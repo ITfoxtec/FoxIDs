@@ -1,2 +1,5 @@
 # FoxIDs
 FoxIDs is an open source security service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and standard convetation.
+
+### Support
+Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow</a> and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.<br />

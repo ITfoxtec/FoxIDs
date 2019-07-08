@@ -1,0 +1,18 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "name": {
+      "value": "foxids1215"
+    },
+    "hostingPlanName": {
+      "value": "foxids1215"
+    },
+    "sku": {
+      "value": "Basic"
+    },
+    "workerSize": {
+      "value": "0"
+    }
+  }
+}

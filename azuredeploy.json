@@ -21,16 +21,30 @@
       "type": "string"
     },
     "alwaysOn": {
-      "type": "bool"
+      "type": "bool",
+      "defaultValue": "true"
     },
     "sku": {
-      "type": "string"
+      "type": "string",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard"
+      ],
+      "defaultValue": "Basic"
     },
     "skuCode": {
       "type": "string"
     },
     "workerSize": {
-      "type": "string"
+      "type": "string",
+      "allowedValues": [
+        "0",
+        "1",
+        "2"
+      ],
+      "defaultValue": "0"
     },
     "workerSizeId": {
       "type": "string"

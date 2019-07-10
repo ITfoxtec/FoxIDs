@@ -31,9 +31,8 @@
             "type": "Bool"
         },
         "planSize": {
-            "type": "string",
             "defaultValue": "S1",
-             "allowedValues": [
+            "allowedValues": [
                 "F1",
                 "D1",
                 "B1",
@@ -47,12 +46,13 @@
                 "P3",
                 "P4"
             ],
+            "type": "String",
             "metadata": {
                 "description": "The instance size of the App Service Plan."
             }
         },
         "planSku": {
-            "type": "String",
+            "defaultValue": "Basic",
             "allowedValues": [
                 "Free",
                 "Shared",
@@ -60,31 +60,72 @@
                 "Standard",
                 "Premium"
             ],
-            "defaultValue": "Basic",
+            "type": "String",
             "metadata": {
                 "description": "The pricing tier of the App Service plan."
             }
         },
         "skuCapacity": {
-            "type": "string",
-            "defaultValue": "1"
+            "defaultValue": 1,
+            "minValue": 1,
+            "type": "Int",
+            "metadata": {
+                "description": "App Service plan instance count."
+            }
         },
         "workerSize": {
-            "defaultValue": "0",
+            "defaultValue": 0,
             "allowedValues": [
-                "0",
-                "1",
-                "2"
+                0,
+                1,
+                2
             ],
-            "type": "String"
+            "type": "Int"
         },
         "numberOfWorkers": {
-            "defaultValue": "1",
-            "type": "String"
+            "defaultValue": 1,
+            "minValue": 1,
+            "type": "Int"
+        },
+        "cacheSku": {
+            "defaultValue": "Standard",
+            "allowedValues": [
+                "Basic",
+                "Standard"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "The pricing tier of the new Azure Redis Cache."
+            }
+        },
+        "cacheSkuFamily": {
+            "defaultValue": "C",
+            "allowedValues": [
+                "C"
+            ],
+            "type": "String",
+            "metadata": {
+                "description": "The family for the sku."
+            }
+        },
+        "cacheSkuCapacity": {
+            "defaultValue": 0,
+            "allowedValues": [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6
+            ],
+            "type": "Int",
+            "metadata": {
+                "description": "The size of the new Azure Redis Cache instance. "
+            }
         }
     },
-    "variables": 
-    {
+    "variables": {
         "location": "[resourceGroup().location]"
     },
     "resources": [
@@ -142,9 +183,9 @@
             "location": "[variables('location')]",
             "properties": {
                 "sku": {
-                    "name": "Standard",
-                    "family": "C",
-                    "capacity": 0
+                    "name": "[parameters('cacheSku')]",
+                    "family": "[parameters('cacheSkuFamily')]",
+                    "capacity": "[parameters('cacheSkuCapacity')]"
                 },
                 "enableNonSslPort": false,
                 "redisConfiguration": {
@@ -160,19 +201,15 @@
             "apiVersion": "2016-10-01",
             "name": "[parameters('keyVault_name')]",
             "location": "[variables('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/sites/', parameters('sites_FoxIDs_name'))]",
-                "[concat('Microsoft.Web/sites/', parameters('sites_FoxIDsApi_name'))]"
-            ],
             "properties": {
                 "sku": {
                     "family": "A",
                     "name": "Standard"
                 },
-                "tenantId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDs_name')), '2018-02-01', 'Full').identity.tenantId]",
+                "tenantId": "[subscription().tenantId]",
                 "accessPolicies": [
                     {
-                        "tenantId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDs_name')), '2018-02-01', 'Full').identity.tenantId]",
+                        "tenantId": "[subscription().tenantId]",
                         "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDs_name')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
@@ -184,7 +221,7 @@
                         }
                     },
                     {
-                        "tenantId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDsApi_name')), '2018-02-01', 'Full').identity.tenantId]",
+                        "tenantId": "[subscription().tenantId]",
                         "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDsApi_name')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
@@ -210,15 +247,15 @@
             "apiVersion": "2018-02-01",
             "name": "[parameters('serverfarms_name')]",
             "location": "[variables('location')]",
-            "properties": {
-                "name": "[parameters('serverfarms_name')]",
-                "workerSize": "[parameters('workerSize')]",
-                "numberOfWorkers": "[parameters('numberOfWorkers')]"
-            },
             "sku": {
                 "name": "[parameters('planSize')]",
                 "tier": "[parameters('planSku')]",
                 "capacity": "[parameters('skuCapacity')]"
+            },
+            "properties": {
+                "name": "[parameters('serverfarms_name')]",
+                "workerSize": "[parameters('workerSize')]",
+                "numberOfWorkers": "[parameters('numberOfWorkers')]"
             }
         },
         {
@@ -227,8 +264,7 @@
             "name": "[parameters('sites_FoxIDs_name')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarms_name'))]",
-                "[resourceId('microsoft.insights/components/', parameters('appInsights_name'))]"
+                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarms_name'))]"
             ],
             "kind": "app",
             "identity": {
@@ -238,17 +274,7 @@
             },
             "properties": {
                 "name": "[parameters('sites_FoxIDs_name')]",
-                "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]"
-                        },
-                        {
-                            "Name": "Settings_CosmosDb_EndpointUri",
-                            "Value": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccounts_name'))).documentEndpoint]"
-                        }                        
-                    ],
+                "siteConfig": {                    
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
                 },
@@ -257,7 +283,25 @@
                 "clientAffinityEnabled": false,
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
                 "httpsOnly": true
-            }
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "apiVersion": "2015-08-01",
+                    "name": "appsettings",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/Sites/', parameters('sites_FoxIDs_name'))]",
+                        "[resourceId('microsoft.insights/components/', parameters('appInsights_name'))]",
+                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccounts_name'))]",
+                        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]"
+                    ],
+                    "properties": {
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
+                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccounts_name'))).documentEndpoint]",
+                        "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))).vaultUri]"
+                    }
+                }
+            ]
         },
         {
             "type": "Microsoft.Web/sites",
@@ -265,8 +309,7 @@
             "name": "[parameters('sites_FoxIDsApi_name')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarms_name'))]",
-                "[resourceId('microsoft.insights/components/', parameters('appInsights_name'))]"
+                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarms_name'))]"
             ],
             "kind": "app",
             "identity": {
@@ -277,16 +320,6 @@
             "properties": {
                 "name": "[parameters('sites_FoxIDsApi_name')]",
                 "siteConfig": {
-                    "appSettings": [
-                        {
-                            "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                            "value": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]"
-                        },
-                        {
-                            "Name": "Settings_CosmosDb_EndpointUri",
-                            "Value": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccounts_name'))).documentEndpoint]"
-                        }
-                    ],
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
                 },
@@ -295,17 +328,49 @@
                 "clientAffinityEnabled": false,
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
                 "httpsOnly": true
-            }
-        },        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "name": "[concat(parameters('keyVault_name'), '/', 'Settings_CosmosDb_PrimaryKey')]",
-            "apiVersion": "2015-06-01",
-          "properties": {
-            "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('databaseAccounts_name')), '2015-04-08').primaryMasterKey]"
-          },
-            "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]"
+            },
+            "resources": [
+                {
+                    "type": "config",
+                    "apiVersion": "2015-08-01",
+                    "name": "appsettings",
+                    "dependsOn": [
+                        "[concat('Microsoft.Web/Sites/', parameters('sites_FoxIDsApi_name'))]",
+                        "[resourceId('microsoft.insights/components/', parameters('appInsights_name'))]",
+                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccounts_name'))]",
+                        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]"
+                    ],
+                    "properties": {
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
+                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccounts_name'))).documentEndpoint]",
+                        "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))).vaultUri]"
+                    }
+                }
             ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2016-10-01",
+            "name": "[concat(parameters('keyVault_name'), '/Settings--CosmosDb--PrimaryKey')]",
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]",
+                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccounts_name'))]"
+            ],
+            "properties": {
+                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('databaseAccounts_name')), '2015-04-08').primaryMasterKey]"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2016-10-01",
+            "name": "[concat(parameters('keyVault_name'), '/Settings--RedisCache--ConnectionString')]",
+            "dependsOn": [
+                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]",
+                "[concat('Microsoft.Cache/Redis/', parameters('redis_name'))]"
+            ],
+            "properties": {
+                "value": "[concat(parameters('keyVault_name'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVault_name')), '2015-08-01').primaryKey)]"
+            }
         }
     ]
 }

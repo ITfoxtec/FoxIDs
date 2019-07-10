@@ -32,10 +32,6 @@
         "serverfarmsName": {
             "type": "String"
         },
-        "alwaysOn": {
-            "defaultValue": true,
-            "type": "Bool"
-        },
         "planSize": {
             "defaultValue": "S1",
             "allowedValues": [
@@ -244,7 +240,7 @@
             "properties": {
                 "name": "[parameters('foxidsSiteName')]",
                 "siteConfig": {                    
-                    "alwaysOn": "[parameters('alwaysOn')]",
+                    "alwaysOn": true,
                     "webSocketsEnabled": false
                 },
                 "reserved": false,
@@ -305,7 +301,7 @@
             "properties": {
                 "name": "[parameters('foxidsApiSiteName')]",
                 "siteConfig": {
-                    "alwaysOn": "[parameters('alwaysOn')]",
+                    "alwaysOn": true,
                     "webSocketsEnabled": false
                 },
                 "reserved": false,

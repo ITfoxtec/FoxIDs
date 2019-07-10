@@ -2,17 +2,32 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "name": {
-      "value": "foxids1215"
+    "alwaysOn": {
+      "value": true
     },
-    "hostingPlanName": {
-      "value": "foxids1215"
+    "planSize": {
+      "value": "S1"
     },
-    "sku": {
-      "value": "Basic"
+    "planSku": {
+      "value": "Standard"
+    },
+    "skuCapacity": {
+      "value": 1
     },
     "workerSize": {
-      "value": "0"
+      "value": 0
+    },
+    "numberOfWorkers": {
+      "value": 1
+    },
+    "cacheSku": {
+      "value": "Standard"
+    },
+    "cacheSkuFamily": {
+      "value": "C"
+    },
+    "cacheSkuCapacity": {
+      "value": 0
     }
   }
 }

@@ -15,7 +15,7 @@
       "value": 1
     },
     "workerSize": {
-      "value": 0
+      "value": "0"
     },
     "numberOfWorkers": {
       "value": 1
@@ -27,7 +27,7 @@
       "value": "C"
     },
     "cacheSkuCapacity": {
-      "value": 0
+      "value": "0"
     }
   }
 }

@@ -277,7 +277,7 @@
                   "type": "sourcecontrols",
                   "dependsOn": [
                     "[resourceId('Microsoft.Web/Sites', parameters('foxidsSiteName'))]",
-                    "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsSiteName'), 'appsettings']"
+                    "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsSiteName'), 'appsettings')]"
                   ],
                   "properties": {
                     "RepoUrl": "[parameters('repoUrl')]",
@@ -338,7 +338,7 @@
                   "type": "sourcecontrols",
                   "dependsOn": [
                     "[resourceId('Microsoft.Web/Sites', parameters('foxidsApiSiteName'))]",
-                    "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsApiSiteName'), 'appsettings']"
+                    "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsApiSiteName'), 'appsettings')]"
                   ],
                   "properties": {
                     "RepoUrl": "[parameters('repoUrl')]",

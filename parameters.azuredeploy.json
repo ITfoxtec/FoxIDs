@@ -2,6 +2,27 @@
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
+    "siteFoxidsName": {
+      "value": "FoxIDs1234"
+    },
+    "siteFoxidsApiName": {
+      "value": "FoxIDsApi1234"
+    },
+    "appInsightsName": {
+      "value": "FoxIDs1234"
+    },
+    "redisName": {
+      "value": "FoxIDs1234"
+    },
+    "keyVaultName": {
+      "value": "foxids1234"
+    }, 
+    "CosmosDBName": {
+      "value": "foxids1234"
+    },
+    "serverfarmsName": {
+      "value": "FoxIDs1234"
+    },    
     "alwaysOn": {
       "value": true
     },

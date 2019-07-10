@@ -20,7 +20,7 @@
                 "description": "Key Vault to be created. Web site will be granted access to this Key Vault."
             }
         },
-        "databaseAccountsName": {
+        "cosmosDbName": {
             "type": "String"
         },
         "serverfarmsName": {
@@ -95,7 +95,7 @@
         {
             "type": "Microsoft.DocumentDB/databaseAccounts",
             "apiVersion": "2015-04-08",
-            "name": "[parameters('databaseAccountsName')]",
+            "name": "[parameters('cosmosDbName')]",
             "location": "[variables('location')]",
             "tags": {
                 "defaultExperience": "DocumentDB"
@@ -255,12 +255,12 @@
                     "dependsOn": [
                         "[concat('Microsoft.Web/Sites/', parameters('siteFoxidsName'))]",
                         "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
-                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]",
+                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
                         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
                     ],
                     "properties": {
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccountsName'))).documentEndpoint]",
+                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
                         "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
                     }
                 }
@@ -300,12 +300,12 @@
                     "dependsOn": [
                         "[concat('Microsoft.Web/Sites/', parameters('siteFoxidsApiName'))]",
                         "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
-                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]",
+                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
                         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
                     ],
                     "properties": {
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccountsName'))).documentEndpoint]",
+                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
                         "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
                     }
                 }
@@ -317,10 +317,10 @@
             "name": "[concat(parameters('keyVaultName'), '/Settings--CosmosDb--PrimaryKey')]",
             "dependsOn": [
                 "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]"
+                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]"
             ],
             "properties": {
-                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('databaseAccountsName')), '2015-04-08').primaryMasterKey]"
+                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('cosmosDbName')), '2015-04-08').primaryMasterKey]"
             }
         },
         {

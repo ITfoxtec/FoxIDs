@@ -17,7 +17,7 @@
     "keyVaultName": {
       "value": "foxids1234"
     }, 
-    "CosmosDBName": {
+    "cosmosDbName": {
       "value": "foxids1234"
     },
     "serverfarmsName": {

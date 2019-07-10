@@ -1,18 +1,45 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {
-    "name": {
-      "value": "foxids1215"
+  "parameters": {         
+    "branch": {
+      "value": "release-current"
     },
-    "hostingPlanName": {
-      "value": "foxids1215"
+    "foxidsSiteName": {
+      "value": "FoxIDs1234"
     },
-    "sku": {
-      "value": "Basic"
+    "foxidsApiSiteName": {
+      "value": "FoxIDsApi1234"
     },
-    "workerSize": {
-      "value": "0"
+    "appInsightsName": {
+      "value": "FoxIDs1234"
+    },
+    "redisName": {
+      "value": "FoxIDs1234"
+    },
+    "keyVaultName": {
+      "value": "foxids1234"
+    }, 
+    "cosmosDbName": {
+      "value": "foxids1234"
+    },
+    "serverfarmsName": {
+      "value": "FoxIDs1234"
+    },    
+    "alwaysOn": {
+      "value": true
+    },
+    "planSize": {
+      "value": "S1"
+    },
+    "planSku": {
+      "value": "Standard"
+    },
+    "keyVaultSkuName": {
+      "value": "Standard"
+    },
+    "cacheSku": {
+      "value": "Standard"
     }
   }
 }

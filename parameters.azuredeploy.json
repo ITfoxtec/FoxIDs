@@ -26,9 +26,6 @@
     "serverfarmsName": {
       "value": "FoxIDs1234"
     },    
-    "alwaysOn": {
-      "value": true
-    },
     "planSize": {
       "value": "S1"
     },

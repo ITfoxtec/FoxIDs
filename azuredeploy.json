@@ -8,6 +8,10 @@
         "branch": {
           "type": "string"
         },
+        "location": {
+            "type": "string",
+            "defaultValue": "[resourceGroup().location]"
+        },
         "foxidsSiteName": {
             "type": "String"
         },
@@ -91,7 +95,7 @@
         }      
     },
     "variables": {
-        "location": "[resourceGroup().location]"
+        "location": "[parameters('location')]"
     },
     "resources": [
         {

@@ -2,28 +2,28 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_FoxIDs_name": {
+        "siteFoxIDsName": {
             "type": "String"
         },
-        "sites_FoxIDsApi_name": {
+        "siteFoxIDsApiName": {
             "type": "String"
         },
-        "appInsights_name": {
+        "appInsightsName": {
             "type": "String"
         },
-        "redis_name": {
+        "redisName": {
             "type": "String"
         },
-        "keyVault_name": {
+        "keyVaultName": {
             "type": "String",
             "metadata": {
                 "description": "Key Vault to be created. Web site will be granted access to this Key Vault."
             }
         },
-        "databaseAccounts_name": {
+        "databaseAccountsName": {
             "type": "String"
         },
-        "serverfarms_name": {
+        "serverfarmsName": {
             "type": "String"
         },
         "alwaysOn": {
@@ -65,6 +65,17 @@
                 "description": "The pricing tier of the App Service plan."
             }
         },
+        "keyVaultSkuName": {
+          "type": "string",
+          "defaultValue": "Standard",
+          "allowedValues": [
+            "Standard",
+            "Premium"
+          ],
+          "metadata": {
+            "description": "Specifies whether the key vault is a standard vault or a premium vault."
+          }
+        },
         "cacheSku": {
             "defaultValue": "Standard",
             "allowedValues": [
@@ -75,7 +86,7 @@
             "metadata": {
                 "description": "The pricing tier of the new Azure Redis Cache."
             }
-        }
+        } 
     },
     "variables": {
         "location": "[resourceGroup().location]"
@@ -84,7 +95,7 @@
         {
             "type": "Microsoft.DocumentDB/databaseAccounts",
             "apiVersion": "2015-04-08",
-            "name": "[parameters('databaseAccounts_name')]",
+            "name": "[parameters('databaseAccountsName')]",
             "location": "[variables('location')]",
             "tags": {
                 "defaultExperience": "DocumentDB"
@@ -114,24 +125,24 @@
         {
             "type": "microsoft.insights/components",
             "apiVersion": "2015-05-01",
-            "name": "[parameters('appInsights_name')]",
+            "name": "[parameters('appInsightsName')]",
             "location": "[variables('location')]",
             "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('sites_FoxIDs_name'))]": "Resource",
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('sites_FoxIDsApi_name'))]": "Resource"
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteFoxIDsName'))]": "Resource",
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteFoxIDsApiName'))]": "Resource"
             },
             "kind": "web",
             "properties": {
                 "Application_Type": "web",
                 "Flow_Type": "Redfield",
                 "Request_Source": "IbizaAIExtension",
-                "applicationId": "[parameters('appInsights_name')]"
+                "applicationId": "[parameters('appInsightsName')]"
             }
         },
         {
             "type": "Microsoft.Cache/Redis",
             "apiVersion": "2017-10-01",
-            "name": "[parameters('redis_name')]",
+            "name": "[parameters('redisName')]",
             "location": "[variables('location')]",
             "properties": {
                 "sku": {
@@ -151,7 +162,7 @@
         {
             "type": "Microsoft.KeyVault/vaults",
             "apiVersion": "2016-10-01",
-            "name": "[parameters('keyVault_name')]",
+            "name": "[parameters('keyVaultName')]",
             "location": "[variables('location')]",
             "properties": {
                 "sku": {
@@ -162,7 +173,7 @@
                 "accessPolicies": [
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDs_name')), '2018-02-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteFoxIDsName')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
                                 "get"
@@ -174,7 +185,7 @@
                     },
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('sites_FoxIDsApi_name')), '2018-02-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteFoxIDsApiName')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
                                 "get"
@@ -197,7 +208,7 @@
         {
             "type": "Microsoft.Web/serverfarms",
             "apiVersion": "2018-02-01",
-            "name": "[parameters('serverfarms_name')]",
+            "name": "[parameters('serverfarmsName')]",
             "location": "[variables('location')]",
             "sku": {
                 "name": "[parameters('planSize')]",
@@ -205,7 +216,7 @@
                 "capacity": "1"
             },
             "properties": {
-                "name": "[parameters('serverfarms_name')]",
+                "name": "[parameters('serverfarmsName')]",
                 "workerSize": "0",
                 "numberOfWorkers": "1"
             }
@@ -213,10 +224,10 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2014-04-01",
-            "name": "[parameters('sites_FoxIDs_name')]",
+            "name": "[parameters('siteFoxIDsName')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarms_name'))]"
+                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
             ],
             "kind": "app",
             "identity": {
@@ -225,15 +236,15 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "name": "[parameters('sites_FoxIDs_name')]",
+                "name": "[parameters('siteFoxIDsName')]",
                 "siteConfig": {                    
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
                 },
                 "reserved": false,
-                "serverFarm": "[parameters('serverfarms_name')]",
+                "serverFarm": "[parameters('serverfarmsName')]",
                 "clientAffinityEnabled": false,
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
                 "httpsOnly": true
             },
             "resources": [
@@ -242,15 +253,15 @@
                     "apiVersion": "2015-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/Sites/', parameters('sites_FoxIDs_name'))]",
-                        "[resourceId('microsoft.insights/components/', parameters('appInsights_name'))]",
-                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccounts_name'))]",
-                        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]"
+                        "[concat('Microsoft.Web/Sites/', parameters('siteFoxIDsName'))]",
+                        "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
+                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]",
+                        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
                     ],
                     "properties": {
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
-                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccounts_name'))).documentEndpoint]",
-                        "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))).vaultUri]"
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccountsName'))).documentEndpoint]",
+                        "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
                     }
                 }
             ]
@@ -258,10 +269,10 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2014-04-01",
-            "name": "[parameters('sites_FoxIDsApi_name')]",
+            "name": "[parameters('siteFoxIDsApiName')]",
             "location": "[variables('location')]",
             "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarms_name'))]"
+                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
             ],
             "kind": "app",
             "identity": {
@@ -270,15 +281,15 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "name": "[parameters('sites_FoxIDsApi_name')]",
+                "name": "[parameters('siteFoxIDsApiName')]",
                 "siteConfig": {
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
                 },
                 "reserved": false,
-                "serverFarm": "[parameters('serverfarms_name')]",
+                "serverFarm": "[parameters('serverfarmsName')]",
                 "clientAffinityEnabled": false,
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
                 "httpsOnly": true
             },
             "resources": [
@@ -287,15 +298,15 @@
                     "apiVersion": "2015-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/Sites/', parameters('sites_FoxIDsApi_name'))]",
-                        "[resourceId('microsoft.insights/components/', parameters('appInsights_name'))]",
-                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccounts_name'))]",
-                        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]"
+                        "[concat('Microsoft.Web/Sites/', parameters('siteFoxIDsApiName'))]",
+                        "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
+                        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]",
+                        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
                     ],
                     "properties": {
-                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsights_name'))).InstrumentationKey]",
-                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccounts_name'))).documentEndpoint]",
-                        "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))).vaultUri]"
+                        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+                        "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('databaseAccountsName'))).documentEndpoint]",
+                        "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
                     }
                 }
             ]
@@ -303,25 +314,25 @@
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVault_name'), '/Settings--CosmosDb--PrimaryKey')]",
+            "name": "[concat(parameters('keyVaultName'), '/Settings--CosmosDb--PrimaryKey')]",
             "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]",
-                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccounts_name'))]"
+                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]"
             ],
             "properties": {
-                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('databaseAccounts_name')), '2015-04-08').primaryMasterKey]"
+                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('databaseAccountsName')), '2015-04-08').primaryMasterKey]"
             }
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
             "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVault_name'), '/Settings--RedisCache--ConnectionString')]",
+            "name": "[concat(parameters('keyVaultName'), '/Settings--RedisCache--ConnectionString')]",
             "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVault_name'))]",
-                "[concat('Microsoft.Cache/Redis/', parameters('redis_name'))]"
+                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+                "[concat('Microsoft.Cache/Redis/', parameters('redisName'))]"
             ],
             "properties": {
-                "value": "[concat(parameters('keyVault_name'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVault_name')), '2015-08-01').primaryKey)]"
+                "value": "[concat(parameters('keyVaultName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVaultName')), '2015-08-01').primaryKey)]"
             }
         }
     ]

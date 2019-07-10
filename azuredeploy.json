@@ -2,10 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "siteFoxIDsName": {
+        "siteFoxidsName": {
             "type": "String"
         },
-        "siteFoxIDsApiName": {
+        "siteFoxidsApiName": {
             "type": "String"
         },
         "appInsightsName": {
@@ -128,8 +128,8 @@
             "name": "[parameters('appInsightsName')]",
             "location": "[variables('location')]",
             "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteFoxIDsName'))]": "Resource",
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteFoxIDsApiName'))]": "Resource"
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteFoxidsName'))]": "Resource",
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteFoxidsApiName'))]": "Resource"
             },
             "kind": "web",
             "properties": {
@@ -173,7 +173,7 @@
                 "accessPolicies": [
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteFoxIDsName')), '2018-02-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteFoxidsName')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
                                 "get"
@@ -185,7 +185,7 @@
                     },
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteFoxIDsApiName')), '2018-02-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteFoxidsApiName')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
                                 "get"
@@ -224,7 +224,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2014-04-01",
-            "name": "[parameters('siteFoxIDsName')]",
+            "name": "[parameters('siteFoxidsName')]",
             "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
@@ -236,7 +236,7 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "name": "[parameters('siteFoxIDsName')]",
+                "name": "[parameters('siteFoxidsName')]",
                 "siteConfig": {                    
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
@@ -253,7 +253,7 @@
                     "apiVersion": "2015-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/Sites/', parameters('siteFoxIDsName'))]",
+                        "[concat('Microsoft.Web/Sites/', parameters('siteFoxidsName'))]",
                         "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
                         "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]",
                         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
@@ -269,7 +269,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2014-04-01",
-            "name": "[parameters('siteFoxIDsApiName')]",
+            "name": "[parameters('siteFoxidsApiName')]",
             "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
@@ -281,7 +281,7 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "name": "[parameters('siteFoxIDsApiName')]",
+                "name": "[parameters('siteFoxidsApiName')]",
                 "siteConfig": {
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
@@ -298,7 +298,7 @@
                     "apiVersion": "2015-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/Sites/', parameters('siteFoxIDsApiName'))]",
+                        "[concat('Microsoft.Web/Sites/', parameters('siteFoxidsApiName'))]",
                         "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
                         "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('databaseAccountsName'))]",
                         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"

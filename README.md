@@ -6,5 +6,3 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 
 ## Deployment
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs?ptmpl=parameters.azuredeploy.json)
-
-[![Deploy to Azure1](https://azuredeploy.net/deploybutton.svg)](https://azuredeploy.net/)

@@ -27,7 +27,7 @@
             "type": "String"
         },
         "alwaysOn": {
-            "defaultValue": "true",
+            "defaultValue": true,
             "type": "Bool"
         },
         "planSize": {
@@ -52,7 +52,7 @@
             }
         },
         "planSku": {
-            "defaultValue": "Basic",
+            "defaultValue": "Standard",
             "allowedValues": [
                 "Free",
                 "Shared",

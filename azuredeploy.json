@@ -5,7 +5,7 @@
         "foxidsSiteName": {
             "type": "String"
         },
-        "siteNameFoxidsApi": {
+        "foxidsApiSiteName": {
             "type": "String"
         },
         "appInsightsName": {
@@ -129,7 +129,7 @@
             "location": "[variables('location')]",
             "tags": {
                 "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsSiteName'))]": "Resource",
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('siteNameFoxidsApi'))]": "Resource"
+                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsApiSiteName'))]": "Resource"
             },
             "kind": "web",
             "properties": {
@@ -185,7 +185,7 @@
                     },
                     {
                         "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('siteNameFoxidsApi')), '2018-02-01', 'Full').identity.principalId]",
+                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
                         "permissions": {
                             "secrets": [
                                 "get"
@@ -269,7 +269,7 @@
         {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2014-04-01",
-            "name": "[parameters('siteNameFoxidsApi')]",
+            "name": "[parameters('foxidsApiSiteName')]",
             "location": "[variables('location')]",
             "dependsOn": [
                 "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
@@ -281,7 +281,7 @@
                 "type": "SystemAssigned"
             },
             "properties": {
-                "name": "[parameters('siteNameFoxidsApi')]",
+                "name": "[parameters('foxidsApiSiteName')]",
                 "siteConfig": {
                     "alwaysOn": "[parameters('alwaysOn')]",
                     "webSocketsEnabled": false
@@ -298,7 +298,7 @@
                     "apiVersion": "2015-08-01",
                     "name": "appsettings",
                     "dependsOn": [
-                        "[concat('Microsoft.Web/Sites/', parameters('siteNameFoxidsApi'))]",
+                        "[concat('Microsoft.Web/Sites/', parameters('foxidsApiSiteName'))]",
                         "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
                         "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
                         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"

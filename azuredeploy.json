@@ -65,28 +65,6 @@
                 "description": "The pricing tier of the App Service plan."
             }
         },
-        "skuCapacity": {
-            "defaultValue": 1,
-            "minValue": 1,
-            "type": "Int",
-            "metadata": {
-                "description": "App Service plan instance count."
-            }
-        },
-        "workerSize": {
-            "defaultValue": 0,
-            "allowedValues": [
-                0,
-                1,
-                2
-            ],
-            "type": "Int"
-        },
-        "numberOfWorkers": {
-            "defaultValue": 1,
-            "minValue": 1,
-            "type": "Int"
-        },
         "cacheSku": {
             "defaultValue": "Standard",
             "allowedValues": [
@@ -96,32 +74,6 @@
             "type": "String",
             "metadata": {
                 "description": "The pricing tier of the new Azure Redis Cache."
-            }
-        },
-        "cacheSkuFamily": {
-            "defaultValue": "C",
-            "allowedValues": [
-                "C"
-            ],
-            "type": "String",
-            "metadata": {
-                "description": "The family for the sku."
-            }
-        },
-        "cacheSkuCapacity": {
-            "defaultValue": 0,
-            "allowedValues": [
-                0,
-                1,
-                2,
-                3,
-                4,
-                5,
-                6
-            ],
-            "type": "Int",
-            "metadata": {
-                "description": "The size of the new Azure Redis Cache instance. "
             }
         }
     },
@@ -184,8 +136,8 @@
             "properties": {
                 "sku": {
                     "name": "[parameters('cacheSku')]",
-                    "family": "[parameters('cacheSkuFamily')]",
-                    "capacity": "[parameters('cacheSkuCapacity')]"
+                    "family": "C",
+                    "capacity": "0"
                 },
                 "enableNonSslPort": false,
                 "redisConfiguration": {
@@ -250,12 +202,12 @@
             "sku": {
                 "name": "[parameters('planSize')]",
                 "tier": "[parameters('planSku')]",
-                "capacity": "[parameters('skuCapacity')]"
+                "capacity": "1"
             },
             "properties": {
                 "name": "[parameters('serverfarms_name')]",
-                "workerSize": "[parameters('workerSize')]",
-                "numberOfWorkers": "[parameters('numberOfWorkers')]"
+                "workerSize": "0",
+                "numberOfWorkers": "1"
             }
         },
         {

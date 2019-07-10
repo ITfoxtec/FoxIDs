@@ -6,3 +6,6 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 
 ## Deployment
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs?ptmpl=parameters.azuredeploy.json)
+
+
+[![Deploy to Azure2](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/shrimpy/ArmParamterTemplateTest?ptmpl=https://raw.githubusercontent.com/shrimpy/ArmParamterTemplateTest/master/parameters.azuredeploy.json)

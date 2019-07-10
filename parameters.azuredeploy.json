@@ -11,6 +11,9 @@
     "planSku": {
       "value": "Standard"
     },
+    "keyVaultSkuName": {
+      "value": "Standard"
+    },
     "cacheSku": {
       "value": "Standard"
     }

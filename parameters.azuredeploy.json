@@ -11,23 +11,8 @@
     "planSku": {
       "value": "Standard"
     },
-    "skuCapacity": {
-      "value": 1
-    },
-    "workerSize": {
-      "value": "0"
-    },
-    "numberOfWorkers": {
-      "value": 1
-    },
     "cacheSku": {
       "value": "Standard"
-    },
-    "cacheSkuFamily": {
-      "value": "C"
-    },
-    "cacheSkuCapacity": {
-      "value": "0"
     }
   }
 }

@@ -20,8 +20,8 @@ https://localhost:44330
 FoxIDs API
 https://localhost:44331
 
-FoxIDs Portal
-https://localhost:44332
+*FoxIDs Portal
+https://localhost:44332*
 
-FoxIDs web
-https://localhost:44333
+*FoxIDs web
+https://localhost:44333*

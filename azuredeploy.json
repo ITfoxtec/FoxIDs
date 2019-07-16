@@ -178,10 +178,12 @@
             "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
               "secrets": [
-                "get"
+                "get",
+                "List"
               ],
               "certificates": [
-                "Get"
+                "Get",
+                "List"
               ]
             }
           },
@@ -190,7 +192,8 @@
             "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
               "secrets": [
-                "get"
+                "get",
+                "List"
               ],
               "certificates": [
                 "Get",

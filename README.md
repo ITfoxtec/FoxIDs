@@ -24,4 +24,4 @@ https://localhost:44331
 https://localhost:44332*
 
 *FoxIDs web
-https://localhost:44333*
+https://localhost:44333* 

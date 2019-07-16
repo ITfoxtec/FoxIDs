@@ -251,38 +251,6 @@
             }
         },
         {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2015-08-01",
-            "name": "[concat(parameters('foxidsSiteName'), '/appsettings')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/Sites/', parameters('foxidsSiteName'))]",
-                "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
-                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
-            ],
-            "properties": {
-                "PROJECT": "src/FoxIDs/FoxIDs.csproj",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
-                "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
-            }
-        },
-        {
-          "type": "Microsoft.Web/sites/sourcecontrols",
-          "apiVersion": "2015-04-01",
-          "name": "[concat(parameters('foxidsSiteName'), '/web')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('foxidsSiteName'))]",
-            "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsSiteName'), 'appsettings')]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoUrl')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": "false",
-            "IsMercurial": "false"
-          }
-        },
-        {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2014-04-01",
             "name": "[parameters('foxidsApiSiteName')]",
@@ -312,6 +280,23 @@
         {
             "type": "Microsoft.Web/sites/config",
             "apiVersion": "2015-08-01",
+            "name": "[concat(parameters('foxidsSiteName'), '/appsettings')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/Sites/', parameters('foxidsSiteName'))]",
+                "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
+                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
+                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+            ],
+            "properties": {
+                "PROJECT": "src/FoxIDs/FoxIDs.csproj",
+                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+                "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
+                "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2015-08-01",
             "name": "[concat(parameters('foxidsApiSiteName'), '/appsettings')]",
             "dependsOn": [
                 "[concat('Microsoft.Web/Sites/', parameters('foxidsApiSiteName'))]",
@@ -329,15 +314,28 @@
         {
           "type": "Microsoft.Web/sites/sourcecontrols",
           "apiVersion": "2015-04-01",
-          "name": "[concat(parameters('foxidsApiSiteName'), '/web')]",
+          "name": "[concat(parameters('foxidsSiteName'), '/web')]",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('foxidsApiSiteName'))]",
-            "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsApiSiteName'), 'appsettings')]"
+            "[resourceId('Microsoft.Web/Sites', parameters('foxidsSiteName'))]"
           ],
           "properties": {
             "RepoUrl": "[parameters('repoUrl')]",
             "branch": "[parameters('branch')]",
-            "IsManualIntegration": "false",
+            "IsManualIntegration": "true",
+            "IsMercurial": "false"
+          }
+        },
+        {
+          "type": "Microsoft.Web/sites/sourcecontrols",
+          "apiVersion": "2015-04-01",
+          "name": "[concat(parameters('foxidsApiSiteName'), '/web')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('foxidsApiSiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('repoUrl')]",
+            "branch": "[parameters('branch')]",
+            "IsManualIntegration": "true",
             "IsMercurial": "false"
           }
         },        

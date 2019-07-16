@@ -4,7 +4,6 @@ using FoxIDs.Models.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models.Config;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -23,11 +22,13 @@ namespace FoxIDs.Controllers
 
         public IActionResult Index()
         {
-            if (environment.IsDevelopment())
-            {
-                return Content("<html><body>FoxIDs do not redirect to website in development mode.</body></html>", "text/html");
-            }
-            return Redirect(!settings.WebsiteUrl.IsNullOrEmpty() ? settings.WebsiteUrl : $"https://www.{Request.Host.ToUriComponent()}"); 
+            //TODO create info web page
+            return Content("<html><body><h1>FoxIDs</h1></body></html>", "text/html");
+            //if (environment.IsDevelopment())
+            //{
+            //    return Content("<html><body>FoxIDs do not redirect to website in development mode.</body></html>", "text/html");
+            //}
+            //return Redirect(!settings.WebsiteUrl.IsNullOrEmpty() ? settings.WebsiteUrl : $"https://www.{Request.Host.ToUriComponent()}"); 
         }
         
         public IActionResult Error()

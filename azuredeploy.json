@@ -321,8 +321,7 @@
           "properties": {
             "RepoUrl": "[parameters('repoUrl')]",
             "branch": "[parameters('branch')]",
-            "IsManualIntegration": "true",
-            "IsMercurial": "false"
+            "IsManualIntegration": "true"
           }
         },
         {
@@ -335,8 +334,7 @@
           "properties": {
             "RepoUrl": "[parameters('repoUrl')]",
             "branch": "[parameters('branch')]",
-            "IsManualIntegration": "true",
-            "IsMercurial": "false"
+            "IsManualIntegration": "true"
           }
         },        
         {

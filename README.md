@@ -9,6 +9,8 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 
 [![Deploy to Azure2](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs?ptmpl=parameters.azuredeploy.json)
 
+If you receive a deployment error like "The gateway did not receive a response from 'Microsoft.DocumentDB' within the specified time period." the deployment have probably succeed anyway.*
+
 
 ## Development
 

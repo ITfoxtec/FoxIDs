@@ -6,3 +6,18 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 
 ## Deployment
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
+
+
+## Development
+
+FoxIDs
+https://localhost:44330
+
+FoxIDs API
+https://localhost:44331
+
+FoxIDs Portal
+https://localhost:44332
+
+FoxIDs web
+https://localhost:44333

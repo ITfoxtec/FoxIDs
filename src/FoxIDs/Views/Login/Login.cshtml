@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model FoxIDs.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = Localizer["Login"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container">
+    <div class="col-md page-content">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group">
+                <input asp-for="Email" autocomplete="username" class="form-control input-control" />
+                <label asp-for="Email" class="label-control"></label>
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="Password" autocomplete="current-password" class="form-control input-control" />
+                <label asp-for="Password" class="label-control"></label>
+                <span asp-validation-for="Password"></span>
+            </div>
+            <div class="form-group button-group">
+                <div>
+                <input type="submit" value="@Localizer["Login"]" class="btn btn-primary" />
+                @if (Model.EnableCancelLogin)
+                {
+                    <a href="CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                }
+                </div>
+            </div>
+            @if (Model.EnableCreateUser)
+            {
+                <div class="form-group create-user-group">
+                    <a href="CreateUser/_@Model.SequenceString" class="link">@Localizer["Create User"]</a>
+                </div>
+            }
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

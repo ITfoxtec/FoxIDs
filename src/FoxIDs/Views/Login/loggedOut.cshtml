@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@{
+    ViewData["Title"] = Localizer["logged out"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div>
+    @Localizer["You are now logged out!"]
+</div>
+

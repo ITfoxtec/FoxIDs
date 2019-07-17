@@ -1,2 +1,2 @@
 [config]
-SCM_BUILD_ARGS=-p:PublishProfile=Release
+command = deploy.cmd

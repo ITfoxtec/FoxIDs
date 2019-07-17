@@ -66,14 +66,14 @@ IF DEFINED CLEAN_LOCAL_DEPLOYMENT_TEMP (
 :: ----------
 
 echo Handling ASP.NET Core Web Application deployment.
-echo "PROJECT = %PROJECT%"
+echo PROJECT = %PROJECT%
 
 :: 1. Restore nuget packages
 call :ExecuteCmd dotnet restore "%PROJECT%"
 IF !ERRORLEVEL! NEQ 0 goto error
 
 :: 2. Build and publish 
-call :ExecuteCmd dotnet publish "%PROJECT%" --output "%DEPLOYMENT_TEMP%" --configuration Release --PublishProfile Release
+call :ExecuteCmd dotnet publish "%PROJECT%" --output "%DEPLOYMENT_TEMP%" --configuration Release
 IF !ERRORLEVEL! NEQ 0 goto error
 
 :: 3. KuduSync

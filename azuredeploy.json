@@ -292,8 +292,9 @@
       ],
       "properties": {
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
-        "SCM_BUILD_ARGS":"-p:Configuration=Release",
+        "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+        "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
       }
@@ -310,8 +311,9 @@
       ],
       "properties": {
         "PROJECT": "src/FoxIDs.Api/FoxIDs.Api.csproj",
-        "SCM_BUILD_ARGS":"-p:Configuration=Release",
+        "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+        "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
       }

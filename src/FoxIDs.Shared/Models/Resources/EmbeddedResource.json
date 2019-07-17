@@ -1,0 +1,350 @@
+{
+  "supported_cultures": [
+    "en",
+    "da"
+  ],
+  "names": [
+    {
+      "name": "Login",
+      "id": 1
+    },
+    {
+      "name": "Email",
+      "id": 2
+    },
+    {
+      "name": "The {0} field is not a valid e-mail address.",
+      "id": 3
+    },
+    {
+      "name": "Password",
+      "id": 4
+    },
+    {
+      "name": "The {0} field is required.",
+      "id": 5
+    },
+    {
+      "name": "The field {0} must be a string or array type with a maximum length of '{1}'.",
+      "id": 6
+    },
+    {
+      "name": "User",
+      "id": 7
+    },
+    {
+      "name": "Confirm password",
+      "id": 8
+    },
+    {
+      "name": "Please confirmation the password.",
+      "id": 9
+    },
+    {
+      "name": "Given Name",
+      "id": 10
+    },
+    {
+      "name": "Family Name",
+      "id": 11
+    },
+    {
+      "name": "CreateUser",
+      "id": 12
+    },
+    {
+      "name": "Create user",
+      "id": 13
+    },
+    {
+      "name": "Cancel",
+      "id": 14
+    },
+    {
+      "name": "Create User",
+      "id": 15
+    },
+    {
+      "name": "'{0}' and 'Password' do not match.",
+      "id": 16
+    },
+    {
+      "name": "Create",
+      "id": 17
+    },
+    {
+      "name": "Login with existing user",
+      "id": 18
+    },
+    {
+      "name": "Given name",
+      "id": 19
+    },
+    {
+      "name": "Family name",
+      "id": 20
+    },
+    {
+      "name": "The password has previously appeared in a data breach. Please choose a more secure alternative.",
+      "id": 21
+    },
+    {
+      "name": "Please use 8 characters or more with a mix of letters, numbers and symbols.",
+      "id": 22
+    },
+    {
+      "name": "Please use a mix of letters, numbers and symbols",
+      "id": 23
+    },
+    {
+      "name": "Wrong email or password",
+      "id": 24
+    }
+  ],
+  "resources": [
+    {
+      "id": 1,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Login"
+        },
+        {
+          "culture": "da",
+          "value": "Login"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Email"
+        },
+        {
+          "culture": "da",
+          "value": "E-mail"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Not a valid email address."
+        },
+        {
+          "culture": "da",
+          "value": "E-mail adressen er ikke valid."
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Password"
+        },
+        {
+          "culture": "en",
+          "value": "Kodeord"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The {0} field is required."
+        },
+        {
+          "culture": "da",
+          "value": "{0} feltet er krævet."
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The {0} fields maximum length is '{1}'."
+        },
+        {
+          "culture": "da",
+          "value": "{0} feldets maximum længde er '{1}'."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "items": [
+        {
+          "culture": "en",
+          "value": "User"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirm password"
+        },
+        {
+          "culture": "da",
+          "value": "Gentag kodeord"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please confirmation the password."
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Given Name"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Family Name"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "items": [
+        {
+          "culture": "en",
+          "value": "CreateUser"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Create user"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Cancel"
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Create User"
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "items": [
+        {
+          "culture": "en",
+          "value": "'{0}' and 'Password' do not match."
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Create"
+        }
+      ]
+    },
+    {
+      "id": 18,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Login with existing user"
+        }
+      ]
+    },
+    {
+      "id": 19,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Given name"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Family name"
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The password has previously appeared in a data breach. Please choose a more secure alternative."
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use 8 characters or more with a mix of letters, numbers and symbols."
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use a mix of letters, numbers and symbols"
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong email or password"
+        }
+      ]
+    }
+  ]
+}

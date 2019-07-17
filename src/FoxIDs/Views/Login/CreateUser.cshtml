@@ -1,0 +1,54 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model FoxIDs.Models.ViewModels.CreateUserViewModel
+
+@{
+    ViewData["Title"] = Localizer["Create user"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container">
+    <div class="col-md page-content">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group">
+                <input asp-for="Email" autocomplete="username" class="form-control input-control" />
+                <label asp-for="Email" class="label-control"></label>
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="Password" autocomplete="new-password" class="form-control input-control" />
+                <label asp-for="Password" class="label-control"></label>
+                <span asp-validation-for="Password"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="ConfirmPassword" autocomplete="new-password" class="form-control input-control" />
+                <label asp-for="ConfirmPassword" class="label-control"></label>
+                <span asp-validation-for="ConfirmPassword"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="GivenName" autocomplete="given-name" class="form-control input-control" />
+                <label asp-for="GivenName" class="label-control"></label>
+                <span asp-validation-for="GivenName"></span>
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="FamilyName" autocomplete="family-name" class="form-control input-control" />
+                <label asp-for="FamilyName" class="label-control"></label>
+                <span asp-validation-for="FamilyName"></span>
+            </div>
+            <div class="form-group button-group">
+                <div>
+                    <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />
+                </div>
+            </div>
+            <div class="form-group create-user-group">
+                <a href="../_@Model.SequenceString" class="link">@Localizer["Login with existing user"]</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

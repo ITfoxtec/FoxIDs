@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <RootNamespace>FoxIDs</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>Anders Revsgaard</Authors>
+    <Company>ITfoxtec</Company>
+    <Copyright>Copyright © 2019</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Models\Resources\EmbeddedResource.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Models\Resources\EmbeddedResource.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ITfoxtec.Identity" Version="1.0.6" />
+    <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.0.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
+    <PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.3" />
+    <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.2.0" />
+    <PackageReference Include="UrlCombine" Version="2.0.0" />
+  </ItemGroup>
+  
+ </Project>

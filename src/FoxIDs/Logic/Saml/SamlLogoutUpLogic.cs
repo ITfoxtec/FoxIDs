@@ -1,0 +1,210 @@
+﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity.Saml2.MvcCore;
+using ITfoxtec.Identity.Saml2.Schemas;
+using FoxIDs.Infrastructure;
+using FoxIDs.Models;
+using FoxIDs.Models.Logic;
+using FoxIDs.Repository;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Threading.Tasks;
+using ITfoxtec.Identity.Saml2.Claims;
+using System.Linq;
+using Microsoft.IdentityModel.Tokens.Saml2;
+using FoxIDs.Models.Sequences;
+
+namespace FoxIDs.Logic
+{
+    public class SamlLogoutUpLogic : LogicBase
+    {
+        private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
+        private readonly ITenantRepository tenantRepository;
+        private readonly SequenceLogic sequenceLogic;
+        private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
+
+        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        {
+            this.logger = logger;
+            this.serviceProvider = serviceProvider;
+            this.tenantRepository = tenantRepository;
+            this.sequenceLogic = sequenceLogic;
+            this.saml2ConfigurationLogic = saml2ConfigurationLogic;
+        }
+
+        public async Task<IActionResult> LogoutAsync(string partyId, LogoutRequest logoutRequest)
+        {
+            logger.ScopeTrace("Up, SAML Logout request.");
+            logger.SetScopeProperty("upPartyId", partyId);
+
+            await logoutRequest.ValidateObjectAsync();
+
+            await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
+            {
+                DownPartyId = logoutRequest.DownParty.Id,
+                DownPartyType = logoutRequest.DownParty.Type.ToString(),
+            });
+
+            if (logoutRequest.RequireLogoutConsent)
+            {
+                throw new NotSupportedException("Require SAML up logout consent not supported.");
+            }
+            if (!logoutRequest.PostLogoutRedirect)
+            {
+                throw new NotSupportedException("SAML up post logout redirect required.");
+            }
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            ValidatePartyLogoutSupport(party);
+
+            var binding = party.LogoutBinding.RequestBinding.ToEnum<SamlBindingType>();
+            switch (binding)
+            {
+                case SamlBindingType.Redirect:
+                    return await LogoutAsync(party, new Saml2RedirectBinding(), logoutRequest);
+                case SamlBindingType.Post:
+                    return await LogoutAsync(party, new Saml2PostBinding(), logoutRequest);
+                default:
+                    throw new NotSupportedException($"Binding '{binding}' not supported.");
+            }
+        }
+
+        private void ValidatePartyLogoutSupport(SamlUpParty party)
+        {
+            if (party.LogoutBinding == null || party.LogoutUrl.IsNullOrEmpty())
+            {
+                throw new EndpointException("Logout not configured.") { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> LogoutAsync<T>(SamlUpParty party, Saml2Binding<T> binding, LogoutRequest logoutRequest)
+        {
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningCertificate: true);
+
+            binding.RelayState = SequenceString;
+
+            var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
+            saml2LogoutRequest.SessionIndex = logoutRequest.SessionId;
+
+            var nameID = logoutRequest.Claims?.Where(c => c.Type == Saml2ClaimTypes.NameId).Select(c => c.Value).FirstOrDefault();
+            var nameIdFormat = logoutRequest.Claims?.Where(c => c.Type == Saml2ClaimTypes.NameIdFormat).Select(c => c.Value).FirstOrDefault();
+            if (!nameID.IsNullOrEmpty())
+            {
+                if (nameIdFormat.IsNullOrEmpty())
+                {
+                    saml2LogoutRequest.NameId = new Saml2NameIdentifier(nameID);
+                }
+                else
+                {
+                    saml2LogoutRequest.NameId = new Saml2NameIdentifier(nameID, new Uri(nameIdFormat));
+                }
+            }
+
+            binding.Bind(saml2LogoutRequest);
+            logger.ScopeTrace($"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace($"Logout url '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
+            logger.ScopeTrace("Up, SAML Logout request.", triggerEvent: true);
+
+            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            {
+                return await Task.FromResult((binding as Saml2RedirectBinding).ToActionResult());
+            }
+            if (binding is Saml2Binding<Saml2PostBinding>)
+            {
+                return await Task.FromResult((binding as Saml2PostBinding).ToActionResult());
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public async Task<IActionResult> LogoutResponseAsync(string partyId)
+        {
+            logger.ScopeTrace($"Up, SAML Logout response.");
+            logger.SetScopeProperty("upPartyId", partyId);
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            ValidatePartyLogoutSupport(party);
+
+            var binding = party.LogoutBinding.ResponseBinding.ToEnum<SamlBindingType>();
+            logger.ScopeTrace($"Binding '{binding}'");
+            switch (binding)
+            {
+                case SamlBindingType.Redirect:
+                    return await LogoutResponseAsync(party, new Saml2RedirectBinding());
+                case SamlBindingType.Post:
+                    return await LogoutResponseAsync(party, new Saml2PostBinding());
+                default:
+                    throw new NotSupportedException($"SAML binding '{binding}' not supported.");
+            }
+        }
+
+        private async Task<IActionResult> LogoutResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
+        {
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+
+            var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
+
+            binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+
+            await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>();
+
+            try
+            {
+                logger.ScopeTrace($"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+                logger.SetScopeProperty("status", saml2LogoutResponse.Status.ToString());
+                logger.ScopeTrace("Up, SAML Logout response.", triggerEvent: true);
+
+                if (saml2LogoutResponse.Status != Saml2StatusCodes.Success)
+                {
+                    throw new SamlRequestException("Unsuccessful Logout response.") { RouteBinding = RouteBinding, Status = saml2LogoutResponse.Status };
+                }
+
+                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+                logger.ScopeTrace("Up, Successful SAML Logout response.", triggerEvent: true);
+
+                return await LogoutResponseDownAsync(sequenceData, saml2LogoutResponse.Status, saml2LogoutResponse.SessionIndex);
+            }
+            catch (SamlRequestException ex)
+            {
+                logger.Error(ex);
+                return await LogoutResponseDownAsync(sequenceData, ex.Status);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                return await LogoutResponseDownAsync(sequenceData, Saml2StatusCodes.Responder);
+            }
+        }
+
+        private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, string sessionIndex = null)
+        {
+            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
+            logger.ScopeTrace($"Response, Down type {type}.");
+            switch (type)
+            {
+                case PartyType.OAuth2:
+                    throw new NotImplementedException();
+                case PartyType.Oidc:
+                    if(status == Saml2StatusCodes.Success)
+                    {
+                        return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
+                    }
+                    else
+                    {
+                        throw new EndpointException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.") { RouteBinding = RouteBinding };
+                    }
+                case PartyType.Saml2:
+                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sessionIndex);
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+    }
+}

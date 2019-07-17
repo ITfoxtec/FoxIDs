@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>
+    <IsWebConfigTransformDisabled>true</IsWebConfigTransformDisabled>
+    <Version>1.0.0</Version>
+    <Authors>Anders Revsgaard</Authors>
+    <Company>ITfoxtec</Company>
+    <Copyright>Copyright © 2019</Copyright>
+    <RootNamespace>FoxIDs</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.7.1" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FoxIDs.Shared\FoxIDs.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

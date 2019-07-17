@@ -1,369 +1,362 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": {
-        "repoUrl": {
-          "type": "string"
-        },
-        "branch": {
-          "type": "string"
-        },
-        "foxidsSiteName": {
-            "type": "String"
-        },
-        "foxidsApiSiteName": {
-            "type": "String"
-        },
-        "appInsightsName": {
-            "type": "String"
-        },
-        "redisName": {
-            "type": "String"
-        },
-        "keyVaultName": {
-            "type": "String",
-            "metadata": {
-                "description": "Key Vault to be created. Web site will be granted access to this Key Vault."
-            }
-        },
-        "cosmosDbName": {
-            "type": "String"
-        },
-        "serverfarmsName": {
-            "type": "String"
-        },
-        "planSize": {
-            "defaultValue": "S1",
-            "allowedValues": [
-                "F1",
-                "D1",
-                "B1",
-                "B2",
-                "B3",
-                "S1",
-                "S2",
-                "S3",
-                "P1",
-                "P2",
-                "P3",
-                "P4"
-            ],
-            "type": "String",
-            "metadata": {
-                "description": "The instance size of the App Service Plan."
-            }
-        },
-        "planSku": {
-            "defaultValue": "Standard",
-            "allowedValues": [
-                "Free",
-                "Shared",
-                "Basic",
-                "Standard",
-                "Premium"
-            ],
-            "type": "String",
-            "metadata": {
-                "description": "The pricing tier of the App Service plan."
-            }
-        },
-        "keyVaultSkuName": {
-          "type": "string",
-          "defaultValue": "Standard",
-          "allowedValues": [
-            "Standard",
-            "Premium"
-          ],
-          "metadata": {
-            "description": "Specifies whether the key vault is a standard vault or a premium vault."
-          }
-        },
-        "cacheSku": {
-            "defaultValue": "Standard",
-            "allowedValues": [
-                "Basic",
-                "Standard"
-            ],
-            "type": "String",
-            "metadata": {
-                "description": "The pricing tier of the new Azure Redis Cache."
-            }
-        }      
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "repoUrl": {
+      "type": "string"
     },
-    "variables": {
-        "location": "[resourceGroup().location]"
+    "branch": {
+      "type": "string"
     },
-    "resources": [
-        {
-            "type": "Microsoft.DocumentDB/databaseAccounts",
-            "apiVersion": "2015-04-08",
-            "name": "[parameters('cosmosDbName')]",
-            "location": "[variables('location')]",
-            "tags": {
-                "defaultExperience": "DocumentDB"
-            },
-            "kind": "GlobalDocumentDB",
-            "properties": {
-                "enableAutomaticFailover": false,
-                "enableMultipleWriteLocations": false,
-                "isVirtualNetworkFilterEnabled": false,
-                "virtualNetworkRules": [],
-                "databaseAccountOfferType": "Standard",
-                "consistencyPolicy": {
-                    "defaultConsistencyLevel": "Session",
-                    "maxIntervalInSeconds": 5,
-                    "maxStalenessPrefix": 100
-                },
-                "locations": [
-                    {
-                        "locationName": "[variables('location')]",
-                        "provisioningState": "Succeeded",
-                        "failoverPriority": 0
-                    }
-                ],
-                "capabilities": []
-            }
+    "foxidsSiteName": {
+      "type": "String"
+    },
+    "foxidsApiSiteName": {
+      "type": "String"
+    },
+    "appInsightsName": {
+      "type": "String"
+    },
+    "redisName": {
+      "type": "String"
+    },
+    "keyVaultName": {
+      "type": "String",
+      "metadata": {
+        "description": "Key Vault to be created. Web site will be granted access to this Key Vault."
+      }
+    },
+    "cosmosDbName": {
+      "type": "String"
+    },
+    "serverfarmsName": {
+      "type": "String"
+    },
+    "planSize": {
+      "defaultValue": "S1",
+      "allowedValues": [
+        "F1",
+        "D1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1",
+        "P2",
+        "P3",
+        "P4"
+      ],
+      "type": "String",
+      "metadata": {
+        "description": "The instance size of the App Service Plan."
+      }
+    },
+    "planSku": {
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Free",
+        "Shared",
+        "Basic",
+        "Standard",
+        "Premium"
+      ],
+      "type": "String",
+      "metadata": {
+        "description": "The pricing tier of the App Service plan."
+      }
+    },
+    "keyVaultSkuName": {
+      "type": "string",
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Standard",
+        "Premium"
+      ],
+      "metadata": {
+        "description": "Specifies whether the key vault is a standard vault or a premium vault."
+      }
+    },
+    "cacheSku": {
+      "defaultValue": "Standard",
+      "allowedValues": [
+        "Basic",
+        "Standard"
+      ],
+      "type": "String",
+      "metadata": {
+        "description": "The pricing tier of the new Azure Redis Cache."
+      }
+    }
+  },
+  "variables": {
+    "location": "[resourceGroup().location]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2015-04-08",
+      "name": "[parameters('cosmosDbName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "defaultExperience": "DocumentDB"
+      },
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "enableAutomaticFailover": false,
+        "enableMultipleWriteLocations": false,
+        "isVirtualNetworkFilterEnabled": false,
+        "virtualNetworkRules": [],
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "Session",
+          "maxIntervalInSeconds": 5,
+          "maxStalenessPrefix": 100
         },
-        {
-            "type": "microsoft.insights/components",
-            "apiVersion": "2015-05-01",
-            "name": "[parameters('appInsightsName')]",
-            "location": "[variables('location')]",
-            "tags": {
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsSiteName'))]": "Resource",
-                "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsApiSiteName'))]": "Resource"
-            },
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web",
-                "Flow_Type": "Redfield",
-                "Request_Source": "IbizaAIExtension",
-                "applicationId": "[parameters('appInsightsName')]"
-            }
-        },
-        {
-            "type": "Microsoft.Cache/Redis",
-            "apiVersion": "2017-10-01",
-            "name": "[parameters('redisName')]",
-            "location": "[variables('location')]",
-            "properties": {
-                "sku": {
-                    "name": "[parameters('cacheSku')]",
-                    "family": "C",
-                    "capacity": "0"
-                },
-                "enableNonSslPort": false,
-                "redisConfiguration": {
-                    "maxclients": "256",
-                    "maxmemory-reserved": "2",
-                    "maxfragmentationmemory-reserved": "12",
-                    "maxmemory-delta": "2"
-                }
-            }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2016-10-01",
-            "name": "[parameters('keyVaultName')]",
-            "location": "[variables('location')]",
-            "properties": {
-                "sku": {
-                    "family": "A",
-                    "name": "Standard"
-                },
-                "tenantId": "[subscription().tenantId]",
-                "accessPolicies": [
-                    {
-                        "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsSiteName')), '2018-02-01', 'Full').identity.principalId]",
-                        "permissions": {
-                            "secrets": [
-                                "get"
-                            ],
-                            "certificates": [
-                                "Get"
-                            ]
-                        }
-                    },
-                    {
-                        "tenantId": "[subscription().tenantId]",
-                        "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
-                        "permissions": {
-                            "secrets": [
-                                "get"
-                            ],
-                            "certificates": [
-                                "Get",
-                                "List",
-                                "Create",
-                                "Import",
-                                "Delete"
-                            ]
-                        }
-                    }
-                ],
-                "enabledForDeployment": false,
-                "enabledForDiskEncryption": false,
-                "enabledForTemplateDeployment": false
-            }
-        },
-        {
-            "type": "Microsoft.Web/serverfarms",
-            "apiVersion": "2018-02-01",
-            "name": "[parameters('serverfarmsName')]",
-            "location": "[variables('location')]",
-            "sku": {
-                "name": "[parameters('planSize')]",
-                "tier": "[parameters('planSku')]",
-                "capacity": "1"
-            },
-            "properties": {
-                "name": "[parameters('serverfarmsName')]",
-                "workerSize": "0",
-                "numberOfWorkers": "1"
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2014-04-01",
-            "name": "[parameters('foxidsSiteName')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
-            ],
-            "kind": "app",
-            "identity": {
-                "principalId": null,
-                "tenantId": null,
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "name": "[parameters('foxidsSiteName')]",
-                "siteConfig": {                    
-                    "alwaysOn": true,
-                    "webSocketsEnabled": false
-                },
-                "reserved": false,
-                "serverFarm": "[parameters('serverfarmsName')]",
-                "clientAffinityEnabled": false,
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                "httpsOnly": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2015-08-01",
-            "name": "[concat(parameters('foxidsSiteName'), '/appsettings')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/Sites/', parameters('foxidsSiteName'))]",
-                "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
-                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
-            ],
-            "properties": {
-                "PROJECT": "src/FoxIDs/FoxIDs.csproj",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
-                "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
-            }
-        },
-        {
-          "type": "Microsoft.Web/sites/sourcecontrols",
-          "apiVersion": "2015-04-01",
-          "name": "[concat(parameters('foxidsSiteName'), '/web')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('foxidsSiteName'))]",
-            "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsSiteName'), 'appsettings')]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoUrl')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": "false",
-            "IsMercurial": "false"
+        "locations": [
+          {
+            "locationName": "[variables('location')]",
+            "provisioningState": "Succeeded",
+            "failoverPriority": 0
           }
+        ],
+        "capabilities": []
+      }
+    },
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2015-05-01",
+      "name": "[parameters('appInsightsName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsSiteName'))]": "Resource",
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsApiSiteName'))]": "Resource"
+      },
+      "kind": "web",
+      "properties": {
+        "Application_Type": "web",
+        "Flow_Type": "Redfield",
+        "Request_Source": "IbizaAIExtension",
+        "applicationId": "[parameters('appInsightsName')]"
+      }
+    },
+    {
+      "type": "Microsoft.Cache/Redis",
+      "apiVersion": "2017-10-01",
+      "name": "[parameters('redisName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "name": "[parameters('cacheSku')]",
+          "family": "C",
+          "capacity": "0"
         },
-        {
-            "type": "Microsoft.Web/sites",
-            "apiVersion": "2014-04-01",
-            "name": "[parameters('foxidsApiSiteName')]",
-            "location": "[variables('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
-            ],
-            "kind": "app",
-            "identity": {
-                "principalId": null,
-                "tenantId": null,
-                "type": "SystemAssigned"
-            },
-            "properties": {
-                "name": "[parameters('foxidsApiSiteName')]",
-                "siteConfig": {
-                    "alwaysOn": true,
-                    "webSocketsEnabled": false
-                },
-                "reserved": false,
-                "serverFarm": "[parameters('serverfarmsName')]",
-                "clientAffinityEnabled": false,
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                "httpsOnly": true
-            }
-        },
-        {
-            "type": "Microsoft.Web/sites/config",
-            "apiVersion": "2015-08-01",
-            "name": "[concat(parameters('foxidsApiSiteName'), '/appsettings')]",
-            "dependsOn": [
-                "[concat('Microsoft.Web/Sites/', parameters('foxidsApiSiteName'))]",
-                "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
-                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
-            ],
-            "properties": {
-                "PROJECT": "src/FoxIDs.Api/FoxIDs.Api.csproj",
-                "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
-                "Settings_CosmosDb_EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
-                "Settings_KeyVault_EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
-            }
-        },
-        {
-          "type": "Microsoft.Web/sites/sourcecontrols",
-          "apiVersion": "2015-04-01",
-          "name": "[concat(parameters('foxidsApiSiteName'), '/web')]",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('foxidsApiSiteName'))]",
-            "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsApiSiteName'), 'appsettings')]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('repoUrl')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": "false",
-            "IsMercurial": "false"
-          }
-        },        
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVaultName'), '/Settings--CosmosDb--PrimaryKey')]",
-            "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-                "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]"
-            ],
-            "properties": {
-                "value": "[listKeys(resourceId('Microsoft.DocumentDb/databaseAccounts', parameters('cosmosDbName')), '2015-04-08').primaryMasterKey]"
-            }
-        },
-        {
-            "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2016-10-01",
-            "name": "[concat(parameters('keyVaultName'), '/Settings--RedisCache--ConnectionString')]",
-            "dependsOn": [
-                "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-                "[concat('Microsoft.Cache/Redis/', parameters('redisName'))]"
-            ],
-            "properties": {
-                "value": "[concat(parameters('keyVaultName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVaultName')), '2015-08-01').primaryKey)]"
-            }
+        "enableNonSslPort": false,
+        "redisConfiguration": {
+          "maxclients": "256",
+          "maxmemory-reserved": "2",
+          "maxfragmentationmemory-reserved": "12",
+          "maxmemory-delta": "2"
         }
-    ]
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults",
+      "apiVersion": "2016-10-01",
+      "name": "[parameters('keyVaultName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "family": "A",
+          "name": "Standard"
+        },
+        "tenantId": "[subscription().tenantId]",
+        "accessPolicies": [
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsSiteName')), '2018-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "List"
+              ],
+              "certificates": [
+                "Get",
+                "List"
+              ]
+            }
+          },
+          {
+            "tenantId": "[subscription().tenantId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
+            "permissions": {
+              "secrets": [
+                "get",
+                "List"
+              ],
+              "certificates": [
+                "Get",
+                "List",
+                "Create",
+                "Import",
+                "Delete"
+              ]
+            }
+          }
+        ],
+        "enabledForDeployment": false,
+        "enabledForDiskEncryption": false,
+        "enabledForTemplateDeployment": false
+      }
+    },
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[parameters('serverfarmsName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "[parameters('planSize')]",
+        "tier": "[parameters('planSku')]",
+        "capacity": "1"
+      },
+      "properties": {
+        "name": "[parameters('serverfarmsName')]",
+        "workerSize": "0",
+        "numberOfWorkers": "1"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('foxidsSiteName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
+      ],
+      "kind": "app",
+      "identity": {
+        "principalId": null,
+        "tenantId": null,
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[parameters('foxidsSiteName')]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "webSocketsEnabled": false
+        },
+        "reserved": false,
+        "serverFarm": "[parameters('serverfarmsName')]",
+        "clientAffinityEnabled": false,
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+        "httpsOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites",
+      "apiVersion": "2014-04-01",
+      "name": "[parameters('foxidsApiSiteName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
+      ],
+      "kind": "app",
+      "identity": {
+        "principalId": null,
+        "tenantId": null,
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "name": "[parameters('foxidsApiSiteName')]",
+        "siteConfig": {
+          "alwaysOn": true,
+          "webSocketsEnabled": false
+        },
+        "reserved": false,
+        "serverFarm": "[parameters('serverfarmsName')]",
+        "clientAffinityEnabled": false,
+        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+        "httpsOnly": true
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2015-08-01",
+      "name": "[concat(parameters('foxidsSiteName'), '/appsettings')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/Sites/', parameters('foxidsSiteName'))]",
+        "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
+        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+      ],
+      "properties": {
+        "PROJECT": "src/FoxIDs/FoxIDs.csproj",
+        "SCM_BUILD_ARGS":"-p:Configuration=Release;PublishProfile=Release",
+        "SCM_TOUCH_WEBCONFIG_AFTER_DEPLOYMENT":"0",
+        "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+        "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
+        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/config",
+      "apiVersion": "2015-08-01",
+      "name": "[concat(parameters('foxidsApiSiteName'), '/appsettings')]",
+      "dependsOn": [
+        "[concat('Microsoft.Web/Sites/', parameters('foxidsApiSiteName'))]",
+        "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
+        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+      ],
+      "properties": {
+        "PROJECT": "src/FoxIDs.Api/FoxIDs.Api.csproj",
+        "SCM_BUILD_ARGS":"-p:Configuration=Release;PublishProfile=Release",
+        "SCM_TOUCH_WEBCONFIG_AFTER_DEPLOYMENT":"0",
+        "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', parameters('appInsightsName'))).InstrumentationKey]",
+        "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', parameters('cosmosDbName'))).documentEndpoint]",
+        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))).vaultUri]"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/sourcecontrols",
+      "apiVersion": "2015-04-01",
+      "name": "[concat(parameters('foxidsSiteName'), '/web')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', parameters('foxidsSiteName'))]",
+        "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsSiteName'), 'appsettings')]"
+      ],
+      "properties": {
+        "RepoUrl": "[parameters('repoUrl')]",
+        "branch": "[parameters('branch')]",
+        "IsManualIntegration": "true"
+      }
+    },
+    {
+      "type": "Microsoft.Web/sites/sourcecontrols",
+      "apiVersion": "2015-04-01",
+      "name": "[concat(parameters('foxidsApiSiteName'), '/web')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', parameters('foxidsApiSiteName'))]",
+        "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsApiSiteName'), 'appsettings')]"
+      ],
+      "properties": {
+        "RepoUrl": "[parameters('repoUrl')]",
+        "branch": "[parameters('branch')]",
+        "IsManualIntegration": "true"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(parameters('keyVaultName'), '/Settings--RedisCache--ConnectionString')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+        "[concat('Microsoft.Cache/Redis/', parameters('redisName'))]"
+      ],
+      "properties": {
+        "value": "[concat(parameters('keyVaultName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVaultName')), '2015-08-01').primaryKey)]"
+      }
+    }
+  ]
 }

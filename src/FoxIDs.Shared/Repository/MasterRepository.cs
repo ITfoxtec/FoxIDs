@@ -171,7 +171,6 @@ namespace FoxIDs.Repository
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
             item.PartitionId = IdToPartitionId(item.Id);
-
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -201,7 +200,6 @@ namespace FoxIDs.Repository
             {
                 item.PartitionId = partitionId;
             }
-
             await items.ValidateObjectAsync();
 
             double totalRU = 0;

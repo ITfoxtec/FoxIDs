@@ -355,7 +355,19 @@
         "[concat('Microsoft.Cache/Redis/', parameters('redisName'))]"
       ],
       "properties": {
-        "value": "[concat(parameters('keyVaultName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVaultName')), '2015-08-01').primaryKey)]"
+        "value": "[concat(parameters('redisName'),'.redis.cache.windows.net,abortConnect=false,ssl=true,password=', listKeys(resourceId('Microsoft.Cache/Redis', parameters('keyVaultName')), '2015-08-01').primaryKey)]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(parameters('keyVaultName'), '/Settings--CosmosDb--PrimaryKey')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+        "[concat('Microsoft.Cache/Redis/', parameters('redisName'))]"
+      ],
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('cosmosDbName')), '2015-11-06').primaryMasterKey]"
       }
     }
   ]

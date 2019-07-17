@@ -1,6 +1,7 @@
 ﻿using FoxIDs;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.SeedDataTool.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Newtonsoft.Json;
@@ -29,16 +30,8 @@ namespace FoxIDs.SeedDataTool.SeedLogic
  
         readonly long timeStamp;
 
-        string masterTenantDocumentName => $"tenant_master_{timeStamp}.json";
-        string masterTrackDocumentName => $"track_master_{timeStamp}.json";
-        string loginDocumentName => $"up_party_login_{timeStamp}.json";
-        string firstAdminUserDocumentName => $"first_admin_user_{timeStamp}.json";
-        string apiResourceDocumentName => $"down_party_api_resource_{timeStamp}.json";
-        string seedClientDocumentName => $"down_party_seed_client_{timeStamp}.json";
-        string portalClientDocumentName => $"down_party_portal_client_{timeStamp}.json";
-
         private readonly SecretHashLogic secretHashLogic;
-
+        private readonly SimpleTenantRepository simpleTenantRepository;
         private static readonly JsonSerializerSettings SettingsIndented = new JsonSerializerSettings
         {
             NullValueHandling = NullValueHandling.Ignore,
@@ -46,54 +39,57 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Formatting = Formatting.Indented
         };
 
-        public MasterTenantDocumentsSeedLogic(SecretHashLogic secretHashLogic)
+        public MasterTenantDocumentsSeedLogic(SecretHashLogic secretHashLogic, SimpleTenantRepository simpleTenantRepository)
         {
             this.secretHashLogic = secretHashLogic;
+            this.simpleTenantRepository = simpleTenantRepository;
 
             timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
         public async Task SeedAsync()
         {
-            var appLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            var masterTenantPath = $"{appLocation}\\marster_tenant";
-            Directory.CreateDirectory(masterTenantPath);
+            Console.WriteLine("Creating master tenant documents");
 
-            await CreateDocumentsAsync(masterTenantPath);
+            await CreateDocumentsAsync();
 
-            Console.WriteLine($"Master tenant documents was created {masterTenantPath}");
+            Console.WriteLine(string.Empty);
+            Console.WriteLine($"Master tenant documents created and saved in Cosmos DB");
         }
 
-        private async Task CreateDocumentsAsync(string masterTenantPath)
+        private async Task CreateDocumentsAsync()
         {
-            await CreateMasterTenantDocumentAsync(masterTenantPath);
-            await CreateMasterTrackDocumentAsync(masterTenantPath);
+            await CreateMasterTenantDocumentAsync();
+            await CreateMasterTrackDocumentAsync();
+            var loginUpParty = await CreateLoginDocumentAsync();
+            Console.WriteLine(string.Empty);
 
-            var loginUpParty = await CreateLoginDocumentAsync(masterTenantPath);
-            await CreateFirstAdminUserDocumentAsync(masterTenantPath);
+            await CreateFirstAdminUserDocumentAsync();
+            Console.WriteLine(string.Empty);
 
-            await CreateApiResourceDocumentAsync(masterTenantPath);
-            await CreateSeedClientDocmentAsync(masterTenantPath);
-            await CreatePortalClientDocmentAsync(masterTenantPath, loginUpParty);
+            await CreateApiResourceDocumentAsync();
+            Console.WriteLine(string.Empty);
+            await CreateSeedClientDocmentAsync();
+            Console.WriteLine(string.Empty);
+            await CreatePortalClientDocmentAsync(loginUpParty);
+            Console.WriteLine(string.Empty);
         }
 
-        private async Task CreateMasterTenantDocumentAsync(string masterTenantPath)
+        private async Task CreateMasterTenantDocumentAsync()
         {
-            Console.WriteLine("Creating tenant.");
+            Console.WriteLine("Creating tenant");
 
             var masterTenant = new Tenant();
             await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = masterTenantName });
             masterTenant.SetPartitionId();
 
-            await masterTenant.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, masterTenantDocumentName), ToJsonIndented(masterTenant));
-            Console.WriteLine($"{masterTenantDocumentName} created");
+            await simpleTenantRepository.SaveAsync(masterTenant);
+            Console.WriteLine("Tenant document created and saved in Cosmos DB");
         }
 
-        private async Task CreateMasterTrackDocumentAsync(string masterTenantPath)
+        private async Task CreateMasterTrackDocumentAsync()
         {
-            Console.WriteLine("Creating track.");
+            Console.WriteLine("Creating track");
 
             var masterTrack = new Track
             {
@@ -106,10 +102,8 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             masterTrack.SetPartitionId();
             masterTrack.PrimaryKey = await CreateX509KeyAsync();
 
-            await masterTrack.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, masterTrackDocumentName), ToJsonIndented(masterTrack));
-            Console.WriteLine($"{masterTrackDocumentName} created");
+            await simpleTenantRepository.SaveAsync(masterTrack);
+            Console.WriteLine($"Track document created and saved in Cosmos DB");
         }
 
         private async Task<TrackKey> CreateX509KeyAsync()
@@ -124,9 +118,9 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             return trackKey;
         }
 
-        private async Task<LoginUpParty> CreateLoginDocumentAsync(string masterTenantPath)
+        private async Task<LoginUpParty> CreateLoginDocumentAsync()
         {
-            Console.WriteLine("Creating login.");
+            Console.WriteLine("Creating login");
 
             var loginUpParty = new LoginUpParty
             {
@@ -140,25 +134,23 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = loginName });
             loginUpParty.SetPartitionId();
 
-            await loginUpParty.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, loginDocumentName), ToJsonIndented(loginUpParty));
-            Console.WriteLine($"{loginDocumentName} created");
+            await simpleTenantRepository.SaveAsync(loginUpParty);
+            Console.WriteLine($"Login document created and saved in Cosmos DB");
 
             return loginUpParty;
         }
 
-        private async Task CreateFirstAdminUserDocumentAsync(string masterTenantPath)
+        private async Task CreateFirstAdminUserDocumentAsync()
         {
-            Console.WriteLine("Creating first administrator user.");
-            Console.Write("Please enter email: ");
+            Console.WriteLine("Creating first administrator user");
+            Console.Write("Please enter the administrator user email: ");
             var email = Console.ReadLine();
             if (!new EmailAddressAttribute().IsValid(email))
             {
                 throw new Exception($"Email '{email}' is invalid.");
             }
             var password = RandomGenerator.Generate(16);
-            Console.WriteLine($"Password: {password}");
+            Console.WriteLine($"Administrator users password is: {password}");
 
             var user = new User { UserId = Guid.NewGuid().ToString() };
             await user.SetIdAsync(new User.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, Email = email });
@@ -166,15 +158,13 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserClaims.ToList() } };
             user.SetPartitionId();
 
-            await user.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, firstAdminUserDocumentName), ToJsonIndented(user));
-            Console.WriteLine($"{firstAdminUserDocumentName} created");
+            await simpleTenantRepository.SaveAsync(user);
+            Console.WriteLine($"Administrator user document created and saved in Cosmos DB");
         }
 
-        private async Task CreateApiResourceDocumentAsync(string masterTenantPath)
+        private async Task CreateApiResourceDocumentAsync()
         {
-            Console.WriteLine("Creating api resource.");
+            Console.WriteLine("Creating api resource");
 
             var apiResourceDownParty = new OAuthDownParty();
             await apiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = apiResourceName });
@@ -184,15 +174,13 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             };
             apiResourceDownParty.SetPartitionId();
 
-            await apiResourceDownParty.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, apiResourceDocumentName), ToJsonIndented(apiResourceDownParty));
-            Console.WriteLine($"{apiResourceDocumentName} created");
+            await simpleTenantRepository.SaveAsync(apiResourceDownParty);
+            Console.WriteLine($"Api resource document created and saved in Cosmos DB");
         }
 
-        private async Task CreateSeedClientDocmentAsync(string masterTenantPath)
+        private async Task CreateSeedClientDocmentAsync()
         {
-            Console.WriteLine("Creating seed client.");
+            Console.WriteLine("Creating seed client");
 
             var seedClientDownParty = new OAuthDownParty();
             await seedClientDownParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = seedClientName });
@@ -208,18 +196,17 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             seedClientDownParty.Client.Secrets = new List<OAuthClientSecret> { oauthClientSecret };
             seedClientDownParty.SetPartitionId();
 
-            await seedClientDownParty.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, seedClientDocumentName), ToJsonIndented(seedClientDownParty));
-            Console.WriteLine($"{seedClientDocumentName} created with secret {secret}");
+            await simpleTenantRepository.SaveAsync(seedClientDownParty);
+            Console.WriteLine("Seed client document created and saved in Cosmos DB");
+            Console.WriteLine($"Seed client secret is: {secret}");
         }
 
-        private async Task CreatePortalClientDocmentAsync(string masterTenantPath, LoginUpParty loginUpParty)
+        private async Task CreatePortalClientDocmentAsync(LoginUpParty loginUpParty)
         {
-            Console.WriteLine("Creating portal client.");
+            Console.WriteLine("Creating portal client");
             Console.Write("Please enter portal domain: ");
             var portalDomain = Console.ReadLine();
-            Console.Write("Please click 'T' to add the localhost test domain otherwise not added: ");
+            Console.Write("Please click 'T' to add the localhost test domain otherwise click another key: ");
             var addLocalhostDomain = Console.ReadKey();
             Console.WriteLine(string.Empty);
 
@@ -252,10 +239,9 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             portalClientDownParty.Client.Secrets = new List<OAuthClientSecret> { oauthClientSecret };
             portalClientDownParty.SetPartitionId();
 
-            await portalClientDownParty.ValidateObjectAsync();
-
-            File.WriteAllText(Path.Combine(masterTenantPath, portalClientDocumentName), ToJsonIndented(portalClientDownParty));
-            Console.WriteLine($"{portalClientDocumentName} created with secret {secret}");
+            await simpleTenantRepository.SaveAsync(portalClientDownParty);
+            Console.WriteLine("Portal client document created and saved in Cosmos DB");
+            Console.WriteLine($"Portal client secret is: {secret}");
         }
 
         private async Task<(string, OAuthClientSecret)> CreateSecretAsync()

@@ -18,8 +18,8 @@ namespace FoxIDs.Repository
         private string databaseId;
         private string collectionId;
         private string ttlCollectionId;
-        private Uri collectionLink;
-        private Uri ttlCollectionLink;
+        private Uri collectionUri;
+        private Uri ttlCollectionUri;
         private readonly TelemetryLogger logger;
 
         public TenantRepository(TelemetryLogger logger, IRepositoryClient repositoryClient)
@@ -28,8 +28,8 @@ namespace FoxIDs.Repository
             databaseId = repositoryClient.DatabaseId;
             collectionId = repositoryClient.CollectionId;
             ttlCollectionId = repositoryClient.TtlCollectionId;
-            collectionLink = repositoryClient.CollectionUri;
-            ttlCollectionLink = repositoryClient.TtlCollectionUri;
+            collectionUri = repositoryClient.CollectionUri;
+            ttlCollectionUri = repositoryClient.TtlCollectionUri;
             this.logger = logger;
         }
 
@@ -236,11 +236,11 @@ namespace FoxIDs.Repository
         {
             if (typeof(T) is IDataTtlDocument)
             {
-                return ttlCollectionLink;
+                return ttlCollectionUri;
             }
             else
             {
-                return collectionLink;
+                return collectionUri;
             }
         }
     }

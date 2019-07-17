@@ -13,6 +13,8 @@ using System.Net.Http;
 using System.IO;
 using UrlCombineLib;
 using ITfoxtec.Identity.Helpers;
+using FoxIDs.SeedDataTool.Repository;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.SeedDataTool.Infrastructure
 {
@@ -31,6 +33,7 @@ namespace FoxIDs.SeedDataTool.Infrastructure
 
             AddConfiguration();
             AddInfrastructure(services);
+            AddRepository(services);
             AddLogic(services);
             AddSeedLogic(services);
 
@@ -49,6 +52,11 @@ namespace FoxIDs.SeedDataTool.Infrastructure
             services.AddTransient<SecretHashLogic>();
 
             services.AddTransient<AccessLogic>();            
+        }
+
+        private static void AddRepository(ServiceCollection services)
+        {
+            services.AddSingleton<SimpleTenantRepository>();
         }
 
         private static void AddInfrastructure(ServiceCollection services)
@@ -79,6 +87,9 @@ namespace FoxIDs.SeedDataTool.Infrastructure
             var seedSettings = new SeedSettings();
             configuration.Bind(nameof(SeedSettings), seedSettings);
             services.AddSingleton(seedSettings);
+            var settings = new Settings();
+            configuration.Bind(nameof(Settings), settings);
+            services.AddSingleton(settings);
         }
     }
 }

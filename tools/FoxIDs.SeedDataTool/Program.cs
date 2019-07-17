@@ -20,26 +20,22 @@ namespace FoxIDs.SeedDataTool
             {
                 var serviceProvider = new StartupConfigure().ConfigureServices();
 
-                var accessToken = await serviceProvider.GetService<AccessLogic>().GetAccessTokenAsync();
-
                 Console.WriteLine("Select seed action");
-                Console.WriteLine($"M: {nameof(MasterTenantDocumentsSeedLogic)}");
-                Console.WriteLine($"P: {nameof(PasswordRiskListSeedLogic)}");
+                Console.WriteLine("M: Create master tenant documents");
+                Console.WriteLine("P: Create passwords risk list");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
-
+                Console.WriteLine(string.Empty);
 
                 switch (char.ToLower(key.KeyChar))
                 {
-                    case 'm':
-                        Console.WriteLine(nameof(MasterTenantDocumentsSeedLogic));
+                    case 'm':                        
                         await serviceProvider.GetService<MasterTenantDocumentsSeedLogic>().SeedAsync();
                         break;
 
                     case 'p':
-                        Console.WriteLine(nameof(PasswordRiskListSeedLogic));
-                        await serviceProvider.GetService<PasswordRiskListSeedLogic>().SeedAsync(accessToken);
+                        await serviceProvider.GetService<PasswordRiskListSeedLogic>().SeedAsync();
                         break;
 
                     default:
@@ -47,7 +43,10 @@ namespace FoxIDs.SeedDataTool
                         break;
                 }
 
-                Console.WriteLine("Done!");
+                Console.WriteLine(string.Empty);
+                Console.WriteLine("Important: remember the password and secrets.");
+                Console.WriteLine("Click any key to end...");
+                Console.ReadKey();
             }
             catch (Exception ex)
             {

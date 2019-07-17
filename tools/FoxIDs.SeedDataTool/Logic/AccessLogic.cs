@@ -9,6 +9,8 @@ namespace FoxIDs.SeedDataTool.Logic
     {
         private readonly SeedSettings settings;
         private readonly TokenHelper tokenHelper;
+        private string accessTokenCache;
+        private long cacheExpiresAt;
 
         public AccessLogic(SeedSettings settings, TokenHelper tokenHelper)
         {
@@ -18,10 +20,15 @@ namespace FoxIDs.SeedDataTool.Logic
 
         public async Task<string> GetAccessTokenAsync()
         {
-            Console.WriteLine("Getting seed client access token.");
-            var accessToken = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.ClientId, settings.ClientSecret, settings.RedirectUri, "foxids_api:master");            
-            Console.WriteLine($"Access token {accessToken.Substring(0, 40)}...");
-            return accessToken;
+            if (cacheExpiresAt < DateTimeOffset.UtcNow.AddSeconds(5).ToUnixTimeSeconds())
+            {
+                Console.WriteLine("Getting seed client access token.");
+                (var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.ClientId, settings.ClientSecret, settings.RedirectUri, "foxids_api:master");
+                accessTokenCache = accessToken;
+                cacheExpiresAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + expiresIn;
+                Console.WriteLine($"Access token {accessToken.Substring(0, 40)}...");
+            }
+            return accessTokenCache;
         }
     }
 }

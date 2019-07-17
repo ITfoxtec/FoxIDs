@@ -18,7 +18,8 @@ namespace FoxIDs.Infrastructure.KeyVault
                     {
                         Resource = resource
                     };
-                    return await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.KeyVault.ClientId, settings.KeyVault.ClientSecret, $"{authority}/oauth2/token", tokenRequest);
+                    (var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.KeyVault.ClientId, settings.KeyVault.ClientSecret, $"{authority}/oauth2/token", tokenRequest);
+                    return accessToken;
                 }
                 catch (Exception ex)
                 {

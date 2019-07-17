@@ -21,11 +21,6 @@
 
   <ItemGroup>
     <None Remove="Infrastructure\Hosting\lnyrzwe4.lii~" />
-    <None Remove="webenvironment.transform" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="webenvironment.transform" />
   </ItemGroup>
 
   <ItemGroup>

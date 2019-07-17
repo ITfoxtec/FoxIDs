@@ -65,8 +65,7 @@ IF DEFINED CLEAN_LOCAL_DEPLOYMENT_TEMP (
 :: Deployment
 :: ----------
 
-echo Handling ASP.NET Core Web Application deployment.
-echo PROJECT = %PROJECT%
+echo Handling ASP.NET Core Web Application deployment. PROJECT = %PROJECT%
 
 :: 1. Restore nuget packages
 call :ExecuteCmd dotnet restore "%PROJECT%"

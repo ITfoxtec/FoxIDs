@@ -25,6 +25,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Model\Resources\EmbeddedResource.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Model\Resources\EmbeddedResource.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\FoxIDs.Shared\FoxIDs.Shared.csproj" />
   </ItemGroup>
 

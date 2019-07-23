@@ -3,9 +3,9 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Resources
+namespace FoxIDs.Models
 {
-    public class Resource
+    public class ResourceItem
     {
         [Required]
         [JsonProperty(PropertyName = "id")]
@@ -13,6 +13,6 @@ namespace FoxIDs.Models.Resources
 
         [Length(1, 5000)]
         [JsonProperty(PropertyName = "items")]
-        public List<ResourceItem> Items { get; set; }
+        public List<ResourceCultureItem> Items { get; set; }
     }
 }

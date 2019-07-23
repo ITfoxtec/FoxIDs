@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Resources
+namespace FoxIDs.Models
 {
     public class ResourceName
     {

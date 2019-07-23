@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using FoxIDs.Models.Resources;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,7 +29,7 @@ namespace FoxIDs.Models
 
         [Length(0, 5000)]
         [JsonProperty(PropertyName = "resources")]
-        public List<Resource> Resources { get; set; }
+        public List<ResourceItem> Resources { get; set; }
 
         [Range(30, 1800)] // 30 seconds to 30 minutes 
         [JsonProperty(PropertyName = "sequence_lifetime")] 

@@ -8,6 +8,9 @@
     "branch": {
       "type": "string"
     },
+    "foxidsSiteName": {
+      "type": "String"
+    },
     "foxidsApiSiteName": {
       "type": "String"
     },
@@ -92,7 +95,7 @@
   },
   "variables": {
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
-    "foxidsSiteName": "[toLower(concat("FoxIDs", variables('suffix')))]",
+    "foxidsSiteName": "[toLower(concat(parameters("foxidsSiteName"), variables('suffix')))]",
     "location": "[resourceGroup().location]"
   },
   "resources": [

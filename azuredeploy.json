@@ -9,7 +9,7 @@
       "type": "string"
     },
     "foxidsName": {
-      "type": "String"
+      "type": "String",
       "metadata": {
         "description": "Prefix of resource names."
       }

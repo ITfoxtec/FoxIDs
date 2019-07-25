@@ -14,12 +14,6 @@
         "description": "Prefix of resource names."
       }
     },
-    "foxidsApiSiteName": {
-      "type": "String"
-    },
-    "foxidsApiSiteName": {
-      "type": "String"
-    },
     "appInsightsName": {
       "type": "String"
     },
@@ -99,6 +93,7 @@
   "variables": {
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
     "foxidsSiteName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
+    "foxidsApiSiteName": "[toLower(concat(parameters('foxidsName'), 'api', variables('suffix')))]",
     "location": "[resourceGroup().location]"
   },
   "resources": [
@@ -139,7 +134,7 @@
       "location": "[variables('location')]",
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsSiteName'))]": "Resource",
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', parameters('foxidsApiSiteName'))]": "Resource"
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsApiSiteName'))]": "Resource"
       },
       "kind": "web",
       "properties": {
@@ -197,7 +192,7 @@
           },
           {
             "tenantId": "[subscription().tenantId]",
-            "objectId": "[reference(concat('Microsoft.Web/sites/', parameters('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
               "secrets": [
                 "get",
@@ -264,7 +259,7 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2014-04-01",
-      "name": "[parameters('foxidsApiSiteName')]",
+      "name": "[variables('foxidsApiSiteName')]",
       "location": "[variables('location')]",
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', parameters('serverfarmsName'))]"
@@ -276,7 +271,7 @@
         "type": "SystemAssigned"
       },
       "properties": {
-        "name": "[parameters('foxidsApiSiteName')]",
+        "name": "[variables('foxidsApiSiteName')]",
         "siteConfig": {
           "alwaysOn": true,
           "webSocketsEnabled": false
@@ -310,9 +305,9 @@
     {
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2015-08-01",
-      "name": "[concat(parameters('foxidsApiSiteName'), '/appsettings')]",
+      "name": "[concat(variables('foxidsApiSiteName'), '/appsettings')]",
       "dependsOn": [
-        "[concat('Microsoft.Web/Sites/', parameters('foxidsApiSiteName'))]",
+        "[concat('Microsoft.Web/Sites/', variables('foxidsApiSiteName'))]",
         "[resourceId('microsoft.insights/components/', parameters('appInsightsName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', parameters('cosmosDbName'))]",
         "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
@@ -343,10 +338,10 @@
     {
       "type": "Microsoft.Web/sites/sourcecontrols",
       "apiVersion": "2015-04-01",
-      "name": "[concat(parameters('foxidsApiSiteName'), '/web')]",
+      "name": "[concat(variables('foxidsApiSiteName'), '/web')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/Sites', parameters('foxidsApiSiteName'))]",
-        "[resourceId('Microsoft.Web/Sites/config', parameters('foxidsApiSiteName'), 'appsettings')]"
+        "[resourceId('Microsoft.Web/Sites', variables('foxidsApiSiteName'))]",
+        "[resourceId('Microsoft.Web/Sites/config', variables('foxidsApiSiteName'), 'appsettings')]"
       ],
       "properties": {
         "RepoUrl": "[parameters('repoUrl')]",

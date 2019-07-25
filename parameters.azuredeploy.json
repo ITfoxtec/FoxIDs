@@ -6,11 +6,8 @@
       "value": "release-current"
     },
     "foxidsName": {
-      "value": "FoxIDs"
+      "value": "foxids"
     },    
-    "foxidsApiSiteName": {
-      "value": "FoxIDsApi1234"
-    },
     "appInsightsName": {
       "value": "FoxIDs1234"
     },

@@ -8,21 +8,6 @@
     "foxidsName": {
       "value": "foxids"
     },    
-    "appInsightsName": {
-      "value": "FoxIDs1234"
-    },
-    "redisName": {
-      "value": "FoxIDs1234"
-    },
-    "keyVaultName": {
-      "value": "foxids1234"
-    }, 
-    "cosmosDbName": {
-      "value": "foxids1234"
-    },
-    "serverfarmsName": {
-      "value": "FoxIDs1234"
-    },    
     "planSize": {
       "value": "S1"
     },

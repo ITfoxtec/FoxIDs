@@ -6,7 +6,7 @@
       "value": "release-current"
     },
     "foxidsSiteName": {
-      "value": "[concat("FoxIDs1234", "GEN-UNIQUE")]"
+      "value": "GEN-UNIQUE"
     },
     "foxidsApiSiteName": {
       "value": "FoxIDsApi1234"

@@ -5,9 +5,6 @@
     "branch": {
       "value": "release-current"
     },
-    "foxidsSiteName": {
-      "value": "GEN-UNIQUE"
-    },
     "foxidsApiSiteName": {
       "value": "FoxIDsApi1234"
     },

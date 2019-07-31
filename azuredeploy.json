@@ -221,7 +221,7 @@
       "apiVersion": "2015-01-01",
       "location": "[variables('location')]",
       "plan": {
-        "name": "free",
+        "name": "[variables('sendgridPlan')]",
         "publisher": "Sendgrid",
         "product": "sendgrid_azure",
         "promotionCode": ""

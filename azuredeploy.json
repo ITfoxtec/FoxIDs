@@ -75,9 +75,9 @@
       "defaultValue": "Free",
       "allowedValues": [
         "Free",
-        "Essentials",
-        "Pro",
-        "Premier"
+        "Bronze",
+        "Silver",
+        "Gold"
       ],
       "type": "string",
       "metadata": {
@@ -221,7 +221,7 @@
       "apiVersion": "2015-01-01",
       "location": "[variables('location')]",
       "plan": {
-        "name": "[parameters('sendgridPlan')]",
+        "name": "free",
         "publisher": "Sendgrid",
         "product": "sendgrid_azure",
         "promotionCode": ""

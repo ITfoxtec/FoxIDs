@@ -13,8 +13,8 @@
       "metadata": {
         "description": "Prefix of resource names."
       }
-    },    
-    "planSize": {
+    },
+    "appServicePlanSize": {
       "defaultValue": "S1",
       "allowedValues": [
         "F1",
@@ -35,7 +35,7 @@
         "description": "The instance size of the App Service Plan."
       }
     },
-    "planSku": {
+    "appServicePlanSku": {
       "defaultValue": "Standard",
       "allowedValues": [
         "Free",
@@ -70,17 +70,32 @@
       "metadata": {
         "description": "The pricing tier of the new Azure Redis Cache."
       }
+    },
+    "sendgridPlan": {
+      "defaultValue": "Free",
+      "allowedValues": [
+        "Free",
+        "Essentials",
+        "Pro",
+        "Premier"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "The size of the Sendgrid Plan."
+      }
     }
   },
   "variables": {
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
     "foxidsSiteName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
     "foxidsApiSiteName": "[toLower(concat(parameters('foxidsName'), 'api', variables('suffix')))]",
+    "serverfarmsName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
     "appInsightsName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
     "redisName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
     "keyVaultName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
     "cosmosDbName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "serverfarmsName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
+    "sendgridAccountName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
+    "sendgridPassword": "GEN-PASSWORD",
     "location": "[resourceGroup().location]"
   },
   "resources": [
@@ -159,7 +174,7 @@
       "properties": {
         "sku": {
           "family": "A",
-          "name": "Standard"
+          "name": "[parameters('keyVaultSkuName')]"
         },
         "tenantId": "[subscription().tenantId]",
         "accessPolicies": [
@@ -201,13 +216,30 @@
       }
     },
     {
+      "name": "[variables('sendgridAccountName')]",
+      "type": "Sendgrid.Email/accounts",
+      "apiVersion": "2015-01-01",
+      "location": "[variables('location')]",
+      "plan": {
+        "name": "[parameters('sendgridPlan')]",
+        "publisher": "Sendgrid",
+        "product": "sendgrid_azure",
+        "promotionCode": ""
+      },
+      "properties": {
+        "password": "[variables('sendgridPassword')]",
+        "acceptMarketingEmails": "0",
+        "email": ""
+      }
+    },
+    {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
       "name": "[variables('serverfarmsName')]",
       "location": "[variables('location')]",
       "sku": {
-        "name": "[parameters('planSize')]",
-        "tier": "[parameters('planSku')]",
+        "name": "[parameters('appServicePlanSize')]",
+        "tier": "[parameters('appServicePlanSku')]",
         "capacity": "1"
       },
       "properties": {
@@ -278,7 +310,8 @@
         "[concat('Microsoft.Web/Sites/', variables('foxidsSiteName'))]",
         "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosDbName'))]",
-        "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
+        "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
+        "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
       ],
       "properties": {
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
@@ -286,7 +319,8 @@
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]"
+        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
+        "Settings:Sendgrid:SmtpServer": "[reference(resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))).smtpServer]"
       }
     },
     {
@@ -297,7 +331,8 @@
         "[concat('Microsoft.Web/Sites/', variables('foxidsApiSiteName'))]",
         "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosDbName'))]",
-        "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
+        "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
+        "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
       ],
       "properties": {
         "PROJECT": "src/FoxIDs.Api/FoxIDs.Api.csproj",
@@ -305,7 +340,8 @@
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]"
+        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
+        "Settings:Sendgrid:SmtpServer": "[reference(resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))).smtpServer]"
       }
     },
     {
@@ -358,6 +394,30 @@
       ],
       "properties": {
         "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbName')), '2015-11-06').primaryMasterKey]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('keyVaultName'), '/Settings--Sendgrid--Username')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
+        "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
+      ],
+      "properties": {
+        "value": "[reference(resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))).username]"
+      }
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "2016-10-01",
+      "name": "[concat(variables('keyVaultName'), '/Settings--Sendgrid--Password')]",
+      "dependsOn": [
+        "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
+        "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
+      ],
+      "properties": {
+        "value": "[variables('sendgridPassword')]"
       }
     }
   ]

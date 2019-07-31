@@ -1,17 +1,17 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {         
+  "parameters": {
     "branch": {
       "value": "release-current"
     },
     "foxidsName": {
       "value": "foxids"
-    },    
-    "planSize": {
+    },
+    "appServicePlanSize": {
       "value": "S1"
     },
-    "planSku": {
+    "appServicePlanSku": {
       "value": "Standard"
     },
     "keyVaultSkuName": {
@@ -19,6 +19,9 @@
     },
     "cacheSku": {
       "value": "Standard"
+    },
+    "sendgridPlan": {
+      "value": "Free"
     }
   }
 }

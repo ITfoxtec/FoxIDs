@@ -66,15 +66,14 @@ namespace FoxIDs.Logic
             (var audiences, var audienceScopes) = await oauthResourceScopeLogic.GetValidResourceAsync(client, selectedScopes);
             if (audiences.Count() > 0)
             {
-                foreach (var audienceScope in audienceScopes)
-                {
-                    accessTokenClaims.AddClaim(JwtClaimTypes.Scope, audienceScope);
-                }
+                accessTokenClaims.AddClaim(JwtClaimTypes.Scope, audienceScopes.ToSpaceList());
             }
             else
             {
                 audiences.Add(client.ClientId);
             }
+
+            accessTokenClaims.AddClaim(JwtClaimTypes.ClientId, client.ClientId);
 
             accessTokenClaims.AddRange(await claimsLogic.FilterJwtClaims(client, claims, selectedScopes, includeAccessTokenClaims: true));
 

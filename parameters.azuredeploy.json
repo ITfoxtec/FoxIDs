@@ -1,35 +1,17 @@
 {
   "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {         
+  "parameters": {
     "branch": {
       "value": "release-current"
     },
-    "foxidsSiteName": {
-      "value": "FoxIDs1234"
+    "foxidsName": {
+      "value": "foxids"
     },
-    "foxidsApiSiteName": {
-      "value": "FoxIDsApi1234"
-    },
-    "appInsightsName": {
-      "value": "FoxIDs1234"
-    },
-    "redisName": {
-      "value": "FoxIDs1234"
-    },
-    "keyVaultName": {
-      "value": "foxids1234"
-    }, 
-    "cosmosDbName": {
-      "value": "foxids1234"
-    },
-    "serverfarmsName": {
-      "value": "FoxIDs1234"
-    },    
-    "planSize": {
+    "appServicePlanSize": {
       "value": "S1"
     },
-    "planSku": {
+    "appServicePlanSku": {
       "value": "Standard"
     },
     "keyVaultSkuName": {
@@ -37,6 +19,9 @@
     },
     "cacheSku": {
       "value": "Standard"
+    },
+    "sendgridPlan": {
+      "value": "Free"
     }
   }
 }

@@ -206,13 +206,13 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Console.WriteLine("Creating portal client");
             Console.Write("Please enter portal domain: ");
             var portalDomain = Console.ReadLine();
-            Console.Write("Please click 'T' to add the localhost test domain otherwise click another key: ");
+            Console.Write("Add localhost test domain to enable local development [y/n] (default no): ");
             var addLocalhostDomain = Console.ReadKey();
             Console.WriteLine(string.Empty);
 
             var portalClientRedirectUris = new List<string>();
             portalClientRedirectUris.Add($"https://{portalDomain}/authresponse");
-            if(char.ToLower(addLocalhostDomain.KeyChar) == 't')
+            if(char.ToLower(addLocalhostDomain.KeyChar) == 'y')
             {
                 portalClientRedirectUris.Add("https://localhost:44332");
             }

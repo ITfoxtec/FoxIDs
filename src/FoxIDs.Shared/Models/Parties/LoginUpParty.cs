@@ -34,14 +34,18 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "enable_create_user")]
-        public bool? EnableCreateUser { get; set; }        
+        public bool? EnableCreateUser { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "logout_consent")]
+        public string LogoutConsent { get; set; }
 
         [Length(0, 40, 200)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }
 
-        [Required]
-        [JsonProperty(PropertyName = "logout_consent")]
-        public string LogoutConsent { get; set; }
+        [MaxLength(4000)]
+        [JsonProperty(PropertyName = "css_style")]
+        public string CssStyle { get; set; }
     }
 }

@@ -70,6 +70,7 @@ namespace FoxIDs.Controllers
                     return View(nameof(Login), new LoginViewModel
                     {
                         SequenceString = SequenceString,
+                        CssStyle = loginUpParty.CssStyle,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
                         EnableCreateUser = loginUpParty.EnableCreateUser.Value,
                         Email = sequenceData.EmailHint.IsNullOrWhiteSpace() ? string.Empty : sequenceData.EmailHint,
@@ -128,6 +129,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     login.SequenceString = SequenceString;
+                    login.CssStyle = loginUpParty.CssStyle;
                     login.EnableCancelLogin = loginUpParty.EnableCancelLogin.Value;
                     login.EnableCreateUser = loginUpParty.EnableCreateUser.Value;
                     return View(nameof(Login), login);
@@ -210,7 +212,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
                 {
-                    return await LogoutResponse(sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
+                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
                 }
 
                 if (!sequenceData.SessionId.IsNullOrEmpty() && sequenceData.SessionId == session.SessionId)
@@ -222,13 +224,13 @@ namespace FoxIDs.Controllers
                 if (logoutConsent == LoginUpPartyLogoutConsent.Always || (logoutConsent == LoginUpPartyLogoutConsent.IfRequered && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace("Show logout consent dialog.");
-                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString });
+                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
                 }
                 else
                 {
                     logger.ScopeTrace("Delete session and logout.");
                     await sessionLogic.DeleteSessionAsync(RouteBinding);
-                    return await LogoutResponse(sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
+                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
                 }
             }
             catch (Exception ex)
@@ -250,6 +252,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     logout.SequenceString = SequenceString;
+                    logout.CssStyle = loginUpParty.CssStyle;
                     return View(nameof(Logout), logout);
                 };
 
@@ -266,12 +269,12 @@ namespace FoxIDs.Controllers
                     {
                         logger.ScopeTrace("Delete session and logout response.");
                         await sessionLogic.DeleteSessionAsync(RouteBinding);
-                        return await LogoutResponse(sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
+                        return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
                     }
                     else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
                     {
                         logger.ScopeTrace("Logout response without logging out.");
-                        return await LogoutResponse(sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
+                        return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
                     }
                     else
                     {
@@ -292,7 +295,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LogoutResponse(string sessionId, bool postLogoutRedirect, LogoutChoice logoutChoice)
+        private async Task<IActionResult> LogoutResponse(LoginUpParty loginUpParty, string sessionId, bool postLogoutRedirect, LogoutChoice logoutChoice)
         {
             if (postLogoutRedirect)
             {
@@ -303,12 +306,12 @@ namespace FoxIDs.Controllers
                 if (logoutChoice == LogoutChoice.Logout)
                 {
                     logger.ScopeTrace("Show logged out dialog.");
-                    return View("loggedOut");
+                    return View("loggedOut", new LoggedOutViewModel { CssStyle = loginUpParty.CssStyle });
                 }
                 else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
                 {
                     logger.ScopeTrace("Show logged in dialog.");
-                    return View("LoggedIn");
+                    return View("LoggedIn", new LoggedInViewModel { CssStyle = loginUpParty.CssStyle });
                 }
                 else
                 {
@@ -334,7 +337,7 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace("Show create user dialog.");
-                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString });
+                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
 
             }
             catch (Exception ex)
@@ -356,6 +359,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     createUser.SequenceString = SequenceString;
+                    createUser.CssStyle = loginUpParty.CssStyle;
                     return View(nameof(CreateUser), createUser);
                 };
 

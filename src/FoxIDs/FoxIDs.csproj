@@ -18,10 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Infrastructure\Hosting\lnyrzwe4.lii~" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
@@ -39,7 +35,7 @@
     <PackageReference Include="RSAKeyVaultProvider" Version="1.1.22" />
     <PackageReference Include="UrlCombine" Version="2.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens.Saml" Version="5.4.0" />
-    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.5.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.4.0" />
     <PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="4.5.0" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.5.3" />

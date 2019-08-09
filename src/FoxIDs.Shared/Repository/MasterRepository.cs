@@ -36,7 +36,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var partitionId = id.IdToPartitionId();
+            var partitionId = IdToPartitionId(id);
             var query = GetQueryAsync<T>(partitionId).Where(d => d.Id == id).Select(d => d.Id).Take(1).AsDocumentQuery();
 
             double totalRU = 0;
@@ -56,12 +56,12 @@ namespace FoxIDs.Repository
             }
         }
 
-        //public async Task<T> GetAsync<T>(string id, bool requered = true, bool delete = false) where T : MasterDocument
-        //{
-        //    if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+        public async Task<T> GetAsync<T>(string id, bool requered = true) where T : MasterDocument
+        {
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-        //    return await ReadDocumentAsync<T>(id, id.IdToPartitionId(), requered, delete);
-        //}
+            return await ReadDocumentAsync<T>(id, IdToPartitionId(id), requered);
+        }
 
         //public Task<FeedResponse<TResult>> GetQueryAsync<T, TResult>(T item, Expression<Func<T, bool>> whereQuery, Expression<Func<T, TResult>> selector) where T : MasterDocument
         //{

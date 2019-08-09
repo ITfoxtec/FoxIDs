@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Text;
+using System.Threading.Tasks;
 using FoxIDs.Models;
-using FoxIDs.Models.Resources;
+using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FoxIDs.Logic
 {
@@ -17,27 +13,24 @@ namespace FoxIDs.Logic
     {
         // The maximum number of culture names to attempt to test.
         private const int maximumCultureNamesToTry = 3;
+        private readonly IMasterRepository masterRepository;
+        private ResourceEnvelope resourceEnvelope;
 
-        private EmbeddedResource embeddedResource;
-
-        public LocalizationLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LocalizationLogic(IHttpContextAccessor httpContextAccessor, IMasterRepository masterRepository) : base(httpContextAccessor)
         {
-            Load();
+            this.masterRepository = masterRepository;
+            Load().GetAwaiter().GetResult();
         }
 
-        private void Load()
+        private async Task Load()
         {
-            using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream($"{typeof(EmbeddedResource).FullName}.json")))
-            {
-                embeddedResource = reader.ReadToEnd().ToObject<EmbeddedResource>();
-                embeddedResource.ValidateObjectAsync().GetAwaiter().GetResult();
-            }
+            resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));
         }
 
         public string GetSupportedCulture(IEnumerable<string> cultures, RouteBinding routeBinding = null)
         {
             routeBinding = routeBinding ?? RouteBinding;
-            var supportedCultures = embeddedResource.SupportedCultures;
+            var supportedCultures = resourceEnvelope.SupportedCultures;
             if(routeBinding.Resources?.Count > 0)
             {
                 var trackSupportedCultures = routeBinding.Resources.SelectMany(r => r.Items.GroupBy(ig => ig.Culture)).Select(rk => rk.Key);
@@ -51,12 +44,12 @@ namespace FoxIDs.Logic
                     return culture;
                 }
             }
-            return embeddedResource.SupportedCultures.First();
+            return resourceEnvelope.SupportedCultures.First();
         }
 
         public string GetValue(string name, string culture)
         {
-            var id = embeddedResource.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
+            var id = resourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
             if(id > 0)
             {
                 if (RouteBinding.Resources?.Count > 0)
@@ -69,20 +62,20 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    var value = GetValue(embeddedResource.Resources, id, culture);
+                    var value = GetValue(resourceEnvelope.Resources, id, culture);
                     if (!value.IsNullOrEmpty())
                     {
                         return value;
                     }
                 }
 
-                return GetValue(embeddedResource.Resources, id, "en");
+                return GetValue(resourceEnvelope.Resources, id, "en");
             }
 
             return null;
         }
 
-        private string GetValue(List<Resource> resources, int id, string culture)
+        private string GetValue(List<ResourceItem> resources, int id, string culture)
         {
             var resource = resources.Where(r => r.Id == id).FirstOrDefault();
             if (resource != null)
@@ -95,17 +88,18 @@ namespace FoxIDs.Logic
 #if DEBUG
         public void SaveDefaultValue(string name)
         {
-            if (!embeddedResource.Names.Any(n => n.Name == name))
+            lock (typeof(LocalizationLogic))
             {
-                var id = embeddedResource.Names.Max(n => n.Id) + 1;
-                embeddedResource.Names.Add(new ResourceName { Name = name, Id = id });
-                embeddedResource.Resources.Add(new Resource { Id = id, Items = new List<ResourceItem>(new[] { new ResourceItem { Culture = "en", Value = name } }) });
+                if (!resourceEnvelope.Names.Any(n => n.Name == name))
+                {
+                    var id = resourceEnvelope.Names.Max(n => n.Id) + 1;
+                    resourceEnvelope.Names.Add(new ResourceName { Name = name, Id = id });
+                    resourceEnvelope.Resources.Add(new ResourceItem { Id = id, Items = new List<ResourceCultureItem>(new[] { new ResourceCultureItem { Culture = "en", Value = name } }) });
 
-                embeddedResource.ValidateObjectAsync().GetAwaiter().GetResult();
+                    resourceEnvelope.ValidateObjectAsync().GetAwaiter().GetResult();
 
-                var foxIDsLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                var embeddedResourceFilePath = $"{foxIDsLocation}\\..\\..\\..\\..\\FoxIDs.Shared\\Models\\Resources\\{nameof(EmbeddedResource)}.json";
-                File.WriteAllText(embeddedResourceFilePath, embeddedResource.ToJsonIndented());
+                    masterRepository.SaveAsync(resourceEnvelope).GetAwaiter().GetResult();
+                }
             }
         }
 #endif

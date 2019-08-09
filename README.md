@@ -9,7 +9,7 @@ You can deploy FoxIDs in your Azure tenant. Afterwords FoxIDs is seeded with the
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
 
-### Possible deployent errors
+### Troubleshooting deployent errors
 
 #### Deployment timeout
 If you receive a deployment error like *"The gateway did not receive a response from 'Microsoft.DocumentDB' within the specified time period." or "The gateway did not receive a response from 'Microsoft.Web' within the specified time period."* 

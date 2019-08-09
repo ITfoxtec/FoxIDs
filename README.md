@@ -5,7 +5,7 @@ FoxIDs is an open source security service supporting login, OAuth 2.0, OpenID Co
 Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow</a> and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.<br />
 
 ## Deployment
-You can deploy FoxIDs in your Azure tenant.
+You can deploy FoxIDs in your Azure tenant. Afterwords FoxIDs is seeded with the seed tool, to create the master certificate and admin user.
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
 

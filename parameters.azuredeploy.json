@@ -19,9 +19,6 @@
     },
     "cacheSku": {
       "value": "Standard"
-    },
-    "sendgridPlan": {
-      "value": "Free"
     }
   }
 }

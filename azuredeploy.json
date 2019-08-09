@@ -70,19 +70,6 @@
       "metadata": {
         "description": "The pricing tier of the new Azure Redis Cache."
       }
-    },
-    "sendgridPlan": {
-      "defaultValue": "Free",
-      "allowedValues": [
-        "Free",
-        "Bronze",
-        "Silver",
-        "Gold"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "The size of the Sendgrid Plan."
-      }
     }
   },
   "variables": {
@@ -221,15 +208,15 @@
       "apiVersion": "2015-01-01",
       "location": "[variables('location')]",
       "plan": {
-        "name": "[variables('sendgridPlan')]",
+        "name": "free",
         "publisher": "Sendgrid",
         "product": "sendgrid_azure",
         "promotionCode": ""
       },
       "properties": {
         "password": "[variables('sendgridPassword')]",
-        "acceptMarketingEmails": "0",
-        "email": ""
+        "acceptMarketingEmails": true,
+        "email": "xxx.xx@xx.com"
       }
     },
     {

@@ -1,8 +1,8 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
-using FoxIDs.SeedDataTool.Model;
-using FoxIDs.SeedDataTool.Repository;
+using FoxIDs.SeedTool.Model;
+using FoxIDs.SeedTool.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Newtonsoft.Json;
@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FoxIDs.SeedDataTool.SeedLogic
+namespace FoxIDs.SeedTool.SeedLogic
 {
     public class MasterTenantDocumentsSeedLogic
     {
@@ -22,17 +22,10 @@ namespace FoxIDs.SeedDataTool.SeedLogic
 
         readonly string[] apiResourceScopes = new[] { "master", "tenant" };
         readonly string[] adminUserClaims = new[] { "master_admin" };
-        readonly string[] seedClientRedirectUris = new[] { "uri:seed:client" };
  
         private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
         private readonly SimpleTenantRepository simpleTenantRepository;
-        private static readonly JsonSerializerSettings SettingsIndented = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include,
-            Formatting = Formatting.Indented
-        };
 
         public MasterTenantDocumentsSeedLogic(SeedSettings settings, SecretHashLogic secretHashLogic, SimpleTenantRepository simpleTenantRepository)
         {
@@ -190,7 +183,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             await seedClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = settings.ClientId });
             seedClientDownParty.Client = new OAuthDownClient
             {
-                RedirectUris = seedClientRedirectUris.ToList(),
+                RedirectUris = new[] { settings.RedirectUri }.ToList(),
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "master" }.ToList() } },
                 ResponseTypes = new[] { "token" }.ToList(),
                 AccessTokenLifetime = 1800 // 30 minutes
@@ -208,14 +201,12 @@ namespace FoxIDs.SeedDataTool.SeedLogic
         private async Task CreatePortalClientDocmentAsync(LoginUpParty loginUpParty)
         {
             Console.WriteLine("Creating portal client");
-            Console.Write("Please enter portal domain: ");
-            var portalDomain = Console.ReadLine();
             Console.Write("Add localhost test domain to enable local development [y/n] (default no): ");
             var addLocalhostDomain = Console.ReadKey();
             Console.WriteLine(string.Empty);
 
             var portalClientRedirectUris = new List<string>();
-            portalClientRedirectUris.Add($"https://{portalDomain}/authresponse");
+            portalClientRedirectUris.Add(settings.FoxIDsPortalAuthResponseEndpoint);
             if(char.ToLower(addLocalhostDomain.KeyChar) == 'y')
             {
                 portalClientRedirectUris.Add("https://localhost:44332");
@@ -254,11 +245,6 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             var secret = RandomGenerator.Generate(32);
             await secretHashLogic.AddSecretHashAsync(oauthClientSecret, secret);
             return (secret, oauthClientSecret);
-        }
-
-        public string ToJsonIndented(object obj)
-        {
-            return JsonConvert.SerializeObject(obj, SettingsIndented);
         }
     }
 }

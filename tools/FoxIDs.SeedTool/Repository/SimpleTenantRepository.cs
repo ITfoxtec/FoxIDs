@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
-using FoxIDs.SeedDataTool.Model;
+using FoxIDs.SeedTool.Model;
 
-namespace FoxIDs.SeedDataTool.Repository
+namespace FoxIDs.SeedTool.Repository
 {
     public class SimpleTenantRepository
     {
@@ -30,8 +30,8 @@ namespace FoxIDs.SeedDataTool.Repository
         {
             if (!isInitiated)
             {
-                isInitiated = true;
                 await CreateDocumentClient();
+                isInitiated = true;
             }
         }
 
@@ -42,6 +42,8 @@ namespace FoxIDs.SeedDataTool.Repository
             client = new DocumentClient(new Uri(settings.CosmosDb.EndpointUri), settings.CosmosDb.PrimaryKey,
                 new JsonSerializerSettings
                 {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Include,
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 },
                 new ConnectionPolicy

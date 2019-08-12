@@ -117,12 +117,12 @@ namespace FoxIDs.Infrastructure.Hosting
             var sequence = await GetSequanceAsync(context, scopedLogger, routeAction);
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {
-                return localizationLogic.GetSupportedCulture(new[] { sequence.Culture }, routeBinding);
+                return await localizationLogic.GetSupportedCultureAsync(new[] { sequence.Culture }, routeBinding);
             }
             else
             {
                 var providerResultCulture = await new AcceptLanguageHeaderRequestCultureProvider().DetermineProviderCultureResult(context.HttpContext);
-                return localizationLogic.GetSupportedCulture(providerResultCulture.UICultures.Select(c => c.Value), routeBinding);
+                return await localizationLogic.GetSupportedCultureAsync(providerResultCulture.UICultures.Select(c => c.Value), routeBinding);
             }
         }
 

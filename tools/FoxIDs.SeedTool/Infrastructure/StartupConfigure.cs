@@ -5,17 +5,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using FoxIDs.SeedDataTool.Logic;
-using FoxIDs.SeedDataTool.Model;
-using FoxIDs.SeedDataTool.SeedLogic;
+using FoxIDs.SeedTool.Logic;
+using FoxIDs.SeedTool.Model;
+using FoxIDs.SeedTool.SeedLogic;
 using System;
 using System.Net.Http;
 using System.IO;
 using UrlCombineLib;
 using ITfoxtec.Identity.Helpers;
-using FoxIDs.SeedDataTool.Repository;
+using FoxIDs.SeedTool.Repository;
 
-namespace FoxIDs.SeedDataTool.Infrastructure
+namespace FoxIDs.SeedTool.Infrastructure
 {
     public class StartupConfigure
     {

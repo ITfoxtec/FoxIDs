@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.UnitTests", "test\Fo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SeedDataTool", "tools\FoxIDs.SeedDataTool\FoxIDs.SeedDataTool.csproj", "{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

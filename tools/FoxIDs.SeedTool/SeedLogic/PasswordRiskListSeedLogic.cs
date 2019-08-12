@@ -1,5 +1,5 @@
-﻿using FoxIDs.SeedDataTool.Logic;
-using FoxIDs.SeedDataTool.Model;
+﻿using FoxIDs.SeedTool.Logic;
+using FoxIDs.SeedTool.Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using UrlCombineLib;
 
-namespace FoxIDs.SeedDataTool.SeedLogic
+namespace FoxIDs.SeedTool.SeedLogic
 {
     public class PasswordRiskListSeedLogic
     {

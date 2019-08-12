@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using FoxIDs.SeedDataTool.Infrastructure;
-using FoxIDs.SeedDataTool.SeedLogic;
+using FoxIDs.SeedTool.Infrastructure;
+using FoxIDs.SeedTool.SeedLogic;
 
-namespace FoxIDs.SeedDataTool
+namespace FoxIDs.SeedTool
 {
     class Program
     {
@@ -21,8 +21,8 @@ namespace FoxIDs.SeedDataTool
 
                 Console.WriteLine("Select seed action");
                 Console.WriteLine("M: Create master tenant documents");
-                Console.WriteLine("P: Create passwords risk list");
                 Console.WriteLine("R: Add text resources");
+                Console.WriteLine("P: Create passwords risk list");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -34,12 +34,12 @@ namespace FoxIDs.SeedDataTool
                         await serviceProvider.GetService<MasterTenantDocumentsSeedLogic>().SeedAsync();
                         break;
 
-                    case 'p':
-                        await serviceProvider.GetService<PasswordRiskListSeedLogic>().SeedAsync();
-                        break;
-
                     case 'r':
                         await serviceProvider.GetService<ResourceSeedLogic>().SeedAsync();
+                        break;
+
+                    case 'p':
+                        await serviceProvider.GetService<PasswordRiskListSeedLogic>().SeedAsync();
                         break;
 
                     default:

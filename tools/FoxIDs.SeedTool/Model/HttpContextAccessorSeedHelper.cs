@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System;
 
-namespace FoxIDs.SeedDataTool.Model
+namespace FoxIDs.SeedTool.Model
 {
     public class HttpContextAccessorSeedHelper : IHttpContextAccessor
     {

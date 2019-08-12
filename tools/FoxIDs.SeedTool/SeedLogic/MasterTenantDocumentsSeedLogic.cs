@@ -26,12 +26,6 @@ namespace FoxIDs.SeedTool.SeedLogic
         private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
         private readonly SimpleTenantRepository simpleTenantRepository;
-        private static readonly JsonSerializerSettings SettingsIndented = new JsonSerializerSettings
-        {
-            NullValueHandling = NullValueHandling.Ignore,
-            DefaultValueHandling = DefaultValueHandling.Include,
-            Formatting = Formatting.Indented
-        };
 
         public MasterTenantDocumentsSeedLogic(SeedSettings settings, SecretHashLogic secretHashLogic, SimpleTenantRepository simpleTenantRepository)
         {
@@ -251,11 +245,6 @@ namespace FoxIDs.SeedTool.SeedLogic
             var secret = RandomGenerator.Generate(32);
             await secretHashLogic.AddSecretHashAsync(oauthClientSecret, secret);
             return (secret, oauthClientSecret);
-        }
-
-        public string ToJsonIndented(object obj)
-        {
-            return JsonConvert.SerializeObject(obj, SettingsIndented);
         }
     }
 }

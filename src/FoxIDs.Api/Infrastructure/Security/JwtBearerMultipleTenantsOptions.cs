@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Infrastructure.Security
 {
-    public class JwtBearerMultipleTenantsPotions : AuthenticationSchemeOptions
+    public class JwtBearerMultipleTenantsOptions : AuthenticationSchemeOptions
     {
         public string FoxIDsEndpoint { get; set; }
         public string DownParty { get; set; }

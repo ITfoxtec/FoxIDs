@@ -47,6 +47,8 @@ namespace FoxIDs.Repository
             Client = new DocumentClient(serviceEndpont, settings.CosmosDb.PrimaryKey,
                 new JsonSerializerSettings
                 {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Include,
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 },
                 new ConnectionPolicy

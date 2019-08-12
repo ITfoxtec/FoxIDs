@@ -11,14 +11,15 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using UrlCombineLib;
 using ITfoxtec.Identity.Tokens;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Infrastructure.Security
 {
-    public class JwtBearerMultipleTenantsHandler : AuthenticationHandler<JwtBearerMultipleTenantsPotions>
+    public class JwtBearerMultipleTenantsHandler : AuthenticationHandler<JwtBearerMultipleTenantsOptions>
     {
         public const string AuthenticationScheme = "bearer-multiple-tenants";
 
-        public JwtBearerMultipleTenantsHandler(IOptionsMonitor<JwtBearerMultipleTenantsPotions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
+        public JwtBearerMultipleTenantsHandler(IOptionsMonitor<JwtBearerMultipleTenantsOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock) : base(options, logger, encoder, clock)
         {
         }
 
@@ -79,7 +80,18 @@ namespace FoxIDs.Infrastructure.Security
                 return Options.FoxIDsEndpoint;
             }
 
-            return Context.GetHost().Replace("://api.", "://");
+            var host = Context.GetHost();
+            if (host.Contains("://api.", StringComparison.OrdinalIgnoreCase))
+            {
+                return host.Replace("://api.", "://");
+            }
+
+            if (host.Contains("api", StringComparison.OrdinalIgnoreCase))
+            {
+                return host.Replace("api", "", StringComparison.OrdinalIgnoreCase);
+            }
+
+            throw new InvalidConfigException("Cannot find FoxIDs api endpoint automatically from the the FoxIDs endpoint. The Settings.FoxIDsEndpoint is required.");
         }
     }
 }

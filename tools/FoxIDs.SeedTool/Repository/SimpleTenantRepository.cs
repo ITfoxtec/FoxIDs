@@ -42,6 +42,8 @@ namespace FoxIDs.SeedTool.Repository
             client = new DocumentClient(new Uri(settings.CosmosDb.EndpointUri), settings.CosmosDb.PrimaryKey,
                 new JsonSerializerSettings
                 {
+                    NullValueHandling = NullValueHandling.Ignore,
+                    DefaultValueHandling = DefaultValueHandling.Include,
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 },
                 new ConnectionPolicy

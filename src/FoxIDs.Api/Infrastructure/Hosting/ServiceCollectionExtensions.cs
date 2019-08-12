@@ -64,7 +64,7 @@ namespace FoxIDs.Infrastructure.Hosting
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication(JwtBearerMultipleTenantsHandler.AuthenticationScheme)
-                .AddScheme<JwtBearerMultipleTenantsPotions, JwtBearerMultipleTenantsHandler>(JwtBearerMultipleTenantsHandler.AuthenticationScheme, options =>
+                .AddScheme<JwtBearerMultipleTenantsOptions, JwtBearerMultipleTenantsHandler>(JwtBearerMultipleTenantsHandler.AuthenticationScheme, options =>
                 {
                     options.FoxIDsEndpoint = settings.FoxIDsEndpoint;
                     options.DownParty = settings.DownParty;

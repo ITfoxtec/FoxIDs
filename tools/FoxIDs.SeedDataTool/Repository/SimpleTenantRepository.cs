@@ -9,16 +9,17 @@ using System.Threading.Tasks;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
+using FoxIDs.SeedDataTool.Model;
 
 namespace FoxIDs.SeedDataTool.Repository
 {
     public class SimpleTenantRepository
     {
-        private readonly Settings settings;
+        private readonly SeedSettings settings;
         private DocumentClient client;
         private Uri collectionUri;
 
-        public SimpleTenantRepository(Settings settings)
+        public SimpleTenantRepository(SeedSettings settings)
         {
             this.settings = settings;
             collectionUri = UriFactory.CreateDocumentCollectionUri(settings.CosmosDb.DatabaseId, settings.CosmosDb.CollectionId);

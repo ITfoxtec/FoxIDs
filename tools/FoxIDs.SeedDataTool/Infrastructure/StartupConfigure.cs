@@ -84,13 +84,7 @@ namespace FoxIDs.SeedDataTool.Infrastructure
                                  .AddJsonFile("appsettings.Development.json", optional: true);
 
             var configuration = builder.Build();
-
-            var seedSettings = new SeedSettings();
-            configuration.Bind(nameof(SeedSettings), seedSettings);
-            services.AddSingleton(seedSettings);
-            var settings = new Settings();
-            configuration.Bind(nameof(Settings), settings);
-            services.AddSingleton(settings);
+            services.BindConfig<SeedSettings>(configuration, nameof(SeedSettings));
         }
     }
 }

@@ -1,5 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FoxIDs;
+using FoxIDs.Models.Config;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -9,8 +12,16 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var settings = new T();
             configuration.Bind(key, settings);
-            services.AddSingleton(settings);
+            try
+            {
+                settings.ValidateObjectAsync().GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidConfigException(typeof(T).Name, ex); 
+            }
 
+            services.AddSingleton(settings);
             return settings;
         }
     }

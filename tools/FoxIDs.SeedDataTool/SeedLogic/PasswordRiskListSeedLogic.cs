@@ -29,7 +29,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
         {
             Console.WriteLine("Creating passwords risk list");
             var riskPasswords = new List<RiskPasswordItemApiModel>();            
-            using (var streamReader = File.OpenText(seedSettings.PwnedPasswordsSha1OrderedByCountPath))
+            using (var streamReader = File.OpenText(seedSettings.PwnedPasswordsPath))
             {
                 var i = 0;
                 while (streamReader.Peek() >= 0)

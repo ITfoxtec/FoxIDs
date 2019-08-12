@@ -6,7 +6,7 @@ FoxIDs is a cloud service which is deployed in you Azure tenant and repay on Azu
 
 ## Deployment
 
-You can [deploy FoxIDs](#1.-Azure-deployment) in your Azure tenant. Afterwords, FoxIDs is initialized with the [seed tool](#2.-Seed), to create the master certificate and the first admin user.
+You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, FoxIDs is initialized with the [seed tool](#2-Seed), to create the master certificate and the first admin user.
 
 ### 1. Azure deployment
 

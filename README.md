@@ -6,6 +6,8 @@ FoxIDs is a cloud service which is deployed in you Azure tenant and repay on Azu
 
 > For [Getting started](https://github.com/ITfoxtec/FoxIDs/wiki/Getting-started) guide and more documentation please see the [Wiki](https://github.com/ITfoxtec/FoxIDs/wiki).
 
+> FoxIDs is .NET Core 2.2 and the web sites is ASP.NET Core.
+
 ## Deployment
 
 You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, FoxIDs is initialized with the [seed tool](#2-Seed), to create the master certificate and the first admin user.
@@ -43,34 +45,49 @@ The ARM deployment script deploys:
 
 ### 2. Seed
 
-In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed tasks is executed through the FoxIDs api.
+> You can either download the seed tool (Win_x64) from [releases](https://github.com/ITfoxtec/FoxIDs/releases) or compile it from source code.
 
-The seed tool is configured in the `appsettings.json` file or by creating a `appsettings.Development.json` file with the configuration.
+In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs api.
+
+The seed tool is configured in the `appsettings.json` file.
+
+Add the FodIDs and FoxIDs api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidsapixxxx` or by configuring custom domains.
 
 ```json
-  "SeedSettings": {
-    "FoxIDsEndpoint": "https://foxidsxxxx.com",
-    "FoxIDsApiEndpoint": "https://foxidsapixxxx.com"
-  }
+"SeedSettings": {
+    "FoxIDsEndpoint": "foxidsxxxx.azurewebsites.net", // or custom domain "https://foxidsxxxx.com"
+    "FoxIDsApiEndpoint": "foxidsapixxxx.azurewebsites.net" // or custom domain "https://api.foxidsapixxxx.com"
 }
 ```
-
 
 #### 2.1 Create master tenant documents
 
 The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the `foxidsxxx` is changed to the Cosmos DB instance name. And the Cosmos DB primary key is configured in the `PrimaryKey`. Both endpoint and primary key can be found in [Azure portal](https://portal.azure.com).
 
 ```json
-"Settings": {
+"SeedSettings": {
   "CosmosDb": {
     "EndpointUri": "https://foxidsxxx.documents.azure.com:443/",
-    "PrimaryKey": "xxx...xxx",
+    "PrimaryKey": "xxx...xxx"
   }
 }
 ```
 
+Run the seed tool executable `SeedTool.exe`, select `M: Create master tenant documents`. When asked please write the first administrator users email.
 
-...
+> IMPORTANT: Remember password and secrets.
+
+Add the seed client secret to the seed tool configured.
+
+```json
+"SeedSettings": {
+  "ClientSecret": "xxx"
+}
+```
+
+#### 2.2 Add text resources
+
+
 
 ## Support
 

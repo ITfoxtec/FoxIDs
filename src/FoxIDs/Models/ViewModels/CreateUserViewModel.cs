@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class CreateUserViewModel
+    public class CreateUserViewModel : ViewModel
     {
         public string SequenceString { get; set; }
 

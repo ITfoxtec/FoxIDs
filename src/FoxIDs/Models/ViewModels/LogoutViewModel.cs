@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class LogoutViewModel
+    public class LogoutViewModel : ViewModel
     {
         public string SequenceString { get; set; }
 

@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
-    public class TTestController : TenantApiController
+    public class TTenantController : TenantApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
 
-        public TTestController(TelemetryScopedLogger logger, ITenantRepository tenantService) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, ITenantRepository tenantService) : base(logger)
         {
             this.logger = logger;
             this.tenantService = tenantService;

@@ -18,6 +18,11 @@ namespace FoxIDs.UnitTests.Mocks
             return Task.FromResult(false);
         }
 
+        public Task<T> GetAsync<T>(string id, bool requered = true) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SaveAsync<T>(T item) where T : MasterDocument
         {
             throw new NotImplementedException();

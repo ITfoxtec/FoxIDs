@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models.Resources;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
@@ -27,7 +26,7 @@ namespace FoxIDs.Models
 
         public ClaimMappingsDataElement ClaimMappings { get; set; }
 
-        public List<Resource> Resources { get; set; }
+        public List<ResourceItem> Resources { get; set; }
 
         public int SequenceLifetime { get; set; }
 

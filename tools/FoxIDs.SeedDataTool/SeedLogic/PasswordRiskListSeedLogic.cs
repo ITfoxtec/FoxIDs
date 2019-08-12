@@ -42,8 +42,8 @@ namespace FoxIDs.SeedDataTool.SeedLogic
                         riskPasswords.Add(new RiskPasswordItemApiModel { PasswordSha1Hash = split[0], Count = passwordCount });
                         if (riskPasswords.Count == 1000)
                         {
-                            Console.WriteLine($"Sending risk passwords, current password count '{passwordCount}'");
-                            await SendPasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
+                            Console.WriteLine($"Saving risk passwords, current password count '{passwordCount}'");
+                            await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
                             riskPasswords = new List<RiskPasswordItemApiModel>();
                         }
                     }
@@ -56,14 +56,14 @@ namespace FoxIDs.SeedDataTool.SeedLogic
 
             if (riskPasswords.Count > 0)
             {
-                Console.WriteLine("Sending the last risk passwords");
-                await SendPasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
+                Console.WriteLine("Saving the last risk passwords");
+                await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
             }
 
             Console.WriteLine("Risk passwords seeded");
         }
 
-        private async Task SendPasswordsRiskListAsync(string accessToken, List<RiskPasswordItemApiModel> riskPasswords)
+        private async Task SavePasswordsRiskListAsync(string accessToken, List<RiskPasswordItemApiModel> riskPasswords)
         {
             var client = httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

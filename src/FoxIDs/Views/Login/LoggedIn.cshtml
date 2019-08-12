@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
+@model FoxIDs.Models.ViewModels.LoggedInViewModel
 
 @{
     ViewData["Title"] = Localizer["Logged in"];
@@ -7,7 +8,11 @@
 
 <h1 class="heading">@ViewData["Title"]</h1>
 
-<div>
-    @Localizer["You are still logged in!"]
-</div>
 
+<div class="row page-container">
+    <div class="col-md page-content">
+        <div class="info-group">
+            @Localizer["You are still logged in!"]
+        </div>
+    </div>
+</div>

@@ -17,9 +17,8 @@ namespace FoxIDs.Repository
         private DocumentClient client;
         private string databaseId;
         private string collectionId;
-        private Uri databaseUri;
         private Uri collectionUri;
-        private DocumentCollection documentCollection;
+        //private DocumentCollection documentCollection;
         private readonly TelemetryLogger logger;
 
         public MasterRepository(TelemetryLogger logger, IRepositoryClient repositoryClient)
@@ -28,7 +27,7 @@ namespace FoxIDs.Repository
             databaseId = repositoryClient.DatabaseId;
             collectionId = repositoryClient.CollectionId;
             collectionUri = repositoryClient.CollectionUri;
-            documentCollection = repositoryClient.DocumentCollection;
+            //documentCollection = repositoryClient.DocumentCollection;
             this.logger = logger;
         }
 

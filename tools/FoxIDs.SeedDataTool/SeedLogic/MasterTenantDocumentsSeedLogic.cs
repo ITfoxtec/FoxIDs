@@ -1,6 +1,7 @@
-﻿using FoxIDs;
-using FoxIDs.Logic;
+﻿using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
+using FoxIDs.SeedDataTool.Model;
 using FoxIDs.SeedDataTool.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
@@ -8,28 +9,22 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 
 namespace FoxIDs.SeedDataTool.SeedLogic
 {
     public class MasterTenantDocumentsSeedLogic
     {
-        const string masterTenantName = "master";
-        const string masterTrackName = "_";
         const string loginName = "login";
         const string apiResourceName = "foxids_api";
-        const string seedClientName = "foxids_seed";
         const string portalClientName = "foxids_portal";
 
         readonly string[] apiResourceScopes = new[] { "master", "tenant" };
         readonly string[] adminUserClaims = new[] { "master_admin" };
         readonly string[] seedClientRedirectUris = new[] { "uri:seed:client" };
  
-        readonly long timeStamp;
-
+        private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
         private readonly SimpleTenantRepository simpleTenantRepository;
         private static readonly JsonSerializerSettings SettingsIndented = new JsonSerializerSettings
@@ -39,18 +34,27 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Formatting = Formatting.Indented
         };
 
-        public MasterTenantDocumentsSeedLogic(SecretHashLogic secretHashLogic, SimpleTenantRepository simpleTenantRepository)
+        public MasterTenantDocumentsSeedLogic(SeedSettings settings, SecretHashLogic secretHashLogic, SimpleTenantRepository simpleTenantRepository)
         {
+            this.settings = settings;
             this.secretHashLogic = secretHashLogic;
             this.simpleTenantRepository = simpleTenantRepository;
-
-            timeStamp = DateTimeOffset.Now.ToUnixTimeSeconds();
         }
 
         public async Task SeedAsync()
         {
+            try
+            {
+                await settings.CosmosDb.ValidateObjectAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidConfigException("The Cosmos DB configuration is required to create the master tenant documents.", ex);
+            }
+
             Console.WriteLine("Creating master tenant documents");
 
+            await simpleTenantRepository.InitiateAsync();
             await CreateDocumentsAsync();
 
             Console.WriteLine(string.Empty);
@@ -80,7 +84,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Console.WriteLine("Creating tenant");
 
             var masterTenant = new Tenant();
-            await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = masterTenantName });
+            await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = settings.MasterTenant });
             masterTenant.SetPartitionId();
 
             await simpleTenantRepository.SaveAsync(masterTenant);
@@ -98,7 +102,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
             };
-            await masterTrack.SetIdAsync(new Track.IdKey { TenantName = masterTenantName, TrackName = masterTrackName });
+            await masterTrack.SetIdAsync(new Track.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack });
             masterTrack.SetPartitionId();
             masterTrack.PrimaryKey = await CreateX509KeyAsync();
 
@@ -108,7 +112,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
 
         private async Task<TrackKey> CreateX509KeyAsync()
         {
-            var certificate = await masterTenantName.CreateSelfSignedCertificateAsync();
+            var certificate = await settings.MasterTenant.CreateSelfSignedCertificateAsync();
 
             var trackKey = new TrackKey()
             {
@@ -131,7 +135,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.Never.ToString()
             };
-            await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = loginName });
+            await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = loginName });
             loginUpParty.SetPartitionId();
 
             await simpleTenantRepository.SaveAsync(loginUpParty);
@@ -153,7 +157,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Console.WriteLine($"Administrator users password is: {password}");
 
             var user = new User { UserId = Guid.NewGuid().ToString() };
-            await user.SetIdAsync(new User.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, Email = email });
+            await user.SetIdAsync(new User.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, Email = email });
             await secretHashLogic.AddSecretHashAsync(user, password);
             user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserClaims.ToList() } };
             user.SetPartitionId();
@@ -167,7 +171,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Console.WriteLine("Creating api resource");
 
             var apiResourceDownParty = new OAuthDownParty();
-            await apiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = apiResourceName });
+            await apiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = apiResourceName });
             apiResourceDownParty.Resource = new OAuthDownResource
             {
                 Scopes = apiResourceScopes.ToList()
@@ -183,7 +187,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             Console.WriteLine("Creating seed client");
 
             var seedClientDownParty = new OAuthDownParty();
-            await seedClientDownParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = seedClientName });
+            await seedClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = settings.ClientId });
             seedClientDownParty.Client = new OAuthDownClient
             {
                 RedirectUris = seedClientRedirectUris.ToList(),
@@ -218,7 +222,7 @@ namespace FoxIDs.SeedDataTool.SeedLogic
             }
 
             var portalClientDownParty = new OidcDownParty();
-            await portalClientDownParty.SetIdAsync(new Party.IdKey { TenantName = masterTenantName, TrackName = masterTrackName, PartyName = portalClientName });
+            await portalClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = portalClientName });
             portalClientDownParty.AllowUpParties = new List<PartyDataElement> { new PartyDataElement { Id = loginUpParty.Id, Type = loginUpParty.Type } };
             portalClientDownParty.Client = new OidcDownClient
             {

@@ -15,18 +15,18 @@ namespace FoxIDs.SeedDataTool.SeedLogic
 {
     public class ResourceSeedLogic
     {
-        private readonly SeedSettings seedSettings;
+        private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
 
-        public ResourceSeedLogic(SeedSettings seedSettings, IHttpClientFactory httpClientFactory, AccessLogic accessLogic)
+        public ResourceSeedLogic(SeedSettings settings, IHttpClientFactory httpClientFactory, AccessLogic accessLogic)
         {
-            this.seedSettings = seedSettings;
+            this.settings = settings;
             this.httpClientFactory = httpClientFactory;
             this.accessLogic = accessLogic;
         }
 
-        public string ResourceApiEndpoint => UrlCombine.Combine(seedSettings.FoxIDsMasterApiEndpoint, "Resource");
+        public string ResourceApiEndpoint => UrlCombine.Combine(settings.FoxIDsMasterApiEndpoint, "Resource");
 
         public async Task SeedAsync()
         {

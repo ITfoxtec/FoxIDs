@@ -15,14 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Models\Resources\EmbeddedResource.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Models\Resources\EmbeddedResource.json" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="ITfoxtec.Identity" Version="1.0.8" />
     <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.0.0" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />

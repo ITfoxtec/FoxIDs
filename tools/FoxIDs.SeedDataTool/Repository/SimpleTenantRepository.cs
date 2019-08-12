@@ -18,12 +18,21 @@ namespace FoxIDs.SeedDataTool.Repository
         private readonly SeedSettings settings;
         private DocumentClient client;
         private Uri collectionUri;
+        private bool isInitiated = false;
 
         public SimpleTenantRepository(SeedSettings settings)
         {
             this.settings = settings;
             collectionUri = UriFactory.CreateDocumentCollectionUri(settings.CosmosDb.DatabaseId, settings.CosmosDb.CollectionId);
-            CreateDocumentClient().GetAwaiter().GetResult();
+        }
+
+        public async Task InitiateAsync()
+        {
+            if (!isInitiated)
+            {
+                isInitiated = true;
+                await CreateDocumentClient();
+            }
         }
 
         private async Task CreateDocumentClient()

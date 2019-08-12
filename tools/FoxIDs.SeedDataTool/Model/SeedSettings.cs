@@ -22,7 +22,7 @@ namespace FoxIDs.SeedDataTool.Model
         [Required]
         public string RedirectUri { get; set; }
 
-        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, Tenant, Track, DownParty);
+        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 
         /// <summary>
         /// FoxIDs endpoint.
@@ -30,15 +30,15 @@ namespace FoxIDs.SeedDataTool.Model
         [Required]
         public string FoxIDsEndpoint { get; set; }
         /// <summary>
-        /// Seed tool tenant.
+        /// Seed tool master tenant.
         /// </summary>
         [Required]
-        public string Tenant { get; set; }
+        public string MasterTenant { get; set; }
         /// <summary>
-        /// Seed tool track.
+        /// Seed tool master track.
         /// </summary>
         [Required]
-        public string Track { get; set; }
+        public string MasterTrack { get; set; }
         /// <summary>
         /// Seed tool down party (client id).
         /// </summary>
@@ -68,7 +68,6 @@ namespace FoxIDs.SeedDataTool.Model
         /// <summary>
         /// Cosmos DB configuration.
         /// </summary>
-        [Required]
         public CosmosDbSettings CosmosDb { get; set; }
     }
 }

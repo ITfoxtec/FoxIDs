@@ -12,24 +12,24 @@ namespace FoxIDs.SeedDataTool.SeedLogic
 {
     public class PasswordRiskListSeedLogic
     {
-        private readonly SeedSettings seedSettings;
+        private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
 
-        public PasswordRiskListSeedLogic(SeedSettings seedSettings, IHttpClientFactory httpClientFactory, AccessLogic accessLogic)
+        public PasswordRiskListSeedLogic(SeedSettings settings, IHttpClientFactory httpClientFactory, AccessLogic accessLogic)
         {
-            this.seedSettings = seedSettings;
+            this.settings = settings;
             this.httpClientFactory = httpClientFactory;
             this.accessLogic = accessLogic;
         }
 
-        public string PasswordRiskListApiEndpoint => UrlCombine.Combine(seedSettings.FoxIDsMasterApiEndpoint, "PasswordRiskList");
+        public string PasswordRiskListApiEndpoint => UrlCombine.Combine(settings.FoxIDsMasterApiEndpoint, "PasswordRiskList");
 
         public async Task SeedAsync()
         {
             Console.WriteLine("Creating passwords risk list");
             var riskPasswords = new List<RiskPasswordItemApiModel>();            
-            using (var streamReader = File.OpenText(seedSettings.PwnedPasswordsPath))
+            using (var streamReader = File.OpenText(settings.PwnedPasswordsPath))
             {
                 var i = 0;
                 while (streamReader.Peek() >= 0)

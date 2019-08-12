@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.SeedDataTool.Model
+﻿namespace FoxIDs.SeedTool.Model
 {
     public class RiskPasswordItemApiModel
     {

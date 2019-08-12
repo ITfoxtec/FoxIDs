@@ -1,7 +1,7 @@
 ﻿using FoxIDs.Model;
-using FoxIDs.SeedDataTool.Logic;
-using FoxIDs.SeedDataTool.Model;
-using FoxIDs.SeedDataTool.Model.Resources;
+using FoxIDs.SeedTool.Logic;
+using FoxIDs.SeedTool.Model;
+using FoxIDs.SeedTool.Model.Resources;
 using ITfoxtec.Identity;
 using System;
 using System.IO;
@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using UrlCombineLib;
 
-namespace FoxIDs.SeedDataTool.SeedLogic
+namespace FoxIDs.SeedTool.SeedLogic
 {
     public class ResourceSeedLogic
     {

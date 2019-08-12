@@ -15,20 +15,26 @@ namespace FoxIDs.Logic
         private const int maximumCultureNamesToTry = 3;
         private readonly IMasterRepository masterRepository;
         private ResourceEnvelope resourceEnvelope;
+        private bool isInitiated = false;
 
         public LocalizationLogic(IHttpContextAccessor httpContextAccessor, IMasterRepository masterRepository) : base(httpContextAccessor)
         {
             this.masterRepository = masterRepository;
-            Load().GetAwaiter().GetResult();
         }
 
-        private async Task Load()
+        private async Task LoadResourceEnvelopeAsync()
         {
-            resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));
+            if(!isInitiated)
+            {
+                resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));
+                isInitiated = true;
+            }
         }
 
-        public string GetSupportedCulture(IEnumerable<string> cultures, RouteBinding routeBinding = null)
+        public async Task<string> GetSupportedCultureAsync(IEnumerable<string> cultures, RouteBinding routeBinding = null)
         {
+            await LoadResourceEnvelopeAsync();
+
             routeBinding = routeBinding ?? RouteBinding;
             var supportedCultures = resourceEnvelope.SupportedCultures;
             if(routeBinding.Resources?.Count > 0)
@@ -47,8 +53,10 @@ namespace FoxIDs.Logic
             return resourceEnvelope.SupportedCultures.First();
         }
 
-        public string GetValue(string name, string culture)
+        public async Task<string> GetValueAsync(string name, string culture)
         {
+            await LoadResourceEnvelopeAsync();
+
             var id = resourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
             if(id > 0)
             {
@@ -88,6 +96,8 @@ namespace FoxIDs.Logic
 #if DEBUG
         public void SaveDefaultValue(string name)
         {
+            LoadResourceEnvelopeAsync().GetAwaiter().GetResult();
+
             lock (typeof(LocalizationLogic))
             {
                 if (!resourceEnvelope.Names.Any(n => n.Name == name))

@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
 
         public async Task SetCultureAsync(IEnumerable<string> names)
         {
-            var culture = localizationLogic.GetSupportedCulture(names);
+            var culture = await localizationLogic.GetSupportedCultureAsync(names);
             if(!culture.IsNullOrEmpty())
             {
                 var sequence = HttpContext.GetSequence();

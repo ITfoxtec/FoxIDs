@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using UrlCombineLib;
 
-namespace FoxIDs.SeedDataTool.Model
+namespace FoxIDs.SeedTool.Model
 {
     public class SeedSettings
     {
@@ -21,8 +21,6 @@ namespace FoxIDs.SeedDataTool.Model
         /// </summary>
         [Required]
         public string RedirectUri { get; set; }
-
-        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 
         /// <summary>
         /// FoxIDs endpoint.
@@ -44,6 +42,10 @@ namespace FoxIDs.SeedDataTool.Model
         /// </summary>
         [Required]
         public string DownParty { get; set; }
+        /// <summary>
+        /// FoxIDs tenant/track/downparty authority.
+        /// </summary>
+        public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 
         /// <summary>
         /// FoxIDs api endpoint.
@@ -58,6 +60,16 @@ namespace FoxIDs.SeedDataTool.Model
         /// FoxIDs master track api endpoint.
         /// </summary>
         public string FoxIDsMasterTrackApiEndpoint => UrlCombine.Combine(FoxIDsApiEndpoint, "master");
+
+        /// <summary>
+        /// FoxIDs portal endpoint.
+        /// </summary>
+        [Required]
+        public string FoxIDsPortalEndpoint { get; set; }
+        /// <summary>
+        /// FoxIDs portal auth response endpoint.
+        /// </summary>
+        public string FoxIDsPortalAuthResponseEndpoint => UrlCombine.Combine(FoxIDsPortalEndpoint, "authresponse");
 
         /// <summary>
         /// Pwned passwords (SHA1 ordered by count) path.

@@ -45,16 +45,7 @@ The ARM deployment script deploys:
 
 In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed tasks is executed through the FoxIDs api.
 
-The seed tool is configured in the `appsettings.json` file or by creating a `appsettings.Development.json` file with the configuration.
-
-```json
-  "SeedSettings": {
-    "FoxIDsEndpoint": "https://foxidsxxxx.com",
-    "FoxIDsApiEndpoint": "https://foxidsapixxxx.com"
-  }
-}
-```
-
+The seed tool is configured in the `appsettings.json` file or by creating a `appsettings.Development.json` file with the partial configuration.
 
 #### 2.1 Create master tenant documents
 
@@ -70,7 +61,8 @@ The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the 
 ```
 
 
-...
+
+
 
 ## Support
 

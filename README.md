@@ -25,7 +25,7 @@ You can deploy FoxIDs in your Azure tenant. Afterwords FoxIDs is initialized wit
 >     $terms = Get-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free'
 >     Set-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free' -Terms $terms -Accept
 >
-> Then delete resource groups and redeploy.
+> Then delete the falling resource groups and redeploy.
 
 ### 2. Seed
 

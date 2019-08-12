@@ -89,9 +89,15 @@ Add the seed client secret to the seed tool configured.
 
 The seed tool add generic text resources as a document in Cosmos DB. The resources can later be customized per track in the track configuration in Cosmos DB.
 
-Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`. When asked please write the first administrator users email.
+Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`. 
 
+#### 2.3 Create passwords risk list
 
+The seed tool can add passwords that is insecure to use in Cosmos DB documents as SHA1 hash. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+
+> Be aware that it takes long time to upload the entire password risk list. This step can be omitted and postponed to later.
+
+Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords risk list`.
 
 ## Support
 

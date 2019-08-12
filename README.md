@@ -55,8 +55,8 @@ Add the FodIDs and FoxIDs api endpoints to the seed tool configured. They can be
 
 ```json
 "SeedSettings": {
-    "FoxIDsEndpoint": "foxidsxxxx.azurewebsites.net", // or custom domain "https://foxidsxxxx.com"
-    "FoxIDsApiEndpoint": "foxidsapixxxx.azurewebsites.net" // or custom domain "https://api.foxidsapixxxx.com"
+    "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net", 
+    "FoxIDsApiEndpoint": "https://foxidsapixxxx.azurewebsites.net" 
 }
 ```
 
@@ -73,7 +73,7 @@ The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the 
 }
 ```
 
-Run the seed tool executable `SeedTool.exe`, select `M: Create master tenant documents`. When asked please write the first administrator users email.
+Run the seed tool executable `SeedTool.exe`, select `M` for `Create master tenant documents`. When asked please write the first administrator users email.
 
 > IMPORTANT: Remember password and secrets.
 
@@ -86,6 +86,10 @@ Add the seed client secret to the seed tool configured.
 ```
 
 #### 2.2 Add text resources
+
+The seed tool add generic text resources as a document in Cosmos DB. The resources can later be customized per track in the track configuration in Cosmos DB.
+
+Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`. When asked please write the first administrator users email.
 
 
 

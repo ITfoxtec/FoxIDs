@@ -51,24 +51,41 @@ In the first initial seed step the seed tool saves documents directly in to the 
 
 The seed tool is configured in the `appsettings.json` file.
 
+Add the FodIDs and FoxIDs api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidsapixxxx` or by configuring custom domains.
+
+```json
+"SeedSettings": {
+    "FoxIDsEndpoint": "foxidsxxxx.azurewebsites.net", // or custom domain "https://foxidsxxxx.com"
+    "FoxIDsApiEndpoint": "foxidsapixxxx.azurewebsites.net" // or custom domain "https://api.foxidsapixxxx.com"
+}
+```
+
 #### 2.1 Create master tenant documents
 
 The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the `foxidsxxx` is changed to the Cosmos DB instance name. And the Cosmos DB primary key is configured in the `PrimaryKey`. Both endpoint and primary key can be found in [Azure portal](https://portal.azure.com).
 
 ```json
-"Settings": {
+"SeedSettings": {
   "CosmosDb": {
     "EndpointUri": "https://foxidsxxx.documents.azure.com:443/",
-    "PrimaryKey": "xxx...xxx",
+    "PrimaryKey": "xxx...xxx"
   }
 }
 ```
 
-Run the seed tool executable `SeedTool.exe`, select `M: Create master tenant documents`.
+Run the seed tool executable `SeedTool.exe`, select `M: Create master tenant documents`. When asked please write the first administrator users email.
 
+> IMPORTANT: Remember password and secrets.
 
+Add the seed client secret to the seed tool configured.
 
+```json
+"SeedSettings": {
+  "ClientSecret": "xxx"
+}
+```
 
+#### 2.2 Add text resources
 
 
 

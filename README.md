@@ -1,12 +1,24 @@
 # FoxIDs
 
-FoxIDs is an open source security service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and standard convetation.
+FoxIDs is an open source security service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+
+FoxIDs is a cloud service which is deployed in you Azure tenant and repay on Azure resources. In the future is will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaktion fee.
 
 ## Deployment
 
-You can deploy FoxIDs in your Azure tenant. Afterwords FoxIDs is initialized with the seed tool, to create the master certificate and admin user.
+You can [deploy FoxIDs](#1.-Azure-deployment) in your Azure tenant. Afterwords, FoxIDs is initialized with the [seed tool](#2.-Seed), to create the master certificate and the first admin user.
 
 ### 1. Azure deployment
+
+The ARM deployment script deploys:
+
+- Two App Services one for FoxIDs and one for the FoxIDs API. Both App Services is hosted in the same App Service plan. 
+- FoxIDs is deployed to the two App Services from the ´release-current´ branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
+- Key vault. Secrets are placed in Key vault.
+- Document DB.
+- Redis cache.
+- SendGrid.
+- Application Insights.
 
 [![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
 

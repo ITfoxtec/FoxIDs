@@ -15,7 +15,7 @@ You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, F
 The ARM deployment script deploys:
 
 - Two App Services one for FoxIDs and one for the FoxIDs API. Both App Services is hosted in the same App Service plan. 
-- FoxIDs is deployed to the two App Services from the ´release-current´ branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
+- FoxIDs is deployed to the two App Services from the `release-current` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
 - Key vault. Secrets are placed in Key vault.
 - Document DB.
 - Redis cache.
@@ -42,6 +42,33 @@ The ARM deployment script deploys:
 > Then delete the falling resource groups and redeploy.
 
 ### 2. Seed
+
+In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed tasks is executed through the FoxIDs api.
+
+The seed tool is configured in the `appsettings.json` file or by creating a `appsettings.Development.json` file with the configuration.
+
+```json
+  "SeedSettings": {
+    "FoxIDsEndpoint": "https://foxidsxxxx.com",
+    "FoxIDsApiEndpoint": "https://foxidsapixxxx.com"
+  }
+}
+```
+
+
+#### 2.1 Create master tenant documents
+
+The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the `foxidsxxx` is changed to the Cosmos DB instance name. And the Cosmos DB primary key is configured in the `PrimaryKey`. Both endpoint and primary key can be found in [Azure portal](https://portal.azure.com).
+
+```json
+"Settings": {
+  "CosmosDb": {
+    "EndpointUri": "https://foxidsxxx.documents.azure.com:443/",
+    "PrimaryKey": "xxx...xxx",
+  }
+}
+```
+
 
 ...
 

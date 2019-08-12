@@ -14,7 +14,6 @@ using System.IO;
 using UrlCombineLib;
 using ITfoxtec.Identity.Helpers;
 using FoxIDs.SeedDataTool.Repository;
-using FoxIDs.Models.Config;
 
 namespace FoxIDs.SeedDataTool.Infrastructure
 {

@@ -93,11 +93,25 @@ Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`
 
 #### 2.3 Create passwords risk list
 
-The seed tool can add passwords that is insecure to use in Cosmos DB documents as SHA1 hash. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+The seed tool can add passwords risk list of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+
+Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
+
+Add the local pwned passwords file path to the seed tool configured.
+
+```json
+"SeedSettings": {
+  "PwnedPasswordsPath": "c:\\... xxx ...\\pwned-passwords-sha1-ordered-by-count-v4.txt"
+}
+```
 
 > Be aware that it takes long time to upload the entire password risk list. This step can be omitted and postponed to later.
 
 Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords risk list`.
+
+#### 2.4 Possible to add samples
+
+It is possible to run the sample applications after they are configured in FoxIDs. The sample configuration can be added with the seed tool, see how in the [samples guid](https://github.com/ITfoxtec/FoxIDs/wiki/Samples).
 
 ## Support
 

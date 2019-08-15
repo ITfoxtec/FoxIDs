@@ -111,7 +111,7 @@ Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords ri
 
 #### 2.4 Possible to add samples
 
-It is possible to run the sample applications after they are configured in FoxIDs. The sample configuration can be added with the seed tool, see how in the [samples guid](https://github.com/ITfoxtec/FoxIDs/wiki/Samples).
+It is possible to run the sample applications after they are configured in FoxIDs. The [sample configuration](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track) can be added with the seed tool.
 
 ## Support
 

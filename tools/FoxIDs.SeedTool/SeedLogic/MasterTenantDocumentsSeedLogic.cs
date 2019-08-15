@@ -20,7 +20,7 @@ namespace FoxIDs.SeedTool.SeedLogic
         const string apiResourceName = "foxids_api";
         const string portalClientName = "foxids_portal";
 
-        readonly string[] apiResourceScopes = new[] { "master", "tenant" };
+        readonly string[] apiResourceScopes = new[] { "master", "tenant", "track" };
         readonly string[] adminUserClaims = new[] { "master_admin" };
  
         private readonly SeedSettings settings;

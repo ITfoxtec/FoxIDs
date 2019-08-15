@@ -77,7 +77,7 @@ Run the seed tool executable `SeedTool.exe`, select `M` for `Create master tenan
 
 > IMPORTANT: Remember password and secrets.
 
-Add the seed client secret to the seed tool configured.
+Add the seed tool client secret to the seed tool configured.
 
 ```json
 "SeedSettings": {

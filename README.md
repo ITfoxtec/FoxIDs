@@ -126,7 +126,7 @@ FoxIDs API
 https://localhost:44331
 
 *FoxIDs Portal
-https://localhost:44332*
+https://localhost:44332 - not created yet*
 
 *FoxIDs web
-https://localhost:44333* 
+https://localhost:44333 - not created yet*

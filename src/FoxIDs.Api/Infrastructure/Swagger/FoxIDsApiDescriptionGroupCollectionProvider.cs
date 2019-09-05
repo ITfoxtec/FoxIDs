@@ -29,9 +29,7 @@ namespace FoxIDs.Infrastructure.Swagger
         /// <param name="apiDescriptionProviders">
         /// The <see cref="IEnumerable{IApiDescriptionProvider}"/>.
         /// </param>
-        public FoxIDsApiDescriptionGroupCollectionProvider(
-            IActionDescriptorCollectionProvider actionDescriptorCollectionProvider,
-            IEnumerable<IApiDescriptionProvider> apiDescriptionProviders)
+        public FoxIDsApiDescriptionGroupCollectionProvider(IActionDescriptorCollectionProvider actionDescriptorCollectionProvider, IEnumerable<IApiDescriptionProvider> apiDescriptionProviders)
         {
             this.actionDescriptorCollectionProvider = actionDescriptorCollectionProvider;
             this.apiDescriptionProviders = apiDescriptionProviders.OrderBy(item => item.Order).ToArray();
@@ -61,6 +59,7 @@ namespace FoxIDs.Infrastructure.Swagger
                 var httpMethods = GetHttpMethods(action);
                 if (httpMethods != null)
                 {
+                    action.ActionConstraints = new[] { new HttpMethodActionConstraint(httpMethods) };
                     action.AttributeRouteInfo = new Microsoft.AspNetCore.Mvc.Routing.AttributeRouteInfo { Template = GetTemplate(action.ControllerName) };
                     action.SetProperty(new ApiDescriptionActionData { GroupName = Constants.Api.Version });
                 }
@@ -105,9 +104,10 @@ namespace FoxIDs.Infrastructure.Swagger
 
         private IEnumerable<string> GetHttpMethods(ControllerActionDescriptor action)
         {
-            if (action.ActionConstraints != null && action.ActionConstraints.Count > 0)
+            var httpMethod = action.ActionName.ToUpper();
+            if(Constants.Api.SupportedApiHttpMethods.Contains(httpMethod))
             {
-                return action.ActionConstraints.OfType<HttpMethodActionConstraint>().SelectMany(c => c.HttpMethods);
+                return new[] { httpMethod };
             }
             else
             {

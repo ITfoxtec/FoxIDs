@@ -19,7 +19,6 @@ namespace FoxIDs.Controllers
             this.masterService = masterService;
         }
 
-        [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Post([FromBody] ResourceApiModel model)
         {

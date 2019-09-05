@@ -36,6 +36,7 @@ namespace FoxIDs
         public static class Api
         {
             public const string Version = "v1";
+            public readonly static string[] SupportedApiHttpMethods = { "GET", "PUT", "POST", "DELETE" };
         }
 
         public static class Sequence

@@ -22,7 +22,6 @@ namespace FoxIDs.Controllers
             this.masterService = masterService;
         }
 
-        [HttpPost]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Post([FromBody] RiskPasswordApiModel model)
         {
@@ -44,7 +43,6 @@ namespace FoxIDs.Controllers
             return NoContent();
         }
 
-        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(string passwordSha1Hash)

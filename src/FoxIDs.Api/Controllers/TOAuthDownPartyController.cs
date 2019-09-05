@@ -19,8 +19,6 @@ namespace FoxIDs.Controllers
             this.tenantService = tenantService;
         }
 
-
-        [HttpGet]
         [ProducesResponseType(typeof(OAuthDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<OAuthDownParty>> Get(string id)
@@ -41,7 +39,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-        [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Post([FromBody] OAuthDownParty oauthDownParty)
         {
@@ -61,7 +58,6 @@ namespace FoxIDs.Controllers
             return CreatedAtAction(nameof(Get), new { id = oauthDownParty.Id }, oauthDownParty);
         }
 
-        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(string id)

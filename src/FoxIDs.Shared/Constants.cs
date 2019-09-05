@@ -29,8 +29,13 @@ namespace FoxIDs
             public const string MasterTenantName = "master";
             public const string DefaultMasterTrackName = "master";
 
-            public const char ApiControllerPreMasterKey = 'M';
-            public const char ApiControllerPreTenantTrackKey = 'T';
+            public const char ApiControllerPreMasterKey = 'm';
+            public const char ApiControllerPreTenantTrackKey = 't';
+        }
+
+        public static class Api
+        {
+            public const string Version = "v1";
         }
 
         public static class Sequence

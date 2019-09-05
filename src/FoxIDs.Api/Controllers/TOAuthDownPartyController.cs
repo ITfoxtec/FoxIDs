@@ -3,17 +3,11 @@ using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Swashbuckle.AspNetCore.Annotations;
 using System.Net;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
-    //[ApiExplorerSettings(GroupName = "OAuthDownParty")]
-    [Route("(tenant)/(track)/!oauthdownparty")]
-    //[ApiExplorerSettings( GroupName = nameof(TOAuthDownPartyController))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public class TOAuthDownPartyController : TenantApiController
     {
         private readonly TelemetryScopedLogger logger;
@@ -26,8 +20,7 @@ namespace FoxIDs.Controllers
         }
 
 
-        //[SwaggerOperation("test")]
-        [HttpGet("id")]
+        [HttpGet]
         [ProducesResponseType(typeof(OAuthDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<OAuthDownParty>> Get(string id)
@@ -68,7 +61,7 @@ namespace FoxIDs.Controllers
             return CreatedAtAction(nameof(Get), new { id = oauthDownParty.Id }, oauthDownParty);
         }
 
-        [HttpDelete("id")]
+        [HttpDelete]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(string id)

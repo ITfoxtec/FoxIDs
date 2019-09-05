@@ -23,7 +23,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                throw new NotSupportedException($"Invalid route path. Api url '{context.HttpContext.Request.Path.Value}' not supported.");
+               // throw new NotSupportedException($"Invalid route path. Api url '{context.HttpContext.Request.Path.Value}' not supported.");
             }
         }
 

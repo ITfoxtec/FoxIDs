@@ -5,6 +5,7 @@ using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,20 +46,23 @@ namespace FoxIDs
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
-            services.AddMvc(options =>
+            services.AddMvcCore(options =>
             {
-                options.EnableEndpointRouting = false; //options.Conventions.Add(new ApiExplorerVisibilityEnabledConvention());
+                options.EnableEndpointRouting = false;
             })
+                .AddAuthorization()
+                .AddRazorViewEngine()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                });
+                })
+                .AddFoxIDsApiExplorer();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "FoxIDs API", Version = "v1" });
+                c.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
                 c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -66,18 +70,35 @@ namespace FoxIDs
                     In = "header",
                     Type = "apiKey"
                 });
-                c.TagActionsBy(s => new[] 
+                c.TagActionsBy(s => new[]
                 {
-                    (s.ActionDescriptor as ControllerActionDescriptor)?.ControllerName + "test"
+                    GetTagActionsBy(s.ActionDescriptor as ControllerActionDescriptor)                    
                 });
 
                 //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 //{
                 //    { "Bearer", new string[] { } }
                 //});
-                c.OperationFilter<SecurityRequirementsOperationFilter>();
+                //c.OperationFilter<SecurityRequirementsOperationFilter>();
                 //c.OperationFilter<TagByApiExplorerSettingsOperationFilter>();
             });
+        }
+
+        private string GetTagActionsBy(ControllerActionDescriptor controllerActionDescriptor)
+        {
+            var controllerName = controllerActionDescriptor.ControllerName.ToLower();
+            if (controllerName.StartsWith(Constants.Routes.ApiControllerPreMasterKey))
+            {
+                return $"master {controllerName.Substring(1)}";
+            }
+            else if (controllerName.StartsWith(Constants.Routes.ApiControllerPreTenantTrackKey))
+            {
+                return $"tenant {controllerName.Substring(1)}";
+            }
+            else
+            {
+                throw new NotSupportedException("Only master and tenant controller supported.");
+            }
         }
 
         public void Configure(IApplicationBuilder app)
@@ -100,22 +121,12 @@ namespace FoxIDs
             app.UseMvc(routes =>
             {
                 routes.Routes.Add(new FoxIDsApiRouter(routes.DefaultHandler));
-            });
-        }
-    }
 
-    public class ApiExplorerVisibilityEnabledConvention : Microsoft.AspNetCore.Mvc.ApplicationModels.IApplicationModelConvention
-    {
-        public void Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel application)
-        {
-            foreach (var controller in application.Controllers)
-            {
-                if (controller.ControllerName.StartsWith("TOAuthDownParty") && controller.ApiExplorer.IsVisible == null)
-                {
-                    //controller.ApiExplorer.IsVisible = true;
-                   // controller.ApiExplorer.GroupName = controller.ControllerName;
-                }
-            }
+
+                routes.MapRoute(
+                    name: "default",
+                    template: $"{{controller={Constants.Routes.DefaultWebSiteController}}}/{{action={Constants.Routes.DefaultWebSiteAction}}}/{{id?}}");
+            });
         }
     }
 }

@@ -2,8 +2,8 @@
 using FoxIDs.Model;
 using FoxIDs.Models;
 using FoxIDs.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
@@ -13,13 +13,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryLogger logger;
         private readonly IMasterRepository masterService;
 
-        public MResourceController(TelemetryLogger logger, IMasterRepository masterService, IApiDescriptionGroupCollectionProvider apiExplorer) : base(logger)
+        public MResourceController(TelemetryLogger logger, IMasterRepository masterService) : base(logger)
         {
             this.logger = logger;
             this.masterService = masterService;
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Post([FromBody] ResourceApiModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

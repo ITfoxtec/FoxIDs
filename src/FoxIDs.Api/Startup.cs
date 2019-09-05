@@ -53,6 +53,7 @@ namespace FoxIDs
                 .AddAuthorization()
                 .AddRazorViewEngine()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonFormatters()
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();

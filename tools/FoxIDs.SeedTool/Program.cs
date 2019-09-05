@@ -47,10 +47,11 @@ namespace FoxIDs.SeedTool
                         break;
                 }
 
+#if !DEBUG
                 Console.WriteLine(string.Empty);
-                Console.WriteLine("Important: remember the password and secrets.");
                 Console.WriteLine("Click any key to end...");
                 Console.ReadKey();
+#endif
             }
             catch (Exception ex)
             {

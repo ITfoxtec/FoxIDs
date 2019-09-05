@@ -24,12 +24,19 @@ namespace FoxIDs
 
             public const string SequenceStringKey = Sequence.String;
 
+            public const char PreApikey = '!';
             public const string MasterApiName = "@master";
             public const string MasterTenantName = "master";
-            public const string MasterTrackName = "_";
+            public const string DefaultMasterTrackName = "master";
 
-            public const string ApiControllerPreMasterName = "M";
-            public const string ApiControllerPreTenantName = "T";
+            public const char ApiControllerPreMasterKey = 'm';
+            public const char ApiControllerPreTenantTrackKey = 't';
+        }
+
+        public static class Api
+        {
+            public const string Version = "v1";
+            public readonly static string[] SupportedApiHttpMethods = { "GET", "PUT", "POST", "DELETE" };
         }
 
         public static class Sequence

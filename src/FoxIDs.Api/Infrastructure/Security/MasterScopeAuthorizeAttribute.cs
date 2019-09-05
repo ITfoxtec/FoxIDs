@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FoxIDs.Infrastructure.Security
 {
-    public class TenantAuthorizeAttribute : AuthorizeAttribute
+    public class MasterScopeAuthorizeAttribute : AuthorizeAttribute
     {
-        public const string Name = nameof(TenantAuthorizeAttribute);
+        public const string Name = nameof(MasterScopeAuthorizeAttribute);
 
-        public TenantAuthorizeAttribute() : base(Name)
+        public MasterScopeAuthorizeAttribute() : base(Name)
         {
             AuthenticationSchemes = JwtBearerMultipleTenantsHandler.AuthenticationScheme;
         }
@@ -16,8 +16,7 @@ namespace FoxIDs.Infrastructure.Security
         {
             options.AddPolicy(Name, policy =>
             {
-                policy.RequireClaim(JwtClaimTypes.Scope, "foxids_api:tenant");
-                policy.RequireClaim(JwtClaimTypes.Role, "master_admin");
+                policy.RequireScope("foxids_api:foxids_master");
             });
         }
     }

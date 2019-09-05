@@ -15,6 +15,7 @@ namespace FoxIDs.Repository
         Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool requered = true);
         Task CreateAsync<T>(T item) where T : IDataDocument;
         Task SaveAsync<T>(T item) where T : IDataDocument;
+        Task DeleteAsync<T>(string id) where T : IDataDocument;
         Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery) where T : IDataDocument;
     }
 }

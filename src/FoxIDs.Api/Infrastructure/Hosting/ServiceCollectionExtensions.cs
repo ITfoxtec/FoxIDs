@@ -72,8 +72,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddAuthorization(options =>
             {
-                MasterAuthorizeAttribute.AddPolicy(options);
-                TenantAuthorizeAttribute.AddPolicy(options);
+                MasterScopeAuthorizeAttribute.AddPolicy(options);
+                TenantScopeAuthorizeAttribute.AddPolicy(options);
             });
 
             return services;

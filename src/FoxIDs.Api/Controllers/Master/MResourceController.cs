@@ -2,6 +2,7 @@
 using FoxIDs.Model;
 using FoxIDs.Models;
 using FoxIDs.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace FoxIDs.Controllers
             this.masterService = masterService;
         }
 
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Post([FromBody] ResourceApiModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

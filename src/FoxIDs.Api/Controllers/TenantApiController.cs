@@ -1,12 +1,16 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FoxIDs.Controllers
 {
     [HttpSecurityHeaders]
-    [TenantAuthorize]
+    [TenantScopeAuthorize]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public abstract class TenantApiController : ControllerBase
     {
         private readonly TelemetryScopedLogger logger;
@@ -14,6 +18,8 @@ namespace FoxIDs.Controllers
         public TenantApiController(TelemetryScopedLogger logger)
         {
             this.logger = logger;
-        }   
+        }
+
+        public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
     }
 }

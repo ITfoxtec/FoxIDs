@@ -4,7 +4,10 @@ using FoxIDs.Models.Config;
 using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Helpers;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 
@@ -78,5 +81,49 @@ namespace FoxIDs.Infrastructure.Hosting
 
             return services;
         }
+
+        public static IServiceCollection AddApiSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = "header",
+                    Type = "apiKey"
+                });
+                c.TagActionsBy(s => new[]
+                {
+                    GetTagActionsBy(s.ActionDescriptor as ControllerActionDescriptor)
+                });
+
+                //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                //{
+                //    { "Bearer", new string[] { } }
+                //});
+            });
+
+            return services;
+        }
+
+        private static string GetTagActionsBy(ControllerActionDescriptor controllerActionDescriptor)
+        {
+            var controllerName = controllerActionDescriptor.ControllerName.ToLower();
+            if (controllerName.StartsWith(Constants.Routes.ApiControllerPreMasterKey))
+            {
+                return $"master {controllerName.Substring(1)}";
+            }
+            else if (controllerName.StartsWith(Constants.Routes.ApiControllerPreTenantTrackKey))
+            {
+                return $"tenant {controllerName.Substring(1)}";
+            }
+            else
+            {
+                throw new NotSupportedException("Only master and tenant controller supported.");
+            }
+        }
+
     }
 }

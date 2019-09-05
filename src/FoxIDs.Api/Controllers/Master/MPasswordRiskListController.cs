@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Controllers
 {
+    //[ApiExplorerSettings(GroupName = "PasswordRiskList")]
+    [Route("@master/!mpasswordrisklist")]
     public class MPasswordRiskListController : MasterApiController
     {
         private readonly TelemetryLogger logger;
@@ -20,6 +22,7 @@ namespace FoxIDs.Controllers
             this.masterService = masterService;
         }
 
+        [HttpPost]
         public async Task<IActionResult> Post([FromBody] RiskPasswordApiModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -40,6 +43,7 @@ namespace FoxIDs.Controllers
             return NoContent();
         }
 
+        [HttpDelete]
         public async Task<IActionResult> Delete(string passwordSha1Hash)
         {
             var passwordRiskList = new RiskPassword { Id = RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash }) };

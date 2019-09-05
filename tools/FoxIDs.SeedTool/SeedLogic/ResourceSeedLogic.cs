@@ -26,7 +26,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             this.accessLogic = accessLogic;
         }
 
-        public string ResourceApiEndpoint => UrlCombine.Combine(settings.FoxIDsMasterApiEndpoint, "Resource");
+        public string ResourceApiEndpoint => UrlCombine.Combine(settings.FoxIDsMasterApiEndpoint, "!resource");
 
         public async Task SeedAsync()
         {

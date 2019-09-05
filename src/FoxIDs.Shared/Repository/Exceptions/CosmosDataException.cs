@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Documents;
 using System;
+using System.Net;
 
 namespace FoxIDs.Repository
 {
@@ -17,14 +18,15 @@ namespace FoxIDs.Repository
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 
+        public HttpStatusCode? StatusCode => (InnerException as DocumentClientException)?.StatusCode;
+
         public override string Message => $"{base.Message}{GetStatus()}";
 
         private string GetStatus()
         {
-            if(InnerException is DocumentClientException)
+            if(StatusCode.HasValue)
             {
-                var iEx = InnerException as DocumentClientException;
-                return $" Status '{iEx.StatusCode} ({(int)iEx.StatusCode})'.";
+                return $" Status '{StatusCode} ({(int)StatusCode})'.";
             }
             return null;
         }

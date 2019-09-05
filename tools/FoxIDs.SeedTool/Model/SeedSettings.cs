@@ -59,7 +59,7 @@ namespace FoxIDs.SeedTool.Model
         /// <summary>
         /// FoxIDs master track api endpoint.
         /// </summary>
-        public string FoxIDsMasterTrackApiEndpoint => UrlCombine.Combine(FoxIDsApiEndpoint, "master");
+        public string FoxIDsMasterTrackApiEndpoint => UrlCombine.Combine(FoxIDsApiEndpoint, MasterTenant, MasterTrack);
 
         /// <summary>
         /// FoxIDs portal endpoint.

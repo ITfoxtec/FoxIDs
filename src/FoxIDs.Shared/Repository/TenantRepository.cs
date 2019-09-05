@@ -181,6 +181,34 @@ namespace FoxIDs.Repository
             }
         }
 
+        public async Task DeleteAsync<T>(string id) where T : IDataDocument
+        {
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToPartitionId();
+
+            double totalRU = 0;
+            try
+            {
+                var documentUri = UriFactory.CreateDocumentUri(databaseId, GetCollectionId<T>(), id);
+                var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
+                var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
+                totalRU += deleteResponse.RequestCharge;
+            }
+            catch (DocumentClientException ex)
+            {
+                throw new CosmosDataException(id, partitionId, ex);
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(id, partitionId, ex);
+            }
+            finally
+            {
+                logger.Trace($"CosmosDB RU '{totalRU}', tenant - delete document id '{id}', partitionId '{partitionId}'.");
+            }
+        }
+
         public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery) where T : IDataDocument
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

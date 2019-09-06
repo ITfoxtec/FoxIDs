@@ -23,7 +23,7 @@ namespace FoxIDs.Controllers
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Post([FromBody] RiskPasswordApiModel model)
+        public async Task<IActionResult> PostPasswordRiskList([FromBody] RiskPasswordApiModel model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(string passwordSha1Hash)
+        public async Task<IActionResult> DeletePasswordRiskList(string passwordSha1Hash)
         {
             try
             {

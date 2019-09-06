@@ -21,7 +21,7 @@ namespace FoxIDs.Controllers
 
         [ProducesResponseType(typeof(OAuthDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<OAuthDownParty>> Get(string id)
+        public async Task<ActionResult<OAuthDownParty>> GetOAuthDownParty(string id)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace FoxIDs.Controllers
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Post([FromBody] OAuthDownParty oauthDownParty)
+        public async Task<IActionResult> PostOAuthDownParty([FromBody] OAuthDownParty oauthDownParty)
         {
             //var msd = new ModelStateDictionary();
             //msd.
@@ -55,12 +55,12 @@ namespace FoxIDs.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             await tenantService.SaveAsync(oauthDownParty);
-            return CreatedAtAction(nameof(Get), new { id = oauthDownParty.Id }, oauthDownParty);
+            return CreatedAtAction(nameof(GetOAuthDownParty), new { id = oauthDownParty.Id }, oauthDownParty);
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteOAuthDownParty(string id)
         {
             try
             {

@@ -104,10 +104,11 @@ namespace FoxIDs.Infrastructure.Swagger
 
         private IEnumerable<string> GetHttpMethods(ControllerActionDescriptor action)
         {
-            var httpMethod = action.ActionName.ToUpper();
-            if(Constants.Api.SupportedApiHttpMethods.Contains(httpMethod))
+            var actionName = action.ActionName.ToUpper();
+            var httpMethods = Constants.Api.SupportedApiHttpMethods.Where(m => actionName.StartsWith(m)).ToList();
+            if (httpMethods.Any())
             {
-                return new[] { httpMethod };
+                return httpMethods;
             }
             else
             {

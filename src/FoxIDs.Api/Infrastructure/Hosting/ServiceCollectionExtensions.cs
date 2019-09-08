@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 
@@ -84,19 +85,37 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IServiceCollection AddApiSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerGen(c =>
+            services.AddSwaggerGen(s =>
             {
-                c.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                s.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
+                s.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = "header",
                     Type = "apiKey"
                 });
-                c.TagActionsBy(s => new[]
+                //s.AddSecurityDefinition("oauth2", new OAuth2Scheme
+                //{
+                //    Type = "oauth2",
+                //    Description = "OAuth2 App Authentication grant",
+                //    Flow = "application",
+                //    AuthorizationUrl = "https://login.microsoftonline.com/{TenantId}/oauth2/v2.0/authorize",
+                //    Scopes = new Dictionary<string, string>
+                //    {
+                        
+                //    }
+                //   ,
+                //    TokenUrl = "https://login.microsoftonline.com/{TenantId}/oauth2/token"
+
+                //});
+                //s.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                //{
+                //    {"oauth2",new string[]{ }},
+                //});
+                s.TagActionsBy(t => new[]
                 {
-                    GetTagActionsBy(s.ActionDescriptor as ControllerActionDescriptor)
+                    GetTagActionsBy(t.ActionDescriptor as ControllerActionDescriptor)
                 });
 
                 //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>

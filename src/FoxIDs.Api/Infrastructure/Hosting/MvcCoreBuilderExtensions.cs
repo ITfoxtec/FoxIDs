@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.Swagger;
+﻿using FoxIDs.Infrastructure.ApiDescription;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;

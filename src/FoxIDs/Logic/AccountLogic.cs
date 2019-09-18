@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
 
             ValidateEmail(email);
 
-            if (await tenantRepository.ExistsAsync<User>(User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email })))
+            if (await tenantRepository.ExistsAsync<User>(await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email })))
             {
                 throw new UserExistsException($"User '{email}' already exists.");
             }
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
 
             ValidateEmail(email);
 
-            var id = User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             var user = await tenantRepository.GetAsync<User>(id, false);
 
             if (user == null)
@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
             if (RouteBinding.CheckPasswordRisk)
             {                
                 var passwordSha1Hash = Sha1Hash(password);              
-                if (await masterRepository.ExistsAsync<RiskPassword>(RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
+                if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
                 {
                     throw new PasswordRiskException($"Password has appeared in a data breach and is at risk, user '{email}'.");
                 }

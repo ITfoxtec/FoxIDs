@@ -1,16 +1,21 @@
-﻿using FoxIDs.Infrastructure.KeyVault;
+﻿using AutoMapper;
+using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.MappingProfiles;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Helpers;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Net.Http;
+using System.Reflection;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -60,6 +65,9 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddHttpContextAccessor();
             services.AddHttpClient();
 
+            services.AddApiSwagger();
+            services.AddAutoMapper();
+
             return services;
         }
 
@@ -85,43 +93,46 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IServiceCollection AddApiSwagger(this IServiceCollection services)
         {
-            services.AddSwaggerGen(s =>
+            services.AddSwaggerGen(c =>
             {
-                s.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
-                s.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                c.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
+                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = "header",
                     Type = "apiKey"
                 });
-                //s.AddSecurityDefinition("oauth2", new OAuth2Scheme
-                //{
-                //    Type = "oauth2",
-                //    Description = "OAuth2 App Authentication grant",
-                //    Flow = "application",
-                //    AuthorizationUrl = "https://login.microsoftonline.com/{TenantId}/oauth2/v2.0/authorize",
-                //    Scopes = new Dictionary<string, string>
-                //    {
-                        
-                //    }
-                //   ,
-                //    TokenUrl = "https://login.microsoftonline.com/{TenantId}/oauth2/token"
-
-                //});
-                //s.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                //{
-                //    {"oauth2",new string[]{ }},
-                //});
-                s.TagActionsBy(t => new[]
+                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
                 {
-                    GetTagActionsBy(t.ActionDescriptor as ControllerActionDescriptor)
+                    {"Bearer", new string[] { }},
                 });
 
-                //c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
-                //{
-                //    { "Bearer", new string[] { } }
-                //});
+                c.TagActionsBy(s => new[]
+                {
+                    GetTagActionsBy(s.ActionDescriptor as ControllerActionDescriptor)
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
+
+            return services;
+        }
+
+        public static IServiceCollection AddAutoMapper(this IServiceCollection services)
+        {
+            services.AddSingleton(serviceProvider =>
+            {
+                var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+                var mappingConfig = new MapperConfiguration(mc =>
+                {
+                    mc.AddProfile(new MasterMappingProfile());
+                    mc.AddProfile(new TenantMappingProfiles(httpContextAccessor));
+                });
+
+                return mappingConfig.CreateMapper();
             });
 
             return services;

@@ -2,9 +2,9 @@
 using FoxIDs.Models;
 using System.Collections.Generic;
 
-namespace FoxIDs.Model
+namespace FoxIDs.Models.Api
 {
-    public class ResourceApiModel
+    public class Resource
     {
         [Length(0, 20, 5)]
         public List<string> SupportedCultures { get; set; }

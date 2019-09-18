@@ -68,31 +68,28 @@ namespace FoxIDs.Repository
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
 
-            return await ReadDocumentAsync<Tenant>(Tenant.IdFormat(new Tenant.IdKey { TenantName = tenantName }), Tenant.PartitionIdFormat(tenantName), requered);
+            return await ReadDocumentAsync<Tenant>(await Tenant.IdFormat(new Tenant.IdKey { TenantName = tenantName }), Tenant.PartitionIdFormat(tenantName), requered);
         }
 
         public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool requered = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            return await ReadDocumentAsync<Track>(Track.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<Track>(await Track.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
         }
 
         public async Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool requered = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            return await ReadDocumentAsync<UpParty>(UpParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<UpParty>(await UpParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
         }
 
         public async Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool requered = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            return await ReadDocumentAsync<DownParty>(DownParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<DownParty>(await DownParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
         }
 
         private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool requered, bool delete = false) where T : IDataDocument

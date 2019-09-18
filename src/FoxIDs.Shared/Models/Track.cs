@@ -9,7 +9,13 @@ namespace FoxIDs.Models
 {
     public class Track : DataDocument
     {
-        public static string IdFormat(IdKey idKey) => $"track:{idKey.TenantName}:{idKey.TrackName}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"track:{idKey.TenantName}:{idKey.TrackName}";
+        }
 
         [Required]
         [MaxLength(80)]
@@ -59,9 +65,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
 
         public class IdKey : Tenant.IdKey

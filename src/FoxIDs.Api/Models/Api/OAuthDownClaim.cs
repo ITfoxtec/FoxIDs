@@ -1,13 +1,11 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Api
 {
     public class OAuthDownClaim
     {
         [Required]
         [MaxLength(Constants.Models.OAuthParty.Client.ClaimLength)]
-        [JsonProperty(PropertyName = "claim")]
         public string Claim { get; set; }
     }
 }

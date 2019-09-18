@@ -14,18 +14,18 @@ namespace FoxIDs
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-           WebHost.CreateDefaultBuilder(args)
-               .UseApplicationInsights()
-               .ConfigureKestrel(options => options.AddServerHeader = false)
-               .ConfigureAppConfiguration((context, config) =>
-               {
-                   if (context.HostingEnvironment.IsProduction())
-                   {
-                       var builtConfig = config.Build();
-                       var keyVaultClient = FoxIDsKeyVaultClient.GetManagedClient();
-                       config.AddAzureKeyVault(builtConfig["Settings:KeyVault:EndpointUri"], keyVaultClient, new DefaultKeyVaultSecretManager());
-                   }
-               })
-               .UseStartup<Startup>();
+            WebHost.CreateDefaultBuilder(args)
+                .UseApplicationInsights()
+                .ConfigureKestrel(options => options.AddServerHeader = false)
+                .ConfigureAppConfiguration((context, config) =>
+                {
+                    var builtConfig = config.Build();
+                    if (context.HostingEnvironment.IsProduction())
+                    {
+                        var keyVaultClient = FoxIDsKeyVaultClient.GetManagedClient();
+                        config.AddAzureKeyVault(builtConfig["Settings:KeyVault:EndpointUri"], keyVaultClient, new DefaultKeyVaultSecretManager());
+                    }
+                })
+                .UseStartup<Startup>();
     }
 }

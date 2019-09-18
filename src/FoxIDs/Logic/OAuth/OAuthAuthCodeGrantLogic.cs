@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             var grantIdKey = new AuthCodeTtlGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Code = code };
             await grantIdKey.ValidateObjectAsync();
 
-            var grant = await tenantRepository.GetAsync<AuthCodeTtlGrant>(AuthCodeTtlGrant.IdFormat(grantIdKey), requered: false, delete: true);
+            var grant = await tenantRepository.GetAsync<AuthCodeTtlGrant>(await AuthCodeTtlGrant.IdFormat(grantIdKey), requered: false, delete: true);
             if (grant == null)
             {
                 throw new OAuthRequestException("Authorization code grant not found.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };

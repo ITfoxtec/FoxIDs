@@ -9,7 +9,13 @@ namespace FoxIDs.Models
 {
     public class AuthCodeTtlGrant : DataTtlDocument
     {
-        public static string IdFormat(IdKey idKey) => $"acgrant:{idKey.TenantName}:{idKey.TrackName}:{idKey.Code}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"acgrant:{idKey.TenantName}:{idKey.TrackName}:{idKey.Code}";
+        }
 
         [Required]
         [MaxLength(180)]
@@ -40,9 +46,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
 
         public class IdKey : Track.IdKey

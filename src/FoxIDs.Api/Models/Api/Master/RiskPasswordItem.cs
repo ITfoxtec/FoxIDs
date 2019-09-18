@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Model
+namespace FoxIDs.Models.Api
 {
-    public class RiskPasswordItemApiModel
+    public class RiskPasswordItem
     {
         [Required]
         [MaxLength(40)]

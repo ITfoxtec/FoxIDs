@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
                 if (sessionEnabled && sessionValid)
                 {
                     logger.SetScopeProperty("sessionId", session.SessionId);
-                    var id = User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email });
+                    var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email });
                     var user = await tenantRepository.GetAsync<User>(id, false);
                     if (user != null && user.UserId == session.UserId)
                     {

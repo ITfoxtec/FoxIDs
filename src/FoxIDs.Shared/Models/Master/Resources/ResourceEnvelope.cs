@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,7 +8,12 @@ namespace FoxIDs.Models
 {
     public class ResourceEnvelope : MasterDocument
     {
-        public static string IdFormat(IdKey idKey) => $"resource:{idKey.Master}";
+        public static string IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+
+            return $"resource:{idKey.Master}";
+        }
 
         [MaxLength(70)]
         [RegularExpression(@"^[\w@:_-]*$")]

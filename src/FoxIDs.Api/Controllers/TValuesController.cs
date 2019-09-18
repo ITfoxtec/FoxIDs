@@ -6,7 +6,7 @@ namespace FoxIDs.Controllers
     {
         // GET api/values
         // GET api/values/5
-        public ActionResult<IActionResult> GetValues(int? id)
+        public ActionResult<IActionResult> Get(int? id)
         {
             if(!id.HasValue)
             {
@@ -19,17 +19,17 @@ namespace FoxIDs.Controllers
         }
 
         // POST api/values
-        public void PostValues([FromBody] string value)
+        public void Post([FromBody] string value)
         {
         }
 
         // PUT api/values/5
-        public void PutValues(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] string value)
         {
         }
 
         // DELETE api/values/5
-        public void DeleteValues(int id)
+        public void Delete(int id)
         {
         }
     }

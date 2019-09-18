@@ -5,13 +5,13 @@ namespace FoxIDs.Models
 {
     public class PartyDataElement : DataElement
     {
-        [MaxLength(110)]
-        [RegularExpression(@"^[\w:_-]*$")]
+        [MaxLength(Constants.Models.OAuthParty.IdLength)]
+        [RegularExpression(Constants.Models.OAuthParty.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
         [Required]
-        [MaxLength(30)]
+        [MaxLength(Constants.Models.OAuthParty.TypeLength)]
         [JsonProperty(PropertyName = "type")]
         public string Type { get; set; }
 

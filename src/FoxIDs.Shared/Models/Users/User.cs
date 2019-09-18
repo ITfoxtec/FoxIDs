@@ -9,7 +9,13 @@ namespace FoxIDs.Models
 {
     public class User : DataDocument, ISecretHash
     {
-        public static string IdFormat(IdKey idKey) => $"user:{idKey.TenantName}:{idKey.TrackName}:{idKey.Email}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"user:{idKey.TenantName}:{idKey.TrackName}:{idKey.Email}";
+        }
 
         [Required]
         [MaxLength(140)]
@@ -47,9 +53,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
 
         public class IdKey : Track.IdKey

@@ -9,7 +9,13 @@ namespace FoxIDs.Models
 {
     public class ClaimMappingsDataElement : IDataElement
     {
-        public static string IdFormat(Track.IdKey idKey) => $"claimmap:{idKey.TenantName}:{idKey.TrackName}";
+        public static async  Task<string> IdFormat(Track.IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"claimmap:{idKey.TenantName}:{idKey.TrackName}";
+        }
 
         [Required]
         [MaxLength(90)]
@@ -24,9 +30,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(Track.IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
     }
 }

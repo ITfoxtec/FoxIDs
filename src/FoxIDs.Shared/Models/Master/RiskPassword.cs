@@ -1,11 +1,19 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
     public class RiskPassword : MasterDocument
     {
-        public static string IdFormat(IdKey idKey) => $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
+        }
 
         [MaxLength(70)]
         [RegularExpression(@"^[\w@:_-]*$")]

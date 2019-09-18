@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -34,8 +35,6 @@ namespace FoxIDs
 
             services.AddAuthenticationAndAuthorization(settings);
 
-            services.AddApiSwagger();
-
             services.AddHsts(options =>
             {
                 options.IncludeSubDomains = true;
@@ -59,22 +58,18 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app)
         {
-            if (!CurrentEnvironment.IsDevelopment())
+            if (CurrentEnvironment.IsDevelopment())
+            {
+                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
+            }
+            else
             {
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseProxyClientIpMiddleware();
             app.UseEnLocalization();
-
-            app.UseSwagger();
-#if DEBUG
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FoxIDs API");
-            });
-#endif
+            app.UseApiSwagger();
 
             app.UseMvc(routes =>
             {

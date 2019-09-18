@@ -1,6 +1,6 @@
 ﻿using FoxIDs.Infrastructure;
-using FoxIDs.Model;
 using FoxIDs.Models;
+using Api = FoxIDs.Models.Api;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +23,7 @@ namespace FoxIDs.Controllers
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PostPasswordRiskList([FromBody] RiskPasswordApiModel model)
+        public async Task<IActionResult> Post([FromBody] Api.RiskPassword model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
             {
                 riskPasswords.Add(new RiskPassword
                 {
-                    Id = RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = item.PasswordSha1Hash }),
+                    Id = await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = item.PasswordSha1Hash }),
                     Count = item.Count,
                     CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
                 });
@@ -45,11 +45,11 @@ namespace FoxIDs.Controllers
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeletePasswordRiskList(string passwordSha1Hash)
+        public async Task<IActionResult> Delete(string passwordSha1Hash)
         {
             try
             {
-                var passwordRiskList = new RiskPassword { Id = RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash }) };
+                var passwordRiskList = new RiskPassword { Id = await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash }) };
                 await masterService.DeleteAsync(passwordRiskList);
                 return NoContent();
             }

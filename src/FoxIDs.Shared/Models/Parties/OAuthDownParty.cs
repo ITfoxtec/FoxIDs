@@ -14,12 +14,9 @@ namespace FoxIDs.Models
     /// </summary>
     public class OAuthDownParty<TClient, TScope, TClaim> : DownParty, IValidatableObject where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
         public OAuthDownParty()
         {
-            Type = PartyType.OAuth2.ToString();
+            Type = PartyType.OAuth2;
         }
 
         private TClient client;

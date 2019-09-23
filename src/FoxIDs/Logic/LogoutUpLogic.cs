@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = logoutRequest.DownParty.Id,
-                DownPartyType = logoutRequest.DownParty.Type.ToString(),
+                DownPartyType = logoutRequest.DownParty.Type,
                 UpPartyId = party.Id,
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
@@ -49,9 +49,8 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type {type}.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();

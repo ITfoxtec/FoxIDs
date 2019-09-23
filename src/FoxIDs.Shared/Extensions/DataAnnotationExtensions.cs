@@ -44,6 +44,8 @@ namespace FoxIDs
 
         public static async Task ValidateObjectAsync(this object data)
         {
+            if (data == null) return;
+
             (var isValid, var results) = await ValidateObjectResultsAsync(data);
             if (!isValid)
             {

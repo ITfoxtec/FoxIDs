@@ -56,13 +56,13 @@ namespace FoxIDs.Logic
                 //},
                 AssertionConsumerServices = new AssertionConsumerService[]
                 {
-                    new AssertionConsumerService { Binding = ToSamleBindingUri(party.AuthnBinding.ResponseBinding.ToEnum<SamlBindingType>()), Location = acsDestination, },
+                    new AssertionConsumerService { Binding = ToSamleBindingUri(party.AuthnBinding.ResponseBinding), Location = acsDestination, },
                 },
             };
             if (party.LogoutBinding != null) {
                 entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
                 {
-                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.ResponseBinding.ToEnum<SamlBindingType>()), Location = singleLogoutDestination },
+                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.ResponseBinding), Location = singleLogoutDestination },
                 };
             }
 
@@ -94,14 +94,14 @@ namespace FoxIDs.Logic
                 //},
                 SingleSignOnServices = new SingleSignOnService[]
                 {
-                    new SingleSignOnService { Binding = ToSamleBindingUri(party.AuthnBinding.RequestBinding.ToEnum<SamlBindingType>()), Location = authnDestination, },
+                    new SingleSignOnService { Binding = ToSamleBindingUri(party.AuthnBinding.RequestBinding), Location = authnDestination, },
                 },
             };
             if (party.LogoutBinding != null)
             {
                 entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
                 {
-                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.RequestBinding.ToEnum<SamlBindingType>()), Location = logoutDestination },
+                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.RequestBinding), Location = logoutDestination },
                 };
             }
 

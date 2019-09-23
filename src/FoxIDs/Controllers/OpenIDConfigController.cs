@@ -33,9 +33,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var type = RouteBinding.DownParty.Type.ToEnum<PartyType>();
-                logger.ScopeTrace($"Openid configuration, Down type '{type}'");
-                switch (type)
+                logger.ScopeTrace($"Openid configuration, Down type '{RouteBinding.DownParty.Type}'");
+                switch (RouteBinding.DownParty.Type)
                 {
                     case PartyType.OAuth2:
                         return Json(await OpenidConfiguration<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>(), JsonExtensions.SettingsIndented);
@@ -44,7 +43,7 @@ namespace FoxIDs.Controllers
                         return Json(await OpenidConfiguration<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>(), JsonExtensions.SettingsIndented);
 
                     default:
-                        throw new NotSupportedException($"Party type '{type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -86,9 +85,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var type = RouteBinding.DownParty.Type.ToEnum<PartyType>();
-                logger.ScopeTrace($"Openid configuration keys, Down type '{type}'");
-                switch (type)
+                logger.ScopeTrace($"Openid configuration keys, Down type '{RouteBinding.DownParty.Type}'");
+                switch (RouteBinding.DownParty.Type)
                 {
                     case PartyType.OAuth2:
                     case PartyType.Oidc:
@@ -104,7 +102,7 @@ namespace FoxIDs.Controllers
                         return Json(jonWebKeySet, JsonExtensions.SettingsIndented);
 
                     default:
-                        throw new NotSupportedException($"Party type '{type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)

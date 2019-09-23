@@ -110,7 +110,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var trackKey = new TrackKey()
             {
-                Type = TrackKeyType.Contained.ToString(),
+                Type = TrackKeyType.Contained,
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };
             return trackKey;
@@ -122,12 +122,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var loginUpParty = new LoginUpParty
             {
-                Type = PartyType.Login.ToString(),
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.Never.ToString()
+                LogoutConsent = LoginUpPartyLogoutConsent.Never
             };
             await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = loginName });
             loginUpParty.SetPartitionId();

@@ -45,20 +45,19 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyId = loginRequest.DownParty.Id,
-                DownPartyType = loginRequest.DownParty.Type.ToString(),
+                DownPartyType = loginRequest.DownParty.Type,
             });
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
 
-            var binding = party.AuthnBinding.RequestBinding.ToEnum<SamlBindingType>();
-            switch (binding)
+            switch (party.AuthnBinding.RequestBinding)
             {
                 case SamlBindingType.Redirect:
                     return await AuthnRequestAsync(party, new Saml2RedirectBinding(), loginRequest);
                 case SamlBindingType.Post:
                     return await AuthnRequestAsync(party, new Saml2PostBinding(), loginRequest);
                 default:
-                    throw new NotSupportedException($"Binding '{binding}' not supported.");
+                    throw new NotSupportedException($"Binding '{party.AuthnBinding.RequestBinding}' not supported.");
             }
         }
 
@@ -107,16 +106,15 @@ namespace FoxIDs.Logic
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
 
-            var binding = party.AuthnBinding.ResponseBinding.ToEnum<SamlBindingType>();
-            logger.ScopeTrace($"Binding '{binding}'");
-            switch (binding)
+            logger.ScopeTrace($"Binding '{party.AuthnBinding.ResponseBinding}'");
+            switch (party.AuthnBinding.ResponseBinding)
             {
                 case SamlBindingType.Redirect:
                     return await AuthnResponseAsync(party, new Saml2RedirectBinding());
                 case SamlBindingType.Post:
                     return await AuthnResponseAsync(party, new Saml2PostBinding());
                 default:
-                    throw new NotSupportedException($"SAML binding '{binding}' not supported.");
+                    throw new NotSupportedException($"SAML binding '{party.AuthnBinding.ResponseBinding}' not supported.");
             }            
         }
 
@@ -195,9 +193,8 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, IEnumerable<Claim> claims = null)
         {
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type {type}.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();

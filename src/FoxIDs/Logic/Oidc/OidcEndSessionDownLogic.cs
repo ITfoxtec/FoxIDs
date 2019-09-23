@@ -78,7 +78,7 @@ namespace FoxIDs.Logic
                 State = endSessionRequest.State,
             });
 
-            var type = RouteBinding.ToUpParties.First().Type.ToEnum<PartyType>();
+            var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
             switch (type)
             {

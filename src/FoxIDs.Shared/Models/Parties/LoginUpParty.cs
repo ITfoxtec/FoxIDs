@@ -9,7 +9,7 @@ namespace FoxIDs.Models
     {
         public LoginUpParty()
         {
-            Type = PartyType.Login.ToString();
+            Type = PartyType.Login;
         }
 
         [Range(0, 21600)] // 0 minutes to 6 hours
@@ -38,7 +38,7 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
-        public string LogoutConsent { get; set; }
+        public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
 
         [Length(0, 40, 200)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]

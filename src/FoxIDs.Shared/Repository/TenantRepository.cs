@@ -109,7 +109,10 @@ namespace FoxIDs.Repository
                     var deleteResponse = await client.DeleteDocumentAsync(documentLink, requestOptions);
                     totalRU += deleteResponse.RequestCharge;
                 }
-                await response?.Document?.ValidateObjectAsync();
+                if (response != null)
+                {
+                    await response.Document.ValidateObjectAsync(); 
+                }
                 return response;
             }
             catch (DocumentClientException ex)
@@ -249,7 +252,7 @@ namespace FoxIDs.Repository
                     var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(item.Id), requestOptions);
                     totalRU += deleteResponse.RequestCharge;
                 }
-                await item?.ValidateObjectAsync();
+                await item.ValidateObjectAsync();
                 return item;
             }
             catch (Exception ex)

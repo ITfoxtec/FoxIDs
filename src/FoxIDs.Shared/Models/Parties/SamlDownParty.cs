@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.IdentityModel.Tokens;
+using System.ServiceModel.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Models
 {
@@ -11,7 +13,7 @@ namespace FoxIDs.Models
     {
         public SamlDownParty()
         {
-            Type = PartyType.Saml2.ToString();
+            Type = PartyType.Saml2;
         }
 
         [MaxLength(300)]
@@ -40,14 +42,12 @@ namespace FoxIDs.Models
         public string SignatureAlgorithm { get; set; }
 
         [Required]
-        [MaxLength(30)]
         [JsonProperty(PropertyName = "certificate_validation_mode")]
-        public string CertificateValidationMode { get; set; }
+        public X509CertificateValidationMode CertificateValidationMode { get; set; }
 
         [Required]
-        [MaxLength(30)]
         [JsonProperty(PropertyName = "revocation_mode")]
-        public string RevocationMode { get; set; }
+        public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
         [MaxLength(300)]

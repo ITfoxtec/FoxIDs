@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyId = logoutRequest.DownParty.Id,
-                DownPartyType = logoutRequest.DownParty.Type.ToString(),
+                DownPartyType = logoutRequest.DownParty.Type,
             });
 
             if (logoutRequest.RequireLogoutConsent)
@@ -60,15 +60,14 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
-            var binding = party.LogoutBinding.RequestBinding.ToEnum<SamlBindingType>();
-            switch (binding)
+            switch (party.LogoutBinding.RequestBinding)
             {
                 case SamlBindingType.Redirect:
                     return await LogoutAsync(party, new Saml2RedirectBinding(), logoutRequest);
                 case SamlBindingType.Post:
                     return await LogoutAsync(party, new Saml2PostBinding(), logoutRequest);
                 default:
-                    throw new NotSupportedException($"Binding '{binding}' not supported.");
+                    throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
             }
         }
 
@@ -130,16 +129,15 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
-            var binding = party.LogoutBinding.ResponseBinding.ToEnum<SamlBindingType>();
-            logger.ScopeTrace($"Binding '{binding}'");
-            switch (binding)
+            logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
+            switch (party.LogoutBinding.ResponseBinding)
             {
                 case SamlBindingType.Redirect:
                     return await LogoutResponseAsync(party, new Saml2RedirectBinding());
                 case SamlBindingType.Post:
                     return await LogoutResponseAsync(party, new Saml2PostBinding());
                 default:
-                    throw new NotSupportedException($"SAML binding '{binding}' not supported.");
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.ResponseBinding}' not supported.");
             }
         }
 
@@ -184,9 +182,8 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, string sessionIndex = null)
         {
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type {type}.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();

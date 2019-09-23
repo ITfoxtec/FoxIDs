@@ -44,15 +44,14 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
-            var binding = party.LogoutBinding.RequestBinding.ToEnum<SamlBindingType>();
-            switch (binding)
+            switch (party.LogoutBinding.RequestBinding)
             {
                 case SamlBindingType.Redirect:
                     return await LogoutRequestAsync(party, new Saml2RedirectBinding());
                 case SamlBindingType.Post:
                     return await LogoutRequestAsync(party, new Saml2PostBinding());
                 default:
-                    throw new NotSupportedException($"Binding '{binding}' not supported.");
+                    throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
             }
         }
 
@@ -85,7 +84,7 @@ namespace FoxIDs.Logic
                     ResponseUrl = party.LoggedOutUrl,
                 });
 
-                var type = RouteBinding.ToUpParties.First().Type.ToEnum<PartyType>();
+                var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {
@@ -111,7 +110,7 @@ namespace FoxIDs.Logic
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
-                return await LogoutResponseAsync(party.Id, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, saml2LogoutRequest.Destination?.OriginalString, party.AuthnBinding.ResponseBinding.ToEnum<SamlBindingType>(), ex.Status);
+                return await LogoutResponseAsync(party.Id, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, saml2LogoutRequest.Destination?.OriginalString, party.AuthnBinding.ResponseBinding, ex.Status);
             }
         }
 
@@ -180,16 +179,15 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
 
-            var binding = party.LogoutBinding.ResponseBinding.ToEnum<SamlBindingType>();
-            logger.ScopeTrace($"Binding '{binding}'");
-            switch (binding)
+            logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
+            switch (party.LogoutBinding.ResponseBinding)
             {
                 case SamlBindingType.Redirect:
                     return await LogoutResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2RedirectBinding(), status, sessionIndex);
                 case SamlBindingType.Post:
                     return await LogoutResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2PostBinding(), status, sessionIndex);
                 default:
-                    throw new NotSupportedException($"SAML binding '{binding}' not supported.");
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.ResponseBinding}' not supported.");
             }            
         }
 

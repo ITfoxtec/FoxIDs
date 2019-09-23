@@ -39,9 +39,9 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = loginRequest.DownParty.Id,
-                DownPartyType = loginRequest.DownParty.Type.ToString(),
+                DownPartyType = loginRequest.DownParty.Type,
                 UpPartyId = party.Id,
-                LoginAction = loginRequest.LoginAction.ToString(),
+                LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 EmailHint = loginRequest.EmailHint,
@@ -69,9 +69,8 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
 
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type {type}.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();
@@ -95,9 +94,8 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type '{type}'.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyType}'.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();
@@ -107,7 +105,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status: ErrorToSamlStatus(error));
 
                 default:
-                    throw new NotSupportedException($"Party type '{type}' not supported.");
+                    throw new NotSupportedException($"Party type '{sequenceData.DownPartyType}' not supported.");
             }
 
         }

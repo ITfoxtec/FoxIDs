@@ -11,9 +11,8 @@ namespace FoxIDs.Models
         public override string Id { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.OAuthParty.TypeLength)]
         [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        public PartyType Type { get; set; }
 
         [JsonIgnore]
         public string Name { get => Id.Substring(Id.LastIndexOf(':') + 1); }

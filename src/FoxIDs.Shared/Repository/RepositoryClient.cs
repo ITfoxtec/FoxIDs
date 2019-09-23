@@ -8,6 +8,7 @@ using System;
 using Microsoft.Extensions.Hosting;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Converters;
 
 namespace FoxIDs.Repository
 {
@@ -44,13 +45,16 @@ namespace FoxIDs.Repository
 
         private async Task CreateDocumentClient()
         {
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                DefaultValueHandling = DefaultValueHandling.Include,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+            };
+            jsonSerializerSettings.Converters.Add(new StringEnumConverter(typeof(CamelCaseNamingStrategy)));
+
             Client = new DocumentClient(serviceEndpont, settings.CosmosDb.PrimaryKey,
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    DefaultValueHandling = DefaultValueHandling.Include,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                },
+                jsonSerializerSettings,
                 new ConnectionPolicy
                 {
                     ConnectionMode = ConnectionMode.Direct,

@@ -11,6 +11,6 @@ namespace FoxIDs.Models.Sequences
 
         [Required]
         [JsonProperty(PropertyName = "dt")]
-        public string DownPartyType { get; set; }
+        public PartyType DownPartyType { get; set; }
     }
 }

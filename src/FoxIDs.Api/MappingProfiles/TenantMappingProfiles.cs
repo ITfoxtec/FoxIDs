@@ -22,8 +22,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<OAuthDownParty, Api.OAuthDownParty>()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Id.Substring(s.Id.LastIndexOf(':') + 1)))
                 .ReverseMap()
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()))
-                .ForMember(d => d.Type, opt => opt.MapFrom(s => ""));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
             CreateMap<OAuthDownClaim, Api.OAuthDownClaim>()
                 .ReverseMap();
             CreateMap<OAuthDownClient, Api.OAuthDownClient>()

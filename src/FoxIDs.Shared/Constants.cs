@@ -41,7 +41,6 @@ namespace FoxIDs
                 public const string IdRegExPattern = @"^[\w:_-]*$";
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w-_]*$";
-                public const int TypeLength = 10;
 
                 public const int AllowUpPartyNamesMin = 0;
                 public const int AllowUpPartyNamesMax = 2000;
@@ -66,7 +65,7 @@ namespace FoxIDs
                     public const int VoluntaryClaimsMax = 100;                    
                     public const int ResponseTypesMin = 1;
                     public const int ResponseTypesMax = 10;
-                    public const int ResponseTypeLength = 10;
+                    public const int ResponseTypeLength = 30;
                     public const int RedirectUrisMin = 1;
                     public const int RedirectUrisMax = 40;
                     public const int RedirectUriLength = 500;

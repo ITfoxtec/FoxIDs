@@ -1,16 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
 
 namespace FoxIDs.Models
 {
     public enum PartyType
     {
-        [JsonProperty(PropertyName = "login")]
-        Login,
-        [JsonProperty(PropertyName = "oauth2")]
-        OAuth2,
-        [JsonProperty(PropertyName = "oidc")]
-        Oidc,
-        [JsonProperty(PropertyName = "saml2")]
-        Saml2
+        [EnumMember(Value = "login")]
+        Login = 10,
+        [EnumMember(Value = "oauth2")]
+        OAuth2 = 20,
+        [EnumMember(Value = "oidc")]
+        Oidc = 30,
+        [EnumMember(Value = "saml2")]
+        Saml2 = 40
     }
 }

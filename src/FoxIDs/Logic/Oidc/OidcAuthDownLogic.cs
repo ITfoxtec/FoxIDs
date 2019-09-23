@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
                     Nonce = authenticationRequest.Nonce,
                 });
 
-                var type = RouteBinding.ToUpParties.First().Type.ToEnum<PartyType>();
+                var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {

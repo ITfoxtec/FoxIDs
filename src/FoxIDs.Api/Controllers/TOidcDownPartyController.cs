@@ -11,15 +11,15 @@ using AutoMapper;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OAuth 2.0 down party api.
+    /// OpenID Connect down party api.
     /// </summary>
-    public class TOAuthDownPartyController : TenantApiController
+    public class TOidcDownPartyController : TenantApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantService;
 
-        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TOidcDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -27,92 +27,92 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get OAuth 2.0 down party.
+        /// Get Oidc down party.
         /// </summary>
         /// <param name="name">Party id.</param>
-        /// <returns>OAuth 2.0 down party.</returns>
-        [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status200OK)]
+        /// <returns>Oidc down party.</returns>
+        [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OAuthDownParty>> Get(string name)
+        public async Task<ActionResult<Api.OidcDownParty>> Get(string name)
         {
             try
             {
                 if (!ModelState.TryValidateParameterAsync(name, nameof(name))) return BadRequest(ModelState);
 
-                var oauthDownParty = await tenantService.GetAsync<OAuthDownParty>(await DownParty.IdFormat(RouteBinding, name));
-                return Ok(mapper.Map<Api.OAuthDownParty>(oauthDownParty));
+                var oauthDownParty = await tenantService.GetAsync<OidcDownParty>(await DownParty.IdFormat(RouteBinding, name));
+                return Ok(mapper.Map<Api.OidcDownParty>(oauthDownParty));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"Get by name '{name}'.");
-                    return NotFound(nameof(Api.OAuthDownParty), name);
+                    return NotFound(nameof(Api.OidcDownParty), name);
                 }
                 throw;
             }
         }
 
         /// <summary>
-        /// Create OAuth 2.0 down party.
+        /// Create Oidc down party.
         /// </summary>
-        /// <param name="response">OAuth 2.0 down party.</param>
-        /// <returns>OAuth 2.0 down party.</returns>
-        [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status201Created)]
+        /// <param name="response">Oidc down party.</param>
+        /// <returns>Oidc down party.</returns>
+        [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OAuthDownParty>> Post([FromBody] Api.OAuthDownParty response)
+        public async Task<ActionResult<Api.OidcDownParty>> Post([FromBody] Api.OidcDownParty response)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(response)) return BadRequest(ModelState);
 
-                var oauthDownParty = mapper.Map<OAuthDownParty>(response);
+                var oauthDownParty = mapper.Map<OidcDownParty>(response);
                 await tenantService.CreateAsync(oauthDownParty);
 
-                return Created(mapper.Map<Api.OAuthDownParty>(oauthDownParty));
+                return Created(mapper.Map<Api.OidcDownParty>(oauthDownParty));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Create by name '{response.Name}'.");
-                    return Conflict(nameof(Api.OAuthDownParty), response.Name);
+                    return Conflict(nameof(Api.OidcDownParty), response.Name);
                 }
                 throw;
             }
         }
 
         /// <summary>
-        /// Update OAuth 2.0 down party.
+        /// Update Oidc down party.
         /// </summary>
-        /// <param name="response">OAuth 2.0 down party.</param>
-        /// <returns>OAuth 2.0 down party.</returns>
-        [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status200OK)]
+        /// <param name="response">Oidc down party.</param>
+        /// <returns>Oidc down party.</returns>
+        [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OAuthDownParty>> Put([FromBody] Api.OAuthDownParty response)
+        public async Task<ActionResult<Api.OidcDownParty>> Put([FromBody] Api.OidcDownParty response)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(response)) return BadRequest(ModelState);
 
-                var oauthDownParty = mapper.Map<OAuthDownParty>(response);
+                var oauthDownParty = mapper.Map<OidcDownParty>(response);
                 await tenantService.UpdateAsync(oauthDownParty);
 
-                return Ok(mapper.Map<Api.OAuthDownParty>(oauthDownParty));
+                return Ok(mapper.Map<Api.OidcDownParty>(oauthDownParty));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"Update by name '{response.Name}'.");
-                    return NotFound(nameof(Api.OAuthDownParty), response.Name);
+                    return NotFound(nameof(Api.OidcDownParty), response.Name);
                 }
                 throw;
             }
         }
 
         /// <summary>
-        /// Delete OAuth 2.0 down party.
+        /// Delete Oidc down party.
         /// </summary>
         /// <param name="name">Party id.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -123,7 +123,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateParameterAsync(name, nameof(name))) return BadRequest(ModelState);
 
-                await tenantService.DeleteAsync<OAuthDownParty>(await DownParty.IdFormat(RouteBinding, name));
+                await tenantService.DeleteAsync<OidcDownParty>(await DownParty.IdFormat(RouteBinding, name));
                 return NoContent();
             }
             catch (CosmosDataException ex)
@@ -131,7 +131,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"Delete by id '{name}'.");
-                    return NotFound(nameof(Api.OAuthDownParty), name);
+                    return NotFound(nameof(Api.OidcDownParty), name);
                 }
                 throw;
             }

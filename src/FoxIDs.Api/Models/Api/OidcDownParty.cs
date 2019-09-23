@@ -4,20 +4,24 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthDownParty : IValidatableObject, INameValue
+    public class OidcDownParty : IValidatableObject, INameValue
     {
         [MaxLength(Constants.Models.OAuthParty.NameLength)]
         [RegularExpression(Constants.Models.OAuthParty.NameRegExPattern)]
         public string Name { get; set; }
 
+        [Required]
+        [MaxLength(Constants.Models.OAuthParty.TypeLength)]
+        public string Type { get; set; }
+
         [Length(Constants.Models.OAuthParty.AllowUpPartyNamesMin, Constants.Models.OAuthParty.AllowUpPartyNamesMax, Constants.Models.OAuthParty.NameLength, Constants.Models.OAuthParty.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>
-        /// OAuth 2.0 down client.
+        /// Oidc down client.
         /// </summary>
         [ValidateObject]
-        public OAuthDownClient Client { get; set; }
+        public OidcDownClient Client { get; set; }
 
         /// <summary>
         /// OAuth 2.0 down resource.

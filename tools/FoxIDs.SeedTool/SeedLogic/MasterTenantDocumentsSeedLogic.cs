@@ -51,7 +51,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             await CreateDocumentsAsync();
 
             Console.WriteLine(string.Empty);
-            Console.WriteLine("Important: remember the password and secrets.");
+            Console.WriteLine("Important: remember the password and secrets");
             Console.WriteLine($"Master tenant documents created and saved in Cosmos DB");
         }
 

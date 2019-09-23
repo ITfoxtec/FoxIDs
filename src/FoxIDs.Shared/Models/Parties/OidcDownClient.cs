@@ -6,7 +6,7 @@ namespace FoxIDs.Models
     public class OidcDownClient : OidcDownClient<OidcDownScope, OidcDownClaim> { }
     public class OidcDownClient<TScope, TClaim> : OAuthDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
-        [Range(300, 86400)] // 5 minutes to 24 hours
+        [Range(Constants.Models.OidcParty.Client.IdTokenLifetimeMin, Constants.Models.OidcParty.Client.IdTokenLifetimeMax)]
         [JsonProperty(PropertyName = "id_token_lifetime")]
         public int IdTokenLifetime { get; set; }
 

@@ -75,7 +75,7 @@ namespace FoxIDs
 
                     public const int AuthorizationCodeLifetimeMin = 10; // 10 seconds 
                     public const int AuthorizationCodeLifetimeMax = 900; // 15 minutes
-                    public const int AccessTokenLifetimeMin = 30; // 5 minutes
+                    public const int AccessTokenLifetimeMin = 300; // 5 minutes
                     public const int AccessTokenLifetimeMax = 86400; // 24 hours
                     public const int RefreshTokenLifetimeMin = 900; // 15 minutes 
                     public const int RefreshTokenLifetimeMax = 15768000; // 6 month
@@ -87,6 +87,15 @@ namespace FoxIDs
                 {
                     public const int ScopesMin = 1;
                     public const int ScopesMax = 100;
+                }
+            }
+
+            public static class OidcParty
+            {
+                public static class Client
+                {
+                    public const int IdTokenLifetimeMin = 300; // 5 minutes
+                    public const int IdTokenLifetimeMax = 86400; // 24 hours
                 }
             }
         }

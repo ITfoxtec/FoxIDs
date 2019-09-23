@@ -100,13 +100,13 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var documentUri = UriFactory.CreateDocumentUri(databaseId, GetCollectionId<T>(), id);
+                var documentLink = GetDocumentLink<T>(id);
                 var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-                var response = await client.ReadDocumentAsync<T>(documentUri, requestOptions);
+                var response = await client.ReadDocumentAsync<T>(documentLink, requestOptions);
                 totalRU += response.RequestCharge;
                 if (delete)
                 {
-                    var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
+                    var deleteResponse = await client.DeleteDocumentAsync(documentLink, requestOptions);
                     totalRU += deleteResponse.RequestCharge;
                 }
                 await response?.Document?.ValidateObjectAsync();
@@ -154,6 +154,30 @@ namespace FoxIDs.Repository
             }
         }
 
+        public async Task UpdateAsync<T>(T item) where T : IDataDocument
+        {
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.SetPartitionId();
+            await item.ValidateObjectAsync();
+
+            double totalRU = 0;
+            try
+            {
+                var response = await client.ReplaceDocumentAsync(GetDocumentLink<T>(item.Id), item, new RequestOptions { PartitionKey = new PartitionKey(item.PartitionId) });
+                totalRU += response.RequestCharge;
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+            }
+            finally
+            {
+                logger.Trace($"CosmosDB RU '{totalRU}', tenant - update type '{typeof(T)}'.");
+            }
+        }
+
         public async Task SaveAsync<T>(T item) where T : IDataDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
@@ -187,9 +211,8 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var documentUri = UriFactory.CreateDocumentUri(databaseId, GetCollectionId<T>(), id);
                 var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-                var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
+                var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(id), requestOptions);
                 totalRU += deleteResponse.RequestCharge;
             }
             catch (DocumentClientException ex)
@@ -222,9 +245,8 @@ namespace FoxIDs.Repository
                 var item = response.FirstOrDefault();
                 if (item != null)
                 {
-                    var documentUri = UriFactory.CreateDocumentUri(databaseId, GetCollectionId<T>(), item.Id);
                     var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-                    var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
+                    var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(item.Id), requestOptions);
                     totalRU += deleteResponse.RequestCharge;
                 }
                 await item?.ValidateObjectAsync();
@@ -255,6 +277,11 @@ namespace FoxIDs.Repository
             {
                 return collectionId;
             }
+        }
+
+        private Uri GetDocumentLink<T>(string id) where T : IDataDocument
+        {
+            return UriFactory.CreateDocumentUri(databaseId, GetCollectionId<T>(), id);
         }
 
         private Uri GetCollectionLink<T>() where T : IDataDocument

@@ -63,5 +63,10 @@ namespace FoxIDs.Infrastructure.ApiDescription
         {
             return methodInfo.IsDefined(attributeType, inherit);
         }
+
+        public override MethodInfo MakeGenericMethod(params Type[] typeArguments)
+        {
+            return methodInfo.MakeGenericMethod(typeArguments);
+        }
     }
 }

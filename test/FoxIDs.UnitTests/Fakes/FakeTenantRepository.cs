@@ -49,6 +49,11 @@ namespace FoxIDs.UnitTests.Mocks
             return Task.CompletedTask;
         }
 
+        public Task UpdateAsync<T>(T item) where T : IDataDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SaveAsync<T>(T item) where T : IDataDocument
         {
             throw new NotImplementedException();

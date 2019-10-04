@@ -127,7 +127,7 @@ namespace FoxIDs.Logic
 
         private bool SessionEnabled(LoginUpParty loginUpParty)
         {
-            return loginUpParty.SessionLifetime > 0 || loginUpParty.PersistentAbsoluteSessionLifetime > 0 || loginUpParty.PersistentSessionLifetimeUnlimited.Value;
+            return loginUpParty.SessionLifetime > 0 || loginUpParty.PersistentSessionAbsoluteLifetime > 0 || loginUpParty.PersistentSessionLifetimeUnlimited.Value;
         }
 
         private DateTimeOffset? GetPersistentCookieExpires(LoginUpParty loginUpParty, long created)
@@ -136,9 +136,9 @@ namespace FoxIDs.Logic
             {
                 return DateTimeOffset.FromUnixTimeSeconds(created).AddYears(settings.PersistentSessionMaxUnlimitedLifetimeYears);
             }
-            else if(loginUpParty.PersistentAbsoluteSessionLifetime > 0)
+            else if(loginUpParty.PersistentSessionAbsoluteLifetime > 0)
             {
-                return DateTimeOffset.FromUnixTimeSeconds(created).AddSeconds(loginUpParty.PersistentAbsoluteSessionLifetime);
+                return DateTimeOffset.FromUnixTimeSeconds(created).AddSeconds(loginUpParty.PersistentSessionAbsoluteLifetime);
             }
             else
             {
@@ -156,7 +156,7 @@ namespace FoxIDs.Logic
             {
                 return true;
             }
-            else if (created.AddSeconds(loginUpParty.PersistentAbsoluteSessionLifetime) >= now)
+            else if (created.AddSeconds(loginUpParty.PersistentSessionAbsoluteLifetime) >= now)
             {
                 return true;
             }

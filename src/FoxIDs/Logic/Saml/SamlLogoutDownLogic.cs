@@ -101,7 +101,7 @@ namespace FoxIDs.Logic
                     case PartyType.Oidc:
                         throw new NotImplementedException();
                     case PartyType.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First().Id, GetSamlUpLogoutRequest(saml2LogoutRequest, party));
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlUpLogoutRequest(saml2LogoutRequest, party));
 
                     default:
                         throw new NotSupportedException($"Party type '{type}' not supported.");

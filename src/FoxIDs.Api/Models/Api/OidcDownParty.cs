@@ -6,11 +6,11 @@ namespace FoxIDs.Models.Api
 {
     public class OidcDownParty : IValidatableObject, INameValue
     {
-        [MaxLength(Constants.Models.OAuthParty.NameLength)]
-        [RegularExpression(Constants.Models.OAuthParty.NameRegExPattern)]
+        [MaxLength(Constants.Models.PartyNameLength)]
+        [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }
 
-        [Length(Constants.Models.OAuthParty.AllowUpPartyNamesMin, Constants.Models.OAuthParty.AllowUpPartyNamesMax, Constants.Models.OAuthParty.NameLength, Constants.Models.OAuthParty.NameRegExPattern)]
+        [Length(Constants.Models.OAuthDownParty.AllowUpPartyNamesMin, Constants.Models.OAuthDownParty.AllowUpPartyNamesMax, Constants.Models.PartyNameLength, Constants.Models.PartyNameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Allow cors origins.
         /// </summary>
-        [Length(Constants.Models.OAuthParty.AllowCorsOriginsMin, Constants.Models.OAuthParty.AllowCorsOriginsMax, Constants.Models.OAuthParty.AllowCorsOriginLength)]
+        [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

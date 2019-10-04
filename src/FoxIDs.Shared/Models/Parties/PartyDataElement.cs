@@ -5,8 +5,8 @@ namespace FoxIDs.Models
 {
     public class PartyDataElement : DataElement
     {
-        [MaxLength(Constants.Models.OAuthParty.IdLength)]
-        [RegularExpression(Constants.Models.OAuthParty.IdRegExPattern)]
+        [MaxLength(Constants.Models.PartyIdLength)]
+        [RegularExpression(Constants.Models.PartyIdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 

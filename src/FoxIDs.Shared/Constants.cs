@@ -35,13 +35,13 @@ namespace FoxIDs
 
         public static class Models
         {
-            public static class OAuthParty
-            {
-                public const int IdLength = 110;
-                public const string IdRegExPattern = @"^[\w:_-]*$";
-                public const int NameLength = 30;
-                public const string NameRegExPattern = @"^[\w-_]*$";
+            public const int PartyNameLength = 30;
+            public const string PartyNameRegExPattern = @"^[\w-_]*$";
+            public const int PartyIdLength = 110;
+            public const string PartyIdRegExPattern = @"^[\w:_-]*$";
 
+            public static class OAuthDownParty
+            {
                 public const int AllowUpPartyNamesMin = 0;
                 public const int AllowUpPartyNamesMax = 2000;
                 public const int AllowCorsOriginsMin = 0;
@@ -55,7 +55,6 @@ namespace FoxIDs
                 {
                     public const int ResourceScopesMin = 1;
                     public const int ResourceScopesMax = 50;
-                    public const int ResourceScopeLength = 30;
                     public const int ScopesMin = 0;
                     public const int ScopesMax = 100;
                     public const int ClaimsMin = 0;
@@ -89,13 +88,39 @@ namespace FoxIDs
                 }
             }
 
-            public static class OidcParty
+            public static class OidcDownParty
             {
                 public static class Client
                 {
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours
                 }
+            }
+
+            public static class LoginUpParty
+            {
+                public const int SessionLifetimeMin = 0; // 0 minutes 
+                public const int SessionLifetimeMax = 21600; // 6 hours
+                public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
+                public const int SessionAbsoluteLifetimeMax = 86400; // 24 hours
+                public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
+                public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
+                public const int AllowIframeOnDomainsMin = 0;
+                public const int AllowIframeOnDomainsMax = 40;
+                public const int AllowIframeOnDomainsLength = 200;
+                public const int CssStyleLength = 4000;
+            }
+
+            public static class SamlUpParty
+            {
+                public const int IssuerLength = 300;
+                public const int MetadataLifetimeMin = 86400; // 24 hours 
+                public const int MetadataLifetimeMax = 31536000; // 12 month
+                public const int SignatureAlgorithmLength = 100;
+                public const int AuthnUrlLength = 500;
+                public const int KeysMin = 1;
+                public const int KeysMax = 10;
+                public const int LogoutUrlLength = 500;
             }
         }
 

@@ -214,7 +214,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var portalClientDownParty = new OidcDownParty();
             await portalClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = portalClientName });
-            portalClientDownParty.AllowUpParties = new List<PartyDataElement> { new PartyDataElement { Id = loginUpParty.Id, Type = loginUpParty.Type } };
+            portalClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
             portalClientDownParty.Client = new OidcDownClient
             {
                 RedirectUris = portalClientRedirectUris.ToList(),

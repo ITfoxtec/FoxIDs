@@ -151,12 +151,12 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task<List<PartyDataElement>> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Group toUpPartyGroup, DownParty downParty)
+        private async Task<List<UpPartyLink>> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Group toUpPartyGroup, DownParty downParty)
         {
-            var toUpParties = new List<PartyDataElement>();
+            var toUpParties = new List<UpPartyLink>();
             if (toUpPartyGroup.Captures.Count > 5)
             {
-                throw new ArgumentException($"More then 5 to up party for down party '{downParty.Id}',");
+                throw new ArgumentException($"More then 5 to up party for down party '{downParty.Id}'.");
             }
 
             foreach (Capture upPartyCapture in toUpPartyGroup.Captures)

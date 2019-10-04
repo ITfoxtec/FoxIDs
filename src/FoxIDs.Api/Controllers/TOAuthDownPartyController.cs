@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -18,12 +19,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantService;
+        private readonly ValidatePartyLogic validatePartyLogic;
 
-        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantService = tenantService;
+            this.validatePartyLogic = validatePartyLogic;
         }
 
         /// <summary>
@@ -46,7 +49,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Get by name '{name}'.");
+                    logger.Warning(ex, $"Get '{nameof(Api.OAuthDownParty)}' by name '{name}'.");
                     return NotFound(nameof(Api.OAuthDownParty), name);
                 }
                 throw;
@@ -67,6 +70,8 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(response)) return BadRequest(ModelState);
 
                 var oauthDownParty = mapper.Map<OAuthDownParty>(response);
+                if (!await validatePartyLogic.ValidateAllowUpParties(ModelState, nameof(response.AllowUpPartyNames), oauthDownParty)) return BadRequest(ModelState);
+                if (!await validatePartyLogic.ValidateResourceScopes(ModelState, oauthDownParty)) return BadRequest(ModelState);
                 await tenantService.CreateAsync(oauthDownParty);
 
                 return Created(mapper.Map<Api.OAuthDownParty>(oauthDownParty));
@@ -75,7 +80,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Create by name '{response.Name}'.");
+                    logger.Warning(ex, $"Create '{nameof(Api.OAuthDownParty)}' by name '{response.Name}'.");
                     return Conflict(nameof(Api.OAuthDownParty), response.Name);
                 }
                 throw;
@@ -96,6 +101,8 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(response)) return BadRequest(ModelState);
 
                 var oauthDownParty = mapper.Map<OAuthDownParty>(response);
+                if (!await validatePartyLogic.ValidateAllowUpParties(ModelState, nameof(response.AllowUpPartyNames), oauthDownParty)) return BadRequest(ModelState);
+                if (!await validatePartyLogic.ValidateResourceScopes(ModelState, oauthDownParty)) return BadRequest(ModelState);
                 await tenantService.UpdateAsync(oauthDownParty);
 
                 return Ok(mapper.Map<Api.OAuthDownParty>(oauthDownParty));
@@ -104,7 +111,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Update by name '{response.Name}'.");
+                    logger.Warning(ex, $"Update '{nameof(Api.OAuthDownParty)}' by name '{response.Name}'.");
                     return NotFound(nameof(Api.OAuthDownParty), response.Name);
                 }
                 throw;
@@ -130,7 +137,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Delete by id '{name}'.");
+                    logger.Warning(ex, $"Delete '{nameof(Api.OAuthDownParty)}' by id '{name}'.");
                     return NotFound(nameof(Api.OAuthDownParty), name);
                 }
                 throw;

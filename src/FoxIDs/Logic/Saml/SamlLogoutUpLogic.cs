@@ -35,9 +35,10 @@ namespace FoxIDs.Logic
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
-        public async Task<IActionResult> LogoutAsync(string partyId, LogoutRequest logoutRequest)
+        public async Task<IActionResult> LogoutAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
             logger.ScopeTrace("Up, SAML Logout request.");
+            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await logoutRequest.ValidateObjectAsync();

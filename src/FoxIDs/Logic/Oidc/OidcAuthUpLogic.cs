@@ -19,7 +19,7 @@ namespace FoxIDs.Logic
             this.tenantRepository = tenantRepository;
         }
 
-        public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
+        public async Task<IActionResult> AuthenticationRequestAsync(UpPartyLink partyLink)
         {
             throw new NotImplementedException();
         }

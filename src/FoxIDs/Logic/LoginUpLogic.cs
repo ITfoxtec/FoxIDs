@@ -29,10 +29,11 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> LoginRedirect(PartyDataElement party, LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirect(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, Login redirect.");
-            logger.SetScopeProperty("upPartyId", party.Id);
+            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();
 
@@ -40,14 +41,14 @@ namespace FoxIDs.Logic
             {
                 DownPartyId = loginRequest.DownParty.Id,
                 DownPartyType = loginRequest.DownParty.Type,
-                UpPartyId = party.Id,
+                UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 EmailHint = loginRequest.EmailHint,
                 Culture = loginRequest.Culture
             });
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({party.Name})/login/_{SequenceString}");
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");
         }
 
         public async Task<IActionResult> LoginResponseAsync(User user, long authTime, IEnumerable<string> authMethods, string sessionId)

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -18,12 +19,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantService;
+        private readonly ValidatePartyLogic validatePartyLogic;
 
-        public TOidcDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TOidcDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantService = tenantService;
+            this.validatePartyLogic = validatePartyLogic;
         }
 
         /// <summary>
@@ -39,14 +42,14 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateParameterAsync(name, nameof(name))) return BadRequest(ModelState);
 
-                var oauthDownParty = await tenantService.GetAsync<OidcDownParty>(await DownParty.IdFormat(RouteBinding, name));
-                return Ok(mapper.Map<Api.OidcDownParty>(oauthDownParty));
+                var oidcDownParty = await tenantService.GetAsync<OidcDownParty>(await DownParty.IdFormat(RouteBinding, name));
+                return Ok(mapper.Map<Api.OidcDownParty>(oidcDownParty));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Get by name '{name}'.");
+                    logger.Warning(ex, $"Get '{nameof(Api.OidcDownParty)}' by name '{name}'.");
                     return NotFound(nameof(Api.OidcDownParty), name);
                 }
                 throw;
@@ -66,16 +69,18 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(response)) return BadRequest(ModelState);
 
-                var oauthDownParty = mapper.Map<OidcDownParty>(response);
-                await tenantService.CreateAsync(oauthDownParty);
+                var oidcDownParty = mapper.Map<OidcDownParty>(response);
+                if (!await validatePartyLogic.ValidateAllowUpParties(ModelState, nameof(response.AllowUpPartyNames), oidcDownParty)) return BadRequest(ModelState);
+                if (!await validatePartyLogic.ValidateResourceScopes(ModelState, oidcDownParty)) return BadRequest(ModelState);
+                await tenantService.CreateAsync(oidcDownParty);
 
-                return Created(mapper.Map<Api.OidcDownParty>(oauthDownParty));
+                return Created(mapper.Map<Api.OidcDownParty>(oidcDownParty));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Create by name '{response.Name}'.");
+                    logger.Warning(ex, $"Create '{nameof(Api.OidcDownParty)}' by name '{response.Name}'.");
                     return Conflict(nameof(Api.OidcDownParty), response.Name);
                 }
                 throw;
@@ -95,16 +100,18 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(response)) return BadRequest(ModelState);
 
-                var oauthDownParty = mapper.Map<OidcDownParty>(response);
-                await tenantService.UpdateAsync(oauthDownParty);
+                var oidcDownParty = mapper.Map<OidcDownParty>(response);
+                if (!await validatePartyLogic.ValidateAllowUpParties(ModelState, nameof(response.AllowUpPartyNames), oidcDownParty)) return BadRequest(ModelState);
+                if (!await validatePartyLogic.ValidateResourceScopes(ModelState, oidcDownParty)) return BadRequest(ModelState);
+                await tenantService.UpdateAsync(oidcDownParty);
 
-                return Ok(mapper.Map<Api.OidcDownParty>(oauthDownParty));
+                return Ok(mapper.Map<Api.OidcDownParty>(oidcDownParty));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Update by name '{response.Name}'.");
+                    logger.Warning(ex, $"Update '{nameof(Api.OidcDownParty)}' by name '{response.Name}'.");
                     return NotFound(nameof(Api.OidcDownParty), response.Name);
                 }
                 throw;
@@ -130,7 +137,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Delete by id '{name}'.");
+                    logger.Warning(ex, $"Delete '{nameof(Api.OidcDownParty)}' by id '{name}'.");
                     return NotFound(nameof(Api.OidcDownParty), name);
                 }
                 throw;

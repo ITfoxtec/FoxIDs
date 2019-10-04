@@ -35,9 +35,10 @@ namespace FoxIDs.Logic
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
-        public async Task<IActionResult> AuthnRequestAsync(string partyId, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthnRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, SAML Authn request.");
+            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();

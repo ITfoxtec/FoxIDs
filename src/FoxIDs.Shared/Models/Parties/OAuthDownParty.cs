@@ -54,7 +54,7 @@ namespace FoxIDs.Models
         /// <summary>
         /// Allow cors origins.
         /// </summary>
-        [Length(Constants.Models.OAuthParty.AllowCorsOriginsMin, Constants.Models.OAuthParty.AllowCorsOriginsMax, Constants.Models.OAuthParty.AllowCorsOriginLength)]
+        [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         [JsonProperty(PropertyName = "allow_cors_origins")]
         public List<string> AllowCorsOrigins { get; set; }
 

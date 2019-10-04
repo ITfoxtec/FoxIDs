@@ -7,11 +7,11 @@ namespace FoxIDs.Models.Api
     public class OidcDownScope
     {
         [Required]
-        [MaxLength(Constants.Models.OAuthParty.ScopesLength)]
-        [RegularExpression(Constants.Models.OAuthParty.ScopeRegExPattern)]
+        [MaxLength(Constants.Models.OAuthDownParty.ScopesLength)]
+        [RegularExpression(Constants.Models.OAuthDownParty.ScopeRegExPattern)]
         public string Scope { get; set; }
 
-        [Length(Constants.Models.OAuthParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthParty.Client.VoluntaryClaimsMax)]
+        [Length(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
         public List<OidcDownClaim> VoluntaryClaims { get; set; }
     }
 }

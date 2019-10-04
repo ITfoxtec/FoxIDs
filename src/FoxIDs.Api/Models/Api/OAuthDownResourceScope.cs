@@ -7,10 +7,10 @@ namespace FoxIDs.Models.Api
     public class OAuthDownResourceScope
     {
         [Required]
-        [MaxLength(Constants.Models.OAuthParty.Client.ResourceScopeLength)]
+        [MaxLength(Constants.Models.PartyNameLength)]
         public string Resource { get; set; }
 
-        [Length(Constants.Models.OAuthParty.Client.ScopesMin, Constants.Models.OAuthParty.Client.ScopesMax, Constants.Models.OAuthParty.ScopesLength)]
+        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopesLength)]
         public List<string> Scopes { get; set; }
     }
 }

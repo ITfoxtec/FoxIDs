@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Logic;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity.Discovery;
@@ -24,6 +25,9 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddSharedLogic();
+
+            services.AddTransient<ValidatePartyLogic>();
+            services.AddTransient<ValidateSamlPartyLogic>();
 
             return services;
         }
@@ -128,6 +132,8 @@ namespace FoxIDs.Infrastructure.Hosting
                 var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
                 var mappingConfig = new MapperConfiguration(mc =>
                 {
+                    mc.AllowNullCollections = true;
+
                     mc.AddProfile(new MasterMappingProfile());
                     mc.AddProfile(new TenantMappingProfiles(httpContextAccessor));
                 });

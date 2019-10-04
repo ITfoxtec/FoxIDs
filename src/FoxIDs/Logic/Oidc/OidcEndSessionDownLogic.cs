@@ -100,7 +100,7 @@ namespace FoxIDs.Logic
                     {
                         throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up Party.") { RouteBinding = RouteBinding };
                     }
-                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First().Id, GetSamlUpLogoutRequest( party, sessionId, idTokenClaims));
+                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlUpLogoutRequest( party, sessionId, idTokenClaims));
 
                 default:
                     throw new NotSupportedException($"Party type '{type}' not supported.");

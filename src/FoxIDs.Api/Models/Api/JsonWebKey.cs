@@ -2,6 +2,9 @@
 
 namespace FoxIDs.Models.Api
 {
+    /// <summary>
+    /// Work around until https://github.com/RicoSuter/NJsonSchema/pull/1073 is resolved.
+    /// </summary>
     public class JsonWebKey
     {
         public string Kid { get; set; }

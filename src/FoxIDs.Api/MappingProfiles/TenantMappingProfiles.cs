@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
@@ -27,11 +26,8 @@ namespace FoxIDs.MappingProfiles
         {
             CreateMap<JsonWebKey, Api.JsonWebKey>()
                 .ReverseMap()
-                //.AfterMap((s, d) => { if (d.Oth?.Count() < 1) d.Oth = null; });
-                .BeforeMap((s, d) => { if (s.KeyOps?.Count() < 1) s.KeyOps = new List<string>(); })
-                .ForCtorParam("json", opt => {
-                    opt.MapFrom(s => s.ToJson());
-                });
+                .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
+                .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));
         }
 
         private void UpMapping()

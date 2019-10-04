@@ -7,20 +7,34 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlUpParty : INameValue
+    public class SamlDownParty : INameValue
     {
         [MaxLength(Constants.Models.PartyNameLength)]
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }
 
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.PartyNameLength, Constants.Models.PartyNameRegExPattern)]
+        public List<string> AllowUpPartyNames { get; set; }
+
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         public string IdSIssuer { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+
+        [Length(Constants.Models.SamlParty.Down.ClaimsMin, Constants.Models.SamlParty.Down.ClaimsMax, Constants.Models.SamlParty.Down.ClaimsLength)]
+        public List<string> Claims { get; set; }
 
         /// <summary>
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
         public int MetadataLifetime { get; set; } = 1728000;
+
+        [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]
+        public int SubjectConfirmationLifetime { get; set; }
+
+        [Range(Constants.Models.SamlParty.Down.IssuedTokenLifetimeMin, Constants.Models.SamlParty.Down.IssuedTokenLifetimeMax)]
+        public int IssuedTokenLifetime { get; set; }
 
         /// <summary>
         /// Default SHA256.
@@ -48,18 +62,19 @@ namespace FoxIDs.Models.Api
         [Required]
         public SamlBinding AuthnBinding { get; set; }
 
-        [Required]
-        [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
-        public string AuthnUrl { get; set; }
-
-        [Required]
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
-        public List<JsonWebKey> Keys { get; set; }
+        [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
+        public List<string> AcsUrls { get; set; }
 
         [ValidateObject]
         public SamlBinding LogoutBinding { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
-        public string LogoutUrl { get; set; }
+        [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
+        public string SingleLogoutUrl { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
+        public string LoggedOutUrl { get; set; }
+
+        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        public List<JsonWebKey> Keys { get; set; }
     }
 }

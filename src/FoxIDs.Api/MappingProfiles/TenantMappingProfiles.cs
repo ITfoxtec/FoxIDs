@@ -28,6 +28,9 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
                 .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));
+
+            CreateMap<SamlBinding, Api.SamlBinding>()
+                .ReverseMap();
         }
 
         private void UpMapping()
@@ -41,8 +44,6 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
-            CreateMap<SamlBinding, Api.SamlBinding>()
-                .ReverseMap();            
         }
 
         private void DownMapping()
@@ -76,6 +77,13 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<OidcDownScope, Api.OidcDownScope>()
                 .ReverseMap();
+
+            CreateMap<SamlDownParty, Api.SamlDownParty>()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
+                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
+                .ReverseMap()
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()))
+                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n })));
         }
     }
 }

@@ -34,7 +34,7 @@ namespace FoxIDs.Models
             return await IdFormat(idKey);
         }
 
-        [Length(Constants.Models.OAuthDownParty.AllowUpPartyNamesMin, Constants.Models.OAuthDownParty.AllowUpPartyNamesMax)]
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
         [JsonProperty(PropertyName = "allow_up_parties")]
         public List<UpPartyLink> AllowUpParties { get; set; }
 

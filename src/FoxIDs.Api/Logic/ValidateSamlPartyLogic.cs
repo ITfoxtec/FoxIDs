@@ -16,19 +16,22 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
+        public bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty) => ValidateSignatureAlgorithm(modelState, nameof(samlUpParty.SignatureAlgorithm), samlUpParty.SignatureAlgorithm);
+        public bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty) => ValidateSignatureAlgorithm(modelState, nameof(samlDownParty.SignatureAlgorithm), samlDownParty.SignatureAlgorithm);
+
+        private bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, string propertyName, string signatureAlgorithm)
         {
             var isValid = true;
             try
             {
-                SignatureAlgorithm.ValidateAlgorithm(samlUpParty.SignatureAlgorithm);
+                SignatureAlgorithm.ValidateAlgorithm(signatureAlgorithm);
             }
             catch (NotSupportedException nsex)
             {
                 isValid = false;
-                var errorMessage = $"Signature algorithm '{samlUpParty.SignatureAlgorithm}' not supported.";
+                var errorMessage = $"Signature algorithm '{signatureAlgorithm}' not supported.";
                 logger.Warning(nsex, errorMessage);
-                modelState.TryAddModelError(nameof(samlUpParty.SignatureAlgorithm).ToCamelCase(), $"{errorMessage}{nsex.Message}");
+                modelState.TryAddModelError(propertyName.ToCamelCase(), $"{errorMessage}{nsex.Message}");
             }
             return isValid;
         }

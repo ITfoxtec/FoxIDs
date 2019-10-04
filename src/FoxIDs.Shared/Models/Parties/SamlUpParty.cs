@@ -16,16 +16,16 @@ namespace FoxIDs.Models
             Type = PartyType.Saml2;
         }
 
-        [MaxLength(Constants.Models.SamlUpParty.IssuerLength)]
+        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "ids_issuer")]
         public string IdSIssuer { get; set; }
 
-        [Range(Constants.Models.SamlUpParty.MetadataLifetimeMin, Constants.Models.SamlUpParty.MetadataLifetimeMax)] 
+        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)] 
         [JsonProperty(PropertyName = "metadata_lifetime")]
         public int MetadataLifetime { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlUpParty.SignatureAlgorithmLength)]
+        [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
         [JsonProperty(PropertyName = "signature_algorithm")]
         public string SignatureAlgorithm { get; set; }
 
@@ -38,7 +38,7 @@ namespace FoxIDs.Models
         public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlUpParty.IssuerLength)]
+        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
         public string Issuer { get; set; }
 
@@ -47,12 +47,12 @@ namespace FoxIDs.Models
         public SamlBinding AuthnBinding { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlUpParty.AuthnUrlLength)]
+        [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
         [JsonProperty(PropertyName = "authn_url")]
         public string AuthnUrl { get; set; }
 
         [Required]
-        [Length(Constants.Models.SamlUpParty.KeysMin, Constants.Models.SamlUpParty.KeysMax)]
+        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
 
@@ -60,7 +60,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_binding")]
         public SamlBinding LogoutBinding { get; set; }
 
-        [MaxLength(Constants.Models.SamlUpParty.LogoutUrlLength)]
+        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [JsonProperty(PropertyName = "logout_url")]
         public string LogoutUrl { get; set; }
     }

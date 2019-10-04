@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace FoxIDs.Infrastructure.ApiDescription
 {
@@ -67,6 +68,31 @@ namespace FoxIDs.Infrastructure.ApiDescription
         public override MethodInfo MakeGenericMethod(params Type[] typeArguments)
         {
             return methodInfo.MakeGenericMethod(typeArguments);
+        }
+
+        public override Type[] GetGenericArguments()
+        {
+            return methodInfo.GetGenericArguments();
+        }
+
+        public override MethodInfo GetGenericMethodDefinition()
+        {
+            return methodInfo.GetGenericMethodDefinition();
+        }
+
+        public override bool IsGenericMethod
+        {
+            get { return methodInfo.IsGenericMethod; }
+        }
+
+        public override bool IsGenericMethodDefinition
+        {
+            get { return methodInfo.IsGenericMethodDefinition; }
+        }
+
+        public override bool ContainsGenericParameters
+        {
+            get { return methodInfo.ContainsGenericParameters; }
         }
     }
 }

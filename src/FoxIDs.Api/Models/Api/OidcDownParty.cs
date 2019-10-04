@@ -10,7 +10,7 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.AllowUpPartyNamesMin, Constants.Models.OAuthDownParty.AllowUpPartyNamesMax, Constants.Models.PartyNameLength, Constants.Models.PartyNameRegExPattern)]
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.PartyNameLength, Constants.Models.PartyNameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>

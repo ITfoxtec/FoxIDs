@@ -40,10 +40,14 @@ namespace FoxIDs
             public const int PartyIdLength = 110;
             public const string PartyIdRegExPattern = @"^[\w:_-]*$";
 
-            public static class OAuthDownParty
+            public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;
-                public const int AllowUpPartyNamesMax = 2000;
+                public const int AllowUpPartyNamesMax = 2000;            
+            }
+
+            public static class OAuthDownParty
+            {
                 public const int AllowCorsOriginsMin = 0;
                 public const int AllowCorsOriginsMax = 40;
                 public const int AllowCorsOriginLength = 200;
@@ -111,16 +115,37 @@ namespace FoxIDs
                 public const int CssStyleLength = 4000;
             }
 
-            public static class SamlUpParty
+            public static class SamlParty
             {
                 public const int IssuerLength = 300;
                 public const int MetadataLifetimeMin = 86400; // 24 hours 
                 public const int MetadataLifetimeMax = 31536000; // 12 month
                 public const int SignatureAlgorithmLength = 100;
-                public const int AuthnUrlLength = 500;
                 public const int KeysMin = 1;
                 public const int KeysMax = 10;
-                public const int LogoutUrlLength = 500;
+
+                public static class Up
+                {
+                    public const int AuthnUrlLength = 500;
+                    public const int LogoutUrlLength = 500;
+                }
+
+                public static class Down
+                {
+                    public const int ClaimsMin = 0;
+                    public const int ClaimsMax = 500;
+                    public const int ClaimsLength = 500;
+                    public const int SubjectConfirmationLifetimeMin = 60; // 1 minutes 
+                    public const int SubjectConfirmationLifetimeMax = 900; // 15 minutes
+                    public const int IssuedTokenLifetimeMin = 300; // 5 minutes 
+                    public const int IssuedTokenLifetimeMax = 86400; // 24 hours
+                    public const int AcsUrlsMin = 1;
+                    public const int AcsUrlsMax = 10;
+                    public const int AcsUrlsLength = 500;
+                    public const int SingleLogoutUrlLength = 500;
+                    public const int LoggedOutUrlLength = 500;
+
+                }
             }
         }
 

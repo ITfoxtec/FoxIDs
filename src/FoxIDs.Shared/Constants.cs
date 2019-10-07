@@ -181,6 +181,7 @@ namespace FoxIDs
             public const string SamlLogout = "Logout";
             public const string SamlAcs = "Acs";
             public const string SamlSingleLogout = "SingleLogout";
+            public const string SamlLoggedOut = "LoggedOut";
         }
 
         public static class OAuth
@@ -200,6 +201,7 @@ namespace FoxIDs
             public const string RelayState = "RelayState";
         }
 
+        /// <summary>
         /// Default claims.
         /// </summary>
         public static class DefaultClaims

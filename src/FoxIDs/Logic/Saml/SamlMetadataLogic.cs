@@ -39,6 +39,7 @@ namespace FoxIDs.Logic
 
             var acsDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
             var singleLogoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout));
+            var singleLogoutResponseDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlLoggedOut));
 
             var entityDescriptor = new EntityDescriptor(samlConfig);
             entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
@@ -59,10 +60,11 @@ namespace FoxIDs.Logic
                     new AssertionConsumerService { Binding = ToSamleBindingUri(party.AuthnBinding.ResponseBinding), Location = acsDestination, },
                 },
             };
-            if (party.LogoutBinding != null) {
+            if (party.LogoutBinding != null)
+            {
                 entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
                 {
-                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.ResponseBinding), Location = singleLogoutDestination },
+                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.ResponseBinding), Location = singleLogoutDestination, ResponseLocation = singleLogoutResponseDestination },
                 };
             }
 

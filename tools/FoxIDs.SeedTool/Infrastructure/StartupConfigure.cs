@@ -4,7 +4,6 @@ using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using FoxIDs.SeedTool.Logic;
 using FoxIDs.SeedTool.Model;
 using FoxIDs.SeedTool.SeedLogic;
@@ -24,11 +23,6 @@ namespace FoxIDs.SeedTool.Infrastructure
         public IServiceProvider ConfigureServices()
         {
             services = new ServiceCollection();
-            services.AddLogging(opt =>
-            {
-                opt.AddConsole();
-                opt.AddDebug();
-            });
 
             AddConfiguration();
             AddInfrastructure(services);
@@ -51,7 +45,7 @@ namespace FoxIDs.SeedTool.Infrastructure
         {
             services.AddTransient<SecretHashLogic>();
 
-            services.AddTransient<AccessLogic>();            
+            services.AddSingleton<AccessLogic>();            
         }
 
         private static void AddRepository(ServiceCollection services)

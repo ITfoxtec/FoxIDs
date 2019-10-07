@@ -29,6 +29,11 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
                 .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));
 
+            CreateMap<OAuthClientSecret, Api.OAuthClientSecretResponse>()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Id))
+                .ReverseMap()
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Name.GetFirstInDotList()));
+
             CreateMap<SamlBinding, Api.SamlBinding>()
                 .ReverseMap();
         }

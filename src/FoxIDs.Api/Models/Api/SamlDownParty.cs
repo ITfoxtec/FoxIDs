@@ -7,8 +7,9 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlDownParty : INameValue
+    public class SamlDownParty : IDownParty, INameValue
     {
+        [Required]
         [MaxLength(Constants.Models.PartyNameLength)]
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }

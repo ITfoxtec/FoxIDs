@@ -26,6 +26,8 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic();
 
+            services.AddTransient<SecretHashLogic>();
+
             services.AddTransient<ValidatePartyLogic>();
             services.AddTransient<ValidateSamlPartyLogic>();
 

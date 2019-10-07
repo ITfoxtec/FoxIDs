@@ -155,7 +155,7 @@ namespace FoxIDs.Repository
                 {
                     return default(T);
                 }
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new CosmosDataException(id, partitionId, $"{typeof(T).Name} not found. The master seed has probably not been executed.", ex);
             }
             catch (Exception ex)
             {

@@ -24,6 +24,15 @@ namespace FoxIDs.Logic
 
         public Task AddSecretHashAsync(ISecretHash item, string secret)
         {
+            if(item is OAuthClientSecret)
+            {
+                (item as OAuthClientSecret).Id = Guid.NewGuid().ToString();
+                if (secret.Length > 20)
+                {
+                    (item as OAuthClientSecret).Info = secret.Substring(0, 3);
+                }
+            }
+
             item.HashAlgorithm = $"{defaultHashAlgorithm}:{defaultIterations}";
 
             var salt = RandomGenerator.GenerateBytes(defaultSaltBytes);

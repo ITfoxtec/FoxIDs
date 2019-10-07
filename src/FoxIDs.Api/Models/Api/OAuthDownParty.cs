@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthDownParty : IValidatableObject, INameValue
+    public class OAuthDownParty : IValidatableObject, IDownParty, INameValue
     {
+        [Required]
         [MaxLength(Constants.Models.PartyNameLength)]
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }

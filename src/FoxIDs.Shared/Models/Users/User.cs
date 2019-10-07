@@ -26,20 +26,20 @@ namespace FoxIDs.Models
         [Required]
         [MaxLength(40)]
         [JsonProperty(PropertyName = "user_id")]
-        public string UserId { get; set; }
+        public string UserId { get; set; }        
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(Constants.Models.SecretHash.HashAlgorithmLength)]
         [JsonProperty(PropertyName = "hash_algorithm")]
         public string HashAlgorithm { get; set; }
 
         [Required]
-        [MaxLength(2048)]
+        [MaxLength(Constants.Models.SecretHash.HashLength)]
         [JsonProperty(PropertyName = "hash")]
         public string Hash { get; set; }
 
         [Required]
-        [MaxLength(512)]
+        [MaxLength(Constants.Models.SecretHash.HashSaltLength)]
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
 

@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
             this.tenantService = tenantService;
         }
 
-        public async Task<bool> ValidateAllowUpParties(ModelStateDictionary modelState, string propertyName, DownParty downParty)
+        public async Task<bool> ValidateAllowUpPartiesAsync(ModelStateDictionary modelState, string propertyName, DownParty downParty)
         {
             var isValid = true;
             if(downParty.AllowUpParties?.Count() > 0)
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        public async Task<bool> ValidateResourceScopes<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        public async Task<bool> ValidateResourceScopesAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {
             var isValid = true;
             if (oauthDownParty.Client?.ResourceScopes?.Count() > 0)

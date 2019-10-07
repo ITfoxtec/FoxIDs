@@ -40,6 +40,18 @@ namespace FoxIDs
             public const int PartyIdLength = 110;
             public const string PartyIdRegExPattern = @"^[\w:_-]*$";
 
+            public const string PartyNameAndGuidIdRegExPattern = @"^[\w-_]*$";
+
+            public static class SecretHash
+            {
+                public const int IdLength = 40;
+                public const int InfoLength = 3;
+                public const int SecretLength = 300;
+                public const int HashAlgorithmLength = 20;
+                public const int HashLength = 2048;
+                public const int HashSaltLength = 512;
+            }
+
             public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;

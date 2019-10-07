@@ -1,5 +1,4 @@
 ﻿using ITfoxtec.Identity;
-using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FoxIDs
@@ -18,61 +16,43 @@ namespace FoxIDs
     public static class List
     {
         /// <summary>
-        /// Add Claim to List<Claim>.
+        /// Converts a string list to a dot separated list.
         /// </summary>
-        public static void AddClaim(this List<Claim> list, string type, string value)
+        public static string ToDotList(this string[] values)
         {
-            list.Add(new Claim(type, value));
-        }
-
-        /// <summary>
-        /// Add Claim to List<Claim>.
-        /// </summary>
-        public static void AddClaim(this List<Claim> list, string type, string value, string valueType, string issuer)
-        {
-            list.Add(new Claim(type, value, valueType, issuer));
-        }
-
-        /// <summary>
-        /// Converts an Dictionary<string, List<string>> to a Claims list.
-        /// </summary>
-        public static List<Claim> ToClaimList(this Dictionary<string, List<string>> list)
-        {
-            return list.SelectMany(item => item.Value.Select(value => new Claim(item.Key, value))).ToList();            
-        }
-
-        /// <summary>
-        /// Converts a ClaimAndValues list to a Claims list.
-        /// </summary>
-        public static List<Claim> ToClaimList(this List<ClaimAndValues> list)
-        {
-            return list.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
-        }
-
-        /// <summary>
-        /// Converts a Claims list to an Dictionary<string, List<string>>.
-        /// </summary>
-        public static Dictionary<string, List<string>> ToDictionary(this List<Claim> list)
-        {
-            var dictionary = new Dictionary<string, List<string>>();
-            foreach (var gc in list.GroupBy(c => c.Type))
+            if (values?.Count() > 0)
             {
-                dictionary.Add(gc.Key, gc.Select(gci => gci.Value).ToList());
+                return string.Join('.', values);
             }
-            return dictionary;
+            return null;
         }
 
         /// <summary>
-        /// Converts a Claims list to a ClaimAndValues list.
+        /// Converts a dot separated list to a string list.
         /// </summary>
-        public static List<ClaimAndValues> ToClaimAndValues(this IEnumerable<Claim> list)
+        public static string[] ToDotList(this string value)
         {
-            var claimAndValues = new List<ClaimAndValues>();
-            foreach (var gc in list.GroupBy(c => c.Type))
+            if (!value.IsNullOrWhiteSpace())
             {
-                claimAndValues.Add(new ClaimAndValues { Claim = gc.Key, Values = gc.Select(gci => gci.Value).ToList() });
+                return value.Split('.');
             }
-            return claimAndValues;
+            return null;
+        }
+
+        /// <summary>
+        /// Return first element in a dot separated list.
+        /// </summary>
+        public static string GetFirstInDotList(this string value)
+        {
+            return value.ToDotList()?.FirstOrDefault() ?? value;
+        }
+
+        /// <summary>
+        /// Return last element in a dot separated list.
+        /// </summary>
+        public static string GetLastInDotList(this string value)
+        {
+            return value.ToDotList()?.LastOrDefault() ?? value;
         }
 
         /// <summary>
@@ -122,7 +102,7 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Converts an IFormCollection to a Dictionary<string, string>.
+        /// Converts an IFormCollection to a Dictionary&lt;string, string&gt;.
         /// </summary>
         public static Dictionary<string, string> ToDictionary(this IFormCollection list)
         {
@@ -130,7 +110,7 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Converts an Dictionary<string, StringValues> to a Dictionary<string, string>.
+        /// Converts an Dictionary&lt;string, StringValues&gt; to a Dictionary&lt;string, string&gt;.
         /// </summary>
         public static Dictionary<string, string> ToDictionary(this Dictionary<string, StringValues> list)
         {
@@ -138,7 +118,7 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Converts a Dictionary<string, string> to a HTML Post Content Result.
+        /// Converts a Dictionary&lt;string, string&gt; to a HTML Post Content Result.
         /// </summary>
         public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url)
         {
@@ -150,7 +130,7 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Converts a Dictionary<string, string> to a Redirect Result.
+        /// Converts a Dictionary&lt;string, string&gt; to a Redirect Result.
         /// </summary>
         public static Task<RedirectResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url)
         {
@@ -158,7 +138,7 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Converts a Dictionary<string, string> to a Fragment Result.
+        /// Converts a Dictionary&lt;string, string&gt; to a Fragment Result.
         /// </summary>
         public static Task<RedirectResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url)
         {

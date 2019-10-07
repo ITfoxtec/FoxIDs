@@ -21,7 +21,7 @@ namespace FoxIDs.Controllers
             this.tenantService = tenantService;
         }
 
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetTenant()
         {
             //var documentQuery = await tenantService.GetQuery("testcorp").AsDocumentQuery().ExecuteNextAsync<Tenant>();
             //var tenant = documentQuery.FirstOrDefault();
@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
             //return Json(tenant);
         }
 
-        public async Task<IActionResult> Post([FromBody]Tenant tenant)
+        public async Task<IActionResult> PostTenant([FromBody]Tenant tenant)
         {
             if(!ModelState.IsValid) return BadRequest(ModelState);
 

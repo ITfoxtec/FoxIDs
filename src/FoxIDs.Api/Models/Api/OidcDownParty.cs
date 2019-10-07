@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcDownParty : IValidatableObject, INameValue
+    public class OidcDownParty : IValidatableObject, IDownParty, INameValue
     {
+        [Required]
         [MaxLength(Constants.Models.PartyNameLength)]
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }
@@ -14,7 +15,7 @@ namespace FoxIDs.Models.Api
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>
-        /// Oidc down client.
+        /// OIDC down client.
         /// </summary>
         [ValidateObject]
         public OidcDownClient Client { get; set; }

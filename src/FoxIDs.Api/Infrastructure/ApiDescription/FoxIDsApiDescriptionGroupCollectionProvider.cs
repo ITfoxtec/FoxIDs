@@ -59,8 +59,6 @@ namespace FoxIDs.Infrastructure.ApiDescription
                 var httpMethods = GetHttpMethods(action);
                 if (httpMethods != null)
                 {
-                    action.ActionName = $"{action.ActionName}{GetControllerName(action.ControllerName)}";
-                    action.MethodInfo = new ApiDescriptionMethodInfo(action.MethodInfo, action.ActionName);
                     action.ActionConstraints = new[] { new HttpMethodActionConstraint(httpMethods) };
                     action.AttributeRouteInfo = new Microsoft.AspNetCore.Mvc.Routing.AttributeRouteInfo { Template = GetTemplate(action.ControllerName) };
                     action.SetProperty(new ApiDescriptionActionData { GroupName = Constants.Api.Version });
@@ -87,23 +85,6 @@ namespace FoxIDs.Infrastructure.ApiDescription
             return new ApiDescriptionGroupCollection(groups, actionDescriptors.Version);
         }
 
-        private string GetControllerName(string controllerName)
-        {
-            var lowerControllerName = controllerName.ToLower();
-            if (lowerControllerName.StartsWith(Constants.Routes.ApiControllerPreMasterKey))
-            {
-                return controllerName.Substring(1);
-            }
-            else if (lowerControllerName.StartsWith(Constants.Routes.ApiControllerPreTenantTrackKey))
-            {
-                return controllerName.Substring(1);
-            }
-            else
-            {
-                throw new NotSupportedException("Only master and tenant controller supported.");
-            }
-        }
-
         private string GetTemplate(string controllerName)
         {
             controllerName = controllerName.ToLower();
@@ -123,7 +104,7 @@ namespace FoxIDs.Infrastructure.ApiDescription
 
         private IEnumerable<string> GetHttpMethods(ControllerActionDescriptor action)
         {
-            var httpMethods = Constants.Api.SupportedApiHttpMethods.Where(m => action.ActionName.Equals(m, StringComparison.OrdinalIgnoreCase)).ToList();
+            var httpMethods = Constants.Api.SupportedApiHttpMethods.Where(m => action.ActionName.StartsWith(m, StringComparison.OrdinalIgnoreCase)).ToList();
             if (httpMethods.Any())
             {
                 return httpMethods;

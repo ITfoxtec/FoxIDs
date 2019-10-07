@@ -63,7 +63,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
 
                 context.RouteData.Values[Constants.Routes.RouteControllerKey] = routeController;
-                context.RouteData.Values[Constants.Routes.RouteActionKey] = method.ToLower();
+                context.RouteData.Values[Constants.Routes.RouteActionKey] = $"{method.ToLower()}{routeController.Substring(1)}";
             }
             catch (ValidationException vex)
             {

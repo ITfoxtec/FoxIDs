@@ -12,13 +12,13 @@ namespace FoxIDs
 {
     public static class DataAnnotationExtensions
     {        
-        public static bool TryValidateParameterAsync(this ModelStateDictionary modelState, string value, string valueName)
+        public static bool TryValidateRequiredParameter(this ModelStateDictionary modelState, string value, string parameterName)
         {
             modelState.Clear();
 
             if (value.IsNullOrWhiteSpace())
             {
-                modelState.TryAddModelError(valueName, $"The {valueName} parameter is required.");
+                modelState.TryAddModelError(parameterName, $"The {parameterName} parameter is required.");
                 return false;
             }
             return true;

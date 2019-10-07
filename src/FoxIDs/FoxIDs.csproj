@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.0.1" />
+    <PackageReference Include="ITfoxtec.Identity.Saml2.MvcCore" Version="4.0.3-beta1" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />

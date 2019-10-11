@@ -109,9 +109,9 @@ Add the local pwned passwords file path to the seed tool configured.
 
 Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords risk list`.
 
-#### 2.4 Add sample configuration
+#### 2.4 Add sample configuration to at track
 
-It is possible to run the sample applications after they are configured in FoxIDs. The sample configuration can be added with the [sample seed tool](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track).
+It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track).
 
 ## Support
 

@@ -8,7 +8,7 @@
     "branch": {
       "type": "string"
     },
-    "foxidsName": {
+    "prefixName": {
       "type": "string",
       "metadata": {
         "description": "Prefix of resource names."
@@ -87,14 +87,14 @@
   },
   "variables": {
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
-    "foxidsSiteName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "foxidsApiSiteName": "[toLower(concat(parameters('foxidsName'), 'api', variables('suffix')))]",
-    "serverfarmsName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "appInsightsName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "redisName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "keyVaultName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "cosmosDbName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
-    "sendgridAccountName": "[toLower(concat(parameters('foxidsName'), variables('suffix')))]",
+    "foxidsSiteName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "foxidsApiSiteName": "[toLower(concat(parameters('prefixName'), 'api', variables('suffix')))]",
+    "serverfarmsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "appInsightsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "redisName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "keyVaultName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "cosmosDbName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "sendgridAccountName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "sendgridPassword": "GEN-PASSWORD",
     "location": "[resourceGroup().location]"
   },

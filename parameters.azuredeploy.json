@@ -5,7 +5,7 @@
     "branch": {
       "value": "release-current"
     },
-    "foxidsName": {
+    "prefixName": {
       "value": "foxids"
     },
     "appServicePlanSize": {

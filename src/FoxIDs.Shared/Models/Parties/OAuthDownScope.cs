@@ -9,11 +9,12 @@ namespace FoxIDs.Models
     public class OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         [Required]
-        [MaxLength(50)]
+        [MaxLength(Constants.Models.OAuthDownParty.ScopesLength)]
+        [RegularExpression(Constants.Models.OAuthDownParty.ScopeRegExPattern)]
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
-        [Length(0, 100)]
+        [Length(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
         [JsonProperty(PropertyName = "voluntary_claims")]
         public List<TClaim> VoluntaryClaims { get; set; }
     }

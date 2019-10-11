@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace FoxIDs
 {
@@ -8,5 +9,10 @@ namespace FoxIDs
         {
             return $"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/";
         }
+        public static Uri GetHostUri(this HttpContext context)
+        {
+            return new Uri(context.GetHost());
+        }
+
     }
 }

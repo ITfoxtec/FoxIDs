@@ -17,31 +17,41 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             var pathSplit = context.HttpContext.Request.Path.Value.Split('/');
 
-            if (pathSplit.Length >= 3 && pathSplit.Length <= 4)
+            if (pathSplit.Length >= 3 && pathSplit.Length <= 5)
             {
-                await HandleTenantAndMasterRouteAsync(context, context.HttpContext.Request.Method, pathSplit);
+                await HandleMasterAndTenantTrackRouteAsync(context, context.HttpContext.Request.Method, pathSplit);
             }
             else
             {
-                throw new Exception($"Invalid route path.");
+                throw new NotSupportedException($"Invalid route path. Api url '{context.HttpContext.Request.Path.Value}' not supported.");
             }
         }
 
-        private async Task HandleTenantAndMasterRouteAsync(RouteContext context, string method, string[] path)
+        private async Task HandleMasterAndTenantTrackRouteAsync(RouteContext context, string method, string[] path)
         {
             var trackIdKey = new Track.IdKey();
-            var controllerPreName = string.Empty;
-            if (Constants.Routes.MasterApiName.Equals(path[1], StringComparison.InvariantCultureIgnoreCase))
+            trackIdKey.TrackName = Constants.Routes.DefaultMasterTrackName;
+            string routeController;
+
+            if (path.Length >= 3 && path[1].Equals(Constants.Routes.MasterApiName, StringComparison.InvariantCultureIgnoreCase) && path[2].StartsWith(Constants.Routes.PreApikey))
             {
-                controllerPreName = Constants.Routes.ApiControllerPreMasterName;
+                routeController = path[2].Replace(Constants.Routes.PreApikey, Constants.Routes.ApiControllerPreMasterKey);
                 trackIdKey.TenantName = Constants.Routes.MasterTenantName;
-                trackIdKey.TrackName = Constants.Routes.MasterTrackName;
+            }
+            else if (path.Length >= 3 && path[2].StartsWith(Constants.Routes.PreApikey))
+            {
+                routeController = path[2].Replace(Constants.Routes.PreApikey, Constants.Routes.ApiControllerPreTenantTrackKey);
+                trackIdKey.TenantName = path[1].ToLower();
+            }
+            else if (path.Length >= 4 && path[3].StartsWith(Constants.Routes.PreApikey))
+            {
+                routeController = path[3].Replace(Constants.Routes.PreApikey, Constants.Routes.ApiControllerPreTenantTrackKey);
+                trackIdKey.TenantName = path[1].ToLower();
+                trackIdKey.TrackName = path[2].ToLower();
             }
             else
             {
-                controllerPreName = Constants.Routes.ApiControllerPreTenantName;
-                trackIdKey.TenantName = path[1].ToLower();
-                trackIdKey.TrackName = path[2].ToLower();
+                throw new NotSupportedException($"Api url '{context.HttpContext.Request.Path.Value}' not supported.");
             }
 
             var scopedLogger = context.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
@@ -52,9 +62,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
 
-                var routeController = path[path.Length - 1];
-                context.RouteData.Values[Constants.Routes.RouteControllerKey] = $"{controllerPreName}{routeController}";
-                context.RouteData.Values[Constants.Routes.RouteActionKey] = method.ToLower();
+                context.RouteData.Values[Constants.Routes.RouteControllerKey] = routeController;
+                context.RouteData.Values[Constants.Routes.RouteActionKey] = $"{method.ToLower()}{routeController.Substring(1)}";
             }
             catch (ValidationException vex)
             {

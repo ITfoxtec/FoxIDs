@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
         {
             if(!isInitiated)
             {
-                resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));
+                resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));              
                 isInitiated = true;
             }
         }

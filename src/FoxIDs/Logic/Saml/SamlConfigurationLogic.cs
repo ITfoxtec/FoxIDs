@@ -49,8 +49,8 @@ namespace FoxIDs.Logic
             }
             samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
 
-            samlConfig.CertificateValidationMode = party.CertificateValidationMode.ToEnum<X509CertificateValidationMode>();
-            samlConfig.RevocationMode = party.RevocationMode.ToEnum<X509RevocationMode>();
+            samlConfig.CertificateValidationMode = party.CertificateValidationMode;
+            samlConfig.RevocationMode = party.RevocationMode;
 
             return samlConfig;
         }
@@ -81,8 +81,8 @@ namespace FoxIDs.Logic
             }
             samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
 
-            samlConfig.CertificateValidationMode = party.CertificateValidationMode.ToEnum<X509CertificateValidationMode>();
-            samlConfig.RevocationMode = party.RevocationMode.ToEnum<X509RevocationMode>();
+            samlConfig.CertificateValidationMode = party.CertificateValidationMode;
+            samlConfig.RevocationMode = party.RevocationMode;
 
             return samlConfig;
         }

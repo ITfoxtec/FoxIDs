@@ -1,13 +1,10 @@
 ﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Infrastructure.Security;
-using Microsoft.AspNetCore.Mvc;
 
 namespace FoxIDs.Controllers
 {
-    [HttpSecurityHeaders]
-    [MasterAuthorize]
-    public abstract class MasterApiController : ControllerBase
+    [MasterScopeAuthorize]
+    public abstract class MasterApiController : ApiController
     {
         private readonly TelemetryLogger logger;
 

@@ -5,6 +5,7 @@ using FoxIDs.Models.Sequences;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -27,6 +28,8 @@ namespace FoxIDs.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            if (RouteBinding == null) throw new InvalidOperationException("Controller can not be called directly.");
+
             logger.ScopeTrace($"Url '{context.HttpContext.Request.Scheme}://{context.HttpContext.Request.Host}{context.HttpContext.Request.Path}'");
             base.OnActionExecuting(context);
         }

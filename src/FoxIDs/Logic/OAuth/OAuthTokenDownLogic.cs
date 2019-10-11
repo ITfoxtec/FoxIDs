@@ -131,7 +131,7 @@ namespace FoxIDs.Logic
             {
                 if (await secretHashLogic.ValidateSecretAsync(secret, clientCredentials.ClientSecret))
                 {
-                    logger.ScopeTrace($"Down, OIDC Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
+                    logger.ScopeTrace($"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
                     return;
                 }
             }

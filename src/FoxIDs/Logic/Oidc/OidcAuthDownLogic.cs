@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
                     Nonce = authenticationRequest.Nonce,
                 });
 
-                var type = RouteBinding.ToUpParties.First().Type.ToEnum<PartyType>();
+                var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {
@@ -84,9 +84,9 @@ namespace FoxIDs.Logic
                     case PartyType.OAuth2:
                         throw new NotImplementedException();
                     case PartyType.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First().Id);
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First());
                     case PartyType.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First().Id, await GetLoginRequestAsync(party, authenticationRequest));
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
 
                     default:
                         throw new NotSupportedException($"Party type '{type}' not supported.");

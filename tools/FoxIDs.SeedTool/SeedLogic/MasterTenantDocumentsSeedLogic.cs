@@ -20,8 +20,8 @@ namespace FoxIDs.SeedTool.SeedLogic
         const string apiResourceName = "foxids_api";
         const string portalClientName = "foxids_portal";
 
-        readonly string[] apiResourceScopes = new[] { "master", "tenant" };
-        readonly string[] adminUserClaims = new[] { "master_admin" };
+        readonly string[] apiResourceScopes = new[] { "foxids_master", "foxids_tenant" };
+        readonly string[] adminUserRoles = new[] { "foxids_master_admin" };
  
         private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
@@ -51,6 +51,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             await CreateDocumentsAsync();
 
             Console.WriteLine(string.Empty);
+            Console.WriteLine("Important: remember the password and secrets");
             Console.WriteLine($"Master tenant documents created and saved in Cosmos DB");
         }
 
@@ -64,7 +65,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             await CreateFirstAdminUserDocumentAsync();
             Console.WriteLine(string.Empty);
 
-            await CreateApiResourceDocumentAsync();
+            await CreateFoxIDsApiResourceDocumentAsync();
             Console.WriteLine(string.Empty);
             await CreateSeedClientDocmentAsync();
             Console.WriteLine(string.Empty);
@@ -109,7 +110,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var trackKey = new TrackKey()
             {
-                Type = TrackKeyType.Contained.ToString(),
+                Type = TrackKeyType.Contained,
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };
             return trackKey;
@@ -121,12 +122,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var loginUpParty = new LoginUpParty
             {
-                Type = PartyType.Login.ToString(),
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.Never.ToString()
+                LogoutConsent = LoginUpPartyLogoutConsent.Never
             };
             await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = loginName });
             loginUpParty.SetPartitionId();
@@ -152,16 +152,16 @@ namespace FoxIDs.SeedTool.SeedLogic
             var user = new User { UserId = Guid.NewGuid().ToString() };
             await user.SetIdAsync(new User.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, Email = email });
             await secretHashLogic.AddSecretHashAsync(user, password);
-            user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserClaims.ToList() } };
+            user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
             user.SetPartitionId();
 
             await simpleTenantRepository.SaveAsync(user);
             Console.WriteLine($"Administrator user document created and saved in Cosmos DB");
         }
 
-        private async Task CreateApiResourceDocumentAsync()
+        private async Task CreateFoxIDsApiResourceDocumentAsync()
         {
-            Console.WriteLine("Creating api resource");
+            Console.WriteLine("Creating FoxIDs api resource");
 
             var apiResourceDownParty = new OAuthDownParty();
             await apiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = apiResourceName });
@@ -172,7 +172,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             apiResourceDownParty.SetPartitionId();
 
             await simpleTenantRepository.SaveAsync(apiResourceDownParty);
-            Console.WriteLine($"Api resource document created and saved in Cosmos DB");
+            Console.WriteLine($"FoxIDs api resource document created and saved in Cosmos DB");
         }
 
         private async Task CreateSeedClientDocmentAsync()
@@ -184,7 +184,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             seedClientDownParty.Client = new OAuthDownClient
             {
                 RedirectUris = new[] { settings.RedirectUri }.ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "master" }.ToList() } },
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "foxids_master" }.ToList() } },
                 ResponseTypes = new[] { "token" }.ToList(),
                 AccessTokenLifetime = 1800 // 30 minutes
             };
@@ -214,12 +214,12 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var portalClientDownParty = new OidcDownParty();
             await portalClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = portalClientName });
-            portalClientDownParty.AllowUpParties = new List<PartyDataElement> { new PartyDataElement { Id = loginUpParty.Id, Type = loginUpParty.Type } };
+            portalClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
             portalClientDownParty.Client = new OidcDownClient
             {
                 RedirectUris = portalClientRedirectUris.ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "tenant" }.ToList() } },
-                ResponseTypes = new[] { "code", "id_token" }.ToList(),
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "foxids_tenant" }.ToList() } },
+                ResponseTypes = new[] { "code", "id_token", "token" }.ToList(),
                 AuthorizationCodeLifetime = 10,
                 IdTokenLifetime = 1800, // 30 minutes
                 AccessTokenLifetime = 1800, // 30 minutes

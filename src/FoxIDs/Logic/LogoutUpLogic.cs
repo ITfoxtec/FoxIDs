@@ -23,23 +23,24 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> LogoutRedirect(PartyDataElement party, LogoutRequest logoutRequest)
+        public async Task<IActionResult> LogoutRedirect(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
             logger.ScopeTrace("Down, Logout redirect.");
-            logger.SetScopeProperty("upPartyId", party.Id);
+            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            logger.SetScopeProperty("upPartyId", partyId);
 
             await logoutRequest.ValidateObjectAsync();
 
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = logoutRequest.DownParty.Id,
-                DownPartyType = logoutRequest.DownParty.Type.ToString(),
-                UpPartyId = party.Id,
+                DownPartyType = logoutRequest.DownParty.Type,
+                UpPartyId = partyId,
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect
             });
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({party.Name})/login/logout/_{HttpContext.GetSequenceString()}");
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/logout/_{HttpContext.GetSequenceString()}");
         }
 
         public async Task<IActionResult> LogoutResponseAsync(string sessionId)
@@ -49,9 +50,8 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type {type}.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();

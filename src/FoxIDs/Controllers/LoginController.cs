@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
                     return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
-                if (sequenceData.LoginAction.ToEnum<LoginAction>() == LoginAction.ReadSession)
+                if (sequenceData.LoginAction == LoginAction.ReadSession)
                 {
                     return await loginUpLogic.LoginResponseErrorAsync(LoginSequenceError.LoginRequired);
                 }
@@ -220,8 +220,7 @@ namespace FoxIDs.Controllers
                     // TODO return error, not possible to logout
                 }
 
-                var logoutConsent = loginUpParty.LogoutConsent.ToEnum<LoginUpPartyLogoutConsent>();
-                if (logoutConsent == LoginUpPartyLogoutConsent.Always || (logoutConsent == LoginUpPartyLogoutConsent.IfRequered && sequenceData.RequireLogoutConsent))
+                if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequered && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace("Show logout consent dialog.");
                     return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });

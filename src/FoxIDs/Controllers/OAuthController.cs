@@ -45,16 +45,15 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Currently only exactly 1 to up party is supported.");
                 }
 
-                var type = RouteBinding.DownParty.Type.ToEnum<PartyType>();
-                logger.ScopeTrace($"Authorization request, Down type '{type}'");
-                switch (type)
+                logger.ScopeTrace($"Authorization request, Down type '{RouteBinding.DownParty.Type}'");
+                switch (RouteBinding.DownParty.Type)
                 {
                     case PartyType.OAuth2:
                         throw new NotImplementedException();
                     case PartyType.Oidc:
                         return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -77,15 +76,14 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Currently only exactly 1 to up party is supported.");
                 }
 
-                var type = RouteBinding.DownParty.Type.ToEnum<PartyType>();
-                logger.ScopeTrace($"End session, Down type '{type}'");
-                switch (type)
+                logger.ScopeTrace($"End session, Down type '{RouteBinding.DownParty.Type}'");
+                switch (RouteBinding.DownParty.Type)
                 {
                     case PartyType.Oidc:
                         return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionRequestAsync(RouteBinding.DownParty.Id);
 
                     default:
-                        throw new NotSupportedException($"Party type '{type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }
 
             }
@@ -101,16 +99,15 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var type = RouteBinding.DownParty.Type.ToEnum<PartyType>();
-                logger.ScopeTrace($"Token request, Down type '{type}'");
-                switch (type)
+                logger.ScopeTrace($"Token request, Down type '{RouteBinding.DownParty.Type}'");
+                switch (RouteBinding.DownParty.Type)
                 {
                     case PartyType.OAuth2:
                         return await serviceProvider.GetService<OAuthTokenDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().TokenRequestAsync(RouteBinding.DownParty.Id);
                     case PartyType.Oidc:
                         return await serviceProvider.GetService<OidcTokenDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().TokenRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)

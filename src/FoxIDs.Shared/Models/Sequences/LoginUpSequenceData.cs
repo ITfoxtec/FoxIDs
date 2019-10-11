@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Logic;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
@@ -19,7 +20,7 @@ namespace FoxIDs.Models.Sequences
         public bool PostLogoutRedirect { get; set; }
 
         [JsonProperty(PropertyName = "la")]
-        public string LoginAction { get; set; }
+        public LoginAction LoginAction { get; set; }
 
         [JsonProperty(PropertyName = "i")]
         public string UserId { get; set; }

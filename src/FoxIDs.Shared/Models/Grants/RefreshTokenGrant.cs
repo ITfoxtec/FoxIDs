@@ -9,7 +9,13 @@ namespace FoxIDs.Models
 {
     public class RefreshTokenGrant : DataDocument
     {
-        public static string IdFormat(IdKey idKey) => $"rtgrant:{idKey.TenantName}:{idKey.TrackName}:{idKey.RefreshToken}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"rtgrant:{idKey.TenantName}:{idKey.TrackName}:{idKey.RefreshToken}";
+        }
 
         [Required]
         [MaxLength(180)]
@@ -43,9 +49,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
 
         public class IdKey : Track.IdKey

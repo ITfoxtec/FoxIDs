@@ -7,7 +7,13 @@ namespace FoxIDs.Models
 {
     public class Tenant : DataDocument
     {
-        public static string IdFormat(IdKey idKey) => $"tenant:{idKey.TenantName}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"tenant:{idKey.TenantName}";
+        }
         public static string PartitionIdFormat(string tenantName) => tenantName;
 
         [Required]
@@ -28,9 +34,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
 
         public class IdKey

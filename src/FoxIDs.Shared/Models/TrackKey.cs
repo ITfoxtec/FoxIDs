@@ -6,7 +6,7 @@ namespace FoxIDs.Models
     public class TrackKey
     {
         [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        public TrackKeyType Type { get; set; }
 
         [JsonProperty(PropertyName = "key")]
         public JsonWebKey Key { get; set; }

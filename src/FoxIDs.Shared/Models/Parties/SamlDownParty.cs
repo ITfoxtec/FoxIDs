@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.IdentityModel.Tokens;
+using System.ServiceModel.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Models
 {
@@ -11,46 +13,46 @@ namespace FoxIDs.Models
     {
         public SamlDownParty()
         {
-            Type = PartyType.Saml2.ToString();
+            Type = PartyType.Saml2;
         }
 
-        [MaxLength(300)]
+        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "ids_issuer")]
         public string IdSIssuer { get; set; }
 
-        [Length(0, 500, 500)]
+        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+
+        [Length(Constants.Models.SamlParty.Down.ClaimsMin, Constants.Models.SamlParty.Down.ClaimsMax, Constants.Models.SamlParty.Down.ClaimsLength)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
-        [Range(86400, 31536000)] // 24 hours to 12 month
+        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
         [JsonProperty(PropertyName = "metadata_lifetime")]
         public int MetadataLifetime { get; set; }
 
-        [Range(60, 900)] // 1 minutes to 15 minutes
+        [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]
         [JsonProperty(PropertyName = "subject_confirmation_lifetime")]
         public int SubjectConfirmationLifetime { get; set; }
 
-        [Range(300, 86400)] // 5 minutes to 24 hours
+        [Range(Constants.Models.SamlParty.Down.IssuedTokenLifetimeMin, Constants.Models.SamlParty.Down.IssuedTokenLifetimeMax)]
         [JsonProperty(PropertyName = "issued_token_lifetime")]
         public int IssuedTokenLifetime { get; set; }
 
         [Required]
-        [MaxLength(100)]
+        [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
         [JsonProperty(PropertyName = "signature_algorithm")]
         public string SignatureAlgorithm { get; set; }
 
         [Required]
-        [MaxLength(30)]
         [JsonProperty(PropertyName = "certificate_validation_mode")]
-        public string CertificateValidationMode { get; set; }
+        public X509CertificateValidationMode CertificateValidationMode { get; set; }
 
         [Required]
-        [MaxLength(30)]
         [JsonProperty(PropertyName = "revocation_mode")]
-        public string RevocationMode { get; set; }
+        public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
-        [MaxLength(300)]
+        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
         public string Issuer { get; set; }
 
@@ -58,7 +60,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_binding")]
         public SamlBinding AuthnBinding { get; set; }
 
-        [Length(1, 10, 500)]
+        [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [JsonProperty(PropertyName = "acs_urls")]
         public List<string> AcsUrls { get; set; }
 
@@ -66,15 +68,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_binding")]
         public SamlBinding LogoutBinding { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
         [JsonProperty(PropertyName = "single_logout_url")]
         public string SingleLogoutUrl { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
         [JsonProperty(PropertyName = "logged_out_url")]
         public string LoggedOutUrl { get; set; }
 
-        [Length(0, 10)]
+        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
     }

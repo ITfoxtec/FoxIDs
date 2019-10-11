@@ -8,11 +8,11 @@ namespace FoxIDs.Models
     public class OAuthDownResourceScope
     {
         [Required]
-        [MaxLength(30)]
+        [MaxLength(Constants.Models.PartyNameLength)]
         [JsonProperty(PropertyName = "resource")]
         public string Resource { get; set; }
 
-        [Length(0, 100, 30)]
+        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopesLength)]
         [JsonProperty(PropertyName = "scopes")]
         public List<string> Scopes { get; set; }
     }

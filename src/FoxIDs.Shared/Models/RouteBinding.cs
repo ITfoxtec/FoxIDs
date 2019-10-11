@@ -20,7 +20,7 @@ namespace FoxIDs.Models
 
         public UpParty UpParty { get; set; }
 
-        public List<PartyDataElement> ToUpParties { get; set; }
+        public List<UpPartyLink> ToUpParties { get; set; }
 
         public DownParty DownParty { get; set; }
 

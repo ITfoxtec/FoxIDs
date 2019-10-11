@@ -4,26 +4,61 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections;
 using System.Reflection;
+using FoxIDs.Infrastructure.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using ITfoxtec.Identity;
 
 namespace FoxIDs
 {
     public static class DataAnnotationExtensions
-    {
-        public static async Task ValidateObjectAsync(this object data)
+    {        
+        public static bool TryValidateRequiredParameter(this ModelStateDictionary modelState, string value, string parameterName)
         {
-            (var isValid, List<string> result) = await ValidateObjectResultAsync(data);
+            modelState.Clear();
+
+            if (value.IsNullOrWhiteSpace())
+            {
+                modelState.TryAddModelError(parameterName, $"The {parameterName} parameter is required.");
+                return false;
+            }
+            return true;
+        }
+
+        public static async Task<bool> TryValidateObjectAsync(this ModelStateDictionary modelState, object data)
+        {
+            modelState.Clear();
+
+            (var isValid, var results) = await ValidateObjectResultsAsync(data);
             if (!isValid)
             {
-                throw new ValidationException($"{data?.GetType()?.Name}: [{string.Join(", ", result)}]");
+                foreach (var result in results)
+                {
+                    foreach (var memberName in result.MemberNames)
+                    {
+                        modelState.TryAddModelError(memberName.ToCamelCase(), result.ErrorMessage);
+                    }
+                }
+            }
+            return isValid;
+        }     
+
+        public static async Task ValidateObjectAsync(this object data)
+        {
+            if (data == null) return;
+
+            (var isValid, var results) = await ValidateObjectResultsAsync(data);
+            if (!isValid)
+            {
+                throw new ValidationResultException(data, results);
             }
         }
 
-        public static Task<(bool, List<string>)> ValidateObjectResultAsync(this object data)
+        public static Task<(bool, List<ValidationResult>)> ValidateObjectResultsAsync(this object data)
         {
             var results = new List<ValidationResult>();
             var isValid = TryValidateObjectRecursive(data, results);
 
-            return Task.FromResult((isValid, results.Select(r => $"{string.Join(", ", r.MemberNames)}: {r.ErrorMessage}").ToList()));
+            return Task.FromResult((isValid, results));
         }
 
         private static bool TryValidateObject(object data, ICollection<ValidationResult> results)

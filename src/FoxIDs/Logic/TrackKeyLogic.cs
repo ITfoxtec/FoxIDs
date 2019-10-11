@@ -23,8 +23,7 @@ namespace FoxIDs.Logic
 
         public SecurityKey GetSecurityKey(TrackKey trackKey)
         {
-            var keyType = trackKey.Type.ToEnum<TrackKeyType>();
-            switch (keyType)
+            switch (trackKey.Type)
             {
                 case TrackKeyType.Contained:
                     return trackKey.Key;
@@ -33,14 +32,13 @@ namespace FoxIDs.Logic
                     return new RsaSecurityKey(GetRSAKeyVault(trackKey));
 
                 default:
-                    throw new NotSupportedException($"Track key type '{keyType}' not supported.");
+                    throw new NotSupportedException($"Track key type '{trackKey.Type}' not supported.");
             }
         }
 
         public Saml2X509Certificate GetSaml2X509Certificate(TrackKey trackKey)
         {
-            var keyType = trackKey.Type.ToEnum<TrackKeyType>();
-            switch (keyType)
+            switch (trackKey.Type)
             {
                 case TrackKeyType.Contained:
                     return trackKey.Key.ToSaml2X509Certificate(true);
@@ -49,7 +47,7 @@ namespace FoxIDs.Logic
                     return new Saml2X509Certificate(trackKey.Key.ToX509Certificate(), GetRSAKeyVault(trackKey));
 
                 default:
-                    throw new NotSupportedException($"Track key type '{keyType}' not supported.");
+                    throw new NotSupportedException($"Track key type '{trackKey.Type}' not supported.");
             }
         }
 

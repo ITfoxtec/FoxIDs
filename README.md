@@ -14,6 +14,8 @@ You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, F
 
 ### 1. Azure deployment
 
+[![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
+
 The ARM deployment script deploys:
 
 - Two App Services one for FoxIDs and one for the FoxIDs API. Both App Services is hosted in the same App Service plan. 
@@ -23,8 +25,6 @@ The ARM deployment script deploys:
 - Redis cache.
 - SendGrid.
 - Application Insights.
-
-[![Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
 
 **Troubleshooting deployent errors:**
 
@@ -49,7 +49,7 @@ The ARM deployment script deploys:
 
 In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs api.
 
-The seed tool is configured in the `appsettings.json` file.
+> The seed tool is configured in the `appsettings.json` file.
 
 Add the FodIDs and FoxIDs api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidsapixxxx` or by configuring custom domains.
 
@@ -77,7 +77,7 @@ Run the seed tool executable `SeedTool.exe`, select `M` for `Create master tenan
 
 > IMPORTANT: Remember password and secrets.
 
-Add the seed client secret to the seed tool configured.
+Add the seed tool client secret to the seed tool configured.
 
 ```json
 "SeedSettings": {
@@ -93,11 +93,25 @@ Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`
 
 #### 2.3 Create passwords risk list
 
-The seed tool can add passwords that is insecure to use in Cosmos DB documents as SHA1 hash. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+The seed tool can add passwords risk list of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+
+Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
+
+Add the local pwned passwords file path to the seed tool configured.
+
+```json
+"SeedSettings": {
+  "PwnedPasswordsPath": "c:\\... xxx ...\\pwned-passwords-sha1-ordered-by-count-v4.txt"
+}
+```
 
 > Be aware that it takes long time to upload the entire password risk list. This step can be omitted and postponed to later.
 
 Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords risk list`.
+
+#### 2.4 Add sample configuration to at track
+
+It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track).
 
 ## Support
 
@@ -112,7 +126,7 @@ FoxIDs API
 https://localhost:44331
 
 *FoxIDs Portal
-https://localhost:44332*
+https://localhost:44332 - not created yet*
 
 *FoxIDs web
-https://localhost:44333* 
+https://localhost:44333 - not created yet*

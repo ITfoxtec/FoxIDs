@@ -134,7 +134,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var documentUri = UriFactory.CreateDocumentUri(databaseId, collectionId, id);
+                var documentUri = GetDocumentLink<T>(id);
                 var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
                 var item = await client.ReadDocumentAsync<T>(documentUri, requestOptions);
                 totalRU += item.RequestCharge;
@@ -143,7 +143,10 @@ namespace FoxIDs.Repository
                     var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
                     totalRU += deleteResponse.RequestCharge;
                 }
-                await item?.Document?.ValidateObjectAsync();
+                if(item != null)
+                {
+                    await item.Document.ValidateObjectAsync();
+                }
                 return item;
             }
             catch (DocumentClientException ex)
@@ -152,7 +155,7 @@ namespace FoxIDs.Repository
                 {
                     return default(T);
                 }
-                throw new CosmosDataException(id, partitionId, ex);
+                throw new CosmosDataException(id, partitionId, $"{typeof(T).Name} not found. The master seed has probably not been executed.", ex);
             }
             catch (Exception ex)
             {
@@ -241,9 +244,8 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var documentUri = UriFactory.CreateDocumentUri(databaseId, collectionId, item.Id);
                 var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-                var response = await client.DeleteDocumentAsync(documentUri, requestOptions);
+                var response = await client.DeleteDocumentAsync(GetDocumentLink<T>(item.Id), requestOptions);
                 totalRU += response.RequestCharge;
             }
             catch (Exception ex)
@@ -282,9 +284,8 @@ namespace FoxIDs.Repository
 
         //            foreach (var id in result.ToList())
         //            {
-        //                var documentUri = UriFactory.CreateDocumentUri(databaseId, collectionId, id);
         //                var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-        //                var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
+        //                var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(id), requestOptions);
         //                totalRU += deleteResponse.RequestCharge;
         //            }
         //        }
@@ -316,6 +317,11 @@ namespace FoxIDs.Repository
         {
             var idList = id.Split(':');
             return idList[1];
+        }
+
+        private Uri GetDocumentLink<T>(string id) where T : IDataDocument
+        {
+            return UriFactory.CreateDocumentUri(databaseId, collectionId, id);
         }
     }
 }

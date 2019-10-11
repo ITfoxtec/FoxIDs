@@ -9,20 +9,20 @@ namespace FoxIDs.Models
     {
         public LoginUpParty()
         {
-            Type = PartyType.Login.ToString();
+            Type = PartyType.Login;
         }
 
-        [Range(0, 21600)] // 0 minutes to 6 hours
+        [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)] 
         [JsonProperty(PropertyName = "session_lifetime")]
         public int SessionLifetime { get; set; }
 
-        [Range(0, 86400)] // 0 minutes to 24 hours
+        [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
         [JsonProperty(PropertyName = "session_absolute_lifetime")]
         public int SessionAbsoluteLifetime { get; set; }
 
-        [Range(0, 31536000)] // 0 min to 12 month
+        [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
         [JsonProperty(PropertyName = "persistent_session_absolute_lifetime")]
-        public int PersistentAbsoluteSessionLifetime { get; set; }
+        public int PersistentSessionAbsoluteLifetime { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "persistent_session_lifetime_unlimited")]
@@ -38,13 +38,13 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
-        public string LogoutConsent { get; set; }
+        public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
 
-        [Length(0, 40, 200)]
+        [Length(Constants.Models.LoginUpParty.AllowIframeOnDomainsMin, Constants.Models.LoginUpParty.AllowIframeOnDomainsMax, Constants.Models.LoginUpParty.AllowIframeOnDomainsLength)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }
 
-        [MaxLength(4000)]
+        [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css_style")]
         public string CssStyle { get; set; }
     }

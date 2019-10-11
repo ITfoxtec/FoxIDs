@@ -14,43 +14,43 @@ namespace FoxIDs.Models
         [JsonIgnore]
         public string ClientId { get => Parent.Name; }
 
-        [Length(0, 50)]
+        [Length(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [JsonProperty(PropertyName = "resource_scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
-        [Length(0, 100)]
+        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
         [JsonProperty(PropertyName = "scopes")]
         public List<TScope> Scopes { get; set; }
 
-        [Length(0, 500)]
+        [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<TClaim> Claims { get; set; }
 
-        [Length(1, 10, 30)]
+        [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [JsonProperty(PropertyName = "response_types")]
         public List<string> ResponseTypes { get; set; }
 
-        [Length(1, 40, 500)]
+        [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [JsonProperty(PropertyName = "redirect_uris")]
         public List<string> RedirectUris { get; set; }
 
-        [Length(0, 10)]
+        [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }
 
-        [Range(10, 900)] // 10 seconds to 15 minutes
+        [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)] 
         [JsonProperty(PropertyName = "authorization_code_lifetime")]
         public int? AuthorizationCodeLifetime { get; set; }
 
-        [Range(300, 86400)] // 5 minutes to 24 hours
+        [Range(Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMax)]
         [JsonProperty(PropertyName = "access_token_lifetime")]
         public int AccessTokenLifetime { get; set; }
 
-        [Range(900, 15768000)] // 15 minutes to 6 month
+        [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMax)]
         [JsonProperty(PropertyName = "refresh_token_lifetime")]
         public int? RefreshTokenLifetime { get; set; }
 
-        [Range(900, 31536000)] // 15 minutes to 12 month
+        [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMax)]
         [JsonProperty(PropertyName = "refresh_token_absolute_lifetime")]
         public int? RefreshTokenAbsoluteLifetime { get; set; }
 

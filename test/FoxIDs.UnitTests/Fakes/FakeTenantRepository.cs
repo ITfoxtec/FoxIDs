@@ -49,10 +49,21 @@ namespace FoxIDs.UnitTests.Mocks
             return Task.CompletedTask;
         }
 
+        public Task UpdateAsync<T>(T item) where T : IDataDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SaveAsync<T>(T item) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
+
+        public Task DeleteAsync<T>(string id) where T : IDataDocument
+        {
+            throw new NotImplementedException();
+        }
+
 
         public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery) where T : IDataDocument
         {

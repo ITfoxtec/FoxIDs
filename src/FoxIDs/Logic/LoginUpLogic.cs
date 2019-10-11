@@ -29,25 +29,26 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> LoginRedirect(PartyDataElement party, LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirect(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, Login redirect.");
-            logger.SetScopeProperty("upPartyId", party.Id);
+            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();
 
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = loginRequest.DownParty.Id,
-                DownPartyType = loginRequest.DownParty.Type.ToString(),
-                UpPartyId = party.Id,
-                LoginAction = loginRequest.LoginAction.ToString(),
+                DownPartyType = loginRequest.DownParty.Type,
+                UpPartyId = partyId,
+                LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 EmailHint = loginRequest.EmailHint,
                 Culture = loginRequest.Culture
             });
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({party.Name})/login/_{SequenceString}");
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");
         }
 
         public async Task<IActionResult> LoginResponseAsync(User user, long authTime, IEnumerable<string> authMethods, string sessionId)
@@ -69,9 +70,8 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
 
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type {type}.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();
@@ -95,9 +95,8 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            var type = sequenceData.DownPartyType.ToEnum<PartyType>();
-            logger.ScopeTrace($"Response, Down type '{type}'.");
-            switch (type)
+            logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyType}'.");
+            switch (sequenceData.DownPartyType)
             {
                 case PartyType.OAuth2:
                     throw new NotImplementedException();
@@ -107,7 +106,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status: ErrorToSamlStatus(error));
 
                 default:
-                    throw new NotSupportedException($"Party type '{type}' not supported.");
+                    throw new NotSupportedException($"Party type '{sequenceData.DownPartyType}' not supported.");
             }
 
         }

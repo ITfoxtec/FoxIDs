@@ -9,7 +9,13 @@ namespace FoxIDs.Models
 {
     public class User : DataDocument, ISecretHash
     {
-        public static string IdFormat(IdKey idKey) => $"user:{idKey.TenantName}:{idKey.TrackName}:{idKey.Email}";
+        public static async Task<string> IdFormat(IdKey idKey)
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            return $"user:{idKey.TenantName}:{idKey.TrackName}:{idKey.Email}";
+        }
 
         [Required]
         [MaxLength(140)]
@@ -20,20 +26,20 @@ namespace FoxIDs.Models
         [Required]
         [MaxLength(40)]
         [JsonProperty(PropertyName = "user_id")]
-        public string UserId { get; set; }
+        public string UserId { get; set; }        
 
         [Required]
-        [MaxLength(20)]
+        [MaxLength(Constants.Models.SecretHash.HashAlgorithmLength)]
         [JsonProperty(PropertyName = "hash_algorithm")]
         public string HashAlgorithm { get; set; }
 
         [Required]
-        [MaxLength(2048)]
+        [MaxLength(Constants.Models.SecretHash.HashLength)]
         [JsonProperty(PropertyName = "hash")]
         public string Hash { get; set; }
 
         [Required]
-        [MaxLength(512)]
+        [MaxLength(Constants.Models.SecretHash.HashSaltLength)]
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
 
@@ -47,9 +53,8 @@ namespace FoxIDs.Models
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
-            await idKey.ValidateObjectAsync();
 
-            Id = IdFormat(idKey);
+            Id = await IdFormat(idKey);
         }
 
         public class IdKey : Track.IdKey

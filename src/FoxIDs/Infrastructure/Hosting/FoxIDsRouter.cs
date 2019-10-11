@@ -33,7 +33,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                throw new Exception($"Invalid route path.");
+                throw new NotSupportedException($"Invalid route path. Url '{context.HttpContext.Request.Path.Value}' not supported.");
             }
         }
 

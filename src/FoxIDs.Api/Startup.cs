@@ -1,11 +1,13 @@
 ﻿using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
 
@@ -40,31 +42,42 @@ namespace FoxIDs
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
-            services.AddMvc(options => options.EnableEndpointRouting = false)
+            services.AddMvcCore(options =>
+            {
+                options.EnableEndpointRouting = false;
+            })
+                .AddAuthorization()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
+                .AddJsonFormatters()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                });
+                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter(typeof(CamelCaseNamingStrategy)));
+                })
+                .AddFoxIDsApiExplorer();
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            if (!CurrentEnvironment.IsDevelopment())
+            if (CurrentEnvironment.IsDevelopment())
+            {
+                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
+            }
+            else
             {
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
             app.UseProxyClientIpMiddleware();
             app.UseEnLocalization();
+            app.UseApiSwagger();
 
             app.UseMvc(routes =>
             {
                 routes.Routes.Add(new FoxIDsApiRouter(routes.DefaultHandler));
             });
-
         }
     }
 }

@@ -1,18 +1,28 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class OAuthDownParty : OAuthDownParty<OAuthDownClient, OAuthDownScope, OAuthDownClaim> { }    
-    public class OAuthDownParty<TClient, TScope, TClaim> : DownParty where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    /// <summary>
+    /// OAuth 2.0 down party.
+    /// </summary>
+    public class OAuthDownParty : OAuthDownParty<OAuthDownClient, OAuthDownScope, OAuthDownClaim> { }
+    /// <summary>
+    /// OAuth 2.0 down party.
+    /// </summary>
+    public class OAuthDownParty<TClient, TScope, TClaim> : DownParty, IValidatableObject where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         public OAuthDownParty()
         {
-            Type = PartyType.OAuth2.ToString();
+            Type = PartyType.OAuth2;
         }
 
         private TClient client;
+        /// <summary>
+        /// OAuth 2.0 down client.
+        /// </summary>
         [ValidateObject]
         [JsonProperty(PropertyName = "client")]
         public TClient Client
@@ -20,12 +30,15 @@ namespace FoxIDs.Models
             get => client;
             set
             {
-                value.Parent = this;
+                if(value != null) value.Parent = this;
                 client = value;
             }            
         }
 
         private OAuthDownResource resource;
+        /// <summary>
+        /// OAuth 2.0 down resource.
+        /// </summary>
         [ValidateObject]
         [JsonProperty(PropertyName = "resource")]
         public OAuthDownResource Resource
@@ -33,13 +46,26 @@ namespace FoxIDs.Models
             get => resource;
             set
             {
-                value.Parent = this;
+                if (value != null) value.Parent = this;
                 resource = value;
             }
         }
-        
-        [Length(0, 40, 200)]
+
+        /// <summary>
+        /// Allow cors origins.
+        /// </summary>
+        [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         [JsonProperty(PropertyName = "allow_cors_origins")]
         public List<string> AllowCorsOrigins { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (Client == null && Resource == null)
+            {
+                results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));
+            }
+            return results;
+        }
     }
 }

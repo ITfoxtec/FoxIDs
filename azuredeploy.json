@@ -8,6 +8,12 @@
     "branch": {
       "type": "string"
     },
+    "siteLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Site location."
+      }
+    },
     "prefixName": {
       "type": "string",
       "metadata": {
@@ -96,7 +102,7 @@
     "cosmosDbName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "sendgridAccountName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "sendgridPassword": "GEN-PASSWORD",
-    "location": "[resourceGroup().location]"
+    "location": "[parameters('siteLocation')]"
   },
   "resources": [
     {

@@ -5,6 +5,9 @@
     "branch": {
       "value": "release-current"
     },
+    "siteLocation": {
+      "value": "West Europe"
+    },
     "prefixName": {
       "value": "foxids"
     },

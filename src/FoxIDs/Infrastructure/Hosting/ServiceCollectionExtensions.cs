@@ -4,6 +4,7 @@ using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Helpers;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.DataProtection;
@@ -78,6 +79,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();
             services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedValidationAttributeAdapterProvider>();
+
+            services.AddSingleton<OidcDiscoveryHandler>();
 
             if (env.IsProduction())
             {

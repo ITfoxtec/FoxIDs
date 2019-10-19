@@ -45,11 +45,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedInfrastructure();
 
-            services.AddSingleton(serviceProvider =>
-            {
-                var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>();
-                return new OidcDiscoveryHandler(httpClientFactory);
-            });
+            services.AddSingleton<OidcDiscoveryHandler>();
 
             if (env.IsProduction())
             {

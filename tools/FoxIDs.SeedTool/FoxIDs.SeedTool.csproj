@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ITfoxtec.Identity" Version="1.0.9" />
+    <PackageReference Include="ITfoxtec.Identity" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="UrlCombine" Version="2.0.0" />
   </ItemGroup>

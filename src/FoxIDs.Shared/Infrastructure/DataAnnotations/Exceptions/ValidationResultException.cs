@@ -31,6 +31,5 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         {
             return data?.GetType()?.Name;
         }
-
     }
 }

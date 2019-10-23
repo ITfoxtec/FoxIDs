@@ -110,7 +110,7 @@ namespace FoxIDs.Logic
             var sequence = HttpContext.GetSequence();
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime + settings.SequenceDataAddLifetime)
+                AbsoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime)
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence), data.ToJson(), options);
         }
@@ -147,14 +147,14 @@ namespace FoxIDs.Logic
 
         private string DataKey(Type type, Sequence sequence)
         {
-            var RouteBinding = HttpContext.GetRouteBinding();
-            return $"{RouteBinding.TenantName}.{RouteBinding.TrackName}.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
+            var routeBinding = HttpContext.GetRouteBinding();
+            return $"{routeBinding.TenantName}.{routeBinding.TrackName}.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
         }
 
         private IDataProtector CreateProtector()
         {
-            var RouteBinding = HttpContext.GetRouteBinding();
-            return dataProtectionProvider.CreateProtector(new[] { RouteBinding.TenantName, RouteBinding.TrackName, typeof(SequenceLogic).Name });
+            var routeBinding = HttpContext.GetRouteBinding();
+            return dataProtectionProvider.CreateProtector(new[] { routeBinding.TenantName, routeBinding.TrackName, typeof(SequenceLogic).Name });
         }
 
         private void CheckTimeout(Sequence sequence) 

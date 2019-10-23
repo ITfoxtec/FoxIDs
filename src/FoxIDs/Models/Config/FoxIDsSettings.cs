@@ -28,12 +28,6 @@ namespace FoxIDs.Models.Config
         public int CorsPreflightMaxAge { get; set; }
 
         /// <summary>
-        /// Add extra lifetime to the sequence lifetime where sequence data is valid in secunds.
-        /// </summary>
-        [Required]
-        public int SequenceDataAddLifetime { get; set; }
-
-        /// <summary>
         /// Add time before where the token is valid in secunds.
         /// </summary>
         [Required]

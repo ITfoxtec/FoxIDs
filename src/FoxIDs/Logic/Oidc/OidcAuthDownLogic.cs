@@ -80,7 +80,7 @@ namespace FoxIDs.Logic
                 switch (type)
                 {
                     case PartyType.Login:
-                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirect(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
+                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
                     case PartyType.OAuth2:
                         throw new NotImplementedException();
                     case PartyType.Oidc:

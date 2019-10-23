@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> LoginRedirect(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, Login redirect.");
             var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);

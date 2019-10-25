@@ -31,6 +31,8 @@ namespace FoxIDs
             services.AddRepository();
             services.AddLogic();
 
+            services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
+
             services.AddAuthenticationAndAuthorization(settings);
 
             services.AddHsts(options =>

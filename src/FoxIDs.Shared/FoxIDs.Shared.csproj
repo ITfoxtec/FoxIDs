@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="ITfoxtec.Identity" Version="1.1.0" />
+    <PackageReference Include="ITfoxtec.Identity" Version="1.1.1" />
     <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.0.3-beta1" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.11.0" />
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.5.1" />

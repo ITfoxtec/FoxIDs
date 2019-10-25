@@ -20,7 +20,7 @@ namespace FoxIDs.Models.Api
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        public int MetadataLifetime { get; set; } = 1728000;
+        public int? MetadataLifetime { get; set; } = 1728000;
 
         /// <summary>
         /// Default SHA256.

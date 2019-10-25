@@ -24,8 +24,11 @@ namespace FoxIDs.Models.Api
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)]
         public int? AuthorizationCodeLifetime { get; set; }
 
+        /// <summary>
+        /// Default 60 minutes.
+        /// </summary>
         [Range(Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMax)]
-        public int AccessTokenLifetime { get; set; }
+        public int? AccessTokenLifetime { get; set; } = 3600;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMax)]
         public int? RefreshTokenLifetime { get; set; }
@@ -37,8 +40,11 @@ namespace FoxIDs.Models.Api
 
         public bool? RefreshTokenLifetimeUnlimited { get; set; }
 
+        /// <summary>
+        /// Default 60 minutes.
+        /// </summary>
         [Range(Constants.Models.OidcDownParty.Client.IdTokenLifetimeMin, Constants.Models.OidcDownParty.Client.IdTokenLifetimeMax)]
-        public int IdTokenLifetime { get; set; }
+        public int? IdTokenLifetime { get; set; } = 3600;
 
         public bool? RequireLogoutIdTokenHint { get; set; } = true;
     }

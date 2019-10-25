@@ -29,13 +29,19 @@ namespace FoxIDs.Models.Api
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        public int MetadataLifetime { get; set; } = 1728000;
+        public int? MetadataLifetime { get; set; } = 1728000;
 
+        /// <summary>
+        /// Default 5 minutes.
+        /// </summary>
         [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]
-        public int SubjectConfirmationLifetime { get; set; }
+        public int? SubjectConfirmationLifetime { get; set; } = 300;
 
+        /// <summary>
+        /// Default 60 minutes.
+        /// </summary>
         [Range(Constants.Models.SamlParty.Down.IssuedTokenLifetimeMin, Constants.Models.SamlParty.Down.IssuedTokenLifetimeMax)]
-        public int IssuedTokenLifetime { get; set; }
+        public int? IssuedTokenLifetime { get; set; } = 3600;
 
         /// <summary>
         /// Default SHA256.

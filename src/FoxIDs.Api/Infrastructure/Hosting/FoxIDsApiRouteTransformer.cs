@@ -51,10 +51,10 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else if (route.Length >= 2 && route[1].StartsWith(Constants.Routes.PreApikey))
             {
-                routeController = route[2].Replace(Constants.Routes.PreApikey, Constants.Routes.ApiControllerPreTenantTrackKey);
+                routeController = route[1].Replace(Constants.Routes.PreApikey, Constants.Routes.ApiControllerPreTenantTrackKey);
                 trackIdKey.TenantName = route[0].ToLower();
             }
-            else if (route.Length >= 4 && route[2].StartsWith(Constants.Routes.PreApikey))
+            else if (route.Length >= 3 && route[2].StartsWith(Constants.Routes.PreApikey))
             {
                 routeController = route[2].Replace(Constants.Routes.PreApikey, Constants.Routes.ApiControllerPreTenantTrackKey);
                 trackIdKey.TenantName = route[0].ToLower();

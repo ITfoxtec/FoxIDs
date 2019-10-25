@@ -10,14 +10,23 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Default 10 hours.
+        /// </summary>
         [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)]
-        public int SessionLifetime { get; set; }
+        public int? SessionLifetime { get; set; } = 36000;
 
+        /// <summary>
+        /// Default 24 hours.
+        /// </summary>
         [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
-        public int SessionAbsoluteLifetime { get; set; }
+        public int? SessionAbsoluteLifetime { get; set; } = 86400;
 
+        /// <summary>
+        /// Default 0 minutes.
+        /// </summary>
         [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
-        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
+        public int? PersistentSessionAbsoluteLifetime { get; set; } = 0;
 
         /// <summary>
         /// Default false.

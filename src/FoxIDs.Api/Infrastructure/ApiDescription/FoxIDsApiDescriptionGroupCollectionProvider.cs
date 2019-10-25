@@ -63,7 +63,7 @@ namespace FoxIDs.Infrastructure.ApiDescription
                 if (httpMethods != null)
                 {
                     action.ActionConstraints = new[] { new HttpMethodActionConstraint(httpMethods) };
-                    action.AttributeRouteInfo = new Microsoft.AspNetCore.Mvc.Routing.AttributeRouteInfo { Template = GetTemplate(action.ControllerName) };
+                    action.AttributeRouteInfo = new Microsoft.AspNetCore.Mvc.Routing.AttributeRouteInfo { Name = action.ActionName, Template = GetTemplate(action.ControllerName) };
 
                     //TODO Work around. When solved change back to use ApiDescriptionActionData.
                     //action.SetProperty(new ApiDescriptionActionData { GroupName = Constants.Api.Version });

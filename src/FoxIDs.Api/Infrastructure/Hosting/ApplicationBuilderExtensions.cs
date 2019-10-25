@@ -10,7 +10,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             builder.UseSwagger(c =>
             {
-                c.SerializeAsV2 = true;
                 c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
                 {
                     openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpRequest.Scheme}://{httpRequest.Host.Value}" } };

@@ -1,52 +1,47 @@
-﻿using ITfoxtec.Identity;
-using FoxIDs.Models;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using FoxIDs.Repository;
-using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using ITfoxtec.Identity;
+using FoxIDs.Models;
+using System.Linq;
+using FoxIDs.Repository;
 using System.Text.RegularExpressions;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
-    public abstract class SiteRouter : IRouter
+    public abstract class SiteRouteTransformer : DynamicRouteValueTransformer
     {
         private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\)))$", RegexOptions.Compiled);
-        private readonly IRouter defaultRouter;
+        private readonly ITenantRepository tenantRepository;
 
-        public SiteRouter(IRouter defaultRouter)
+        public SiteRouteTransformer(ITenantRepository tenantRepository)
         {
-            this.defaultRouter = defaultRouter;
+            this.tenantRepository = tenantRepository;
         }
-
-        public VirtualPathData GetVirtualPath(VirtualPathContext context)
-        {
-            return defaultRouter.GetVirtualPath(context);
-        }
-
-        public async Task RouteAsync(RouteContext context)
+        
+        public override async ValueTask<RouteValueDictionary> TransformAsync(HttpContext httpContext, RouteValueDictionary values)
         {
             try
             {
-                await HandleRouteAsync(context);
+                var path = MapPath(values[Constants.Routes.RouteTransformerPathKey] is string ? values[Constants.Routes.RouteTransformerPathKey] as string : string.Empty);
+                var route = path.Split('/').Where(r => !r.IsNullOrWhiteSpace()).ToArray();
+                return await HandleRouteAsync(httpContext, values, route);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failing url '{context.HttpContext?.Request?.Path.Value}'", ex);
+                throw new Exception($"Failing url '{httpContext.Request.Scheme}://{httpContext.Request.Host.ToUriComponent()}{httpContext.Request.Path.Value}'", ex);
             }
-
-            await defaultRouter.RouteAsync(context);
         }
-        
-        protected abstract Task HandleRouteAsync(RouteContext context);
-      
-        protected async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, HttpContext httpContext, Track.IdKey trackIdKey, string partyNameAndBinding = null)
-        {
-            var tenantRepository = httpContext.RequestServices.GetService<ITenantRepository>();
 
+        protected abstract string MapPath(string path);
+
+        protected abstract Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, RouteValueDictionary values, string[] route);
+
+        protected async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, string partyNameAndBinding = null)
+        {
             var track = await GetTrackAsync(tenantRepository, trackIdKey);
             var routeBinding = new RouteBinding
             {
@@ -193,5 +188,6 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             return toUpParties;
         }
+
     }
 }

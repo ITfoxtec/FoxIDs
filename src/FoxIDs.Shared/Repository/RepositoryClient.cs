@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Converters;
+using Microsoft.AspNetCore.Hosting;
 
 namespace FoxIDs.Repository
 {
@@ -17,11 +18,11 @@ namespace FoxIDs.Repository
         private bool isDisposed = false;
         private readonly Settings settings;
         private readonly TelemetryLogger logger;
-        private readonly IHostingEnvironment environment;
+        private readonly IWebHostEnvironment environment;
         private Uri serviceEndpont;
         private Uri databaseUri;
 
-        public RepositoryClient(Settings settings, TelemetryLogger logger, IHostingEnvironment environment)
+        public RepositoryClient(Settings settings, TelemetryLogger logger, IWebHostEnvironment environment)
         {
             this.settings = settings;
             this.logger = logger;

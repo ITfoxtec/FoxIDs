@@ -1,28 +1,25 @@
 ﻿using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
+using Microsoft.Extensions.Hosting;
 using System;
+using System.Text.Json.Serialization;
 
 namespace FoxIDs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             CurrentEnvironment = env;
         }
 
         private IConfiguration Configuration { get; }
-        private IHostingEnvironment CurrentEnvironment { get; }
+        private IWebHostEnvironment CurrentEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -42,19 +39,11 @@ namespace FoxIDs
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
-            services.AddMvcCore(options =>
-            {
-                options.EnableEndpointRouting = false;
-            })
-                .AddAuthorization()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddJsonFormatters()
+            services.AddControllers()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                    options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Include;
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.Converters.Add(new StringEnumConverter(typeof(CamelCaseNamingStrategy)));
+                    options.JsonSerializerOptions.IgnoreNullValues = true;
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 })
                 .AddFoxIDsApiExplorer();
         }
@@ -62,8 +51,7 @@ namespace FoxIDs
         public void Configure(IApplicationBuilder app)
         {
             if (CurrentEnvironment.IsDevelopment())
-            {
-                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
+            { 
             }
             else
             {
@@ -74,9 +62,11 @@ namespace FoxIDs
             app.UseEnLocalization();
             app.UseApiSwagger();
 
-            app.UseMvc(routes =>
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
             {
-                routes.Routes.Add(new FoxIDsApiRouter(routes.DefaultHandler));
+                endpoints.MapDynamicControllerRoute<FoxIDsApiRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
             });
         }
     }

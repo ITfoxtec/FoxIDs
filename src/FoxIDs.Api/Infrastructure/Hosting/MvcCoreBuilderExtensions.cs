@@ -7,9 +7,9 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class MvcCoreBuilderExtensions
     {
-        public static IMvcCoreBuilder AddFoxIDsApiExplorer(this IMvcCoreBuilder builder)
+        public static IMvcBuilder AddFoxIDsApiExplorer(this IMvcBuilder builder)
         {
-            builder.Services.TryAddSingleton<IApiDescriptionGroupCollectionProvider, FoxIDsApiDescriptionGroupCollectionProvider>();
+            builder.Services.AddSingleton<IApiDescriptionGroupCollectionProvider, FoxIDsApiDescriptionGroupCollectionProvider>();
             builder.Services.TryAddEnumerable(ServiceDescriptor.Transient<IApiDescriptionProvider, DefaultApiDescriptionProvider>());
 
             return builder;

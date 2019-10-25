@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.Collections.Generic;
@@ -41,9 +43,11 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings, IHostingEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment env)
         {
             services.AddSharedInfrastructure();
+
+            services.AddScoped<FoxIDsApiRouteTransformer>();
 
             services.AddSingleton<OidcDiscoveryHandler>();
 
@@ -97,17 +101,29 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(Constants.Api.Version, new Info { Title = "FoxIDs API", Version = Constants.Api.Version });
-                c.AddSecurityDefinition("Bearer", new ApiKeyScheme
+                c.SwaggerDoc(Constants.Api.Version, new OpenApiInfo { Title = "FoxIDs API", Version = Constants.Api.Version });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
-                    In = "header",
-                    Type = "apiKey"
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
                 });
-                c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
-                    {"Bearer", new string[] { }},
+                    {
+                         new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+                    }
                 });
 
                 c.TagActionsBy(s => new[]

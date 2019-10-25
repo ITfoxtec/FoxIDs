@@ -3,6 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Microsoft.Extensions.Hosting;
 
 namespace FoxIDs
 {
@@ -15,7 +16,6 @@ namespace FoxIDs
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
                 .ConfigureKestrel(options => options.AddServerHeader = false)
                 .ConfigureAppConfiguration((context, builder) =>
                 {

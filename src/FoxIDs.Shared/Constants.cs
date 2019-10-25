@@ -8,6 +8,8 @@ namespace FoxIDs
     {
         public static class Routes
         {
+            public const string RouteTransformerPathKey = "path";
+
             public const string DefaultWebSiteAction = "index";
             public const string DefaultWebSiteController = "w";
 
@@ -24,13 +26,13 @@ namespace FoxIDs
 
             public const string SequenceStringKey = Sequence.String;
 
-            public const char PreApikey = '!';
+            public const string PreApikey = "!";
             public const string MasterApiName = "@master";
             public const string MasterTenantName = "master";
             public const string DefaultMasterTrackName = "master";
 
-            public const char ApiControllerPreMasterKey = 'm';
-            public const char ApiControllerPreTenantTrackKey = 't';
+            public const string ApiControllerPreMasterKey = "m";
+            public const string ApiControllerPreTenantTrackKey = "t";
         }
 
         public static class Models

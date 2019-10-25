@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using StackExchange.Redis;
 
@@ -70,7 +71,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IHostingEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment env)
         {
             services.AddSharedInfrastructure();
 
@@ -79,6 +80,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();
             services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedValidationAttributeAdapterProvider>();
+
+            services.AddScoped<FoxIDsRouteTransformer>();
 
             services.AddSingleton<OidcDiscoveryHandler>();
 

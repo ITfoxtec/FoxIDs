@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,9 @@ namespace FoxIDs.Infrastructure.Filters
         private class HttpSecurityHeadersActionAttribute : IAsyncActionFilter
         {
             private readonly TelemetryScopedLogger logger;
-            private readonly IHostingEnvironment env;
+            private readonly IWebHostEnvironment env;
 
-            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IHostingEnvironment env)
+            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment env)
             {
                 this.logger = logger;
                 this.env = env;

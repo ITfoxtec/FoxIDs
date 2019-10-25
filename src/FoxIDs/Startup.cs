@@ -1,25 +1,24 @@
 ﻿using System;
 using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace FoxIDs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             CurrentEnvironment = env;
         }
 
         private IConfiguration Configuration { get; }
-        private IHostingEnvironment CurrentEnvironment { get; }
+        private IWebHostEnvironment CurrentEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
@@ -31,15 +30,17 @@ namespace FoxIDs
             services.AddRepository();
             services.AddLogic();
 
+            services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
+
             services.AddHsts(options =>
             {
                 options.IncludeSubDomains = true;
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddMvcLocalization();
+            services.AddControllersWithViews()
+                .AddMvcLocalization()
+                .AddNewtonsoftJson(); 
         }
 
         public void Configure(IApplicationBuilder app)
@@ -52,7 +53,6 @@ namespace FoxIDs
 
             if (CurrentEnvironment.IsDevelopment())
             {
-                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
                 app.UseDeveloperExceptionPage();
             }
             else
@@ -65,13 +65,11 @@ namespace FoxIDs
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyClientIpMiddleware();
 
-            app.UseMvc(routes =>
-            {                
-                routes.Routes.Add(new FoxIDsRouter(routes.DefaultHandler));
-
-                routes.MapRoute(
-                    name: "default",
-                    template: $"{{controller={Constants.Routes.DefaultWebSiteController}}}/{{action={Constants.Routes.DefaultWebSiteAction}}}/{{id?}}");
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDynamicControllerRoute<FoxIDsRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
             });
         }
     }

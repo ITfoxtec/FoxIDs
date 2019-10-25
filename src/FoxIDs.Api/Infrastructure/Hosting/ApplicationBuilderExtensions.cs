@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
 
 namespace FoxIDs.Infrastructure.Hosting
@@ -9,16 +10,16 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             builder.UseSwagger(c =>
             {
-                c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                c.SerializeAsV2 = true;
+                c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
                 {
-                    swaggerDoc.Host = httpReq.Host.Value;
-                    swaggerDoc.Schemes = new List<string>() { httpReq.Scheme };
+                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpRequest.Scheme}://{httpRequest.Host.Value}" } };
                 });
             });
 #if DEBUG
             builder.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FoxIDs API");
+                c.SwaggerEndpoint($"/swagger/{Constants.Api.Version}/swagger.json", "FoxIDs API");
             });
 #endif
         }

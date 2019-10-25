@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Globalization;
@@ -10,7 +11,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ApplicationBuilderExtensions
     {
-        public static IApplicationBuilder UseStaticFilesCacheControl(this IApplicationBuilder app, IHostingEnvironment env)
+        public static IApplicationBuilder UseStaticFilesCacheControl(this IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

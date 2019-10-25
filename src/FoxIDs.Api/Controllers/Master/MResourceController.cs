@@ -20,7 +20,7 @@ namespace FoxIDs.Controllers
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Post([FromBody] Api.Resource model)
+        public async Task<IActionResult> PostResource([FromBody] Api.Resource model)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

@@ -11,10 +11,10 @@ namespace FoxIDs.Controllers
     [HttpSecurityHeaders]
     public class WController : Controller
     {
-        private readonly IHostingEnvironment environment;
+        private readonly IWebHostEnvironment environment;
         private readonly FoxIDsSettings settings;
 
-        public WController(IHostingEnvironment environment, FoxIDsSettings settings)
+        public WController(IWebHostEnvironment environment, FoxIDsSettings settings)
         {
             this.environment = environment;
             this.settings = settings;

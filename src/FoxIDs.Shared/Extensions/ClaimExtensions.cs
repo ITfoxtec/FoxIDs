@@ -13,7 +13,6 @@ namespace FoxIDs
         /// </summary>
         /// <param name="claims">A claim collection.</param>
         /// <param name="predicate">The function that performs the matching logic.</param>
-        /// <returns></returns>
         public static string FindFirstValue(this IEnumerable<Claim> claims, Func<Claim, bool> predicate)
         {
             return claims.Where(predicate).Select(c => c.Value).FirstOrDefault();

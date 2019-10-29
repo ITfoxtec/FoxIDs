@@ -41,11 +41,10 @@ namespace FoxIDs.Infrastructure.Saml2
                 subjectClaims = AddNameIdAsNameClaim(subjectClaims);
             }
 
-            var now = DateTimeOffset.UtcNow;
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(subjectClaims),
-                Expires = now.AddMinutes(issuedTokenLifetime).UtcDateTime,
+                Expires = tokenIssueTime.AddSeconds(issuedTokenLifetime).UtcDateTime,
                 Audience = appliesToAddress,
                 Issuer = Issuer
             };

@@ -54,10 +54,13 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
-                if (session != null && ValidSession(sequenceData, session))
+                if (sequenceData.LoginAction != LoginAction.RequereLogin)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                    if (session != null && ValidSession(sequenceData, session))
+                    {
+                        return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    }
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -92,7 +95,7 @@ namespace FoxIDs.Controllers
                 return false;
             }
 
-            if (!sequenceData.UserId.IsNullOrEmpty() && session.UserId != sequenceData.UserId)
+            if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserId.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
             {
                 logger.ScopeTrace("Session user and requested user do not match.");
                 return false;

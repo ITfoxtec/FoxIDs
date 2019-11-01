@@ -155,14 +155,14 @@ namespace FoxIDs.Controllers
                         if (session != null && user.UserId != session.UserId)
                         {
                             logger.ScopeTrace("Authenticated user and session user do not match.");
-                            // TODO invalid user in login
+                            // TODO invalid user login
                             throw new NotImplementedException();
                         }
 
                         if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
                         {
                             logger.ScopeTrace("Authenticated user and requested user do not match.");
-                            // TODO invalid user in login
+                            // TODO invalid user login
                             throw new NotImplementedException();
                         }
 

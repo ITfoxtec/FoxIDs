@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
         {
             if(SessionEnabled(loginUpParty))
             {
-                logger.ScopeTrace($"Create session for User '{user.Email}' session exists, User id '{user.UserId}', Session id '{sessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace($"Create session for User '{user.Email}', User id '{user.UserId}', Session id '{sessionId}', Route '{RouteBinding.Route}'.");
 
                 var session = new SessionCookie
                 {
@@ -169,6 +169,5 @@ namespace FoxIDs.Logic
                 return false;
             }
         }
-
     }
 }

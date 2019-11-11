@@ -100,7 +100,7 @@ namespace FoxIDs.Logic
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
-                return await AuthnResponseAsync(party.Id, samlConfig, saml2AuthnRequest.Id.Value, binding.RelayState, saml2AuthnRequest.AssertionConsumerServiceUrl?.OriginalString, party.AuthnBinding.ResponseBinding, ex.Status);
+                return await AuthnResponseAsync(party.Id, samlConfig, saml2AuthnRequest.Id.Value, binding.RelayState, GetAcsUrl(party, saml2AuthnRequest), party.AuthnBinding.ResponseBinding, ex.Status);
             }
         }
 

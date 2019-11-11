@@ -143,6 +143,5 @@ namespace FoxIDs.Logic
                     throw new NotImplementedException();
             }
         }
-
     }
 }

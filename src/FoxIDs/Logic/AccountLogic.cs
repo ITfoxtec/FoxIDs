@@ -125,16 +125,38 @@ namespace FoxIDs.Logic
 
         private void CheckPasswordComplexity(string email, string password)
         {
+            CheckPasswordComplexityCharRepeate(email, password);
+            CheckPasswordComplexityCharDissimilarity(email, password);
+            CheckPasswordComplexityContainsEmail(email, password);
+            CheckPasswordComplexityContainsUrl(email, password);
+        }
+
+        private void CheckPasswordComplexityCharRepeate(string email, string password)
+        {
+            var maxCharRepeate = RouteBinding.PasswordLength / 2;
+
+            var charCounts = password.GroupBy(c => c).Select(g => g.Count());
+            if(charCounts.Any(c => c >= maxCharRepeate))
+            {
+                throw new PasswordComplexityException($"Password char repeate does not comply with complexity, user '{email}'.");
+            }
+        }
+
+        private void CheckPasswordComplexityCharDissimilarity(string email, string password)
+        {
             var matchCount = 0;
             if (Regex.IsMatch(password, @"[a-z]")) matchCount++;
             if (Regex.IsMatch(password, @"[A-Z]")) matchCount++;
             if (Regex.IsMatch(password, @"\d")) matchCount++;
             if (Regex.IsMatch(password, @"\W")) matchCount++;
-            if(matchCount < 3)
+            if (matchCount < 3)
             {
-                throw new PasswordComplexityException($"Password does not comply with complexity, user '{email}'.");
+                throw new PasswordComplexityException($"Password char dissimilarity does not comply with complexity, user '{email}'.");
             }
+        }
 
+        private void CheckPasswordComplexityContainsEmail(string email, string password)
+        {
             var emailSplit = email.Split('@', '.', '-', '_');
             foreach (var es in emailSplit)
             {
@@ -143,7 +165,10 @@ namespace FoxIDs.Logic
                     throw new PasswordEmailTextComplexityException($"Password contains e-mail text that does not comply with complexity, user '{email}'.");
                 }
             }
+        }
 
+        private void CheckPasswordComplexityContainsUrl(string email, string password)
+        {
             var url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}{HttpContext.Request.Path.Value}";
             var urlSplit = url.Substring(0, url.LastIndexOf('/')).Split(':', '/', '(', ')', '.', '-', '_');
             foreach (var us in urlSplit)

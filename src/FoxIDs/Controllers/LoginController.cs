@@ -54,13 +54,11 @@ namespace FoxIDs.Controllers
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
-                if (sequenceData.LoginAction != LoginAction.RequereLogin)
+                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                var validSession = ValidSession(sequenceData, session);
+                if (validSession && sequenceData.LoginAction != LoginAction.RequereLogin)
                 {
-                    (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
-                    if (session != null && ValidSession(sequenceData, session))
-                    {
-                        return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
-                    }
+                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -75,7 +73,7 @@ namespace FoxIDs.Controllers
                         SequenceString = SequenceString,
                         CssStyle = loginUpParty.CssStyle,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
-                        EnableCreateUser = loginUpParty.EnableCreateUser.Value,
+                        EnableCreateUser = !validSession && loginUpParty.EnableCreateUser.Value,
                         Email = sequenceData.EmailHint.IsNullOrWhiteSpace() ? string.Empty : sequenceData.EmailHint,
                     });
                 }
@@ -89,6 +87,8 @@ namespace FoxIDs.Controllers
 
         private bool ValidSession(LoginUpSequenceData sequenceData, SessionCookie session)
         {
+            if (session != null) return false;
+
             if (sequenceData.MaxAge.HasValue && DateTimeOffset.UtcNow.ToUnixTimeSeconds() - session.CreateTime > sequenceData.MaxAge.Value)
             {
                 logger.ScopeTrace($"Session max age not accepted, Max age '{sequenceData.MaxAge}', Session created '{session.CreateTime}'.");
@@ -156,17 +156,17 @@ namespace FoxIDs.Controllers
                         {
                             logger.ScopeTrace("Authenticated user and session user do not match.");
                             // TODO invalid user login
-                            throw new NotImplementedException();
+                            throw new NotImplementedException("Authenticated user and session user do not match.");
                         }
 
                         if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
                         {
                             logger.ScopeTrace("Authenticated user and requested user do not match.");
                             // TODO invalid user login
-                            throw new NotImplementedException();
+                            throw new NotImplementedException("Authenticated user and requested user do not match.");
                         }
 
-                        return await LoginResponse(loginUpParty, user);
+                        return await LoginResponse(loginUpParty, user, session);
                     }
                     catch (AccountException aex)
                     {
@@ -190,14 +190,22 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user)
+        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user, SessionCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var authMethods = new List<string>();
             authMethods.Add(IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
-            var sessionId = RandomGenerator.Generate(24);
 
-            await sessionLogic.CreateSessionAsync(loginUpParty, user, authTime, authMethods, sessionId);
+            string sessionId = null;
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session))
+            {
+                sessionId = session.SessionId;
+            }
+            else
+            {
+                sessionId = RandomGenerator.Generate(24);
+                await sessionLogic.CreateSessionAsync(loginUpParty, user, authTime, authMethods, sessionId);
+            }
 
             return await loginUpLogic.LoginResponseAsync(user, authTime, authMethods, sessionId);
         }

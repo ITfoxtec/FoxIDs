@@ -46,6 +46,24 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, SessionCookie session)
+        {
+            logger.ScopeTrace($"Update session, Route '{RouteBinding.Route}'.");
+
+            var sessionEnabled = SessionEnabled(loginUpParty);
+            var sessionValid = SessionValid(loginUpParty, session);
+
+            if (sessionEnabled && sessionValid)
+            {
+                session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
+                logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.");
+                return true;
+            }
+
+            return false;
+        }
+
         public async Task<(SessionCookie, User)> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty)
         {
             logger.ScopeTrace($"Get and update session and check user, Route '{RouteBinding.Route}'.");

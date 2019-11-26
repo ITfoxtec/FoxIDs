@@ -3,6 +3,7 @@ using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -62,6 +63,7 @@ namespace FoxIDs
             }
 
             app.UseHttpsRedirection();
+            app.UseStatusCodePages(context => throw new Exception($"Page '{context.HttpContext.Request.Path}', status code: {context.HttpContext.Response.StatusCode} {ReasonPhrases.GetReasonPhrase(context.HttpContext.Response.StatusCode)}"));
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyClientIpMiddleware();
 

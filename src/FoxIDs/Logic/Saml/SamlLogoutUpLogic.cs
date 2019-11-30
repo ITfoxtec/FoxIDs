@@ -186,9 +186,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     if(status == Saml2StatusCodes.Success)
                     {
                         return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
@@ -197,7 +197,7 @@ namespace FoxIDs.Logic
                     {
                         throw new EndpointException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.") { RouteBinding = RouteBinding };
                     }
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sessionIndex);
 
                 default:

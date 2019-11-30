@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum PartyType
+    public enum PartyTypes
     {
         [EnumMember(Value = "login")]
         Login = 10,

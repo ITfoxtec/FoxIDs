@@ -13,7 +13,7 @@ namespace FoxIDs.Models
     {
         public SamlUpParty()
         {
-            Type = PartyType.Saml2;
+            Type = PartyTypes.Saml2;
         }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]

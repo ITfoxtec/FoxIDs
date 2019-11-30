@@ -54,6 +54,16 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
             }
 
+            public static class Party
+            {
+                public const int ClaimTransformationMin = 0;
+                public const int ClaimTransformationMax = 100;
+                public const int ClaimTransformationClaimsMin = 0;
+                public const int ClaimTransformationClaimsMax = 10;
+                public const int ClaimTransformationOrderMin = 0;
+                public const int ClaimTransformationOrderMax = 1000;
+            }
+
             public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;
@@ -138,6 +148,10 @@ namespace FoxIDs
                 public const int KeysMin = 1;
                 public const int KeysMax = 10;
 
+                public const int ClaimsMin = 0;
+                public const int ClaimsMax = 500;
+                public const int ClaimsLength = 500;
+
                 public static class Up
                 {
                     public const int AuthnUrlLength = 500;
@@ -146,9 +160,6 @@ namespace FoxIDs
 
                 public static class Down
                 {
-                    public const int ClaimsMin = 0;
-                    public const int ClaimsMax = 500;
-                    public const int ClaimsLength = 500;
                     public const int SubjectConfirmationLifetimeMin = 60; // 1 minutes 
                     public const int SubjectConfirmationLifetimeMax = 900; // 15 minutes
                     public const int IssuedTokenLifetimeMin = 300; // 5 minutes 

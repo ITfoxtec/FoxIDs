@@ -9,7 +9,7 @@ namespace FoxIDs.Models
     {
         public LoginUpParty()
         {
-            Type = PartyType.Login;
+            Type = PartyTypes.Login;
         }
 
         [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)] 

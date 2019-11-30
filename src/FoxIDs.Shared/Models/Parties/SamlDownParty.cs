@@ -13,16 +13,18 @@ namespace FoxIDs.Models
     {
         public SamlDownParty()
         {
-            Type = PartyType.Saml2;
+            Type = PartyTypes.Saml2;
         }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "ids_issuer")]
         public string IdSIssuer { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
+        [JsonProperty(PropertyName = "claim_transformations")]
+        public List<SamlClaimTransformation> ClaimTransformations { get; set; }
 
-        [Length(Constants.Models.SamlParty.Down.ClaimsMin, Constants.Models.SamlParty.Down.ClaimsMax, Constants.Models.SamlParty.Down.ClaimsLength)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimsLength)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 

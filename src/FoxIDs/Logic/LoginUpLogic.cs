@@ -73,11 +73,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     var claimsLogic = serviceProvider.GetService<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
                     var samlClaims = await claimsLogic.FromJwtToSamlClaims(claims);
                     samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Email.OriginalString);
@@ -98,11 +98,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyType}'.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, ErrorToOAuth2OidcString(error), errorDescription);
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status: ErrorToSamlStatus(error));
 
                 default:

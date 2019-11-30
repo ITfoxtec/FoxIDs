@@ -33,6 +33,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SecretHashLogic>();
             services.AddTransient<AccountLogic>();
             services.AddTransient<SessionLogic>();
+            services.AddTransient<ClaimTransformationsLogic>();            
 
             services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();

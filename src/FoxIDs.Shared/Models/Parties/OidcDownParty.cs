@@ -5,7 +5,7 @@
     {
         public OidcDownParty()
         {
-            Type = PartyType.Oidc;
+            Type = PartyTypes.Oidc;
         }
     }
 }

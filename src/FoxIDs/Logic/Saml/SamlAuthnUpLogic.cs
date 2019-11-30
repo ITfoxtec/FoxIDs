@@ -197,9 +197,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     if(status == Saml2StatusCodes.Success)
                     {
                         var claimsLogic = serviceProvider.GetService<ClaimsLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
                     {
                         return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
                     }
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, claims);
 
                 default:

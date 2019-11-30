@@ -16,7 +16,7 @@ namespace FoxIDs.Models
     {
         public OAuthDownParty()
         {
-            Type = PartyType.OAuth2;
+            Type = PartyTypes.OAuth2;
         }
 
         private TClient client;
@@ -50,6 +50,10 @@ namespace FoxIDs.Models
                 resource = value;
             }
         }
+
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
+        [JsonProperty(PropertyName = "claim_transformations")]
+        public List<OAuthClaimTransformation> ClaimTransformations { get; set; }
 
         /// <summary>
         /// Allow cors origins.

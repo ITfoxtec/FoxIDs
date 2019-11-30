@@ -29,15 +29,17 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ClaimTransformationsLogic claimsTransformationsLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimsTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.claimsTransformationsLogic = claimsTransformationsLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -84,13 +86,13 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {
-                    case PartyType.Login:
+                    case PartyTypes.Login:
                         return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
-                    case PartyType.OAuth2:
+                    case PartyTypes.OAuth2:
                         throw new NotImplementedException();
-                    case PartyType.Oidc:
+                    case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First());
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
 
                     default:
@@ -203,6 +205,8 @@ namespace FoxIDs.Logic
             };
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
+                claims = await claimsTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+
                 saml2AuthnResponse.SessionIndex = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
 
                 saml2AuthnResponse.NameId = GetNameId(claims);

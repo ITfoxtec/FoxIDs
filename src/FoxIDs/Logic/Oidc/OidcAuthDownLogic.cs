@@ -23,16 +23,18 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ClaimTransformationsLogic claimsTransformationsLogic;
         private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
         private readonly OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic;
         private readonly OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic;
 
-        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimsTransformationsLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.claimsTransformationsLogic = claimsTransformationsLogic;
             this.jwtLogic = jwtLogic;
             this.oauthAuthCodeGrantLogic = oauthAuthCodeGrantLogic;
             this.oauthResourceScopeLogic = oauthResourceScopeLogic;
@@ -79,13 +81,13 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {
-                    case PartyType.Login:
+                    case PartyTypes.Login:
                         return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
-                    case PartyType.OAuth2:
+                    case PartyTypes.OAuth2:
                         throw new NotImplementedException();
-                    case PartyType.Oidc:
+                    case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First());
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
 
                     default:
@@ -215,6 +217,8 @@ namespace FoxIDs.Logic
             }
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
+
+            claims = await claimsTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
 
             var authenticationResponse = new AuthenticationResponse
             {

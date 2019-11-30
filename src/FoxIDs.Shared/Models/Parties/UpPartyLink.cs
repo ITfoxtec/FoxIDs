@@ -16,7 +16,7 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "type")]
-        public PartyType Type { get; set; }
+        public PartyTypes Type { get; set; }
 
     }
 }

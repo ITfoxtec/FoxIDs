@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Request, Up type '{type}'.");
             switch (type)
             {
-                case PartyType.Login:
+                case PartyTypes.Login:
                     var logoutRequest = new LogoutRequest
                     {
                         DownParty = party,
@@ -91,11 +91,11 @@ namespace FoxIDs.Logic
                         PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace(),
                     };
                     return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), logoutRequest);
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     throw new NotImplementedException();
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
                         throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up Party.") { RouteBinding = RouteBinding };

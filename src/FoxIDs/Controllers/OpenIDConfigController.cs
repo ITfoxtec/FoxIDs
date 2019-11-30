@@ -29,9 +29,9 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"Openid configuration, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
-                    case PartyType.OAuth2:
+                    case PartyTypes.OAuth2:
                         return Json(await serviceProvider.GetService<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfiguration(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
-                    case PartyType.Oidc:
+                    case PartyTypes.Oidc:
                         return Json(await serviceProvider.GetService<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfiguration(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
 
                     default:
@@ -51,9 +51,9 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"Openid configuration keys, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
-                    case PartyType.OAuth2:
+                    case PartyTypes.OAuth2:
                         return Json(serviceProvider.GetService<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().Keys(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
-                    case PartyType.Oidc:
+                    case PartyTypes.Oidc:
                         return Json(serviceProvider.GetService<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().Keys(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
 
                     default:

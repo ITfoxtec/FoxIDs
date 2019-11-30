@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {
-                    case PartyType.Login:
+                    case PartyTypes.Login:
                         return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), new LogoutRequest
                         {
                             DownParty = party,
@@ -96,11 +96,11 @@ namespace FoxIDs.Logic
                             RequireLogoutConsent = false,
                             PostLogoutRedirect = true,
                         });
-                    case PartyType.OAuth2:
+                    case PartyTypes.OAuth2:
                         throw new NotImplementedException();
-                    case PartyType.Oidc:
+                    case PartyTypes.Oidc:
                         throw new NotImplementedException();
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlUpLogoutRequest(saml2LogoutRequest, party));
 
                     default:

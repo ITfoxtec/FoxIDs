@@ -87,7 +87,7 @@ namespace FoxIDs.Controllers
 
         private bool ValidSession(LoginUpSequenceData sequenceData, SessionCookie session)
         {
-            if (session != null) return false;
+            if (session == null) return false;
 
             if (sequenceData.MaxAge.HasValue && DateTimeOffset.UtcNow.ToUnixTimeSeconds() - session.CreateTime > sequenceData.MaxAge.Value)
             {

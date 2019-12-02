@@ -21,12 +21,14 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
 
-        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
         }
 
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
@@ -51,7 +53,7 @@ namespace FoxIDs.Logic
             return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");
         }
 
-        public async Task<IActionResult> LoginResponseAsync(User user, long authTime, IEnumerable<string> authMethods, string sessionId)
+        public async Task<IActionResult> LoginResponseAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
         {
             logger.ScopeTrace("Up, Login response.");
 
@@ -69,6 +71,8 @@ namespace FoxIDs.Logic
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
+
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
 
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)

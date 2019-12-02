@@ -40,6 +40,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
 
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
+        [JsonProperty(PropertyName = "claim_transformations")]
+        public List<OAuthClaimTransformation> ClaimTransformations { get; set; }
+
         [Length(Constants.Models.LoginUpParty.AllowIframeOnDomainsMin, Constants.Models.LoginUpParty.AllowIframeOnDomainsMax, Constants.Models.LoginUpParty.AllowIframeOnDomainsLength)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }

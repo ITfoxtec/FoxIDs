@@ -20,6 +20,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "ids_issuer")]
         public string IdSIssuer { get; set; }
 
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
+        [JsonProperty(PropertyName = "claim_transformations")]
+        public List<SamlClaimTransformation> ClaimTransformations { get; set; }
+
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
+        [JsonProperty(PropertyName = "claims")]
+        public List<string> Claims { get; set; }
+
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)] 
         [JsonProperty(PropertyName = "metadata_lifetime")]
         public int MetadataLifetime { get; set; }

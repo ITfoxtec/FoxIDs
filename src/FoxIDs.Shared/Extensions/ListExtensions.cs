@@ -63,7 +63,7 @@ namespace FoxIDs
         public static List<string> ConcatOnce(this IEnumerable<string> first, IEnumerable<string> second)
         {
             var list = first == null ? new List<string>() : new List<string>(first);
-            if(second != null)
+            if(second?.Count() > 0)
             {
                 list.AddRange(second.Where(vc => !list.Contains(vc)));
             }

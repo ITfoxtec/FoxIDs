@@ -58,6 +58,7 @@ namespace FoxIDs
             {
                 public const int ClaimTransformationMin = 0;
                 public const int ClaimTransformationMax = 100;
+                public const int ClaimTransformationLength = 500;
                 public const int ClaimTransformationClaimsMin = 0;
                 public const int ClaimTransformationClaimsMax = 10;
                 public const int ClaimTransformationOrderMin = 0;
@@ -150,7 +151,8 @@ namespace FoxIDs
 
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
-                public const int ClaimsLength = 500;
+                public const int ClaimLength = 500;
+                public const int ClaimValueLength = 500;
 
                 public static class Up
                 {
@@ -234,7 +236,7 @@ namespace FoxIDs
             /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
+            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname, ClaimTypes.AuthenticationMethod, ClaimTypes.AuthenticationInstant };
 
         }
 

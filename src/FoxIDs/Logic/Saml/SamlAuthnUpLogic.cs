@@ -24,14 +24,16 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -156,7 +158,8 @@ namespace FoxIDs.Logic
                     claims = AddNameIdClaim(claims); 
                 }
 
-                //TODO validate SAML claim type and value max length
+                claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+                claims = ValidateClaims(party, claims);
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, claims);
             }
@@ -170,6 +173,24 @@ namespace FoxIDs.Logic
                 logger.Error(ex);
                 return await AuthnResponseDownAsync(sequenceData, Saml2StatusCodes.Responder);
             }
+        }
+
+        private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)
+        {
+            IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);
+            claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
+            foreach(var claim in claims)
+            {
+                if(claim.Type?.Count() > Constants.Models.SamlParty.ClaimLength)
+                {
+                    throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.SamlParty.ClaimLength)}' is too long.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                }
+                if (claim.Value?.Count() > Constants.Models.SamlParty.ClaimValueLength)
+                {
+                    throw new SamlRequestException($"Claim value '{claim.Value.Substring(0, Constants.Models.SamlParty.ClaimValueLength)}' is too long.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                }
+            }
+            return claims;
         }
 
         private List<Claim> AddNameIdClaim(IEnumerable<Claim> claims)

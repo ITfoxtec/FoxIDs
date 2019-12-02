@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                 var validSession = ValidSession(sequenceData, session);
                 if (validSession && sequenceData.LoginAction != LoginAction.RequereLogin)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -207,7 +207,7 @@ namespace FoxIDs.Controllers
                 await sessionLogic.CreateSessionAsync(loginUpParty, user, authTime, authMethods, sessionId);
             }
 
-            return await loginUpLogic.LoginResponseAsync(user, authTime, authMethods, sessionId);
+            return await loginUpLogic.LoginResponseAsync(loginUpParty, user, authTime, authMethods, sessionId);
         }
 
         public async Task<IActionResult> Logout()
@@ -343,7 +343,7 @@ namespace FoxIDs.Controllers
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 logger.ScopeTrace("Show create user dialog.");
@@ -383,7 +383,7 @@ namespace FoxIDs.Controllers
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 if (ModelState.IsValid)

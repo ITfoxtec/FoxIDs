@@ -24,7 +24,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transformations")]
         public List<SamlClaimTransformation> ClaimTransformations { get; set; }
 
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimsLength)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 

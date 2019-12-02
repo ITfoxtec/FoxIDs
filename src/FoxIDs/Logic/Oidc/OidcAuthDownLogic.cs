@@ -23,18 +23,18 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly ClaimTransformationsLogic claimsTransformationsLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
         private readonly OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic;
         private readonly OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic;
 
-        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimsTransformationsLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.claimsTransformationsLogic = claimsTransformationsLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
             this.jwtLogic = jwtLogic;
             this.oauthAuthCodeGrantLogic = oauthAuthCodeGrantLogic;
             this.oauthResourceScopeLogic = oauthResourceScopeLogic;
@@ -218,7 +218,7 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
-            claims = await claimsTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
 
             var authenticationResponse = new AuthenticationResponse
             {

@@ -29,17 +29,17 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly ClaimTransformationsLogic claimsTransformationsLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimsTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.claimsTransformationsLogic = claimsTransformationsLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -205,14 +205,14 @@ namespace FoxIDs.Logic
             };
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
-                claims = await claimsTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+                claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
 
                 saml2AuthnResponse.SessionIndex = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
 
                 saml2AuthnResponse.NameId = GetNameId(claims);
 
                 var tokenIssueTime = DateTimeOffset.UtcNow;
-                var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(GetSubjectClaims(claims, party), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
+                var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
 
                 var authnContext = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationMethod);
                 var authenticationInstant = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationInstant);
@@ -290,15 +290,9 @@ namespace FoxIDs.Logic
             }
         }
 
-        private IEnumerable<Claim> GetSubjectClaims(IEnumerable<Claim> claims, SamlDownParty party)
+        private IEnumerable<Claim> GetSubjectClaims(SamlDownParty party, IEnumerable<Claim> claims)
         {
-            IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims;
-
-            if(party.Claims?.Count() > 0)
-            {
-                acceptedClaims = acceptedClaims.ConcatOnce(party.Claims);
-            }
-
+            IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);
             return claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
         }
     }

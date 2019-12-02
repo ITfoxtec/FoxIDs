@@ -6,10 +6,14 @@ namespace FoxIDs.Models
     {
         [EnumMember(Value = "constant")]
         Constant = 10,
+        [EnumMember(Value = "match")]
+        Match = 20,
+        [EnumMember(Value = "reg_ex_match")]
+        RegexMatch = 25,
         [EnumMember(Value = "map")]
-        Map = 20,
-        [EnumMember(Value = "reg_ex")]
-        RegEx = 30,
+        Map = 30,
+        [EnumMember(Value = "reg_ex_map")]
+        RegexMap = 35,
         [EnumMember(Value = "Concatenate")]
         Concatenate = 40
     }

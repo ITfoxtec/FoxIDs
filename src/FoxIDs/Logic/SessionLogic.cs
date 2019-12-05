@@ -143,6 +143,20 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task TryDeleteSessionAsync()
+        {
+            try
+            {
+                var session = await sessionCookieRepository.GetAsync();
+                if (session != null)
+                {
+                    await sessionCookieRepository.DeleteAsync();
+                }
+            }
+            catch
+            { }
+        }
+
         private bool SessionEnabled(LoginUpParty loginUpParty)
         {
             return loginUpParty.SessionLifetime > 0 || loginUpParty.PersistentSessionAbsoluteLifetime > 0 || loginUpParty.PersistentSessionLifetimeUnlimited.Value;

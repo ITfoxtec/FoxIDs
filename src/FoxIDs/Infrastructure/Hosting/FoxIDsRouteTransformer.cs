@@ -64,10 +64,10 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             if (route.Length >= 1)
             {
-                values[Constants.Routes.RouteControllerKey] = route[1];
+                values[Constants.Routes.RouteControllerKey] = route[0];
                 if (route.Length >= 2)
                 {
-                    values[Constants.Routes.RouteActionKey] = route[2];
+                    values[Constants.Routes.RouteActionKey] = route[1];
                 }
             }
         }

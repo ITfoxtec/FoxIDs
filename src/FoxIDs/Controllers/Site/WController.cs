@@ -4,6 +4,11 @@ using FoxIDs.Models.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models.Config;
+using FoxIDs.Logic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
+using System;
+using Microsoft.Extensions.Localization;
 
 namespace FoxIDs.Controllers
 {
@@ -12,12 +17,16 @@ namespace FoxIDs.Controllers
     public class WController : Controller
     {
         private readonly IWebHostEnvironment environment;
+        private readonly IStringLocalizer localizer;
         private readonly FoxIDsSettings settings;
+        private readonly SessionLogic sessionLogic;
 
-        public WController(IWebHostEnvironment environment, FoxIDsSettings settings)
+        public WController(IWebHostEnvironment environment, IStringLocalizer localizer, FoxIDsSettings settings, SessionLogic sessionLogic)
         {
             this.environment = environment;
+            this.localizer = localizer;
             this.settings = settings;
+            this.sessionLogic = sessionLogic;
         }
 
         public IActionResult Index()
@@ -31,9 +40,27 @@ namespace FoxIDs.Controllers
             //return Redirect(!settings.WebsiteUrl.IsNullOrEmpty() ? settings.WebsiteUrl : $"https://www.{Request.Host.ToUriComponent()}"); 
         }
         
-        public IActionResult Error()
+        public async Task<IActionResult> Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            await sessionLogic.TryDeleteSessionAsync();
+
+            var errorViewModel = new ErrorViewModel
+            {
+                CreateTime = DateTimeOffset.Now,
+                RequestId = HttpContext.TraceIdentifier
+            };
+
+            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            var exception = exceptionHandlerPathFeature?.Error;
+
+            if (exception is SequenceTimeoutException)
+            {
+                var timeout = new TimeSpan(0, 0, HttpContext.GetRouteBinding().SequenceLifetime);
+                errorViewModel.ErrorTitle = localizer["Timeout"];
+                errorViewModel.Error = string.Format(localizer["It should take a maximum of {1} minutes from start to finish. Please try again."], timeout.TotalMinutes);
+            }
+
+            return View(errorViewModel);
         }
     }
 }

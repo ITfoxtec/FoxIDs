@@ -25,6 +25,10 @@ a {
         color: #D87513;
     }
 
+code {
+    color: #212529 !important;
+}
+
 .content-container {
     padding: 2.5rem 0.94rem 5rem 0.94rem;
 }

@@ -49,6 +49,7 @@ namespace FoxIDs.SeedTool
             request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, "application/json");
             return client.SendAsync(request);
         }
+
         public static Task<HttpResponseMessage> PatchJsonAsync(this HttpClient client, string requestUri, object data)
         {
             var request = new HttpRequestMessage(new HttpMethod("PATCH"), requestUri);

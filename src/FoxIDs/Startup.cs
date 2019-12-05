@@ -54,8 +54,7 @@ namespace FoxIDs
 
             if (CurrentEnvironment.IsDevelopment())
             {
-                app.UseExceptionHandler($"/{Constants.Routes.DefaultWebSiteController}/Error");
-                //app.UseDeveloperExceptionPage();
+                app.UseDeveloperExceptionPage();
             }
             else
             {

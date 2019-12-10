@@ -71,7 +71,9 @@ namespace FoxIDs.Repository
                 }
                 catch (CryptographicException ex)
                 {
-                    throw new Exception($"Unable to Unprotect Cookie '{typeof(TMessage).Name}'.", ex);
+                    logger.Warning(ex, $"Unable to Unprotect Cookie '{typeof(TMessage).Name}', deleting cookie.");
+                    DeleteByName(CookieName());
+                    return null;
                 }
                 catch (Exception ex)
                 {

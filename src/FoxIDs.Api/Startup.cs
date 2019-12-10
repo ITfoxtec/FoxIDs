@@ -23,6 +23,8 @@ namespace FoxIDs
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry(Configuration);
+
             var settings = services.BindConfig<FoxIDsApiSettings>(Configuration, nameof(Settings));
             // Also add as Settings
             services.AddSingleton<Settings>(settings);
@@ -30,8 +32,6 @@ namespace FoxIDs
             services.AddInfrastructure(settings, CurrentEnvironment);
             services.AddRepository();
             services.AddLogic();
-
-            services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
 
             services.AddAuthenticationAndAuthorization(settings);
 

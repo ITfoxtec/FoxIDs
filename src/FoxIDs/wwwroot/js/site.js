@@ -1,7 +1,7 @@
 ﻿(function () {
     var setFocus = true;
 
-    $(".input-control").each(function () {
+    $('.input-control').each(function () {
         var input = $(this);
         var parent = $(this.parentNode);
 
@@ -11,7 +11,7 @@
         }
 
         if (input.val()) {
-            parent.addClass("active");
+            parent.addClass('active');
         }
 
         input.blur(function () {
@@ -25,9 +25,9 @@
     });
 
     function browserValueCheck() {
-        $(".input-control:not(.active)").each(function () {
+        $('.input-control:not(.active)').each(function () {
             if ($(this).val()) {
-                $(this.parentNode).addClass("active");
+                $(this.parentNode).addClass('active');
             }
         });
     }

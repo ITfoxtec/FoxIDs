@@ -128,7 +128,7 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        public async Task DeleteSessionAsync(RouteBinding RouteBinding)
+        public async Task<SessionCookie> DeleteSessionAsync(RouteBinding RouteBinding)
         {
             logger.ScopeTrace($"Delete session, Route '{RouteBinding.Route}'.");
             var session = await sessionCookieRepository.GetAsync();
@@ -136,10 +136,12 @@ namespace FoxIDs.Logic
             {
                 await sessionCookieRepository.DeleteAsync();
                 logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
+                return session;
             }
             else
             {
                 logger.ScopeTrace("Session do not exists.");
+                return null;
             }
         }
 

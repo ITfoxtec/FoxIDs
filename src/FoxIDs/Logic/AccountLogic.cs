@@ -84,7 +84,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}'.");
             if (await secretHashLogic.ValidateSecretAsync(user, password))
             {
-                logger.ScopeTrace($"User '{email}', password valid.");
+                logger.ScopeTrace($"User '{email}', password valid.", triggerEvent: true);
                 return user;
             }
             else

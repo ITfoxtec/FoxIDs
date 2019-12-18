@@ -172,7 +172,7 @@ namespace FoxIDs.Controllers
                     {
                         if (aex is InvalidPasswordException || aex is UserNotExistsException)
                         {
-                            logger.ScopeTrace(aex.Message);
+                            logger.ScopeTrace(aex.Message, triggerEvent: true);
                             ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
                         }
                         else
@@ -238,7 +238,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    logger.ScopeTrace("Delete session and logout.");
+                    logger.ScopeTrace($"User '{session.Email}', delete session and logout.", triggerEvent: true);
                     await sessionLogic.DeleteSessionAsync(RouteBinding);
                     return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
                 }
@@ -277,8 +277,8 @@ namespace FoxIDs.Controllers
                 {
                     if (logout.LogoutChoice == LogoutChoice.Logout)
                     {
-                        logger.ScopeTrace("Delete session and logout response.");
-                        await sessionLogic.DeleteSessionAsync(RouteBinding);
+                        var session = await sessionLogic.DeleteSessionAsync(RouteBinding);
+                        logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and logout.", triggerEvent: true);
                         return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
                     }
                     else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)

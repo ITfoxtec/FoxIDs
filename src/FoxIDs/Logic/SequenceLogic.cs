@@ -41,8 +41,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.");
-                logger.SetScopeProperty("sequenceId", sequence.Id);
+                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id } });
             }
             catch (Exception ex)
             {
@@ -71,6 +70,10 @@ namespace FoxIDs.Logic
                 try
                 {
                     var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
+                    if (sequence != null)
+                    {
+                        logger.SetScopeProperty("sequenceId", sequence.Id);
+                    }
                     return Task.FromResult(sequence);
                 }
                 catch
@@ -90,8 +93,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
 
-                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.");
-                logger.SetScopeProperty("sequenceId", sequence.Id);
+                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id } });
             }
             catch (SequenceException)
             {

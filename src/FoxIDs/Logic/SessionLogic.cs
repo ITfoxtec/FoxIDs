@@ -41,8 +41,7 @@ namespace FoxIDs.Logic
                 session.LastUpdated = authTime;
                 session.AuthMethods = authMethods;
                 await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                logger.SetScopeProperty("sessionId", session.SessionId);
-                logger.ScopeTrace($"Session created, Session id '{session.SessionId}'.");
+                logger.ScopeTrace($"Session created, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
             }
         }
 
@@ -57,7 +56,7 @@ namespace FoxIDs.Logic
             {
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.");
+                logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
                 return true;
             }
 
@@ -86,7 +85,7 @@ namespace FoxIDs.Logic
 
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                        logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.");
+                        logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
 
                         return (session, user);
                     }

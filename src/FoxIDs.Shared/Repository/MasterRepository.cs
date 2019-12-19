@@ -51,7 +51,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', @master - exists id '{id}'.");
+                logger.Metric($"CosmosDB RU, @master - exists id '{id}'.", totalRU);
             }
         }
 
@@ -92,7 +92,7 @@ namespace FoxIDs.Repository
         //    }
         //    finally
         //    {
-        //        logger.Trace($"CosmosDB RU '{totalRU}', get query partitionId '{partitionId}'.");
+        //        logger.Metric($"CosmosDB RU get query partitionId '{partitionId}'.", totalRU);
         //    }
         //}
 
@@ -122,7 +122,7 @@ namespace FoxIDs.Repository
         //    }
         //    finally
         //    {
-        //        logger.Trace($"CosmosDB RU ?'{totalRU}'?, get query count type '{typeof(T)}'.");
+        //        logger.Trace($"CosmosDB RU ?'{totalRU}'?, get query count type '{typeof(T)}'.", totalRU);
         //    }
         //}
 
@@ -163,7 +163,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', @master - read document id '{id}', partitionId '{partitionId}'.");
+                logger.Metric($"CosmosDB RU, @master - read document id '{id}', partitionId '{partitionId}'.", totalRU);
             }
         }
 
@@ -187,7 +187,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', @master - save type '{typeof(T)}'.");
+                logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
             }
         }
 
@@ -230,7 +230,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', @master - save bulk type '{typeof(T)}'.");
+                logger.Metric($"CosmosDB RU, @master - save bulk type '{typeof(T)}'.", totalRU);
             }
         }
 
@@ -254,7 +254,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', @master - delete id '{item.Id}', partitionId '{partitionId}'..");
+                logger.Metric($"CosmosDB RU, @master - delete id '{item.Id}', partitionId '{partitionId}'.", totalRU);
             }
         }
 
@@ -296,7 +296,7 @@ namespace FoxIDs.Repository
         //    }
         //    finally
         //    {
-        //        logger.Trace($"CosmosDB RU '{totalRU}', delete all by data type '{dataType}'.");
+        //        logger.Metric($"CosmosDB RU delete all by data type '{dataType}'.", totalRU);
         //    }
         //}
 

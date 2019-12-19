@@ -50,6 +50,11 @@ namespace FoxIDs.Infrastructure
             telemetryClient.TrackTrace(message, properties);
         }
 
+        public void Metric(string message, double value, IDictionary<string, string> properties = null)
+        {
+            telemetryClient.TrackMetric(message, value, properties);
+        }
+
         private static IDictionary<string, string> AddErrorLevelInfo(IDictionary<string, string> properties, string level, string message)
         {
             if (properties == null) properties = new Dictionary<string, string>();

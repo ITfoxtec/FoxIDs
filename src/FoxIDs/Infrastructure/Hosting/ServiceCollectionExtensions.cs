@@ -6,7 +6,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Helpers;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -78,8 +77,6 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment env)
         {
             services.AddSharedInfrastructure();
-
-            services.AddSingleton<ITelemetryInitializer, SiteTelemetryInitializer>();
 
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();

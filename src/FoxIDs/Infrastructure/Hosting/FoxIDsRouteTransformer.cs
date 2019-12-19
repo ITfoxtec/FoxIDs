@@ -141,11 +141,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             var sequenceString = routeAction.Substring(1);
             var sequence = await sequenceLogic.TryReadSequenceAsync(sequenceString);
-
-            if (sequence != null)
-            {
-                scopedLogger.SetScopeProperty("sequenceId", sequence.Id);
-            }
             httpContext.Items[Constants.Routes.SequenceStringKey] = sequenceString;
 
             return sequence;

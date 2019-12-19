@@ -68,5 +68,14 @@ namespace FoxIDs.Infrastructure
                 //TODO implement tenant track logging
             }
         }
+
+        public void Metric(string message, double value, IDictionary<string, string> properties = null)
+        {
+            var routeBinding = httpContextAccessor.HttpContext.TryGetRouteBinding();
+            if (routeBinding != null)
+            {
+                //TODO implement tenant metric logging
+            }
+        }
     }
 }

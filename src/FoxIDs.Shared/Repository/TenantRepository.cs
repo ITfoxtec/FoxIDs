@@ -9,6 +9,8 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
 using FoxIDs.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Repository
 {
@@ -20,9 +22,9 @@ namespace FoxIDs.Repository
         private string ttlCollectionId;
         private Uri collectionUri;
         private Uri ttlCollectionUri;
-        private readonly TelemetryLogger logger;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public TenantRepository(TelemetryLogger logger, IRepositoryClient repositoryClient)
+        public TenantRepository(IHttpContextAccessor httpContextAccessor, IRepositoryClient repositoryClient)
         {
             client = repositoryClient.Client;
             databaseId = repositoryClient.DatabaseId;
@@ -30,7 +32,7 @@ namespace FoxIDs.Repository
             ttlCollectionId = repositoryClient.TtlCollectionId;
             collectionUri = repositoryClient.CollectionUri;
             ttlCollectionUri = repositoryClient.TtlCollectionUri;
-            this.logger = logger;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<bool> ExistsAsync<T>(string id) where T : IDataDocument
@@ -53,7 +55,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - exists id '{id}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - exists id '{id}'.", totalRU);
             }
         }
 
@@ -129,7 +132,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - read document id '{id}', partitionId '{partitionId}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'.", totalRU);
             }
         }
         
@@ -153,7 +157,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - create type '{typeof(T)}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - create type '{typeof(T)}'.", totalRU);
             }
         }
 
@@ -177,7 +182,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - update type '{typeof(T)}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - update type '{typeof(T)}'.", totalRU);
             }
         }
 
@@ -201,7 +207,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - save type '{typeof(T)}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - save type '{typeof(T)}'.", totalRU);
             }
         }
 
@@ -228,7 +235,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - delete document id '{id}', partitionId '{partitionId}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'.", totalRU);
             }
         }
 
@@ -261,7 +269,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Trace($"CosmosDB RU '{totalRU}', tenant - delete type '{typeof(T)}'.");
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - delete type '{typeof(T)}'.", totalRU);
             }
         }
 

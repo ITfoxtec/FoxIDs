@@ -25,6 +25,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<TelemetryLogger>();
             services.AddSingleton<TenantTrackLogger>();
             services.AddScoped<TelemetryScopedLogger>();
+            services.AddScoped<TelemetryScopedProperties>();
 
             return services;
         }

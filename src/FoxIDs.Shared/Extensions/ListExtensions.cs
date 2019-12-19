@@ -62,7 +62,7 @@ namespace FoxIDs
         /// <param name="second">The sequence to concatenate to the first sequence.</param>
         public static List<string> ConcatOnce(this IEnumerable<string> first, IEnumerable<string> second)
         {
-            var list = first == null ? new List<string>() : new List<string>(first);
+            var list = first != null ? new List<string>(first) : new List<string>();
             if(second?.Count() > 0)
             {
                 list.AddRange(second.Where(vc => !list.Contains(vc)));
@@ -77,10 +77,31 @@ namespace FoxIDs
         /// <param name="second">The sequence to concatenate to the first sequence.</param>
         public static List<string> ConcatOnce(this List<string> first, List<string> second)
         {
-            var list = first == null ? new List<string>() : first;
+            var list = first ?? new List<string>();
             if (second != null)
             {
                 list.AddRange(second.Where(vc => !list.Contains(vc)));
+            }
+            return list;
+        }
+
+        /// <summary>
+        /// Concatenates two sequences and only include each key once.
+        /// </summary>
+        /// <param name="first">The first sequence to concatenate.</param>
+        /// <param name="second">The sequence to concatenate to the first sequence.</param>
+        public static IDictionary<string, string> ConcatOnce(this IDictionary<string, string> first, IDictionary<string, string> second)
+        {
+            var list = first ?? new Dictionary<string, string>();
+            if (second != null)
+            {
+                foreach(var s in second)
+                {
+                    if(!list.ContainsKey(s.Key))
+                    {
+                        list.Add(s.Key, s.Value);
+                    }
+                }
             }
             return list;
         }

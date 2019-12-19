@@ -1,4 +1,5 @@
 ﻿using System;
+using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
@@ -24,6 +25,7 @@ namespace FoxIDs
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
+            services.AddApplicationInsightsTelemetryProcessor<TelemetryScopedProcessor>();
 
             var settings = services.BindConfig<FoxIDsSettings>(Configuration, nameof(Settings));
             // Also add as Settings

@@ -20,7 +20,7 @@ namespace FoxIDs.Infrastructure
 
         public void Process(ITelemetry item)
         {
-            if (item is ISupportProperties)
+            if (item is ISupportProperties && !(item is MetricTelemetry))
             {
                 if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
                 {

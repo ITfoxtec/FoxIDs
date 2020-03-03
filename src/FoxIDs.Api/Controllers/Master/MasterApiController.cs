@@ -6,9 +6,9 @@ namespace FoxIDs.Controllers
     [MasterScopeAuthorize]
     public abstract class MasterApiController : ApiController
     {
-        private readonly TelemetryLogger logger;
+        private readonly TelemetryScopedLogger logger;
 
-        public MasterApiController(TelemetryLogger logger)
+        public MasterApiController(TelemetryScopedLogger logger) : base(logger)
         {
             this.logger = logger;
         }

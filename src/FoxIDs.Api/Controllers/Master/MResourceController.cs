@@ -10,10 +10,10 @@ namespace FoxIDs.Controllers
 {
     public class MResourceController : MasterApiController
     {
-        private readonly TelemetryLogger logger;
+        private readonly TelemetryScopedLogger logger;
         private readonly IMasterRepository masterService;
 
-        public MResourceController(TelemetryLogger logger, IMasterRepository masterService) : base(logger)
+        public MResourceController(TelemetryScopedLogger logger, IMasterRepository masterService) : base(logger)
         {
             this.logger = logger;
             this.masterService = masterService;

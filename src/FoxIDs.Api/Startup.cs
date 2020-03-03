@@ -25,7 +25,7 @@ namespace FoxIDs
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
-            services.AddApplicationInsightsTelemetryProcessor<TelemetryScopedProcessor>();
+            //services.AddApplicationInsightsTelemetryProcessor<TelemetryScopedProcessor>();
 
             var settings = services.BindConfig<FoxIDsApiSettings>(Configuration, nameof(Settings));
             // Also add as Settings

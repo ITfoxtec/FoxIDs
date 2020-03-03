@@ -8,7 +8,7 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
 
-        public TenantApiController(TelemetryScopedLogger logger)
+        public TenantApiController(TelemetryScopedLogger logger) : base(logger)
         {
             this.logger = logger;
         }

@@ -13,10 +13,10 @@ namespace FoxIDs.Controllers
 {
     public class MPasswordRiskListController : MasterApiController
     {
-        private readonly TelemetryLogger logger;
+        private readonly TelemetryScopedLogger logger;
         private readonly IMasterRepository masterService;
 
-        public MPasswordRiskListController(TelemetryLogger logger, IMasterRepository masterService) : base(logger)
+        public MPasswordRiskListController(TelemetryScopedLogger logger, IMasterRepository masterService) : base(logger)
         {
             this.logger = logger;
             this.masterService = masterService;

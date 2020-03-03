@@ -23,6 +23,8 @@ namespace FoxIDs.Logic
 
         public SecurityKey GetSecurityKey(TrackKey trackKey)
         {
+            ValidateTrackKey(trackKey);
+
             switch (trackKey.Type)
             {
                 case TrackKeyType.Contained:
@@ -38,6 +40,8 @@ namespace FoxIDs.Logic
 
         public Saml2X509Certificate GetSaml2X509Certificate(TrackKey trackKey)
         {
+            ValidateTrackKey(trackKey);
+
             switch (trackKey.Type)
             {
                 case TrackKeyType.Contained:
@@ -54,6 +58,20 @@ namespace FoxIDs.Logic
         private RSA GetRSAKeyVault(TrackKey trackKey)
         {
             return keyVaultClient.ToRSA(new KeyIdentifier(settings.KeyVault.EndpointUri, trackKey.ExternalName), new Microsoft.Azure.KeyVault.WebKey.JsonWebKey(trackKey.Key.ToRsaParameters()));
+        }
+
+        private void ValidateTrackKey(TrackKey trackKey)
+        {
+            var nowLocal = DateTime.Now;
+            var certificate = trackKey.Key.ToX509Certificate();
+            if (certificate.NotBefore > nowLocal)
+            {
+                throw new Exception($"Track certificate not valid yet. NotBefore {certificate.NotBefore.ToUniversalTime().ToString("u")}.");
+            }
+            if (certificate.NotAfter < nowLocal)
+            {
+                throw new Exception($"Track certificate is expired. NotAfter {certificate.NotAfter.ToUniversalTime().ToString("u")}.");
+            }
         }
     }
 }

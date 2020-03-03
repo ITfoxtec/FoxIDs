@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -22,6 +23,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+
             services.AddSingleton<TelemetryLogger>();
             services.AddSingleton<TenantTrackLogger>();
             services.AddScoped<TelemetryScopedLogger>();

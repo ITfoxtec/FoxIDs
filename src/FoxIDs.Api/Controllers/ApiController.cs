@@ -1,8 +1,11 @@
-﻿using FoxIDs.Infrastructure.Filters;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models;
 using FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using System;
 using System.Linq;
@@ -16,6 +19,13 @@ namespace FoxIDs.Controllers
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public abstract class ApiController : ControllerBase
     {
+        private readonly TelemetryScopedLogger logger;
+
+        public ApiController(TelemetryScopedLogger logger)
+        {
+            this.logger = logger;
+        }
+
         public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
 
         public virtual CreatedResult Created(INameValue value)
@@ -35,12 +45,42 @@ namespace FoxIDs.Controllers
 
         public virtual NotFoundObjectResult NotFound(string typeName, string name)
         {
-            return NotFound($"{typeName} '{name}' not found.");
+            try
+            {
+                throw new Exception($"{typeName} '{name}' not found.");
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+                return base.NotFound(ex.Message);
+            }
         }
 
         public virtual ConflictObjectResult Conflict(string typeName, string name)
         {
-            return Conflict($"{typeName} '{name}' already exists.");
+            try
+            {
+                throw new Exception($"{typeName} '{name}' already exists.");
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+                return base.Conflict(ex.Message);
+            }
+        }
+
+        public override BadRequestObjectResult BadRequest(ModelStateDictionary modelState)
+        {
+            try
+            {
+                var errors = modelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
+                throw new Exception($"Bad request. {string.Join(", ", errors)}");
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+                return base.BadRequest(ex.Message);
+            }
         }
     }
 }

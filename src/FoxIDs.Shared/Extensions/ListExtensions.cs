@@ -123,22 +123,6 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Converts an IFormCollection to a Dictionary&lt;string, string&gt;.
-        /// </summary>
-        public static Dictionary<string, string> ToDictionary(this IFormCollection list)
-        {
-            return list.ToDictionary(x => x.Key, x => x.Value.FirstOrDefault());
-        }
-
-        /// <summary>
-        /// Converts an Dictionary&lt;string, StringValues&gt; to a Dictionary&lt;string, string&gt;.
-        /// </summary>
-        public static Dictionary<string, string> ToDictionary(this Dictionary<string, StringValues> list)
-        {
-            return list.ToDictionary(x => x.Key, x => x.Value.FirstOrDefault());
-        }
-
-        /// <summary>
         /// Converts a Dictionary&lt;string, string&gt; to a HTML Post Content Result.
         /// </summary>
         public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url)

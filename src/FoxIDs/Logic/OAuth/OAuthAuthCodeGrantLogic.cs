@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
             this.claimsLogic = claimsLogic;
         }
 
-        public async Task<string> CreateAuthCodeGrantAsync(TClient client, List<Claim> claims, string redirectUri, string scope, string nonce)
+        public async Task<string> CreateAuthCodeGrantAsync(TClient client, List<Claim> claims, string redirectUri, string scope, string nonce, string codeChallenge, string codeChallengeMethod)
         {
             logger.ScopeTrace($"Create Authorization code grant, Route '{RouteBinding.Route}'.");
 

@@ -52,8 +52,8 @@ namespace FoxIDs.Models.Api
         [Required]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequered;
 
-        [Length(Constants.Models.LoginUpParty.AllowIframeOnDomainsMin, Constants.Models.LoginUpParty.AllowIframeOnDomainsMax, Constants.Models.LoginUpParty.AllowIframeOnDomainsLength)]
-        public List<string> AllowIframeOnDomains { get; set; }
+        //[Length(Constants.Models.LoginUpParty.AllowIframeOnDomainsMin, Constants.Models.LoginUpParty.AllowIframeOnDomainsMax, Constants.Models.LoginUpParty.AllowIframeOnDomainsLength)]
+        //public List<string> AllowIframeOnDomains { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         public string CssStyle { get; set; }

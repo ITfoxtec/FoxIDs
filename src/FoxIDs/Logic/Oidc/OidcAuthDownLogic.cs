@@ -50,16 +50,23 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Party Client not configured.");
             }
 
-            var queryDictionary = QueryHelpers.ParseQuery(HttpContext.Request.QueryString.Value).ToDictionary();
+            var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();
-            //var codeChallengeRequest = queryDictionary.ToObject<CodeChallengeRequest>();
 
             logger.ScopeTrace($"Authentication request '{authenticationRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("clientId", authenticationRequest.ClientId);
 
+            var codeChallengeSecret = party.Client.EnablePkce.Value ? queryDictionary.ToObject<CodeChallengeSecret>() : null;
+            if (codeChallengeSecret != null)
+            {
+                codeChallengeSecret.Validate();
+                logger.ScopeTrace($"CodeChallengeSecret '{codeChallengeSecret.ToJsonIndented()}'.");
+            }
+
             try
             {
-                ValidateAuthenticationRequest(party.Client, authenticationRequest);
+                var requireCodeFlow = party.Client.EnablePkce.Value && codeChallengeSecret != null;
+                ValidateAuthenticationRequest(party.Client, authenticationRequest, requireCodeFlow);
                 logger.ScopeTrace("Down, OIDC Authentication request accepted.", triggerEvent: true);
 
                 if(!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
@@ -75,6 +82,8 @@ namespace FoxIDs.Logic
                     State = authenticationRequest.State,
                     ResponseMode = authenticationRequest.ResponseMode,
                     Nonce = authenticationRequest.Nonce,
+                    CodeChallenge = codeChallengeSecret?.CodeChallenge,
+                    CodeChallengeMethod = codeChallengeSecret?.CodeChallengeMethod,
                 });
 
                 var type = RouteBinding.ToUpParties.First().Type;
@@ -131,13 +140,21 @@ namespace FoxIDs.Logic
             return loginRequest;
         }
 
-        private void ValidateAuthenticationRequest(OidcDownClient client, AuthenticationRequest authenticationRequest)
+        private void ValidateAuthenticationRequest(OidcDownClient client, AuthenticationRequest authenticationRequest, bool requireCodeFlow)
         {
             try
             {
                 var responseType = authenticationRequest.ResponseType.ToSpaceList();
                 bool isImplicitFlow = !responseType.Contains(IdentityConstants.ResponseTypes.Code);
                 authenticationRequest.Validate(isImplicitFlow);
+
+                if (requireCodeFlow)
+                {
+                    if(responseType.Where(rt => !rt.Equals(IdentityConstants.ResponseTypes.Code)).Any())
+                    {
+                        throw new OAuthRequestException($"Require '{IdentityConstants.ResponseTypes.Code}' flow with PKCE.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    }
+                }
 
                 if (!client.RedirectUris.Any(u => u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
                 {
@@ -236,7 +253,7 @@ namespace FoxIDs.Logic
 
             if (responseTypes.Contains(IdentityConstants.ResponseTypes.Code))
             {
-                authenticationResponse.Code = await oauthAuthCodeGrantLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce);
+                authenticationResponse.Code = await oauthAuthCodeGrantLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
             }
 
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                

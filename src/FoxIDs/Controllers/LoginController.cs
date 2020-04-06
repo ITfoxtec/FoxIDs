@@ -19,7 +19,7 @@ using Microsoft.Extensions.Localization;
 namespace FoxIDs.Controllers
 {
     [Sequence]
-    public class LoginController : EndpointController, IAllowIframeOnDomains
+    public class LoginController : EndpointController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
@@ -29,8 +29,6 @@ namespace FoxIDs.Controllers
         private readonly AccountLogic accountLogic;
         private readonly LoginUpLogic loginUpLogic;
         private readonly LogoutUpLogic logoutUpLogic;
-
-        public List<string> AllowIframeOnDomains { get; private set; }
 
         public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic accountLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
         {
@@ -52,7 +50,6 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 var validSession = ValidSession(sequenceData, session);
@@ -127,7 +124,6 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -218,7 +214,6 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
@@ -257,7 +252,6 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -338,7 +332,6 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
@@ -364,7 +357,6 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 Func<IActionResult> viewError = () =>
                 {

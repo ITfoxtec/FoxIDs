@@ -1,4 +1,5 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -35,24 +36,32 @@ namespace FoxIDs.Infrastructure.Filters
 
                 var response = resultContext.HttpContext.Response;
                 var result = resultContext.Result;
-                var allowIframeOnDomains = (resultContext.Controller as IAllowIframeOnDomains)?.AllowIframeOnDomains;
-                SetHeaders(response, result, allowIframeOnDomains);
+                SetHeaders(response, result, GetAllowIframeOnDomains(resultContext.Controller));
+            }
+
+            private List<string> GetAllowIframeOnDomains(object controller)
+            {
+                if (controller is IRouteBinding)
+                {
+                    return (controller as IRouteBinding)?.RouteBinding?.AllowIframeOnDomains;
+                }
+                return null;
             }
 
             public void SetHeaders(HttpResponse response, IActionResult result, List<string> allowIframeOnDomains)
             {
-                logger.ScopeTrace($"Adding http security headers. Is {(IsView(result) ? string.Empty : "not")} view.");
+                logger.ScopeTrace($"Adding http security headers. Is {(IsViewOrHtmlContent(result) ? string.Empty : "not")} view.");
 
                 response.SetHeader("X-Content-Type-Options", "nosniff");
                 response.SetHeader("Referrer-Policy", "no-referrer");
                 response.SetHeader("X-XSS-Protection", "1; mode=block");
 
-                if (IsView(result))
+                if (IsViewOrHtmlContent(result))
                 {
                     HeaderXFrameOptions(response, allowIframeOnDomains);
                 }
 
-                var csp = CreateCsp(IsView(result), allowIframeOnDomains).ToSpaceList();
+                var csp = CreateCsp(IsViewOrHtmlContent(result), allowIframeOnDomains).ToSpaceList();
                 if (!csp.IsNullOrEmpty())
                 {
                     response.SetHeader("Content-Security-Policy", csp);
@@ -62,9 +71,21 @@ namespace FoxIDs.Infrastructure.Filters
                 logger.ScopeTrace($"Http security headers added.");
             }
 
-            private bool IsView(IActionResult result)
+            private bool IsViewOrHtmlContent(IActionResult result)
             {
-                return result is ViewResult;
+                if (result is ViewResult)
+                {
+                    return true;
+                }
+                else if (result is ContentResult)
+                {
+                    if ("text/html".Equals((result as ContentResult).ContentType, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
 
             private void HeaderXFrameOptions(HttpResponse response, List<string> allowIframeOnDomains)
@@ -117,7 +138,6 @@ namespace FoxIDs.Infrastructure.Filters
                     return $"frame-ancestors {allowIframeOnDomains.Select(d => $"https://{d}").ToSpaceList()};";
                 }
             }
-
         }
     }
 }

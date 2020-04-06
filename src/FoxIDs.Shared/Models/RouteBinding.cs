@@ -35,5 +35,7 @@ namespace FoxIDs.Models
         public bool CheckPasswordComplexity { get; set; }
 
         public bool CheckPasswordRisk { get; set; }
+
+        public List<string> AllowIframeOnDomains { get; set; }
     }
 }

@@ -47,13 +47,12 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Party Client not configured.");
             }
 
-            var queryDictionary = QueryHelpers.ParseQuery(HttpContext.Request.QueryString.Value).ToDictionary();
-            var endSessionRequest = queryDictionary.ToObject<EndSessionRequest>();
+            var endSessionRequest = HttpContext.Request.Query.ToObject<EndSessionRequest>();
 
             logger.ScopeTrace($"end session request '{endSessionRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("clientId", party.Client.ClientId);
 
-            ValidateEndSessionRequest( party.Client, endSessionRequest);
+            ValidateEndSessionRequest(party.Client, endSessionRequest);
             logger.ScopeTrace("Down, OIDC End session request accepted.", triggerEvent: true);
 
             (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, endSessionRequest.IdTokenHint);
@@ -68,7 +67,10 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"ID Token hint is required.") { RouteBinding = RouteBinding };
                 }
             }
-            if (validIdToken) logger.ScopeTrace("Valid ID token hint.");
+            else
+            {
+                logger.ScopeTrace("Valid ID token hint.");
+            }
 
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantAsync(party.Client, sessionId);
 

@@ -44,10 +44,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transformations")]
         public List<OAuthClaimTransformation> ClaimTransformations { get; set; }
 
-        [Length(Constants.Models.LoginUpParty.AllowIframeOnDomainsMin, Constants.Models.LoginUpParty.AllowIframeOnDomainsMax, Constants.Models.LoginUpParty.AllowIframeOnDomainsLength)]
-        [JsonProperty(PropertyName = "allow_iframe_on_domains")]
-        public List<string> AllowIframeOnDomains { get; set; }
-
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css_style")]
         public string CssStyle { get; set; }

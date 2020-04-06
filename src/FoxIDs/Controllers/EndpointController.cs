@@ -11,7 +11,7 @@ namespace FoxIDs.Controllers
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     [HttpSecurityHeaders]
-    public abstract class EndpointController : Controller
+    public abstract class EndpointController : Controller, IRouteBinding
     {
         private readonly TelemetryScopedLogger logger;
 

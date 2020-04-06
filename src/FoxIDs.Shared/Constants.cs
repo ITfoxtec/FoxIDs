@@ -54,6 +54,13 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
             }
 
+            public static class Track
+            {
+                public const int AllowIframeOnDomainsMin = 0;
+                public const int AllowIframeOnDomainsMax = 40;
+                public const int AllowIframeOnDomainsLength = 200;
+            }
+
             public static class Party
             {
                 public const int ClaimTransformationMin = 0;
@@ -134,9 +141,6 @@ namespace FoxIDs
                 public const int SessionAbsoluteLifetimeMax = 86400; // 24 hours
                 public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
                 public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
-                public const int AllowIframeOnDomainsMin = 0;
-                public const int AllowIframeOnDomainsMax = 40;
-                public const int AllowIframeOnDomainsLength = 200;
                 public const int CssStyleLength = 4000;
             }
 
@@ -192,6 +196,11 @@ namespace FoxIDs
 
         public static class Endpoints
         {
+            public const string Authorize = "authorize";
+            public const string AuthorizeResponse = "authorizeresponse";
+            public const string Token = "token";
+            public const string EndSession = "endsession";
+
             public const string SamlAuthn = "Authn";
             public const string SamlLogout = "Logout";
             public const string SamlAcs = "Acs";

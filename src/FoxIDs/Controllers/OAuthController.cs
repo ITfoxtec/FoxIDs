@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
         }
 
         [Sequence(SequenceAction.Start)]
-        public async Task<IActionResult> Authorization()
+        public async Task<IActionResult> Authorize()
         {
             try
             {
@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Currently only exactly 1 to up party is supported.");
                 }
 
-                logger.ScopeTrace($"Authorization request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace($"Authorize request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Authorization request failed for client id '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Authorize request failed for client id '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 

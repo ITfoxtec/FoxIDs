@@ -56,7 +56,8 @@ namespace FoxIDs.Infrastructure.Hosting
                 SequenceLifetime = track.SequenceLifetime,
                 PasswordLength = track.PasswordLength,
                 CheckPasswordComplexity = track.CheckPasswordComplexity.Value,
-                CheckPasswordRisk = track.CheckPasswordRisk.Value
+                CheckPasswordRisk = track.CheckPasswordRisk.Value,
+                AllowIframeOnDomains = track.AllowIframeOnDomains
             };
 
             if (!partyNameAndBinding.IsNullOrWhiteSpace())

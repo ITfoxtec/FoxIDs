@@ -31,17 +31,25 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "client_id")]
         public string ClientId { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(2000)]
         [JsonProperty(PropertyName = "redirect_uri")]
         public string RedirectUri { get; set; }
 
-        [MaxLength(150)]
+        [MaxLength(2000)]
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
-        [MaxLength(550)]
+        [MaxLength(2000)]
         [JsonProperty(PropertyName = "nonce")]
         public string Nonce { get; set; }
+
+        [MaxLength(2000)]
+        [JsonProperty(PropertyName = "code_challenge")]
+        public string CodeChallenge { get; set; }
+
+        [MaxLength(10)]
+        [JsonProperty(PropertyName = "code_challenge_method")]
+        public string CodeChallengeMethod { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {

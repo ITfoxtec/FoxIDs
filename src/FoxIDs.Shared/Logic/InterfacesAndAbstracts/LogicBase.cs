@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoxIDs.Logic
 {
-    public class LogicBase
+    public class LogicBase : IRouteBinding
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 

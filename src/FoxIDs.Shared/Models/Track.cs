@@ -53,6 +53,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "check_password_risk")]
         public bool? CheckPasswordRisk { get; set; }
 
+        [Length(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
+        [JsonProperty(PropertyName = "allow_iframe_on_domains")]
+        public List<string> AllowIframeOnDomains { get; set; }
+
         [JsonIgnore]
         public string Name
         {

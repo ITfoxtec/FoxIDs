@@ -194,6 +194,11 @@ namespace FoxIDs
             public const string Valid = "sequence_valid";
         }
 
+        public static class FormAction
+        {
+            public const string Domains = "form_action_domains";
+        }
+
         public static class Endpoints
         {
             public const string Authorize = "authorize";

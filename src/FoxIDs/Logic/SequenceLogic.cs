@@ -117,14 +117,25 @@ namespace FoxIDs.Logic
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence), data.ToJson(), options);
         }
 
-        public async Task<T> GetSequenceDataAsync<T>(bool remove = true) where T : ISequenceData
+        public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false) where T : ISequenceData
         {
-            var sequence = HttpContext.GetSequence();
+            var sequence = HttpContext.GetSequence(allowNull);
+            if(allowNull && sequence == null)
+            {
+                return default;
+            }
             var key = DataKey(typeof(T), sequence);
             var data = await distributedCache.GetStringAsync(key);
             if(data == null)
             {
-                throw new SequenceException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
+                if(allowNull)
+                {
+                    return default;
+                }
+                else
+                {
+                    throw new SequenceException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
+                }
             }
 
             if(remove)

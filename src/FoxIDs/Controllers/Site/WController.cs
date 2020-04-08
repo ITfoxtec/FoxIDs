@@ -13,7 +13,7 @@ using Microsoft.Extensions.Localization;
 namespace FoxIDs.Controllers
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    [HttpSecurityHeaders]
+    [FoxIDsHttpSecurityHeaders]
     public class WController : Controller
     {
         private readonly IWebHostEnvironment environment;

@@ -24,15 +24,17 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
         private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
         private readonly OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
             this.jwtLogic = jwtLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
@@ -79,6 +81,7 @@ namespace FoxIDs.Logic
                 RedirectUri = endSessionRequest.PostLogoutRedirectUri,
                 State = endSessionRequest.State,
             });
+            await formActionLogic.CreateFormActionByUrlAsync(endSessionRequest.PostLogoutRedirectUri);
 
             var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -178,6 +181,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
+            await formActionLogic.RemoveFormActionSequenceDataAsync();
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
     }

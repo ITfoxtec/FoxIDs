@@ -17,7 +17,7 @@ namespace FoxIDs.Controllers
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public abstract class ApiController : ControllerBase
+    public abstract class ApiController : ControllerBase, IRouteBinding
     {
         private readonly TelemetryScopedLogger logger;
 

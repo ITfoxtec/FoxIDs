@@ -6,11 +6,18 @@ namespace FoxIDs
 {
     public static class SequenceExtensions
     {
-        public static Sequence GetSequence(this HttpContext httpContext)
+        public static Sequence GetSequence(this HttpContext httpContext, bool allowNull = false)
         {
             if (!httpContext.Items.ContainsKey(Constants.Sequence.Object))
             {
-                throw new InvalidOperationException("HttpContext Items do not contain a sequence object.");
+                if(allowNull)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new InvalidOperationException("HttpContext Items do not contain a sequence object.");
+                }
             }
 
             return httpContext.Items[Constants.Sequence.Object] as Sequence;

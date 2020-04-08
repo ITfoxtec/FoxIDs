@@ -10,7 +10,7 @@ using System;
 namespace FoxIDs.Controllers
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    [HttpSecurityHeaders]
+    [FoxIDsHttpSecurityHeaders]
     public abstract class EndpointController : Controller, IRouteBinding
     {
         private readonly TelemetryScopedLogger logger;

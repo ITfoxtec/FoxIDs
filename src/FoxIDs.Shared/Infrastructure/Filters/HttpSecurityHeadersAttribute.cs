@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Filters
@@ -16,11 +14,13 @@ namespace FoxIDs.Infrastructure.Filters
     public class HttpSecurityHeadersAttribute : TypeFilterAttribute
     {
         public HttpSecurityHeadersAttribute() : base(typeof(HttpSecurityHeadersActionAttribute))
-        {
-        }
+        { }
+        public HttpSecurityHeadersAttribute(Type type) : base(type)
+        { }
 
-        private class HttpSecurityHeadersActionAttribute : IAsyncActionFilter
+        public class HttpSecurityHeadersActionAttribute : IAsyncActionFilter
         {
+            protected bool isHtmlContent;
             private readonly TelemetryScopedLogger logger;
             private readonly IWebHostEnvironment env;
 
@@ -34,34 +34,30 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 var resultContext = await next();
 
-                var response = resultContext.HttpContext.Response;
-                var result = resultContext.Result;
-                SetHeaders(response, result, GetAllowIframeOnDomains(resultContext.Controller));
+                await ActionExecutionInitAsync(resultContext);
+                SetHeaders(resultContext.HttpContext.Response);
             }
 
-            private List<string> GetAllowIframeOnDomains(object controller)
+            protected virtual Task ActionExecutionInitAsync(ActionExecutedContext resultContext)
             {
-                if (controller is IRouteBinding)
-                {
-                    return (controller as IRouteBinding)?.RouteBinding?.AllowIframeOnDomains;
-                }
-                return null;
+                isHtmlContent = IsHtmlContent(resultContext.Result);
+                return Task.CompletedTask;
             }
 
-            public void SetHeaders(HttpResponse response, IActionResult result, List<string> allowIframeOnDomains)
+            protected virtual void SetHeaders(HttpResponse response)
             {
-                logger.ScopeTrace($"Adding http security headers. Is {(IsViewOrHtmlContent(result) ? string.Empty : "not")} view.");
+                logger.ScopeTrace($"Adding http security headers. Is {(isHtmlContent ? string.Empty : "not")} view.");
 
                 response.SetHeader("X-Content-Type-Options", "nosniff");
                 response.SetHeader("Referrer-Policy", "no-referrer");
                 response.SetHeader("X-XSS-Protection", "1; mode=block");
 
-                if (IsViewOrHtmlContent(result))
+                if (isHtmlContent)
                 {
-                    HeaderXFrameOptions(response, allowIframeOnDomains);
+                    HeaderXFrameOptions(response);
                 }
 
-                var csp = CreateCsp(IsViewOrHtmlContent(result), allowIframeOnDomains).ToSpaceList();
+                var csp = CreateCsp().ToSpaceList();
                 if (!csp.IsNullOrEmpty())
                 {
                     response.SetHeader("Content-Security-Policy", csp);
@@ -71,7 +67,7 @@ namespace FoxIDs.Infrastructure.Filters
                 logger.ScopeTrace($"Http security headers added.");
             }
 
-            private bool IsViewOrHtmlContent(IActionResult result)
+            private bool IsHtmlContent(IActionResult result)
             {
                 if (result is ViewResult)
                 {
@@ -88,21 +84,14 @@ namespace FoxIDs.Infrastructure.Filters
                 return false;
             }
 
-            private void HeaderXFrameOptions(HttpResponse response, List<string> allowIframeOnDomains)
+            protected virtual void HeaderXFrameOptions(HttpResponse response)
             {
-                if (allowIframeOnDomains != null && allowIframeOnDomains.Count() == 1 && allowIframeOnDomains.Where(d => !d.Contains("*")).Count() == 1)
-                {
-                    response.SetHeader("X-Frame-Options", $"allow-from https://{allowIframeOnDomains.First()}/");
-                }
-                else
-                {
-                    response.SetHeader("X-Frame-Options", "deny");
-                }
+                response.SetHeader("X-Frame-Options", "deny");
             }
 
-            private IEnumerable<string> CreateCsp(bool isView, List<string> allowIframeOnDomains)
+            protected virtual IEnumerable<string> CreateCsp()
             {
-                if (isView)
+                if (isHtmlContent)
                 {
                     yield return "block-all-mixed-content;";
 
@@ -114,11 +103,11 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "style-src 'self' 'unsafe-inline';";
 
                     yield return "base-uri 'self';";
-                    yield return "form-action 'self';";
+                    yield return CspFormAction();
 
                     yield return "sandbox allow-forms allow-popups allow-same-origin allow-scripts;";
 
-                    yield return CspFrameAncestors(allowIframeOnDomains);
+                    yield return CspFrameAncestors();
                 }
 
                 if (!env.IsDevelopment())
@@ -127,16 +116,14 @@ namespace FoxIDs.Infrastructure.Filters
                 }
             }
 
-            private string CspFrameAncestors(List<string> allowIframeOnDomains)
+            protected virtual string CspFormAction()
             {
-                if (allowIframeOnDomains == null || allowIframeOnDomains.Count() < 1)
-                {
-                    return "frame-ancestors 'none';";
-                }
-                else
-                {
-                    return $"frame-ancestors {allowIframeOnDomains.Select(d => $"https://{d}").ToSpaceList()};";
-                }
+                return "form-action 'self';";
+            }
+
+            protected virtual string CspFrameAncestors()
+            {
+                return "frame-ancestors 'none';";
             }
         }
     }

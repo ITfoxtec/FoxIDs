@@ -29,16 +29,18 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
@@ -75,12 +77,14 @@ namespace FoxIDs.Logic
                 binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnRequest);
                 logger.ScopeTrace("Down, SAML Auth request accepted.", triggerEvent: true);
 
+                var responseUrl = GetAcsUrl(party, saml2AuthnRequest);
                 await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
                 {
                     Id = saml2AuthnRequest.Id.Value,
                     RelayState = binding.RelayState,
-                    ResponseUrl = GetAcsUrl(party, saml2AuthnRequest),
+                    ResponseUrl = responseUrl,
                 });
+                await formActionLogic.CreateFormActionByUrlAsync(responseUrl);
 
                 var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -229,6 +233,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Authn response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
+            await formActionLogic.RemoveFormActionSequenceDataAsync();
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await Task.FromResult((binding as Saml2RedirectBinding).ToActionResult());

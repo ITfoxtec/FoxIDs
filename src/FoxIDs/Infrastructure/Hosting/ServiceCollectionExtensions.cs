@@ -25,6 +25,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<LocalizationLogic>();            
 
             services.AddTransient<SequenceLogic>();
+            services.AddTransient<FormActionLogic>();
             services.AddTransient<TrackKeyLogic>();
 
             services.AddTransient<LoginUpLogic>();

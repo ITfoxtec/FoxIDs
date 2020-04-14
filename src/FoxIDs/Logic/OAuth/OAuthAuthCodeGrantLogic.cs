@@ -42,6 +42,8 @@ namespace FoxIDs.Logic
                 RedirectUri = redirectUri,
                 Scope = scope,
                 Nonce = nonce,
+                CodeChallenge = codeChallenge,
+                CodeChallengeMethod = codeChallengeMethod
             };
             await grant.SetIdAsync(new AuthCodeTtlGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Code = code });
             await tenantRepository.SaveAsync(grant);

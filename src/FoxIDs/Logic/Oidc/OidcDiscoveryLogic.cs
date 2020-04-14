@@ -45,6 +45,11 @@ namespace FoxIDs.Logic
                 oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported.ConcatOnce(party.Client.Scopes?.Select(s => s.Scope));
                 oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken)
                     .ConcatOnce(party.Client.Claims?.Select(c => c.Claim).ToList()).ConcatOnce(party.Client.Scopes?.Where(s => s.VoluntaryClaims != null).SelectMany(s => s.VoluntaryClaims?.Select(c => c.Claim)).ToList());
+
+                if(party.Client.EnablePkce == true)
+                {
+                    oidcDiscovery.CodeChallengeMethodsSupported = new[] { IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256 };
+                }
             }
 
             return oidcDiscovery;

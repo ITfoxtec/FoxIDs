@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Logic;
-using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -8,22 +7,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using UrlCombineLib;
 using Microsoft.Extensions.DependencyInjection;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Localization;
 using FoxIDs.Models.Sequences;
-using FoxIDs.Repository;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsRouteTransformer : SiteRouteTransformer
     {
-        private readonly IServiceProvider serviceProvider;
         private readonly LocalizationLogic localizationLogic;
         private readonly SequenceLogic sequenceLogic;
 
-        public FoxIDsRouteTransformer(IServiceProvider serviceProvider, LocalizationLogic localizationLogic, SequenceLogic sequenceLogic, ITenantRepository tenantRepository) : base(tenantRepository)
+        public FoxIDsRouteTransformer(LocalizationLogic localizationLogic, SequenceLogic sequenceLogic)
         {
-            this.serviceProvider = serviceProvider;
             this.localizationLogic = localizationLogic;
             this.sequenceLogic = sequenceLogic;
         }
@@ -74,57 +69,39 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private async Task HandleTenantRouteAsync(HttpContext httpContext, RouteValueDictionary values, string[] route)
         {
-            var trackIdKey = new Track.IdKey
+            var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
+
+            scopedLogger.SetScopeProperty("domain", httpContext.Request.Host.ToUriComponent());
+            scopedLogger.SetScopeProperty("userAgent", httpContext.Request.Headers["User-Agent"].ToString());
+
+            var routeAction = route[route.Length - 1];
+            if (routeAction.StartsWith('_'))
             {
-                TenantName = route[0].ToLower(),
-                TrackName = route[1].ToLower()
-            };
-            var partyNameAndbinding = route[2].ToLower();
+                var routeController = route.Length == 5 ? route[route.Length - 2] : route[route.Length - 3];
+                var subRoutAction = route.Length == 5 ? routeController : route[route.Length - 2];
+                values[Constants.Routes.RouteControllerKey] = routeController;
+                values[Constants.Routes.RouteActionKey] = subRoutAction;
 
-            var scopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-            try
-            {
-                scopedLogger.SetScopeProperty("domain", httpContext.Request.Host.ToUriComponent());
-                scopedLogger.SetScopeProperty("userAgent", httpContext.Request.Headers["User-Agent"].ToString());
-
-                var routeBinding = await GetRouteDataAsync(scopedLogger, trackIdKey, partyNameAndbinding);
-                httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
-
-                scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName, routeBinding.PartyNameAndBinding }.ToJson());
-
-                var routeAction = route[route.Length - 1];
-                if (routeAction.StartsWith('_'))
-                {
-                    var routeController = route.Length == 5 ? route[route.Length - 2] : route[route.Length - 3];
-                    var subRoutAction = route.Length == 5 ? routeController : route[route.Length - 2];
-                    values[Constants.Routes.RouteControllerKey] = routeController;
-                    values[Constants.Routes.RouteActionKey] = subRoutAction;
-
-                    await SetSequanceAndCulture(httpContext, scopedLogger, routeBinding, routeAction);
-                }
-                else
-                {
-                    var routeController = route[route.Length - 2];
-                    values[Constants.Routes.RouteControllerKey] = routeController;
-                    values[Constants.Routes.RouteActionKey] = routeAction;
-                }
+                await SetSequanceAndCulture(httpContext, scopedLogger, routeAction);
             }
-            catch (ValidationException vex)
+            else
             {
-                scopedLogger.Error(vex);
-                throw;
+                var routeController = route[route.Length - 2];
+                values[Constants.Routes.RouteControllerKey] = routeController;
+                values[Constants.Routes.RouteActionKey] = routeAction;
             }
         }
 
-        protected async Task SetSequanceAndCulture(HttpContext httpContext, TelemetryScopedLogger scopedLogger, RouteBinding routeBinding, string routeAction)
+        protected async Task SetSequanceAndCulture(HttpContext httpContext, TelemetryScopedLogger scopedLogger, string routeAction)
         {
-            var culture = await SetSequanceAndGetSupportedCultureAsync(httpContext, scopedLogger, routeBinding, routeAction);
+            var culture = await SetSequanceAndGetSupportedCultureAsync(httpContext, scopedLogger, routeAction);
             var requestCulture = new RequestCulture(culture);
             httpContext.Features.Set<IRequestCultureFeature>(new RequestCultureFeature(requestCulture, null));
         }
 
-        private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, TelemetryScopedLogger scopedLogger, RouteBinding routeBinding, string routeAction)
+        private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, TelemetryScopedLogger scopedLogger, string routeAction)
         {
+            var routeBinding = httpContext.GetRouteBinding();
             var sequence = await SetSequanceAsync(httpContext, scopedLogger, routeAction);
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {

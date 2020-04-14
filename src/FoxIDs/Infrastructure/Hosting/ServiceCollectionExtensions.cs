@@ -6,6 +6,7 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Helpers;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -84,6 +85,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedValidationAttributeAdapterProvider>();
 
             services.AddScoped<FoxIDsRouteTransformer>();
+            services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
 
             services.AddSingleton<OidcDiscoveryHandler>();
 

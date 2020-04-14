@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
-using FoxIDs.Infrastructure.Filters;
 
 namespace FoxIDs.Controllers
 {
-    [CorsPolicy]
     public class OpenIDConfigController : EndpointController
     {
         private readonly TelemetryScopedLogger logger;

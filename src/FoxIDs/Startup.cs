@@ -41,9 +41,11 @@ namespace FoxIDs
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
+            services.AddCors();
+
             services.AddControllersWithViews()
                 .AddMvcLocalization()
-                .AddNewtonsoftJson(); 
+                .AddNewtonsoftJson(options => { options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; }); 
         }
 
         public void Configure(IApplicationBuilder app)
@@ -68,6 +70,9 @@ namespace FoxIDs
             app.UseStatusCodePages(context => throw new Exception($"Page '{context.HttpContext.Request.Path}', status code: {context.HttpContext.Response.StatusCode} {ReasonPhrases.GetReasonPhrase(context.HttpContext.Response.StatusCode)}"));
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyClientIpMiddleware();
+
+            app.UseRouteBindingMiddleware();
+            app.UseCors();
 
             app.UseRouting();
             app.UseAuthorization();

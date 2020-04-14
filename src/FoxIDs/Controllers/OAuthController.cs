@@ -93,7 +93,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-        [CorsPolicy]
         [OAuthException]
         public async Task<IActionResult> Token()
         {

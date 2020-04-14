@@ -43,6 +43,8 @@ namespace FoxIDs
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
+            services.AddCors();
+
             services.AddControllers()
                 .AddJsonOptions(options =>
                 {
@@ -65,6 +67,15 @@ namespace FoxIDs
             app.UseProxyClientIpMiddleware();
             app.UseEnLocalization();
             app.UseApiSwagger();
+
+            app.UseRouteBindingMiddleware();
+            app.UseCors(builder =>
+            {
+                builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+            });
 
             app.UseRouting();
             app.UseAuthorization();

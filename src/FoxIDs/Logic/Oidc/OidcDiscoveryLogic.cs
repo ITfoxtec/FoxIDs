@@ -32,6 +32,7 @@ namespace FoxIDs.Logic
                 Issuer = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName),
                 AuthorizationEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Authorize),
                 TokenEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Token),
+                UserInfoEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.UserInfo),
                 EndSessionEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.EndSession),
                 JwksUri = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, IdentityConstants.OidcDiscovery.Path, IdentityConstants.OidcDiscovery.Keys),
             };

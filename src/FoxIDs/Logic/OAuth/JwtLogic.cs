@@ -102,6 +102,27 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, bool validateAudience = false, bool validateLifetime = true)
+        {
+            var issuerSigningKeys = new List<JsonWebKey>();
+            issuerSigningKeys.Add(RouteBinding.PrimaryKey.Key);
+            if (RouteBinding.SecondaryKey != null)
+            {
+                issuerSigningKeys.Add(RouteBinding.SecondaryKey.Key);
+            }
+
+            try
+            {
+                (var claimsPrincipal, var securityToken) = await Task.FromResult(JwtHandler.ValidateToken(token, Issuer(RouteBinding), issuerSigningKeys, validateAudience: validateAudience, validateLifetime: validateLifetime));
+                return claimsPrincipal;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"JWT not valid. Route '{RouteBinding.Route}'.");
+                return null;
+            }
+        }
+
         private string Issuer(RouteBinding RouteBinding)
         {
             return UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName);

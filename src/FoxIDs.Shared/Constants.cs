@@ -204,6 +204,7 @@ namespace FoxIDs
             public const string Authorize = "authorize";
             public const string AuthorizeResponse = "authorizeresponse";
             public const string Token = "token";
+            public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
 
             public const string SamlAuthn = "Authn";

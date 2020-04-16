@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 using System;
 using System.Security.Authentication;
 using System.Text.Encodings.Web;
@@ -50,27 +49,14 @@ namespace FoxIDs.Infrastructure.Security
 
         private string GetAccessTokenFromHeader()
         {
-            string authorizationHeader = Request.Headers[HeaderNames.Authorization];
-            if (authorizationHeader.IsNullOrWhiteSpace())
+            var accessToken = Request.Headers.GetAuthorizationHeaderBearer();
+
+            if (accessToken.IsNullOrWhiteSpace())
             {
-                throw new AuthenticationException("Authorization header is empty.");
+                throw new AuthenticationException("Authorization header token is empty.");
             }
 
-            if (authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
-            {
-                var accessToken = authorizationHeader.Substring("Bearer ".Length).Trim();
-
-                if (accessToken.IsNullOrWhiteSpace())
-                {
-                    throw new AuthenticationException("Authorization header token is empty.");
-                }
-
-                return accessToken;
-            }
-            else
-            {
-                throw new AuthenticationException("Invalid Authorization header token.");
-            }
+            return accessToken;
         }
 
         private string GetFoxIDsEndpoint()

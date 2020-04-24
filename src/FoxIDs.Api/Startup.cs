@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Text.Json.Serialization;
 
@@ -69,12 +70,13 @@ namespace FoxIDs
             app.UseApiSwagger();
 
             app.UseRouteBindingMiddleware();
+
             app.UseCors(builder =>
             {
                 builder
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
-                .AllowAnyHeader();
+                .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization);
             });
 
             app.UseRouting();

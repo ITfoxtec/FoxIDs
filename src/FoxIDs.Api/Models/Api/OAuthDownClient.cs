@@ -21,6 +21,11 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         public List<string> RedirectUris { get; set; }
 
+        /// <summary>
+        /// Enable PKCE, default false.
+        /// </summary>
+        public bool? EnablePkce { get; set; } = false;
+
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)]
         public int? AuthorizationCodeLifetime { get; set; }
 

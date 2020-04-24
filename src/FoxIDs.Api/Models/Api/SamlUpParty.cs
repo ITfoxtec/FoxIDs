@@ -25,20 +25,17 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Default SHA256.
         /// </summary>
-        [Required]
         [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
         public string SignatureAlgorithm { get; set; } = Saml2SecurityAlgorithms.RsaSha256Signature;
 
         /// <summary>
         /// Default None.
         /// </summary>
-        [Required]
         public X509CertificateValidationMode CertificateValidationMode { get; set; } = X509CertificateValidationMode.None;
 
         /// <summary>
         /// Default NoCheck.
         /// </summary>
-        [Required]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
         [Required]

@@ -6,7 +6,6 @@ using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Azure.KeyVault;
 using Microsoft.IdentityModel.Tokens;
 using RSAKeyVaultProvider;
 using UrlCombineLib;
@@ -60,9 +59,7 @@ namespace FoxIDs.Logic
 
         private RSA GetRSAKeyVault(TrackKey trackKey)
         {
-            return RSAFactory.Create(tokenCredential, new Uri(UrlCombine.Combine(settings.KeyVault.EndpointUri, "certificates", trackKey.ExternalName)), new Azure.Security.KeyVault.Keys.JsonWebKey(trackKey.Key.ToRsa()));
-
-            //return keyVaultClient.ToRSA(new KeyIdentifier(settings.KeyVault.EndpointUri, trackKey.ExternalName), new Microsoft.Azure.KeyVault.WebKey.JsonWebKey(trackKey.Key.ToRsaParameters()));
+            return RSAFactory.Create(tokenCredential, new Uri(UrlCombine.Combine(settings.KeyVault.EndpointUri, "keys", trackKey.ExternalName)), new Azure.Security.KeyVault.Keys.JsonWebKey(trackKey.Key.ToRsa()));
         }
 
         private void ValidateTrackKey(TrackKey trackKey)

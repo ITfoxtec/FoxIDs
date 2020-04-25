@@ -189,6 +189,12 @@
             "tenantId": "[subscription().tenantId]",
             "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
+              "keys": [
+                "Get",
+                "List",
+                "Decrypt",
+                "Sign"
+              ],
               "secrets": [
                 "get",
                 "List"
@@ -203,6 +209,10 @@
             "tenantId": "[subscription().tenantId]",
             "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
+              "keys": [
+                "Get",
+                "List"
+              ],
               "secrets": [
                 "get",
                 "List"

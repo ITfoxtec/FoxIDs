@@ -29,7 +29,7 @@ namespace FoxIDs.Infrastructure.Hosting
             if(!origin.IsNullOrEmpty())
             {
                 var routeBinding = context.GetRouteBinding();
-                if (routeBinding != null && routeBinding.DownParty != null)
+                if (routeBinding != null && routeBinding.DownParty != null && (routeBinding.DownParty.Type == PartyTypes.OAuth2 || routeBinding.DownParty.Type == PartyTypes.Oidc))
                 {
                     var party = await tenantRepository.GetAsync<OAuthDownParty>(routeBinding.DownParty.Id);
                     if (party?.AllowCorsOrigins != null && party.AllowCorsOrigins.Count() > 0)

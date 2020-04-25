@@ -51,22 +51,22 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<OidcDiscoveryHandler>();
 
-            if (env.IsProduction())
-            {
-                services.AddSingleton(serviceProvider =>
-                {
-                    return FoxIDsKeyVaultClient.GetManagedClient();
-                });
-            }
-            else
-            {
-                services.AddTransient<TokenHelper>();
-                services.AddSingleton(serviceProvider =>
-                {
-                    var tokenHelper = serviceProvider.GetService<TokenHelper>();
-                    return FoxIDsKeyVaultClient.GetClient(settings, tokenHelper);
-                });
-            }
+            //if (env.IsProduction())
+            //{
+            //    services.AddSingleton(serviceProvider =>
+            //    {
+            //        return FoxIDsKeyVaultClient.GetManagedClient();
+            //    });
+            //}
+            //else
+            //{
+            //    services.AddTransient<TokenHelper>();
+            //    services.AddSingleton(serviceProvider =>
+            //    {
+            //        var tokenHelper = serviceProvider.GetService<TokenHelper>();
+            //        return FoxIDsKeyVaultClient.GetClient(settings, tokenHelper);
+            //    });
+            //}
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();

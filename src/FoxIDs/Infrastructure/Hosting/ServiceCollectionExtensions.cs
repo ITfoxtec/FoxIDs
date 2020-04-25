@@ -1,4 +1,6 @@
-﻿using FoxIDs.Infrastructure.KeyVault;
+﻿using Azure.Core;
+using Azure.Identity;
+using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Localization;
 using FoxIDs.Logic;
 using FoxIDs.Models;
@@ -92,19 +94,24 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (env.IsProduction())
             {
-                services.AddSingleton(serviceProvider =>
-                {
-                    return FoxIDsKeyVaultClient.GetManagedClient();
-                });
+                services.AddSingleton<TokenCredential, DefaultAzureCredential>();
+                //services.AddSingleton(serviceProvider =>
+                //{
+                //    return FoxIDsKeyVaultClient.GetManagedClient();
+                //});
             }
             else
             {
-                services.AddTransient<TokenHelper>();
-                services.AddSingleton(serviceProvider =>
+                services.AddSingleton<TokenCredential>(serviceProvider =>
                 {
-                    var tokenHelper = serviceProvider.GetService<TokenHelper>();
-                    return FoxIDsKeyVaultClient.GetClient(settings, tokenHelper);
+                    return new ClientSecretCredential(settings.KeyVault.TenantId, settings.KeyVault.ClientId, settings.KeyVault.ClientSecret);
                 });
+                //services.AddTransient<TokenHelper>();
+                //services.AddSingleton(serviceProvider =>
+                //{
+                //    var tokenHelper = serviceProvider.GetService<TokenHelper>();
+                //    return FoxIDsKeyVaultClient.GetClient(settings, tokenHelper);
+                //}); 
             }
 
             services.AddHttpContextAccessor();

@@ -27,6 +27,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{66AA1AF7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.Control", "src\FoxIDs.Control\FoxIDs.Control.csproj", "{841451D6-66A5-4E7A-8952-BFF9A9375B6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{841451D6-66A5-4E7A-8952-BFF9A9375B6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{841451D6-66A5-4E7A-8952-BFF9A9375B6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{841451D6-66A5-4E7A-8952-BFF9A9375B6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{841451D6-66A5-4E7A-8952-BFF9A9375B6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{4E5D61BC-6FCA-491E-867F-A803771F06B4} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{89976246-3E49-4492-A9EF-978BF8E0535C} = {ADF3A7A1-55CD-466B-9CE2-76B159582B17}
 		{E75B36E6-AD0E-42D7-A055-FE5816DF73B3} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
+		{841451D6-66A5-4E7A-8952-BFF9A9375B6B} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

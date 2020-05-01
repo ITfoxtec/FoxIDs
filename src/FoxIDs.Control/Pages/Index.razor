@@ -1,0 +1,12 @@
+﻿@page "/{tenant}"
+
+<h1>@Tenant, Hello, world!</h1>
+
+Welcome to your new app.
+
+<SurveyPrompt Title="How is Blazor working for you?" />
+
+@code {
+    [Parameter]
+    public string Tenant { get; set; }
+}

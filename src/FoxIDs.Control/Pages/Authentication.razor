@@ -1,0 +1,17 @@
+@page "/{tenant}/authentication/{action}"
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+<RemoteAuthenticatorView ApplicationPaths="GetPathsOptions" Action="@Action"  />
+
+@code{
+    [Parameter]
+    public string Tenant { get; set; }
+
+    [Parameter]
+    public string Action { get; set; }
+
+    public RemoteAuthenticationApplicationPathsOptions GetPathsOptions => new RemoteAuthenticationApplicationPathsOptions()
+    {
+        LogInPath = $"/{Tenant}/authentication/{Action}",
+        LogInCallbackPath = $"/{Tenant}/authentication/{Action}"
+    };
+}

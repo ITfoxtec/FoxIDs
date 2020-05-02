@@ -1,5 +1,10 @@
 @page "/{tenant}/fetchdata"
-@inject HttpClient Http
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using Microsoft.Extensions.Configuration
+@attribute [Authorize]
+@inject HttpClient httpClient
+@inject IConfiguration Configuration
 
 <h1>@Tenant, Weather forecast</h1>
 
@@ -42,7 +47,15 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        try
+        {
+            var aspNetCoreApi1SampleMethod = Configuration["AppSettings:FoxIDsApiSampleMethod"];
+            forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
     }
 
     public class WeatherForecast

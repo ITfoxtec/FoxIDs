@@ -69,7 +69,7 @@ namespace FoxIDs.SeedTool.Model
         /// <summary>
         /// FoxIDs portal auth response endpoint.
         /// </summary>
-        public string FoxIDsPortalAuthResponseEndpoint => UrlCombine.Combine(FoxIDsPortalEndpoint, "authresponse");
+        public string FoxIDsControlAuthResponseEndpoint => UrlCombine.Combine(FoxIDsPortalEndpoint, "authresponse");
 
         /// <summary>
         /// Pwned passwords (SHA1 ordered by count) path.

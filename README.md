@@ -75,7 +75,7 @@ The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the 
 
 Run the seed tool executable `SeedTool.exe`, select `M` for `Create master tenant documents`. When asked please write the first administrator users email.
 
-> IMPORTANT: Remember password and secrets.
+> IMPORTANT: Remember password and secret.
 
 Add the seed tool client secret to the seed tool configured.
 
@@ -125,8 +125,8 @@ https://localhost:44330
 FoxIDs API
 https://localhost:44331
 
-*FoxIDs Portal
-https://localhost:44332 - not created yet*
+*FoxIDs Control
+https://localhost:44332 
 
 *FoxIDs web
 https://localhost:44333 - not created yet*

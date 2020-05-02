@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using UrlCombineLib;
 
 namespace FoxIDs.SeedTool.SeedLogic
 {
@@ -18,10 +19,12 @@ namespace FoxIDs.SeedTool.SeedLogic
     {
         const string loginName = "login";
         const string apiResourceName = "foxids_api";
-        const string portalClientName = "foxids_portal";
+        const string controlClientName = "foxids_control";
 
-        readonly string[] apiResourceScopes = new[] { "foxids_master", "foxids_tenant" };
-        readonly string[] adminUserRoles = new[] { "foxids_master_admin" };
+        const string apiResourceMasterScope = "foxids_master";
+        const string apiResourceTenantScope = "foxids_tenant";
+        static readonly string[] apiResourceScopes = new[] { apiResourceMasterScope, apiResourceTenantScope };
+        static readonly string[] adminUserRoles = new[] { "foxids_master_admin" };
  
         private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
@@ -67,9 +70,9 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             await CreateFoxIDsApiResourceDocumentAsync();
             Console.WriteLine(string.Empty);
-            await CreateSeedClientDocmentAsync();
+            await CreateControlClientDocmentAsync(loginUpParty);
             Console.WriteLine(string.Empty);
-            await CreatePortalClientDocmentAsync(loginUpParty);
+            await CreateSeedClientDocmentAsync();
             Console.WriteLine(string.Empty);
         }
 
@@ -175,6 +178,52 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine($"FoxIDs api resource document created and saved in Cosmos DB");
         }
 
+        private async Task CreateControlClientDocmentAsync(LoginUpParty loginUpParty)
+        {
+            Console.WriteLine("Creating control client");
+            Console.Write("Add localhost test domain to enable local development [y/n] (default no): ");
+            var addLocalhostDomain = Console.ReadKey();
+            Console.WriteLine(string.Empty);
+
+            var controlClientAllowCorsOrigins = new List<string>();
+            controlClientAllowCorsOrigins.Add(settings.FoxIDsControlAuthResponseEndpoint);
+            if (char.ToLower(addLocalhostDomain.KeyChar) == 'y')
+            {
+                controlClientAllowCorsOrigins.Add("https://localhost:44332");
+            }
+
+            var controlClientRedirectUris = new List<string>();
+            controlClientRedirectUris.Add(UrlCombine.Combine(settings.FoxIDsControlAuthResponseEndpoint, settings.MasterTenant));
+            if (char.ToLower(addLocalhostDomain.KeyChar) == 'y')
+            {
+                controlClientRedirectUris.Add(UrlCombine.Combine("https://localhost:44332", settings.MasterTenant));
+            }
+
+            var controlClientDownParty = new OidcDownParty();
+            await controlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = controlClientName });
+            controlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
+            controlClientDownParty.AllowCorsOrigins = controlClientAllowCorsOrigins;
+            controlClientDownParty.Client = new OidcDownClient
+            {
+                RedirectUris = controlClientRedirectUris,
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { apiResourceTenantScope }.ToList() } },
+                ResponseTypes = new[] { "code" }.ToList(),
+                EnablePkce = true,
+                AuthorizationCodeLifetime = 10,
+                IdTokenLifetime = 1800, // 30 minutes
+                AccessTokenLifetime = 1800, // 30 minutes
+                RefreshTokenLifetime = 86400, // 24 hours
+                RefreshTokenAbsoluteLifetime = 86400, // 24 hours
+                RefreshTokenUseOneTime = true,
+                RefreshTokenLifetimeUnlimited = false,
+                RequireLogoutIdTokenHint = true,
+            };
+            controlClientDownParty.SetPartitionId();
+
+            await simpleTenantRepository.SaveAsync(controlClientDownParty);
+            Console.WriteLine("Control client document created and saved in Cosmos DB");
+        }
+
         private async Task CreateSeedClientDocmentAsync()
         {
             Console.WriteLine("Creating seed client");
@@ -184,7 +233,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             seedClientDownParty.Client = new OAuthDownClient
             {
                 RedirectUris = new[] { settings.RedirectUri }.ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "foxids_master" }.ToList() } },
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { apiResourceMasterScope }.ToList() } },
                 ResponseTypes = new[] { "token" }.ToList(),
                 AccessTokenLifetime = 1800 // 30 minutes
             };
@@ -196,47 +245,6 @@ namespace FoxIDs.SeedTool.SeedLogic
             await simpleTenantRepository.SaveAsync(seedClientDownParty);
             Console.WriteLine("Seed client document created and saved in Cosmos DB");
             Console.WriteLine($"Seed client secret is: {secret}");
-        }
-
-        private async Task CreatePortalClientDocmentAsync(LoginUpParty loginUpParty)
-        {
-            Console.WriteLine("Creating portal client");
-            Console.Write("Add localhost test domain to enable local development [y/n] (default no): ");
-            var addLocalhostDomain = Console.ReadKey();
-            Console.WriteLine(string.Empty);
-
-            var portalClientRedirectUris = new List<string>();
-            portalClientRedirectUris.Add(settings.FoxIDsPortalAuthResponseEndpoint);
-            if(char.ToLower(addLocalhostDomain.KeyChar) == 'y')
-            {
-                portalClientRedirectUris.Add("https://localhost:44332");
-            }
-
-            var portalClientDownParty = new OidcDownParty();
-            await portalClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = portalClientName });
-            portalClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
-            portalClientDownParty.Client = new OidcDownClient
-            {
-                RedirectUris = portalClientRedirectUris.ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "foxids_tenant" }.ToList() } },
-                ResponseTypes = new[] { "code", "id_token", "token" }.ToList(),
-                AuthorizationCodeLifetime = 10,
-                IdTokenLifetime = 1800, // 30 minutes
-                AccessTokenLifetime = 1800, // 30 minutes
-                RefreshTokenLifetime = 86400, // 24 hours
-                RefreshTokenAbsoluteLifetime = 86400, // 24 hours
-                RefreshTokenUseOneTime = true,
-                RefreshTokenLifetimeUnlimited = false,
-                RequireLogoutIdTokenHint = true,
-            };
-
-            (var secret, var oauthClientSecret) = await CreateSecretAsync();
-            portalClientDownParty.Client.Secrets = new List<OAuthClientSecret> { oauthClientSecret };
-            portalClientDownParty.SetPartitionId();
-
-            await simpleTenantRepository.SaveAsync(portalClientDownParty);
-            Console.WriteLine("Portal client document created and saved in Cosmos DB");
-            Console.WriteLine($"Portal client secret is: {secret}");
         }
 
         private async Task<(string, OAuthClientSecret)> CreateSecretAsync()

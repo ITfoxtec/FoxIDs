@@ -1,6 +1,6 @@
 @page "/{tenant}/authentication/{action}"
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView ApplicationPaths="GetPathsOptions" Action="@Action"  />
+<RemoteAuthenticatorView @*ApplicationPaths="GetPathsOptions"*@ Action="@Action"  />
 
 @code{
     [Parameter]
@@ -9,9 +9,9 @@
     [Parameter]
     public string Action { get; set; }
 
-    public RemoteAuthenticationApplicationPathsOptions GetPathsOptions => new RemoteAuthenticationApplicationPathsOptions()
-    {
-        LogInPath = $"/{Tenant}/authentication/{Action}",
-        LogInCallbackPath = $"/{Tenant}/authentication/{Action}"
-    };
+    //public RemoteAuthenticationApplicationPathsOptions GetPathsOptions => new RemoteAuthenticationApplicationPathsOptions()
+    //{
+    //    LogInPath = $"/{Tenant}/authentication/{Action}",
+    //    LogInCallbackPath = $"/{Tenant}/authentication/{Action}"
+    //};
 }

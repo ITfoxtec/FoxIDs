@@ -14,11 +14,13 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpRequest.Scheme}://{httpRequest.Host.Value}" } };
                 });
+                c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
             });
 #if DEBUG
             builder.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"/swagger/{Constants.Api.Version}/swagger.json", "FoxIDs API");
+                c.SwaggerEndpoint($"/api/swagger/{Constants.Api.Version}/swagger.json", "FoxIDs Control API");
+                c.RoutePrefix = "api";
             });
 #endif
         }

@@ -18,7 +18,7 @@ You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, F
 
 The ARM deployment script deploys:
 
-- Two App Services one for FoxIDs and one for the FoxIDs API. Both App Services is hosted in the same App Service plan. 
+- Two App Services one for FoxIDs and one for the FoxIDs Control (client and api). Both App Services is hosted in the same App Service plan. 
 - FoxIDs is deployed to the two App Services from the `release-current` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
 - Key vault. Secrets are placed in Key vault.
 - Document DB.
@@ -47,16 +47,16 @@ The ARM deployment script deploys:
 
 > You can either download the seed tool (Win_x64) from [releases](https://github.com/ITfoxtec/FoxIDs/releases) or compile it from source code.
 
-In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs api.
+In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs Control api.
 
 > The seed tool is configured in the `appsettings.json` file.
 
-Add the FodIDs and FoxIDs api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidsapixxxx` or by configuring custom domains.
+Add the FodIDs and FoxIDs Control api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidscontrolapixxxx` or by configuring custom domains.
 
 ```json
 "SeedSettings": {
     "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net", 
-    "FoxIDsApiEndpoint": "https://foxidsapixxxx.azurewebsites.net" 
+    "FoxIDsControlApiEndpoint": "https://foxidscontrolapixxxx.azurewebsites.net" 
 }
 ```
 
@@ -122,11 +122,8 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 FoxIDs
 https://localhost:44330
 
-FoxIDs API
+FoxIDs Control (client and api)
 https://localhost:44331
-
-*FoxIDs Control
-https://localhost:44332 
 
 *FoxIDs web
 https://localhost:44333 - not created yet*

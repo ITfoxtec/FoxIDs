@@ -69,21 +69,38 @@ namespace FoxIDs
             app.UseEnLocalization();
             app.UseApiSwagger();
 
-            app.UseRouteBindingMiddleware();
-
-            app.UseCors(builder =>
+            app.Map("/api", app =>
             {
-                builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization);
+                app.UseRouteBindingMiddleware();
+
+                app.UseCors(builder =>
+                {
+                    builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization);
+                });
+
+                app.UseRouting();
+                #pragma warning disable ASP0001 // Authorization middleware is incorrectly configured.
+                app.UseAuthorization();
+                #pragma warning restore ASP0001 // Authorization middleware is incorrectly configured.
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapDynamicControllerRoute<FoxIDsApiRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
+                });
             });
 
+            if (CurrentEnvironment.IsDevelopment())
+            {
+                app.UseWebAssemblyDebugging();
+            }
+            app.UseBlazorFrameworkFiles();
+            app.UseStaticFiles();
             app.UseRouting();
-            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDynamicControllerRoute<FoxIDsApiRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }

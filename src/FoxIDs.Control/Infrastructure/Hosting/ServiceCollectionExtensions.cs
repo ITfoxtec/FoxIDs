@@ -103,7 +103,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 //TODO Work around. Remove when JsonStringEnumConverter is supported.
                 c.DescribeAllEnumsAsStrings();
-                c.SwaggerDoc(Constants.Api.Version, new OpenApiInfo { Title = "FoxIDs API", Version = Constants.Api.Version });
+                c.SwaggerDoc(Constants.Api.Version, new OpenApiInfo { Title = "FoxIDs Control API", Version = Constants.Api.Version });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",

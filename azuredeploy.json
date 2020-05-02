@@ -94,7 +94,7 @@
   "variables": {
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
     "foxidsSiteName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
-    "foxidsApiSiteName": "[toLower(concat(parameters('prefixName'), 'api', variables('suffix')))]",
+    "foxidsControlSiteName": "[toLower(concat(parameters('prefixName'), 'control', variables('suffix')))]",
     "serverfarmsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "appInsightsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "redisName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
@@ -142,7 +142,7 @@
       "location": "[variables('location')]",
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsSiteName'))]": "Resource",
-        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsApiSiteName'))]": "Resource"
+        "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsControlSiteName'))]": "Resource"
       },
       "kind": "web",
       "properties": {
@@ -207,7 +207,7 @@
           },
           {
             "tenantId": "[subscription().tenantId]",
-            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsApiSiteName')), '2018-02-01', 'Full').identity.principalId]",
+            "objectId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]",
             "permissions": {
               "keys": [
                 "Get",
@@ -295,7 +295,7 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2014-04-01",
-      "name": "[variables('foxidsApiSiteName')]",
+      "name": "[variables('foxidsControlSiteName')]",
       "location": "[variables('location')]",
       "dependsOn": [
         "[concat('Microsoft.Web/serverfarms/', variables('serverfarmsName'))]"
@@ -307,7 +307,7 @@
         "type": "SystemAssigned"
       },
       "properties": {
-        "name": "[variables('foxidsApiSiteName')]",
+        "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
           "alwaysOn": true,
           "webSocketsEnabled": false
@@ -343,16 +343,16 @@
     {
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2015-08-01",
-      "name": "[concat(variables('foxidsApiSiteName'), '/appsettings')]",
+      "name": "[concat(variables('foxidsControlSiteName'), '/appsettings')]",
       "dependsOn": [
-        "[concat('Microsoft.Web/Sites/', variables('foxidsApiSiteName'))]",
+        "[concat('Microsoft.Web/Sites/', variables('foxidsControlSiteName'))]",
         "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosDbName'))]",
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
         "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
       ],
       "properties": {
-        "PROJECT": "src/FoxIDs.Api/FoxIDs.Api.csproj",
+        "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
@@ -378,10 +378,10 @@
     {
       "type": "Microsoft.Web/sites/sourcecontrols",
       "apiVersion": "2015-04-01",
-      "name": "[concat(variables('foxidsApiSiteName'), '/web')]",
+      "name": "[concat(variables('foxidsControlSiteName'), '/web')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/Sites', variables('foxidsApiSiteName'))]",
-        "[resourceId('Microsoft.Web/Sites/config', variables('foxidsApiSiteName'), 'appsettings')]"
+        "[resourceId('Microsoft.Web/Sites', variables('foxidsControlSiteName'))]",
+        "[resourceId('Microsoft.Web/Sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
         "RepoUrl": "[parameters('repoUrl')]",

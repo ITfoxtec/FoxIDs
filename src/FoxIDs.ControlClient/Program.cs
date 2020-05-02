@@ -10,7 +10,7 @@ namespace FoxIDs
 {
     public class Program
     {
-        const string httpClientLogicalName = "FoxIDs.API";
+        const string httpClientLogicalName = "FoxIDs.ControlAPI";
 
         public static async Task Main(string[] args)
         {

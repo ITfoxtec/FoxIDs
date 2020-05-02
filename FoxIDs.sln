@@ -17,7 +17,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{48D65B3F-F81
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{ADF3A7A1-55CD-466B-9CE2-76B159582B17}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.Api", "src\FoxIDs.Api\FoxIDs.Api.csproj", "{4A4B168C-8850-4D9E-A749-3CE34179B986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.Control", "src\FoxIDs.Control\FoxIDs.Control.csproj", "{4A4B168C-8850-4D9E-A749-3CE34179B986}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.Shared", "src\FoxIDs.Shared\FoxIDs.Shared.csproj", "{4E5D61BC-6FCA-491E-867F-A803771F06B4}"
 EndProject

@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
 
-namespace FoxIDs.ControlClient
+namespace FoxIDs
 {
     public class Program
     {

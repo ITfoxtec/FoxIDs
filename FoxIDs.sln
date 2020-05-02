@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{66AA1AF7
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SeedTool", "tools\FoxIDs.SeedTool\FoxIDs.SeedTool.csproj", "{E75B36E6-AD0E-42D7-A055-FE5816DF73B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.Control", "src\FoxIDs.Control\FoxIDs.Control.csproj", "{841451D6-66A5-4E7A-8952-BFF9A9375B6B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ControlClient", "src\FoxIDs.ControlClient\FoxIDs.ControlClient.csproj", "{841451D6-66A5-4E7A-8952-BFF9A9375B6B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

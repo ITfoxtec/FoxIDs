@@ -30,5 +30,9 @@
     <PackageReference Include="NEST" Version="7.6.1" />
     <PackageReference Include="UrlCombine" Version="2.0.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FoxIDs.SharedBase\FoxIDs.SharedBase.csproj" />
+  </ItemGroup>
   
  </Project>

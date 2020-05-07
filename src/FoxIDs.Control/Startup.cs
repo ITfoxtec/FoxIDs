@@ -1,8 +1,8 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.Hosting;
+﻿using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -46,7 +46,7 @@ namespace FoxIDs
 
             services.AddCors();
 
-            services.AddControllers()
+            services.AddControllersWithViews()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.IgnoreNullValues = true;
@@ -71,7 +71,7 @@ namespace FoxIDs
 
             app.Map("/api", app =>
             {
-                app.UseRouteBindingMiddleware();
+                app.UseApiRouteBindingMiddleware();
 
                 app.UseCors(builder =>
                 {
@@ -95,12 +95,22 @@ namespace FoxIDs
             {
                 app.UseWebAssemblyDebugging();
             }
+
+            // Rewrite Blazor tenant/xxx requests to /xxx
+            var options = new RewriteOptions() 
+                .AddRewrite(@"^(.+)\/_content\/(.+)", "_content/$2", true)
+                .AddRewrite(@"^(.+)\/_framework\/(.+)", "_framework/$2", true)
+                .AddRewrite(@"^(.+)\/appsettings(.+)", "appsettings$2", true);
+            app.UseRewriter(options);
+
             app.UseBlazorFrameworkFiles();
-            app.UseStaticFiles();
+            app.UseStaticFilesCacheControl(CurrentEnvironment);
+
+            app.UseClientRouteBindingMiddleware();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapFallbackToFile("index.html");
+                endpoints.MapDynamicControllerRoute<FoxIDsClientRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
             });
         }
     }

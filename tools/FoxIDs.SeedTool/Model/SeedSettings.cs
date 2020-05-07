@@ -48,10 +48,15 @@ namespace FoxIDs.SeedTool.Model
         public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 
         /// <summary>
-        /// FoxIDs api control endpoint.
+        /// FoxIDs control endpoint.
         /// </summary>
         [Required]
-        public string FoxIDsControlApiEndpoint { get; set; }
+        public string FoxIDsControlEndpoint { get; set; }
+
+        /// <summary>
+        /// FoxIDs control api endpoint.
+        /// </summary>
+        public string FoxIDsControlApiEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "api");
         /// <summary>
         /// FoxIDs master api control endpoint.
         /// </summary>
@@ -62,14 +67,9 @@ namespace FoxIDs.SeedTool.Model
         public string FoxIDsMasterTrackControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, MasterTenant, MasterTrack);
 
         /// <summary>
-        /// FoxIDs portal endpoint.
+        /// FoxIDs master track control client endpoint.
         /// </summary>
-        [Required]
-        public string FoxIDsControlEndpoint { get; set; }
-        /// <summary>
-        /// FoxIDs portal auth response endpoint.
-        /// </summary>
-        public string FoxIDsControlAuthResponseEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "authresponse");
+        public string FoxIDsMasterControlClientEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, MasterTenant);
 
         /// <summary>
         /// Pwned passwords (SHA1 ordered by count) path.

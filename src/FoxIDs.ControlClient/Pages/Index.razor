@@ -1,12 +1,12 @@
-﻿@page "/{tenant}"
+﻿@page "/"
+@inject RouteBindingBase routeBinding
+@attribute [Authorize]
 
-<h1>@Tenant, Hello, world!</h1>
+<h1>TenantName: @routeBinding.TenantName, Hello, world!</h1>
 
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 
 @code {
-    [Parameter]
-    public string Tenant { get; set; }
 }

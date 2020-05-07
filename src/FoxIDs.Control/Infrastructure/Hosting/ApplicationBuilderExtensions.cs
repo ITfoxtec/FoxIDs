@@ -25,7 +25,12 @@ namespace FoxIDs.Infrastructure.Hosting
 #endif
         }
 
-        public static IApplicationBuilder UseRouteBindingMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseClientRouteBindingMiddleware(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<FoxIDsClientRouteBindingMiddleware>();
+        }
+
+        public static IApplicationBuilder UseApiRouteBindingMiddleware(this IApplicationBuilder app)
         {
             return app.UseMiddleware<FoxIDsApiRouteBindingMiddleware>();
         }

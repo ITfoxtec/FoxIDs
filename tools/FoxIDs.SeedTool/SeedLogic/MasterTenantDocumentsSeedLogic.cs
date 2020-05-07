@@ -185,10 +185,10 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine(string.Empty);
 
             var controlClientRedirectUris = new List<string>();
-            controlClientRedirectUris.Add(UrlCombine.Combine(settings.FoxIDsControlAuthResponseEndpoint, settings.MasterTenant));
+            controlClientRedirectUris.AddRange(GetControlClientRedirectUris(settings.FoxIDsMasterControlClientEndpoint));
             if (char.ToLower(addLocalhostDomain.KeyChar) == 'y')
             {
-                controlClientRedirectUris.Add(UrlCombine.Combine("https://localhost:44332", settings.MasterTenant));
+                controlClientRedirectUris.AddRange(GetControlClientRedirectUris("https://localhost:44332"));
             }
 
             var controlClientDownParty = new OidcDownParty();
@@ -213,6 +213,12 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             await simpleTenantRepository.SaveAsync(controlClientDownParty);
             Console.WriteLine("Control client document created and saved in Cosmos DB");
+        }
+
+        private IEnumerable<string> GetControlClientRedirectUris(string baseUrl)
+        {
+            yield return UrlCombine.Combine(baseUrl, "authentication/login-callback");
+            yield return UrlCombine.Combine(baseUrl, "authentication/logout-callback");
         }
 
         private async Task CreateSeedClientDocmentAsync()

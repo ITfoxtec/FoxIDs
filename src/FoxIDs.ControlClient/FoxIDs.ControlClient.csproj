@@ -15,4 +15,8 @@
     <PackageReference Include="System.Net.Http.Json" Version="5.0.0-preview.3.20214.6" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FoxIDs.SharedBase\FoxIDs.SharedBase.csproj" />
+  </ItemGroup>
+
 </Project>

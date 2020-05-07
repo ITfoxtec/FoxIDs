@@ -1,6 +1,4 @@
-@page "/{tenant}/fetchdata"
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@page "/fetchdata"
 @using Microsoft.Extensions.Configuration
 @attribute [Authorize]
 @inject HttpClient httpClient
@@ -49,8 +47,8 @@ else
     {
         try
         {
-            //var aspNetCoreApi1SampleMethod = Configuration["AppSettings:FoxIDsApiSampleMethod"];
-            //forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+            var aspNetCoreApi1SampleMethod = Configuration["AppSettings:FoxIDsApiSampleMethod"];
+            forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
         }
         catch (AccessTokenNotAvailableException exception)
         {

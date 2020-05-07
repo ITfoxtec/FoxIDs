@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
+using FoxIDs.Models;
+using System.Linq;
 
 namespace FoxIDs
 {
@@ -25,8 +27,14 @@ namespace FoxIDs
             builder.Services.AddOidcAuthentication(options =>
             {
                 builder.Configuration.Bind("IdentitySettings", options.ProviderOptions);
+                options.ProviderOptions.DefaultScopes.Add("email");
                 options.ProviderOptions.DefaultScopes.Add(builder.Configuration["AppSettings:FoxIDsControlApiScope"]);
                 options.ProviderOptions.ResponseType = "code";
+            });
+
+            builder.Services.AddSingleton(s => new RouteBindingBase
+            {
+                TenantName = builder.HostEnvironment.BaseAddress.TrimEnd('/').Split('/').Last()
             });
 
             await builder.Build().RunAsync();

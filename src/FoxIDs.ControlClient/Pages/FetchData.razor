@@ -1,10 +1,10 @@
-@page "/fetchdata"
+@page "/{tenantName}/fetchdata"
 @using Microsoft.Extensions.Configuration
 @attribute [Authorize]
 @inject HttpClient httpClient
 @inject IConfiguration Configuration
 
-<h1>@Tenant, Weather forecast</h1>
+<h1>@TenantName, Weather forecast</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
 
@@ -39,7 +39,7 @@ else
 
 @code {
     [Parameter]
-    public string Tenant { get; set; }
+    public string TenantName { get; set; }
 
     private WeatherForecast[] forecasts;
 

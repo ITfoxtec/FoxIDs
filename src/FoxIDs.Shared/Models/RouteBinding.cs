@@ -2,8 +2,10 @@
 
 namespace FoxIDs.Models
 {
-    public class RouteBinding : RouteBindingBase
+    public class RouteBinding
     {
+        public string TenantName { get; set; }
+
         public string TrackName { get; set; }
 
         public string RouteUrl { get; set; }

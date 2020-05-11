@@ -1,4 +1,6 @@
-﻿<div class="top-row pl-4 navbar navbar-dark">
+﻿@inject RouteBindingLogic routeBindingLogic
+
+<div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">FoxIDs.Control</a>
     <button class="navbar-toggler" @onclick="ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
@@ -27,11 +29,17 @@
 
 @code {
     private bool collapseNavMenu = true;
+    private string tenantName;
 
     private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        tenantName = await routeBindingLogic.GetTenantNameAsync();
     }
 }

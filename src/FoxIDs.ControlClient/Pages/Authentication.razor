@@ -1,7 +1,7 @@
-@page "/authentication/{action}"
-<RemoteAuthenticatorView Action="@Action"  />
+@page "/{tenantName}/authentication/{action}"
+@inherits AuthenticationPageBase
 
-@code{
+@code {
     [Parameter]
-    public string Action { get; set; }
+    public string TenantName { get; set; }
 }

@@ -47,7 +47,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedInfrastructure();
 
-            services.AddScoped<FoxIDsClientRouteTransformer>();
             services.AddScoped<FoxIDsApiRouteTransformer>();
 
             services.AddSingleton<OidcDiscoveryHandler>();

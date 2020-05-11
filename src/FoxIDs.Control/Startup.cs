@@ -2,7 +2,6 @@
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -96,21 +95,14 @@ namespace FoxIDs
                 app.UseWebAssemblyDebugging();
             }
 
-            // Rewrite Blazor tenant/xxx requests to /xxx
-            var options = new RewriteOptions() 
-                .AddRewrite(@"^(.+)\/_content\/(.+)", "_content/$2", true)
-                .AddRewrite(@"^(.+)\/_framework\/(.+)", "_framework/$2", true)
-                .AddRewrite(@"^(.+)\/appsettings(.+)", "appsettings$2", true);
-            app.UseRewriter(options);
-
             app.UseBlazorFrameworkFiles();
-            app.UseStaticFilesCacheControl(CurrentEnvironment);
+            app.UseStaticFiles();
 
             app.UseClientRouteBindingMiddleware();
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapDynamicControllerRoute<FoxIDsClientRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
+                endpoints.MapFallbackToFile("index.html");
             });
         }
     }

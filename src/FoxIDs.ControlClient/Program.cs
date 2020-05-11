@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
-using FoxIDs.Models;
-using System.Linq;
+using FoxIDs.Logic;
 
 namespace FoxIDs
 {
@@ -18,26 +17,24 @@ namespace FoxIDs
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
-
-            builder.Services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-                       .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
-
-            builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));
-
-            builder.Services.AddOidcAuthentication(options =>
-            {
-                builder.Configuration.Bind("IdentitySettings", options.ProviderOptions);
-                options.ProviderOptions.DefaultScopes.Add("email");
-                options.ProviderOptions.DefaultScopes.Add(builder.Configuration["AppSettings:FoxIDsControlApiScope"]);
-                options.ProviderOptions.ResponseType = "code";
-            });
-
-            builder.Services.AddSingleton(s => new RouteBindingBase
-            {
-                TenantName = builder.HostEnvironment.BaseAddress.TrimEnd('/').Split('/').Last()
-            });
+            ConfigureServices(builder.Services, builder.Configuration, builder.HostEnvironment);
 
             await builder.Build().RunAsync();
+        }
+
+        private static void ConfigureServices(IServiceCollection services, WebAssemblyHostConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
+        {
+            services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress));
+                       //.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));
+
+            services.AddTenantOpenidConnectPkce(settings =>
+            {
+                configuration.Bind("IdentitySettings", settings);
+            });
+
+            services.AddScoped<RouteBindingLogic>();
         }
     }
 }

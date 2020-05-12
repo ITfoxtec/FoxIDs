@@ -3,9 +3,9 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.Extensions.Configuration;
 using FoxIDs.Logic;
+using FoxIDs.Security;
 
 namespace FoxIDs
 {
@@ -24,8 +24,8 @@ namespace FoxIDs
 
         private static void ConfigureServices(IServiceCollection services, WebAssemblyHostConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
         {
-            services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress));
-                       //.AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+            services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
+                       .AddHttpMessageHandler<TenantAccessTokenMessageHandler>();
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));
 

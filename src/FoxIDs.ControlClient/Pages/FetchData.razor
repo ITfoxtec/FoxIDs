@@ -45,15 +45,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
             var aspNetCoreApi1SampleMethod = Configuration["AppSettings:FoxIDsApiSampleMethod"];
             forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-        }
-        catch (AccessTokenNotAvailableException exception)
-        {
-            exception.Redirect();
-        }
     }
 
     public class WeatherForecast

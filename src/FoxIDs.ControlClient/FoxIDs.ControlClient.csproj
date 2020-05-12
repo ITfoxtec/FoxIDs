@@ -8,9 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.SessionStorage" Version="1.0.11" />
-    <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.0.0" />
+    <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0-rc1.20223.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="3.2.0-rc1.20223.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0-rc1.20223.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0-rc1.20223.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0-preview.3.20215.2" />

@@ -88,6 +88,7 @@ namespace FoxIDs.Logic
         protected override async Task<IActionResult> AuthorizationCodeGrant(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
             var authCodeGrant = await oauthAuthCodeGrantLogic.GetAndValidateAuthCodeGrantAsync(tokenRequest.Code, tokenRequest.RedirectUri, tokenRequest.ClientId);
+            Console.WriteLine($"authCodeGrant not null: {authCodeGrant != null}");
             if (validatePkce)
             {
                 await ValidatePkce(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);

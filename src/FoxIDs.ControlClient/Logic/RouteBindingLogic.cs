@@ -4,6 +4,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -12,6 +13,7 @@ namespace FoxIDs.Logic
     {
         private const string tenanSessionKey = "tenant_session";
         private string tenantName;
+        private bool? isMastertenant;
         private readonly NavigationManager navigationManager;
         private readonly ISessionStorageService sessionStorage;
         private readonly AuthenticationStateProvider authenticationStateProvider;
@@ -23,15 +25,35 @@ namespace FoxIDs.Logic
             this.authenticationStateProvider = authenticationStateProvider;
         }
 
+        public bool IsMasterTenant => (isMastertenant ?? (isMastertenant = "master".Equals(tenantName, StringComparison.OrdinalIgnoreCase))).Value;
+
         public async Task<string> GetTenantNameAsync()
         {
             if(tenantName.IsNullOrEmpty())
             {
-                var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
-                tenantName = urlSplit[0];
-                await ValidateAndUpdateSessionTenantName();
+                await InitRouteBindingAsync();
             }
             return tenantName;
+        }
+
+        public string GetPage()
+        {
+            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
+            if(urlSplit.Count() > 1) 
+            {
+                return urlSplit[1];
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        public async Task InitRouteBindingAsync()
+        {
+            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
+            tenantName = urlSplit[0];
+            await ValidateAndUpdateSessionTenantName();
         }
 
         private async Task ValidateAndUpdateSessionTenantName()

@@ -1,0 +1,12 @@
+﻿@page "/{tenantName}/certificates"
+@inherits PageBase
+@inject RouteBindingLogic routeBinding
+
+<h3>Certificates</h3>
+
+
+
+@code {
+    [Parameter]
+    public string TenantName { get; set; }
+}

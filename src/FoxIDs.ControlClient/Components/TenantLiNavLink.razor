@@ -1,0 +1,49 @@
+﻿@implements IDisposable
+@inject RouteBindingLogic routeBindingLogic
+@inject NavigationManager navigationManager
+
+<li class="@liCssClass">
+    <a class="nav-link" href="@tenantHref">@ChildContent</a>
+</li>
+
+@code {
+    const string liCssClassDefault = "nav-item";
+    string liCssClass = liCssClassDefault;
+    bool isActive = false;
+    string tenantHref;
+
+    [Parameter]
+    public string Href { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        navigationManager.LocationChanged += LocationChanged;
+        tenantHref = $"{await routeBindingLogic.GetTenantNameAsync()}/{Href}";
+        UpdateLiCssClass(navigationManager.Uri);
+        base.OnInitialized();
+    }
+
+    private void UpdateLiCssClass(string currentLocation)
+    {
+        var newIsActive = currentLocation.Contains(tenantHref, StringComparison.OrdinalIgnoreCase);
+        if (isActive != newIsActive)
+        {
+            isActive = newIsActive;
+            liCssClass = isActive ? $"{liCssClassDefault} active" : liCssClassDefault;
+            StateHasChanged();
+        }
+    }
+
+    private void LocationChanged(object sender, LocationChangedEventArgs args)
+    {
+        UpdateLiCssClass(args.Location);
+    }
+
+    void IDisposable.Dispose()
+    {
+        navigationManager.LocationChanged -= LocationChanged;
+    }
+}

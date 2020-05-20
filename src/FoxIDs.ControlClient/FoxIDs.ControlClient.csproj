@@ -20,4 +20,8 @@
     <ProjectReference Include="..\FoxIDs.SharedBase\FoxIDs.SharedBase.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\" />
+  </ItemGroup>
+
 </Project>

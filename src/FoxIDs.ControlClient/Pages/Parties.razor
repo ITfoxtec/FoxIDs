@@ -1,0 +1,22 @@
+﻿@page "/{tenantName}/parties"
+@inherits PageBase
+@inject RouteBindingLogic routeBinding
+
+<h3>Parties</h3>
+
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active" href="#">Down Parties</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="#">Up Parties</a>
+    </li>
+</ul>
+
+
+
+@code {
+    [Parameter]
+    public string TenantName { get; set; }
+}

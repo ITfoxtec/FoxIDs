@@ -3,10 +3,10 @@
 <AuthorizeView>
     <Authorized>
         Hello, @context.User.Identity.Name!
-        <button class="nav-link btn btn-link" @onclick="LogoutAsync">Logout</button>
+        <button class="dropdown-item btn btn-link" @onclick="LogoutAsync">Logout</button>
     </Authorized>
     <NotAuthorized>
-        <button class="nav-link btn btn-link" @onclick="LoginAsync">Login</button>
+        <button class="dropdown-item btn btn-link" @onclick="LoginAsync">Login</button>
     </NotAuthorized>
 </AuthorizeView>
 

@@ -1,15 +1,88 @@
 ﻿@inherits LayoutComponentBase
+@inject RouteBindingLogic routeBindingLogic
 
-<div class="sidebar">
-    <NavMenu />
+<nav class="navbar navbar-expand navbar-light bg-light navbar-main">
+    <a class="navbar-brand">FoxIDs</a>
+    <ul class="navbar-nav mr-auto">
+        @if (!routeBindingLogic.IsMasterTenant)
+        {
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Select Track
+                </a>
+                <div class="dropdown-menu searchDropdown" aria-labelledby="trackNavbarDropdown">
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Search track">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" type="submit">Go</button>
+                        </div>
+                    </div>
+                    <a class="dropdown-item">Track a</a>
+                    <a class="dropdown-item">Track b</a>
+                    <a class="dropdown-item">Track c</a>
+                    <a class="dropdown-item">Track d</a>
+                </div>
+            </li>
+        }
+    </ul>
+    <ul class="navbar-nav">
+        @if (routeBindingLogic.IsMasterTenant)
+        {
+            <li class="nav-item">
+                <a class="nav-link"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="nav-link"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</a>
+            </li>
+        }
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="meNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Me
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="meNavbarDropdown">
+                <a class="dropdown-item">Me</a>
+                <div class="dropdown-divider"></div>
+                <LoginDisplay />
+            </div>
+        </li>
+    </ul>
+</nav>
+
+<nav class="navbar navbar-expand navbar-light bg-light navbar-second">
+    <div class="container-lg">
+        <ul class="navbar-nav">
+            <TenantLiNavLink href="parties">
+                Parties
+            </TenantLiNavLink>
+            <TenantLiNavLink href="users">
+                Users
+            </TenantLiNavLink>
+            <TenantLiNavLink href="certificates">
+                Certificates
+            </TenantLiNavLink>
+            <TenantLiNavLink href="text">
+                Text
+            </TenantLiNavLink>
+            @if (routeBindingLogic.IsMasterTenant)
+            {
+                <TenantLiNavLink href="passwordrisklist">
+                    Password Risk
+                </TenantLiNavLink>                
+            }
+        </ul>
+    </div>
+</nav>
+
+<div class="container-lg main-container">
+    @Body
 </div>
 
-<div class="main">
-    <div class="top-row px-4">
-        <LoginDisplay />
-    </div>
-
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await routeBindingLogic.InitRouteBindingAsync();
+    }
+}

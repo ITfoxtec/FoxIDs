@@ -1,6 +1,6 @@
 @page "/{tenantName}/fetchdata"
 @using Microsoft.Extensions.Configuration
-@attribute [Authorize]
+@inherits PageBase
 @inject HttpClient httpClient
 @inject IConfiguration Configuration
 
@@ -45,8 +45,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-            var aspNetCoreApi1SampleMethod = Configuration["AppSettings:FoxIDsApiSampleMethod"];
-            forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        var aspNetCoreApi1SampleMethod = Configuration["AppSettings:FoxIDsApiSampleMethod"];
+        forecasts = await httpClient.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
     }
 
     public class WeatherForecast

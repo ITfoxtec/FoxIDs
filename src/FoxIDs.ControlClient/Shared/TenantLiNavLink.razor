@@ -1,6 +1,6 @@
 ﻿@implements IDisposable
-@inject RouteBindingLogic routeBindingLogic
-@inject NavigationManager navigationManager
+@inject RouteBindingLogic RouteBindingLogic
+@inject NavigationManager NavigationManager
 
 <li class="@liCssClass">
     <a class="nav-link" href="@tenantHref">@ChildContent</a>
@@ -20,9 +20,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        navigationManager.LocationChanged += LocationChanged;
-        tenantHref = $"{await routeBindingLogic.GetTenantNameAsync()}/{Href}";
-        UpdateLiCssClass(navigationManager.Uri);
+        NavigationManager.LocationChanged += LocationChanged;
+        tenantHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Href}";
+        UpdateLiCssClass(NavigationManager.Uri);
         base.OnInitialized();
     }
 
@@ -44,6 +44,6 @@
 
     void IDisposable.Dispose()
     {
-        navigationManager.LocationChanged -= LocationChanged;
+        NavigationManager.LocationChanged -= LocationChanged;
     }
 }

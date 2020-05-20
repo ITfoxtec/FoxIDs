@@ -1,7 +1,7 @@
 ﻿@page "/{tenantName}/"
 @inherits PageBase
 @inject RouteBindingLogic routeBinding
-@inject NavigationManager navigationManager
+@inject NavigationManager NavigationManager
 
 @code {
     [Parameter]
@@ -11,11 +11,11 @@
     {
         if (routeBinding.IsMasterTenant)
         {
-            navigationManager.NavigateTo($"{TenantName}/parties");
+            NavigationManager.NavigateTo($"{TenantName}/parties");
         }
         else
         {
-            navigationManager.NavigateTo($"{TenantName}/parties");
+            NavigationManager.NavigateTo($"{TenantName}/parties");
         }
     }
 }

@@ -9,9 +9,9 @@ namespace FoxIDs.Security
     {
         private readonly TenantOpenidConnectPkce tenantOpenidConnectPkce;
 
-        public TenantAccessTokenMessageHandler(NavigationManager navigationManager, OpenidConnectPkce openidConnectPkce, AuthenticationStateProvider authenticationStateProvider) : base(navigationManager, openidConnectPkce, authenticationStateProvider)
+        public TenantAccessTokenMessageHandler(NavigationManager NavigationManager, OpenidConnectPkce OpenidConnectPkce, AuthenticationStateProvider authenticationStateProvider) : base(NavigationManager, OpenidConnectPkce, authenticationStateProvider)
         {
-            tenantOpenidConnectPkce = openidConnectPkce as TenantOpenidConnectPkce;
+            tenantOpenidConnectPkce = OpenidConnectPkce as TenantOpenidConnectPkce;
         }
 
         protected override async Task LoginAsync()

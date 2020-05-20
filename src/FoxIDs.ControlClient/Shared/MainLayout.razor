@@ -1,10 +1,13 @@
 ﻿@inherits LayoutComponentBase
-@inject RouteBindingLogic routeBindingLogic
+@inject RouteBindingLogic RouteBindingLogic
+@inject IModalService Modal
+
+<BlazoredModal />
 
 <nav class="navbar navbar-expand navbar-light bg-light navbar-main">
     <a class="navbar-brand">FoxIDs</a>
     <ul class="navbar-nav mr-auto">
-        @if (!routeBindingLogic.IsMasterTenant)
+        @if (!RouteBindingLogic.IsMasterTenant)
         {
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -26,10 +29,10 @@
         }
     </ul>
     <ul class="navbar-nav">
-        @if (routeBindingLogic.IsMasterTenant)
+        @if (RouteBindingLogic.IsMasterTenant)
         {
             <li class="nav-item">
-                <a class="nav-link"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</a>
+                <button class="nav-link btn btn-link" @onclick="@(() => Modal.Show<CreateTenant>())"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
             </li>
         }
         else
@@ -66,11 +69,12 @@
             <TenantLiNavLink href="text">
                 Text
             </TenantLiNavLink>
-            @if (routeBindingLogic.IsMasterTenant)
+            @if (RouteBindingLogic.IsMasterTenant)
             {
                 <TenantLiNavLink href="passwordrisklist">
                     Password Risk
-                </TenantLiNavLink>                
+                </TenantLiNavLink>
+
             }
         </ul>
     </div>
@@ -83,6 +87,6 @@
 @code {
     protected override async Task OnInitializedAsync()
     {
-        await routeBindingLogic.InitRouteBindingAsync();
+        await RouteBindingLogic.InitRouteBindingAsync();
     }
 }

@@ -14,13 +14,13 @@ namespace FoxIDs.Logic
         private const string tenanSessionKey = "tenant_session";
         private string tenantName;
         private bool? isMastertenant;
-        private readonly NavigationManager navigationManager;
+        private readonly NavigationManager NavigationManager;
         private readonly ISessionStorageService sessionStorage;
         private readonly AuthenticationStateProvider authenticationStateProvider;
 
-        public RouteBindingLogic(NavigationManager navigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider)
+        public RouteBindingLogic(NavigationManager NavigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider)
         {
-            this.navigationManager = navigationManager;
+            this.NavigationManager = NavigationManager;
             this.sessionStorage = sessionStorage;
             this.authenticationStateProvider = authenticationStateProvider;
         }
@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
 
         public string GetPage()
         {
-            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
+            var urlSplit = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/');
             if(urlSplit.Count() > 1) 
             {
                 return urlSplit[1];
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
 
         public async Task InitRouteBindingAsync()
         {
-            var urlSplit = navigationManager.ToBaseRelativePath(navigationManager.Uri).Split('/');
+            var urlSplit = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/');
             tenantName = urlSplit[0];
             await ValidateAndUpdateSessionTenantName();
         }

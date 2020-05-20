@@ -1,4 +1,4 @@
-﻿@inject OpenidConnectPkce openidConnectPkce
+﻿@inject OpenidConnectPkce OpenidConnectPkce
 
 <AuthorizeView>
     <Authorized>
@@ -13,11 +13,11 @@
 @code{
     private async Task LoginAsync(MouseEventArgs args)
     {
-        await (openidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
     }
 
     private async Task LogoutAsync(MouseEventArgs args)
     {
-        await (openidConnectPkce as TenantOpenidConnectPkce).TenantLogoutAsync();
+        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLogoutAsync();
     }
 }

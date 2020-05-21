@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FoxIDs.SharedBase\FoxIDs.SharedBase.csproj" />
+    <ProjectReference Include="..\FoxIDs.ControlShared\FoxIDs.ControlShared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

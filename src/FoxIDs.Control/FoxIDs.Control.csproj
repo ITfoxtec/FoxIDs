@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FoxIDs.ControlClient\FoxIDs.ControlClient.csproj" />
+	<ProjectReference Include="..\FoxIDs.ControlShared\FoxIDs.ControlShared.csproj" />
     <ProjectReference Include="..\FoxIDs.Shared\FoxIDs.Shared.csproj" />
   </ItemGroup>
 

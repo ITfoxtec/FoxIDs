@@ -5,17 +5,20 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace FoxIDs.Controllers
 {
     public class MResourceController : MasterApiController
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly IMapper mapper;
         private readonly IMasterRepository masterService;
 
-        public MResourceController(TelemetryScopedLogger logger, IMasterRepository masterService) : base(logger)
+        public MResourceController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterService) : base(logger)
         {
             this.logger = logger;
+            this.mapper = mapper;
             this.masterService = masterService;
         }
 
@@ -24,14 +27,9 @@ namespace FoxIDs.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var resourceEnvelope = new ResourceEnvelope
-            {
-                Id = ResourceEnvelope.IdFormat(new MasterDocument.IdKey()),
-                SupportedCultures = model.SupportedCultures,
-                Names = model.Names,
-                Resources = model.Resources,
-            };
-
+            var resourceEnvelope = mapper.Map<ResourceEnvelope>(model);
+            resourceEnvelope.Id = ResourceEnvelope.IdFormat(new MasterDocument.IdKey());
+    
             await masterService.SaveAsync(resourceEnvelope);
 
             return NoContent();

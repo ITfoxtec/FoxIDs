@@ -3,11 +3,19 @@
 app {
 }
 
+a {
+    color: #df8935;
+}
+
+    a:hover {
+        color: #d87513;
+    }
 
 .main-container {
     padding-top: 30px;
 }
     .main-container > h3 {
+        font-weight: 300;
         padding-bottom: 8px;
     }
 
@@ -32,8 +40,8 @@ app {
 
 /*Navbar*/
 .navbar.navbar-main {
-    border-bottom: 3px solid #f78f1e;
-    background-color: #e9ecef !important;
+    border-bottom: 3px solid #fc7e01;
+    background-color: #ffffff !important;
 }
 
 .navbar .searchDropdown {
@@ -53,9 +61,111 @@ app {
 }
 
     .navbar.navbar-second .active {
-        border-bottom: 1px solid #f78f1e;
+        border-bottom: 1px solid #fc7e01;
     }
 
     .navbar.navbar-second .nav-item {
         padding: .5rem 0rem;
     }
+
+
+
+.btn-primary {
+    background-color: #f19031;
+    border-color: #f19031;
+}
+
+    .btn-primary:hover {
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+    .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active,
+    .show > .btn-primary.dropdown-toggle {
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+        .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
+        .show > .btn-primary.dropdown-toggle:focus {
+            box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+        }
+
+.btn:focus, .btn.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.form-group {
+    margin-bottom: 1.3rem;
+}
+
+.form-control:focus {
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.button-group {
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.active-group {
+    position: relative;
+    padding: 15px 0px;
+    margin: 15px 0px;
+}
+
+    .active-group .input-control {
+        z-index: 1;
+        box-flex: 1;
+        flex-grow: 1;
+        flex-shrink: 1;
+        background-color: transparent;
+    }
+
+    .active-group .label-control {
+        color: #788489;
+        padding-left: 0.8rem;
+        top: 1.35rem;
+        transition: transform 150ms cubic-bezier(0.4,0,0.2,1),opacity 150ms cubic-bezier(0.4,0,0.2,1);
+        z-index: 1;
+        -moz-transform-origin: bottom left;
+        transform-origin: bottom left;
+        -moz-transition: all .3s cubic-bezier(0.4,0,0.2,1);
+        transition: all .3s cubic-bezier(0.4,0,0.2,1);
+        -moz-transition-property: color,bottom,transform;
+        transition-property: color,bottom,transform;
+        pointer-events: none;
+        position: absolute;
+    }
+
+    .active-group .input-control:focus ~ .label-control {
+        -webkit-transform: scale(.85) translateY(-2.4rem);
+        transform: scale(.85) translateY(-2.4rem);
+        color: #df8935;
+    }
+
+    .active-group.active .label-control {
+        -webkit-transform: scale(.85) translateY(-2.4rem);
+        transform: scale(.85) translateY(-2.4rem);
+    }
+
+    .active-group .input-control:not(:focus):-webkit-autofill ~ .label-control {
+        -webkit-transform: scale(.85) translateY(-2.4rem);
+        transform: scale(.85) translateY(-2.4rem);
+    }
+
+.input-validation-error {
+    border-color: #a94442;
+    -webkit-animation: borderFadein 1.5s;
+    animation: borderFadein 1.5s
+}
+
+.validation-summary-errors {
+    color: #a94442;
+}
+
+.field-validation-error {
+    color: #a94442;
+}

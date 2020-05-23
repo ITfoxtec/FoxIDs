@@ -1,6 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {

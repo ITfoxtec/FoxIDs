@@ -17,8 +17,8 @@ namespace FoxIDs.Models
         public static string PartitionIdFormat(string tenantName) => tenantName;
 
         [Required]
-        [MaxLength(50)]
-        [RegularExpression(@"^[\w:_-]*$")]
+        [MaxLength(Constants.Models.TenantIdLength)]
+        [RegularExpression(Constants.Models.TenantIdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
@@ -41,8 +41,8 @@ namespace FoxIDs.Models
         public class IdKey
         {
             [Required]
-            [MaxLength(30)]
-            [RegularExpression(@"^\w[\w-_]*$")]
+            [MaxLength(Constants.Models.TenantNameLength)]
+            [RegularExpression(Constants.Models.TenantNameRegExPattern)]
             public string TenantName { get; set; }
         }
     }

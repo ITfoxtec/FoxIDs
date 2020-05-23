@@ -18,13 +18,13 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [MaxLength(140)]
-        [RegularExpression(@"^[\w:\-.+@]*$")]
+        [MaxLength(Constants.Models.User.IdLength)]
+        [RegularExpression(Constants.Models.User.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
         [Required]
-        [MaxLength(40)]
+        [MaxLength(Constants.Models.User.UserIdLength)]
         [JsonProperty(PropertyName = "user_id")]
         public string UserId { get; set; }        
 
@@ -46,7 +46,7 @@ namespace FoxIDs.Models
         [JsonIgnore]
         public string Email => Id.Substring(Id.LastIndexOf(':') + 1); 
 
-        [Length(0, 100)]
+        [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 
@@ -60,8 +60,8 @@ namespace FoxIDs.Models
         public class IdKey : Track.IdKey
         {
             [Required]
-            [MaxLength(60)]
-            [RegularExpression(@"^[\w:\-.+@]*$")]
+            [MaxLength(Constants.Models.User.EmailLength)]
+            [RegularExpression(Constants.Models.User.EmailRegExPattern)]
             public string Email { get; set; }
         }
     }

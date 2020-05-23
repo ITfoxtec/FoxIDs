@@ -93,7 +93,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var masterTrack = new Track
             {
-                SequenceLifetime = 30,
+                SequenceLifetime = 120,
                 PasswordLength = 8,
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true

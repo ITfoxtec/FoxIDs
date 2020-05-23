@@ -156,16 +156,16 @@ a {
         transform: scale(.85) translateY(-2.4rem);
     }
 
-.input-validation-error {
+.input-control.invalid {
     border-color: #a94442;
     -webkit-animation: borderFadein 1.5s;
     animation: borderFadein 1.5s
 }
 
-.validation-summary-errors {
+.validation-message {
     color: #a94442;
 }
 
-.field-validation-error {
+.validation-errors {
     color: #a94442;
 }

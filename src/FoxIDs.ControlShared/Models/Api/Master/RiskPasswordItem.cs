@@ -7,12 +7,12 @@ namespace FoxIDs.Models.Api
     public class RiskPasswordItem
     {
         [Required]
-        [MaxLength(40)]
-        [RegularExpression(@"^[A-F0-9]*$")]
+        [MaxLength(Constants.Models.RiskPassword.PasswordSha1HashLength)]
+        [RegularExpression(Constants.Models.RiskPassword.PasswordSha1HashRegExPattern)]
         public string PasswordSha1Hash { get; set; }
 
         [Required]
-        [Min(1)]
+        [Min(Constants.Models.RiskPassword.CountMin)]
         public long Count { get; set; }
     }
 }

@@ -38,12 +38,26 @@ namespace FoxIDs
 
         public static class Models
         {
+            public const int TenantIdLength = 50;
+            public const string TenantIdRegExPattern = @"^[\w:_-]*$";
+            public const int TenantNameLength = 30;
+            public const string TenantNameRegExPattern = @"^\w[\w-_]*$";
+
             public const int PartyNameLength = 30;
             public const string PartyNameRegExPattern = @"^[\w-_]*$";
             public const int PartyIdLength = 110;
             public const string PartyIdRegExPattern = @"^[\w:_-]*$";
 
             public const string PartyNameAndGuidIdRegExPattern = @"^[\w-_]*$";
+
+            public static class RiskPassword
+            {
+                public const int IdLength = 70;
+                public const string IdRegExPattern = @"^[\w@:_-]*$";
+                public const int CountMin = 1;
+                public const int PasswordSha1HashLength = 40;
+                public const string PasswordSha1HashRegExPattern = @"^[A-F0-9]*$";
+            }
 
             public static class SecretHash
             {
@@ -53,6 +67,17 @@ namespace FoxIDs
                 public const int HashAlgorithmLength = 20;
                 public const int HashLength = 2048;
                 public const int HashSaltLength = 512;
+            }
+
+            public static class User
+            {
+                public const int IdLength = 140;
+                public const string IdRegExPattern = @"^[\w:\-.+@]*$";
+                public const int UserIdLength = 40;
+                public const int ClaimsMin = 0;
+                public const int ClaimsMax = 100;
+                public const int EmailLength = 60;
+                public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
             }
 
             public static class Track

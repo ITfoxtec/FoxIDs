@@ -19,7 +19,7 @@ namespace FoxIDs
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
             builder.RootComponents.Add<App>("app");
             ConfigureServices(builder.Services, builder.Configuration, builder.HostEnvironment);
-
+   
             await builder.Build().RunAsync();
         }
 

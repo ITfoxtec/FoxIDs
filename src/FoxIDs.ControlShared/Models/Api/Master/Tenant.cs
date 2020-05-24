@@ -16,11 +16,5 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
         [Display(Name = "Administrator email")]
         public string AdministratorEmail { get; set; }
-
-
-        /*
-         * create master track
-         * admin user
-         */
     }
 }

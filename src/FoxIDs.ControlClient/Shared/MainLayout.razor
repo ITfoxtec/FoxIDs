@@ -1,8 +1,5 @@
 ﻿@inherits LayoutComponentBase
 @inject RouteBindingLogic RouteBindingLogic
-@inject IModalService Modal
-
-<BlazoredModal />
 
 <nav class="navbar navbar-expand navbar-light bg-light navbar-main">
     <a class="navbar-brand">FoxIDs</a>
@@ -32,7 +29,7 @@
         @if (RouteBindingLogic.IsMasterTenant)
         {
             <li class="nav-item">
-                <button class="nav-link btn btn-link" @onclick="@(() => Modal.Show<CreateTenant>())"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                <button class="nav-link btn btn-link" @onclick="@(() => { tenant = new Tenant(); createTenantModal.Show(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
             </li>
         }
         else
@@ -80,11 +77,49 @@
     </div>
 </nav>
 
+<Modal @ref="createTenantModal" Title="Create Tenant">
+    <EditForm Model="@tenant" OnValidSubmit="HandleValidSubmit">       
+        <div class="modal-body">
+            <DataAnnotationsValidator />
+            @*<ValidationSummary />*@
+
+            <div class="form-group active-group">
+                <InputText @bind-Value="tenant.Name" class="form-control input-control" />
+                <Label For="@(() => tenant.Name)" class="label-control" />
+                <ValidationMessage For="@(() => tenant.Name)" />
+            </div>
+            <div class="form-group active-group">
+                <InputText @bind-Value="tenant.AdministratorEmail" class="form-control input-control" />
+                <Label For="@(() => tenant.AdministratorEmail)" class="label-control" />
+                <ValidationMessage For="@(() => tenant.AdministratorEmail)" />
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+        </div>
+    </EditForm>
+</Modal>
+
 <div class="container-lg main-container">
     @Body
 </div>
 
 @code {
+    Modal createTenantModal;
+
+    private Tenant tenant = new Tenant();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+
+        /*
+         * create master track
+         * admin user
+         */
+    }
+
     protected override async Task OnInitializedAsync()
     {
         await RouteBindingLogic.InitRouteBindingAsync();

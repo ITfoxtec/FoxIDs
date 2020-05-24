@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FoxIDs.Logic;
 using FoxIDs.Security;
-using Blazored.Modal;
 
 namespace FoxIDs
 {
@@ -36,8 +35,6 @@ namespace FoxIDs
             });
 
             services.AddScoped<RouteBindingLogic>();
-
-            services.AddBlazoredModal();
         }
     }
 }

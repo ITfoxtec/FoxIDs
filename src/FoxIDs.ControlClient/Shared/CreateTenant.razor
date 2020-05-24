@@ -1,13 +1,13 @@
-﻿@inject IModalService ModalService
+﻿@*@inject IModalService ModalService*@
 
 <h3>Create Tenant</h3>
 
-<div class="row">
+<!--<div class="row">
     <EditForm Model="@tenant" OnValidSubmit="HandleValidSubmit">
-        <DataAnnotationsValidator />
+        <DataAnnotationsValidator />-->
         @*<ValidationSummary />*@
 
-        <div class="form-group active-group">
+        <!--<div class="form-group active-group">
             <InputText @bind-Value="tenant.Name" class="form-control input-control" />
             <Label For="@(() => tenant.Name)" class="label-control" />
             <ValidationMessage For="@(() => tenant.Name)" />
@@ -20,13 +20,13 @@
 
         <button class="btn btn-primary" type="submit">Create tenant</button>
     </EditForm>
-</div>
+</div>-->
 
 @code {
-    private Tenant tenant = new Tenant();
+    //private Tenant tenant = new Tenant();
 
-    private void HandleValidSubmit()
-    {
-        Console.WriteLine("OnValidSubmit");
-    }
+    //private void HandleValidSubmit()
+    //{
+    //    Console.WriteLine("OnValidSubmit");
+    //}
 }

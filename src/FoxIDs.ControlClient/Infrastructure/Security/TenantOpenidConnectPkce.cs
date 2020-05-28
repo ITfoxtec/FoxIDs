@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Security
+namespace FoxIDs.Infrastructure.Security
 {
     public class TenantOpenidConnectPkce : OpenidConnectPkce
     {

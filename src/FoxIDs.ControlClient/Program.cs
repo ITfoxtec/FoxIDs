@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FoxIDs.Logic;
-using FoxIDs.Security;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs
 {

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Security;
+﻿using FoxIDs.Infrastructure.Security;
 using Blazored.SessionStorage;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using ITfoxtec.Identity.Discovery;

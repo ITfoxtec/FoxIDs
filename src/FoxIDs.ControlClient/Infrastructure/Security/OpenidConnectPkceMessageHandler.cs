@@ -5,7 +5,7 @@
 //using System.Threading;
 //using System.Threading.Tasks;
 
-//namespace FoxIDs.Security
+//namespace FoxIDs.Infrastructure.Security
 //{
 //    public class OpenidConnectPkceMessageHandler : DelegatingHandler
 //    {

@@ -14,6 +14,17 @@ namespace FoxIDs.Models
 
             return $"tenant:{idKey.TenantName}";
         }
+
+        public static async Task<string> IdFormat(string name)
+        {
+            if (name == null) new ArgumentNullException(nameof(name));
+
+            return await IdFormat(new IdKey
+            {
+                TenantName = name,
+            });
+        }
+
         public static string PartitionIdFormat(string tenantName) => tenantName;
 
         [Required]

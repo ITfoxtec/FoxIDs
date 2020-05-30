@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Get '{typeof(AParty).Name}' by name '{name}'.");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(AParty).Name}' by name '{name}'.");
                     return NotFound(typeof(AParty).Name, name);
                 }
                 throw;
@@ -67,7 +67,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Create '{typeof(AParty).Name}' by name '{party.Name}'.");
+                    logger.Warning(ex, $"Conflict, Create '{typeof(AParty).Name}' by name '{party.Name}'.");
                     return Conflict(typeof(AParty).Name, party.Name);
                 }
                 throw;
@@ -92,7 +92,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Update '{typeof(AParty).Name}' by name '{party.Name}'.");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(AParty).Name}' by name '{party.Name}'.");
                     return NotFound(typeof(AParty).Name, party.Name);
                 }
                 throw;
@@ -112,7 +112,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Delete '{typeof(AParty).Name}' by id '{name}'.");
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(AParty).Name}' by id '{name}'.");
                     return NotFound(typeof(AParty).Name, name);
                 }
                 throw;

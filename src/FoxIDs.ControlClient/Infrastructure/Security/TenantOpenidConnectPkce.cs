@@ -24,6 +24,7 @@ namespace FoxIDs.Infrastructure.Security
                 Authority = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.Authority),
                 ClientId = globalOpenidClientPkceSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
+                Scope = globalOpenidClientPkceSettings.Scope,
                 LoginCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LoginCallBackPath),
                 LogoutCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LogoutCallBackPath)
             };
@@ -38,6 +39,7 @@ namespace FoxIDs.Infrastructure.Security
                 Authority = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.Authority),
                 ClientId = globalOpenidClientPkceSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
+                Scope = globalOpenidClientPkceSettings.Scope,
                 LoginCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LoginCallBackPath),
                 LogoutCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LogoutCallBackPath)
             };

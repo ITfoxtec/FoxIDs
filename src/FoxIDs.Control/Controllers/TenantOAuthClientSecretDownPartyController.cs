@@ -43,7 +43,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Get '{typeof(TParty).Name}' client secrets by name '{partyName}'.");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(TParty).Name}' client secrets by name '{partyName}'.");
                     return NotFound(typeof(TParty).Name, partyName);
                 }
                 throw;
@@ -73,7 +73,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Create secret on client '{typeof(TParty).Name}' by name '{party.PartyName}'.");
+                    logger.Warning(ex, $"Conflict, Create secret on client '{typeof(TParty).Name}' by name '{party.PartyName}'.");
                     return Conflict(typeof(TParty).Name, party.PartyName);
                 }
                 throw;
@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"Delete secret from client '{typeof(TParty).Name}' by name '{name}'.");
+                    logger.Warning(ex, $"NotFound, Delete secret from client '{typeof(TParty).Name}' by name '{name}'.");
                     return NotFound(typeof(TParty).Name, name);
                 }
                 throw;

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
-using System.Linq;
 using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.MappingProfiles

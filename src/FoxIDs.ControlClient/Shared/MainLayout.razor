@@ -1,5 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject RouteBindingLogic RouteBindingLogic
+@inject TenantLogic TenantLogic
 
 <nav class="navbar navbar-expand navbar-light bg-light navbar-main">
     <a class="navbar-brand">FoxIDs</a>
@@ -29,7 +30,7 @@
         @if (RouteBindingLogic.IsMasterTenant)
         {
             <li class="nav-item">
-                <button class="nav-link btn btn-link" @onclick="@(() => { tenant = new Tenant(); createTenantModal.Show(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                <button class="nav-link btn btn-link" @onclick="@(() => { CreateTenantModalInitialization(); createTenantModal.Show(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
             </li>
         }
         else
@@ -78,20 +79,31 @@
 </nav>
 
 <Modal @ref="createTenantModal" Title="Create Tenant">
-    <EditForm Model="@tenant" OnValidSubmit="HandleValidSubmit">       
+    <EditForm EditContext="@createTenantEditContext" OnSubmit="OnSubmitAsync">
         <div class="modal-body">
             <DataAnnotationsValidator />
-            @*<ValidationSummary />*@
+            @*Microsoft.AspNetCore.Components.DataAnnotations.Validation package: <ObjectGraphDataAnnotationsValidator />, validate sub objects [ValidateComplexType] *@
+            @if (!createTenantError.IsNullOrWhiteSpace()) 
+            {
+                <div class="alert alert-danger" role="alert">
+                    @createTenantError
+                </div>
+            }
 
             <div class="form-group active-group">
-                <InputText @bind-Value="tenant.Name" class="form-control input-control" />
-                <Label For="@(() => tenant.Name)" class="label-control" />
-                <ValidationMessage For="@(() => tenant.Name)" />
+                <InputText @bind-Value="createTenant.Name" class="form-control input-control" />
+                <Label For="@(() => createTenant.Name)" class="label-control" />
+                <ValidationMessage For="@(() => createTenant.Name)" />
             </div>
             <div class="form-group active-group">
-                <InputText @bind-Value="tenant.AdministratorEmail" class="form-control input-control" />
-                <Label For="@(() => tenant.AdministratorEmail)" class="label-control" />
-                <ValidationMessage For="@(() => tenant.AdministratorEmail)" />
+                <InputText @bind-Value="createTenant.AdministratorEmail" class="form-control input-control" />
+                <Label For="@(() => createTenant.AdministratorEmail)" class="label-control" />
+                <ValidationMessage For="@(() => createTenant.AdministratorEmail)" />
+            </div>
+            <div class="form-group active-group">
+                <InputText @bind-Value="createTenant.AdministratorPassword" class="form-control input-control" />
+                <Label For="@(() => createTenant.AdministratorPassword)" class="label-control" />
+                <ValidationMessage For="@(() => createTenant.AdministratorPassword)" />
             </div>
         </div>
         <div class="modal-footer">
@@ -106,14 +118,53 @@
 </div>
 
 @code {
-    Modal createTenantModal;
+    private Modal createTenantModal;
+    private EditContext createTenantEditContext;
+    private string createTenantError;
+    private CreateTenantViewModel createTenant;
 
-    private Tenant tenant = new Tenant();
+    protected override void OnInitialized()
+    {
+        CreateTenantModalInitialization();
+    }
 
-    private void HandleValidSubmit()
+    private void CreateTenantModalInitialization()
+    {
+        createTenantError = null;
+        createTenant = new CreateTenantViewModel();
+        createTenantEditContext = new EditContext(createTenant);
+    }
+
+    private async Task OnSubmitAsync()
     {
         Console.WriteLine("OnValidSubmit");
+        createTenantError = null;
+        var isValid = createTenantEditContext.Validate();
+        Console.WriteLine("OnValidSubmit, isValid: " + isValid);
 
+        Console.WriteLine("OnValidSubmit, val mes: " + string.Join(',', createTenantEditContext.GetValidationMessages()));
+
+        if (isValid)
+        {
+            try
+            {
+                await TenantLogic.CreateTenantAsync(createTenant);
+            }
+            catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
+            {
+                var messageStore = new ValidationMessageStore(createTenantEditContext);
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    messageStore.Add(createTenantEditContext.Field(nameof(createTenant.Name)), ex.Message);
+                }
+                else
+                {
+                    createTenantError = ex.Message;
+                }
+            }
+
+
+        }
         /*
          * create master track
          * admin user

@@ -6,11 +6,17 @@ namespace FoxIDs.Models.Api
 {
     public class OAuthDownParty : IValidatableObject, IDownParty, INameValue
     {
+        /// <summary>
+        /// Party name.
+        /// </summary>
         [Required]
         [MaxLength(Constants.Models.PartyNameLength)]
         [RegularExpression(Constants.Models.PartyNameRegExPattern)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Allow up party names.
+        /// </summary>
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.PartyNameLength, Constants.Models.PartyNameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 

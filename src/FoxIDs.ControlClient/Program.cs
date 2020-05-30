@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using FoxIDs.Infrastructure;
 
 namespace FoxIDs
 {
@@ -25,7 +26,8 @@ namespace FoxIDs
         private static void ConfigureServices(IServiceCollection services, WebAssemblyHostConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
         {
             services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
-                       .AddHttpMessageHandler<TenantAccessTokenMessageHandler>();
+                       .AddHttpMessageHandler<TenantAccessTokenMessageHandler>()
+                       .AddHttpMessageHandler<CheckResponseMessageHandler>();
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));
 
@@ -34,7 +36,10 @@ namespace FoxIDs
                 configuration.Bind("IdentitySettings", settings);
             });
 
+            services.AddTransient<CheckResponseMessageHandler>();
+
             services.AddScoped<RouteBindingLogic>();
+            services.AddScoped<TenantLogic>();
         }
     }
 }

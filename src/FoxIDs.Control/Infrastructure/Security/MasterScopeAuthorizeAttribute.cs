@@ -16,7 +16,7 @@ namespace FoxIDs.Infrastructure.Security
         {
             options.AddPolicy(Name, policy =>
             {
-                policy.RequireScope("foxids_api:foxids_master");
+                policy.RequireScope("foxids_control_api:foxids_master");
             });
         }
     }

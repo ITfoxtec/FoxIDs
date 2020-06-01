@@ -17,6 +17,8 @@ namespace FoxIDs.Models
             return $"track:{idKey.TenantName}:{idKey.TrackName}";
         }
 
+        public static new string PartitionIdFormat(IdKey idKey) => $"{idKey.TenantName}:tracks";
+
         [Required]
         [MaxLength(80)]
         [RegularExpression(@"^[\w:_-]*$")]

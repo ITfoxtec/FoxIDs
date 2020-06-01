@@ -12,7 +12,8 @@ namespace FoxIDs.Logic
 {
     public class TenantLogic
     {
-        private const string ApiUri = "api/master/master/!tenant"; // "api/@master/!tenant";
+        private const string apiUri = "api/master/master/!tenant";
+        private const string filterApiUri = "api/master/master/!filtertenant";
         private readonly HttpClient httpClient;
 
         public TenantLogic(HttpClient httpClient)
@@ -20,11 +21,27 @@ namespace FoxIDs.Logic
             this.httpClient = httpClient;
         }
 
+        public async Task<IEnumerable<Tenant>> SearchTenantAsync(string filterName)
+        {
+            try
+            {
+                using var response = await httpClient.GetAsync($"{filterApiUri}?filterName={filterName}");
+                var tenants = await response.ToObjectAsync<IEnumerable<Tenant>>();
+                return tenants;
+            }
+            catch (FoxIDsApiException ex)
+            {
+
+                throw;
+            }
+
+        }
+
         public async Task CreateTenantAsync(CreateTenantViewModel tenant)
         {
             try
             {
-                using var response = await httpClient.PostAsJsonAsync(ApiUri, new Tenant { Name = tenant.Name });
+                using var response = await httpClient.PostAsJsonAsync(apiUri, new Tenant { Name = tenant.Name });
                 var tenantResponse = await response.ToObjectAsync<Tenant>();
 
             }

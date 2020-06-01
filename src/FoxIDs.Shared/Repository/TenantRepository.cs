@@ -11,6 +11,7 @@ using System.Linq.Expressions;
 using FoxIDs.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace FoxIDs.Repository
 {
@@ -71,14 +72,14 @@ namespace FoxIDs.Repository
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
 
-            return await ReadDocumentAsync<Tenant>(await Tenant.IdFormat(new Tenant.IdKey { TenantName = tenantName }), Tenant.PartitionIdFormat(tenantName), requered);
+            return await ReadDocumentAsync<Tenant>(await Tenant.IdFormat(tenantName), Tenant.PartitionIdFormat(), requered);
         }
 
         public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool requered = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadDocumentAsync<Track>(await Track.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), requered);
         }
 
         public async Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool requered = true)
@@ -136,7 +137,33 @@ namespace FoxIDs.Repository
                 scopedLogger.ScopeMetric($"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'.", totalRU);
             }
         }
-        
+
+        public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument
+        {
+            var partitionId = PartitionIdFormat<T>(idKey);
+            var orderedQueryable = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
+            var query = (whereQuery == null) ? orderedQueryable.AsDocumentQuery() : orderedQueryable.Where(whereQuery).AsDocumentQuery();
+
+            double totalRU = 0;
+            try
+            {
+                var response = await query.ExecuteNextAsync<T>();
+                totalRU += response.RequestCharge;
+                var items = response.ToHashSet();
+                await items.ValidateObjectAsync();
+                return items;
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(ex);
+            }
+            finally
+            {
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}'.", totalRU);
+            }
+        }
+
         public async Task CreateAsync<T>(T item) where T : IDataDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
@@ -245,7 +272,7 @@ namespace FoxIDs.Repository
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
-            var partitionId = DataDocument.PartitionIdFormat(idKey);
+            var partitionId = PartitionIdFormat<T>(idKey);
             var query = GetQueryAsync<T>(partitionId).Where(whereQuery).AsDocumentQuery();
 
             double totalRU = 0;
@@ -274,9 +301,27 @@ namespace FoxIDs.Repository
             }
         }
 
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId) where T : IDataDocument
+        private string PartitionIdFormat<T>(Track.IdKey idKey) where T : IDataDocument
         {
-            return client.CreateDocumentQuery<T>(GetCollectionLink<T>(), new FeedOptions() { MaxItemCount = 1, PartitionKey = new PartitionKey(partitionId) });
+            if(typeof(T).Equals(typeof(Tenant)))
+            {
+                return Tenant.PartitionIdFormat();
+            }
+            else if (typeof(T).Equals(typeof(Tenant)))
+            {
+                if (idKey == null) new ArgumentNullException(nameof(idKey));
+                return Track.PartitionIdFormat(idKey);
+            }
+            else
+            {
+                if (idKey == null) new ArgumentNullException(nameof(idKey));
+                return DataDocument.PartitionIdFormat(idKey);
+            }
+        }
+
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1) where T : IDataDocument
+        {
+            return client.CreateDocumentQuery<T>(GetCollectionLink<T>(), new FeedOptions() { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount });
         }
 
         private string GetCollectionId<T>() where T : IDataDocument

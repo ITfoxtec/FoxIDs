@@ -36,7 +36,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                var MTenant = await tenantService.GetAsync<Tenant>(await Tenant.IdFormat(name));
+                var MTenant = await tenantService.GetTenantByNameAsync(name);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
             catch (CosmosDataException ex)

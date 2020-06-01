@@ -29,6 +29,9 @@ namespace FoxIDs.MappingProfiles
               .ReverseMap()
               .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormat(s.Name).GetAwaiter().GetResult()));
 
+            CreateMap<HashSet<Tenant>, HashSet<Api.Tenant>>()
+              .ReverseMap();
+
             CreateMap<JsonWebKey, Api.JsonWebKey>()
                 .ReverseMap()
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))

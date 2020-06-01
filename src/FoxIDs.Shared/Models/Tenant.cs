@@ -25,7 +25,7 @@ namespace FoxIDs.Models
             });
         }
 
-        public static string PartitionIdFormat(string tenantName) => tenantName;
+        public static string PartitionIdFormat() => "tenants";
 
         [Required]
         [MaxLength(Constants.Models.TenantIdLength)]
@@ -33,20 +33,18 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
-        [JsonIgnore]
-        public string Name
-        {
-            get
-            {
-                return Id.Substring(Id.LastIndexOf(':') + 1);
-            }
-        }
+        [Required]
+        [MaxLength(Constants.Models.TenantNameLength)]
+        [RegularExpression(Constants.Models.TenantNameRegExPattern)]
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormat(idKey);
+            Name = Id.Substring(Id.LastIndexOf(':') + 1);
         }
 
         public class IdKey

@@ -13,6 +13,7 @@ namespace FoxIDs
         static HttpResponseMessageExtensions()
         {
             jsonSerializerOptions.IgnoreNullValues = true;
+            jsonSerializerOptions.PropertyNameCaseInsensitive = true;
             jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 
@@ -27,7 +28,8 @@ namespace FoxIDs
             var responseText = await response.Content.ReadAsStringAsync();
             try
             {
-                return JsonSerializer.Deserialize<T>(responseText, jsonSerializerOptions);
+                var d = JsonSerializer.Deserialize<T>(responseText, jsonSerializerOptions);
+                return d;
             }
             catch (JsonException ex)
             {

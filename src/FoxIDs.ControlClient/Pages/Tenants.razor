@@ -1,0 +1,100 @@
+﻿@page "/{tenantName}/tenants"
+@inherits PageBase
+@inject RouteBindingLogic routeBinding
+@inject TenantLogic TenantLogic
+
+<h3>Tenants</h3>
+
+<EditForm EditContext="@searchTenantEditContext" OnSubmit="OnSubmitAsync">
+    <DataAnnotationsValidator />
+
+    @if (!searchTenantError.IsNullOrWhiteSpace())
+    {
+        <div class="alert alert-danger" role="alert">
+            @searchTenantError
+        </div>
+    }
+
+    <div class="form-group">
+        <div class="input-group active-group">
+            <InputText @bind-Value="searchTenant.Name" class="form-control input-control" />
+            <Label For="@(() => searchTenant.Name)" class="label-control" />
+            <ValidationMessage For="@(() => searchTenant.Name)" />
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Go</button>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+<ul class="list-group list-group-flush">
+    @foreach (var tenant in tenants)
+    {
+        <li class="list-group-item">@tenant.Name</li>
+    }
+</ul>
+
+@code {
+    private Modal searchTenantModal;
+    private EditContext searchTenantEditContext;
+    private string searchTenantError;
+    private SearchTenantViewModel searchTenant;
+    private IEnumerable<Tenant> tenants = new List<Tenant>();
+
+    [Parameter]
+    public string TenantName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        SearchTenantModalInitialization();
+        await DefaultLoadTenentsAsync();
+    }
+
+    private void SearchTenantModalInitialization()
+    {
+        searchTenantError = null;
+        searchTenant = new SearchTenantViewModel();
+        searchTenantEditContext = new EditContext(searchTenant);
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        searchTenantError = null;
+        var isValid = searchTenantEditContext.Validate();
+
+        if (isValid)
+        {
+            try
+            {
+                tenants = await TenantLogic.SearchTenantAsync(searchTenant.Name);
+                Console.WriteLine("Result, count: " + tenants?.Count());
+            }
+            catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    var messageStore = new ValidationMessageStore(searchTenantEditContext);
+                    messageStore.Add(searchTenantEditContext.Field(nameof(searchTenant.Name)), ex.Message);
+                }
+                else
+                {
+                    searchTenantError = ex.Message;
+                }
+            }
+        }
+    }
+
+    private async Task DefaultLoadTenentsAsync()
+    {
+        try
+        {
+            tenants = await TenantLogic.SearchTenantAsync(searchTenant.Name);
+            Console.WriteLine("Result, count: " + tenants?.Count());
+        }
+        catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
+        {
+            searchTenantError = ex.Message;
+        }
+    }
+}

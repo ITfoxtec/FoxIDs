@@ -55,6 +55,12 @@
 <nav class="navbar navbar-expand navbar-light bg-light navbar-second">
     <div class="container-lg">
         <ul class="navbar-nav">
+            @if (RouteBindingLogic.IsMasterTenant)
+            {
+                <TenantLiNavLink href="tenants">
+                    Tenants
+                </TenantLiNavLink>
+            }
             <TenantLiNavLink href="parties">
                 Parties
             </TenantLiNavLink>
@@ -72,7 +78,6 @@
                 <TenantLiNavLink href="passwordrisklist">
                     Password Risk
                 </TenantLiNavLink>
-
             }
         </ul>
     </div>

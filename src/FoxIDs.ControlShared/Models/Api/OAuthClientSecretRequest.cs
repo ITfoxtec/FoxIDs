@@ -11,8 +11,8 @@ namespace FoxIDs.Models.Api
         /// OAuth 2.0 or OIDC party name.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.PartyNameLength)]
-        [RegularExpression(Constants.Models.PartyNameRegExPattern)]
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string PartyName { get; set; }
 
         /// <summary>

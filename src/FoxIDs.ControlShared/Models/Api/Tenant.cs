@@ -8,8 +8,8 @@ namespace FoxIDs.Models.Api
         /// Tenant name.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.TenantNameLength)]
-        [RegularExpression(Constants.Models.TenantNameRegExPattern)]
+        [MaxLength(Constants.Models.Tenant.NameLength)]
+        [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
         [Display(Name = "Tenant name")]
         public string Name { get; set; }
     }

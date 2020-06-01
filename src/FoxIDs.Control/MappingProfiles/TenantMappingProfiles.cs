@@ -25,7 +25,6 @@ namespace FoxIDs.MappingProfiles
         private void Mapping()
         {
             CreateMap<Tenant, Api.Tenant>()
-              .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
               .ReverseMap()
               .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormat(s.Name).GetAwaiter().GetResult()));
 
@@ -49,12 +48,10 @@ namespace FoxIDs.MappingProfiles
         private void UpMapping()
         {
             CreateMap<LoginUpParty, Api.LoginUpParty>()
-                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
 
             CreateMap<SamlUpParty, Api.SamlUpParty>()
-                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
         }
@@ -62,7 +59,6 @@ namespace FoxIDs.MappingProfiles
         private void DownMapping()
         {
             CreateMap<OAuthDownParty, Api.OAuthDownParty>()
-                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()))
@@ -79,7 +75,6 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<OidcDownParty, Api.OidcDownParty>()
-                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()))
@@ -92,7 +87,6 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<SamlDownParty, Api.SamlDownParty>()
-                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name))
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()))

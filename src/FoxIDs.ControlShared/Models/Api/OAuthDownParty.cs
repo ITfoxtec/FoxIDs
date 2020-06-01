@@ -10,14 +10,14 @@ namespace FoxIDs.Models.Api
         /// Party name.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.PartyNameLength)]
-        [RegularExpression(Constants.Models.PartyNameRegExPattern)]
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
         /// <summary>
         /// Allow up party names.
         /// </summary>
-        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.PartyNameLength, Constants.Models.PartyNameRegExPattern)]
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>

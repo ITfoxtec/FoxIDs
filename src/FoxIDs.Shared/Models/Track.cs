@@ -20,8 +20,8 @@ namespace FoxIDs.Models
         public static new string PartitionIdFormat(IdKey idKey) => $"{idKey.TenantName}:tracks";
 
         [Required]
-        [MaxLength(80)]
-        [RegularExpression(@"^[\w:_-]*$")]
+        [MaxLength(Constants.Models.Track.IdLength)]
+        [RegularExpression(Constants.Models.Track.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
@@ -35,15 +35,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_mappings")]
         public ClaimMappingsDataElement ClaimMappings { get; set; }
 
-        [Length(0, 5000)]
+        [Length(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }
 
-        [Range(30, 1800)] // 30 seconds to 30 minutes 
+        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 30 minutes 
         [JsonProperty(PropertyName = "sequence_lifetime")] 
         public int SequenceLifetime { get; set; }
 
-        [Range(6, 20)]
+        [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [JsonProperty(PropertyName = "password_length")]
         public int PasswordLength { get; set; }
 
@@ -59,27 +59,25 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }
 
-        [JsonIgnore]
-        public string Name
-        {
-            get
-            {
-                return Id.Substring(Id.LastIndexOf(':') + 1);
-            }
-        }
+        [Required]
+        [MaxLength(Constants.Models.Track.NameLength)]
+        [RegularExpression(Constants.Models.Track.NameRegExPattern)]
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormat(idKey);
+            Name = Id.Substring(Id.LastIndexOf(':') + 1); ;
         }
 
         public class IdKey : Tenant.IdKey
         {
             [Required]
-            [MaxLength(30)]
-            [RegularExpression(@"^[\w-_]*$")]
+            [MaxLength(Constants.Models.Track.NameLength)]
+            [RegularExpression(Constants.Models.Track.NameRegExPattern)]
             public string TrackName { get; set; }
         }
     }

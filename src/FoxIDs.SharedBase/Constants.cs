@@ -38,18 +38,6 @@ namespace FoxIDs
 
         public static class Models
         {
-            public const int TenantIdLength = 50;
-            public const string TenantIdRegExPattern = @"^[\w:_-]*$";
-            public const int TenantNameLength = 30;
-            public const string TenantNameRegExPattern = @"^\w[\w-_]*$";
-
-            public const int PartyNameLength = 30;
-            public const string PartyNameRegExPattern = @"^[\w-_]*$";
-            public const int PartyIdLength = 110;
-            public const string PartyIdRegExPattern = @"^[\w:_-]*$";
-
-            public const string PartyNameAndGuidIdRegExPattern = @"^[\w-_]*$";
-
             public static class RiskPassword
             {
                 public const int IdLength = 70;
@@ -69,6 +57,33 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
             }
 
+            public static class Tenant
+            {
+                public const int IdLength = 50;
+                public const string IdRegExPattern = @"^[\w:_-]*$";
+                public const int NameLength = 30;
+                public const string NameRegExPattern = @"^\w[\w-_]*$";
+            }
+
+            public static class Track
+            {
+                public const int IdLength = 80;
+                public const string IdRegExPattern = @"^[\w:_-]*$";
+                public const int NameLength = 30;
+                public const string NameRegExPattern = @"^[\w-_]*$";
+
+                public const int ResourcesMin = 0;
+                public const int ResourcesMax = 5000;
+                public const int SequenceLifetimeMin = 30;
+                public const int SequenceLifetimeMax = 1800;
+                public const int PasswordLengthMin = 6;
+                public const int PasswordLengthMax = 20;
+
+                public const int AllowIframeOnDomainsMin = 0;
+                public const int AllowIframeOnDomainsMax = 40;
+                public const int AllowIframeOnDomainsLength = 200;
+            }
+
             public static class User
             {
                 public const int IdLength = 140;
@@ -80,15 +95,15 @@ namespace FoxIDs
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
             }
 
-            public static class Track
-            {
-                public const int AllowIframeOnDomainsMin = 0;
-                public const int AllowIframeOnDomainsMax = 40;
-                public const int AllowIframeOnDomainsLength = 200;
-            }
-
             public static class Party
             {
+                public const int NameLength = 30;
+                public const string NameRegExPattern = @"^[\w-_]*$";
+                public const int IdLength = 110;
+                public const string IdRegExPattern = @"^[\w:_-]*$";
+
+                public const string NameAndGuidIdRegExPattern = @"^[\w-_]*$";
+
                 public const int ClaimTransformationMin = 0;
                 public const int ClaimTransformationMax = 100;
                 public const int ClaimTransformationLength = 500;

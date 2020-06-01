@@ -9,8 +9,8 @@ namespace FoxIDs.Models.Api
 {
     public class SamlUpParty : INameValue
     {
-        [MaxLength(Constants.Models.PartyNameLength)]
-        [RegularExpression(Constants.Models.PartyNameRegExPattern)]
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]

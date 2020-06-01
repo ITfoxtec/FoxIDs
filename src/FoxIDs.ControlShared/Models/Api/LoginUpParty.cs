@@ -4,8 +4,8 @@ namespace FoxIDs.Models.Api
 {
     public class LoginUpParty : INameValue
     {
-        [MaxLength(Constants.Models.PartyNameLength)]
-        [RegularExpression(Constants.Models.PartyNameRegExPattern)]
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
         /// <summary>

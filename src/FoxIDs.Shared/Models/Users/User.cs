@@ -43,8 +43,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
 
-        [JsonIgnore]
-        public string Email => Id.Substring(Id.LastIndexOf(':') + 1); 
+        [Required]
+        [MaxLength(Constants.Models.User.EmailLength)]
+        [RegularExpression(Constants.Models.User.EmailRegExPattern)]
+        [JsonProperty(PropertyName = "email")]
+        public string Email { get; set; }
 
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
@@ -55,6 +58,7 @@ namespace FoxIDs.Models
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormat(idKey);
+            Email = Id.Substring(Id.LastIndexOf(':') + 1); 
         }
 
         public class IdKey : Track.IdKey

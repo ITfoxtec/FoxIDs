@@ -8,7 +8,7 @@ namespace FoxIDs.Models
     public class OAuthDownResourceScope
     {
         [Required]
-        [MaxLength(Constants.Models.PartyNameLength)]
+        [MaxLength(Constants.Models.Party.NameLength)]
         [JsonProperty(PropertyName = "resource")]
         public string Resource { get; set; }
 

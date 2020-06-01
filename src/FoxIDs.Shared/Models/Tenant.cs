@@ -28,14 +28,14 @@ namespace FoxIDs.Models
         public static string PartitionIdFormat() => "tenants";
 
         [Required]
-        [MaxLength(Constants.Models.TenantIdLength)]
-        [RegularExpression(Constants.Models.TenantIdRegExPattern)]
+        [MaxLength(Constants.Models.Tenant.IdLength)]
+        [RegularExpression(Constants.Models.Tenant.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.TenantNameLength)]
-        [RegularExpression(Constants.Models.TenantNameRegExPattern)]
+        [MaxLength(Constants.Models.Tenant.NameLength)]
+        [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
@@ -50,8 +50,8 @@ namespace FoxIDs.Models
         public class IdKey
         {
             [Required]
-            [MaxLength(Constants.Models.TenantNameLength)]
-            [RegularExpression(Constants.Models.TenantNameRegExPattern)]
+            [MaxLength(Constants.Models.Tenant.NameLength)]
+            [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
             public string TenantName { get; set; }
         }
     }

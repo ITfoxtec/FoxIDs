@@ -11,8 +11,8 @@ namespace FoxIDs.Models.Api
         /// Secret name.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.PartyNameLength + Constants.Models.SecretHash.IdLength + 1)]
-        [RegularExpression(Constants.Models.PartyNameAndGuidIdRegExPattern)]
+        [MaxLength(Constants.Models.Party.NameLength + Constants.Models.SecretHash.IdLength + 1)]
+        [RegularExpression(Constants.Models.Party.NameAndGuidIdRegExPattern)]
         public string Name { get; set; }
 
         /// <summary>

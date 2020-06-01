@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.ViewModels
 {
@@ -11,8 +7,8 @@ namespace FoxIDs.Models.ViewModels
         /// <summary>
         /// Search by tenant name.
         /// </summary>
-        [MaxLength(Constants.Models.TenantNameLength)]
-        [RegularExpression(Constants.Models.TenantNameRegExPattern)]
+        [MaxLength(Constants.Models.Tenant.NameLength)]
+        [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
         [Display(Name = "Search tenant")]
         public string Name { get; set; }
     }

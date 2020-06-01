@@ -6,7 +6,7 @@ namespace FoxIDs.Models
     public class UpPartyLink
     {
         [Required]
-        [MaxLength(Constants.Models.PartyNameLength)]
+        [MaxLength(Constants.Models.Party.NameLength)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 

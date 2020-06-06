@@ -1,7 +1,7 @@
 ﻿@page "/{tenantName}/tenants"
 @inherits PageBase
 @inject RouteBindingLogic routeBinding
-@inject TenantLogic TenantLogic
+@inject TenantService TenantService
 
 <h3>Tenants</h3>
 
@@ -67,7 +67,7 @@
         {
             try
             {
-                tenants = await TenantLogic.SearchTenantAsync(searchTenant.Name);
+                tenants = await TenantService.SearchTenantAsync(searchTenant.Name);
                 Console.WriteLine("Result, count: " + tenants?.Count());
             }
             catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
@@ -89,7 +89,7 @@
     {
         try
         {
-            tenants = await TenantLogic.SearchTenantAsync(searchTenant.Name);
+            tenants = await TenantService.SearchTenantAsync(searchTenant.Name);
             Console.WriteLine("Result, count: " + tenants?.Count());
         }
         catch (FoxIDs.Infrastructure.FoxIDsApiException ex)

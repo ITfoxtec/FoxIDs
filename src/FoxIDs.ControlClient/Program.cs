@@ -38,8 +38,9 @@ namespace FoxIDs
 
             services.AddTransient<CheckResponseMessageHandler>();
 
+            services.AddScoped<TenantService>();
+
             services.AddScoped<RouteBindingLogic>();
-            services.AddScoped<TenantLogic>();
         }
     }
 }

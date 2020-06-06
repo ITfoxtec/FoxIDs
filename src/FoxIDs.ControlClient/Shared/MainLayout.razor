@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject RouteBindingLogic RouteBindingLogic
-@inject TenantLogic TenantLogic
+@inject TenantService TenantService
 
 <nav class="navbar navbar-expand navbar-light bg-light navbar-main">
     <a class="navbar-brand">FoxIDs</a>
@@ -153,7 +153,7 @@
         {
             try
             {
-                await TenantLogic.CreateTenantAsync(createTenant);
+                await TenantService.CreateTenantAsync(createTenant);
             }
             catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
             {

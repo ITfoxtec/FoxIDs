@@ -1,6 +1,4 @@
 ﻿@inherits LayoutComponentBase
-@inject RouteBindingLogic RouteBindingLogic
-@inject TenantService TenantService
 
 <nav class="navbar navbar-expand navbar-light bg-light navbar-main">
     <a class="navbar-brand">FoxIDs</a>
@@ -121,63 +119,3 @@
 <div class="container-lg main-container">
     @Body
 </div>
-
-@code {
-    private Modal createTenantModal;
-    private EditContext createTenantEditContext;
-    private string createTenantError;
-    private CreateTenantViewModel createTenant;
-
-    protected override void OnInitialized()
-    {
-        CreateTenantModalInitialization();
-    }
-
-    private void CreateTenantModalInitialization()
-    {
-        createTenantError = null;
-        createTenant = new CreateTenantViewModel();
-        createTenantEditContext = new EditContext(createTenant);
-    }
-
-    private async Task OnSubmitAsync()
-    {
-        Console.WriteLine("OnValidSubmit");
-        createTenantError = null;
-        var isValid = createTenantEditContext.Validate();
-        Console.WriteLine("OnValidSubmit, isValid: " + isValid);
-
-        Console.WriteLine("OnValidSubmit, val mes: " + string.Join(',', createTenantEditContext.GetValidationMessages()));
-
-        if (isValid)
-        {
-            try
-            {
-                await TenantService.CreateTenantAsync(createTenant);
-            }
-            catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
-            {
-                var messageStore = new ValidationMessageStore(createTenantEditContext);
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    messageStore.Add(createTenantEditContext.Field(nameof(createTenant.Name)), ex.Message);
-                }
-                else
-                {
-                    createTenantError = ex.Message;
-                }
-            }
-
-
-        }
-        /*
-         * create master track
-         * admin user
-         */
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await RouteBindingLogic.InitRouteBindingAsync();
-    }
-}

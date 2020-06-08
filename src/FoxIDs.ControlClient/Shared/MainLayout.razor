@@ -28,7 +28,7 @@
         @if (RouteBindingLogic.IsMasterTenant)
         {
             <li class="nav-item">
-                <button class="nav-link btn btn-link" @onclick="@(() => { CreateTenantModalInitialization(); createTenantModal.Show(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                <button class="nav-link btn btn-link" @onclick="@(() => { createTenantForm.Init(); createTenantModal.Show(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
             </li>
         }
         else
@@ -82,38 +82,29 @@
 </nav>
 
 <Modal @ref="createTenantModal" Title="Create Tenant">
-    <EditForm EditContext="@createTenantEditContext" OnSubmit="OnSubmitAsync">
+    <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
         <div class="modal-body">
-            <DataAnnotationsValidator />
-            @*Microsoft.AspNetCore.Components.DataAnnotations.Validation package: <ObjectGraphDataAnnotationsValidator />, validate sub objects [ValidateComplexType] *@
-            @if (!createTenantError.IsNullOrWhiteSpace()) 
-            {
-                <div class="alert alert-danger" role="alert">
-                    @createTenantError
-                </div>
-            }
-
             <div class="form-group active-group">
-                <InputText @bind-Value="createTenant.Name" class="form-control input-control" />
-                <Label For="@(() => createTenant.Name)" class="label-control" />
-                <ValidationMessage For="@(() => createTenant.Name)" />
+                <InputText @bind-Value="createTenantForm.Model.Name" class="form-control input-control" />
+                <Label For="@(() => createTenantForm.Model.Name)" class="label-control" />
+                <ValidationMessage For="@(() => createTenantForm.Model.Name)" />
             </div>
             <div class="form-group active-group">
-                <InputText @bind-Value="createTenant.AdministratorEmail" class="form-control input-control" />
-                <Label For="@(() => createTenant.AdministratorEmail)" class="label-control" />
-                <ValidationMessage For="@(() => createTenant.AdministratorEmail)" />
+                <InputText @bind-Value="createTenantForm.Model.AdministratorEmail" class="form-control input-control" />
+                <Label For="@(() => createTenantForm.Model.AdministratorEmail)" class="label-control" />
+                <ValidationMessage For="@(() => createTenantForm.Model.AdministratorEmail)" />
             </div>
             <div class="form-group active-group">
-                <InputText @bind-Value="createTenant.AdministratorPassword" class="form-control input-control" />
-                <Label For="@(() => createTenant.AdministratorPassword)" class="label-control" />
-                <ValidationMessage For="@(() => createTenant.AdministratorPassword)" />
+                <InputText @bind-Value="createTenantForm.Model.AdministratorPassword" class="form-control input-control" />
+                <Label For="@(() => createTenantForm.Model.AdministratorPassword)" class="label-control" />
+                <ValidationMessage For="@(() => createTenantForm.Model.AdministratorPassword)" />
             </div>
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Create</button>
             <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
         </div>
-    </EditForm>
+    </PageEditForm>
 </Modal>
 
 <div class="container-lg main-container">

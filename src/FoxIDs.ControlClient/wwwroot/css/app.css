@@ -161,6 +161,10 @@ a {
         transform: scale(.85) translateY(-2.4rem);
     }
 
+    .active-group .input-group {
+        position: initial;
+    }
+
 .input-control.invalid {
     border-color: #a94442;
     -webkit-animation: borderFadein 1.5s;

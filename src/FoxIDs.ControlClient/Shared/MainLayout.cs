@@ -1,4 +1,5 @@
-﻿using FoxIDs.Logic;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Shared.Components;
 using Microsoft.AspNetCore.Components;
@@ -10,9 +11,7 @@ namespace FoxIDs.Shared
     public partial class MainLayout
     {
         private Modal createTenantModal;
-        private EditContext createTenantEditContext;
-        private string createTenantError;
-        private CreateTenantViewModel createTenant;
+        private PageEditForm<CreateTenantViewModel> createTenantForm;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -23,50 +22,27 @@ namespace FoxIDs.Shared
         protected override async Task OnInitializedAsync()
         {
             await RouteBindingLogic.InitRouteBindingAsync();
+            await base.OnInitializedAsync();
         }
 
-        protected override void OnInitialized()
+        private async Task OnValidSubmitAsync(EditContext editContext)
         {
-            CreateTenantModalInitialization();
-        }
-
-        private void CreateTenantModalInitialization()
-        {
-            createTenantError = null;
-            createTenant = new CreateTenantViewModel();
-            createTenantEditContext = new EditContext(createTenant);
-        }
-
-        private async Task OnSubmitAsync()
-        {
-            createTenantError = null;
-            var isValid = createTenantEditContext.Validate();
-
-            if (isValid)
+            try
             {
-                try
-                {
-                    await TenantService.CreateTenantAsync(createTenant);
-                }
-                catch (FoxIDs.Infrastructure.FoxIDsApiException ex)
-                {
-                    var messageStore = new ValidationMessageStore(createTenantEditContext);
-                    if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                    {
-                        messageStore.Add(createTenantEditContext.Field(nameof(createTenant.Name)), ex.Message);
-                    }
-                    else
-                    {
-                        createTenantError = ex.Message;
-                    }
-                }
-
-
+                await TenantService.CreateTenantAsync(createTenantForm.Model);
             }
-            /*
-             * create master track
-             * admin user
-             */
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    var messageStore = new ValidationMessageStore(editContext);
+                    messageStore.Add(editContext.Field(nameof(createTenantForm.Model.Name)), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }

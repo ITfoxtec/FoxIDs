@@ -5,7 +5,8 @@
 <label @attributes="AdditionalAttributes">@label</label>
 
 @code {
-    [Parameter] public Expression<Func<string>> For { get; set; }
+    [Parameter] 
+    public Expression<Func<string>> For { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IDictionary<string, object> AdditionalAttributes { get; set; }

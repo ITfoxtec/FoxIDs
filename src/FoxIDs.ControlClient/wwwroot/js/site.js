@@ -3,7 +3,7 @@
 
     $('.input-control').each(function () {
         var input = $(this);
-        var parent = $(this.parentNode);
+        var parent = input.closest('.active-group'); // $(this.parentNode);
 
         if (setFocus) {
             input.focus();
@@ -11,23 +11,33 @@
         }
 
         if (input.val()) {
-            parent.addClass('active');
+            if (parent) {
+                parent.addClass('active');
+            }
         }
 
         input.blur(function () {
             if (input.val()) {
-                parent.addClass('active');
+                if (parent) {
+                    parent.addClass('active');
+                }
             }
             else {
-                parent.removeClass('active');
+                if (parent) {
+                    parent.removeClass('active');
+                }
             }
         });
     });
 
     function browserValueCheck() {
         $('.input-control:not(.active)').each(function () {
-            if ($(this).val()) {
-                $(this.parentNode).addClass('active');
+            var input = $(this);
+            if (input.val()) {
+                var parent = input.closest('.active-group');
+                if (parent) {
+                    parent.addClass('active');
+                }
             }
         });
     }

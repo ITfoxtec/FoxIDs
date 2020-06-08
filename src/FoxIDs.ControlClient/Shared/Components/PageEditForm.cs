@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using FoxIDs.Infrastructure.Security;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Shared.Components
@@ -11,6 +14,9 @@ namespace FoxIDs.Shared.Components
 
         public EditContext EditContext { get; private set; } = new EditContext(new TModel());
         public TModel Model { get; private set; }
+
+        [Inject]
+        public OpenidConnectPkce OpenidConnectPkce { get; set; }
 
         [Parameter]
         public RenderFragment ChildContent { get; set; }
@@ -47,6 +53,10 @@ namespace FoxIDs.Shared.Components
                 try
                 {
                     await OnValidSubmit.InvokeAsync(EditContext);
+                }
+                catch(AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
                 catch (Exception ex)
                 {

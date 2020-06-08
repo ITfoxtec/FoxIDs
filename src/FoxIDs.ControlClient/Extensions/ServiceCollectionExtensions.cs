@@ -26,7 +26,7 @@ namespace FoxIDs
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));
 
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
-            services.AddTransient<TenantAccessTokenMessageHandler>();
+            services.AddTransient<AccessTokenMessageHandler>();
 
             services.AddOptions();
             services.AddAuthorizationCore();

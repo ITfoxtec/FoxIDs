@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using FoxIDs.Logic;
-using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 
 namespace FoxIDs
 {
@@ -26,7 +26,7 @@ namespace FoxIDs
         private static void ConfigureServices(IServiceCollection services, WebAssemblyHostConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
         {
             services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
-                       .AddHttpMessageHandler<TenantAccessTokenMessageHandler>()
+                       .AddHttpMessageHandler<AccessTokenMessageHandler>()
                        .AddHttpMessageHandler<CheckResponseMessageHandler>();
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));

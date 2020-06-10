@@ -41,10 +41,13 @@
                 }
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="meNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Me
+                        <span class="oi oi-person" aria-hidden="true"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="meNavbarDropdown">
-                        <a class="dropdown-item">Me</a>
+                        <button class="dropdown-item btn btn-link" @onclick="@(() => { myProfileModal.Show(); })">
+                            My Profile<br/>
+                            <small>@context.User.Claims.Where(c => c.Type == JwtClaimTypes.Email).Select(c => c.Value).FirstOrDefault()</small>
+                        </button>                        
                         <div class="dropdown-divider"></div>
                         <LoginDisplay />
                     </div>
@@ -90,7 +93,7 @@
 </AuthorizeView>
 
 <Modal @ref="createTenantModal" Title="Create Tenant">
-    <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
+    <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
         <div class="modal-body">
             <div class="form-group active-group">
                 <InputText @bind-Value="createTenantForm.Model.Name" class="form-control input-control" />
@@ -113,6 +116,18 @@
             <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
         </div>
     </PageEditForm>
+</Modal>
+
+<Modal @ref="myProfileModal" Title="My Profile - show claims">
+    <ul class="list-group list-group-flush">
+        @if(myProfileClaims != null) {
+            @foreach (var claim in myProfileClaims)
+            {
+                <li class="list-group-item">@claim.Type: @claim.Value</li>
+            }
+        }
+    </ul>
+
 </Modal>
 
 <div class="container-lg main-container">

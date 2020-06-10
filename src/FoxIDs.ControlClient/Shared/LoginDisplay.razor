@@ -2,7 +2,6 @@
 
 <AuthorizeView>
     <Authorized>
-        Hello, @context.User.Identity.Name!
         <button class="dropdown-item btn btn-link" @onclick="LogoutAsync">Logout</button>
     </Authorized>
     <NotAuthorized>

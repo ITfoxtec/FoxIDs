@@ -18,7 +18,7 @@ namespace FoxIDs.SeedTool.SeedLogic
     {
         const string loginName = "login";
         const string controlApiResourceName = "foxids_control_api";
-        const string controlClientName = "foxids_control";
+        const string controlClientName = "foxids_control_client";
 
         const string controlApiResourceMasterScope = "foxids_master";
         const string controlApiResourceTenantScope = "foxids_tenant";
@@ -93,7 +93,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var masterTrack = new Track
             {
-                SequenceLifetime = 120,
+                SequenceLifetime = 600,
                 PasswordLength = 8,
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
@@ -108,10 +108,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         private async Task<TrackKey> CreateX509KeyAsync()
         {
-            var certificate = await settings.MasterTenant.CreateSelfSignedCertificateAsync();
+            var certificate = await settings.MasterTrack.CreateSelfSignedCertificateAsync();
 
             var trackKey = new TrackKey()
             {
+                ExternalName = certificate.Thumbprint,
                 Type = TrackKeyType.Contained,
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };
@@ -124,6 +125,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var loginUpParty = new LoginUpParty
             {
+                Name = loginName,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
@@ -151,7 +153,11 @@ namespace FoxIDs.SeedTool.SeedLogic
             var password = RandomGenerator.Generate(16);
             Console.WriteLine($"Administrator users password is: {password}");
 
-            var user = new User { UserId = Guid.NewGuid().ToString() };
+            var user = new User
+            {
+                UserId = Guid.NewGuid().ToString(),
+                Email = email
+            };
             await user.SetIdAsync(new User.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, Email = email });
             await secretHashLogic.AddSecretHashAsync(user, password);
             user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
@@ -165,7 +171,10 @@ namespace FoxIDs.SeedTool.SeedLogic
         {
             Console.WriteLine("Creating FoxIDs control api resource");
 
-            var controlApiResourceDownParty = new OAuthDownParty();
+            var controlApiResourceDownParty = new OAuthDownParty
+            {
+                Name = controlApiResourceName
+            };
             await controlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = controlApiResourceName });
             controlApiResourceDownParty.Resource = new OAuthDownResource
             {
@@ -185,13 +194,19 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine(string.Empty);
 
             var controlClientRedirectUris = new List<string>();
+            var controlClientAllowCorsOrigins = new List<string>();
             controlClientRedirectUris.AddRange(GetControlClientRedirectUris(settings.FoxIDsMasterControlClientEndpoint));
+            controlClientAllowCorsOrigins.Add(settings.FoxIDsMasterControlClientEndpoint.TrimEnd('/'));
             if (char.ToLower(addLocalhostDomain.KeyChar) == 'y')
             {
                 controlClientRedirectUris.AddRange(GetControlClientRedirectUris("https://localhost:44332"));
+                controlClientAllowCorsOrigins.Add("https://localhost:44332");
             }
 
-            var controlClientDownParty = new OidcDownParty();
+            var controlClientDownParty = new OidcDownParty
+            {
+                Name = controlClientName
+            };
             await controlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = controlClientName });
             controlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
             controlClientDownParty.Client = new OidcDownClient
@@ -199,6 +214,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 RedirectUris = controlClientRedirectUris,
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceTenantScope }.ToList() } },
                 ResponseTypes = new[] { "code" }.ToList(),
+                Scopes = GetControlClientScopes(),
                 EnablePkce = true,
                 AuthorizationCodeLifetime = 10,
                 IdTokenLifetime = 1800, // 30 minutes
@@ -215,10 +231,42 @@ namespace FoxIDs.SeedTool.SeedLogic
             Console.WriteLine("Control client document created and saved in Cosmos DB");
         }
 
+        private List<OidcDownScope> GetControlClientScopes()
+        {
+            return new List<OidcDownScope>
+            {
+                new OidcDownScope { Scope = "offline_access" },
+                new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim>
+                    {
+                        new OidcDownClaim { Claim = "name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "family_name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "given_name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "middle_name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "nickname" },
+                        new OidcDownClaim { Claim = "preferred_username" },
+                        new OidcDownClaim { Claim = "profile" },
+                        new OidcDownClaim { Claim = "picture" },
+                        new OidcDownClaim { Claim = "website" },
+                        new OidcDownClaim { Claim = "gender" },
+                        new OidcDownClaim { Claim = "birthdate" },
+                        new OidcDownClaim { Claim = "zoneinfo" },
+                        new OidcDownClaim { Claim = "locale" },
+                        new OidcDownClaim { Claim = "updated_at" }
+                    }
+                },
+                new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim>
+                    {
+                        new OidcDownClaim { Claim = "email", InIdToken = true  },
+                        new OidcDownClaim { Claim = "email_verified" }
+                    }
+                },
+            };
+        }
+
         private IEnumerable<string> GetControlClientRedirectUris(string baseUrl)
         {
-            yield return UrlCombine.Combine(baseUrl, "authentication/login-callback");
-            yield return UrlCombine.Combine(baseUrl, "authentication/logout-callback");
+            yield return UrlCombine.Combine(baseUrl, "authentication/login_callback");
+            yield return UrlCombine.Combine(baseUrl, "authentication/logout_callback");
         }
 
         private async Task CreateSeedClientDocmentAsync()

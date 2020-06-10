@@ -17,6 +17,20 @@ namespace FoxIDs.Models
             return $"track:{idKey.TenantName}:{idKey.TrackName}";
         }
 
+        public static async Task<string> IdFormat(RouteBinding routeBinding, string name)
+        {
+            if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
+            if (name == null) new ArgumentNullException(nameof(name));
+
+            var idKey = new IdKey
+            {
+                TenantName = routeBinding.TenantName,
+                TrackName = routeBinding.TrackName,
+            };
+
+            return await IdFormat(idKey);
+        }
+
         public static new string PartitionIdFormat(IdKey idKey) => $"{idKey.TenantName}:tracks";
 
         [Required]
@@ -39,7 +53,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }
 
-        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 30 minutes 
+        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
         [JsonProperty(PropertyName = "sequence_lifetime")] 
         public int SequenceLifetime { get; set; }
 

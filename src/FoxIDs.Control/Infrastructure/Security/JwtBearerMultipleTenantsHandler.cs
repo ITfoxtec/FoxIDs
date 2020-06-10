@@ -29,7 +29,7 @@ namespace FoxIDs.Infrastructure.Security
                 var accessToken = GetAccessTokenFromHeader();
 
                 var routeBinding = Context.GetRouteBinding();
-                var authority = UrlCombine.Combine(GetFoxIDsEndpoint(), routeBinding.TenantName, Constants.Routes.DefaultMasterTrackName, Options.DownParty);
+                var authority = UrlCombine.Combine(GetFoxIDsEndpoint(), routeBinding.TenantName, Constants.Routes.MasterTrackName, Options.DownParty);
 
                 var oidcDiscoveryUri = UrlCombine.Combine(authority, IdentityConstants.OidcDiscovery.Path);
                 var oidcDiscoveryHandler = Context.RequestServices.GetService<OidcDiscoveryHandler>();

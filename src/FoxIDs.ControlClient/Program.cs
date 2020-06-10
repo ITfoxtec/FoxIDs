@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using FoxIDs.Services;
 
 namespace FoxIDs
 {
@@ -39,6 +40,7 @@ namespace FoxIDs
             services.AddTransient<CheckResponseMessageHandler>();
 
             services.AddScoped<TenantService>();
+            services.AddScoped<TrackService>();
 
             services.AddScoped<RouteBindingLogic>();
         }

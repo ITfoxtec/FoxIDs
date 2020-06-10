@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
+using ITfoxtec.Identity;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -15,12 +17,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantService;
+        private readonly MasterTenantLogic masterTenantLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, MasterTenantLogic masterTenantLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantService = tenantService;
+            this.masterTenantLogic = masterTenantLogic;
         }
 
         /// <summary>
@@ -57,7 +61,7 @@ namespace FoxIDs.Controllers
         /// <returns>Tenant.</returns>
         [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<Api.Tenant>> PostTenant([FromBody] Api.Tenant tenant)
+        public async Task<ActionResult<Api.Tenant>> PostTenant([FromBody] Api.CreateTenantRequest tenant)
         {
             try
             {
@@ -65,6 +69,12 @@ namespace FoxIDs.Controllers
 
                 var mTenant = mapper.Map<Tenant>(tenant);
                 await tenantService.CreateAsync(mTenant);
+
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
+                var mLoginUpParty = await masterTenantLogic.CreateLoginDocumentAsync(tenant.Name);
+                await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword);
+                await masterTenantLogic.CreateFoxIDsControlApiResourceDocumentAsync(tenant.Name);
+                await masterTenantLogic.CreateControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }

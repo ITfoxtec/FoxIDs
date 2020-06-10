@@ -13,7 +13,7 @@ namespace FoxIDs.Infrastructure.Hosting
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {
             var trackIdKey = new Track.IdKey();
-            trackIdKey.TrackName = Constants.Routes.DefaultMasterTrackName;
+            trackIdKey.TrackName = Constants.Routes.MasterTrackName;
 
             if (route.Length >= 1)
             {

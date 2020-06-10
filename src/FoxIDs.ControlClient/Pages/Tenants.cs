@@ -2,6 +2,7 @@
 using FoxIDs.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Models.ViewModels;
+using FoxIDs.Services;
 using FoxIDs.Shared.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -42,8 +43,7 @@ namespace FoxIDs.Pages
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    var messageStore = new ValidationMessageStore(editContext);
-                    messageStore.Add(editContext.Field(nameof(searchTenantForm.Model.Name)), ex.Message);
+                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.Name), ex.Message);
                 }
                 else
                 {

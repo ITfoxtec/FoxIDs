@@ -30,7 +30,7 @@
                 @if (RouteBindingLogic.IsMasterTenant)
                 {
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link" @onclick="@(() => { createTenantForm.Init(); createTenantModal.Show(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                        <button class="nav-link btn btn-link" @onclick="@(() => { ShowCreateTenantModal(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
                     </li>
                 }
                 else
@@ -96,7 +96,7 @@
     <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
         <div class="modal-body">
             <div class="form-group active-group">
-                <InputText @bind-Value="createTenantForm.Model.Name" class="form-control input-control" />
+                <InputText @bind-Value="createTenantForm.Model.Name" class="form-control input-control" autofocus />
                 <Label For="@(() => createTenantForm.Model.Name)" class="label-control" />
                 <ValidationMessage For="@(() => createTenantForm.Model.Name)" />
             </div>
@@ -110,10 +110,24 @@
                 <Label For="@(() => createTenantForm.Model.AdministratorPassword)" class="label-control" />
                 <ValidationMessage For="@(() => createTenantForm.Model.AdministratorPassword)" />
             </div>
+
+            <ul class="list-group list-group-flush">
+                @foreach (var receipt in createTenantReceipt)
+                {
+                    <li class="list-group-item"><span class="oi oi-check" style="color: #62cd62;" aria-hidden="true"></span> @receipt</li>
+                }
+            </ul>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Create</button>
-            <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+            @if (!createTenantDone)
+            {
+                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
+            }
         </div>
     </PageEditForm>
 </Modal>
@@ -127,7 +141,6 @@
             }
         }
     </ul>
-
 </Modal>
 
 <div class="container-lg main-container">

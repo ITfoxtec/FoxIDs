@@ -49,6 +49,11 @@ namespace FoxIDs.Logic
             }
         }
 
+        public string GetBaseUri()
+        {
+            return NavigationManager.BaseUri;
+        }
+
         public async Task InitRouteBindingAsync()
         {
             var urlSplit = NavigationManager.ToBaseRelativePath(NavigationManager.Uri).Split('/');

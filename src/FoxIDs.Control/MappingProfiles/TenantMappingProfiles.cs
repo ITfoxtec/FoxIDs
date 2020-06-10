@@ -24,11 +24,20 @@ namespace FoxIDs.MappingProfiles
 
         private void Mapping()
         {
+            CreateMap<Api.CreateTenantRequest, Api.Tenant>();
+
             CreateMap<Tenant, Api.Tenant>()
               .ReverseMap()
               .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormat(s.Name).GetAwaiter().GetResult()));
 
             CreateMap<HashSet<Tenant>, HashSet<Api.Tenant>>()
+              .ReverseMap();
+
+            CreateMap<Track, Api.Track>()
+              .ReverseMap()
+              .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
+
+            CreateMap<HashSet<Track>, HashSet<Api.Track>>()
               .ReverseMap();
 
             CreateMap<JsonWebKey, Api.JsonWebKey>()

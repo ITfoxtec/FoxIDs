@@ -10,6 +10,7 @@ namespace FoxIDs.Shared.Components
 {
     public partial class PageEditForm<TModel> where TModel : new()
     {
+        private ValidationMessageStore validationMessageStore;
         private string error;
 
         public EditContext EditContext { get; private set; } = new EditContext(new TModel());
@@ -35,6 +36,7 @@ namespace FoxIDs.Shared.Components
             Model = new TModel();
             error = null;
             EditContext = new EditContext(Model);
+            validationMessageStore = new ValidationMessageStore(EditContext);
         }
 
         public void SetError(string error)
@@ -43,9 +45,16 @@ namespace FoxIDs.Shared.Components
             StateHasChanged();
         }
 
+        public void SetFieldError(string fieldname, string error)
+        {
+            validationMessageStore.Add(EditContext.Field(fieldname), error);
+            EditContext.NotifyValidationStateChanged();
+        }
+
         private async Task OnSubmitAsync()
         {
             error = null;
+            validationMessageStore.Clear();
             var isValid = EditContext.Validate();
 
             if (isValid)

@@ -30,7 +30,7 @@ namespace FoxIDs
             public const string PreApikey = "!";
             public const string MasterApiName = "@master";
             public const string MasterTenantName = "master";
-            public const string DefaultMasterTrackName = "master";
+            public const string MasterTrackName = "master";
 
             public const string ApiControllerPreMasterKey = "m";
             public const string ApiControllerPreTenantTrackKey = "t";
@@ -75,13 +75,15 @@ namespace FoxIDs
                 public const int ResourcesMin = 0;
                 public const int ResourcesMax = 5000;
                 public const int SequenceLifetimeMin = 30;
-                public const int SequenceLifetimeMax = 1800;
-                public const int PasswordLengthMin = 6;
+                public const int SequenceLifetimeMax = 10800;
+                public const int PasswordLengthMin = 4;
                 public const int PasswordLengthMax = 20;
 
                 public const int AllowIframeOnDomainsMin = 0;
                 public const int AllowIframeOnDomainsMax = 40;
                 public const int AllowIframeOnDomainsLength = 200;
+
+                public const int MasterTrackControlClientBaseUri = 400;
             }
 
             public static class User
@@ -93,6 +95,19 @@ namespace FoxIDs
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
+            }
+
+            public static class Claim
+            {
+                public const int ClaimsMapIdLength = 90;
+                public const int ClaimsMapMin = 0;
+                public const int ClaimsMapMax = 200;
+
+                public const int ClaimsMapJwtClaimLength = 50;
+                public const int ClaimsMapSamlClaimLength = 300;
+
+                public const int ClaimValuesMin = 1;
+                public const int ClaimValuesMax = 100;
             }
 
             public static class Party

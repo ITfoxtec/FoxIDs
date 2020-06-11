@@ -1,8 +1,10 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
+    [RequireMasterTenant]
     [MasterScopeAuthorize]
     public abstract class MasterApiController : ApiController
     {

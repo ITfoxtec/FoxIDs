@@ -24,7 +24,7 @@ namespace FoxIDs.Infrastructure.Security
                 Authority = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.Authority),
                 ClientId = globalOpenidClientPkceSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
-                Scope = globalOpenidClientPkceSettings.Scope,
+                Scope = GetScope(),
                 LoginCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LoginCallBackPath),
                 LogoutCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LogoutCallBackPath)
             };
@@ -39,7 +39,7 @@ namespace FoxIDs.Infrastructure.Security
                 Authority = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.Authority),
                 ClientId = globalOpenidClientPkceSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
-                Scope = globalOpenidClientPkceSettings.Scope,
+                Scope = GetScope(),
                 LoginCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LoginCallBackPath),
                 LogoutCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LogoutCallBackPath)
             };
@@ -50,6 +50,18 @@ namespace FoxIDs.Infrastructure.Security
         private async Task<string> ReplaceTenantNameAsync(string value)
         {
             return value.Replace("{tenant_name}", await routeBindingBase.GetTenantNameAsync(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        private string GetScope()
+        {
+            if(routeBindingBase.IsMasterTenant)
+            {
+                return $"{globalOpenidClientPkceSettings.Scope} {(globalOpenidClientPkceSettings as TenantOpenidConnectPkceSettings).MasterScope}";
+            }
+            else
+            {
+                return globalOpenidClientPkceSettings.Scope;
+            }
         }
     }
 }

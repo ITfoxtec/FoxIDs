@@ -16,10 +16,7 @@ namespace FoxIDs.Logic
         const string controlApiResourceName = "foxids_control_api";
         const string controlClientName = "foxids_control_client";
 
-        const string controlApiResourceMasterScope = "foxids_master";
         const string controlApiResourceTenantScope = "foxids_tenant";
-        static readonly string[] controlApiResourceScopes = new[] { controlApiResourceMasterScope, controlApiResourceTenantScope };
-        //static readonly string[] adminUserRoles = new[] { "foxids_master_admin" };
 
         private readonly ITenantRepository tenantService;
         private readonly SecretHashLogic secretHashLogic;
@@ -94,7 +91,7 @@ namespace FoxIDs.Logic
             await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName, PartyName = controlApiResourceName });
             mControlApiResourceDownParty.Resource = new OAuthDownResource
             {
-                Scopes = controlApiResourceScopes.ToList()
+                Scopes = new[] { controlApiResourceTenantScope }.ToList()
             };
 
             await tenantService.CreateAsync(mControlApiResourceDownParty);

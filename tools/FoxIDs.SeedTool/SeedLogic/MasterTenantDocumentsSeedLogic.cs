@@ -23,7 +23,6 @@ namespace FoxIDs.SeedTool.SeedLogic
         const string controlApiResourceMasterScope = "foxids_master";
         const string controlApiResourceTenantScope = "foxids_tenant";
         static readonly string[] controlApiResourceScopes = new[] { controlApiResourceMasterScope, controlApiResourceTenantScope };
-        static readonly string[] adminUserRoles = new[] { "foxids_master_admin" };
  
         private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
@@ -160,7 +159,6 @@ namespace FoxIDs.SeedTool.SeedLogic
             };
             await user.SetIdAsync(new User.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, Email = email });
             await secretHashLogic.AddSecretHashAsync(user, password);
-            user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
             user.SetPartitionId();
 
             await simpleTenantRepository.SaveAsync(user);
@@ -212,7 +210,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             controlClientDownParty.Client = new OidcDownClient
             {
                 RedirectUris = controlClientRedirectUris,
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceTenantScope }.ToList() } },
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceMasterScope, controlApiResourceTenantScope }.ToList() } },
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),
                 EnablePkce = true,

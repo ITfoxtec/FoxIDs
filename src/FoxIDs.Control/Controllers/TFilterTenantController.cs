@@ -10,10 +10,14 @@ using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
+using FoxIDs.Infrastructure.Security;
+using FoxIDs.Infrastructure.Filters;
 
 namespace FoxIDs.Controllers
 {
-    public class TFilterTenantController : TenantApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize]
+    public class TFilterTenantController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

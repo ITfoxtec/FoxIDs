@@ -12,15 +12,15 @@ namespace FoxIDs
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddTenantOpenidConnectPkce(this IServiceCollection services, Action<OpenidConnectPkceSettings> settings)
+        public static IServiceCollection AddTenantOpenidConnectPkce(this IServiceCollection services, Action<TenantOpenidConnectPkceSettings> settings)
         {
             IdentityModelEventSource.ShowPII = true;
 
             services.AddBlazoredSessionStorage();
 
-            var openIDClientPkceSettings = new OpenidConnectPkceSettings();
+            var openIDClientPkceSettings = new TenantOpenidConnectPkceSettings();
             settings(openIDClientPkceSettings);
-            services.AddSingleton(openIDClientPkceSettings);
+            services.AddSingleton<OpenidConnectPkceSettings>(openIDClientPkceSettings);
 
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));

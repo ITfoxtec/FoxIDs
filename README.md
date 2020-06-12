@@ -6,7 +6,7 @@ FoxIDs is a cloud service which is deployed in you Azure tenant and rely on Azur
 
 > For [Getting started](https://github.com/ITfoxtec/FoxIDs/wiki/Getting-started) guide and more documentation please see the [Wiki](https://github.com/ITfoxtec/FoxIDs/wiki).
 
-> FoxIDs is .NET Core 3.0 and the web sites is ASP.NET Core.
+> FoxIDs is .NET Core 3.1 and the web sites is ASP.NET Core.
 
 ## Deployment
 
@@ -122,7 +122,7 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 FoxIDs
 https://localhost:44330
 
-FoxIDs Control (client and api)
+FoxIDs Control (Blazor (WebAssembly) client and API)
 https://localhost:44331
 
 *FoxIDs web

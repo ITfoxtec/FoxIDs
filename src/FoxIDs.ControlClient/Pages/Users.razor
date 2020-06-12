@@ -1,0 +1,12 @@
+﻿@page "/{tenantName}/users"
+@inherits PageBase
+@inject RouteBindingLogic routeBinding
+
+<h3>Users</h3>
+
+
+
+@code {
+    [Parameter]
+    public string TenantName { get; set; }
+}

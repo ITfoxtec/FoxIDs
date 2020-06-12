@@ -5,23 +5,24 @@ using FoxIDs.SeedTool.Model;
 using FoxIDs.SeedTool.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using UrlCombineLib;
 
 namespace FoxIDs.SeedTool.SeedLogic
 {
     public class MasterTenantDocumentsSeedLogic
     {
         const string loginName = "login";
-        const string apiResourceName = "foxids_api";
-        const string portalClientName = "foxids_portal";
+        const string controlApiResourceName = "foxids_control_api";
+        const string controlClientName = "foxids_control_client";
 
-        readonly string[] apiResourceScopes = new[] { "foxids_master", "foxids_tenant" };
-        readonly string[] adminUserRoles = new[] { "foxids_master_admin" };
+        const string controlApiResourceMasterScope = "foxids_master";
+        const string controlApiResourceTenantScope = "foxids_tenant";
+        static readonly string[] controlApiResourceScopes = new[] { controlApiResourceMasterScope, controlApiResourceTenantScope };
  
         private readonly SeedSettings settings;
         private readonly SecretHashLogic secretHashLogic;
@@ -65,11 +66,11 @@ namespace FoxIDs.SeedTool.SeedLogic
             await CreateFirstAdminUserDocumentAsync();
             Console.WriteLine(string.Empty);
 
-            await CreateFoxIDsApiResourceDocumentAsync();
+            await CreateFoxIDsControlApiResourceDocumentAsync();
+            Console.WriteLine(string.Empty);
+            await CreateControlClientDocmentAsync(loginUpParty);
             Console.WriteLine(string.Empty);
             await CreateSeedClientDocmentAsync();
-            Console.WriteLine(string.Empty);
-            await CreatePortalClientDocmentAsync(loginUpParty);
             Console.WriteLine(string.Empty);
         }
 
@@ -91,7 +92,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var masterTrack = new Track
             {
-                SequenceLifetime = 30,
+                SequenceLifetime = 600,
                 PasswordLength = 8,
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
@@ -106,10 +107,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         private async Task<TrackKey> CreateX509KeyAsync()
         {
-            var certificate = await settings.MasterTenant.CreateSelfSignedCertificateAsync();
+            var certificate = await settings.MasterTrack.CreateSelfSignedCertificateAsync();
 
             var trackKey = new TrackKey()
             {
+                ExternalName = certificate.Thumbprint,
                 Type = TrackKeyType.Contained,
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };
@@ -122,6 +124,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var loginUpParty = new LoginUpParty
             {
+                Name = loginName,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
@@ -149,30 +152,119 @@ namespace FoxIDs.SeedTool.SeedLogic
             var password = RandomGenerator.Generate(16);
             Console.WriteLine($"Administrator users password is: {password}");
 
-            var user = new User { UserId = Guid.NewGuid().ToString() };
+            var user = new User
+            {
+                UserId = Guid.NewGuid().ToString(),
+                Email = email
+            };
             await user.SetIdAsync(new User.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, Email = email });
             await secretHashLogic.AddSecretHashAsync(user, password);
-            user.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
             user.SetPartitionId();
 
             await simpleTenantRepository.SaveAsync(user);
             Console.WriteLine($"Administrator user document created and saved in Cosmos DB");
         }
 
-        private async Task CreateFoxIDsApiResourceDocumentAsync()
+        private async Task CreateFoxIDsControlApiResourceDocumentAsync()
         {
-            Console.WriteLine("Creating FoxIDs api resource");
+            Console.WriteLine("Creating FoxIDs control api resource");
 
-            var apiResourceDownParty = new OAuthDownParty();
-            await apiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = apiResourceName });
-            apiResourceDownParty.Resource = new OAuthDownResource
+            var controlApiResourceDownParty = new OAuthDownParty
             {
-                Scopes = apiResourceScopes.ToList()
+                Name = controlApiResourceName
             };
-            apiResourceDownParty.SetPartitionId();
+            await controlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = controlApiResourceName });
+            controlApiResourceDownParty.Resource = new OAuthDownResource
+            {
+                Scopes = controlApiResourceScopes.ToList()
+            };
+            controlApiResourceDownParty.SetPartitionId();
 
-            await simpleTenantRepository.SaveAsync(apiResourceDownParty);
-            Console.WriteLine($"FoxIDs api resource document created and saved in Cosmos DB");
+            await simpleTenantRepository.SaveAsync(controlApiResourceDownParty);
+            Console.WriteLine($"FoxIDs control api resource document created and saved in Cosmos DB");
+        }
+
+        private async Task CreateControlClientDocmentAsync(LoginUpParty loginUpParty)
+        {
+            Console.WriteLine("Creating control client");
+            Console.Write("Add localhost test domain to enable local development [y/n] (default no): ");
+            var addLocalhostDomain = Console.ReadKey();
+            Console.WriteLine(string.Empty);
+
+            var controlClientRedirectUris = new List<string>();
+            var controlClientAllowCorsOrigins = new List<string>();
+            controlClientRedirectUris.AddRange(GetControlClientRedirectUris(settings.FoxIDsMasterControlClientEndpoint));
+            controlClientAllowCorsOrigins.Add(settings.FoxIDsMasterControlClientEndpoint.TrimEnd('/'));
+            if (char.ToLower(addLocalhostDomain.KeyChar) == 'y')
+            {
+                controlClientRedirectUris.AddRange(GetControlClientRedirectUris("https://localhost:44332"));
+                controlClientAllowCorsOrigins.Add("https://localhost:44332");
+            }
+
+            var controlClientDownParty = new OidcDownParty
+            {
+                Name = controlClientName
+            };
+            await controlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = controlClientName });
+            controlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
+            controlClientDownParty.Client = new OidcDownClient
+            {
+                RedirectUris = controlClientRedirectUris,
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceMasterScope, controlApiResourceTenantScope }.ToList() } },
+                ResponseTypes = new[] { "code" }.ToList(),
+                Scopes = GetControlClientScopes(),
+                EnablePkce = true,
+                AuthorizationCodeLifetime = 10,
+                IdTokenLifetime = 1800, // 30 minutes
+                AccessTokenLifetime = 1800, // 30 minutes
+                RefreshTokenLifetime = 86400, // 24 hours
+                RefreshTokenAbsoluteLifetime = 86400, // 24 hours
+                RefreshTokenUseOneTime = true,
+                RefreshTokenLifetimeUnlimited = false,
+                RequireLogoutIdTokenHint = true,
+            };
+            controlClientDownParty.SetPartitionId();
+
+            await simpleTenantRepository.SaveAsync(controlClientDownParty);
+            Console.WriteLine("Control client document created and saved in Cosmos DB");
+        }
+
+        private List<OidcDownScope> GetControlClientScopes()
+        {
+            return new List<OidcDownScope>
+            {
+                new OidcDownScope { Scope = "offline_access" },
+                new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim>
+                    {
+                        new OidcDownClaim { Claim = "name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "family_name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "given_name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "middle_name", InIdToken = true  },
+                        new OidcDownClaim { Claim = "nickname" },
+                        new OidcDownClaim { Claim = "preferred_username" },
+                        new OidcDownClaim { Claim = "profile" },
+                        new OidcDownClaim { Claim = "picture" },
+                        new OidcDownClaim { Claim = "website" },
+                        new OidcDownClaim { Claim = "gender" },
+                        new OidcDownClaim { Claim = "birthdate" },
+                        new OidcDownClaim { Claim = "zoneinfo" },
+                        new OidcDownClaim { Claim = "locale" },
+                        new OidcDownClaim { Claim = "updated_at" }
+                    }
+                },
+                new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim>
+                    {
+                        new OidcDownClaim { Claim = "email", InIdToken = true  },
+                        new OidcDownClaim { Claim = "email_verified" }
+                    }
+                },
+            };
+        }
+
+        private IEnumerable<string> GetControlClientRedirectUris(string baseUrl)
+        {
+            yield return UrlCombine.Combine(baseUrl, "authentication/login_callback");
+            yield return UrlCombine.Combine(baseUrl, "authentication/logout_callback");
         }
 
         private async Task CreateSeedClientDocmentAsync()
@@ -184,7 +276,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             seedClientDownParty.Client = new OAuthDownClient
             {
                 RedirectUris = new[] { settings.RedirectUri }.ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "foxids_master" }.ToList() } },
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceMasterScope }.ToList() } },
                 ResponseTypes = new[] { "token" }.ToList(),
                 AccessTokenLifetime = 1800 // 30 minutes
             };
@@ -196,47 +288,6 @@ namespace FoxIDs.SeedTool.SeedLogic
             await simpleTenantRepository.SaveAsync(seedClientDownParty);
             Console.WriteLine("Seed client document created and saved in Cosmos DB");
             Console.WriteLine($"Seed client secret is: {secret}");
-        }
-
-        private async Task CreatePortalClientDocmentAsync(LoginUpParty loginUpParty)
-        {
-            Console.WriteLine("Creating portal client");
-            Console.Write("Add localhost test domain to enable local development [y/n] (default no): ");
-            var addLocalhostDomain = Console.ReadKey();
-            Console.WriteLine(string.Empty);
-
-            var portalClientRedirectUris = new List<string>();
-            portalClientRedirectUris.Add(settings.FoxIDsPortalAuthResponseEndpoint);
-            if(char.ToLower(addLocalhostDomain.KeyChar) == 'y')
-            {
-                portalClientRedirectUris.Add("https://localhost:44332");
-            }
-
-            var portalClientDownParty = new OidcDownParty();
-            await portalClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = portalClientName });
-            portalClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
-            portalClientDownParty.Client = new OidcDownClient
-            {
-                RedirectUris = portalClientRedirectUris.ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = apiResourceName, Scopes = new[] { "foxids_tenant" }.ToList() } },
-                ResponseTypes = new[] { "code", "id_token", "token" }.ToList(),
-                AuthorizationCodeLifetime = 10,
-                IdTokenLifetime = 1800, // 30 minutes
-                AccessTokenLifetime = 1800, // 30 minutes
-                RefreshTokenLifetime = 86400, // 24 hours
-                RefreshTokenAbsoluteLifetime = 86400, // 24 hours
-                RefreshTokenUseOneTime = true,
-                RefreshTokenLifetimeUnlimited = false,
-                RequireLogoutIdTokenHint = true,
-            };
-
-            (var secret, var oauthClientSecret) = await CreateSecretAsync();
-            portalClientDownParty.Client.Secrets = new List<OAuthClientSecret> { oauthClientSecret };
-            portalClientDownParty.SetPartitionId();
-
-            await simpleTenantRepository.SaveAsync(portalClientDownParty);
-            Console.WriteLine("Portal client document created and saved in Cosmos DB");
-            Console.WriteLine($"Portal client secret is: {secret}");
         }
 
         private async Task<(string, OAuthClientSecret)> CreateSecretAsync()

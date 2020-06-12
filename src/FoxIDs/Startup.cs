@@ -4,7 +4,6 @@ using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -50,19 +49,13 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app)
         {
-            //IApplicationLifetime lifetime
-            //lifetime.ApplicationStarted.Register(() =>
-            //{
-            //    ...  Logge start event ... ?? https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/339
-            //});
-
             if (CurrentEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler($"/{Constants.Routes.DefaultWebSiteController}/Error");
+                app.UseExceptionHandler($"/{Constants.Routes.DefaultSiteController}/Error");
                 app.UseHsts();
             }
 

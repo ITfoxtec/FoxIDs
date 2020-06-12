@@ -77,7 +77,6 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Delete Refresh Token grant, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            await idKey.ValidateObjectAsync();
             RefreshTokenGrant grant = await tenantRepository.DeleteAsync<RefreshTokenTtlGrant>(idKey, d => d.SessionId == sessionId);
             if (grant != null)
             {

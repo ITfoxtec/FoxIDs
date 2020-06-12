@@ -1,0 +1,24 @@
+﻿@page "/{tenantName}/tenants"
+@inherits PageBase
+
+<h3>Tenants</h3>
+
+<PageEditForm @ref="searchTenantForm" TModel="SearchTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
+    <div class="form-group active-group">
+        <div class="input-group">
+            <InputText @bind-Value="searchTenantForm.Model.Name" class="form-control input-control" />
+            <Label For="@(() => searchTenantForm.Model.Name)" class="label-control" />
+            <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Go</button>
+            </div>
+        </div>
+        <ValidationMessage For="@(() => searchTenantForm.Model.Name)" />
+    </div>
+</PageEditForm>
+
+<ul class="list-group list-group-flush">
+    @foreach (var tenant in tenants)
+    {
+        <li class="list-group-item">@tenant.Name</li>
+    }
+</ul>

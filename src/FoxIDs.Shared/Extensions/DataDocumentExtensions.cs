@@ -14,17 +14,19 @@ namespace FoxIDs
             var idList = id.Split(':');
             if (id.StartsWith("tenant:"))
             {
-                return idList[1];
+                return Tenant.PartitionIdFormat();
+            }
+            else if(id.StartsWith("track:"))
+            {
+                return Track.PartitionIdFormat(new Track.IdKey { TenantName = idList[1], TrackName = idList[2] });
             }
             else if (id.StartsWith("party:"))
             {
-
-                return $"{idList[2]}:{idList[3]}";
+                return DataDocument.PartitionIdFormat(new Track.IdKey { TenantName = idList[2], TrackName = idList[3] });
             }
             else
             {
-
-                return $"{idList[1]}:{idList[2]}";
+                return DataDocument.PartitionIdFormat(new Track.IdKey { TenantName = idList[1], TrackName = idList[2] });
             }
         }
     }

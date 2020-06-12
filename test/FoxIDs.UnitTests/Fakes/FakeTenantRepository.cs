@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Repository;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 
@@ -44,6 +45,11 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task CreateAsync<T>(T item) where T : IDataDocument
         {
             return Task.CompletedTask;
@@ -64,11 +70,9 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-
         public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
-
     }
 }

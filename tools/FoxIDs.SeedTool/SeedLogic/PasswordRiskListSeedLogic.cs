@@ -23,7 +23,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             this.accessLogic = accessLogic;
         }
 
-        public string PasswordRiskListApiEndpoint => UrlCombine.Combine(settings.FoxIDsMasterApiEndpoint, "!passwordrisklist");
+        public string PasswordRiskListApiEndpoint => UrlCombine.Combine(settings.FoxIDsMasterControlApiEndpoint, "!passwordrisklist");
 
         public async Task SeedAsync()
         {

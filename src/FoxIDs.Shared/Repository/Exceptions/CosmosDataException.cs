@@ -11,6 +11,8 @@ namespace FoxIDs.Repository
         public CosmosDataException(string partitionId) : base(IdToMessage(partitionId)) { }
         public CosmosDataException(string id, string partitionId) : base(IdToMessage(id, partitionId)) { }
 
+        public CosmosDataException(Exception inner) : base(inner.Message, inner) { }
+
         public CosmosDataException(string partitionId, Exception inner) : base(IdToMessage(partitionId), inner) { }
         public CosmosDataException(string id, string partitionId, Exception inner) : base(IdToMessage(id, partitionId), inner) { }
         public CosmosDataException(string id, string partitionId, string message, Exception inner) : base($"{IdToMessage(id, partitionId)} {message}", inner) { }

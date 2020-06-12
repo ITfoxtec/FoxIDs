@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -15,12 +16,13 @@ namespace FoxIDs.Models
             return $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
         }
 
-        [MaxLength(70)]
-        [RegularExpression(@"^[\w@:_-]*$")]
+        [MaxLength(Constants.Models.RiskPassword.IdLength)]
+        [RegularExpression(Constants.Models.RiskPassword.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
         [Required]
+        [Min(Constants.Models.RiskPassword.CountMin)]
         [JsonProperty(PropertyName = "count")]
         public long Count { get; set; }
 
@@ -31,8 +33,8 @@ namespace FoxIDs.Models
         public new class IdKey : MasterDocument.IdKey
         {
             [Required]
-            [MaxLength(40)]
-            [RegularExpression(@"^[A-F0-9]*$")]
+            [MaxLength(Constants.Models.RiskPassword.PasswordSha1HashLength)]
+            [RegularExpression(Constants.Models.RiskPassword.PasswordSha1HashRegExPattern)]
             public string PasswordSha1Hash { get; set; }
         }
     }

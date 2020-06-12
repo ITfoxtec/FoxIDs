@@ -75,7 +75,6 @@ namespace FoxIDs.Logic
                 throw new OAuthRequestException($"Client id '{clientId}' do not match related grant.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
 
-
             logger.ScopeTrace($"Authorization code grant valid, Code '{code}'.");
             return grant;
         }

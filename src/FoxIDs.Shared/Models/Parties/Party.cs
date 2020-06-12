@@ -14,7 +14,7 @@ namespace FoxIDs.Models
         public class IdKey : Track.IdKey
         {
             [Required]
-            [MaxLength(Constants.Models.PartyNameLength)]
+            [MaxLength(Constants.Models.Party.NameLength)]
             [RegularExpression(@"^[\w-_]*$")]
             public string PartyName { get; set; }
         }

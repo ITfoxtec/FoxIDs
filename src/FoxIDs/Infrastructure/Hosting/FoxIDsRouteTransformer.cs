@@ -64,6 +64,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     values[Constants.Routes.RouteActionKey] = route[1];
                 }
+                else
+                {
+                    values[Constants.Routes.RouteActionKey] = Constants.Routes.DefaultSiteAction;
+                }
             }
         }
 

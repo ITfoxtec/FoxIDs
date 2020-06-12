@@ -14,35 +14,44 @@ namespace FoxIDs.Models
 
             return $"tenant:{idKey.TenantName}";
         }
-        public static string PartitionIdFormat(string tenantName) => tenantName;
+
+        public static async Task<string> IdFormat(string name)
+        {
+            if (name == null) new ArgumentNullException(nameof(name));
+
+            return await IdFormat(new IdKey
+            {
+                TenantName = name,
+            });
+        }
+
+        public static string PartitionIdFormat() => "tenants";
 
         [Required]
-        [MaxLength(50)]
-        [RegularExpression(@"^[\w:_-]*$")]
+        [MaxLength(Constants.Models.Tenant.IdLength)]
+        [RegularExpression(Constants.Models.Tenant.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
-        [JsonIgnore]
-        public string Name
-        {
-            get
-            {
-                return Id.Substring(Id.LastIndexOf(':') + 1);
-            }
-        }
+        [Required]
+        [MaxLength(Constants.Models.Tenant.NameLength)]
+        [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormat(idKey);
+            Name = Id.Substring(Id.LastIndexOf(':') + 1);
         }
 
         public class IdKey
         {
             [Required]
-            [MaxLength(30)]
-            [RegularExpression(@"^\w[\w-_]*$")]
+            [MaxLength(Constants.Models.Tenant.NameLength)]
+            [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
             public string TenantName { get; set; }
         }
     }

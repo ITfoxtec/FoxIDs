@@ -48,28 +48,28 @@ namespace FoxIDs.SeedTool.Model
         public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 
         /// <summary>
-        /// FoxIDs api endpoint.
+        /// FoxIDs control endpoint.
         /// </summary>
         [Required]
-        public string FoxIDsApiEndpoint { get; set; }
-        /// <summary>
-        /// FoxIDs master api endpoint.
-        /// </summary>
-        public string FoxIDsMasterApiEndpoint => UrlCombine.Combine(FoxIDsApiEndpoint, "@master");
-        /// <summary>
-        /// FoxIDs master track api endpoint.
-        /// </summary>
-        public string FoxIDsMasterTrackApiEndpoint => UrlCombine.Combine(FoxIDsApiEndpoint, MasterTenant, MasterTrack);
+        public string FoxIDsControlEndpoint { get; set; }
 
         /// <summary>
-        /// FoxIDs portal endpoint.
+        /// FoxIDs control api endpoint.
         /// </summary>
-        [Required]
-        public string FoxIDsPortalEndpoint { get; set; }
+        public string FoxIDsControlApiEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "api");
         /// <summary>
-        /// FoxIDs portal auth response endpoint.
+        /// FoxIDs master api control endpoint.
         /// </summary>
-        public string FoxIDsPortalAuthResponseEndpoint => UrlCombine.Combine(FoxIDsPortalEndpoint, "authresponse");
+        public string FoxIDsMasterControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, "@master");
+        /// <summary>
+        /// FoxIDs master track control api endpoint.
+        /// </summary>
+        public string FoxIDsMasterTrackControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, MasterTenant, MasterTrack);
+
+        /// <summary>
+        /// FoxIDs master track control client endpoint.
+        /// </summary>
+        public string FoxIDsMasterControlClientEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, MasterTenant);
 
         /// <summary>
         /// Pwned passwords (SHA1 ordered by count) path.

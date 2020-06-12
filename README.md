@@ -122,7 +122,7 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 FoxIDs
 https://localhost:44330
 
-FoxIDs Control (Blazor (WebAssembly) client and API)
+FoxIDs Control (Blazor WebAssembly client and API)
 https://localhost:44331
 
 *FoxIDs web

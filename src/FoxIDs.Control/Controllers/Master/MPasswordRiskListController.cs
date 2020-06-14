@@ -49,6 +49,9 @@ namespace FoxIDs.Controllers
         {
             try
             {
+                //TODO delete all elements
+                // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
+                //            Add the ability to delete ALL data in a partition
                 var passwordRiskList = new RiskPassword { Id = await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash }) };
                 await masterService.DeleteAsync(passwordRiskList);
                 return NoContent();

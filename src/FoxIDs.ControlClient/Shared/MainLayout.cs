@@ -4,7 +4,6 @@ using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
@@ -28,13 +27,10 @@ namespace FoxIDs.Client.Shared
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
+        public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
         public TenantService TenantService { get; set; }
-
-        [Inject]
-        public TrackService TrackService { get; set; }
-
-        [Inject]
-        public IAuthorizationService AuthorizationService { get; set; }
 
         [CascadingParameter]
         private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -85,6 +81,8 @@ namespace FoxIDs.Client.Shared
                 createTenantReceipt.Add("First master track administrator user created.");
                 createTenantReceipt.Add("Master track down party control api created.");
                 createTenantReceipt.Add("Master track down party control client created.");
+
+                await NotificationLogic.TenantUpdatedAsync();
             }
             catch (FoxIDsApiException ex)
             {

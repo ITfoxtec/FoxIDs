@@ -16,6 +16,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddScoped<RouteBindingLogic>();
+            services.AddScoped<NotificationLogic>();
 
             return services;
         }

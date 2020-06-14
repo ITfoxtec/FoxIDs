@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages
 {
-    public partial class Tenants
+    public partial class Tenants : IDisposable 
     {
         private Modal searchTenantModal;
         private PageEditForm<SearchTenantViewModel> searchTenantForm;
@@ -20,6 +20,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
+        public NotificationLogic NotificationLogic { get; set; }
 
         [Inject]
         public TenantService TenantService { get; set; }
@@ -31,6 +34,13 @@ namespace FoxIDs.Client.Pages
         {
             await base.OnInitializedAsync();
             await DefaultLoadTenentsAsync();
+            NotificationLogic.OnTenantUpdatedAsync += OnTenantUpdatedAsync;
+        }
+
+        private async Task OnTenantUpdatedAsync()
+        {
+            await OnValidSubmitAsync(null);
+            StateHasChanged();
         }
 
         private async Task OnValidSubmitAsync(EditContext editContext)
@@ -54,14 +64,12 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadTenentsAsync()
         {
-            try
-            {
-                tenants = await TenantService.SearchTenantAsync(null);
-            }
-            catch (Exception ex)
-            {
-                searchTenantForm.SetError(ex.Message);
-            }
+            tenants = await TenantService.SearchTenantAsync(null);
+        }
+
+        public void Dispose()
+        {
+            NotificationLogic.OnTenantUpdatedAsync -= OnTenantUpdatedAsync;
         }
     }
 }

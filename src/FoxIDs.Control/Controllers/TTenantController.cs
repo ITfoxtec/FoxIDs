@@ -10,6 +10,7 @@ using System.Net;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -104,8 +105,13 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                await tenantService.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
+                throw new NotSupportedException();
                 //TODO delete all sub elements
+                // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
+                //            Add the ability to delete ALL data in a partition
+                await tenantService.DeleteAsync<Track>(new Track.IdKey { TenantName = name });
+                await tenantService.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
+
                 return NoContent();
             }
             catch (CosmosDataException ex)

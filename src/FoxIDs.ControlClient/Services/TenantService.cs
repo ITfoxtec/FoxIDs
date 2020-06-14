@@ -18,18 +18,23 @@ namespace FoxIDs.Client.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Tenant>> SearchTenantAsync(string filterName, string tenantName = null)
+        public async Task<IEnumerable<Tenant>> SearchTenantAsync(string filterName)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(filterApiUri, tenantName)}?filterName={filterName}");
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(filterApiUri)}?filterName={filterName}");
             var tenants = await response.ToObjectAsync<IEnumerable<Tenant>>();
             return tenants;
 
         }
 
-        public async Task CreateTenantAsync(CreateTenantRequest tenant, string tenantName = null)
+        public async Task CreateTenantAsync(CreateTenantRequest tenant)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri, tenantName), tenant);
+            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri), tenant);
             var tenantResponse = await response.ToObjectAsync<Tenant>();
+        }
+
+        public async Task DeleteTenantAsync(string tenantName)
+        {
+            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(apiUri)}?name={tenantName}");
         }
     }
 }

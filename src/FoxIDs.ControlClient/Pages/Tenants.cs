@@ -17,6 +17,10 @@ namespace FoxIDs.Client.Pages
         private Modal searchTenantModal;
         private PageEditForm<SearchTenantViewModel> searchTenantForm;
         private IEnumerable<Tenant> tenants = new List<Tenant>();
+        private Modal tenantModal;
+        private TenantInfoViewModel tenantInfo = new TenantInfoViewModel();
+        private string deleteTenantError;
+        private bool deleteTenantAcknowledge = false;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -39,8 +43,15 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnTenantUpdatedAsync()
         {
-            await OnValidSubmitAsync(null);
-            StateHasChanged();
+            try
+            {
+                await OnValidSubmitAsync(null);
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                searchTenantForm.SetError(ex.Message);
+            }
         }
 
         private async Task OnValidSubmitAsync(EditContext editContext)
@@ -64,7 +75,36 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadTenentsAsync()
         {
-            tenants = await TenantService.SearchTenantAsync(null);
+            try
+            {
+                tenants = await TenantService.SearchTenantAsync(null);
+            }
+            catch (Exception ex)
+            {
+                searchTenantForm.SetError(ex.Message);
+            }
+        }
+
+        private void ShowTenant(string tenantName)
+        {
+            tenantInfo.Name = tenantName;
+            tenantInfo.LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{tenantName}";
+            deleteTenantError = null;
+            deleteTenantAcknowledge = false;
+            tenantModal.Show();
+        }
+
+        private async Task DeleteTenantAsync(string tenantName)
+        {
+            try
+            {
+                await TenantService.DeleteTenantAsync(tenantName);
+                tenantModal.Hide();
+            }
+            catch (Exception ex)
+            {
+                deleteTenantError = ex.Message + " Specified method is not supported.";
+            }
         }
 
         public void Dispose()

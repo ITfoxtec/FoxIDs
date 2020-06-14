@@ -140,6 +140,11 @@ namespace FoxIDs.Repository
 
         public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument
         {
+            if (idKey != null)
+            {
+                await idKey.ValidateObjectAsync();
+            }
+
             var partitionId = PartitionIdFormat<T>(idKey);
             var orderedQueryable = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
             var query = (whereQuery == null) ? orderedQueryable.AsDocumentQuery() : orderedQueryable.Where(whereQuery).AsDocumentQuery();
@@ -267,13 +272,14 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery) where T : IDataDocument
+        public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
 
             var partitionId = PartitionIdFormat<T>(idKey);
-            var query = GetQueryAsync<T>(partitionId).Where(whereQuery).AsDocumentQuery();
+            var orderedQueryable = GetQueryAsync<T>(partitionId);
+            var query = (whereQuery == null) ? orderedQueryable.AsDocumentQuery() : orderedQueryable.Where(whereQuery).AsDocumentQuery();
 
             double totalRU = 0;
             try

@@ -30,7 +30,7 @@
                 @if (RouteBindingLogic.IsMasterTenant)
                 {
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link" @onclick="@(() => { ShowCreateTenantModal(); })"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                        <button class="nav-link btn btn-link" @onclick="@(() => ShowCreateTenantModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
                     </li>
                 }
                 else
@@ -138,14 +138,16 @@
 </Modal>
 
 <Modal @ref="myProfileModal" Title="My Profile - show claims">
-    <ul class="list-group list-group-flush">
-        @if(myProfileClaims != null) {
-            @foreach (var claim in myProfileClaims)
-            {
-                <li class="list-group-item">@claim.Type: @claim.Value</li>
+    <div class="modal-body">
+        <ul class="list-group list-group-flush">
+            @if(myProfileClaims != null) {
+                @foreach (var claim in myProfileClaims)
+                {
+                    <li class="list-group-item">@claim.Type: @claim.Value</li>
+                }
             }
-        }
-    </ul>
+        </ul>
+    </div>
 </Modal>
 
 <div class="container-lg main-container">

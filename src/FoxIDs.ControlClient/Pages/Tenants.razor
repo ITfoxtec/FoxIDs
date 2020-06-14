@@ -3,16 +3,16 @@
 
 <h3>Tenants</h3>
 
-<PageEditForm @ref="searchTenantForm" TModel="SearchTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
+<PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
     <div class="form-group active-group">
         <div class="input-group">
-            <InputText @bind-Value="searchTenantForm.Model.Name" class="form-control input-control" />
-            <Label For="@(() => searchTenantForm.Model.Name)" class="label-control" />
+            <InputText @bind-Value="searchTenantForm.Model.FilterName" class="form-control input-control" />
+            <Label For="@(() => searchTenantForm.Model.FilterName)" class="label-control" />
             <div class="input-group-append">
                 <button type="submit" class="btn btn-primary">Go</button>
             </div>
         </div>
-        <ValidationMessage For="@(() => searchTenantForm.Model.Name)" />
+        <ValidationMessage For="@(() => searchTenantForm.Model.FilterName)" />
     </div>
 </PageEditForm>
 

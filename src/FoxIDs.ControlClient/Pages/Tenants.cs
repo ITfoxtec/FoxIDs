@@ -14,8 +14,7 @@ namespace FoxIDs.Client.Pages
 {
     public partial class Tenants : IDisposable 
     {
-        private Modal searchTenantModal;
-        private PageEditForm<SearchTenantViewModel> searchTenantForm;
+        private PageEditForm<FilterTenantViewModel> searchTenantForm;
         private IEnumerable<Tenant> tenants = new List<Tenant>();
         private Modal tenantModal;
         private TenantInfoViewModel tenantInfo = new TenantInfoViewModel();
@@ -58,13 +57,13 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                tenants = await TenantService.SearchTenantAsync(searchTenantForm.Model.Name);
+                tenants = await TenantService.FilterTenantAsync(searchTenantForm.Model.FilterName);
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.Name), ex.Message);
+                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.FilterName), ex.Message);
                 }
                 else
                 {
@@ -77,7 +76,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                tenants = await TenantService.SearchTenantAsync(null);
+                tenants = await TenantService.FilterTenantAsync(null);
             }
             catch (Exception ex)
             {

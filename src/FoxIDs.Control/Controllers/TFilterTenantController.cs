@@ -43,6 +43,7 @@ namespace FoxIDs.Controllers
             {
                 var mTenants = filterName.IsNullOrWhiteSpace() ? await tenantService.GetListAsync<Tenant>() : await tenantService.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName));
                 var aTenants = new HashSet<Api.Tenant>(mTenants.Count());
+                throw new System.Exception();
                 foreach(var mTenant in mTenants)
                 {
                     aTenants.Add(mapper.Map<Api.Tenant>(mTenant));

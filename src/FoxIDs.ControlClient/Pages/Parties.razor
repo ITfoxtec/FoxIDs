@@ -1,22 +1,89 @@
 ﻿@page "/{tenantName}/parties"
 @inherits PageBase
-@inject RouteBindingLogic routeBinding
 
 <h3>Parties</h3>
 
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
-        <a class="nav-link active" href="#">Down Parties</a>
+        <a class="nav-link @(showDownPartyTab ? "active" : "")" @onclick="@(async () => await ShowDownPartyTabAsync())">Down Parties</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#">Up Parties</a>
+        <a class="nav-link @(!showDownPartyTab ? "active" : "")" @onclick="@(async () => await ShowUpPartyTabAsync())">Up Parties</a>
     </li>
 </ul>
 
+<div class="tab-content">
+    @if (showDownPartyTab)
+    {
+        <div>
+            <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
+                <div class="form-group active-group">
+                    <div class="input-group">
+                        <InputText @bind-Value="downPartyFilterForm.Model.FilterName" class="form-control input-control" />
+                        <Label For="@(() => downPartyFilterForm.Model.FilterName)" class="label-control" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Go</button>
+                        </div>
+                    </div>
+                    <ValidationMessage For="@(() => downPartyFilterForm.Model.FilterName)" />
+                </div>
+            </PageEditForm>
+
+            <ul class="list-group list-group-flush">
+                @foreach (var downParty in downParties)
+                {
+                    <li class="list-group-item">
+                        <button class="btn btn-link" @onclick="@(async () => await ShowDownPartyAsync(@downParty.Name))">
+                            @downParty.Name, type: @downParty.Type<br />
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <div>
+            <PageEditForm @ref="upPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
+                <div class="form-group active-group">
+                    <div class="input-group">
+                        <InputText @bind-Value="upPartyFilterForm.Model.FilterName" class="form-control input-control" />
+                        <Label For="@(() => upPartyFilterForm.Model.FilterName)" class="label-control" />
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-primary">Go</button>
+                        </div>
+                    </div>
+                    <ValidationMessage For="@(() => upPartyFilterForm.Model.FilterName)" />
+                </div>
+            </PageEditForm>
+
+            <ul class="list-group list-group-flush">
+                @foreach (var upParty in upParties)
+                {
+                    <li class="list-group-item">
+                        <button class="btn btn-link" @onclick="@(async () => await ShowUpPartyAsync(@upParty.Name))">
+                            @upParty.Name, type: @upParty.Type<br />
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+</div>
+
+<Modal @ref="downPartyModal" Title="Down Party">
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
+    </div>
+</Modal>
+
+<Modal @ref="upPartyModal" Title="Up Party">
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
+    </div>
+</Modal>
 
 
-@code {
-    [Parameter]
-    public string TenantName { get; set; }
-}

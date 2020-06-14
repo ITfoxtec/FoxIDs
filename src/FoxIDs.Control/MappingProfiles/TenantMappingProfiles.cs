@@ -30,15 +30,17 @@ namespace FoxIDs.MappingProfiles
               .ReverseMap()
               .ForMember(d => d.Id, opt => opt.MapFrom(s => Tenant.IdFormat(s.Name).GetAwaiter().GetResult()));
 
-            CreateMap<HashSet<Tenant>, HashSet<Api.Tenant>>()
-              .ReverseMap();
-
             CreateMap<Track, Api.Track>()
               .ReverseMap()
               .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
 
-            CreateMap<HashSet<Track>, HashSet<Api.Track>>()
-              .ReverseMap();
+            CreateMap<UpParty, Api.UpParty>()
+              .ReverseMap()
+              .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
+
+            CreateMap<DownParty, Api.DownParty>()
+              .ReverseMap()
+              .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name).GetAwaiter().GetResult()));
 
             CreateMap<JsonWebKey, Api.JsonWebKey>()
                 .ReverseMap()

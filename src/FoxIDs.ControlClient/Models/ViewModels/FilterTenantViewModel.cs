@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SearchTenantViewModel
+    public class FilterTenantViewModel
     {
         /// <summary>
         /// Search by tenant name.
@@ -10,6 +10,6 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.Tenant.NameLength)]
         [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
         [Display(Name = "Search tenant")]
-        public string Name { get; set; }
+        public string FilterName { get; set; }
     }
 }

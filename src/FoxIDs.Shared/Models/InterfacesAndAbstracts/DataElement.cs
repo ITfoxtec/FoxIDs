@@ -11,6 +11,6 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "data_type")]
-        public virtual string DataType => Id.Substring(0, Id.IndexOf(':'));
+        public virtual string DataType { get; set; }
     }
 }

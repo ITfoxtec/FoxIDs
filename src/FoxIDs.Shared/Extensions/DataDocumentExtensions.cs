@@ -1,9 +1,26 @@
 ﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
 
 namespace FoxIDs
 {
     public static class DataDocumentExtensions
     {
+        public static void SetDataType(this IDataDocument document)
+        {
+            if(document is DataElement && (document as DataElement).DataType.IsNullOrEmpty())
+            {
+                if (document.Id.StartsWith("party:"))
+                {
+                    var idList = document.Id.Split(':');
+                    (document as DataElement).DataType = $"{idList[0]}:{idList[1]}";
+                }
+                else
+                {
+                    (document as DataElement).DataType = document.Id.Substring(0, document.Id.IndexOf(':'));
+                }
+            }
+        }
+
         public static string IdToMasterPartitionId(this string id)
         {
             if (id.StartsWith("prisk:"))

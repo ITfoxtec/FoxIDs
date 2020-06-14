@@ -175,6 +175,7 @@ namespace FoxIDs.Repository
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
             item.SetTenantPartitionId();
+            item.SetDataType();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -200,6 +201,7 @@ namespace FoxIDs.Repository
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
             item.SetTenantPartitionId();
+            item.SetDataType();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -225,6 +227,7 @@ namespace FoxIDs.Repository
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
             item.SetTenantPartitionId();
+            item.SetDataType();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;

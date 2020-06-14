@@ -25,6 +25,8 @@ namespace FoxIDs.Client.Infrastructure.Hosting
         {
             services.AddScoped<TenantService>();
             services.AddScoped<TrackService>();
+            services.AddScoped<DownPartyService>();
+            services.AddScoped<UpPartyService>();
 
             return services;
         }

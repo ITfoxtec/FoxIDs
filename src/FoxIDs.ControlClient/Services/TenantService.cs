@@ -18,7 +18,7 @@ namespace FoxIDs.Client.Services
             this.httpClient = httpClient;
         }
 
-        public async Task<IEnumerable<Tenant>> SearchTenantAsync(string filterName)
+        public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterName)
         {
             using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(filterApiUri)}?filterName={filterName}");
             var tenants = await response.ToObjectAsync<IEnumerable<Tenant>>();

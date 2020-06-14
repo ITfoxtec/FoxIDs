@@ -5,7 +5,13 @@
     <AuthorizeView>
         <Authorized>
             <ul class="navbar-nav mr-auto">
-                @if (!RouteBindingLogic.IsMasterTenant)
+                @if (RouteBindingLogic.IsMasterTenant)
+                {
+                    <li class="nav-item">
+                        <i>Master tenant and track</i>
+                    </li>
+                }
+                else
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -87,7 +87,7 @@ namespace FoxIDs.Client.Pages
         private void ShowTenant(string tenantName)
         {
             tenantInfo.Name = tenantName;
-            tenantInfo.LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{tenantName}";
+            tenantInfo.LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{tenantName}".ToLower();
             deleteTenantError = null;
             deleteTenantAcknowledge = false;
             tenantModal.Show();
@@ -98,11 +98,12 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await TenantService.DeleteTenantAsync(tenantName);
+                await OnTenantUpdatedAsync();
                 tenantModal.Hide();
             }
             catch (Exception ex)
             {
-                deleteTenantError = ex.Message + " Specified method is not supported.";
+                deleteTenantError = ex.Message;
             }
         }
 

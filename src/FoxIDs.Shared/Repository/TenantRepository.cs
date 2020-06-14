@@ -138,13 +138,8 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument
+        public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 20) where T : IDataDocument
         {
-            if (idKey != null)
-            {
-                await idKey.ValidateObjectAsync();
-            }
-
             var partitionId = PartitionIdFormat<T>(idKey);
             var orderedQueryable = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
             var query = (whereQuery == null) ? orderedQueryable.AsDocumentQuery() : orderedQueryable.Where(whereQuery).AsDocumentQuery();
@@ -310,13 +305,46 @@ namespace FoxIDs.Repository
             }
         }
 
+        public async Task DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
+        {
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            await idKey.ValidateObjectAsync();
+
+            var partitionId = PartitionIdFormat<T>(idKey);
+            var orderedQueryable = GetQueryAsync<T>(partitionId, -1);
+            var query = (whereQuery == null) ? orderedQueryable.AsDocumentQuery() : orderedQueryable.Where(whereQuery).AsDocumentQuery();
+
+            double totalRU = 0;
+            try
+            {
+                var response = await query.ExecuteNextAsync<T>();
+                totalRU += response.RequestCharge;
+                var li = response.ToHashSet();
+                foreach (var item in li) 
+                {
+                    var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
+                    var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(item.Id), requestOptions);
+                    totalRU += deleteResponse.RequestCharge;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(partitionId, ex);
+            }
+            finally
+            {
+                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - delete list type '{typeof(T)}'.", totalRU);
+            }
+        }
+
         private string PartitionIdFormat<T>(Track.IdKey idKey) where T : IDataDocument
         {
             if(typeof(T).Equals(typeof(Tenant)))
             {
                 return Tenant.PartitionIdFormat();
             }
-            else if (typeof(T).Equals(typeof(Tenant)))
+            else if (typeof(T).Equals(typeof(Track)))
             {
                 if (idKey == null) new ArgumentNullException(nameof(idKey));
                 return Track.PartitionIdFormat(idKey);

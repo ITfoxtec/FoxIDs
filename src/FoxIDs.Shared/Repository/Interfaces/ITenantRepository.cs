@@ -34,5 +34,6 @@ namespace FoxIDs.Repository
         /// </summary>
         Task DeleteAsync<T>(string id) where T : IDataDocument;
         Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument;
+        Task DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument;
     }
 }

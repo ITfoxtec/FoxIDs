@@ -54,7 +54,10 @@
     </div>
     <div class="modal-footer">
         <a class="btn btn-link" href="@tenantInfo.LoginUri" target="_blank">Open tenant</a>
-        <button class="btn btn-link" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
+        @if (!Constants.Routes.MasterTenantName.Equals(tenantInfo?.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            <button class="btn btn-link" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
+        }
         <br />
         <button class="btn btn-secondary" @onclick="@(() => tenantModal.Hide())">Close</button>
     </div>

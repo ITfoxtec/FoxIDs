@@ -1,15 +1,11 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Logic;
+﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
-using FoxIDs.Models.ViewModels;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Services
+namespace FoxIDs.Client.Services
 {
     public class TenantService : BaseService
     {

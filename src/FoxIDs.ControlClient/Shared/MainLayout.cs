@@ -1,9 +1,9 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Logic;
+﻿using FoxIDs.Client.Infrastructure;
+using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
-using FoxIDs.Models.ViewModels;
-using FoxIDs.Services;
-using FoxIDs.Shared.Components;
+using FoxIDs.Client.Models.ViewModels;
+using FoxIDs.Client.Services;
+using FoxIDs.Client.Shared.Components;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Shared
+namespace FoxIDs.Client.Shared
 {
     public partial class MainLayout
     {

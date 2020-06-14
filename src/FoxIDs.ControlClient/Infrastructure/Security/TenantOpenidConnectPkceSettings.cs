@@ -1,6 +1,6 @@
 ﻿using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 
-namespace FoxIDs.Infrastructure.Security
+namespace FoxIDs.Client.Infrastructure.Security
 {
     public class TenantOpenidConnectPkceSettings : OpenidConnectPkceSettings
     {

@@ -1,11 +1,11 @@
-﻿using FoxIDs.Logic;
+﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Services
+namespace FoxIDs.Client.Services
 {
     public class TrackService : BaseService
     {

@@ -1,4 +1,4 @@
-﻿using FoxIDs.Infrastructure.Security;
+﻿using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -6,7 +6,7 @@ using System;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Shared.Components
+namespace FoxIDs.Client.Shared.Components
 {
     public partial class PageEditForm<TModel> where TModel : new()
     {

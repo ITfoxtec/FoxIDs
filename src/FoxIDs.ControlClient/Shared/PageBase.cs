@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components;
 
-namespace FoxIDs.Shared
+namespace FoxIDs.Client.Shared
 {
     [Authorize]
     public class PageBase : ComponentBase

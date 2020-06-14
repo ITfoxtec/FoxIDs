@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Runtime.Serialization;
 
-namespace FoxIDs.Infrastructure
+namespace FoxIDs.Client.Infrastructure
 {
     [Serializable]
     public class FoxIDsApiException : Exception

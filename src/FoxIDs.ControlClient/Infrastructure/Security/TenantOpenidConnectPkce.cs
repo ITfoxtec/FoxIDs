@@ -1,12 +1,12 @@
 ﻿using Blazored.SessionStorage;
-using FoxIDs.Logic;
+using FoxIDs.Client.Logic;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Infrastructure.Security
+namespace FoxIDs.Client.Infrastructure.Security
 {
     public class TenantOpenidConnectPkce : OpenidConnectPkce
     {

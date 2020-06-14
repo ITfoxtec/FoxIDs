@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.ViewModels
+namespace FoxIDs.Client.Models.ViewModels
 {
     public class CreateTenantViewModel
     {

@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Logic
+namespace FoxIDs.Client.Logic
 {
     public class RouteBindingLogic
     {

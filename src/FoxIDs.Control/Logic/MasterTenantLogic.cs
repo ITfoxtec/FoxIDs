@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
             mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
             mControlClientDownParty.Client = new OidcDownClient
             {
-                RedirectUris = GetControlClientRedirectUris(controlClientBaseUri).ToList(),
+                RedirectUris = GetControlClientRedirectUris(tenantName, controlClientBaseUri).ToList(),
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceTenantScope }.ToList() } },
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),
@@ -163,10 +163,10 @@ namespace FoxIDs.Logic
             };
         }
 
-        private IEnumerable<string> GetControlClientRedirectUris(string baseUrl)
+        private IEnumerable<string> GetControlClientRedirectUris(string tenantName, string baseUrl)
         {
-            yield return UrlCombine.Combine(baseUrl, "authentication/login_callback");
-            yield return UrlCombine.Combine(baseUrl, "authentication/logout_callback");
+            yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/login_callback");
+            yield return UrlCombine.Combine(baseUrl, tenantName, "authentication/logout_callback");
         }
 
     }

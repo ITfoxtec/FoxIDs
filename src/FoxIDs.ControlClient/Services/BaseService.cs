@@ -1,7 +1,7 @@
-﻿using FoxIDs.Logic;
+﻿using FoxIDs.Client.Logic;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Services
+namespace FoxIDs.Client.Services
 {
     public abstract class BaseService
     {

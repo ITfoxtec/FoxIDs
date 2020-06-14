@@ -70,7 +70,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery) where T : IDataDocument
+        public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }

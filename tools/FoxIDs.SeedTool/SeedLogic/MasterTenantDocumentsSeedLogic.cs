@@ -80,7 +80,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var masterTenant = new Tenant();
             await masterTenant.SetIdAsync(new Tenant.IdKey { TenantName = settings.MasterTenant });
-            masterTenant.SetPartitionId();
+            masterTenant.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(masterTenant);
             Console.WriteLine("Tenant document created and saved in Cosmos DB");
@@ -98,7 +98,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 CheckPasswordRisk = true
             };
             await masterTrack.SetIdAsync(new Track.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack });
-            masterTrack.SetPartitionId();
+            masterTrack.SetTenantPartitionId();
             masterTrack.PrimaryKey = await CreateX509KeyAsync();
 
             await simpleTenantRepository.SaveAsync(masterTrack);
@@ -132,7 +132,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 LogoutConsent = LoginUpPartyLogoutConsent.Never
             };
             await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = loginName });
-            loginUpParty.SetPartitionId();
+            loginUpParty.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(loginUpParty);
             Console.WriteLine($"Login document created and saved in Cosmos DB");
@@ -159,7 +159,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             };
             await user.SetIdAsync(new User.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, Email = email });
             await secretHashLogic.AddSecretHashAsync(user, password);
-            user.SetPartitionId();
+            user.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(user);
             Console.WriteLine($"Administrator user document created and saved in Cosmos DB");
@@ -178,7 +178,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             {
                 Scopes = controlApiResourceScopes.ToList()
             };
-            controlApiResourceDownParty.SetPartitionId();
+            controlApiResourceDownParty.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(controlApiResourceDownParty);
             Console.WriteLine($"FoxIDs control api resource document created and saved in Cosmos DB");
@@ -223,7 +223,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 RefreshTokenLifetimeUnlimited = false,
                 RequireLogoutIdTokenHint = true,
             };
-            controlClientDownParty.SetPartitionId();
+            controlClientDownParty.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(controlClientDownParty);
             Console.WriteLine("Control client document created and saved in Cosmos DB");
@@ -283,7 +283,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             (var secret, var oauthClientSecret) = await CreateSecretAsync();
             seedClientDownParty.Client.Secrets = new List<OAuthClientSecret> { oauthClientSecret };
-            seedClientDownParty.SetPartitionId();
+            seedClientDownParty.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(seedClientDownParty);
             Console.WriteLine("Seed client document created and saved in Cosmos DB");

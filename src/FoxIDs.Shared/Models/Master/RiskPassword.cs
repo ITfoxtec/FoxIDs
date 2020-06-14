@@ -16,6 +16,8 @@ namespace FoxIDs.Models
             return $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
         }
 
+        public static new string PartitionIdFormat(MasterDocument.IdKey idKey) => $"{idKey.Master}:prisk";
+
         [MaxLength(Constants.Models.RiskPassword.IdLength)]
         [RegularExpression(Constants.Models.RiskPassword.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]

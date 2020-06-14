@@ -4,19 +4,31 @@ namespace FoxIDs
 {
     public static class DataDocumentExtensions
     {
-        public static void SetPartitionId(this IDataDocument document)
+        public static string IdToMasterPartitionId(this string id)
         {
-            document.PartitionId = IdToPartitionId(document.Id);
+            if (id.StartsWith("prisk:"))
+            {
+                return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
+            }
+            else
+            {
+                return MasterDocument.PartitionIdFormat(new MasterDocument.IdKey());
+            }
         }
 
-        public static string IdToPartitionId(this string id)
+        public static void SetTenantPartitionId(this IDataDocument document)
+        {
+            document.PartitionId = IdToTenantPartitionId(document.Id);
+        }
+
+        public static string IdToTenantPartitionId(this string id)
         {
             var idList = id.Split(':');
             if (id.StartsWith("tenant:"))
             {
                 return Tenant.PartitionIdFormat();
             }
-            else if(id.StartsWith("track:"))
+            else if (id.StartsWith("track:"))
             {
                 return Track.PartitionIdFormat(new Track.IdKey { TenantName = idList[1], TrackName = idList[2] });
             }

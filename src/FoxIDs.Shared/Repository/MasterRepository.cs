@@ -35,7 +35,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var partitionId = IdToPartitionId(id);
+            var partitionId = id.IdToMasterPartitionId();
             var query = GetQueryAsync<T>(partitionId).Where(d => d.Id == id).Select(d => d.Id).Take(1).AsDocumentQuery();
 
             double totalRU = 0;
@@ -59,7 +59,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadDocumentAsync<T>(id, IdToPartitionId(id), requered);
+            return await ReadDocumentAsync<T>(id, id.IdToMasterPartitionId(), requered);
         }
 
         //public Task<FeedResponse<TResult>> GetQueryAsync<T, TResult>(T item, Expression<Func<T, bool>> whereQuery, Expression<Func<T, TResult>> selector) where T : MasterDocument
@@ -172,7 +172,7 @@ namespace FoxIDs.Repository
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            item.PartitionId = IdToPartitionId(item.Id);
+            item.PartitionId = item.Id.IdToMasterPartitionId();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -197,7 +197,7 @@ namespace FoxIDs.Repository
             var firstItem = items.First();
             if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
 
-            var partitionId = IdToPartitionId(firstItem.Id);
+            var partitionId = firstItem.Id.IdToMasterPartitionId();
             foreach(var item in items)
             {
                 item.PartitionId = partitionId;
@@ -239,7 +239,7 @@ namespace FoxIDs.Repository
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            var partitionId = IdToPartitionId(item.Id);
+            var partitionId = item.Id.IdToMasterPartitionId();
 
             double totalRU = 0;
             try
@@ -264,7 +264,7 @@ namespace FoxIDs.Repository
         //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
         //    if (item.DataType.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.DataType), item.GetType().Name);
 
-        //    await DeleteAllByTypeAsync<T>(IdToPartitionId(item.Id), item.DataType);
+        //    await DeleteAllByTypeAsync<T>(item.Id.IdToMasterPartitionId(), item.DataType);
         //}
 
         //public async Task DeleteAllByTypeAsync<T>(string partitionId, string dataType) where T : MasterDocument
@@ -313,10 +313,17 @@ namespace FoxIDs.Repository
             return client.CreateDocumentQuery<T>(collectionUri, feedOptions);
         }
 
-        private string IdToPartitionId(string id)
+        private string PartitionIdFormat<T>(MasterDocument.IdKey idKey) where T : MasterDocument
         {
-            var idList = id.Split(':');
-            return idList[1];
+            if (idKey == null) new ArgumentNullException(nameof(idKey));
+            if (typeof(T).Equals(typeof(RiskPassword)))
+            {
+                return RiskPassword.PartitionIdFormat(idKey);
+            }
+            else
+            {
+                return MasterDocument.PartitionIdFormat(idKey);
+            }
         }
 
         private Uri GetDocumentLink<T>(string id) where T : IDataDocument

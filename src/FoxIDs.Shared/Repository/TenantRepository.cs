@@ -40,7 +40,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var partitionId = id.IdToPartitionId();
+            var partitionId = id.IdToTenantPartitionId();
             var query = GetQueryAsync<T>(partitionId).Where(d => d.Id == id).Select(d => d.Id).Take(1).AsDocumentQuery();
 
             double totalRU = 0;
@@ -65,7 +65,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadDocumentAsync<T>(id, id.IdToPartitionId(), requered, delete);
+            return await ReadDocumentAsync<T>(id, id.IdToTenantPartitionId(), requered, delete);
         }
 
         public async Task<Tenant> GetTenantByNameAsync(string tenantName, bool requered = true)
@@ -174,7 +174,7 @@ namespace FoxIDs.Repository
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            item.SetPartitionId();
+            item.SetTenantPartitionId();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -199,7 +199,7 @@ namespace FoxIDs.Repository
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            item.SetPartitionId();
+            item.SetTenantPartitionId();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -224,7 +224,7 @@ namespace FoxIDs.Repository
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
-            item.SetPartitionId();
+            item.SetTenantPartitionId();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -248,7 +248,7 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var partitionId = id.IdToPartitionId();
+            var partitionId = id.IdToTenantPartitionId();
 
             double totalRU = 0;
             try

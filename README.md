@@ -1,6 +1,6 @@
 # FoxIDs
 
-FoxIDs is an open source security service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+FoxIDs is an open source security cloud service (identity service) supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
 
 FoxIDs is a cloud service which is deployed in you Azure tenant and rely on Azure resources. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 

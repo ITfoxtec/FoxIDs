@@ -1,7 +1,11 @@
 ﻿@page "/{tenantName}/tenants"
 @inherits PageBase
 
-<h3>Tenants</h3>
+<div class="d-flex">
+    <div class="mr-auto p-2">
+        <h3>Tenants</h3>
+    </div>
+</div>
 
 <PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
     <div class="form-group active-group">

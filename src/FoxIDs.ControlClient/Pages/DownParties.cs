@@ -14,6 +14,10 @@ namespace FoxIDs.Client.Pages
 {
     public partial class DownParties
     {
+        private Modal createDownPartyModal;
+        private PageEditForm<CreateTenantViewModel> createDownPartyForm;
+        private bool createDownPartyDone;
+        private List<string> createDownPartyReceipt = new List<string>();
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
         private IEnumerable<DownParty> downParties = new List<DownParty>();
         private Modal downPartyModal;
@@ -64,6 +68,35 @@ namespace FoxIDs.Client.Pages
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     downPartyFilterForm.SetFieldError(nameof(downPartyFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void ShowCreateDownPartyModal()
+        {
+            createDownPartyDone = false;
+            createDownPartyReceipt = new List<string>();
+            createDownPartyForm.Init();
+            createDownPartyModal.Show();
+        }
+
+        private async Task OnCreateDownPartyValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                createDownPartyDone = true;
+
+                await OnDownPartyFilterValidSubmitAsync(null);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    createDownPartyForm.SetFieldError(nameof(createDownPartyForm.Model.Name), ex.Message);
                 }
                 else
                 {

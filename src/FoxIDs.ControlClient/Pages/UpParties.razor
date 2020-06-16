@@ -1,7 +1,14 @@
 ﻿@page "/{tenantName}/upparties"
 @inherits PageBase
 
-<h3>Parties</h3>
+<div class="d-flex">
+    <div class="mr-auto p-2">
+        <h3>Parties</h3>
+    </div>
+    <div class="p-2">
+        <button class="nav-link btn btn-link" @onclick="@(() => ShowCreateUpPartyModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Up Party</button>
+    </div>
+</div>
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
@@ -39,6 +46,24 @@
         </ul>
     </div>
 </div>
+
+<Modal @ref="createUpPartyModal" Title="Create Up Party">
+    <PageEditForm @ref="createUpPartyForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateUpPartyValidSubmitAsync">
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+            @if (!createUpPartyDone)
+            {
+                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => createUpPartyModal.Hide())">Cancel</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-secondary" @onclick="@(() => createUpPartyModal.Hide())">Close</button>
+            }
+        </div>
+    </PageEditForm>
+</Modal>
 
 <Modal @ref="upPartyModal" Title="Up Party">
     <div class="modal-body">

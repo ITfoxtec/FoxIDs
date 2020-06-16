@@ -14,6 +14,10 @@ namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
+        private Modal createUpPartyModal;
+        private PageEditForm<CreateTenantViewModel> createUpPartyForm;
+        private bool createUpPartyDone;
+        private List<string> createUpPartyReceipt = new List<string>();
         private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
         private IEnumerable<UpParty> upParties = new List<UpParty>();
         private Modal upPartyModal;
@@ -64,6 +68,35 @@ namespace FoxIDs.Client.Pages
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     upPartyFilterForm.SetFieldError(nameof(upPartyFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void ShowCreateUpPartyModal()
+        {
+            createUpPartyDone = false;
+            createUpPartyReceipt = new List<string>();
+            createUpPartyForm.Init();
+            createUpPartyModal.Show();
+        }
+
+        private async Task OnCreateUpPartyValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                createUpPartyDone = true;
+
+                await OnUpPartyFilterValidSubmitAsync(null);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    createUpPartyForm.SetFieldError(nameof(createUpPartyForm.Model.Name), ex.Message);
                 }
                 else
                 {

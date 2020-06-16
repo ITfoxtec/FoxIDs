@@ -11,13 +11,19 @@ a {
         color: #d87513;
     }
 
+h3 {
+    font-weight: 300;
+    padding-bottom: 8px;
+}
+
+h4 {
+    font-weight: 300;
+    padding-bottom: 8px;
+}
+
 .main-container {
     padding-top: 30px;
 }
-    .main-container > h3 {
-        font-weight: 300;
-        padding-bottom: 8px;
-    }
 
 #blazor-error-ui {
     background: lightyellow;
@@ -42,6 +48,10 @@ a {
 .navbar.navbar-main {
     border-bottom: 3px solid #fc7e01;
     background-color: #ffffff !important;
+}
+
+.navbar .navbar-brand {
+    font-size: 1.5rem;
 }
 
 .navbar .searchDropdown {

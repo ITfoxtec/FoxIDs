@@ -11,6 +11,14 @@ a {
         color: #d87513;
     }
 
+.btn-link {
+    color: #df8935;
+}
+
+    .btn-link:hover {
+        color: #d87513;
+    }
+
 h3 {
     font-weight: 300;
     padding-bottom: 8px;

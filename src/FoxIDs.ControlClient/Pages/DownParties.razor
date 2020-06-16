@@ -1,0 +1,48 @@
+﻿@page "/{tenantName}/downparties"
+@inherits PageBase
+
+<h3>Parties</h3>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Down Parties</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@upPartyHref">Up Parties</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <div>
+        <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
+            <div class="form-group active-group">
+                <div class="input-group">
+                    <InputText @bind-Value="downPartyFilterForm.Model.FilterName" class="form-control input-control" />
+                    <Label For="@(() => downPartyFilterForm.Model.FilterName)" class="label-control" />
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-primary">Go</button>
+                    </div>
+                </div>
+                <ValidationMessage For="@(() => downPartyFilterForm.Model.FilterName)" />
+            </div>
+        </PageEditForm>
+
+        <ul class="list-group list-group-flush">
+            @foreach (var downParty in downParties)
+            {
+                <li class="list-group-item">
+                    <button class="btn btn-link" @onclick="@(async () => await ShowDownPartyAsync(@downParty.Name))">
+                        @downParty.Name, type: @downParty.Type<br />
+                    </button>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+<Modal @ref="downPartyModal" Title="Down Party">
+    <div class="modal-body">
+    </div>
+    <div class="modal-footer">
+    </div>
+</Modal>

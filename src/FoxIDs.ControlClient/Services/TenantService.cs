@@ -29,7 +29,7 @@ namespace FoxIDs.Client.Services
         public async Task CreateTenantAsync(CreateTenantRequest tenant)
         {
             using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri), tenant);
-            var tenantResponse = await response.ToObjectAsync<Tenant>();
+            //var tenantResponse = await response.ToObjectAsync<Tenant>();
         }
 
         public async Task DeleteTenantAsync(string tenantName)

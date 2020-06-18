@@ -2,6 +2,7 @@
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Services
@@ -22,7 +23,11 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(filterApiUri)}?filterName={filterName}");
             var upParties = await response.ToObjectAsync<IEnumerable<UpParty>>();
             return upParties;
+        }
 
+        public async Task CreateLoginUpPartyAsync(LoginUpParty party)
+        {
+            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri), party);
         }
     }
 }

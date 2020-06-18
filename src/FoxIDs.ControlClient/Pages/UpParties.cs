@@ -9,14 +9,18 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Authentication;
+using FoxIDs.Client.Infrastructure.Security;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
-        private Modal createUpPartyModal;
-        private PageEditForm<CreateTenantViewModel> createUpPartyForm;
-        private bool createUpPartyDone;
+        private Modal createLoginUpPartyModal;
+        private PageEditForm<LoginUpPartyViewModel> createLoginUpPartyForm;
+
+        private PartyTypes createUpPartyType;
+
         private List<string> createUpPartyReceipt = new List<string>();
         private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
         private IEnumerable<UpParty> upParties = new List<UpParty>();
@@ -51,6 +55,10 @@ namespace FoxIDs.Client.Pages
             {
                 upParties = await UpPartyService.FilterUpPartyAsync(null);
             }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
             catch (Exception ex)
             {
                 upPartyFilterForm.SetError(ex.Message);
@@ -76,27 +84,48 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowCreateUpPartyModal()
+        private void ShowCreateUpPartyModal(PartyTypes type)
         {
-            createUpPartyDone = false;
-            createUpPartyReceipt = new List<string>();
-            createUpPartyForm.Init();
-            createUpPartyModal.Show();
+            createUpPartyType = type;
+            if(type == PartyTypes.Login)
+            {
+                createLoginUpPartyForm.Init();
+                createLoginUpPartyModal.Show();
+            }
+            else if (type == PartyTypes.Oidc)
+            {
+
+            }
+            else if (type == PartyTypes.Saml2)
+            {
+
+            }
         }
 
-        private async Task OnCreateUpPartyValidSubmitAsync(EditContext editContext)
+        private async Task OnCreateLoginUpPartyValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                createUpPartyDone = true;
-
+                await UpPartyService.CreateLoginUpPartyAsync(new LoginUpParty
+                {
+                    Name = createLoginUpPartyForm.Model.Name,
+                    SessionLifetime = createLoginUpPartyForm.Model.SessionLifetime,
+                    SessionAbsoluteLifetime = createLoginUpPartyForm.Model.SessionAbsoluteLifetime,
+                    PersistentSessionAbsoluteLifetime = createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime,
+                    PersistentSessionLifetimeUnlimited = createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited,
+                    EnableCancelLogin = createLoginUpPartyForm.Model.EnableCancelLogin,
+                    EnableCreateUser = createLoginUpPartyForm.Model.EnableCreateUser,
+                    LogoutConsent = createLoginUpPartyForm.Model.LogoutConsent,
+                    CssStyle = createLoginUpPartyForm.Model.CssStyle
+                });
                 await OnUpPartyFilterValidSubmitAsync(null);
+                createLoginUpPartyModal.Hide();
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    createUpPartyForm.SetFieldError(nameof(createUpPartyForm.Model.Name), ex.Message);
+                    createLoginUpPartyForm.SetFieldError(nameof(createLoginUpPartyForm.Model.Name), ex.Message);
                 }
                 else
                 {

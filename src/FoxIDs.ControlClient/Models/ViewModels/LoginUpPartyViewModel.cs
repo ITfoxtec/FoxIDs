@@ -1,56 +1,67 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Models.Api;
+using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpParty : INameValue
+    public class LoginUpPartyViewModel
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [Display(Name = "Up Party name")]
         public string Name { get; set; }
 
         /// <summary>
         /// Default 10 hours.
         /// </summary>
         [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)]
-        public int? SessionLifetime { get; set; } = 36000;
+        [Display(Name = "Session lifetime")]
+        public int SessionLifetime { get; set; } = 36000;
 
         /// <summary>
         /// Default 24 hours.
         /// </summary>
         [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
-        public int? SessionAbsoluteLifetime { get; set; } = 86400;
+        [Display(Name = "Session absolute lifetime")]
+        public int SessionAbsoluteLifetime { get; set; } = 86400;
 
         /// <summary>
         /// Default 0 minutes.
         /// </summary>
         [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
-        public int? PersistentSessionAbsoluteLifetime { get; set; } = 0;
+        [Display(Name = "Persistent session absolute lifetime")]
+        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
 
         /// <summary>
         /// Default false.
         /// </summary>
         [Required]
-        public bool? PersistentSessionLifetimeUnlimited { get; set; } = false;
+        [Display(Name = "Persistent session lifetime unlimited")]
+        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         /// <summary>
         /// Default true.
         /// </summary>
         [Required]
-        public bool? EnableCancelLogin { get; set; } = false;
+        [Display(Name = "Cancel login")]
+        public bool EnableCancelLogin { get; set; } = false;
 
         /// <summary>
         /// Default true.
         /// </summary>
         [Required]
-        public bool? EnableCreateUser { get; set; } = true;
+        [Display(Name = "Create user")]
+        public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
         /// Default if requered.
         /// </summary>
         [Required]
+        [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequered;
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
+        [Display(Name = "Css style")]
         public string CssStyle { get; set; }
     }
 }

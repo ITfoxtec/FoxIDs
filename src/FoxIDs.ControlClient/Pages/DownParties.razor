@@ -6,7 +6,16 @@
         <h3>Parties</h3>
     </div>
     <div class="p-2">
-        <button class="nav-link btn btn-primary" @onclick="@(() => ShowCreateDownPartyModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Down Party</button>
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Down Party
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownPartyModal(PartyTypes.Oidc))">OpenID Connect</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownPartyModal(PartyTypes.OAuth2))">OAuth 2.0</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownPartyModal(PartyTypes.Saml2))">Saml 2.0</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -47,9 +56,21 @@
     </div>
 </div>
 
-<Modal @ref="createDownPartyModal" Title="Create Down Party">
+<Modal @ref="createDownPartyModal" Title="@CreateTitle()">
     <PageEditForm @ref="createDownPartyForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateDownPartyValidSubmitAsync">
         <div class="modal-body">
+            @if (createDownPartyType == PartyTypes.OAuth2)
+            {
+
+            }
+            else if (createDownPartyType == PartyTypes.Oidc)
+            {
+
+            }
+            else if (createDownPartyType == PartyTypes.Saml2)
+            {
+
+            }
         </div>
         <div class="modal-footer">
             @if (!createDownPartyDone)

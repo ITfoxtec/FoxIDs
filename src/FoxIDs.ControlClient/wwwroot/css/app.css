@@ -87,7 +87,13 @@ h4 {
     }
 
 .dropdown-item.active, .dropdown-item:active {
+    color: #fff;
     background-color: #ea7c0f;
+}
+
+.btn:focus, .btn.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
 }
 
 .btn-primary {
@@ -96,13 +102,15 @@ h4 {
 }
 
     .btn-primary:hover {
+        color: #fff;
         background-color: #ea7c0f;
         border-color: #ea7c0f;
     }
 
     .btn-primary.focus, .btn-primary:focus {
+        color: #fff;
         background-color: #ea7c0f;
-        border-color: #ea7c0f;      
+        border-color: #ea7c0f;
     }
 
         .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
@@ -114,13 +122,44 @@ h4 {
         border-color: #ea7c0f;
     }
 
-.btn:focus, .btn.focus {
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+.btn-outline-primary {
+    color: #788489 !important;
+    border-color: #f19031 !important;
+}
+    .btn-outline-primary:hover, .btn-outline-primary.focus, .btn-outline-primary:focus {
+        color: #788489 !important;
+        background-color: #fff !important;
+        border-color: #f19031 !important;
+    }
+
+.toggle.btn-outline-primary .toggle-handle {
+    background-color: #f19031 !important;
+    border-color: #f19031 !important;
+}
+
+.btn-outline-secondary {
+    color: #788489 !important;
+}
+
+    .btn-outline-secondary:hover, .btn-outline-secondary.focus, .btn-outline-secondary:focus {
+        color: #788489 !important;
+        background-color: #fff !important;
+    }
+
+
+.toggle.btn-outline-secondary .toggle-handle {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;  
 }
 
 .form-group {
     margin-bottom: 1.3rem;
+}
+
+.form-check-input {
+    margin-left: 0!important;
+    height: 2.2rem;
+    width: 2.2rem;
 }
 
 .form-control:focus {
@@ -148,6 +187,7 @@ h4 {
     }
 
     .active-group .label-control {
+        display: block;
         color: #788489;
         padding-left: 0.8rem;
         top: 1.35rem;

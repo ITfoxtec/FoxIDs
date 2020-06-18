@@ -9,13 +9,16 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Authentication;
+using FoxIDs.Client.Infrastructure.Security;
 
 namespace FoxIDs.Client.Pages
 {
-    public partial class DownParties
+    public partial class DownParties 
     {
         private Modal createDownPartyModal;
         private PageEditForm<CreateTenantViewModel> createDownPartyForm;
+        private PartyTypes createDownPartyType;
         private bool createDownPartyDone;
         private List<string> createDownPartyReceipt = new List<string>();
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
@@ -51,6 +54,10 @@ namespace FoxIDs.Client.Pages
             {
                 downParties = await DownPartyService.FilterDownPartyAsync(null);
             }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
             catch (Exception ex)
             {
                 downPartyFilterForm.SetError(ex.Message);
@@ -76,12 +83,33 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowCreateDownPartyModal()
+        private void ShowCreateDownPartyModal(PartyTypes type)
         {
+            createDownPartyType = type;
             createDownPartyDone = false;
             createDownPartyReceipt = new List<string>();
             createDownPartyForm.Init();
             createDownPartyModal.Show();
+        }
+
+        private string CreateTitle()
+        {
+            Func<string> text = () =>
+            {
+                switch (createDownPartyType)
+                {
+                    case PartyTypes.Oidc:
+                        return "OpenID Connect";
+                    case PartyTypes.OAuth2:
+                        return "OAuth 2.0";
+                    case PartyTypes.Saml2:
+                        return "SAML 2.0";
+                    default:
+                        return string.Empty;
+                }
+            };
+
+            return $"Create {text()} Down Party";
         }
 
         private async Task OnCreateDownPartyValidSubmitAsync(EditContext editContext)

@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Security.Authentication;
+using FoxIDs.Client.Infrastructure.Security;
 
 namespace FoxIDs.Client.Pages
 {
@@ -46,6 +48,10 @@ namespace FoxIDs.Client.Pages
             {
                 await OnValidSubmitAsync(null);
                 StateHasChanged();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
             catch (Exception ex)
             {

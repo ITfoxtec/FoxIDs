@@ -6,7 +6,16 @@
         <h3>Parties</h3>
     </div>
     <div class="p-2">
-        <button class="nav-link btn btn-primary" @onclick="@(() => ShowCreateUpPartyModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Up Party</button>
+        <div class="btn-group" role="group">
+            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Up Party
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Login))">Login</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Oidc))">OpenID Connect</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Saml2))">Saml 2.0</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -47,20 +56,67 @@
     </div>
 </div>
 
-<Modal @ref="createUpPartyModal" Title="Create Up Party">
-    <PageEditForm @ref="createUpPartyForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateUpPartyValidSubmitAsync">
+<Modal @ref="createLoginUpPartyModal" Title="Create Login Up Party">
+    <PageEditForm @ref="createLoginUpPartyForm" TModel="LoginUpPartyViewModel" OnValidSubmit="OnCreateLoginUpPartyValidSubmitAsync">
         <div class="modal-body">
+            <div class="mb-3 alert alert-info" role="alert">
+                For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
+            </div>
+
+            <div class="form-group active-group">
+                <InputText @bind-Value="createLoginUpPartyForm.Model.Name" class="form-control input-control" autofocus />
+                <Label For="@(() => createLoginUpPartyForm.Model.Name)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.Name)" />
+            </div>
+            <div class="form-group active-group">
+                <InputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" class="form-control input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" />
+            </div>
+            <div class="form-group active-group">
+                <InputNumber @bind-Value="createLoginUpPartyForm.Model.SessionAbsoluteLifetime" class="form-control input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
+            </div>
+            <div class="form-group active-group">
+                <InputNumber @bind-Value="createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" class="form-control input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
+            </div>
+            <div class="form-group active-group">
+                <InputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" class="input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
+            </div>
+            <div class="form-group active-group">
+                <InputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCancelLogin" TextType="e.d" class="input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" />
+            </div>
+            <div class="form-group active-group">
+                <InputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCreateUser" TextType="e.d" class="input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" />
+            </div>
+            <div class="form-group active-group">
+                <InputSelect @bind-Value="createLoginUpPartyForm.Model.LogoutConsent" class="form-control input-control">
+                    <option value="@LoginUpPartyLogoutConsent.IfRequered">@LoginUpPartyLogoutConsent.IfRequered</option>
+                    <option value="@LoginUpPartyLogoutConsent.Always">@LoginUpPartyLogoutConsent.Always</option>
+                    <option value="@LoginUpPartyLogoutConsent.Never">@LoginUpPartyLogoutConsent.Never</option>
+                </InputSelect>
+                <Label For="@(() => createLoginUpPartyForm.Model.LogoutConsent)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.LogoutConsent)" />
+            </div>
+            <div class="form-group active-group">
+                <InputTextArea @bind-Value="createLoginUpPartyForm.Model.CssStyle" class="form-control input-control" />
+                <Label For="@(() => createLoginUpPartyForm.Model.CssStyle)" class="label-control" />
+                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.CssStyle)" />
+            </div>
+
         </div>
         <div class="modal-footer">
-            @if (!createUpPartyDone)
-            {
-                <button type="submit" class="btn btn-primary">Create</button>
-                <button type="button" class="btn btn-secondary" @onclick="@(() => createUpPartyModal.Hide())">Cancel</button>
-            }
-            else
-            {
-                <button type="button" class="btn btn-secondary" @onclick="@(() => createUpPartyModal.Hide())">Close</button>
-            }
+            <button type="submit" class="btn btn-primary">Create</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => createLoginUpPartyModal.Hide())">Cancel</button>
         </div>
     </PageEditForm>
 </Modal>

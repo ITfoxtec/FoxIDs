@@ -5,8 +5,8 @@
 <label @attributes="AdditionalAttributes">@label</label>
 
 @code {
-    [Parameter] 
-    public Expression<Func<string>> For { get; set; }
+    [Parameter]
+    public Expression<Func<object>> For { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IDictionary<string, object> AdditionalAttributes { get; set; }
@@ -15,9 +15,25 @@
 
     private string GetDisplayName()
     {
-        var expression = (MemberExpression)For.Body;
-        var all = expression.Member.GetCustomAttributes();
-        var value = expression.Member.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
-        return value?.Name ?? expression.Member.Name ?? "";
+        try
+        {
+            var expression = For.Body as MemberExpression;
+            if(expression == null)
+            {
+                var ue = For.Body as UnaryExpression;
+                if (ue != null)
+                {
+                    expression = ue.Operand as MemberExpression;
+                }
+            }
+
+            var all = expression.Member.GetCustomAttributes();
+            var value = expression.Member.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            return value?.Name ?? expression.Member.Name ?? "";
+        }
+        catch
+        {
+            return For.Name;
+        }
     }
 }

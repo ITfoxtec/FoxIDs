@@ -11,9 +11,13 @@
     private string liCssClass = liCssClassDefault;
     private bool isActive = false;
     private string tenantHref;
+    private string tenantAlternativHref;
 
     [Parameter]
     public string Href { get; set; }
+
+    [Parameter]
+    public string Tag { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -22,6 +26,10 @@
     {
         NavigationManager.LocationChanged += LocationChanged;
         tenantHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Href}";
+        if(!Tag.IsNullOrEmpty())
+        {
+            tenantAlternativHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Tag}";
+        }
         UpdateLiCssClass(NavigationManager.Uri);
         base.OnInitialized();
     }

@@ -1,4 +1,5 @@
-﻿using FoxIDs.Client.Infrastructure;
+﻿using FoxIDs.Client;
+using FoxIDs.Client.Infrastructure;
 using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;
@@ -106,18 +107,19 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await UpPartyService.CreateLoginUpPartyAsync(new LoginUpParty
-                {
-                    Name = createLoginUpPartyForm.Model.Name,
-                    SessionLifetime = createLoginUpPartyForm.Model.SessionLifetime,
-                    SessionAbsoluteLifetime = createLoginUpPartyForm.Model.SessionAbsoluteLifetime,
-                    PersistentSessionAbsoluteLifetime = createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime,
-                    PersistentSessionLifetimeUnlimited = createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited,
-                    EnableCancelLogin = createLoginUpPartyForm.Model.EnableCancelLogin,
-                    EnableCreateUser = createLoginUpPartyForm.Model.EnableCreateUser,
-                    LogoutConsent = createLoginUpPartyForm.Model.LogoutConsent,
-                    CssStyle = createLoginUpPartyForm.Model.CssStyle
-                });
+                //await UpPartyService.CreateLoginUpPartyAsync(new LoginUpParty
+                //{
+                //    Name = createLoginUpPartyForm.Model.Name,
+                //    SessionLifetime = createLoginUpPartyForm.Model.SessionLifetime,
+                //    SessionAbsoluteLifetime = createLoginUpPartyForm.Model.SessionAbsoluteLifetime,
+                //    PersistentSessionAbsoluteLifetime = createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime,
+                //    PersistentSessionLifetimeUnlimited = createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited,
+                //    EnableCancelLogin = createLoginUpPartyForm.Model.EnableCancelLogin,
+                //    EnableCreateUser = createLoginUpPartyForm.Model.EnableCreateUser,
+                //    LogoutConsent = createLoginUpPartyForm.Model.LogoutConsent,
+                //    CssStyle = createLoginUpPartyForm.Model.CssStyle
+                //});
+                await UpPartyService.CreateLoginUpPartyAsync(createLoginUpPartyForm.Model.Map<LoginUpParty>());
                 await OnUpPartyFilterValidSubmitAsync(null);
                 createLoginUpPartyModal.Hide();
             }

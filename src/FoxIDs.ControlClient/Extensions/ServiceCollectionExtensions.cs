@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Logging;
 using System;
 using System.Net.Http;
 
-namespace FoxIDs
+namespace FoxIDs.Client
 {
     public static class ServiceCollectionExtensions
     {

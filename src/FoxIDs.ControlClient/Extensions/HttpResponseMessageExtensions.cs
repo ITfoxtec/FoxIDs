@@ -4,19 +4,10 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace FoxIDs
+namespace FoxIDs.Client
 {
     public static class HttpResponseMessageExtensions
     {
-        private static JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions();
-
-        static HttpResponseMessageExtensions()
-        {
-            jsonSerializerOptions.IgnoreNullValues = true;
-            jsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        }
-
         /// <summary>
         /// Converts a HttpResponseMessage json string to an object.
         /// </summary>
@@ -28,8 +19,7 @@ namespace FoxIDs
             var responseText = await response.Content.ReadAsStringAsync();
             try
             {
-                var d = JsonSerializer.Deserialize<T>(responseText, jsonSerializerOptions);
-                return d;
+                return responseText.JsonDeserialize<T>();
             }
             catch (JsonException ex)
             {

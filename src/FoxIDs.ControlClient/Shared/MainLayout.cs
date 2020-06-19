@@ -63,20 +63,13 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                await TenantService.CreateTenantAsync(new CreateTenantRequest 
+                await TenantService.CreateTenantAsync(createTenantForm.Model.Map<CreateTenantRequest>(afterMap =>
                 {
-                    Name = createTenantForm.Model.Name, 
-                    AdministratorEmail = createTenantForm.Model.AdministratorEmail,
-                    AdministratorPassword = createTenantForm.Model.AdministratorPassword,
-                    ControlClientBaseUri = RouteBindingLogic.GetBaseUri()
-                });
+                    afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
+                }));
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
-
-                //await TrackService.CreateTrackAsync(new Track { Name = Constants.Routes.MasterTrackName }, createTenantForm.Model.Name);
                 createTenantReceipt.Add("Master track created.");
-
-
                 createTenantReceipt.Add("Master track default up party login created.");
                 createTenantReceipt.Add("First master track administrator user created.");
                 createTenantReceipt.Add("Master track down party control api created.");

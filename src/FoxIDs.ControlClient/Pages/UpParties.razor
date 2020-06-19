@@ -63,21 +63,9 @@
                 For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
             </div>
             <FInputText @bind-Value="createLoginUpPartyForm.Model.Name" For="@(() => createLoginUpPartyForm.Model.Name)" Focus="true" />
-            <div class="form-group active-group">
-                <InputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" class="form-control input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" />
-            </div>
-            <div class="form-group active-group">
-                <InputNumber @bind-Value="createLoginUpPartyForm.Model.SessionAbsoluteLifetime" class="form-control input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
-            </div>
-            <div class="form-group active-group">
-                <InputNumber @bind-Value="createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" class="form-control input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
-            </div>
+            <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" />
+            <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
+            <FInputNumber @bind-Value="createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
             <div class="form-group active-group">
                 <InputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" class="input-control" />
                 <Label For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" class="label-control" />

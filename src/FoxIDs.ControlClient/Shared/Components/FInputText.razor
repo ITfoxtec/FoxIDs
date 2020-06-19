@@ -1,0 +1,10 @@
+﻿@inherits FInputBase<string>
+
+<div class="form-group active-group">
+    <input @ref="inputElement" type="text" @bind="@CurrentValue" class="form-control input-control" />
+    <Label For="@For" class="label-control" />
+    <ValidationMessage For="@For" />
+</div>
+
+@code {
+}

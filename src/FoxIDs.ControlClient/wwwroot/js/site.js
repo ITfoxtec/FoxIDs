@@ -1,4 +1,8 @@
 ﻿(function () {
+    window.SetElementFocus = (element) => {
+        element.focus();
+    };
+
     var setFocus = true;
 
     $('.input-control').each(function () {
@@ -44,5 +48,3 @@
     setInterval(browserValueCheck, 100);
 
 })();
-
-

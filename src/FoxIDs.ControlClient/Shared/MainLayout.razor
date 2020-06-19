@@ -101,16 +101,8 @@
 <Modal @ref="createTenantModal" Title="Create Tenant">
     <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
         <div class="modal-body">
-            <div class="form-group active-group">
-                <InputText @bind-Value="createTenantForm.Model.Name" class="form-control input-control" autofocus />
-                <Label For="@(() => createTenantForm.Model.Name)" class="label-control" />
-                <ValidationMessage For="@(() => createTenantForm.Model.Name)" />
-            </div>
-            <div class="form-group active-group">
-                <InputText @bind-Value="createTenantForm.Model.AdministratorEmail" class="form-control input-control" />
-                <Label For="@(() => createTenantForm.Model.AdministratorEmail)" class="label-control" />
-                <ValidationMessage For="@(() => createTenantForm.Model.AdministratorEmail)" />
-            </div>
+            <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="createTenantForm.Model.AdministratorEmail" For="@(() => createTenantForm.Model.Name)" />
             <div class="form-group active-group">
                 <div class="input-group">
                     <InputText @bind-Value="createTenantForm.Model.AdministratorPassword" type="@(showCreateTenantPassword ? "text" : "password")" class="form-control input-control" />

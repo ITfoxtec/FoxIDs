@@ -1,3 +1,4 @@
+@typeparam TValue
 @using System.Reflection
 @using System.ComponentModel.DataAnnotations;
 @using System.Linq.Expressions;
@@ -6,7 +7,7 @@
 
 @code {
     [Parameter]
-    public Expression<Func<object>> For { get; set; }
+    public Expression<Func<TValue>> For { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public IDictionary<string, object> AdditionalAttributes { get; set; }

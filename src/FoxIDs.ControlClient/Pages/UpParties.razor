@@ -62,12 +62,7 @@
             <div class="mb-3 alert alert-info" role="alert">
                 For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
             </div>
-
-            <div class="form-group active-group">
-                <InputText @bind-Value="createLoginUpPartyForm.Model.Name" class="form-control input-control" autofocus />
-                <Label For="@(() => createLoginUpPartyForm.Model.Name)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.Name)" />
-            </div>
+            <FInputText @bind-Value="createLoginUpPartyForm.Model.Name" For="@(() => createLoginUpPartyForm.Model.Name)" Focus="true" />
             <div class="form-group active-group">
                 <InputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" class="form-control input-control" />
                 <Label For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" class="label-control" />

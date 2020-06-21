@@ -17,7 +17,6 @@ namespace FoxIDs.Client.Shared
     {
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
-        private bool showCreateTenantPassword = false;
         private bool createTenantDone;
         private List<string> createTenantReceipt = new List<string>();
         private Modal myProfileModal;

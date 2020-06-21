@@ -79,12 +79,7 @@
                 <Label For="@(() => createLoginUpPartyForm.Model.LogoutConsent)" class="label-control" />
                 <ValidationMessage For="@(() => createLoginUpPartyForm.Model.LogoutConsent)" />
             </div>
-            <div class="form-group active-group">
-                <InputTextArea @bind-Value="createLoginUpPartyForm.Model.CssStyle" class="form-control input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.CssStyle)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.CssStyle)" />
-            </div>
-
+            <FInputTextArea @bind-Value="createLoginUpPartyForm.Model.CssStyle" For="@(() => createLoginUpPartyForm.Model.CssStyle)"  />
         </div>
         <div class="modal-footer">
             <button type="submit" class="btn btn-primary">Create</button>

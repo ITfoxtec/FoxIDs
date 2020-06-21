@@ -1,0 +1,7 @@
+﻿@inherits FInputBase<string>
+
+<div class="form-group active-group">
+    <textarea  @ref="inputElement" @bind="@CurrentValue" class="form-control input-control" />
+    <Label For="@For" class="label-control" />
+    <ValidationMessage For="@For" />
+</div>

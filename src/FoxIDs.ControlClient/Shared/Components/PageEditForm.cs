@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Shared.Components
 {
-    public partial class PageEditForm<TModel> where TModel : new()
+    public partial class PageEditForm<TModel> where TModel : class, new()
     {
         private ValidationMessageStore validationMessageStore;
         private string error;
@@ -31,9 +31,9 @@ namespace FoxIDs.Client.Shared.Components
             base.OnInitialized();
         }
 
-        public void Init()
+        public void Init(TModel model = null)
         {            
-            Model = new TModel();
+            Model = model ?? new TModel();
             error = null;
             EditContext = new EditContext(Model);
             validationMessageStore = new ValidationMessageStore(EditContext);

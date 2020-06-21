@@ -34,11 +34,17 @@
             <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" Focus="true" />
         </PageEditForm>
 
+        @if (!loadPartyError.IsNullOrWhiteSpace())
+        {
+            <div class="alert alert-danger" role="alert">
+                @loadPartyError
+            </div>
+        }
         <ul class="list-group list-group-flush">
             @foreach (var upParty in upParties)
             {
                 <li class="list-group-item">
-                    <button class="btn btn-link" @onclick="@(async () => await ShowUpPartyAsync(@upParty.Name))">
+                    <button class="btn btn-link" @onclick="@(async () => await ShowEditUpPartyAsync(@upParty.Type, @upParty.Name))">
                         @upParty.Name, type: @upParty.Type<br />
                     </button>
                 </li>
@@ -47,38 +53,33 @@
     </div>
 </div>
 
-<Modal @ref="createLoginUpPartyModal" Title="Create Login Up Party">
-    <PageEditForm @ref="createLoginUpPartyForm" TModel="LoginUpPartyViewModel" OnValidSubmit="OnCreateLoginUpPartyValidSubmitAsync">
+<Modal @ref="editLoginUpPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Login Up Party")">
+    <PageEditForm @ref="editLoginUpPartyForm" TModel="LoginUpPartyViewModel" OnValidSubmit="OnEditLoginUpPartyValidSubmitAsync">
         <div class="modal-body">
-            <div class="mb-3 alert alert-info" role="alert">
-                For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
-            </div>
-            <FInputText @bind-Value="createLoginUpPartyForm.Model.Name" For="@(() => createLoginUpPartyForm.Model.Name)" Focus="true" />
-            <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" />
-            <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
-            <FInputNumber @bind-Value="createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
-            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
-            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCancelLogin" For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" TextType="e.d" />
-            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCreateUser" For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" TextType="e.d" />
-            <FInputSelect @bind-Value="createLoginUpPartyForm.Model.LogoutConsent" For="@(() => createLoginUpPartyForm.Model.LogoutConsent)">
+            @if (createMode)
+            {
+                <div class="mb-3 alert alert-info" role="alert">
+                    For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
+                </div>
+            }
+            <FInputText @bind-Value="editLoginUpPartyForm.Model.Name" For="@(() => editLoginUpPartyForm.Model.Name)" Focus="true" />
+            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionLifetime" For="@(() => editLoginUpPartyForm.Model.SessionLifetime)" />
+            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
+            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
+            <FInputToggle @bind-Value="editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
+            <FInputToggle @bind-Value="editLoginUpPartyForm.Model.EnableCancelLogin" For="@(() => editLoginUpPartyForm.Model.EnableCancelLogin)" TextType="e.d" />
+            <FInputToggle @bind-Value="editLoginUpPartyForm.Model.EnableCreateUser" For="@(() => editLoginUpPartyForm.Model.EnableCreateUser)" TextType="e.d" />
+            <FInputSelect @bind-Value="editLoginUpPartyForm.Model.LogoutConsent" For="@(() => editLoginUpPartyForm.Model.LogoutConsent)">
                 <option value="@LoginUpPartyLogoutConsent.IfRequered">@LoginUpPartyLogoutConsent.IfRequered</option>
                 <option value="@LoginUpPartyLogoutConsent.Always">@LoginUpPartyLogoutConsent.Always</option>
                 <option value="@LoginUpPartyLogoutConsent.Never">@LoginUpPartyLogoutConsent.Never</option>
             </FInputSelect>
-            <FInputTextArea @bind-Value="createLoginUpPartyForm.Model.CssStyle" For="@(() => createLoginUpPartyForm.Model.CssStyle)"  />
+            <FInputTextArea @bind-Value="editLoginUpPartyForm.Model.CssStyle" For="@(() => editLoginUpPartyForm.Model.CssStyle)" />
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Create</button>
-            <button type="button" class="btn btn-secondary" @onclick="@(() => createLoginUpPartyModal.Hide())">Cancel</button>
+            <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => editLoginUpPartyModal.Hide())">Cancel</button>
         </div>
     </PageEditForm>
 </Modal>
-
-<Modal @ref="upPartyModal" Title="Up Party">
-    <div class="modal-body">
-    </div>
-    <div class="modal-footer">
-    </div>
-</Modal>
-
 

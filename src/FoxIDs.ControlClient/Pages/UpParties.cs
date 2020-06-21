@@ -17,16 +17,14 @@ namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
-        private Modal createLoginUpPartyModal;
-        private PageEditForm<LoginUpPartyViewModel> createLoginUpPartyForm;
-
-        private PartyTypes createUpPartyType;
-
-        private List<string> createUpPartyReceipt = new List<string>();
         private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
         private IEnumerable<UpParty> upParties = new List<UpParty>();
-        private Modal upPartyModal;
         private string downPartyHref;
+
+        private string loadPartyError;
+        private bool createMode;
+        private Modal editLoginUpPartyModal;
+        private PageEditForm<LoginUpPartyViewModel> editLoginUpPartyForm;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -87,11 +85,11 @@ namespace FoxIDs.Client.Pages
 
         private void ShowCreateUpPartyModal(PartyTypes type)
         {
-            createUpPartyType = type;
-            if(type == PartyTypes.Login)
+            createMode = true;
+            if (type == PartyTypes.Login)
             {
-                createLoginUpPartyForm.Init();
-                createLoginUpPartyModal.Show();
+                editLoginUpPartyForm.Init();
+                editLoginUpPartyModal.Show();
             }
             else if (type == PartyTypes.Oidc)
             {
@@ -103,19 +101,26 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task OnCreateLoginUpPartyValidSubmitAsync(EditContext editContext)
+        private async Task OnEditLoginUpPartyValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                await UpPartyService.CreateLoginUpPartyAsync(createLoginUpPartyForm.Model.Map<LoginUpParty>());
-                await OnUpPartyFilterValidSubmitAsync(null);
-                createLoginUpPartyModal.Hide();
+                if(createMode)
+                {
+                    await UpPartyService.UpdateLoginUpPartyAsync(editLoginUpPartyForm.Model.Map<LoginUpParty>());
+                    await OnUpPartyFilterValidSubmitAsync(null);
+                }
+                else
+                {
+                    await UpPartyService.UpdateLoginUpPartyAsync(editLoginUpPartyForm.Model.Map<LoginUpParty>());
+                }
+                editLoginUpPartyModal.Hide();
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    createLoginUpPartyForm.SetFieldError(nameof(createLoginUpPartyForm.Model.Name), ex.Message);
+                    editLoginUpPartyForm.SetFieldError(nameof(editLoginUpPartyForm.Model.Name), ex.Message);
                 }
                 else
                 {
@@ -124,9 +129,35 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task ShowUpPartyAsync(string upPartyName)
+        private async Task ShowEditUpPartyAsync(PartyTypes type, string upPartyName)
         {
+            loadPartyError = null;
+            createMode = false;
+            if (type == PartyTypes.Login)
+            {
+                try
+                {
+                    var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upPartyName);
+                    editLoginUpPartyForm.Init(loginUpParty.Map<LoginUpPartyViewModel>());
+                    editLoginUpPartyModal.Show();
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    loadPartyError = ex.Message;
+                }                
+            }
+            else if (type == PartyTypes.Oidc)
+            {
 
+            }
+            else if (type == PartyTypes.Saml2)
+            {
+
+            }
         }
     }
 }

@@ -25,9 +25,22 @@ namespace FoxIDs.Client.Services
             return upParties;
         }
 
+        public async Task<LoginUpParty> GetLoginUpPartyAsync(string name)
+        {
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(loginApiUri)}?name={name}");
+            var loginUpParties = await response.ToObjectAsync<LoginUpParty>();
+            return loginUpParties;
+        }
+
         public async Task CreateLoginUpPartyAsync(LoginUpParty party)
         {
             using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
         }
+
+        public async Task UpdateLoginUpPartyAsync(LoginUpParty party)
+        {
+            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
+        }
+
     }
 }

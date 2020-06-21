@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Services
 {
     public class UpPartyService : BaseService
     {
-        private const string apiUri = "api/{tenant}/master/!upparty";
+        private const string loginApiUri = "api/{tenant}/master/!loginupparty";
         private const string filterApiUri = "api/{tenant}/master/!filterupparty";
         private readonly HttpClient httpClient;
 
@@ -27,7 +27,7 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateLoginUpPartyAsync(LoginUpParty party)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri), party);
+            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
         }
     }
 }

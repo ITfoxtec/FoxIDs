@@ -1,13 +1,12 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using ITfoxtec.Identity.Saml2.Schemas;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel.Security;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpParty : INameValue
+    public class SamlUpPartyViewModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

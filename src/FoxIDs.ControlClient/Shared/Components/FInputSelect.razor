@@ -1,0 +1,22 @@
+﻿@typeparam TValue
+@inherits FInputBase<TValue>
+
+<div class="form-group active-group">
+    <select @ref="inputElement" @bind="@CurrentValueAsString" class="form-control input-control">
+        @if (ShowDefaultOption)
+        {
+            <option value="0" hidden disabled>- Please Select -</option>
+        }
+        @ChildContent
+    </select>
+    <Label For="@For" class="label-control" />
+    <ValidationMessage For="@For" />
+</div>
+
+@code {
+    [Parameter]
+    public bool ShowDefaultOption { get; set; } = false;
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

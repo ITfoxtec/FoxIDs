@@ -60,6 +60,21 @@ namespace FoxIDs.Client.Shared.Components
                     return false;
                 }
             }
+            else if (typeof(TValue).IsEnum)
+            {
+                try
+                {
+                    result = (TValue)Enum.Parse(typeof(TValue), value);
+                    validationErrorMessage = null;
+                    return true;
+                }
+                catch (ArgumentException)
+                {
+                    result = default;
+                    validationErrorMessage = $"Unable to pass '{value}' value to enum.";
+                    return false;
+                }
+            }
             else
             {
                 throw new NotImplementedException();

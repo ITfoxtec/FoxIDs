@@ -60,16 +60,11 @@
             <FInputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
             <FInputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCancelLogin" For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" TextType="e.d" />
             <FInputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCreateUser" For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" TextType="e.d" />
-
-            <div class="form-group active-group">
-                <InputSelect @bind-Value="createLoginUpPartyForm.Model.LogoutConsent" class="form-control input-control">
-                    <option value="@LoginUpPartyLogoutConsent.IfRequered">@LoginUpPartyLogoutConsent.IfRequered</option>
-                    <option value="@LoginUpPartyLogoutConsent.Always">@LoginUpPartyLogoutConsent.Always</option>
-                    <option value="@LoginUpPartyLogoutConsent.Never">@LoginUpPartyLogoutConsent.Never</option>
-                </InputSelect>
-                <Label For="@(() => createLoginUpPartyForm.Model.LogoutConsent)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.LogoutConsent)" />
-            </div>
+            <FInputSelect @bind-Value="createLoginUpPartyForm.Model.LogoutConsent" For="@(() => createLoginUpPartyForm.Model.LogoutConsent)">
+                <option value="@LoginUpPartyLogoutConsent.IfRequered">@LoginUpPartyLogoutConsent.IfRequered</option>
+                <option value="@LoginUpPartyLogoutConsent.Always">@LoginUpPartyLogoutConsent.Always</option>
+                <option value="@LoginUpPartyLogoutConsent.Never">@LoginUpPartyLogoutConsent.Never</option>
+            </FInputSelect>
             <FInputTextArea @bind-Value="createLoginUpPartyForm.Model.CssStyle" For="@(() => createLoginUpPartyForm.Model.CssStyle)"  />
         </div>
         <div class="modal-footer">

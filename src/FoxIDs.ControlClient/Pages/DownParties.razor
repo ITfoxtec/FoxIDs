@@ -31,16 +31,7 @@
 <div class="tab-content">
     <div>
         <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
-            <div class="form-group active-group">
-                <div class="input-group">
-                    <InputText @bind-Value="downPartyFilterForm.Model.FilterName" class="form-control input-control" />
-                    <Label For="@(() => downPartyFilterForm.Model.FilterName)" class="label-control" />
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-primary">Go</button>
-                    </div>
-                </div>
-                <ValidationMessage For="@(() => downPartyFilterForm.Model.FilterName)" />
-            </div>
+            <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" Focus="true" />
         </PageEditForm>
 
         <ul class="list-group list-group-flush">

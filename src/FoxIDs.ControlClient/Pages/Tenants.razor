@@ -8,16 +8,7 @@
 </div>
 
 <PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
-    <div class="form-group active-group">
-        <div class="input-group">
-            <InputText @bind-Value="searchTenantForm.Model.FilterName" class="form-control input-control" />
-            <Label For="@(() => searchTenantForm.Model.FilterName)" class="label-control" />
-            <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">Go</button>
-            </div>
-        </div>
-        <ValidationMessage For="@(() => searchTenantForm.Model.FilterName)" />
-    </div>
+    <FInputTextFilter @bind-Value="searchTenantForm.Model.FilterName" For="@(() => searchTenantForm.Model.FilterName)" Focus="true" />
 </PageEditForm>
 
 <ul class="list-group list-group-flush">

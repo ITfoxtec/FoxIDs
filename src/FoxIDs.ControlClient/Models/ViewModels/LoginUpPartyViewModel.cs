@@ -6,6 +6,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class LoginUpPartyViewModel
     {
+        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Up Party name")]
@@ -14,6 +15,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Default 10 hours.
         /// </summary>
+        [Required]
         [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)]
         [Display(Name = "Session lifetime")]
         public int SessionLifetime { get; set; } = 36000;
@@ -21,6 +23,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Default 24 hours.
         /// </summary>
+        [Required]
         [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
         [Display(Name = "Session absolute lifetime")]
         public int SessionAbsoluteLifetime { get; set; } = 86400;
@@ -28,6 +31,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Default 0 minutes.
         /// </summary>
+        [Required]
         [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
         [Display(Name = "Persistent session absolute lifetime")]
         public int PersistentSessionAbsoluteLifetime { get; set; } = 0;

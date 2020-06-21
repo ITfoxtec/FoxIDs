@@ -2,7 +2,7 @@
 
 <div class="form-group active-group">
     <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-outline-secondary off")" @onclick="@(() => ToggleCurrentValue())" data-toggle="toggle" role="button" style="width: @width; height: 38px;">
-        <input @ref="inputElement" class="@CssClass" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
+        <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
         <div class="toggle-group">
             <label class="btn btn-outline-primary toggle-on">@onText</label>
             <label class="btn btn-outline-secondary toggle-off">@offText</label>
@@ -12,9 +12,6 @@
     <Label For="@For" class="label-control" />
     <ValidationMessage For="@For" />
 </div>
-
-
-
 
 @code {
     private string width = "65px";

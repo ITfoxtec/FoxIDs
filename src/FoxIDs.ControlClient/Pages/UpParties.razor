@@ -66,24 +66,10 @@
             <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" />
             <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
             <FInputNumber @bind-Value="createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
+            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
+            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCancelLogin" For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" TextType="e.d" />
+            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCreateUser" For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" TextType="e.d" />
 
-            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" class="input-control" />
-
-            @*<div class="form-group active-group">
-                <InputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" class="input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
-            </div>*@
-            <div class="form-group active-group">
-                <InputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCancelLogin" TextType="e.d" class="input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" />
-            </div>
-            <div class="form-group active-group">
-                <InputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCreateUser" TextType="e.d" class="input-control" />
-                <Label For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" class="label-control" />
-                <ValidationMessage For="@(() => createLoginUpPartyForm.Model.EnableCreateUser)" />
-            </div>
             <div class="form-group active-group">
                 <InputSelect @bind-Value="createLoginUpPartyForm.Model.LogoutConsent" class="form-control input-control">
                     <option value="@LoginUpPartyLogoutConsent.IfRequered">@LoginUpPartyLogoutConsent.IfRequered</option>

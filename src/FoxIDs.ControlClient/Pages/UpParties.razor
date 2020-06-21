@@ -66,11 +66,14 @@
             <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionLifetime" For="@(() => createLoginUpPartyForm.Model.SessionLifetime)" />
             <FInputNumber @bind-Value="createLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
             <FInputNumber @bind-Value="createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => createLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
-            <div class="form-group active-group">
+
+            <FInputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" class="input-control" />
+
+            @*<div class="form-group active-group">
                 <InputToggle @bind-Value="createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" class="input-control" />
                 <Label For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" class="label-control" />
                 <ValidationMessage For="@(() => createLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
-            </div>
+            </div>*@
             <div class="form-group active-group">
                 <InputToggle @bind-Value="createLoginUpPartyForm.Model.EnableCancelLogin" TextType="e.d" class="input-control" />
                 <Label For="@(() => createLoginUpPartyForm.Model.EnableCancelLogin)" class="label-control" />

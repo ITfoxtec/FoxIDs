@@ -28,6 +28,38 @@ namespace FoxIDs.Client.Shared.Components
                 validationErrorMessage = null;
                 return true;
             }
+            else if (typeof(TValue) == typeof(int))
+            {
+                var parseResult = int.TryParse(value, out var intResult);
+                if (parseResult)
+                {
+                    result = (TValue)Convert.ChangeType(intResult, typeof(TValue));
+                    validationErrorMessage = null;
+                    return true;
+                }
+                else
+                {
+                    result = default;
+                    validationErrorMessage = $"Unable to pass '{value}' value to int.";
+                    return false;
+                }
+            }
+            else if (typeof(TValue) == typeof(bool))
+            {
+                var parseResult = bool.TryParse(value, out var boolResult);
+                if (parseResult)
+                {
+                    result = (TValue)Convert.ChangeType(boolResult, typeof(TValue));
+                    validationErrorMessage = null;
+                    return true;
+                }
+                else
+                {
+                    result = default;
+                    validationErrorMessage = $"Unable to pass '{value}' value to bool.";
+                    return false;
+                }
+            }
             else
             {
                 throw new NotImplementedException();

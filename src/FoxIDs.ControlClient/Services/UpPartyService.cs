@@ -25,6 +25,7 @@ namespace FoxIDs.Client.Services
             return upParties;
         }
 
+        #region LoginUpParty
         public async Task<LoginUpParty> GetLoginUpPartyAsync(string name)
         {
             using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(loginApiUri)}?name={name}");
@@ -41,6 +42,12 @@ namespace FoxIDs.Client.Services
         {
             using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
         }
+
+        public async Task DeleteLoginUpPartyAsync(string name)
+        {
+            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(loginApiUri)}?name={name}");
+        } 
+        #endregion
 
     }
 }

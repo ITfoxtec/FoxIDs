@@ -31,7 +31,7 @@
 <div class="tab-content">
     <div>
         <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
-            <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" Focus="true" />
+            <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" />
         </PageEditForm>
 
         <ul class="list-group list-group-flush">

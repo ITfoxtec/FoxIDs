@@ -32,9 +32,9 @@ namespace FoxIDs.Client.Services
             //var tenantResponse = await response.ToObjectAsync<Tenant>();
         }
 
-        public async Task DeleteTenantAsync(string tenantName)
+        public async Task DeleteTenantAsync(string name)
         {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(apiUri)}?name={tenantName}");
+            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(apiUri)}?name={name}");
         }
     }
 }

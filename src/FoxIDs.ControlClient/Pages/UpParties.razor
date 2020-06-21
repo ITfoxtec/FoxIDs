@@ -31,7 +31,7 @@
 <div class="tab-content">
     <div>
         <PageEditForm @ref="upPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
-            <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" Focus="true" />
+            <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" />
         </PageEditForm>
 
         @if (!loadPartyError.IsNullOrWhiteSpace())
@@ -44,7 +44,7 @@
             @foreach (var upParty in upParties)
             {
                 <li class="list-group-item">
-                    <button class="btn btn-link" @onclick="@(async () => await ShowEditUpPartyAsync(@upParty.Type, @upParty.Name))">
+                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUpPartyAsync(@upParty.Type, @upParty.Name))">
                         @upParty.Name, type: @upParty.Type<br />
                     </button>
                 </li>
@@ -75,8 +75,25 @@
                 <option value="@LoginUpPartyLogoutConsent.Never">@LoginUpPartyLogoutConsent.Never</option>
             </FInputSelect>
             <FInputTextArea @bind-Value="editLoginUpPartyForm.Model.CssStyle" For="@(() => editLoginUpPartyForm.Model.CssStyle)" />
+            @if (!createMode && deleteAcknowledge)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <div>
+                        You are about to delete login up party "@currentUpPartyName", are you sure?
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteLoginUpPartyAsync(currentUpPartyName))">Yes delete</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => deleteAcknowledge = false)">No</button>
+                    </div>
+                </div>
+            }
         </div>
         <div class="modal-footer">
+            @if (!createMode)
+            {
+                <button type="button" class="btn btn-link" @onclick="@(() => deleteAcknowledge = true)">Delete</button>
+            }
             <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
             <button type="button" class="btn btn-secondary" @onclick="@(() => editLoginUpPartyModal.Hide())">Cancel</button>
         </div>

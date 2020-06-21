@@ -84,6 +84,10 @@ namespace FoxIDs.Client.Pages
             {
                 tenants = await TenantService.FilterTenantAsync(null);
             }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
             catch (Exception ex)
             {
                 searchTenantForm.SetError(ex.Message);
@@ -106,6 +110,10 @@ namespace FoxIDs.Client.Pages
                 await TenantService.DeleteTenantAsync(tenantName);
                 await OnTenantUpdatedAsync();
                 tenantModal.Hide();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
             catch (Exception ex)
             {

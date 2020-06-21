@@ -23,6 +23,8 @@ namespace FoxIDs.Client.Pages
 
         private string loadPartyError;
         private bool createMode;
+        private bool deleteAcknowledge;
+        private string currentUpPartyName;
         private Modal editLoginUpPartyModal;
         private PageEditForm<LoginUpPartyViewModel> editLoginUpPartyForm;
 
@@ -101,6 +103,39 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task ShowUpdateUpPartyAsync(PartyTypes type, string upPartyName)
+        {
+            loadPartyError = null;
+            createMode = false;
+            deleteAcknowledge = false;
+            if (type == PartyTypes.Login)
+            {
+                try
+                {
+                    var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upPartyName);
+                    currentUpPartyName = loginUpParty.Name;
+                    editLoginUpPartyForm.Init(loginUpParty.Map<LoginUpPartyViewModel>());
+                    editLoginUpPartyModal.Show();
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    loadPartyError = ex.Message;
+                }
+            }
+            else if (type == PartyTypes.Oidc)
+            {
+
+            }
+            else if (type == PartyTypes.Saml2)
+            {
+
+            }
+        }
+
         private async Task OnEditLoginUpPartyValidSubmitAsync(EditContext editContext)
         {
             try
@@ -128,35 +163,22 @@ namespace FoxIDs.Client.Pages
                 }
             }
         }
-
-        private async Task ShowEditUpPartyAsync(PartyTypes type, string upPartyName)
+     
+        private async Task DeleteLoginUpPartyAsync(string name)
         {
-            loadPartyError = null;
-            createMode = false;
-            if (type == PartyTypes.Login)
+            try
             {
-                try
-                {
-                    var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upPartyName);
-                    editLoginUpPartyForm.Init(loginUpParty.Map<LoginUpPartyViewModel>());
-                    editLoginUpPartyModal.Show();
-                }
-                catch (AuthenticationException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (Exception ex)
-                {
-                    loadPartyError = ex.Message;
-                }                
+                await UpPartyService.DeleteLoginUpPartyAsync(name);
+                await OnUpPartyFilterValidSubmitAsync(null);
+                editLoginUpPartyModal.Hide();
             }
-            else if (type == PartyTypes.Oidc)
+            catch (AuthenticationException)
             {
-
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
-            else if (type == PartyTypes.Saml2)
+            catch (Exception ex)
             {
-
+                editLoginUpPartyForm.SetError(ex.Message);
             }
         }
     }

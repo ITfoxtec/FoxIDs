@@ -236,3 +236,7 @@ h4 {
 .validation-errors {
     color: #a94442;
 }
+
+.modal-dialog-scrollable .modal-content {
+    overflow: auto;
+}

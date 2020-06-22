@@ -1,62 +1,86 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity.Saml2.Schemas;
+using System.Security.Cryptography.X509Certificates;
+using System.ServiceModel.Security;
+using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel
+    public class SamlUpPartyViewModel 
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [Display(Name = "Up Party name")]
         public string Name { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [Display(Name = "Optional custom issuer (default auto generated)")]
         public string IdSIssuer { get; set; }
 
         /// <summary>
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        public int? MetadataLifetime { get; set; } = 1728000;
+        [Display(Name = "Metadata lifetime")]
+        public int MetadataLifetime { get; set; } = 1728000;
 
         /// <summary>
         /// Default SHA256.
         /// </summary>
+        [Required]
         [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
+        [Display(Name = "Signature algorithm")]
         public string SignatureAlgorithm { get; set; } = Saml2SecurityAlgorithms.RsaSha256Signature;
 
         /// <summary>
         /// Default None.
         /// </summary>
+        [Required]
+        [Display(Name = "Certificate validation mode")]
         public X509CertificateValidationMode CertificateValidationMode { get; set; } = X509CertificateValidationMode.None;
 
         /// <summary>
         /// Default NoCheck.
         /// </summary>
+        [Required]
+        [Display(Name = "Revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
         [Required]
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 
         [Required]
-        public SamlBinding AuthnBinding { get; set; }
+        [Display(Name = "Authn request binding")]
+        public SamlBindingType AuthnRequestBinding { get; set; } = SamlBindingType.Redirect;
+
+        [Required]
+        [Display(Name = "Authn response binding")]
+        public SamlBindingType AuthnResponseBinding { get; set; } = SamlBindingType.Post;
 
         [Required]
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
+        [Display(Name = "Authn url")]
         public string AuthnUrl { get; set; }
 
         [Required]
         [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Display(Name = "Keys")]
         public List<JsonWebKey> Keys { get; set; }
 
-        [ValidateObject]
-        public SamlBinding LogoutBinding { get; set; }
+        [Display(Name = "Logout request binding")]
+        public SamlBindingType LogoutRequestBinding { get; set; } = SamlBindingType.Post;
+
+        [Display(Name = "Logout response binding")]
+        public SamlBindingType LogoutResponseBinding { get; set; } = SamlBindingType.Post;
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
+        [Display(Name = "Logout url")]
         public string LogoutUrl { get; set; }
     }
 }

@@ -23,10 +23,13 @@ namespace FoxIDs.Client.Pages
 
         private string loadPartyError;
         private bool createMode;
+        private bool showAdvanced;
         private bool deleteAcknowledge;
         private string currentUpPartyName;
         private Modal editLoginUpPartyModal;
         private PageEditForm<LoginUpPartyViewModel> editLoginUpPartyForm;
+        private Modal editSamlUpPartyModal;
+        private PageEditForm<SamlUpPartyViewModel> editSamlUpPartyForm;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -88,6 +91,7 @@ namespace FoxIDs.Client.Pages
         private void ShowCreateUpPartyModal(PartyTypes type)
         {
             createMode = true;
+            showAdvanced = false;
             if (type == PartyTypes.Login)
             {
                 editLoginUpPartyForm.Init();
@@ -99,7 +103,8 @@ namespace FoxIDs.Client.Pages
             }
             else if (type == PartyTypes.Saml2)
             {
-
+                editSamlUpPartyForm.Init();
+                editSamlUpPartyModal.Show();
             }
         }
 
@@ -108,6 +113,7 @@ namespace FoxIDs.Client.Pages
             loadPartyError = null;
             createMode = false;
             deleteAcknowledge = false;
+            showAdvanced = false;
             if (type == PartyTypes.Login)
             {
                 try
@@ -132,7 +138,21 @@ namespace FoxIDs.Client.Pages
             }
             else if (type == PartyTypes.Saml2)
             {
-
+                try
+                {
+                    var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(upPartyName);
+                    currentUpPartyName = samlUpParty.Name;
+                    editSamlUpPartyForm.Init(samlUpParty.Map<SamlUpPartyViewModel>());
+                    editSamlUpPartyModal.Show();
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    loadPartyError = ex.Message;
+                }
             }
         }
 
@@ -179,6 +199,52 @@ namespace FoxIDs.Client.Pages
             catch (Exception ex)
             {
                 editLoginUpPartyForm.SetError(ex.Message);
+            }
+        }
+
+        private async Task OnEditSamlUpPartyValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                if (createMode)
+                {
+                    await UpPartyService.UpdateSamlUpPartyAsync(editSamlUpPartyForm.Model.Map<SamlUpParty>());
+                    await OnUpPartyFilterValidSubmitAsync(null);
+                }
+                else
+                {
+                    await UpPartyService.UpdateSamlUpPartyAsync(editSamlUpPartyForm.Model.Map<SamlUpParty>());
+                }
+                editSamlUpPartyModal.Hide();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    editSamlUpPartyForm.SetFieldError(nameof(editSamlUpPartyForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task DeleteSamlUpPartyAsync(string name)
+        {
+            try
+            {
+                await UpPartyService.DeleteSamlUpPartyAsync(name);
+                await OnUpPartyFilterValidSubmitAsync(null);
+                editSamlUpPartyModal.Hide();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                editSamlUpPartyForm.SetError(ex.Message);
             }
         }
     }

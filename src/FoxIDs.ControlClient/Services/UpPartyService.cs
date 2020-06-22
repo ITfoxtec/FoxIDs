@@ -9,8 +9,9 @@ namespace FoxIDs.Client.Services
 {
     public class UpPartyService : BaseService
     {
-        private const string loginApiUri = "api/{tenant}/master/!loginupparty";
         private const string filterApiUri = "api/{tenant}/master/!filterupparty";
+        private const string loginApiUri = "api/{tenant}/master/!loginupparty";
+        private const string samlApiUri = "api/{tenant}/master/!lsamlupparty";
         private readonly HttpClient httpClient;
 
         public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(routeBindingLogic)
@@ -46,7 +47,31 @@ namespace FoxIDs.Client.Services
         public async Task DeleteLoginUpPartyAsync(string name)
         {
             await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(loginApiUri)}?name={name}");
-        } 
+        }
+        #endregion
+
+        #region SamlUpParty
+        public async Task<SamlUpParty> GetSamlUpPartyAsync(string name)
+        {
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(samlApiUri)}?name={name}");
+            var samlUpParties = await response.ToObjectAsync<SamlUpParty>();
+            return samlUpParties;
+        }
+
+        public async Task CreateSamlUpPartyAsync(SamlUpParty party)
+        {
+            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
+        }
+
+        public async Task UpdateSamlUpPartyAsync(SamlUpParty party)
+        {
+            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
+        }
+
+        public async Task DeleteSamlUpPartyAsync(string name)
+        {
+            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(samlApiUri)}?name={name}");
+        }
         #endregion
 
     }

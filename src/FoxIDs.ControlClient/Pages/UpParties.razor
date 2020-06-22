@@ -12,7 +12,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                 <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Login))">Login</button>
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Oidc))">OpenID Connect</button>
+                @*<button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Oidc))">OpenID Connect</button>*@
                 <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Saml2))">Saml 2.0</button>
             </div>
         </div>
@@ -63,18 +63,22 @@
                 </div>
             }
             <FInputText @bind-Value="editLoginUpPartyForm.Model.Name" For="@(() => editLoginUpPartyForm.Model.Name)" Focus="true" />
-            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionLifetime" For="@(() => editLoginUpPartyForm.Model.SessionLifetime)" />
-            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
-            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
-            <FInputToggle @bind-Value="editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
             <FInputToggle @bind-Value="editLoginUpPartyForm.Model.EnableCancelLogin" For="@(() => editLoginUpPartyForm.Model.EnableCancelLogin)" TextType="e.d" />
             <FInputToggle @bind-Value="editLoginUpPartyForm.Model.EnableCreateUser" For="@(() => editLoginUpPartyForm.Model.EnableCreateUser)" TextType="e.d" />
             <FInputSelect @bind-Value="editLoginUpPartyForm.Model.LogoutConsent" For="@(() => editLoginUpPartyForm.Model.LogoutConsent)">
-                <option value="@LoginUpPartyLogoutConsent.IfRequered">@LoginUpPartyLogoutConsent.IfRequered</option>
-                <option value="@LoginUpPartyLogoutConsent.Always">@LoginUpPartyLogoutConsent.Always</option>
-                <option value="@LoginUpPartyLogoutConsent.Never">@LoginUpPartyLogoutConsent.Never</option>
+                <option value="@LoginUpPartyLogoutConsent.IfRequered">If requered</option>
+                <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
+                <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
             </FInputSelect>
-            <FInputTextArea @bind-Value="editLoginUpPartyForm.Model.CssStyle" For="@(() => editLoginUpPartyForm.Model.CssStyle)" />
+            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionLifetime" For="@(() => editLoginUpPartyForm.Model.SessionLifetime)" />
+            <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
+            @if (showAdvanced)
+            {
+                <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
+                <FInputNumber @bind-Value="editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
+                <FInputToggle @bind-Value="editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
+                <FInputTextArea @bind-Value="editLoginUpPartyForm.Model.CssStyle" For="@(() => editLoginUpPartyForm.Model.CssStyle)" />
+            }
             @if (!createMode && deleteAcknowledge)
             {
                 <div class="alert alert-danger" role="alert">
@@ -96,6 +100,78 @@
             }
             <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
             <button type="button" class="btn btn-secondary" @onclick="@(() => editLoginUpPartyModal.Hide())">Cancel</button>
+        </div>
+    </PageEditForm>
+</Modal>
+
+<Modal @ref="editSamlUpPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Saml Up Party")">
+    <PageEditForm @ref="editSamlUpPartyForm" TModel="SamlUpPartyViewModel" OnValidSubmit="OnEditSamlUpPartyValidSubmitAsync">
+        <div class="modal-body">
+            <FInputText @bind-Value="editSamlUpPartyForm.Model.Name" For="@(() => editSamlUpPartyForm.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="editSamlUpPartyForm.Model.Issuer" For="@(() => editSamlUpPartyForm.Model.Issuer)" />
+            <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />
+            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlUpPartyForm.Model.AuthnRequestBinding)">
+                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+            </FInputSelect>
+            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnResponseBinding" For="@(() => editSamlUpPartyForm.Model.AuthnResponseBinding)">
+                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+            </FInputSelect>
+
+            <FInputText @bind-Value="editSamlUpPartyForm.Model.LogoutUrl" For="@(() => editSamlUpPartyForm.Model.LogoutUrl)" />
+            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlUpPartyForm.Model.LogoutRequestBinding)">
+                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+            </FInputSelect>
+            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutResponseBinding" For="@(() => editSamlUpPartyForm.Model.LogoutResponseBinding)">
+                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+            </FInputSelect>
+            <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
+            @if (showAdvanced)
+            {
+                <FInputSelect @bind-Value="editSamlUpPartyForm.Model.SignatureAlgorithm" For="@(() => editSamlUpPartyForm.Model.SignatureAlgorithm)">
+                    <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
+                    <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>
+                    <option value="@Saml2SecurityAlgorithms.RsaSha384Signature">RSA-SHA-384</option>
+                    <option value="@Saml2SecurityAlgorithms.RsaSha512Signature">RSA-SHA-512</option>
+                </FInputSelect>
+                <FInputSelect @bind-Value="editSamlUpPartyForm.Model.CertificateValidationMode" For="@(() => editSamlUpPartyForm.Model.CertificateValidationMode)">
+                    <option value="@X509CertificateValidationMode.None">None</option>
+                    <option value="@X509CertificateValidationMode.ChainTrust">Chain trust</option>
+                    <option value="@X509CertificateValidationMode.PeerTrust">Peer trust</option>
+                    <option value="@X509CertificateValidationMode.PeerOrChainTrust">Peer or chain trust</option>
+                </FInputSelect>
+                <FInputSelect @bind-Value="editSamlUpPartyForm.Model.RevocationMode" For="@(() => editSamlUpPartyForm.Model.RevocationMode)">
+                    <option value="@X509RevocationMode.NoCheck">No check</option>
+                    <option value="@X509RevocationMode.Offline">Offline</option>
+                    <option value="@X509RevocationMode.Online">Online</option>
+                </FInputSelect>
+                <FInputText @bind-Value="editSamlUpPartyForm.Model.IdSIssuer" For="@(() => editSamlUpPartyForm.Model.IdSIssuer)" />
+                <FInputNumber @bind-Value="editSamlUpPartyForm.Model.MetadataLifetime" For="@(() => editSamlUpPartyForm.Model.MetadataLifetime)" />
+            }
+            @if (!createMode && deleteAcknowledge)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <div>
+                        You are about to delete saml up party "@currentUpPartyName", are you sure?
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSamlUpPartyAsync(currentUpPartyName))">Yes delete</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => deleteAcknowledge = false)">No</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            @if (!createMode)
+            {
+                <button type="button" class="btn btn-link" @onclick="@(() => deleteAcknowledge = true)">Delete</button>
+            }
+            <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => editSamlUpPartyModal.Hide())">Cancel</button>
         </div>
     </PageEditForm>
 </Modal>

@@ -109,6 +109,40 @@
         <div class="modal-body">
             <FInputText @bind-Value="editSamlUpPartyForm.Model.Name" For="@(() => editSamlUpPartyForm.Model.Name)" Focus="true" />
             <FInputText @bind-Value="editSamlUpPartyForm.Model.Issuer" For="@(() => editSamlUpPartyForm.Model.Issuer)" />
+
+
+            <div class="form-group active-group active">
+                <div class="drag-drop-zone input-control">
+                    <InputFile multiple OnChange="OnSamlUpPartyCertificateFileSelectedAsync" />
+                    @samlUpPartyCertificateFileStatus
+                </div>
+                @*<input @ref="inputElement" type="text" @bind="@CurrentValue" class="form-control input-control" />*@
+                <Label For="@(() => editSamlUpPartyForm.Model.Keys)" class="label-control" />
+                <ValidationMessage For="@(() => editSamlUpPartyForm.Model.Keys)" />
+            </div>
+
+            <p>@fileTextContents</p>
+
+            @foreach (var fileName in fileNames)
+            {
+                <p>@fileName</p>
+
+            }
+
+            @*@foreach (var key in editSamlUpPartyForm.Model.Keys)
+        {
+            <InputText @bind-Value="@key.ToJsonIndented()" class="form-control" />
+        }*@
+
+            @*@if (fileName != null)
+        {
+            <h3>@fileName</h3>
+            <pre>@fileTextContents</pre>
+        }*@
+
+
+
+
             <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />
             <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlUpPartyForm.Model.AuthnRequestBinding)">
                 <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
@@ -118,7 +152,6 @@
                 <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
                 <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
             </FInputSelect>
-
             <FInputText @bind-Value="editSamlUpPartyForm.Model.LogoutUrl" For="@(() => editSamlUpPartyForm.Model.LogoutUrl)" />
             <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlUpPartyForm.Model.LogoutRequestBinding)">
                 <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>

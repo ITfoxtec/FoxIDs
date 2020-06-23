@@ -3,16 +3,9 @@
         element.focus();
     };
 
-    var setFocus = true;
-
     $('.input-control').each(function () {
         var input = $(this);
-        var parent = input.closest('.active-group'); // $(this.parentNode);
-
-        if (setFocus) {
-            input.focus();
-            setFocus = false;
-        }
+        var parent = input.closest('.active-group');
 
         if (input.val()) {
             if (parent) {

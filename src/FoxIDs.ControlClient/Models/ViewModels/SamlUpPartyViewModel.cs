@@ -70,7 +70,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
-        [Display(Name = "Keys")]
+        [Display(Name = "One or more signing certificates")]
         public List<JsonWebKey> Keys { get; set; }
 
         [Display(Name = "Logout request binding")]

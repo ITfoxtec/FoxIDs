@@ -45,9 +45,21 @@ namespace FoxIDs.Client.Shared.Components
             StateHasChanged();
         }
 
+        public void ClearError()
+        {
+            error = null;
+            StateHasChanged();
+        }
+
         public void SetFieldError(string fieldname, string error)
         {
             validationMessageStore.Add(EditContext.Field(fieldname), error);
+            EditContext.NotifyValidationStateChanged();
+        }
+
+        public void ClearFieldError(string fieldname)
+        {
+            validationMessageStore.Clear(EditContext.Field(fieldname));
             EditContext.NotifyValidationStateChanged();
         }
 

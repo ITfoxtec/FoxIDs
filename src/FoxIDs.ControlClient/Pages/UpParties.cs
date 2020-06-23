@@ -12,6 +12,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Authentication;
 using FoxIDs.Client.Infrastructure.Security;
+using BlazorInputFile;
+using System.Linq;
+using System.IO;
+using ITfoxtec.Identity.Util;
+using System.Security.Cryptography.X509Certificates;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages
 {
@@ -199,6 +205,54 @@ namespace FoxIDs.Client.Pages
             catch (Exception ex)
             {
                 editLoginUpPartyForm.SetError(ex.Message);
+            }
+        }
+
+        IFileListEntry file;
+        private async Task OnSamlUpPartyCertificateFileSelected(IFileListEntry[] files)
+        {
+            file = files.FirstOrDefault();
+        }
+
+        const string DefaultStatus = "Drop certificate files here or click to select";
+        const int MaxFileSize = 5 * 1024 * 1024; // 5MB
+
+        private List<string> fileNames = new List<string>();
+        string fileTextContents;
+
+        string samlUpPartyCertificateFileStatus = DefaultStatus;
+        private async Task OnSamlUpPartyCertificateFileSelectedAsync(IFileListEntry[] files)
+        {
+            editSamlUpPartyForm.ClearFieldError(nameof(editSamlUpPartyForm.Model.Keys));
+            foreach (var file in files)
+            {
+                if (file.Size > MaxFileSize)
+                {
+                    samlUpPartyCertificateFileStatus = $"That's too big. Max size: {MaxFileSize} bytes.";
+                }
+                else
+                {
+                    samlUpPartyCertificateFileStatus = "Loading...";
+
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await file.Data.CopyToAsync(memoryStream);
+
+                        try
+                        {
+                            var certificate = new X509Certificate2(memoryStream.ToArray());
+                            fileNames.Add(certificate.Thumbprint);
+                            var jwk = await certificate.ToJsonWebKeyAsync();
+                            //editSamlUpPartyForm.Model.Keys.Add(jwk);
+                        }
+                        catch (Exception ex)
+                        {
+                            editSamlUpPartyForm.SetFieldError(nameof(editSamlUpPartyForm.Model.Keys), ex.Message);
+                        }
+                    }
+
+                    samlUpPartyCertificateFileStatus = DefaultStatus;
+                }
             }
         }
 

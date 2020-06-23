@@ -18,6 +18,7 @@ using System.IO;
 using ITfoxtec.Identity.Util;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs.Client.Pages
 {
@@ -217,12 +218,15 @@ namespace FoxIDs.Client.Pages
         const string DefaultStatus = "Drop certificate files here or click to select";
         const int MaxFileSize = 5 * 1024 * 1024; // 5MB
 
-        private List<string> fileNames = new List<string>();
-        string fileTextContents;
+        private List<string> samlUpPartyCertificateThumbprints = new List<string>();
 
         string samlUpPartyCertificateFileStatus = DefaultStatus;
         private async Task OnSamlUpPartyCertificateFileSelectedAsync(IFileListEntry[] files)
         {
+            if(editSamlUpPartyForm.Model.Keys == null)
+            {
+                editSamlUpPartyForm.Model.Keys = new List<JsonWebKey>();
+            }
             editSamlUpPartyForm.ClearFieldError(nameof(editSamlUpPartyForm.Model.Keys));
             foreach (var file in files)
             {
@@ -241,7 +245,7 @@ namespace FoxIDs.Client.Pages
                         try
                         {
                             var certificate = new X509Certificate2(memoryStream.ToArray());
-                            fileNames.Add(certificate.Thumbprint);
+                            samlUpPartyCertificateThumbprints.Add(certificate.Thumbprint);
                             var jwk = await certificate.ToJsonWebKeyAsync();
                             editSamlUpPartyForm.Model.Keys.Add(jwk);
                         }

@@ -121,26 +121,12 @@
                 <ValidationMessage For="@(() => editSamlUpPartyForm.Model.Keys)" />
             </div>
 
-            <p>@fileTextContents</p>
 
-            @foreach (var fileName in fileNames)
+            @foreach (var thumbprint in samlUpPartyCertificateThumbprints)
             {
-                <p>@fileName</p>
+                <p>@thumbprint</p>
 
             }
-
-            @*@foreach (var key in editSamlUpPartyForm.Model.Keys)
-        {
-            <InputText @bind-Value="@key.ToJsonIndented()" class="form-control" />
-        }*@
-
-            @*@if (fileName != null)
-        {
-            <h3>@fileName</h3>
-            <pre>@fileTextContents</pre>
-        }*@
-
-
 
 
             <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />

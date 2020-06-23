@@ -11,7 +11,7 @@ namespace FoxIDs.Client.Services
     {
         private const string filterApiUri = "api/{tenant}/master/!filterupparty";
         private const string loginApiUri = "api/{tenant}/master/!loginupparty";
-        private const string samlApiUri = "api/{tenant}/master/!lsamlupparty";
+        private const string samlApiUri = "api/{tenant}/master/!samlupparty";
         private readonly HttpClient httpClient;
 
         public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(routeBindingLogic)

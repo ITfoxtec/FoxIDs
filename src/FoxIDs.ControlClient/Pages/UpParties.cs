@@ -243,7 +243,7 @@ namespace FoxIDs.Client.Pages
                             var certificate = new X509Certificate2(memoryStream.ToArray());
                             fileNames.Add(certificate.Thumbprint);
                             var jwk = await certificate.ToJsonWebKeyAsync();
-                            //editSamlUpPartyForm.Model.Keys.Add(jwk);
+                            editSamlUpPartyForm.Model.Keys.Add(jwk);
                         }
                         catch (Exception ex)
                         {

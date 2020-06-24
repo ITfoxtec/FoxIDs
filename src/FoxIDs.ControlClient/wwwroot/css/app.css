@@ -243,14 +243,14 @@ h4 {
 
 .drag-drop-zone {
     border: 2px dashed #df8935;
-    padding: 0.8rem  0.5rem  0.8rem  0.5rem;
+    padding: 0.5rem  0.3rem  0.5rem  0.3rem;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #eee;
     box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
     color: #aeaeae;
-    font-size: 1.1rem;
+    font-size: 1.0rem;
     cursor: pointer;
     position: relative;
 }

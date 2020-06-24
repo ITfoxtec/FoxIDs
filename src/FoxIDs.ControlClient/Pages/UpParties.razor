@@ -130,23 +130,43 @@
 
 
             <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />
-            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlUpPartyForm.Model.AuthnRequestBinding)">
-                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-            </FInputSelect>
-            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnResponseBinding" For="@(() => editSamlUpPartyForm.Model.AuthnResponseBinding)">
-                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-            </FInputSelect>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group active-group">
+                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlUpPartyForm.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
+                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                        </FInputSelect>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group active-group">
+                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnResponseBinding" For="@(() => editSamlUpPartyForm.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
+                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                        </FInputSelect>
+                    </div>
+                </div>
+            </div>
             <FInputText @bind-Value="editSamlUpPartyForm.Model.LogoutUrl" For="@(() => editSamlUpPartyForm.Model.LogoutUrl)" />
-            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlUpPartyForm.Model.LogoutRequestBinding)">
-                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-            </FInputSelect>
-            <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutResponseBinding" For="@(() => editSamlUpPartyForm.Model.LogoutResponseBinding)">
-                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-            </FInputSelect>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group active-group">
+                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlUpPartyForm.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
+                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                        </FInputSelect>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group active-group">
+                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutResponseBinding" For="@(() => editSamlUpPartyForm.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
+                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                        </FInputSelect>
+                    </div>
+                </div>
+            </div>
             <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
             @if (showAdvanced)
             {

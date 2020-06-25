@@ -109,26 +109,31 @@
         <div class="modal-body">
             <FInputText @bind-Value="editSamlUpPartyForm.Model.Name" For="@(() => editSamlUpPartyForm.Model.Name)" Focus="true" />
             <FInputText @bind-Value="editSamlUpPartyForm.Model.Issuer" For="@(() => editSamlUpPartyForm.Model.Issuer)" />
-
-
             <div class="form-group active-group active">
                 <div class="drag-drop-zone input-control">
                     <InputFile multiple OnChange="OnSamlUpPartyCertificateFileSelectedAsync" />
                     @samlUpPartyCertificateFileStatus
                 </div>
-                @*<input @ref="inputElement" type="text" @bind="@CurrentValue" class="form-control input-control" />*@
                 <Label For="@(() => editSamlUpPartyForm.Model.Keys)" class="label-control" />
                 <ValidationMessage For="@(() => editSamlUpPartyForm.Model.Keys)" />
-            </div>
-
-
-            @foreach (var thumbprint in samlUpPartyCertificateThumbprints)
-            {
-                <p>@thumbprint</p>
-
-            }
-
-
+                <ul class="list-group">
+                    @foreach (var certificateInfo in certificateInfoList)
+                    {
+                        <li class="list-group-item">
+                            <div class="d-flex">
+                                <div class="mr-auto p-2">
+                                    <strong>@certificateInfo.Subject</strong><br />
+                                    Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
+                                    Thumbprint: @certificateInfo.Thumbprint
+                                </div>
+                                <div class="p-2">
+                                    <button class="btn btn-link" title="Delete" @onclick="@(() => RemoveSamlUpPartyCertificate(certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>   
             <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />
             <div class="row">
                 <div class="col">

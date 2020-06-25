@@ -1,5 +1,4 @@
-﻿using FoxIDs.Client;
-using FoxIDs.Client.Infrastructure;
+﻿using FoxIDs.Client.Infrastructure;
 using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;
@@ -13,12 +12,10 @@ using System.Threading.Tasks;
 using System.Security.Authentication;
 using FoxIDs.Client.Infrastructure.Security;
 using BlazorInputFile;
-using System.Linq;
 using System.IO;
-using ITfoxtec.Identity.Util;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity;
-using Microsoft.IdentityModel.Tokens;
+using MTokens = Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs.Client.Pages
 {
@@ -33,10 +30,16 @@ namespace FoxIDs.Client.Pages
         private bool showAdvanced;
         private bool deleteAcknowledge;
         private string currentUpPartyName;
+
         private Modal editLoginUpPartyModal;
         private PageEditForm<LoginUpPartyViewModel> editLoginUpPartyForm;
+
         private Modal editSamlUpPartyModal;
         private PageEditForm<SamlUpPartyViewModel> editSamlUpPartyForm;
+        const string defaultSamlUpPartyCertificateFileStatus = "Drop certificate files here or click to select";
+        const int samlUpPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
+        private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
+        string samlUpPartyCertificateFileStatus = defaultSamlUpPartyCertificateFileStatus;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -111,6 +114,7 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.Saml2)
             {
                 editSamlUpPartyForm.Init();
+                certificateInfoList.Clear();
                 editSamlUpPartyModal.Show();
             }
         }
@@ -149,7 +153,29 @@ namespace FoxIDs.Client.Pages
                 {
                     var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(upPartyName);
                     currentUpPartyName = samlUpParty.Name;
-                    editSamlUpPartyForm.Init(samlUpParty.Map<SamlUpPartyViewModel>());
+                    editSamlUpPartyForm.Init(samlUpParty.Map<SamlUpPartyViewModel>(afterMap => 
+                    {
+                        afterMap.AuthnRequestBinding = samlUpParty.AuthnBinding.RequestBinding;
+                        afterMap.AuthnResponseBinding = samlUpParty.AuthnBinding.ResponseBinding;
+                        if(!samlUpParty.LogoutUrl.IsNullOrEmpty())
+                        {
+                            afterMap.LogoutRequestBinding = samlUpParty.LogoutBinding.RequestBinding;
+                            afterMap.LogoutResponseBinding = samlUpParty.LogoutBinding.ResponseBinding;
+                        }
+                    }));
+                    certificateInfoList.Clear();
+                    foreach (var key in samlUpParty.Keys)
+                    {
+                        var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
+                        certificateInfoList.Add(new CertificateInfoViewModel
+                        {
+                            Subject = certificate.Subject,
+                            ValidFrom = certificate.NotBefore,
+                            ValidTo = certificate.NotAfter,
+                            Thumbprint = certificate.Thumbprint,
+                            Jwk = key
+                        });
+                    }
                     editSamlUpPartyModal.Show();
                 }
                 catch (AuthenticationException)
@@ -189,8 +215,8 @@ namespace FoxIDs.Client.Pages
                     throw;
                 }
             }
-        }
-     
+        }     
+
         private async Task DeleteLoginUpPartyAsync(string name)
         {
             try
@@ -209,18 +235,6 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        IFileListEntry file;
-        private async Task OnSamlUpPartyCertificateFileSelected(IFileListEntry[] files)
-        {
-            file = files.FirstOrDefault();
-        }
-
-        const string DefaultStatus = "Drop certificate files here or click to select";
-        const int MaxFileSize = 5 * 1024 * 1024; // 5MB
-
-        private List<string> samlUpPartyCertificateThumbprints = new List<string>();
-
-        string samlUpPartyCertificateFileStatus = DefaultStatus;
         private async Task OnSamlUpPartyCertificateFileSelectedAsync(IFileListEntry[] files)
         {
             if(editSamlUpPartyForm.Model.Keys == null)
@@ -230,9 +244,9 @@ namespace FoxIDs.Client.Pages
             editSamlUpPartyForm.ClearFieldError(nameof(editSamlUpPartyForm.Model.Keys));
             foreach (var file in files)
             {
-                if (file.Size > MaxFileSize)
+                if (file.Size > samlUpPartyCertificateMaxFileSize)
                 {
-                    samlUpPartyCertificateFileStatus = $"That's too big. Max size: {MaxFileSize} bytes.";
+                    samlUpPartyCertificateFileStatus = $"That's too big. Max size: {samlUpPartyCertificateMaxFileSize} bytes.";
                 }
                 else
                 {
@@ -245,8 +259,19 @@ namespace FoxIDs.Client.Pages
                         try
                         {
                             var certificate = new X509Certificate2(memoryStream.ToArray());
-                            samlUpPartyCertificateThumbprints.Add(certificate.Thumbprint);
-                            var jwk = await certificate.ToJsonWebKeyAsync();
+                            var msJwk = await certificate.ToJsonWebKeyAsync();
+                            var jwk = msJwk.Map<JsonWebKey>(afterMap => 
+                            {
+                                afterMap.X5c = new List<string>(msJwk.X5c);
+                            });
+                            certificateInfoList.Add(new CertificateInfoViewModel 
+                            {
+                                Subject = certificate.Subject,
+                                ValidFrom = certificate.NotBefore,
+                                ValidTo = certificate.NotAfter,
+                                Thumbprint = certificate.Thumbprint,
+                                Jwk = jwk
+                            });
                             editSamlUpPartyForm.Model.Keys.Add(jwk);
                         }
                         catch (Exception ex)
@@ -255,23 +280,38 @@ namespace FoxIDs.Client.Pages
                         }
                     }
 
-                    samlUpPartyCertificateFileStatus = DefaultStatus;
+                    samlUpPartyCertificateFileStatus = defaultSamlUpPartyCertificateFileStatus;
                 }
             }
+        }
+
+        private void RemoveSamlUpPartyCertificate(CertificateInfoViewModel certificateInfo)
+        {
+            editSamlUpPartyForm.Model.Keys.Remove(certificateInfo.Jwk);
+            certificateInfoList.Remove(certificateInfo);
         }
 
         private async Task OnEditSamlUpPartyValidSubmitAsync(EditContext editContext)
         {
             try
             {
+                var samlUpParty = editSamlUpPartyForm.Model.Map<SamlUpParty>(afterMap => 
+                {
+                    afterMap.AuthnBinding = new SamlBinding { RequestBinding = editSamlUpPartyForm.Model.AuthnRequestBinding, ResponseBinding = editSamlUpPartyForm.Model.AuthnResponseBinding };
+                    if(!afterMap.LogoutUrl.IsNullOrEmpty())
+                    {
+                        afterMap.LogoutBinding = new SamlBinding { RequestBinding = editSamlUpPartyForm.Model.LogoutRequestBinding, ResponseBinding = editSamlUpPartyForm.Model.LogoutResponseBinding };
+                    }
+                });
+            
                 if (createMode)
                 {
-                    await UpPartyService.UpdateSamlUpPartyAsync(editSamlUpPartyForm.Model.Map<SamlUpParty>());
+                    await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
                     await OnUpPartyFilterValidSubmitAsync(null);
                 }
                 else
                 {
-                    await UpPartyService.UpdateSamlUpPartyAsync(editSamlUpPartyForm.Model.Map<SamlUpParty>());
+                    await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
                 }
                 editSamlUpPartyModal.Hide();
             }

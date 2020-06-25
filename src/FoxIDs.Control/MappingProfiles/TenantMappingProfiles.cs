@@ -46,7 +46,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
-            CreateMap<JsonWebKey, JsonWebKey>()
+            CreateMap<JsonWebKey, Api.JsonWebKey>()
                 .ReverseMap()
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
                 .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));

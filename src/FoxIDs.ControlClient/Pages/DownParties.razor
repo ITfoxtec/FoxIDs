@@ -38,7 +38,7 @@
             @foreach (var downParty in downParties)
             {
                 <li class="list-group-item">
-                    <button class="btn btn-link" @onclick="@(async () => await ShowDownPartyAsync(@downParty.Name))">
+                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateDownPartyAsync(@downParty.Type, @downParty.Name))">
                         @downParty.Name, type: @downParty.Type<br />
                     </button>
                 </li>
@@ -47,39 +47,3 @@
     </div>
 </div>
 
-<Modal @ref="createDownPartyModal" Title="@CreateTitle()">
-    <PageEditForm @ref="createDownPartyForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateDownPartyValidSubmitAsync">
-        <div class="modal-body">
-            @if (createDownPartyType == PartyTypes.OAuth2)
-            {
-
-            }
-            else if (createDownPartyType == PartyTypes.Oidc)
-            {
-
-            }
-            else if (createDownPartyType == PartyTypes.Saml2)
-            {
-
-            }
-        </div>
-        <div class="modal-footer">
-            @if (!createDownPartyDone)
-            {
-                <button type="submit" class="btn btn-primary">Create</button>
-                <button type="button" class="btn btn-secondary" @onclick="@(() => createDownPartyModal.Hide())">Cancel</button>
-            }
-            else
-            {
-                <button type="button" class="btn btn-secondary" @onclick="@(() => createDownPartyModal.Hide())">Close</button>
-            }
-        </div>
-    </PageEditForm>
-</Modal>
-
-<Modal @ref="downPartyModal" Title="Down Party">
-    <div class="modal-body">
-    </div>
-    <div class="modal-footer">
-    </div>
-</Modal>

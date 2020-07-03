@@ -11,20 +11,50 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Authentication;
 using FoxIDs.Client.Infrastructure.Security;
+using ITfoxtec.Identity;
+using System.IO;
+using System.Security.Cryptography.X509Certificates;
+using MTokens = Microsoft.IdentityModel.Tokens;
+using System.Linq;
+using BlazorInputFile;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class DownParties 
     {
-        private Modal createDownPartyModal;
-        private PageEditForm<CreateTenantViewModel> createDownPartyForm;
-        private PartyTypes createDownPartyType;
-        private bool createDownPartyDone;
-        private List<string> createDownPartyReceipt = new List<string>();
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
         private IEnumerable<DownParty> downParties = new List<DownParty>();
-        private Modal downPartyModal;
         private string upPartyHref;
+
+        private string loadPartyError;
+        private bool createMode;
+        private bool showAdvanced;
+        private bool deleteAcknowledge;
+        private string currentDownPartyName;
+
+        private Modal editOidcDownPartyModal;
+        private PageEditForm<OidcDownPartyViewModel> editOidcDownPartyForm;
+
+        private Modal editOAuthDownPartyModal;
+        private PageEditForm<OAuthDownPartyViewModel> editOAuthDownPartyForm;
+
+        private Modal editSamlDownPartyModal;
+        private PageEditForm<SamlDownPartyViewModel> editSamlDownPartyForm;
+        const string defaultSamlDownPartyCertificateFileStatus = "Drop certificate files here or click to select";
+        const int samlDownPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
+        private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
+        string samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
+
+        //private Modal downPartyModal;
+
+
+        //private Modal createDownPartyModal;
+        //private PageEditForm<CreateTenantViewModel> createDownPartyForm;
+        //private PartyTypes createDownPartyType;
+        //private bool createDownPartyDone;
+        //private List<string> createDownPartyReceipt = new List<string>();
+
+
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -34,9 +64,6 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public DownPartyService DownPartyService { get; set; }
-
-        [Inject]
-        public UpPartyService UpPartyService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -85,46 +112,131 @@ namespace FoxIDs.Client.Pages
 
         private void ShowCreateDownPartyModal(PartyTypes type)
         {
-            createDownPartyType = type;
-            createDownPartyDone = false;
-            createDownPartyReceipt = new List<string>();
-            createDownPartyForm.Init();
-            createDownPartyModal.Show();
-        }
-
-        private string CreateTitle()
-        {
-            Func<string> text = () =>
+            createMode = true;
+            showAdvanced = false;
+            if (type == PartyTypes.Oidc)
             {
-                switch (createDownPartyType)
-                {
-                    case PartyTypes.Oidc:
-                        return "OpenID Connect";
-                    case PartyTypes.OAuth2:
-                        return "OAuth 2.0";
-                    case PartyTypes.Saml2:
-                        return "SAML 2.0";
-                    default:
-                        return string.Empty;
-                }
-            };
-
-            return $"Create {text()} Down Party";
+                editOidcDownPartyForm.Init();
+                editOidcDownPartyModal.Show();
+            }
+            else if (type == PartyTypes.OAuth2)
+            {
+                editOAuthDownPartyForm.Init();
+                editOAuthDownPartyModal.Show();
+            }
+            else if (type == PartyTypes.Saml2)
+            {
+                editSamlDownPartyForm.Init();
+                //certificateInfoList.Clear();
+                editSamlDownPartyModal.Show();
+            }
         }
 
-        private async Task OnCreateDownPartyValidSubmitAsync(EditContext editContext)
+        private async Task ShowUpdateDownPartyAsync(PartyTypes type, string downPartyName)
+        {
+            loadPartyError = null;
+            createMode = false;
+            deleteAcknowledge = false;
+            showAdvanced = false;
+            if (type == PartyTypes.Oidc)
+            {
+                try
+                {
+                    var loginDownParty = await DownPartyService.GetOidcDownPartyAsync(downPartyName);
+                    currentDownPartyName = loginDownParty.Name;
+                    editOidcDownPartyForm.Init(loginDownParty.Map<OidcDownPartyViewModel>());
+                    editOidcDownPartyModal.Show();
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    loadPartyError = ex.Message;
+                }
+            }
+            else if (type == PartyTypes.OAuth2)
+            {
+                try
+                {
+                    var loginDownParty = await DownPartyService.GetOAuthDownPartyAsync(downPartyName);
+                    currentDownPartyName = loginDownParty.Name;
+                    editOAuthDownPartyForm.Init(loginDownParty.Map<OAuthDownPartyViewModel>());
+                    editOAuthDownPartyModal.Show();
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    loadPartyError = ex.Message;
+                }
+            }
+            else if (type == PartyTypes.Saml2)
+            {
+                try
+                {
+                    var samlDownParty = await DownPartyService.GetSamlDownPartyAsync(downPartyName);
+                    currentDownPartyName = samlDownParty.Name;
+                    editSamlDownPartyForm.Init(samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
+                    {
+                        afterMap.AuthnRequestBinding = samlDownParty.AuthnBinding.RequestBinding;
+                        afterMap.AuthnResponseBinding = samlDownParty.AuthnBinding.ResponseBinding;
+                        if (!samlDownParty.LoggedOutUrl.IsNullOrEmpty())
+                        {
+                            afterMap.LogoutRequestBinding = samlDownParty.LogoutBinding.RequestBinding;
+                            afterMap.LogoutResponseBinding = samlDownParty.LogoutBinding.ResponseBinding;
+                        }
+
+                        certificateInfoList.Clear();
+                        foreach (var key in afterMap.Keys)
+                        {
+                            var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
+                            certificateInfoList.Add(new CertificateInfoViewModel
+                            {
+                                Subject = certificate.Subject,
+                                ValidFrom = certificate.NotBefore,
+                                ValidTo = certificate.NotAfter,
+                                Thumbprint = certificate.Thumbprint,
+                                Jwk = key
+                            });
+                        }
+                    }));
+                    editSamlDownPartyModal.Show();
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    loadPartyError = ex.Message;
+                }
+            }
+        }
+
+        private async Task OnEditOidcDownPartyValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                createDownPartyDone = true;
-
-                await OnDownPartyFilterValidSubmitAsync(null);
+                if (createMode)
+                {
+                    await DownPartyService.UpdateOidcDownPartyAsync(editOidcDownPartyForm.Model.Map<OidcDownParty>());
+                    await OnDownPartyFilterValidSubmitAsync(null);
+                }
+                else
+                {
+                    await DownPartyService.UpdateOidcDownPartyAsync(editOidcDownPartyForm.Model.Map<OidcDownParty>());
+                }
+                editOidcDownPartyModal.Hide();
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    createDownPartyForm.SetFieldError(nameof(createDownPartyForm.Model.Name), ex.Message);
+                    editOidcDownPartyForm.SetFieldError(nameof(editOidcDownPartyForm.Model.Name), ex.Message);
                 }
                 else
                 {
@@ -133,9 +245,234 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task ShowDownPartyAsync(string upPartyName)
+        private async Task DeleteOidcDownPartyAsync(string name)
         {
-
+            try
+            {
+                await DownPartyService.DeleteOidcDownPartyAsync(name);
+                await OnDownPartyFilterValidSubmitAsync(null);
+                editOidcDownPartyModal.Hide();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                editOidcDownPartyForm.SetError(ex.Message);
+            }
         }
+
+        private async Task OnEditOAuthDownPartyValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                if (createMode)
+                {
+                    await DownPartyService.UpdateOAuthDownPartyAsync(editOAuthDownPartyForm.Model.Map<OAuthDownParty>());
+                    await OnDownPartyFilterValidSubmitAsync(null);
+                }
+                else
+                {
+                    await DownPartyService.UpdateOAuthDownPartyAsync(editOAuthDownPartyForm.Model.Map<OAuthDownParty>());
+                }
+                editOAuthDownPartyModal.Hide();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    editOAuthDownPartyForm.SetFieldError(nameof(editOAuthDownPartyForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task DeleteOAuthDownPartyAsync(string name)
+        {
+            try
+            {
+                await DownPartyService.DeleteOAuthDownPartyAsync(name);
+                await OnDownPartyFilterValidSubmitAsync(null);
+                editOAuthDownPartyModal.Hide();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                editOAuthDownPartyForm.SetError(ex.Message);
+            }
+        }
+
+        private async Task OnSamlDownPartyCertificateFileSelectedAsync(IFileListEntry[] files)
+        {
+            if (editSamlDownPartyForm.Model.Keys == null)
+            {
+                editSamlDownPartyForm.Model.Keys = new List<JsonWebKey>();
+            }
+            editSamlDownPartyForm.ClearFieldError(nameof(editSamlDownPartyForm.Model.Keys));
+            foreach (var file in files)
+            {
+                if (file.Size > samlDownPartyCertificateMaxFileSize)
+                {
+                    editSamlDownPartyForm.SetFieldError(nameof(editSamlDownPartyForm.Model.Keys), $"That's too big. Max size: {samlDownPartyCertificateMaxFileSize} bytes.");
+                    return;
+                }
+
+                samlDownPartyCertificateFileStatus = "Loading...";
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.Data.CopyToAsync(memoryStream);
+
+                    try
+                    {
+                        var certificate = new X509Certificate2(memoryStream.ToArray());
+                        var msJwk = await certificate.ToJsonWebKeyAsync();
+                        var jwk = msJwk.Map<JsonWebKey>(afterMap =>
+                        {
+                            afterMap.X5c = new List<string>(msJwk.X5c);
+                        });
+
+                        if (editSamlDownPartyForm.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            editSamlDownPartyForm.SetFieldError(nameof(editSamlDownPartyForm.Model.Keys), "Signature validation keys (certificates) has duplicates.");
+                            return;
+                        }
+
+                        certificateInfoList.Add(new CertificateInfoViewModel
+                        {
+                            Subject = certificate.Subject,
+                            ValidFrom = certificate.NotBefore,
+                            ValidTo = certificate.NotAfter,
+                            Thumbprint = certificate.Thumbprint,
+                            Jwk = jwk
+                        });
+                        editSamlDownPartyForm.Model.Keys.Add(jwk);
+                    }
+                    catch (Exception ex)
+                    {
+                        editSamlDownPartyForm.SetFieldError(nameof(editSamlDownPartyForm.Model.Keys), ex.Message);
+                    }
+                }
+
+                samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
+            }
+        }
+
+        private void RemoveSamlDownPartyCertificate(CertificateInfoViewModel certificateInfo)
+        {
+            editSamlDownPartyForm.ClearFieldError(nameof(editSamlDownPartyForm.Model.Keys));
+            if (editSamlDownPartyForm.Model.Keys.Remove(certificateInfo.Jwk))
+            {
+                certificateInfoList.Remove(certificateInfo);
+            }
+        }
+
+        private async Task OnEditSamlDownPartyValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                var samlDownParty = editSamlDownPartyForm.Model.Map<SamlDownParty>(afterMap =>
+                {
+                    afterMap.AuthnBinding = new SamlBinding { RequestBinding = editSamlDownPartyForm.Model.AuthnRequestBinding, ResponseBinding = editSamlDownPartyForm.Model.AuthnResponseBinding };
+                    if (!afterMap.LoggedOutUrl.IsNullOrEmpty())
+                    {
+                        afterMap.LogoutBinding = new SamlBinding { RequestBinding = editSamlDownPartyForm.Model.LogoutRequestBinding, ResponseBinding = editSamlDownPartyForm.Model.LogoutResponseBinding };
+                    }
+                });
+
+                if (createMode)
+                {
+                    await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
+                    await OnDownPartyFilterValidSubmitAsync(null);
+                }
+                else
+                {
+                    await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
+                }
+                editSamlDownPartyModal.Hide();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    editSamlDownPartyForm.SetFieldError(nameof(editSamlDownPartyForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task DeleteSamlDownPartyAsync(string name)
+        {
+            try
+            {
+                await DownPartyService.DeleteSamlDownPartyAsync(name);
+                await OnDownPartyFilterValidSubmitAsync(null);
+                editSamlDownPartyModal.Hide();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                editSamlDownPartyForm.SetError(ex.Message);
+            }
+        }
+
+        //private string CreateTitle()
+        //{
+        //    Func<string> text = () =>
+        //    {
+        //        switch (createDownPartyType)
+        //        {
+        //            case PartyTypes.Oidc:
+        //                return "OpenID Connect";
+        //            case PartyTypes.OAuth2:
+        //                return "OAuth 2.0";
+        //            case PartyTypes.Saml2:
+        //                return "SAML 2.0";
+        //            default:
+        //                return string.Empty;
+        //        }
+        //    };
+
+        //    return $"Create {text()} Down Party";
+        //}
+
+        //private async Task OnCreateDownPartyValidSubmitAsync(EditContext editContext)
+        //{
+        //    try
+        //    {
+        //        createDownPartyDone = true;
+
+        //        await OnDownPartyFilterValidSubmitAsync(null);
+        //    }
+        //    catch (FoxIDsApiException ex)
+        //    {
+        //        if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+        //        {
+        //            createDownPartyForm.SetFieldError(nameof(createDownPartyForm.Model.Name), ex.Message);
+        //        }
+        //        else
+        //        {
+        //            throw;
+        //        }
+        //    }
+        //}
+
+        //private async Task ShowDownPartyAsync(string upPartyName)
+        //{
+
+        //}
     }
 }

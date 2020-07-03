@@ -49,9 +49,6 @@ namespace FoxIDs.Client.Pages
         public NotificationLogic NotificationLogic { get; set; }
 
         [Inject]
-        public DownPartyService DownPartyService { get; set; }
-
-        [Inject]
         public UpPartyService UpPartyService { get; set; }
 
         [Parameter]
@@ -110,7 +107,7 @@ namespace FoxIDs.Client.Pages
             }
             else if (type == PartyTypes.Oidc)
             {
-
+                throw new NotImplementedException();
             }
             else if (type == PartyTypes.Saml2)
             {
@@ -146,7 +143,7 @@ namespace FoxIDs.Client.Pages
             }
             else if (type == PartyTypes.Oidc)
             {
-
+                throw new NotImplementedException();
             }
             else if (type == PartyTypes.Saml2)
             {
@@ -248,7 +245,7 @@ namespace FoxIDs.Client.Pages
             {
                 if (file.Size > samlUpPartyCertificateMaxFileSize)
                 {
-                    samlUpPartyCertificateFileStatus = $"That's too big. Max size: {samlUpPartyCertificateMaxFileSize} bytes.";
+                    editSamlUpPartyForm.SetFieldError(nameof(editSamlUpPartyForm.Model.Keys), $"That's too big. Max size: {samlUpPartyCertificateMaxFileSize} bytes.");
                     return;
                 }
 
@@ -269,7 +266,7 @@ namespace FoxIDs.Client.Pages
 
                         if (editSamlUpPartyForm.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
-                            samlUpPartyCertificateFileStatus = "Signing keys has duplicates.";
+                            editSamlUpPartyForm.SetFieldError(nameof(editSamlUpPartyForm.Model.Keys), "Signature validation keys (certificates) has duplicates.");
                             return;
                         }
 
@@ -314,7 +311,7 @@ namespace FoxIDs.Client.Pages
                         afterMap.LogoutBinding = new SamlBinding { RequestBinding = editSamlUpPartyForm.Model.LogoutRequestBinding, ResponseBinding = editSamlUpPartyForm.Model.LogoutResponseBinding };
                     }
                 });
-            
+
                 if (createMode)
                 {
                     await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);

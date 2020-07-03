@@ -9,24 +9,46 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel 
+    public class SamlDownPartyViewModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Up Party name")]
+        [Display(Name = "Down Party name")]
         public string Name { get; set; }
+
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [Display(Name = "")]
+        public List<string> AllowUpPartyNames { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Optional custom issuer (default auto generated)")]
         public string IdSIssuer { get; set; }
+
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
+        [Display(Name = "")]
+        public List<string> Claims { get; set; }
 
         /// <summary>
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
         [Display(Name = "Metadata lifetime")]
-        public int MetadataLifetime { get; set; } = 1728000;
+        public int? MetadataLifetime { get; set; } = 1728000;
+
+        /// <summary>
+        /// Default 5 minutes.
+        /// </summary>
+        [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]
+        [Display(Name = "Subject confirmation lifetime")]
+        public int? SubjectConfirmationLifetime { get; set; } = 300;
+
+        /// <summary>
+        /// Default 60 minutes.
+        /// </summary>
+        [Range(Constants.Models.SamlParty.Down.IssuedTokenLifetimeMin, Constants.Models.SamlParty.Down.IssuedTokenLifetimeMax)]
+        [Display(Name = "Issued token lifetime")]
+        public int? IssuedTokenLifetime { get; set; } = 3600;
 
         /// <summary>
         /// Default SHA256.
@@ -57,21 +79,15 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Authn request binding")]
-        public SamlBindingType AuthnRequestBinding { get; set; } = SamlBindingType.Redirect;
+        public SamlBindingType AuthnRequestBinding { get; set; } = SamlBindingType.Post;
 
         [Required]
         [Display(Name = "Authn response binding")]
         public SamlBindingType AuthnResponseBinding { get; set; } = SamlBindingType.Post;
 
-        [Required]
-        [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
-        [Display(Name = "Authn url")]
-        public string AuthnUrl { get; set; }
-
-        [Required]
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
-        [Display(Name = "One or more signature validation certificates")]
-        public List<JsonWebKey> Keys { get; set; }
+        [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
+        [Display(Name = "Assertion consumer service (ACS) url")]
+        public List<string> AcsUrls { get; set; }
 
         [Display(Name = "Logout request binding")]
         public SamlBindingType LogoutRequestBinding { get; set; } = SamlBindingType.Post;
@@ -79,8 +95,16 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout response binding")]
         public SamlBindingType LogoutResponseBinding { get; set; } = SamlBindingType.Post;
 
-        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
-        [Display(Name = "Logout url")]
-        public string LogoutUrl { get; set; }
+        [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
+        [Display(Name = "Single logout url")]
+        public string SingleLogoutUrl { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
+        [Display(Name = "Logged out url")]
+        public string LoggedOutUrl { get; set; }
+
+        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Display(Name = "Optional one or more signature validation certificates")]
+        public List<JsonWebKey> Keys { get; set; }
     }
 }

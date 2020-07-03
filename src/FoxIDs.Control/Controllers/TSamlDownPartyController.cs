@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>Saml down party.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.SamlDownParty>> PostSamlDownParty([FromBody] Api.SamlDownParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateSignatureAlgorithm(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlDownParty>> PostSamlDownParty([FromBody] Api.SamlDownParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
 
         /// <summary>
         /// Downdate Saml down party.
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>Saml down party.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.SamlDownParty>> PutSamlDownParty([FromBody] Api.SamlDownParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateSignatureAlgorithm(ModelState, ap)), (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlDownParty>> PutSamlDownParty([FromBody] Api.SamlDownParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)), (ap, mp) => Task.FromResult(true));
 
         /// <summary>
         /// Delete Saml down party.

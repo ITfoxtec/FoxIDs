@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>Saml up party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateSignatureAlgorithm(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateSignatureAlgorithmAndSigningKeys(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
 
         /// <summary>
         /// Update Saml up party.
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>Saml up party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateSignatureAlgorithm(ModelState, ap)), (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateSignatureAlgorithmAndSigningKeys(ModelState, ap)), (ap, mp) => Task.FromResult(true));
        
         /// <summary>
         /// Delete Saml up party.

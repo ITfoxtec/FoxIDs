@@ -16,6 +16,7 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
@@ -162,20 +163,21 @@ namespace FoxIDs.Client.Pages
                             afterMap.LogoutRequestBinding = samlUpParty.LogoutBinding.RequestBinding;
                             afterMap.LogoutResponseBinding = samlUpParty.LogoutBinding.ResponseBinding;
                         }
-                    }));
-                    certificateInfoList.Clear();
-                    foreach (var key in samlUpParty.Keys)
-                    {
-                        var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-                        certificateInfoList.Add(new CertificateInfoViewModel
+
+                        certificateInfoList.Clear();
+                        foreach (var key in afterMap.Keys)
                         {
-                            Subject = certificate.Subject,
-                            ValidFrom = certificate.NotBefore,
-                            ValidTo = certificate.NotAfter,
-                            Thumbprint = certificate.Thumbprint,
-                            Jwk = key
-                        });
-                    }
+                            var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
+                            certificateInfoList.Add(new CertificateInfoViewModel
+                            {
+                                Subject = certificate.Subject,
+                                ValidFrom = certificate.NotBefore,
+                                ValidTo = certificate.NotAfter,
+                                Thumbprint = certificate.Thumbprint,
+                                Jwk = key
+                            });
+                        }
+                    }));
                     editSamlUpPartyModal.Show();
                 }
                 catch (AuthenticationException)
@@ -237,7 +239,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnSamlUpPartyCertificateFileSelectedAsync(IFileListEntry[] files)
         {
-            if(editSamlUpPartyForm.Model.Keys == null)
+            if (editSamlUpPartyForm.Model.Keys == null)
             {
                 editSamlUpPartyForm.Model.Keys = new List<JsonWebKey>();
             }
@@ -247,48 +249,57 @@ namespace FoxIDs.Client.Pages
                 if (file.Size > samlUpPartyCertificateMaxFileSize)
                 {
                     samlUpPartyCertificateFileStatus = $"That's too big. Max size: {samlUpPartyCertificateMaxFileSize} bytes.";
+                    return;
                 }
-                else
+
+                samlUpPartyCertificateFileStatus = "Loading...";
+
+                using (var memoryStream = new MemoryStream())
                 {
-                    samlUpPartyCertificateFileStatus = "Loading...";
+                    await file.Data.CopyToAsync(memoryStream);
 
-                    using (var memoryStream = new MemoryStream())
+                    try
                     {
-                        await file.Data.CopyToAsync(memoryStream);
+                        var certificate = new X509Certificate2(memoryStream.ToArray());
+                        var msJwk = await certificate.ToJsonWebKeyAsync();
+                        var jwk = msJwk.Map<JsonWebKey>(afterMap => 
+                        {
+                            afterMap.X5c = new List<string>(msJwk.X5c);
+                        });
 
-                        try
+                        if (editSamlUpPartyForm.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
-                            var certificate = new X509Certificate2(memoryStream.ToArray());
-                            var msJwk = await certificate.ToJsonWebKeyAsync();
-                            var jwk = msJwk.Map<JsonWebKey>(afterMap => 
-                            {
-                                afterMap.X5c = new List<string>(msJwk.X5c);
-                            });
-                            certificateInfoList.Add(new CertificateInfoViewModel 
-                            {
-                                Subject = certificate.Subject,
-                                ValidFrom = certificate.NotBefore,
-                                ValidTo = certificate.NotAfter,
-                                Thumbprint = certificate.Thumbprint,
-                                Jwk = jwk
-                            });
-                            editSamlUpPartyForm.Model.Keys.Add(jwk);
+                            samlUpPartyCertificateFileStatus = "Signing keys has duplicates.";
+                            return;
                         }
-                        catch (Exception ex)
+
+                        certificateInfoList.Add(new CertificateInfoViewModel 
                         {
-                            editSamlUpPartyForm.SetFieldError(nameof(editSamlUpPartyForm.Model.Keys), ex.Message);
-                        }
+                            Subject = certificate.Subject,
+                            ValidFrom = certificate.NotBefore,
+                            ValidTo = certificate.NotAfter,
+                            Thumbprint = certificate.Thumbprint,
+                            Jwk = jwk
+                        });
+                        editSamlUpPartyForm.Model.Keys.Add(jwk);
                     }
-
-                    samlUpPartyCertificateFileStatus = defaultSamlUpPartyCertificateFileStatus;
+                    catch (Exception ex)
+                    {
+                        editSamlUpPartyForm.SetFieldError(nameof(editSamlUpPartyForm.Model.Keys), ex.Message);
+                    }
                 }
+
+                samlUpPartyCertificateFileStatus = defaultSamlUpPartyCertificateFileStatus;
             }
         }
 
         private void RemoveSamlUpPartyCertificate(CertificateInfoViewModel certificateInfo)
         {
-            editSamlUpPartyForm.Model.Keys.Remove(certificateInfo.Jwk);
-            certificateInfoList.Remove(certificateInfo);
+            editSamlUpPartyForm.ClearFieldError(nameof(editSamlUpPartyForm.Model.Keys));
+            if (editSamlUpPartyForm.Model.Keys.Remove(certificateInfo.Jwk))
+            {
+                certificateInfoList.Remove(certificateInfo);
+            }
         }
 
         private async Task OnEditSamlUpPartyValidSubmitAsync(EditContext editContext)

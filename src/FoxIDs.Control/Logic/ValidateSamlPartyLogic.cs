@@ -4,6 +4,9 @@ using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
+using System.Collections.Generic;
+using FoxIDs.Models.Api;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -16,8 +19,37 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty) => ValidateSignatureAlgorithm(modelState, nameof(samlUpParty.SignatureAlgorithm), samlUpParty.SignatureAlgorithm);
-        public bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty) => ValidateSignatureAlgorithm(modelState, nameof(samlDownParty.SignatureAlgorithm), samlDownParty.SignatureAlgorithm);
+        public bool ValidateSignatureAlgorithmAndSigningKeys(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
+        {
+            return ValidateSignatureAlgorithm(modelState, nameof(samlUpParty.SignatureAlgorithm), samlUpParty.SignatureAlgorithm) &&
+                ValidateSigningKeys(modelState, nameof(samlUpParty.Keys), samlUpParty.Keys);
+        }
+
+        public bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)
+        {
+            return ValidateSignatureAlgorithm(modelState, nameof(samlDownParty.SignatureAlgorithm), samlDownParty.SignatureAlgorithm);
+        }
+
+        private bool ValidateSigningKeys(ModelStateDictionary modelState, string propertyName, List<JsonWebKey> keys)
+        {
+            var isValid = true;
+            try
+            {
+                var anyDuplicate = keys.GroupBy(x => x.X5t).Any(g => g.Count() > 1);
+                if (anyDuplicate)
+                {
+                    throw new Exception("Signing keys has duplicates.");
+                }
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+                logger.Warning(ex);
+                modelState.TryAddModelError(propertyName.ToCamelCase(), ex.Message);
+                return false;
+            }
+            return isValid;
+        }
 
         private bool ValidateSignatureAlgorithm(ModelStateDictionary modelState, string propertyName, string signatureAlgorithm)
         {

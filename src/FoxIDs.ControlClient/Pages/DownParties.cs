@@ -44,18 +44,7 @@ namespace FoxIDs.Client.Pages
         const int samlDownPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
         private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
         string samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
-
-        //private Modal downPartyModal;
-
-
-        //private Modal createDownPartyModal;
-        //private PageEditForm<CreateTenantViewModel> createDownPartyForm;
-        //private PartyTypes createDownPartyType;
-        //private bool createDownPartyDone;
-        //private List<string> createDownPartyReceipt = new List<string>();
-
-
-
+ 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
@@ -182,6 +171,11 @@ namespace FoxIDs.Client.Pages
                     currentDownPartyName = samlDownParty.Name;
                     editSamlDownPartyForm.Init(samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
                     {
+                        if(afterMap.AcsUrls == null)
+                        {
+                            afterMap.AcsUrls = new List<string> { null };
+                        }
+
                         afterMap.AuthnRequestBinding = samlDownParty.AuthnBinding.RequestBinding;
                         afterMap.AuthnResponseBinding = samlDownParty.AuthnBinding.ResponseBinding;
                         if (!samlDownParty.LoggedOutUrl.IsNullOrEmpty())
@@ -428,51 +422,5 @@ namespace FoxIDs.Client.Pages
                 editSamlDownPartyForm.SetError(ex.Message);
             }
         }
-
-        //private string CreateTitle()
-        //{
-        //    Func<string> text = () =>
-        //    {
-        //        switch (createDownPartyType)
-        //        {
-        //            case PartyTypes.Oidc:
-        //                return "OpenID Connect";
-        //            case PartyTypes.OAuth2:
-        //                return "OAuth 2.0";
-        //            case PartyTypes.Saml2:
-        //                return "SAML 2.0";
-        //            default:
-        //                return string.Empty;
-        //        }
-        //    };
-
-        //    return $"Create {text()} Down Party";
-        //}
-
-        //private async Task OnCreateDownPartyValidSubmitAsync(EditContext editContext)
-        //{
-        //    try
-        //    {
-        //        createDownPartyDone = true;
-
-        //        await OnDownPartyFilterValidSubmitAsync(null);
-        //    }
-        //    catch (FoxIDsApiException ex)
-        //    {
-        //        if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-        //        {
-        //            createDownPartyForm.SetFieldError(nameof(createDownPartyForm.Model.Name), ex.Message);
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-        //}
-
-        //private async Task ShowDownPartyAsync(string upPartyName)
-        //{
-
-        //}
     }
 }

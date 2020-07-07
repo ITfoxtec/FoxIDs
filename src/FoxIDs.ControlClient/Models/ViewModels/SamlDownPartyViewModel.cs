@@ -33,22 +33,22 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        [Display(Name = "Metadata lifetime")]
-        public int? MetadataLifetime { get; set; } = 1728000;
+        [Display(Name = "Metadata lifetime in seconds")]
+        public int MetadataLifetime { get; set; } = 1728000;
 
         /// <summary>
         /// Default 5 minutes.
         /// </summary>
         [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]
-        [Display(Name = "Subject confirmation lifetime")]
-        public int? SubjectConfirmationLifetime { get; set; } = 300;
+        [Display(Name = "Subject confirmation lifetime in seconds")]
+        public int SubjectConfirmationLifetime { get; set; } = 300;
 
         /// <summary>
         /// Default 60 minutes.
         /// </summary>
         [Range(Constants.Models.SamlParty.Down.IssuedTokenLifetimeMin, Constants.Models.SamlParty.Down.IssuedTokenLifetimeMax)]
-        [Display(Name = "Issued token lifetime")]
-        public int? IssuedTokenLifetime { get; set; } = 3600;
+        [Display(Name = "Issued token lifetime in seconds")]
+        public int IssuedTokenLifetime { get; set; } = 3600;
 
         /// <summary>
         /// Default SHA256.
@@ -87,7 +87,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) url")]
-        public List<string> AcsUrls { get; set; }
+        public List<string> AcsUrls { get; set; } = new List<string> { null };
 
         [Display(Name = "Logout request binding")]
         public SamlBindingType LogoutRequestBinding { get; set; } = SamlBindingType.Post;

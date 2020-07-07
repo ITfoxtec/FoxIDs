@@ -18,7 +18,7 @@ namespace FoxIDs.Client.Shared.Components
         public bool Focus { get; set; } = false;
 
         [Parameter]
-        public Expression<Func<TValue>> For { get; set; }
+        public Expression<Func<object>> For { get; set; }
 
         protected override bool TryParseValueFromString(string value, out TValue result, out string validationErrorMessage)
         {

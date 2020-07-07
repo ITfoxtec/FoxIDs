@@ -1,0 +1,53 @@
+﻿@using System.Linq.Expressions
+
+<div class="form-group active-group">
+    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i}))
+    {
+        if (item.Index == 0)
+        {
+            <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
+            <Label For="@For" class="label-control" />
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-11" style="padding-right: 0px">
+                    <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
+                </div>
+                <div class="col-1" style="padding-left: 0px; padding-right: 0px">
+                    <button type="button" class="btn btn-link" title="Remove" @onclick="@(async e => await RemoveAsync(e, item.Index))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                </div>
+            </div>
+        }
+    }
+    <ValidationMessage For="@For" />
+    <button type="button" class="btn btn-link btn-sm" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more</button>
+</div>
+
+@code {
+    [Parameter]
+    public List<string> ValueList { get; set; }
+    [Parameter]
+    public EventCallback<List<string>> ValueListChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<object>> For { get; set; }
+
+    private async Task OnChangeAsync(ChangeEventArgs e, int index)
+    {
+        ValueList[index] = e.Value.ToString();
+        await ValueListChanged.InvokeAsync(ValueList);
+    }
+
+    private async Task AddAsync(MouseEventArgs e)
+    {
+        ValueList.Add(null);
+        await ValueListChanged.InvokeAsync(ValueList);
+    }
+
+    private async Task RemoveAsync(MouseEventArgs e, int index)
+    {
+        ValueList.RemoveAt(index);
+        await ValueListChanged.InvokeAsync(ValueList);
+    }
+}

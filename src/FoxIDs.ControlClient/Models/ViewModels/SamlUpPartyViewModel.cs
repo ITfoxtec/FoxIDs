@@ -25,7 +25,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        [Display(Name = "Metadata lifetime")]
+        [Display(Name = "Metadata lifetime in seconds")]
         public int MetadataLifetime { get; set; } = 1728000;
 
         /// <summary>

@@ -206,7 +206,6 @@ namespace FoxIDs
                 public const int MetadataLifetimeMin = 86400; // 24 hours 
                 public const int MetadataLifetimeMax = 31536000; // 12 month
                 public const int SignatureAlgorithmLength = 100;
-                public const int KeysMin = 1;
                 public const int KeysMax = 10;
 
                 public const int ClaimsMin = 0;
@@ -216,12 +215,14 @@ namespace FoxIDs
 
                 public static class Up
                 {
+                    public const int KeysMin = 1;
                     public const int AuthnUrlLength = 500;
                     public const int LogoutUrlLength = 500;
                 }
 
                 public static class Down
                 {
+                    public const int KeysMin = 0;
                     public const int SubjectConfirmationLifetimeMin = 60; // 1 minutes 
                     public const int SubjectConfirmationLifetimeMax = 900; // 15 minutes
                     public const int IssuedTokenLifetimeMin = 300; // 5 minutes 
@@ -231,7 +232,6 @@ namespace FoxIDs
                     public const int AcsUrlsLength = 500;
                     public const int SingleLogoutUrlLength = 500;
                     public const int LoggedOutUrlLength = 500;
-
                 }
             }
         }

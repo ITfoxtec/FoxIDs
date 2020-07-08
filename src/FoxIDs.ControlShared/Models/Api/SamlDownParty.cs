@@ -79,7 +79,7 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
         public string LoggedOutUrl { get; set; }
 
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
     }
 }

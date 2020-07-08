@@ -27,7 +27,7 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateTrackAsync(Track track, string tenantName = null)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri, tenantName), track);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(apiUri, tenantName), track);
             var trackResponse = await response.ToObjectAsync<Track>();
         }
     }

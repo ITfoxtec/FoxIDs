@@ -36,12 +36,12 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateLoginUpPartyAsync(LoginUpParty party)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
         }
 
         public async Task UpdateLoginUpPartyAsync(LoginUpParty party)
         {
-            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
+            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
         }
 
         public async Task DeleteLoginUpPartyAsync(string name)
@@ -60,12 +60,12 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateSamlUpPartyAsync(SamlUpParty party)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
         }
 
         public async Task UpdateSamlUpPartyAsync(SamlUpParty party)
         {
-            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
+            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
         }
 
         public async Task DeleteSamlUpPartyAsync(string name)

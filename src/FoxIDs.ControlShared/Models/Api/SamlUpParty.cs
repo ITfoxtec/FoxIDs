@@ -51,7 +51,7 @@ namespace FoxIDs.Models.Api
         public string AuthnUrl { get; set; }
 
         [Required]
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
         [ValidateObject]

@@ -96,14 +96,14 @@ namespace FoxIDs.Client.Models.ViewModels
         public SamlBindingType LogoutResponseBinding { get; set; } = SamlBindingType.Post;
 
         [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
-        [Display(Name = "Single logout url")]
+        [Display(Name = "Optional single logout url")]
         public string SingleLogoutUrl { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
-        [Display(Name = "Logged out url")]
+        [Display(Name = "Optional logged out url")]
         public string LoggedOutUrl { get; set; }
 
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "Optional one or more signature validation certificates")]
         public List<JsonWebKey> Keys { get; set; }
     }

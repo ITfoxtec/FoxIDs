@@ -78,7 +78,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logged_out_url")]
         public string LoggedOutUrl { get; set; }
 
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
     }

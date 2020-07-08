@@ -28,7 +28,7 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateTenantAsync(CreateTenantRequest tenant)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(apiUri), tenant);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(apiUri), tenant);
             //var tenantResponse = await response.ToObjectAsync<Tenant>();
         }
 

@@ -37,12 +37,12 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateOidcDownPartyAsync(OidcDownParty party)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(oidcApiUri), party);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(oidcApiUri), party);
         }
 
         public async Task UpdateOidcDownPartyAsync(OidcDownParty party)
         {
-            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(oidcApiUri), party);
+            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(oidcApiUri), party);
         }
 
         public async Task DeleteOidcDownPartyAsync(string name)
@@ -61,12 +61,12 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateOAuthDownPartyAsync(OAuthDownParty party)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(oauthApiUri), party);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(oauthApiUri), party);
         }
 
         public async Task UpdateOAuthDownPartyAsync(OAuthDownParty party)
         {
-            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(oauthApiUri), party);
+            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(oauthApiUri), party);
         }
 
         public async Task DeleteOAuthDownPartyAsync(string name)
@@ -85,12 +85,12 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateSamlDownPartyAsync(SamlDownParty party)
         {
-            using var response = await httpClient.PostAsJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
+            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
         }
 
         public async Task UpdateSamlDownPartyAsync(SamlDownParty party)
         {
-            using var response = await httpClient.PutAsJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
+            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
         }
 
         public async Task DeleteSamlDownPartyAsync(string name)

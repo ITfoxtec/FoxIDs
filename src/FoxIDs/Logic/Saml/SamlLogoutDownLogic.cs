@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
-                return await LogoutResponseAsync(party.Id, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, saml2LogoutRequest.Destination?.OriginalString, party.AuthnBinding.ResponseBinding, ex.Status);
+                return await LogoutResponseAsync(party.Id, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, party.LoggedOutUrl, party.AuthnBinding.ResponseBinding, ex.Status);
             }
         }
 

@@ -71,7 +71,7 @@
                 <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
             </FInputSelect>
             <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionLifetime" For="@(() => editLoginUpPartyForm.Model.SessionLifetime)" />
-            <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
             @if (showAdvanced)
             {
                 <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
@@ -119,7 +119,7 @@
                 <ul class="list-group">
                     @foreach (var certificateInfo in certificateInfoList)
                     {
-                        <li class="list-group-item">
+                        <li class="list-group-item p-0">
                             <div class="d-flex">
                                 <div class="mr-auto p-2">
                                     <strong>@certificateInfo.Subject</strong><br />
@@ -127,7 +127,7 @@
                                     Thumbprint: @certificateInfo.Thumbprint
                                 </div>
                                 <div class="p-2">
-                                    <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlUpPartyCertificate(certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                    <button type="button" class="btn btn-link p-0" title="Remove" @onclick="@(() => RemoveSamlUpPartyCertificate(certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
                                 </div>
                             </div>
                         </li>
@@ -135,7 +135,7 @@
                 </ul>
             </div>   
             <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />
-            <div class="row">
+            <div class="row active-group-outline">
                 <div class="col">
                     <div class="form-group active-group">
                         <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlUpPartyForm.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
@@ -154,7 +154,7 @@
                 </div>
             </div>
             <FInputText @bind-Value="editSamlUpPartyForm.Model.LogoutUrl" For="@(() => editSamlUpPartyForm.Model.LogoutUrl)" />
-            <div class="row">
+            <div class="row active-group-outline">
                 <div class="col">
                     <div class="form-group active-group">
                         <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlUpPartyForm.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
@@ -172,7 +172,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
             @if (showAdvanced)
             {
                 <FInputSelect @bind-Value="editSamlUpPartyForm.Model.SignatureAlgorithm" For="@(() => editSamlUpPartyForm.Model.SignatureAlgorithm)">

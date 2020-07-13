@@ -11,17 +11,17 @@
         else
         {
             <div class="row">
-                <div class="col-11" style="padding-right: 0px">
+                <div class="col-11">
                     <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
                 </div>
-                <div class="col-1" style="padding-left: 0px; padding-right: 0px">
-                    <button type="button" class="btn btn-link" title="Remove" @onclick="@(async e => await RemoveAsync(e, item.Index))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                <div class="col-1 p-0">
+                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(async e => await RemoveAsync(e, item.Index))"><span class="oi oi-delete" aria-hidden="true"></span></button>
                 </div>
             </div>
         }
     }
     <ValidationMessage For="@For" />
-    <button type="button" class="btn btn-link btn-sm" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more</button>
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more</button>
 </div>
 
 @code {

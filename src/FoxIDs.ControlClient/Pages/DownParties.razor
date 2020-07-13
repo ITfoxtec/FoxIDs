@@ -53,7 +53,7 @@
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Name" For="@(() => editSamlDownPartyForm.Model.Name)" Focus="true" />
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Issuer" For="@(() => editSamlDownPartyForm.Model.Issuer)" />
             <FInputTextList @bind-ValueList="editSamlDownPartyForm.Model.AcsUrls" For="@(() => editSamlDownPartyForm.Model.AcsUrls)" />
-            <div class="row">
+            <div class="row active-group-outline">
                 <div class="col">
                     <div class="form-group active-group">
                         <FInputSelect @bind-Value="editSamlDownPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlDownPartyForm.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
@@ -73,7 +73,7 @@
             </div>
             <FInputText @bind-Value="editSamlDownPartyForm.Model.LoggedOutUrl" For="@(() => editSamlDownPartyForm.Model.LoggedOutUrl)" />
             <FInputText @bind-Value="editSamlDownPartyForm.Model.SingleLogoutUrl" For="@(() => editSamlDownPartyForm.Model.SingleLogoutUrl)" />
-            <div class="row">
+            <div class="row active-group-outline">
                 <div class="col">
                     <div class="form-group active-group">
                         <FInputSelect @bind-Value="editSamlDownPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlDownPartyForm.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
@@ -91,7 +91,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
             @if (showAdvanced)
             {
                 <FInputTextList @bind-ValueList="editSamlDownPartyForm.Model.Claims" For="@(() => editSamlDownPartyForm.Model.Claims)" />

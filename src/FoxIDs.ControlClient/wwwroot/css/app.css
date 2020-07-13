@@ -175,7 +175,7 @@ h4 {
 .active-group {
     position: relative;
     padding: 15px 0px;
-    margin: 15px 0px;
+    margin: 5px 0px;
 }
 
     .active-group .input-control {
@@ -222,6 +222,10 @@ h4 {
     .active-group .input-group {
         position: initial;
     }
+
+.active-group-outline .active-group {
+    margin-bottom: 0px;
+}
 
 .input-control.invalid {
     border-color: #a94442;

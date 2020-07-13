@@ -130,7 +130,7 @@ namespace FoxIDs
 
             public static class DownParty
             {
-                public const int AllowUpPartyNamesMin = 0;
+                public const int AllowUpPartyNamesMin = 1;
                 public const int AllowUpPartyNamesMax = 2000;            
             }
 

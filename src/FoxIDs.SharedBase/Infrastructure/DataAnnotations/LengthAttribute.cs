@@ -28,6 +28,17 @@ namespace FoxIDs.Infrastructure.DataAnnotations
 
         public override bool IsValid(object value)
         {
+            if (value == null)
+            {
+                return true;
+            }
+
+            tempFormatErrorMessage = null;
+            if (base.IsValid(value))
+            {
+                return false;
+            }
+
             var count = 0;
             try
             {
@@ -38,11 +49,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                     {
                         if (enumerator.Current is string)
                         {
-                            if (!maxStringLenght.HasValue)
-                            {
-                                throw new ValidationException($"Max string length is required for string item list in field {fieldNameKey}.", this, enumerator.Current as string);
-                            }
-                            else
+                            if (maxStringLenght.HasValue)
                             {
                                 new MaxLengthAttribute(maxStringLenght.Value).Validate(enumerator.Current as string, $"{fieldNameKey}.item[{count}]");
                             }
@@ -51,10 +58,6 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                             {
                                 new RegularExpressionAttribute(regExPattern).Validate(enumerator.Current as string, $"{fieldNameKey}.item[{count}]");
                             }
-                        }
-                        else if (maxStringLenght.HasValue)
-                        {
-                            throw new ValidationException($"Max string length is only allowed for string list {fieldNameKey}.", this, enumerator.Current as string);
                         }
                         count++;
                     }
@@ -66,7 +69,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                 return false;
             }
 
-            return base.IsValid(count);
+            return true;
         }
 
         public override string FormatErrorMessage(string name)

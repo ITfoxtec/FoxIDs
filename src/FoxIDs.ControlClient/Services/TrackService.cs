@@ -2,7 +2,6 @@
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Services
@@ -11,24 +10,12 @@ namespace FoxIDs.Client.Services
     {
         private const string apiUri = "api/{tenant}/master/!track";
         private const string filterApiUri = "api/{tenant}/master/!filtertrack";
-        private readonly HttpClient httpClient;
 
-        public TrackService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(routeBindingLogic)
-        {
-            this.httpClient = httpClient;
-        }
+        public TrackService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
+        { }
 
-        public async Task<IEnumerable<Track>> SearchTrackAsync(string filterName, string tenantName = null)
-        {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(filterApiUri, tenantName)}?filterName={filterName}");
-            var tracks = await response.ToObjectAsync<IEnumerable<Track>>();
-            return tracks;
-        }
+        public async Task<IEnumerable<Track>> FilterTrackAsync(string filterName, string tenantName = null) => await FilterAsync<Track>(filterApiUri, filterName, tenantName);
 
-        public async Task CreateTrackAsync(Track track, string tenantName = null)
-        {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(apiUri, tenantName), track);
-            var trackResponse = await response.ToObjectAsync<Track>();
-        }
+        public async Task CreateTrackAsync(Track track, string tenantName = null) => await CreateAsync(apiUri, track, tenantName);
     }
 }

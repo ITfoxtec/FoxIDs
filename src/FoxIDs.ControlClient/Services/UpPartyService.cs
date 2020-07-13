@@ -2,7 +2,6 @@
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Services
@@ -12,67 +11,20 @@ namespace FoxIDs.Client.Services
         private const string filterApiUri = "api/{tenant}/master/!filterupparty";
         private const string loginApiUri = "api/{tenant}/master/!loginupparty";
         private const string samlApiUri = "api/{tenant}/master/!samlupparty";
-        private readonly HttpClient httpClient;
 
-        public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(routeBindingLogic)
-        {
-            this.httpClient = httpClient;
-        }
+        public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
+        { }
 
-        public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName)
-        {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(filterApiUri)}?filterName={filterName}");
-            var upParties = await response.ToObjectAsync<IEnumerable<UpParty>>();
-            return upParties;
-        }
+        public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName) => await FilterAsync<UpParty>(filterApiUri, filterName);
 
-        #region LoginUpParty
-        public async Task<LoginUpParty> GetLoginUpPartyAsync(string name)
-        {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(loginApiUri)}?name={name}");
-            var loginUpParties = await response.ToObjectAsync<LoginUpParty>();
-            return loginUpParties;
-        }
+        public async Task<LoginUpParty> GetLoginUpPartyAsync(string name) => await GetAsync<LoginUpParty>(loginApiUri, name);
+        public async Task CreateLoginUpPartyAsync(LoginUpParty party) => await CreateAsync(loginApiUri, party);
+        public async Task UpdateLoginUpPartyAsync(LoginUpParty party) => await UpdateAsync(loginApiUri, party);
+        public async Task DeleteLoginUpPartyAsync(string name) => await DeleteAsync(loginApiUri, name);
 
-        public async Task CreateLoginUpPartyAsync(LoginUpParty party)
-        {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
-        }
-
-        public async Task UpdateLoginUpPartyAsync(LoginUpParty party)
-        {
-            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(loginApiUri), party);
-        }
-
-        public async Task DeleteLoginUpPartyAsync(string name)
-        {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(loginApiUri)}?name={name}");
-        }
-        #endregion
-
-        #region SamlUpParty
-        public async Task<SamlUpParty> GetSamlUpPartyAsync(string name)
-        {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(samlApiUri)}?name={name}");
-            var samlUpParties = await response.ToObjectAsync<SamlUpParty>();
-            return samlUpParties;
-        }
-
-        public async Task CreateSamlUpPartyAsync(SamlUpParty party)
-        {
-            using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
-        }
-
-        public async Task UpdateSamlUpPartyAsync(SamlUpParty party)
-        {
-            using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(samlApiUri), party);
-        }
-
-        public async Task DeleteSamlUpPartyAsync(string name)
-        {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(samlApiUri)}?name={name}");
-        }
-        #endregion
-
+        public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);
+        public async Task CreateSamlUpPartyAsync(SamlUpParty party) => await CreateAsync(samlApiUri, party);
+        public async Task UpdateSamlUpPartyAsync(SamlUpParty party) => await UpdateAsync(samlApiUri, party);
+        public async Task DeleteSamlUpPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
     }
 }

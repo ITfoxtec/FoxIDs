@@ -34,11 +34,6 @@ namespace FoxIDs.Infrastructure.DataAnnotations
             }
 
             tempFormatErrorMessage = null;
-            if (base.IsValid(value))
-            {
-                return false;
-            }
-
             var count = 0;
             try
             {
@@ -69,7 +64,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                 return false;
             }
 
-            return true;
+            return base.IsValid(count);
         }
 
         public override string FormatErrorMessage(string name)

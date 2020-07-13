@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using FoxIDs.Models.Api;
 using System.Linq;
 using ITfoxtec.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Logic
 {
@@ -49,13 +50,16 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                var anyDuplicate = keys.GroupBy(x => x.X5t).Any(g => g.Count() > 1);
-                if (anyDuplicate)
+                if (keys != null)
                 {
-                    throw new Exception("Signature validation keys (certificates) has duplicates.");
+                    var anyDuplicate = keys.GroupBy(x => x.X5t).Any(g => g.Count() > 1);
+                    if (anyDuplicate)
+                    {
+                        throw new ValidationException("Signature validation keys (certificates) has duplicates.");
+                    }
                 }
             }
-            catch (Exception ex)
+            catch (ValidationException ex)
             {
                 isValid = false;
                 logger.Warning(ex);

@@ -47,15 +47,12 @@
     </div>
 </div>
 
-
 <Modal @ref="editSamlDownPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Saml Down Party")">
     <PageEditForm @ref="editSamlDownPartyForm" TModel="SamlDownPartyViewModel" OnValidSubmit="OnEditSamlDownPartyValidSubmitAsync">
         <div class="modal-body">
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Name" For="@(() => editSamlDownPartyForm.Model.Name)" Focus="true" />
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Issuer" For="@(() => editSamlDownPartyForm.Model.Issuer)" />
-
             <FInputTextList @bind-ValueList="editSamlDownPartyForm.Model.AcsUrls" For="@(() => editSamlDownPartyForm.Model.AcsUrls)" />
-
             <div class="row">
                 <div class="col">
                     <div class="form-group active-group">
@@ -97,6 +94,7 @@
             <button type="button" class="btn btn-link btn-sm" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
             @if (showAdvanced)
             {
+                <FInputTextList @bind-ValueList="editSamlDownPartyForm.Model.Claims" For="@(() => editSamlDownPartyForm.Model.Claims)" />
                 <div class="form-group active-group active">
                     <div class="drag-drop-zone input-control">
                         <InputFile multiple OnChange="OnSamlDownPartyCertificateFileSelectedAsync" />
@@ -144,9 +142,7 @@
                 <FInputNumber @bind-Value="editSamlDownPartyForm.Model.IssuedTokenLifetime" For="@(() => editSamlDownPartyForm.Model.IssuedTokenLifetime)" />
                 <FInputNumber @bind-Value="editSamlDownPartyForm.Model.MetadataLifetime" For="@(() => editSamlDownPartyForm.Model.MetadataLifetime)" />
                 /*mangler
-                    AcsUrls - teste...
                     AllowUpPartyNames
-                    Claims
                 */
             }
             @if (!createMode && deleteAcknowledge)

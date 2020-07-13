@@ -33,6 +33,15 @@
     [Parameter]
     public Expression<Func<object>> For { get; set; }
 
+    protected override void OnParametersSet()
+    {
+        if (ValueList == null)
+        {
+            ValueList = new List<string> { null };
+        }
+        base.OnParametersSet();
+    }
+
     private async Task OnChangeAsync(ChangeEventArgs e, int index)
     {
         ValueList[index] = e.Value.ToString();

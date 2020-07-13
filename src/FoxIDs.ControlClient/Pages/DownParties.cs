@@ -171,11 +171,6 @@ namespace FoxIDs.Client.Pages
                     currentDownPartyName = samlDownParty.Name;
                     editSamlDownPartyForm.Init(samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
                     {
-                        if(afterMap.AcsUrls == null)
-                        {
-                            afterMap.AcsUrls = new List<string> { null };
-                        }
-
                         afterMap.AuthnRequestBinding = samlDownParty.AuthnBinding.RequestBinding;
                         afterMap.AuthnResponseBinding = samlDownParty.AuthnBinding.ResponseBinding;
                         if (!samlDownParty.LoggedOutUrl.IsNullOrEmpty())

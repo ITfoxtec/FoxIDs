@@ -18,7 +18,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Name { get; set; }
 
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "")]
+        [Display(Name = "Allow UpParty names")]
         public List<string> AllowUpPartyNames { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
@@ -26,7 +26,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string IdSIssuer { get; set; }
 
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
-        [Display(Name = "")]
+        [Display(Name = "Issue of claim (in addition to default claims)")]
         public List<string> Claims { get; set; }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) url")]
-        public List<string> AcsUrls { get; set; } = new List<string> { null };
+        public List<string> AcsUrls { get; set; } 
 
         [Display(Name = "Logout request binding")]
         public SamlBindingType LogoutRequestBinding { get; set; } = SamlBindingType.Post;

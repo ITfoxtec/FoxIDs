@@ -7,10 +7,10 @@
     </div>
     <div class="p-2">
         <div class="btn-group" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="oi oi-plus" aria-hidden="true"></span> Create Up Party
             </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+            <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
                 <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Login))">Login</button>
                 @*<button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Oidc))">OpenID Connect</button>*@
                 <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Saml2))">Saml 2.0</button>

@@ -13,7 +13,7 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
-        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Up Party name")]
         public string Name { get; set; }
 

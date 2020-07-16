@@ -13,13 +13,13 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
-        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Down Party name")]
         public string Name { get; set; }
 
-        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow UpParty names")]
-        public List<string> AllowUpPartyNames { get; set; }
+        [Length(Constants.Models.SamlParty.Down.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [Display(Name = "Allow Up Party names")]
+        public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Optional custom issuer (default auto generated)")]

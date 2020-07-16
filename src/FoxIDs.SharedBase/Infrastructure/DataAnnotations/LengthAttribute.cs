@@ -28,11 +28,6 @@ namespace FoxIDs.Infrastructure.DataAnnotations
 
         public override bool IsValid(object value)
         {
-            if (value == null)
-            {
-                return true;
-            }
-
             tempFormatErrorMessage = null;
             var count = 0;
             try
@@ -42,6 +37,11 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                     var enumerator = (value as IEnumerable).GetEnumerator();
                     while (enumerator.MoveNext())
                     {
+                        if (enumerator.Current == null || enumerator.Current.ToString().IsNullOrWhiteSpace())
+                        {
+                            throw new ValidationException($"{fieldNameKey}.item[{count}] is null or contain only white spaces.");
+                        }
+
                         if (enumerator.Current is string)
                         {
                             if (maxStringLenght.HasValue)

@@ -7,13 +7,13 @@
     </div>
     <div class="p-2">
         <div class="btn-group" role="group">
-            <button id="btnGroupDrop1" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="oi oi-plus" aria-hidden="true"></span> Create Down Party
             </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownPartyModal(PartyTypes.Oidc))">OpenID Connect</button>
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownPartyModal(PartyTypes.OAuth2))">OAuth 2.0</button>
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownPartyModal(PartyTypes.Saml2))">Saml 2.0</button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+                <button class="dropdown-item btn btn-link" @onclick="@(async () => await ShowCreateDownPartyModalAsync(PartyTypes.Oidc))">OpenID Connect</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(async () => await ShowCreateDownPartyModalAsync(PartyTypes.OAuth2))">OAuth 2.0</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(async () => await ShowCreateDownPartyModalAsync(PartyTypes.Saml2))">Saml 2.0</button>
             </div>
         </div>
     </div>
@@ -50,6 +50,65 @@
 <Modal @ref="editSamlDownPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Saml Down Party")">
     <PageEditForm @ref="editSamlDownPartyForm" TModel="SamlDownPartyViewModel" OnValidSubmit="OnEditSamlDownPartyValidSubmitAsync">
         <div class="modal-body">
+            <div class="form-group active-group @(editSamlDownPartyForm.Model.AllowUpPartyNames.Count() > 0 ? "active" : "")">
+                <ul class="list-group">
+                    @if (editSamlDownPartyForm.Model.AllowUpPartyNames.Count() <= 0)
+                    {
+                        <li class="list-group-item p-0">
+                            <div class="d-flex">
+                                <div class="mr-auto px-3 py-1">
+                                </div>
+                                <div class="p-0">
+                                    <button type="button" class="btn btn-link px-2 py-1" title="Remove" disabled><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                    else
+                    {
+                        @foreach (var allowUpPartyName in editSamlDownPartyForm.Model.AllowUpPartyNames)
+                        {
+                            <li class="list-group-item p-0">
+                                <div class="d-flex">
+                                    <div class="mr-auto px-3 py-1">
+                                        @allowUpPartyName
+                                    </div>
+                                    <div class="p-0">
+                                        <button type="button" class="btn btn-link px-2 py-1" title="Remove" @onclick="@(() => RemoveSamlAllowUpPartyName(allowUpPartyName))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    }
+                </ul>
+                <Label For="@(() => editSamlDownPartyForm.Model.AllowUpPartyNames)" class="label-control" />
+                <ValidationMessage For="@(() => editSamlDownPartyForm.Model.AllowUpPartyNames)" />
+
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <button type="button" class="nav-link dropdown-toggle btn btn-link btn-xs" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="oi oi-plus" aria-hidden="true"></span> Add allow up party
+                        </button>
+
+                        <div class="dropdown-menu searchDropdown" aria-labelledby="allowUpPartyNamesDropdown">
+                            <PageEditForm @ref="allowUpPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnAllowUpPartyNamesFilterValidSubmitAsync">
+                                <div class="form-group active-group pb-0">
+                                    <FInputTextFilter @bind-Value="allowUpPartyNamesFilterForm.Model.FilterName" For="@(() => allowUpPartyNamesFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                                </div>
+                            </PageEditForm>
+                            @if (allowUpPartyFilters != null)
+                            {
+                                @foreach (var allowUpPartyFilter in allowUpPartyFilters)
+                                {
+                                    <button class="dropdown-item btn btn-link" @onclick="@(() => AddSamlAllowUpPartyName(allowUpPartyFilter.Name))">
+                                        @allowUpPartyFilter.Name, type: @allowUpPartyFilter.Type
+                                    </button>
+                                }
+                            }
+                        </div>
+                    </li>
+                </ul>
+            </div>
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Name" For="@(() => editSamlDownPartyForm.Model.Name)" Focus="true" />
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Issuer" For="@(() => editSamlDownPartyForm.Model.Issuer)" />
             <FInputTextList @bind-ValueList="editSamlDownPartyForm.Model.AcsUrls" For="@(() => editSamlDownPartyForm.Model.AcsUrls)" />
@@ -141,9 +200,6 @@
                 <FInputNumber @bind-Value="editSamlDownPartyForm.Model.SubjectConfirmationLifetime" For="@(() => editSamlDownPartyForm.Model.SubjectConfirmationLifetime)" />
                 <FInputNumber @bind-Value="editSamlDownPartyForm.Model.IssuedTokenLifetime" For="@(() => editSamlDownPartyForm.Model.IssuedTokenLifetime)" />
                 <FInputNumber @bind-Value="editSamlDownPartyForm.Model.MetadataLifetime" For="@(() => editSamlDownPartyForm.Model.MetadataLifetime)" />
-                /*mangler
-                    AllowUpPartyNames
-                */
             }
             @if (!createMode && deleteAcknowledge)
             {

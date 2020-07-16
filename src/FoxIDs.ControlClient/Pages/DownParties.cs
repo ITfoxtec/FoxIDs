@@ -44,12 +44,18 @@ namespace FoxIDs.Client.Pages
         const int samlDownPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
         private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
         string samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
- 
+        private PageEditForm<FilterUpPartyViewModel> allowUpPartyNamesFilterForm;
+        private IEnumerable<UpParty> allowUpPartyFilters;
+
+
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
+        public UpPartyService UpPartyService { get; set; }
 
         [Inject]
         public DownPartyService DownPartyService { get; set; }
@@ -99,10 +105,33 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowCreateDownPartyModal(PartyTypes type)
+        private async Task OnAllowUpPartyNamesFilterValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                allowUpPartyFilters = await UpPartyService.FilterUpPartyAsync(allowUpPartyNamesFilterForm.Model.FilterName);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    allowUpPartyNamesFilterForm.SetFieldError(nameof(allowUpPartyNamesFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task ShowCreateDownPartyModalAsync(PartyTypes type)
         {
             createMode = true;
             showAdvanced = false;
+
+            allowUpPartyNamesFilterForm.Init();
+            await OnAllowUpPartyNamesFilterValidSubmitAsync(null);
+
             if (type == PartyTypes.Oidc)
             {
                 editOidcDownPartyForm.Init();
@@ -127,6 +156,10 @@ namespace FoxIDs.Client.Pages
             createMode = false;
             deleteAcknowledge = false;
             showAdvanced = false;
+
+            allowUpPartyNamesFilterForm.Init();
+            await OnAllowUpPartyNamesFilterValidSubmitAsync(null);
+
             if (type == PartyTypes.Oidc)
             {
                 try
@@ -206,6 +239,7 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        #region Oidc
         private async Task OnEditOidcDownPartyValidSubmitAsync(EditContext editContext)
         {
             try
@@ -251,7 +285,9 @@ namespace FoxIDs.Client.Pages
                 editOidcDownPartyForm.SetError(ex.Message);
             }
         }
+        #endregion
 
+        #region OAuth
         private async Task OnEditOAuthDownPartyValidSubmitAsync(EditContext editContext)
         {
             try
@@ -296,6 +332,22 @@ namespace FoxIDs.Client.Pages
             {
                 editOAuthDownPartyForm.SetError(ex.Message);
             }
+        }
+        #endregion
+
+        #region Saml
+
+        private void AddSamlAllowUpPartyName(string upPartyName)
+        {
+            if(!editSamlDownPartyForm.Model.AllowUpPartyNames.Where(p => p.Equals(upPartyName, StringComparison.OrdinalIgnoreCase)).Any())
+            {
+                editSamlDownPartyForm.Model.AllowUpPartyNames.Add(upPartyName);
+            }
+        }
+
+        private void RemoveSamlAllowUpPartyName(string upPartyName)
+        {
+            editSamlDownPartyForm.Model.AllowUpPartyNames.Remove(upPartyName);
         }
 
         private async Task OnSamlDownPartyCertificateFileSelectedAsync(IFileListEntry[] files)
@@ -416,6 +468,7 @@ namespace FoxIDs.Client.Pages
             {
                 editSamlDownPartyForm.SetError(ex.Message);
             }
-        }
+        } 
+        #endregion
     }
 }

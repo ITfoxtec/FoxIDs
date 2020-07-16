@@ -8,7 +8,6 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Search by party name.
         /// </summary>
         [MaxLength(Constants.Models.Party.NameLength)]
-        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Search party")]
         public string FilterName { get; set; }
     }

@@ -45,6 +45,10 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));
             }
+            if (Client != null && AllowUpPartyNames?.Count <= 0)
+            {
+                results.Add(new ValidationResult($"At least one of the field {nameof(AllowUpPartyNames)} is required if the field {nameof(Resource)} is defined.", new[] { nameof(Client), nameof(Resource) }));
+            }
             return results;
         }
     }

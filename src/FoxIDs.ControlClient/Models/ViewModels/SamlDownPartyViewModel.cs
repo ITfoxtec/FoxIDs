@@ -9,7 +9,7 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlDownPartyViewModel
+    public class SamlDownPartyViewModel : IAllowUpPartyNames
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

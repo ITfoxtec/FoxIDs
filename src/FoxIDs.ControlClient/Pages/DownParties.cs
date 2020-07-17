@@ -44,18 +44,13 @@ namespace FoxIDs.Client.Pages
         const int samlDownPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
         private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
         string samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
-        private PageEditForm<FilterUpPartyViewModel> allowUpPartyNamesFilterForm;
-        private IEnumerable<UpParty> allowUpPartyFilters;
-
+        SelectUpParty<SamlDownPartyViewModel> selectSamlAllowUpPartyName;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
-
-        [Inject]
-        public UpPartyService UpPartyService { get; set; }
 
         [Inject]
         public DownPartyService DownPartyService { get; set; }
@@ -105,33 +100,10 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task OnAllowUpPartyNamesFilterValidSubmitAsync(EditContext editContext)
-        {
-            try
-            {
-                allowUpPartyFilters = await UpPartyService.FilterUpPartyAsync(allowUpPartyNamesFilterForm.Model.FilterName);
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    allowUpPartyNamesFilterForm.SetFieldError(nameof(allowUpPartyNamesFilterForm.Model.FilterName), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
         private async Task ShowCreateDownPartyModalAsync(PartyTypes type)
         {
             createMode = true;
             showAdvanced = false;
-
-            allowUpPartyNamesFilterForm.Init();
-            await OnAllowUpPartyNamesFilterValidSubmitAsync(null);
-
             if (type == PartyTypes.Oidc)
             {
                 editOidcDownPartyForm.Init();
@@ -145,7 +117,7 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.Saml2)
             {
                 editSamlDownPartyForm.Init();
-                //certificateInfoList.Clear();
+                selectSamlAllowUpPartyName.Init();
                 editSamlDownPartyModal.Show();
             }
         }
@@ -156,10 +128,6 @@ namespace FoxIDs.Client.Pages
             createMode = false;
             deleteAcknowledge = false;
             showAdvanced = false;
-
-            allowUpPartyNamesFilterForm.Init();
-            await OnAllowUpPartyNamesFilterValidSubmitAsync(null);
-
             if (type == PartyTypes.Oidc)
             {
                 try
@@ -226,6 +194,7 @@ namespace FoxIDs.Client.Pages
                             });
                         }
                     }));
+                    selectSamlAllowUpPartyName.Init();
                     editSamlDownPartyModal.Show();
                 }
                 catch (AuthenticationException)

@@ -42,7 +42,7 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<SamlDownPartyViewModel> editSamlDownPartyForm;
         const string defaultSamlDownPartyCertificateFileStatus = "Drop certificate files here or click to select";
         const int samlDownPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
-        private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
+        private List<CertificateInfoViewModel> samlCertificateInfoList = new List<CertificateInfoViewModel>();
         string samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
         SelectUpParty<SamlDownPartyViewModel> selectSamlAllowUpPartyName;
 
@@ -180,18 +180,21 @@ namespace FoxIDs.Client.Pages
                             afterMap.LogoutResponseBinding = samlDownParty.LogoutBinding.ResponseBinding;
                         }
 
-                        certificateInfoList.Clear();
-                        foreach (var key in afterMap.Keys)
+                        samlCertificateInfoList.Clear();
+                        if (afterMap.Keys?.Count() > 0)
                         {
-                            var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-                            certificateInfoList.Add(new CertificateInfoViewModel
+                            foreach (var key in afterMap.Keys)
                             {
-                                Subject = certificate.Subject,
-                                ValidFrom = certificate.NotBefore,
-                                ValidTo = certificate.NotAfter,
-                                Thumbprint = certificate.Thumbprint,
-                                Jwk = key
-                            });
+                                var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
+                                samlCertificateInfoList.Add(new CertificateInfoViewModel
+                                {
+                                    Subject = certificate.Subject,
+                                    ValidFrom = certificate.NotBefore,
+                                    ValidTo = certificate.NotAfter,
+                                    Thumbprint = certificate.Thumbprint,
+                                    Jwk = key
+                                });
+                            }
                         }
                     }));
                     selectSamlAllowUpPartyName.Init();
@@ -201,10 +204,10 @@ namespace FoxIDs.Client.Pages
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
-                {
-                    loadPartyError = ex.Message;
-                }
+                //catch (Exception ex)
+                //{
+                //    loadPartyError = ex.Message;
+                //}
             }
         }
 
@@ -355,7 +358,7 @@ namespace FoxIDs.Client.Pages
                             return;
                         }
 
-                        certificateInfoList.Add(new CertificateInfoViewModel
+                        samlCertificateInfoList.Add(new CertificateInfoViewModel
                         {
                             Subject = certificate.Subject,
                             ValidFrom = certificate.NotBefore,
@@ -380,7 +383,7 @@ namespace FoxIDs.Client.Pages
             editSamlDownPartyForm.ClearFieldError(nameof(editSamlDownPartyForm.Model.Keys));
             if (editSamlDownPartyForm.Model.Keys.Remove(certificateInfo.Jwk))
             {
-                certificateInfoList.Remove(certificateInfo);
+                samlCertificateInfoList.Remove(certificateInfo);
             }
         }
 

@@ -39,7 +39,7 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<SamlUpPartyViewModel> editSamlUpPartyForm;
         const string defaultSamlUpPartyCertificateFileStatus = "Drop certificate files here or click to select";
         const int samlUpPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
-        private List<CertificateInfoViewModel> certificateInfoList = new List<CertificateInfoViewModel>();
+        private List<CertificateInfoViewModel> samlCertificateInfoList = new List<CertificateInfoViewModel>();
         string samlUpPartyCertificateFileStatus = defaultSamlUpPartyCertificateFileStatus;
 
         [Inject]
@@ -112,7 +112,7 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.Saml2)
             {
                 editSamlUpPartyForm.Init();
-                certificateInfoList.Clear();
+                samlCertificateInfoList.Clear();
                 editSamlUpPartyModal.Show();
             }
         }
@@ -161,11 +161,11 @@ namespace FoxIDs.Client.Pages
                             afterMap.LogoutResponseBinding = samlUpParty.LogoutBinding.ResponseBinding;
                         }
 
-                        certificateInfoList.Clear();
+                        samlCertificateInfoList.Clear();
                         foreach (var key in afterMap.Keys)
                         {
                             var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-                            certificateInfoList.Add(new CertificateInfoViewModel
+                            samlCertificateInfoList.Add(new CertificateInfoViewModel
                             {
                                 Subject = certificate.Subject,
                                 ValidFrom = certificate.NotBefore,
@@ -270,7 +270,7 @@ namespace FoxIDs.Client.Pages
                             return;
                         }
 
-                        certificateInfoList.Add(new CertificateInfoViewModel 
+                        samlCertificateInfoList.Add(new CertificateInfoViewModel 
                         {
                             Subject = certificate.Subject,
                             ValidFrom = certificate.NotBefore,
@@ -295,7 +295,7 @@ namespace FoxIDs.Client.Pages
             editSamlUpPartyForm.ClearFieldError(nameof(editSamlUpPartyForm.Model.Keys));
             if (editSamlUpPartyForm.Model.Keys.Remove(certificateInfo.Jwk))
             {
-                certificateInfoList.Remove(certificateInfo);
+                samlCertificateInfoList.Remove(certificateInfo);
             }
         }
 

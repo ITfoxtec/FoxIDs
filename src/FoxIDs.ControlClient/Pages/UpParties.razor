@@ -117,7 +117,7 @@
                 <Label For="@(() => editSamlUpPartyForm.Model.Keys)" class="label-control" />
                 <ValidationMessage For="@(() => editSamlUpPartyForm.Model.Keys)" />
                 <ul class="list-group">
-                    @foreach (var certificateInfo in certificateInfoList)
+                    @foreach (var certificateInfo in samlCertificateInfoList)
                     {
                         <li class="list-group-item p-0">
                             <div class="d-flex">

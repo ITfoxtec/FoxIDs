@@ -29,29 +29,107 @@
 </ul>
 
 <div class="tab-content">
-    <div>
-        <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
-            <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" />
-        </PageEditForm>
+    <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
+        <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" />
+    </PageEditForm>
 
-        <ul class="list-group list-group-flush">
-            @foreach (var downParty in downParties)
-            {
-                <li class="list-group-item">
-                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateDownPartyAsync(@downParty.Type, @downParty.Name))">
-                        @downParty.Name, type: @downParty.Type<br />
-                    </button>
-                </li>
-            }
-        </ul>
-    </div>
+    <ul class="list-group list-group-flush">
+        @foreach (var downParty in downParties)
+        {
+            <li class="list-group-item">
+                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateDownPartyAsync(@downParty.Type, @downParty.Name))">
+                    @downParty.Name, type: @downParty.Type<br />
+                </button>
+            </li>
+        }
+    </ul>
 </div>
+
+<Modal @ref="editOidcDownPartyModal" Title="@($"{(createMode ? "Create" : "Update")} OpenID Connect Down Party")">
+    <PageEditForm @ref="editOidcDownPartyForm" TModel="OidcDownPartyViewModel" OnValidSubmit="OnEditOidcDownPartyValidSubmitAsync">
+        <div class="modal-body">
+            <FInputText @bind-Value="editOidcDownPartyForm.Model.Name" For="@(() => editOidcDownPartyForm.Model.Name)" Focus="true" />
+
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    @if (showEditOidcDownPartyClientTab)
+                    {
+                        <a class="nav-link active">OpenID Connect Client</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => showEditOidcDownPartyClientTab = true)">OpenID Connect Client</button>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (showEditOidcDownPartyClientTab)
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => showEditOidcDownPartyClientTab = false)">OAuth 2.0 Resource</button>
+                    }
+                    else
+                    {
+                        <a class="nav-link active">OAuth 2.0 Resource</a>
+                    }
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                @if (showEditOidcDownPartyClientTab)
+                {
+                    <SelectUpParty @ref="selectOidcAllowUpPartyName" EditDownPartyForm="editOidcDownPartyForm" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddOidcAllowUpPartyName" OnRemoveUpPartyName="RemoveOidcAllowUpPartyName" />
+                    @if (editOidcDownPartyForm.Model.Client != null)
+                    {
+                        <FInputTextList @bind-ValueList="editOidcDownPartyForm.Model.Client.RedirectUris" For="@(() => editOidcDownPartyForm.Model.Client.RedirectUris)" />
+                        @*editOidcDownPartyForm.Model.Client.ResponseTypes*@
+
+                        <FInputToggleN @bind-Value="editOidcDownPartyForm.Model.Client.EnablePkce" For="@(() => editOidcDownPartyForm.Model.Client.EnablePkce)" TextType="e.d" />
+
+                        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
+                        @if (showAdvanced)
+                        {
+
+                        }
+                    }
+                }
+                else
+                {
+                    @if (editOidcDownPartyForm.Model.Resource != null)
+                    {
+
+                    }
+                }
+            </div>
+
+            @if (!createMode && deleteAcknowledge)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <div>
+                        You are about to delete OpenID Connect Down Party "@currentDownPartyName", are you sure?
+                    </div>
+
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteOidcDownPartyAsync(currentDownPartyName))">Yes delete</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => deleteAcknowledge = false)">No</button>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="modal-footer">
+            @if (!createMode)
+            {
+                <button type="button" class="btn btn-link" @onclick="@(() => deleteAcknowledge = true)">Delete</button>
+            }
+            <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
+            <button type="button" class="btn btn-secondary" @onclick="@(() => editOidcDownPartyModal.Hide())">Cancel</button>
+        </div>
+    </PageEditForm>
+</Modal>
 
 <Modal @ref="editSamlDownPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Saml Down Party")">
     <PageEditForm @ref="editSamlDownPartyForm" TModel="SamlDownPartyViewModel" OnValidSubmit="OnEditSamlDownPartyValidSubmitAsync">
         <div class="modal-body">
-            <SelectUpParty @ref="selectSamlAllowUpPartyName" EditDownPartyForm="editSamlDownPartyForm" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddSamlAllowUpPartyName" OnRemoveUpPartyName="RemoveSamlAllowUpPartyName"/>
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Name" For="@(() => editSamlDownPartyForm.Model.Name)" Focus="true" />
+            <SelectUpParty @ref="selectSamlAllowUpPartyName" EditDownPartyForm="editSamlDownPartyForm" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddSamlAllowUpPartyName" OnRemoveUpPartyName="RemoveSamlAllowUpPartyName" />
             <FInputText @bind-Value="editSamlDownPartyForm.Model.Issuer" For="@(() => editSamlDownPartyForm.Model.Issuer)" />
             <FInputTextList @bind-ValueList="editSamlDownPartyForm.Model.AcsUrls" For="@(() => editSamlDownPartyForm.Model.AcsUrls)" />
             <div class="row active-group-outline">
@@ -147,7 +225,7 @@
             {
                 <div class="alert alert-danger" role="alert">
                     <div>
-                        You are about to delete saml up party "@currentDownPartyName", are you sure?
+                        You are about to delete saml Down Party "@currentDownPartyName", are you sure?
                     </div>
 
                     <div class="mt-3">

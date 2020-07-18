@@ -29,28 +29,26 @@
 </ul>
 
 <div class="tab-content">
-    <div>
-        <PageEditForm @ref="upPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
-            <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" />
-        </PageEditForm>
+    <PageEditForm @ref="upPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
+        <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" />
+    </PageEditForm>
 
-        @if (!loadPartyError.IsNullOrWhiteSpace())
+    @if (!loadPartyError.IsNullOrWhiteSpace())
+    {
+        <div class="alert alert-danger" role="alert">
+            @loadPartyError
+        </div>
+    }
+    <ul class="list-group list-group-flush">
+        @foreach (var upParty in upParties)
         {
-            <div class="alert alert-danger" role="alert">
-                @loadPartyError
-            </div>
+            <li class="list-group-item">
+                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUpPartyAsync(@upParty.Type, @upParty.Name))">
+                    @upParty.Name, type: @upParty.Type<br />
+                </button>
+            </li>
         }
-        <ul class="list-group list-group-flush">
-            @foreach (var upParty in upParties)
-            {
-                <li class="list-group-item">
-                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUpPartyAsync(@upParty.Type, @upParty.Name))">
-                        @upParty.Name, type: @upParty.Type<br />
-                    </button>
-                </li>
-            }
-        </ul>
-    </div>
+    </ul>
 </div>
 
 <Modal @ref="editLoginUpPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Login Up Party")">
@@ -83,7 +81,7 @@
             {
                 <div class="alert alert-danger" role="alert">
                     <div>
-                        You are about to delete login up party "@currentUpPartyName", are you sure?
+                        You are about to delete login Up Party "@currentUpPartyName", are you sure?
                     </div>
 
                     <div class="mt-3">
@@ -199,7 +197,7 @@
             {
                 <div class="alert alert-danger" role="alert">
                     <div>
-                        You are about to delete saml up party "@currentUpPartyName", are you sure?
+                        You are about to delete saml Up Party "@currentUpPartyName", are you sure?
                     </div>
 
                     <div class="mt-3">

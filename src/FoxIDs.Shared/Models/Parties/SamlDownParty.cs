@@ -9,7 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Models
 {
-    public class SamlDownParty : DownParty
+    public class SamlDownParty : DownParty, IValidatableObject
     {
         public SamlDownParty()
         {
@@ -81,5 +81,15 @@ namespace FoxIDs.Models
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (AllowUpParties?.Count <= 0)
+            {
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
+            }
+            return results;
+        }
     }
 }

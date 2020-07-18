@@ -9,7 +9,7 @@ using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlDownPartyViewModel : IAllowUpPartyNames
+    public class SamlDownPartyViewModel : IAllowUpPartyNames, IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Down Party name")]
         public string Name { get; set; }
 
-        [Length(Constants.Models.SamlParty.Down.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow Up Party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
@@ -106,5 +106,15 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "Optional one or more signature validation certificates")]
         public List<JsonWebKey> Keys { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (AllowUpPartyNames?.Count <= 0)
+            {
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required.", new[] { nameof(AllowUpPartyNames) }));
+            }
+            return results;
+        }
     }
 }

@@ -31,9 +31,10 @@ namespace FoxIDs.Client.Shared.Components
             base.OnInitialized();
         }
 
-        public void Init(TModel model = null)
+        public void Init(TModel model = null, Action<TModel> afterInit = null)
         {            
             Model = model ?? new TModel();
+            afterInit?.Invoke(model);
             error = null;
             EditContext = new EditContext(Model);
             validationMessageStore = new ValidationMessageStore(EditContext);
@@ -84,6 +85,11 @@ namespace FoxIDs.Client.Shared.Components
                     error = ex.Message;
                 }
             }
+        }
+
+        internal void Init(Func<object, object> p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

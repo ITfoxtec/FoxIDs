@@ -11,7 +11,7 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
-        [Length(Constants.Models.OidcDownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>
@@ -35,7 +35,11 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if(Client == null && Resource == null)
+            if (Client != null && AllowUpPartyNames?.Count <= 0)
+            {
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the field {nameof(Resource)} is defined.", new[] { nameof(Client), nameof(AllowUpPartyNames) }));
+            }
+            if (Client == null && Resource == null)
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));
             }

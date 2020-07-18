@@ -182,8 +182,6 @@ namespace FoxIDs
 
             public static class OidcDownParty
             {
-                public const int AllowUpPartyNamesMin = 1;
-
                 public static class Client
                 {
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
@@ -224,7 +222,6 @@ namespace FoxIDs
 
                 public static class Down
                 {
-                    public const int AllowUpPartyNamesMin = 1;
                     public const int KeysMin = 0;
                     public const int SubjectConfirmationLifetimeMin = 60; // 1 minutes 
                     public const int SubjectConfirmationLifetimeMax = 900; // 15 minutes

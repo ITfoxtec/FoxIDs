@@ -34,6 +34,8 @@ namespace FoxIDs.Client.Pages
 
         private Modal editOidcDownPartyModal;
         private PageEditForm<OidcDownPartyViewModel> editOidcDownPartyForm;
+        private bool showEditOidcDownPartyClientTab = true;
+        private SelectUpParty<OidcDownPartyViewModel> selectOidcAllowUpPartyName;
 
         private Modal editOAuthDownPartyModal;
         private PageEditForm<OAuthDownPartyViewModel> editOAuthDownPartyForm;
@@ -44,7 +46,7 @@ namespace FoxIDs.Client.Pages
         const int samlDownPartyCertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
         private List<CertificateInfoViewModel> samlCertificateInfoList = new List<CertificateInfoViewModel>();
         string samlDownPartyCertificateFileStatus = defaultSamlDownPartyCertificateFileStatus;
-        SelectUpParty<SamlDownPartyViewModel> selectSamlAllowUpPartyName;
+        private SelectUpParty<SamlDownPartyViewModel> selectSamlAllowUpPartyName;
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -106,7 +108,7 @@ namespace FoxIDs.Client.Pages
             showAdvanced = false;
             if (type == PartyTypes.Oidc)
             {
-                editOidcDownPartyForm.Init();
+                editOidcDownPartyForm.Init(afterInit: afterInit => OidcDownPartyViewModelAfterInit(afterInit));
                 editOidcDownPartyModal.Show();
             }
             else if (type == PartyTypes.OAuth2)
@@ -134,7 +136,7 @@ namespace FoxIDs.Client.Pages
                 {
                     var loginDownParty = await DownPartyService.GetOidcDownPartyAsync(downPartyName);
                     currentDownPartyName = loginDownParty.Name;
-                    editOidcDownPartyForm.Init(loginDownParty.Map<OidcDownPartyViewModel>());
+                    editOidcDownPartyForm.Init(loginDownParty.Map<OidcDownPartyViewModel>(), afterInit => OidcDownPartyViewModelAfterInit(afterInit));
                     editOidcDownPartyModal.Show();
                 }
                 catch (AuthenticationException)
@@ -212,6 +214,25 @@ namespace FoxIDs.Client.Pages
         }
 
         #region Oidc
+        private void OidcDownPartyViewModelAfterInit(OidcDownPartyViewModel model)
+        {
+            model.Client = model.Client ?? new OidcDownClient();
+            model.Resource = model.Resource ?? new OAuthDownResource();
+        }
+
+        private void AddOidcAllowUpPartyName(string upPartyName)
+        {
+            if (!editOidcDownPartyForm.Model.AllowUpPartyNames.Where(p => p.Equals(upPartyName, StringComparison.OrdinalIgnoreCase)).Any())
+            {
+                editOidcDownPartyForm.Model.AllowUpPartyNames.Add(upPartyName);
+            }
+        }
+
+        private void RemoveOidcAllowUpPartyName(string upPartyName)
+        {
+            editOidcDownPartyForm.Model.AllowUpPartyNames.Remove(upPartyName);
+        }
+
         private async Task OnEditOidcDownPartyValidSubmitAsync(EditContext editContext)
         {
             try

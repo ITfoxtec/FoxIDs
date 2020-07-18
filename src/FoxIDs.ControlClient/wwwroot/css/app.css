@@ -172,6 +172,12 @@ h4 {
     margin-top: 15px;
 }
 
+.list-group-item.active, .list-group-item:active {
+    background-color: #fff;
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
 .active-group {
     position: relative;
     padding: 15px 0px;

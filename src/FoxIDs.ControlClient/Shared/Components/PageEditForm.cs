@@ -23,18 +23,32 @@ namespace FoxIDs.Client.Shared.Components
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
+        public EventCallback<TModel> OnAfterInit { get; set; }
+
+        [Parameter]
         public EventCallback<EditContext> OnValidSubmit { get; set; }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            Init();
-            base.OnInitialized();
+            await InitAsync();
+            await base.OnInitializedAsync();
         }
 
-        public void Init(TModel model = null, Action<TModel> afterInit = null)
-        {            
+        public async Task InitAsync(TModel model = null, Action<TModel> afterInit = null)
+        {
             Model = model ?? new TModel();
-            afterInit?.Invoke(model);
+            afterInit?.Invoke(Model);
+            await OnAfterInit.InvokeAsync(Model);
+            error = null;
+            EditContext = new EditContext(Model);
+            validationMessageStore = new ValidationMessageStore(EditContext);
+        }
+
+        [Obsolete("delete!")]
+        public void Init(TModel model = null, Action<TModel> afterInit = null)
+        {
+            Model = model ?? new TModel();
+            afterInit?.Invoke(Model);
             error = null;
             EditContext = new EditContext(Model);
             validationMessageStore = new ValidationMessageStore(EditContext);
@@ -85,11 +99,6 @@ namespace FoxIDs.Client.Shared.Components
                     error = ex.Message;
                 }
             }
-        }
-
-        internal void Init(Func<object, object> p)
-        {
-            throw new NotImplementedException();
         }
     }
 }

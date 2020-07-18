@@ -46,9 +46,6 @@ namespace FoxIDs.Client.Pages
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
-        public NotificationLogic NotificationLogic { get; set; }
-
-        [Inject]
         public UpPartyService UpPartyService { get; set; }
 
         [Parameter]

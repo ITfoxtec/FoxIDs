@@ -21,10 +21,10 @@ namespace FoxIDs.Client.Shared.Components
         public PageEditForm<TModel> EditDownPartyForm { get; set; }
 
         [Parameter]
-        public EventCallback<string> OnAddUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, string)> OnAddUpPartyName { get; set; }
 
         [Parameter]
-        public EventCallback<string> OnRemoveUpPartyName { get; set; }
+        public EventCallback<(IAllowUpPartyNames, string)> OnRemoveUpPartyName { get; set; }
 
         public void Init()
         {
@@ -57,12 +57,12 @@ namespace FoxIDs.Client.Shared.Components
 
         private async Task OnAddUpPartyNameAsync(string name)
         {
-            await OnAddUpPartyName.InvokeAsync(name);
+            await OnAddUpPartyName.InvokeAsync((EditDownPartyForm.Model, name));
         }
 
         private async Task OnRemoveUpPartyNameAsync(string name)
         {
-            await OnRemoveUpPartyName.InvokeAsync(name);
+            await OnRemoveUpPartyName.InvokeAsync((EditDownPartyForm.Model, name));
         }
     }
 }

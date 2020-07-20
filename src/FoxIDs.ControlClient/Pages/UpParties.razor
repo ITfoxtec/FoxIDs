@@ -11,9 +11,9 @@
                 <span class="oi oi-plus" aria-hidden="true"></span> Create Up Party
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Login))">Login</button>
-                @*<button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Oidc))">OpenID Connect</button>*@
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpPartyModal(PartyTypes.Saml2))">Saml 2.0</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
+                @*<button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>*@
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">Saml 2.0</button>
             </div>
         </div>
     </div>
@@ -33,188 +33,204 @@
         <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" />
     </PageEditForm>
 
-    @if (!loadPartyError.IsNullOrWhiteSpace())
-    {
-        <div class="alert alert-danger" role="alert">
-            @loadPartyError
-        </div>
-    }
-    <ul class="list-group list-group-flush">
+    <ul class="list-group">
         @foreach (var upParty in upParties)
         {
-            <li class="list-group-item">
-                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUpPartyAsync(@upParty.Type, @upParty.Name))">
-                    @upParty.Name, type: @upParty.Type<br />
-                </button>
+            <li class="list-group-item @(upParty.Edit ? "active" : string.Empty)">
+                @if (!upParty.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @upParty.Error
+                    </div>
+                }
+                @if (upParty.Edit)
+                {
+                    if (upParty.Type == PartyTypes.Login)
+                    {
+                        var loginUpParty = upParty as GeneralLoginUpPartyViewModel;
+                        <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
+                            <div class="modal-header">Login</div>
+                            <div class="modal-body">
+                                @if (loginUpParty.CreateMode)
+                                {
+                                    <div class="mb-3 alert alert-info" role="alert">
+                                        For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
+                                    </div>
+                                }
+                                <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" Focus="true" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
+                                <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
+                                    <option value="@LoginUpPartyLogoutConsent.IfRequered">If requered</option>
+                                    <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
+                                    <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
+                                </FInputSelect>
+                                <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionLifetime" For="@(() => loginUpParty.Form.Model.SessionLifetime)" />
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@($"{(loginUpParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
+                                @if (loginUpParty.ShowAdvanced)
+                                {
+                                    <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.SessionAbsoluteLifetime)" />
+                                    <FInputNumber @bind-Value="loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime)" />
+                                    <FInputToggle @bind-Value="loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited" For="@(() => loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited)" />
+                                    <FInputTextArea @bind-Value="loginUpParty.Form.Model.CssStyle" For="@(() => loginUpParty.Form.Model.CssStyle)" />
+                                }
+                            </div>
+                            @if (!loginUpParty.CreateMode && loginUpParty.DeleteAcknowledge)
+                            {
+                                <div class="modal-footer">
+                                    <div class="alert alert-danger" role="alert">
+                                        <div>
+                                            You are about to delete Login Up Party "@upParty.Name", are you sure?
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteLoginUpPartyAsync(loginUpParty))">Yes delete</button>
+                                            <button type="button" class="btn btn-secondary" @onclick="@(() => loginUpParty.DeleteAcknowledge = false)">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                @if (!loginUpParty.CreateMode)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="@(() => loginUpParty.DeleteAcknowledge = true)">Delete</button>
+                                }
+                                <button type="submit" class="btn btn-primary">@(@loginUpParty.CreateMode ? "Create" : "Update")</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancel(upParty))">Cancel</button>
+                            </div>
+                        </PageEditForm>
+                    }
+                    //else if (upParty.Type == PartyTypes.Oidc)
+                    //{
+                    //}
+                    else if (upParty.Type == PartyTypes.Saml2)
+                    {
+                        var samlUpParty = upParty as GeneralSamlUpPartyViewModel;
+                        <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
+                            <div class="modal-header">SAML 2.0</div>
+                            <div class="modal-body">
+                                <FInputText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" Focus="true" />
+                                <FInputText @bind-Value="samlUpParty.Form.Model.Issuer" For="@(() => samlUpParty.Form.Model.Issuer)" />
+                                <div class="form-group active-group active">
+                                    <div class="drag-drop-zone input-control">
+                                        <InputFile multiple OnChange="@(async (files) => await OnSamlUpPartyCertificateFileSelectedAsync(samlUpParty, files))" />
+                                        @samlUpParty.CertificateFileStatus
+                                    </div>
+                                    <Label For="@(() => samlUpParty.Form.Model.Keys)" class="label-control" />
+                                    <ValidationMessage For="@(() => samlUpParty.Form.Model.Keys)" />
+                                    <ul class="list-group">
+                                        @foreach (var certificateInfo in samlUpParty.CertificateInfoList)
+                                        {
+                                            <li class="list-group-item p-0">
+                                                <div class="d-flex">
+                                                    <div class="mr-auto p-2">
+                                                        <strong>@certificateInfo.Subject</strong><br />
+                                                        Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
+                                                        Thumbprint: @certificateInfo.Thumbprint
+                                                    </div>
+                                                    <div class="p-2">
+                                                        <button type="button" class="btn btn-link p-0" title="Remove" @onclick="@(() => RemoveSamlUpPartyCertificate(samlUpParty, certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                <FInputText @bind-Value="samlUpParty.Form.Model.AuthnUrl" For="@(() => samlUpParty.Form.Model.AuthnUrl)" />
+                                <div class="row active-group-outline">
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnRequestBinding" For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnResponseBinding" For="@(() => samlUpParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                </div>
+                                <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
+                                <div class="row active-group-outline">
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutRequestBinding" For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutResponseBinding" For="@(() => samlUpParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
+                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@($"{(samlUpParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
+                                @if (samlUpParty.ShowAdvanced)
+                                {
+                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha384Signature">RSA-SHA-384</option>
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha512Signature">RSA-SHA-512</option>
+                                    </FInputSelect>
+                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.CertificateValidationMode" For="@(() => samlUpParty.Form.Model.CertificateValidationMode)">
+                                        <option value="@X509CertificateValidationMode.None">None</option>
+                                        <option value="@X509CertificateValidationMode.ChainTrust">Chain trust</option>
+                                        <option value="@X509CertificateValidationMode.PeerTrust">Peer trust</option>
+                                        <option value="@X509CertificateValidationMode.PeerOrChainTrust">Peer or chain trust</option>
+                                    </FInputSelect>
+                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.RevocationMode" For="@(() => samlUpParty.Form.Model.RevocationMode)">
+                                        <option value="@X509RevocationMode.NoCheck">No check</option>
+                                        <option value="@X509RevocationMode.Offline">Offline</option>
+                                        <option value="@X509RevocationMode.Online">Online</option>
+                                    </FInputSelect>
+                                    <FInputText @bind-Value="samlUpParty.Form.Model.IdSIssuer" For="@(() => samlUpParty.Form.Model.IdSIssuer)" />
+                                    <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataLifetime" For="@(() => samlUpParty.Form.Model.MetadataLifetime)" />
+                                }
+                            </div>
+                            @if (!upParty.CreateMode && upParty.DeleteAcknowledge)
+                            {
+                                <div class="modal-footer">
+                                    <div class="alert alert-danger" role="alert">
+                                        <div>
+                                            You are about to delete SAML 2.0 Up Party "@upParty.Name", are you sure?
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSamlUpPartyAsync(samlUpParty))">Yes delete</button>
+                                            <button type="button" class="btn btn-secondary" @onclick="@(() => upParty.DeleteAcknowledge = false)">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                @if (!upParty.CreateMode)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="@(() => upParty.DeleteAcknowledge = true)">Delete</button>
+                                }
+                                <button type="submit" class="btn btn-primary">@(@upParty.CreateMode ? "Create" : "Update")</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancel(upParty))">Cancel</button>
+                            </div>
+                        </PageEditForm>
+                    }
+                }
+                else
+                {
+                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUpPartyAsync(upParty))">
+                        @UpPartyInfoText(upParty)<br />
+                    </button>
+                }
             </li>
         }
     </ul>
 </div>
-
-<Modal @ref="editLoginUpPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Login Up Party")">
-    <PageEditForm @ref="editLoginUpPartyForm" TModel="LoginUpPartyViewModel" OnValidSubmit="OnEditLoginUpPartyValidSubmitAsync">
-        <div class="modal-body">
-            @if (createMode)
-            {
-                <div class="mb-3 alert alert-info" role="alert">
-                    For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
-                </div>
-            }
-            <FInputText @bind-Value="editLoginUpPartyForm.Model.Name" For="@(() => editLoginUpPartyForm.Model.Name)" Focus="true" />
-            <FInputToggle @bind-Value="editLoginUpPartyForm.Model.EnableCancelLogin" For="@(() => editLoginUpPartyForm.Model.EnableCancelLogin)" TextType="e.d" />
-            <FInputToggle @bind-Value="editLoginUpPartyForm.Model.EnableCreateUser" For="@(() => editLoginUpPartyForm.Model.EnableCreateUser)" TextType="e.d" />
-            <FInputSelect @bind-Value="editLoginUpPartyForm.Model.LogoutConsent" For="@(() => editLoginUpPartyForm.Model.LogoutConsent)">
-                <option value="@LoginUpPartyLogoutConsent.IfRequered">If requered</option>
-                <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
-                <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
-            </FInputSelect>
-            <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionLifetime" For="@(() => editLoginUpPartyForm.Model.SessionLifetime)" />
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
-            @if (showAdvanced)
-            {
-                <FInputNumber @bind-Value="editLoginUpPartyForm.Model.SessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.SessionAbsoluteLifetime)" />
-                <FInputNumber @bind-Value="editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime" For="@(() => editLoginUpPartyForm.Model.PersistentSessionAbsoluteLifetime)" />
-                <FInputToggle @bind-Value="editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited" For="@(() => editLoginUpPartyForm.Model.PersistentSessionLifetimeUnlimited)" />
-                <FInputTextArea @bind-Value="editLoginUpPartyForm.Model.CssStyle" For="@(() => editLoginUpPartyForm.Model.CssStyle)" />
-            }
-            @if (!createMode && deleteAcknowledge)
-            {
-                <div class="alert alert-danger" role="alert">
-                    <div>
-                        You are about to delete login Up Party "@currentUpPartyName", are you sure?
-                    </div>
-
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteLoginUpPartyAsync(currentUpPartyName))">Yes delete</button>
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => deleteAcknowledge = false)">No</button>
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="modal-footer">
-            @if (!createMode)
-            {
-                <button type="button" class="btn btn-link" @onclick="@(() => deleteAcknowledge = true)">Delete</button>
-            }
-            <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
-            <button type="button" class="btn btn-secondary" @onclick="@(() => editLoginUpPartyModal.Hide())">Cancel</button>
-        </div>
-    </PageEditForm>
-</Modal>
-
-<Modal @ref="editSamlUpPartyModal" Title="@($"{(createMode ? "Create" : "Update")} Saml Up Party")">
-    <PageEditForm @ref="editSamlUpPartyForm" TModel="SamlUpPartyViewModel" OnValidSubmit="OnEditSamlUpPartyValidSubmitAsync">
-        <div class="modal-body">
-            <FInputText @bind-Value="editSamlUpPartyForm.Model.Name" For="@(() => editSamlUpPartyForm.Model.Name)" Focus="true" />
-            <FInputText @bind-Value="editSamlUpPartyForm.Model.Issuer" For="@(() => editSamlUpPartyForm.Model.Issuer)" />
-            <div class="form-group active-group active">
-                <div class="drag-drop-zone input-control">
-                    <InputFile multiple OnChange="OnSamlUpPartyCertificateFileSelectedAsync" />
-                    @samlUpPartyCertificateFileStatus
-                </div>
-                <Label For="@(() => editSamlUpPartyForm.Model.Keys)" class="label-control" />
-                <ValidationMessage For="@(() => editSamlUpPartyForm.Model.Keys)" />
-                <ul class="list-group">
-                    @foreach (var certificateInfo in samlCertificateInfoList)
-                    {
-                        <li class="list-group-item p-0">
-                            <div class="d-flex">
-                                <div class="mr-auto p-2">
-                                    <strong>@certificateInfo.Subject</strong><br />
-                                    Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
-                                    Thumbprint: @certificateInfo.Thumbprint
-                                </div>
-                                <div class="p-2">
-                                    <button type="button" class="btn btn-link p-0" title="Remove" @onclick="@(() => RemoveSamlUpPartyCertificate(certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                </div>
-                            </div>
-                        </li>
-                    }
-                </ul>
-            </div>   
-            <FInputText @bind-Value="editSamlUpPartyForm.Model.AuthnUrl" For="@(() => editSamlUpPartyForm.Model.AuthnUrl)" />
-            <div class="row active-group-outline">
-                <div class="col">
-                    <div class="form-group active-group">
-                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnRequestBinding" For="@(() => editSamlUpPartyForm.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
-                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-                        </FInputSelect>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group active-group">
-                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.AuthnResponseBinding" For="@(() => editSamlUpPartyForm.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
-                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-                        </FInputSelect>
-                    </div>
-                </div>
-            </div>
-            <FInputText @bind-Value="editSamlUpPartyForm.Model.LogoutUrl" For="@(() => editSamlUpPartyForm.Model.LogoutUrl)" />
-            <div class="row active-group-outline">
-                <div class="col">
-                    <div class="form-group active-group">
-                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutRequestBinding" For="@(() => editSamlUpPartyForm.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
-                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-                        </FInputSelect>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group active-group">
-                        <FInputSelect @bind-Value="editSamlUpPartyForm.Model.LogoutResponseBinding" For="@(() => editSamlUpPartyForm.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
-                            <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                            <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
-                        </FInputSelect>
-                    </div>
-                </div>
-            </div>
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => showAdvanced = !showAdvanced)">@($"{(showAdvanced ? "Hide" : "Show")} advanced settings")</button>
-            @if (showAdvanced)
-            {
-                <FInputSelect @bind-Value="editSamlUpPartyForm.Model.SignatureAlgorithm" For="@(() => editSamlUpPartyForm.Model.SignatureAlgorithm)">
-                    <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
-                    <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>
-                    <option value="@Saml2SecurityAlgorithms.RsaSha384Signature">RSA-SHA-384</option>
-                    <option value="@Saml2SecurityAlgorithms.RsaSha512Signature">RSA-SHA-512</option>
-                </FInputSelect>
-                <FInputSelect @bind-Value="editSamlUpPartyForm.Model.CertificateValidationMode" For="@(() => editSamlUpPartyForm.Model.CertificateValidationMode)">
-                    <option value="@X509CertificateValidationMode.None">None</option>
-                    <option value="@X509CertificateValidationMode.ChainTrust">Chain trust</option>
-                    <option value="@X509CertificateValidationMode.PeerTrust">Peer trust</option>
-                    <option value="@X509CertificateValidationMode.PeerOrChainTrust">Peer or chain trust</option>
-                </FInputSelect>
-                <FInputSelect @bind-Value="editSamlUpPartyForm.Model.RevocationMode" For="@(() => editSamlUpPartyForm.Model.RevocationMode)">
-                    <option value="@X509RevocationMode.NoCheck">No check</option>
-                    <option value="@X509RevocationMode.Offline">Offline</option>
-                    <option value="@X509RevocationMode.Online">Online</option>
-                </FInputSelect>
-                <FInputText @bind-Value="editSamlUpPartyForm.Model.IdSIssuer" For="@(() => editSamlUpPartyForm.Model.IdSIssuer)" />
-                <FInputNumber @bind-Value="editSamlUpPartyForm.Model.MetadataLifetime" For="@(() => editSamlUpPartyForm.Model.MetadataLifetime)" />
-            }
-            @if (!createMode && deleteAcknowledge)
-            {
-                <div class="alert alert-danger" role="alert">
-                    <div>
-                        You are about to delete saml Up Party "@currentUpPartyName", are you sure?
-                    </div>
-
-                    <div class="mt-3">
-                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSamlUpPartyAsync(currentUpPartyName))">Yes delete</button>
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => deleteAcknowledge = false)">No</button>
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="modal-footer">
-            @if (!createMode)
-            {
-                <button type="button" class="btn btn-link" @onclick="@(() => deleteAcknowledge = true)">Delete</button>
-            }
-            <button type="submit" class="btn btn-primary">@(@createMode ? "Create" : "Update")</button>
-            <button type="button" class="btn btn-secondary" @onclick="@(() => editSamlUpPartyModal.Hide())">Cancel</button>
-        </div>
-    </PageEditForm>
-</Modal>
-

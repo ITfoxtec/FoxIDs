@@ -155,7 +155,7 @@ namespace FoxIDs
                     public const int VoluntaryClaimsMin = 0;
                     public const int VoluntaryClaimsMax = 100;                    
                     public const int ResponseTypesMin = 1;
-                    public const int ResponseTypesMax = 10;
+                    public const int ResponseTypesMax = 5;
                     public const int ResponseTypeLength = 30;
                     public const int RedirectUrisMin = 1;
                     public const int RedirectUrisMax = 40;

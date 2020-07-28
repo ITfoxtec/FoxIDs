@@ -53,9 +53,9 @@ namespace FoxIDs.Logic
 
             switch (party.AuthnBinding.RequestBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await AuthnRequestAsync(party, new Saml2RedirectBinding());
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await AuthnRequestAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"Binding '{party.AuthnBinding.RequestBinding}' not supported.");
@@ -171,16 +171,16 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{party.AuthnBinding.ResponseBinding}'");
             switch (party.AuthnBinding.ResponseBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await AuthnResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2RedirectBinding(), status, party, claims);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await AuthnResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2PostBinding(), status, party, claims);
                 default:
                     throw new NotSupportedException($"SAML binding '{party.AuthnBinding.ResponseBinding}' not supported.");
             }            
         }
 
-        private Task<IActionResult> AuthnResponseAsync(string partyId, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, SamlBindingType binding, Saml2StatusCodes status) 
+        private Task<IActionResult> AuthnResponseAsync(string partyId, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, SamlBindingTypes binding, Saml2StatusCodes status) 
         {
             logger.ScopeTrace($"Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
             logger.SetScopeProperty("downPartyId", partyId);
@@ -188,9 +188,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{binding}'");
             switch (binding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return AuthnResponseAsync(samlConfig, inResponseTo, relayState, acsUrl, new Saml2RedirectBinding(), status);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return AuthnResponseAsync(samlConfig, inResponseTo, relayState, acsUrl, new Saml2PostBinding(), status);
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");

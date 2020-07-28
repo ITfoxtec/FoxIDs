@@ -7,10 +7,10 @@ namespace FoxIDs.Models
     {
         [Required]
         [JsonProperty(PropertyName = "request_binding")]
-        public SamlBindingType RequestBinding { get; set; }
+        public SamlBindingTypes RequestBinding { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "response_binding")]
-        public SamlBindingType ResponseBinding { get; set; }
+        public SamlBindingTypes ResponseBinding { get; set; }
     }
 }

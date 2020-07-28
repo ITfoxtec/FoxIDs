@@ -48,9 +48,9 @@ namespace FoxIDs.Logic
 
             switch (party.LogoutBinding.RequestBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await LogoutRequestAsync(party, new Saml2RedirectBinding());
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await LogoutRequestAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
@@ -185,16 +185,16 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
             switch (party.LogoutBinding.ResponseBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await LogoutResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2RedirectBinding(), status, sessionIndex);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await LogoutResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2PostBinding(), status, sessionIndex);
                 default:
                     throw new NotSupportedException($"SAML binding '{party.LogoutBinding.ResponseBinding}' not supported.");
             }            
         }
 
-        private Task<IActionResult> LogoutResponseAsync(string partyId, Saml2Configuration samlConfig, string inResponseTo, string relayState, string loggedOutUrl, SamlBindingType binding, Saml2StatusCodes status) 
+        private Task<IActionResult> LogoutResponseAsync(string partyId, Saml2Configuration samlConfig, string inResponseTo, string relayState, string loggedOutUrl, SamlBindingTypes binding, Saml2StatusCodes status) 
         {
             logger.ScopeTrace($"Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
             logger.SetScopeProperty("downPartyId", partyId);
@@ -202,9 +202,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{binding}'");
             switch (binding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return LogoutResponseAsync(samlConfig, inResponseTo, relayState, loggedOutUrl, new Saml2RedirectBinding(), status);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return LogoutResponseAsync(samlConfig, inResponseTo, relayState, loggedOutUrl, new Saml2PostBinding(), status);
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");

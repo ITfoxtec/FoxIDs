@@ -50,35 +50,5 @@ namespace FoxIDs.Logic
             }
             return isValid;
         }
-
-        public async Task<bool> ValidateResourceScopesAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
-        {
-            var isValid = true;
-            if (oauthDownParty.Client?.ResourceScopes?.Count() > 0)
-            {
-                foreach (var resourceScope in oauthDownParty.Client.ResourceScopes.Where(rs => !rs.Resource.Equals(oauthDownParty.Name, System.StringComparison.OrdinalIgnoreCase)))
-                {
-                    try
-                    {
-                        _ = await tenantService.GetAsync<DownParty>(await DownParty.IdFormat(RouteBinding, resourceScope.Resource));
-                    }
-                    catch (CosmosDataException ex)
-                    {
-                        if (ex.StatusCode == HttpStatusCode.NotFound)
-                        {
-                            isValid = false;
-                            var errorMessage = $"Resource scope down party resource '{resourceScope.Resource}' not found.";
-                            logger.Warning(ex, errorMessage);
-                            modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}".ToCamelCase(), errorMessage);
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                }
-            }
-            return isValid;
-        }
     }
 }

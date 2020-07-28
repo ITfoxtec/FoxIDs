@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum SamlBindingType
+    public enum SamlBindingTypes
     {
         Redirect,
         Post

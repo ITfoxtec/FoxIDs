@@ -55,9 +55,9 @@ namespace FoxIDs.Logic
 
             switch (party.AuthnBinding.RequestBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await AuthnRequestAsync(party, new Saml2RedirectBinding(), loginRequest);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await AuthnRequestAsync(party, new Saml2PostBinding(), loginRequest);
                 default:
                     throw new NotSupportedException($"Binding '{party.AuthnBinding.RequestBinding}' not supported.");
@@ -112,9 +112,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{party.AuthnBinding.ResponseBinding}'");
             switch (party.AuthnBinding.ResponseBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await AuthnResponseAsync(party, new Saml2RedirectBinding());
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await AuthnResponseAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"SAML binding '{party.AuthnBinding.ResponseBinding}' not supported.");

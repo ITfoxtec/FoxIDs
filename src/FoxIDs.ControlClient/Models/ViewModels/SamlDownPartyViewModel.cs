@@ -79,21 +79,21 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Authn request binding")]
-        public SamlBindingType AuthnRequestBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Post;
 
         [Required]
         [Display(Name = "Authn response binding")]
-        public SamlBindingType AuthnResponseBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) url")]
         public List<string> AcsUrls { get; set; } 
 
         [Display(Name = "Logout request binding")]
-        public SamlBindingType LogoutRequestBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes LogoutRequestBinding { get; set; } = SamlBindingTypes.Post;
 
         [Display(Name = "Logout response binding")]
-        public SamlBindingType LogoutResponseBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes LogoutResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
         [Display(Name = "Optional single logout url")]

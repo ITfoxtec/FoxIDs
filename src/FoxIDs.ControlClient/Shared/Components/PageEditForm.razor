@@ -1,7 +1,8 @@
 ﻿@typeparam TModel
 
 <EditForm EditContext="@EditContext" OnSubmit="OnSubmitAsync">
-    <DataAnnotationsValidator />
+    @*<DataAnnotationsValidator />*@
+    <ObjectGraphDataAnnotationsValidator />
     @*Microsoft.AspNetCore.Components.DataAnnotations.Validation package: <ObjectGraphDataAnnotationsValidator />, validate sub objects [ValidateComplexType] *@
     @if (!error.IsNullOrWhiteSpace())
     {

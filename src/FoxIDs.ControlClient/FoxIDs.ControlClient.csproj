@@ -10,6 +10,7 @@
     <PackageReference Include="Blazored.SessionStorage" Version="1.0.12" />
     <PackageReference Include="BlazorInputFile" Version="0.2.0" />
     <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.0" PrivateAssets="all" />

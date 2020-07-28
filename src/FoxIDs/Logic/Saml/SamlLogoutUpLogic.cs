@@ -65,9 +65,9 @@ namespace FoxIDs.Logic
 
             switch (party.LogoutBinding.RequestBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await LogoutAsync(party, new Saml2RedirectBinding(), logoutRequest);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await LogoutAsync(party, new Saml2PostBinding(), logoutRequest);
                 default:
                     throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
@@ -136,9 +136,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
             switch (party.LogoutBinding.ResponseBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await LogoutResponseAsync(party, new Saml2RedirectBinding());
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await LogoutResponseAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"SAML binding '{party.LogoutBinding.ResponseBinding}' not supported.");

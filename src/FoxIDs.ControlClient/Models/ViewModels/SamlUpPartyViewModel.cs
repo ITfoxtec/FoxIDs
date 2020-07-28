@@ -57,11 +57,11 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Authn request binding")]
-        public SamlBindingType AuthnRequestBinding { get; set; } = SamlBindingType.Redirect;
+        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Redirect;
 
         [Required]
         [Display(Name = "Authn response binding")]
-        public SamlBindingType AuthnResponseBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [Required]
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
@@ -74,10 +74,10 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<JsonWebKey> Keys { get; set; }
 
         [Display(Name = "Logout request binding")]
-        public SamlBindingType LogoutRequestBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes LogoutRequestBinding { get; set; } = SamlBindingTypes.Post;
 
         [Display(Name = "Logout response binding")]
-        public SamlBindingType LogoutResponseBinding { get; set; } = SamlBindingType.Post;
+        public SamlBindingTypes LogoutResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [Display(Name = "Logout url")]

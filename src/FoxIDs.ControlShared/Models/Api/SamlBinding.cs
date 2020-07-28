@@ -5,9 +5,9 @@ namespace FoxIDs.Models.Api
     public class SamlBinding
     {
         [Required]
-        public SamlBindingType RequestBinding { get; set; }
+        public SamlBindingTypes RequestBinding { get; set; }
 
         [Required]
-        public SamlBindingType ResponseBinding { get; set; }
+        public SamlBindingTypes ResponseBinding { get; set; }
     }
 }

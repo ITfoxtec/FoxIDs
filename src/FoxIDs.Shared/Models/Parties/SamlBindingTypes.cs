@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum SamlBindingType
+    public enum SamlBindingTypes
     {
         [EnumMember(Value = "redirect")]
         Redirect,

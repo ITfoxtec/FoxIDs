@@ -77,20 +77,24 @@
                                 </ul>
 
                                 <div class="tab-content">
+                                    <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
+                                    <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@($"{(downParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
+                                    @if (downParty.ShowAdvanced)
+                                    {
+                                        <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
+                                    }
                                     @if (oidcDownParty.ShowClientTab)
                                     {
-                                        <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                                         @if (oidcDownParty.Form.Model.Client != null)
                                         {
                                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
-                                            @*oidcDownParty.Form.Model.Client.ResponseTypes*@
-
+                                            <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)"  />
                                             <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
 
                                             <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@($"{(downParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
                                             @if (downParty.ShowAdvanced)
                                             {
-
                                             }
                                         }
                                     }
@@ -98,7 +102,7 @@
                                     {
                                         @if (oidcDownParty.Form.Model.Resource != null)
                                         {
-
+                                            <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" />
                                         }
                                     }
                                 </div>
@@ -145,16 +149,16 @@
                                     <div class="col">
                                         <div class="form-group active-group">
                                             <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
                                             </FInputSelect>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group active-group">
                                             <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
                                             </FInputSelect>
                                         </div>
                                     </div>
@@ -165,16 +169,16 @@
                                     <div class="col">
                                         <div class="form-group active-group">
                                             <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
                                             </FInputSelect>
                                         </div>
                                     </div>
                                     <div class="col">
                                         <div class="form-group active-group">
                                             <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
-                                                <option value="@SamlBindingType.Redirect">@SamlBindingType.Redirect</option>
-                                                <option value="@SamlBindingType.Post">@SamlBindingType.Post</option>
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
                                             </FInputSelect>
                                         </div>
                                     </div>

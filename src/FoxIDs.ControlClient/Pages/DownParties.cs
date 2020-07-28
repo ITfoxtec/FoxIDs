@@ -25,6 +25,7 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
         private List<GeneralDownPartyViewModel> downParties = new List<GeneralDownPartyViewModel>();
         private string upPartyHref;
+        private List<string> responseTypeItems = new List<string> { "code", "code token", "code token id_token", "token", "token id_token" };
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -253,7 +254,7 @@ namespace FoxIDs.Client.Pages
         #region Oidc
         private void OidcDownPartyViewModelAfterInit(OidcDownPartyViewModel model)
         {
-            model.Client = model.Client ?? new OidcDownClient();
+            model.Client = model.Client ?? new OidcDownClientViewModel();
             model.Resource = model.Resource ?? new OAuthDownResource();
         }
 

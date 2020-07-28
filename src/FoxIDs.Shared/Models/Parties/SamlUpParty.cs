@@ -64,7 +64,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
 
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "logout_binding")]
         public SamlBinding LogoutBinding { get; set; }
 

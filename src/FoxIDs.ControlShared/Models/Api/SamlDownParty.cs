@@ -70,7 +70,7 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         public List<string> AcsUrls { get; set; }
 
-        [ValidateObject]
+        [ValidateComplexType]
         public SamlBinding LogoutBinding { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]

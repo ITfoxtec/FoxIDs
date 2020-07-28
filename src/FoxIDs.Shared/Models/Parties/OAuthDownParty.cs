@@ -23,7 +23,7 @@ namespace FoxIDs.Models
         /// <summary>
         /// OAuth 2.0 down client.
         /// </summary>
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "client")]
         public TClient Client
         {
@@ -39,7 +39,7 @@ namespace FoxIDs.Models
         /// <summary>
         /// OAuth 2.0 down resource.
         /// </summary>
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "resource")]
         public OAuthDownResource Resource
         {

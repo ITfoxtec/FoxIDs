@@ -23,13 +23,13 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// OAuth 2.0 down client.
         /// </summary>
-        [ValidateObject]
+        [ValidateComplexType]
         public OAuthDownClient Client { get; set; }
 
         /// <summary>
         /// OAuth 2.0 down resource.
         /// </summary>
-        [ValidateObject]
+        [ValidateComplexType]
         public OAuthDownResource Resource { get; set; }
 
         /// <summary>

@@ -54,7 +54,7 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
-        [ValidateObject]
+        [ValidateComplexType]
         public SamlBinding LogoutBinding { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]

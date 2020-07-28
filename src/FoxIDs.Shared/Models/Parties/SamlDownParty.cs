@@ -66,7 +66,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "acs_urls")]
         public List<string> AcsUrls { get; set; }
 
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "logout_binding")]
         public SamlBinding LogoutBinding { get; set; }
 

@@ -24,15 +24,13 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// OIDC down client.
         /// </summary>
-        [ValidateObject]
         [ValidateComplexType]
         public OidcDownClientViewModel Client { get; set; }        
 
         /// <summary>
         /// OAuth 2.0 down resource.
         /// </summary>
-        [ValidateObject]
-        [ValidateComplexType]
+        [ValidateComplexType]        
         public OAuthDownResource Resource { get; set; }
 
         /// <summary>

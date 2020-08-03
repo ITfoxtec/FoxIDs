@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -15,6 +16,7 @@ namespace FoxIDs.Client.Models.ViewModels
         }
 
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
+        [Display(Name = "Secrets")]
         public List<OAuthClientSecretRequest> Secrets { get; set; }
     }
 }

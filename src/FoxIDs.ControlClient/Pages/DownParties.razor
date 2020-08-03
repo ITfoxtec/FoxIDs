@@ -91,7 +91,8 @@
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                                             <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
 
-                                            <div class="pb-4">
+                                            <div class="form-group active-group active">
+                                                <Label For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" class="label-control" />
                                                 <ul class="list-group">
                                                     @foreach (var resourceScope in oidcDownParty.Form.Model.Client.ResourceScopes)
                                                     {

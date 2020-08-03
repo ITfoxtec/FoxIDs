@@ -51,7 +51,10 @@
                         <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAfterInit="OidcDownPartyViewModelAfterInit" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
                             <div class="modal-header">
                                 OpenID Connect
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                @if (oidcDownParty.ShowClientTab)
+                                {
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                }
                             </div>
                             <div class="modal-body">
                                 <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />

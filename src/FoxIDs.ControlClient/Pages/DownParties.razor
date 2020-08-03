@@ -164,7 +164,10 @@
                     {
                         var samlDownParty = downParty as GeneralSamlDownPartyViewModel;
                         <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
-                            <div class="modal-header">SAML 2.0</div>
+                            <div class="modal-header">
+                                SAML 2.0
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                            </div>
                             <div class="modal-body">
                                 <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" Focus="true" />
                                 <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
@@ -207,8 +210,7 @@
                                             </FInputSelect>
                                         </div>
                                     </div>
-                                </div>
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@($"{(downParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
+                                </div>                                
                                 @if (downParty.ShowAdvanced)
                                 {
                                     <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" />

@@ -49,7 +49,10 @@
                     {
                         var loginUpParty = upParty as GeneralLoginUpPartyViewModel;
                         <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
-                            <div class="modal-header">Login</div>
+                            <div class="modal-header">
+                                Login
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                            </div>
                             <div class="modal-body">
                                 @if (loginUpParty.CreateMode)
                                 {
@@ -66,7 +69,6 @@
                                     <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
                                 </FInputSelect>
                                 <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionLifetime" For="@(() => loginUpParty.Form.Model.SessionLifetime)" />
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@($"{(loginUpParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
                                 @if (loginUpParty.ShowAdvanced)
                                 {
                                     <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.SessionAbsoluteLifetime)" />
@@ -107,7 +109,10 @@
                     {
                         var samlUpParty = upParty as GeneralSamlUpPartyViewModel;
                         <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
-                            <div class="modal-header">SAML 2.0</div>
+                            <div class="modal-header">
+                                SAML 2.0
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                            </div>
                             <div class="modal-body">
                                 <FInputText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" Focus="true" />
                                 <FInputText @bind-Value="samlUpParty.Form.Model.Issuer" For="@(() => samlUpParty.Form.Model.Issuer)" />
@@ -174,7 +179,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@($"{(samlUpParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
                                 @if (samlUpParty.ShowAdvanced)
                                 {
                                     <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">

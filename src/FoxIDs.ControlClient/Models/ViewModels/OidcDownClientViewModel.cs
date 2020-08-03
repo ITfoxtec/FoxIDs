@@ -8,6 +8,9 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         public OidcDownClientViewModel()
         {
+            ResourceScopes = new List<OAuthDownResourceScope>();
+            Scopes = new List<OidcDownScope>();
+            Claims = new List<OidcDownClaim>();
             ResponseTypes = new List<string> { "code" };
         }
 

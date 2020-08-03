@@ -21,7 +21,7 @@
         }
     }
     <ValidationMessage For="@For" />
-    <button type="button" class="btn btn-link btn-xs" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more</button>
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more@(AddOneMoreName.IsNullOrEmpty() ? string.Empty : $" {AddOneMoreName}")</button>
 </div>
 
 @code {
@@ -32,6 +32,9 @@
 
     [Parameter]
     public Expression<Func<object>> For { get; set; }
+
+    [Parameter]
+    public string AddOneMoreName { get; set; } = null;
 
     protected override void OnParametersSet()
     {

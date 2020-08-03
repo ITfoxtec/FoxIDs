@@ -17,6 +17,7 @@ using System.Security.Cryptography.X509Certificates;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using BlazorInputFile;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages
 {
@@ -256,6 +257,16 @@ namespace FoxIDs.Client.Pages
         {
             model.Client = model.Client ?? new OidcDownClientViewModel();
             model.Resource = model.Resource ?? new OAuthDownResource();
+        }
+
+        private void AddOidcResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
+        {
+            resourceScopes.Add(new OAuthDownResourceScope());
+        }
+
+        private void RemoveOidcResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes, OAuthDownResourceScope removeResourceScope)
+        {
+            resourceScopes.Remove(removeResourceScope);
         }
 
         private async Task OnEditOidcDownPartyValidSubmitAsync(GeneralOidcDownPartyViewModel generalOidcDownParty, EditContext editContext)

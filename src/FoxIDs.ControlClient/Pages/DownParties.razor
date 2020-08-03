@@ -79,7 +79,6 @@
                                 <div class="tab-content">
                                     <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
                                     <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
-                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@($"{(downParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
                                     @if (downParty.ShowAdvanced)
                                     {
                                         <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
@@ -89,8 +88,32 @@
                                         @if (oidcDownParty.Form.Model.Client != null)
                                         {
                                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
-                                            <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)"  />
+                                            <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                                             <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
+
+                                            <div class="pb-4">
+                                                <ul class="list-group">
+                                                    @foreach (var resourceScope in oidcDownParty.Form.Model.Client.ResourceScopes)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <div class="row">
+                                                                <div class="col-11">
+                                                                    <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
+                                                                    <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" AddOneMoreName="Scope" />
+                                                                </div>
+                                                                <div class="col-1 text-right">
+                                                                    @if (oidcDownParty.Form.Model.Client.ResourceScopes.IndexOf(resourceScope) > 0)
+                                                                    {
+                                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" />
+                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more Resource and Scopes</button>
+                                            </div>
 
                                             <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@($"{(downParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
                                             @if (downParty.ShowAdvanced)

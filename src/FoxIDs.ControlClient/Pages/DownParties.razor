@@ -49,7 +49,10 @@
                     {
                         var oidcDownParty = downParty as GeneralOidcDownPartyViewModel;
                         <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAfterInit="OidcDownPartyViewModelAfterInit" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
-                            <div class="modal-header">OpenID Connect</div>
+                            <div class="modal-header">
+                                OpenID Connect
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                            </div>
                             <div class="modal-body">
                                 <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
 
@@ -76,15 +79,14 @@
                                     </li>
                                 </ul>
 
-                                <div class="tab-content">
-                                    <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
-                                    <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
-                                    @if (downParty.ShowAdvanced)
-                                    {
-                                        <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
-                                    }
+                                <div class="tab-content pt-3">
                                     @if (oidcDownParty.ShowClientTab)
                                     {
+                                        <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                                        @if (downParty.ShowAdvanced)
+                                        {
+                                            <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
+                                        }
                                         @if (oidcDownParty.Form.Model.Client != null)
                                         {
                                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
@@ -113,10 +115,9 @@
                                                     }
                                                 </ul>
                                                 <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" />
-                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more Resource and Scopes</button>
+                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more Resource and scopes</button>
                                             </div>
 
-                                            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@($"{(downParty.ShowAdvanced ? "Hide" : "Show")} advanced settings")</button>
                                             @if (downParty.ShowAdvanced)
                                             {
                                             }

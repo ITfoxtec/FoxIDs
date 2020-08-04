@@ -137,7 +137,23 @@ namespace FoxIDs.Client.Pages
                 {
                     var generalOidcDownParty = downParty as GeneralOidcDownPartyViewModel;
                     var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
-                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>());
+                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
+                    {
+                        if(afterMap.Resource == null)
+                        {
+                            afterMap.Resource = new OAuthDownResourceViewModel();
+                        }
+                        var defaultScopeIndex = afterMap.Resource.Scopes.FindIndex(match => match.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
+                        if(defaultScopeIndex > -1)
+                        {
+                            afterMap.Resource.DefaultScope = true;
+                            afterMap.Resource.Scopes.RemoveAt(defaultScopeIndex);
+                        }
+                        else
+                        {
+                            afterMap.Resource.DefaultScope = false;
+                        }
+                    }));
                 }
                 catch (AuthenticationException)
                 {
@@ -256,7 +272,7 @@ namespace FoxIDs.Client.Pages
         private void OidcDownPartyViewModelAfterInit(OidcDownPartyViewModel model)
         {
             model.Client = model.Client ?? new OidcDownClientViewModel();
-            model.Resource = model.Resource ?? new OAuthDownResource();
+            model.Resource = model.Resource ?? new OAuthDownResourceViewModel();
         }
 
         private void AddOidcResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
@@ -273,13 +289,25 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
+                var oidcDownParty = generalOidcDownParty.Form.Model.Map<OidcDownParty>(afterMap: afterMap =>
+                {
+                    if (generalOidcDownParty.Form.Model.Resource.DefaultScope && !afterMap.Resource.Scopes.Where(s => s.Equals(generalOidcDownParty.Form.Model.Name, StringComparison.Ordinal)).Any())
+                    {
+                        afterMap.Resource.Scopes.Add(generalOidcDownParty.Form.Model.Name);
+                    }
+                    if (afterMap.Resource.Scopes.Count <= 0)
+                    {
+                        afterMap.Resource = null;
+                    }
+                });
+
                 if (generalOidcDownParty.CreateMode)
                 {
-                    await DownPartyService.CreateOidcDownPartyAsync(generalOidcDownParty.Form.Model.Map<OidcDownParty>());
+                    await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
                 }
                 else
                 {
-                    await DownPartyService.UpdateOidcDownPartyAsync(generalOidcDownParty.Form.Model.Map<OidcDownParty>());
+                    await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
                 }
                 generalOidcDownParty.Name = generalOidcDownParty.Form.Model.Name;
                 generalOidcDownParty.Edit = false;

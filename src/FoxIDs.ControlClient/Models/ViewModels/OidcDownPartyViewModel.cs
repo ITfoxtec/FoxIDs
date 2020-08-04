@@ -25,13 +25,13 @@ namespace FoxIDs.Client.Models.ViewModels
         /// OIDC down client.
         /// </summary>
         [ValidateComplexType]
-        public OidcDownClientViewModel Client { get; set; }        
-
+        public OidcDownClientViewModel Client { get; set; }
+  
         /// <summary>
         /// OAuth 2.0 down resource.
         /// </summary>
         [ValidateComplexType]        
-        public OAuthDownResource Resource { get; set; }
+        public OAuthDownResourceViewModel Resource { get; set; } 
 
         /// <summary>
         /// Allow cors origins.

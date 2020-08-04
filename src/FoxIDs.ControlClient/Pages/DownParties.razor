@@ -130,7 +130,25 @@
                                     {
                                         @if (oidcDownParty.Form.Model.Resource != null)
                                         {
-                                            <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" />
+                                            <div class="form-group active-group active">
+                                                <Label For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" class="label-control" />
+                                                <div class="card">
+                                                    <div class="card-body px-3 py-2">
+                                                        <div class="form-check form-check-inline">
+                                                            @if (oidcDownParty.Form.Model.Resource.DefaultScope)
+                                                            {
+                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" checked="checked" @onchange="@((e) => oidcDownParty.Form.Model.Resource.DefaultScope = (bool)e.Value)" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => oidcDownParty.Form.Model.Resource.DefaultScope = (bool)e.Value)" />
+                                                            }
+                                                            <label class="form-check-label" for="oidcdefaultresource">Add default scope '@oidcDownParty.Form.Model.Name' for the application itself</label>
+                                                        </div>                                                        
+                                                    </div>
+                                                </div>
+                                                <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" />
+                                            </div>
                                         }
                                     }
                                 </div>

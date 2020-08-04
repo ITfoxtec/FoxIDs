@@ -39,7 +39,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                     {
                         if (enumerator.Current == null || enumerator.Current.ToString().IsNullOrWhiteSpace())
                         {
-                            throw new ValidationException($"{fieldNameKey}.item[{count}] is null or contain only white spaces.");
+                            throw new ValidationException($"{fieldNameKey}.item[{count + 1}] is null or contain only white spaces.");
                         }
 
                         if (enumerator.Current is string)

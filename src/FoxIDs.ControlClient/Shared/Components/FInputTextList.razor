@@ -1,9 +1,9 @@
 ﻿@using System.Linq.Expressions
 
-<div class="form-group active-group">
-    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i}))
+<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
+    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
     {
-        if (item.Index == 0)
+        if (item.Index == 0 && !DynamicFirstRow)
         {
             <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
             <Label For="@For" class="label-control" />
@@ -26,6 +26,12 @@
 
 @code {
     [Parameter]
+    public bool IncludeActiveFormGroup { get; set; } = true;
+
+    [Parameter]
+    public bool DynamicFirstRow { get; set; } = false;
+
+    [Parameter]
     public List<string> ValueList { get; set; }
     [Parameter]
     public EventCallback<List<string>> ValueListChanged { get; set; }
@@ -40,7 +46,14 @@
     {
         if (ValueList == null)
         {
-            ValueList = new List<string> { null };
+            if(DynamicFirstRow)
+            {
+                ValueList = new List<string>();
+            }
+            else
+            {
+                ValueList = new List<string> { null };
+            }
         }
         base.OnParametersSet();
     }

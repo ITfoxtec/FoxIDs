@@ -2,13 +2,12 @@
  
 <div class="active-group active">
     <div class="card">
-        <div class="card-body px-3 py-2 ">
+        <div class="card-body px-3 py-2">
             @if (Items != null)
             {
                 @foreach (var item in Items)
                 {
                     <div class="form-check form-check-inline">
-
                         @if (IsSelected(item))
                         {
                             <input type="checkbox" class="form-check-input" id="@ItemToId(item)" checked="checked" @onchange="@((e) => SelectChanged(e, item))" />
@@ -19,7 +18,6 @@
                         }
                         <label class="form-check-label" for="@ItemToId(item)">@item</label>
                     </div>
-
                 }
             }
         </div>

@@ -285,6 +285,30 @@ namespace FoxIDs.Client.Pages
             resourceScopes.Remove(removeResourceScope);
         }
 
+        private void AddOidcScope(MouseEventArgs e, List<OidcDownScope> scopes)
+        {
+            scopes.Add(new OidcDownScope());
+        }
+
+        private void RemoveOidcScope(MouseEventArgs e, List<OidcDownScope> scopes, OidcDownScope removeScope)
+        {
+            scopes.Remove(removeScope);
+        }
+
+        private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, List<OidcDownClaim> voluntaryClaims)
+        {
+            if(voluntaryClaims == null)
+            {
+                voluntaryClaims = new List<OidcDownClaim>();
+            }
+            voluntaryClaims.Add(new OidcDownClaim());
+        }
+
+        private void RemoveOidcScopeVoluntaryClaim(MouseEventArgs e, List<OidcDownClaim> voluntaryClaims, OidcDownClaim removeVoluntaryClaim)
+        {
+            voluntaryClaims.Remove(removeVoluntaryClaim);
+        }
+
         private async Task OnEditOidcDownPartyValidSubmitAsync(GeneralOidcDownPartyViewModel generalOidcDownParty, EditContext editContext)
         {
             try

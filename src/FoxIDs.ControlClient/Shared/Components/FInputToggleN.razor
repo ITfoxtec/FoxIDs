@@ -1,6 +1,6 @@
 ﻿@inherits FInputBase<bool?>
 
-<div class="form-group active-group">
+<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
     <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-outline-secondary off")" @onclick="@(() => ToggleCurrentValue())" data-toggle="toggle" role="button" style="width: @width; height: 38px;">
         <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
         <div class="toggle-group">
@@ -9,14 +9,23 @@
             <span class="toggle-handle btn btn-light"></span>
         </div>
     </div>
-    <Label For="@For" class="label-control" />
-    <ValidationMessage For="@For" />
+    @if (IncludeLabelAndValidationMessage)
+    {
+        <Label For="@For" class="label-control" />
+        <ValidationMessage For="@For" />
+    }
 </div>
 
 @code {
     private string width = "65px";
     private string onText = "On";
     private string offText = "Off";
+
+    [Parameter]
+    public bool IncludeActiveFormGroup { get; set; } = true;
+
+    [Parameter]
+    public bool IncludeLabelAndValidationMessage { get; set; } = true;
 
     [Parameter]
     public string TextType { get; set; }

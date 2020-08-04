@@ -6,11 +6,13 @@ namespace FoxIDs.Models.Api
     {
         [Required]
         [MaxLength(Constants.Models.OAuthDownParty.Client.ClaimLength)]
+        [Display(Name = "Voluntary claims")]
         public string Claim { get; set; }
 
         /// <summary>
         /// Claim also in id token, default false.
         /// </summary>
+        [Display(Name = "Include in ID Token")]
         public bool? InIdToken { get; set; } = false;
     }
 }

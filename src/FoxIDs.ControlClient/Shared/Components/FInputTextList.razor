@@ -21,7 +21,7 @@
         }
     }
     <ValidationMessage For="@For" />
-    <button type="button" class="btn btn-link btn-xs" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add one more@(AddOneMoreName.IsNullOrEmpty() ? string.Empty : $" {AddOneMoreName}")</button>
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add@(AddOneMoreName.IsNullOrEmpty() ? string.Empty : $" {AddOneMoreName}")</button>
 </div>
 
 @code {

@@ -12,6 +12,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Scope")]
         public string Scope { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
         [Display(Name = "Voluntary claims")]
         public List<OidcDownClaim> VoluntaryClaims { get; set; }

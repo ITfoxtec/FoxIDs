@@ -15,6 +15,7 @@ namespace FoxIDs.Client.Models.ViewModels
             ResponseTypes = new List<string> { "code" };
         }
 
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [Display(Name = "Secrets")]
         public List<OAuthClientSecretRequest> Secrets { get; set; }

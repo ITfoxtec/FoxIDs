@@ -309,6 +309,16 @@ namespace FoxIDs.Client.Pages
             voluntaryClaims.Remove(removeVoluntaryClaim);
         }
 
+        private void AddOidcClaim(MouseEventArgs e, List<OidcDownClaim> claims)
+        {
+            claims.Add(new OidcDownClaim());
+        }
+
+        private void RemoveOidcClaim(MouseEventArgs e, List<OidcDownClaim> claims, OidcDownClaim removeClaim)
+        {
+            claims.Remove(removeClaim);
+        }
+
         private async Task OnEditOidcDownPartyValidSubmitAsync(GeneralOidcDownPartyViewModel generalOidcDownParty, EditContext editContext)
         {
             try

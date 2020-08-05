@@ -6,14 +6,17 @@ namespace FoxIDs.Models.Api
 {
     public class OidcDownClient
     {
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
         [Display(Name = "Scopes")]
         public List<OidcDownScope> Scopes { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
         [Display(Name = "Claims")]
         public List<OidcDownClaim> Claims { get; set; }

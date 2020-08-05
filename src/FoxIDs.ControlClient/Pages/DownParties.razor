@@ -139,10 +139,14 @@
                                                                                         {
                                                                                             <div class="active-group active pb-0 mb-0">
                                                                                                 <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
-                                                                                                <Label For="@(() => voluntaryClaim.Claim)" class="label-control" />
+                                                                                                <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
                                                                                             </div>
                                                                                         }
-                                                                                        <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                        else
+                                                                                        {
+                                                                                            <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                        }
+                                                                                        <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
                                                                                     </div>
                                                                                     <div class="col-4">
                                                                                         @if (includeLable)
@@ -152,7 +156,10 @@
                                                                                                 <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
                                                                                             </div>
                                                                                         }
-                                                                                        <FInputToggleN @bind-Value="@voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                        else
+                                                                                        {
+                                                                                            <FInputToggleN @bind-Value="@voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                        }
                                                                                     </div>
                                                                                     <div class="col-1 p-0">
                                                                                         @if (includeLable)
@@ -161,7 +168,10 @@
                                                                                                 <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
                                                                                             </div>
                                                                                         }
-                                                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                        else
+                                                                                        {
+                                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                        }
                                                                                     </div>
                                                                                 </div>
                                                                             }
@@ -183,6 +193,61 @@
 
                                             @if (downParty.ShowAdvanced)
                                             {
+                                                <div class="form-group active-group active">
+                                                    <Label For="@(() => oidcDownParty.Form.Model.Client.Claims)" class="label-control" />
+
+                                                    <div class="card">
+                                                        <div class="card-body px-3 py-2">
+                                                            @foreach (var claimItem in oidcDownParty.Form.Model.Client.Claims)
+                                                            {
+                                                                var includeLable = oidcDownParty.Form.Model.Client.Claims.IndexOf(claimItem) <= 0;
+                                                                <div class="row">
+                                                                    <div class="col-7">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                                <Label For="@(() => claimItem.Claim)" class="label-control" />
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                        }
+                                                                        <ValidationMessage For="@(() => claimItem.Claim)" />
+                                                                    </div>
+                                                                    <div class="col-4">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <FInputToggleN @bind-Value="@claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                <Label For="@(() => claimItem.InIdToken)" class="label-control" />
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <FInputToggleN @bind-Value="@claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                        }
+                                                                    </div>
+                                                                    <div class="col-1 p-0">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Claims)" />
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
+                                                </div>
                                             }
                                         }
                                     }

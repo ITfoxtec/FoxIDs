@@ -17,6 +17,7 @@ using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Linq;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages
 {
@@ -134,7 +135,7 @@ namespace FoxIDs.Client.Pages
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
+                catch (HttpRequestException ex)
                 {
                     upParty.Error = ex.Message;
                 }
@@ -178,7 +179,7 @@ namespace FoxIDs.Client.Pages
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
+                catch (HttpRequestException ex)
                 {
                     upParty.Error = ex.Message;
                 }

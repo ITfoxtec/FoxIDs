@@ -96,103 +96,104 @@
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                                             <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
 
-                                            <div class="form-group active-group active">
-                                                <Label For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" class="label-control" />
-                                                <ul class="list-group">
-                                                    @foreach (var resourceScope in oidcDownParty.Form.Model.Client.ResourceScopes)
-                                                    {
-                                                        <li class="list-group-item">
-                                                            <div class="row">
-                                                                <div class="col-11">
-                                                                    <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
-                                                                    <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" AddOneMoreName="Scope" />
-                                                                </div>
-                                                                <div class="col-1 text-right">
-                                                                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" />
-                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Resource and scopes</button>
-                                            </div>
 
-                                            <div class="form-group active-group active">
-                                                <Label For="@(() => oidcDownParty.Form.Model.Client.Scopes)" class="label-control" />
-                                                <ul class="list-group">
-                                                    @foreach (var scopeItem in oidcDownParty.Form.Model.Client.Scopes)
-                                                    {
-                                                        <li class="list-group-item">
-                                                            <div class="row">
-                                                                <div class="col-11">
-                                                                    <FInputText @bind-Value="scopeItem.Scope" For="@(() => scopeItem.Scope)" />
-                                                                    <div>
-                                                                        @if (scopeItem.VoluntaryClaims != null)
-                                                                        {
-                                                                            @foreach (var voluntaryClaim in scopeItem.VoluntaryClaims)
-                                                                            {
-                                                                                var includeLable = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
-                                                                                <div class="row">
-                                                                                    <div class="col-7">
-                                                                                        @if (includeLable)
-                                                                                        {
-                                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                                <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
-                                                                                                <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
-                                                                                            </div>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
-                                                                                        }
-                                                                                        <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
-                                                                                    </div>
-                                                                                    <div class="col-4">
-                                                                                        @if (includeLable)
-                                                                                        {
-                                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                                <FInputToggleN @bind-Value="@voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-                                                                                                <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
-                                                                                            </div>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <FInputToggleN @bind-Value="@voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-                                                                                        }
-                                                                                    </div>
-                                                                                    <div class="col-1 p-0">
-                                                                                        @if (includeLable)
-                                                                                        {
-                                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                                                            </div>
-                                                                                        }
-                                                                                        else
-                                                                                        {
-                                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                                                        }
-                                                                                    </div>
-                                                                                </div>
-                                                                            }
-                                                                            <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
-                                                                        }
-                                                                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-1 text-right">
-                                                                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScope(e, oidcDownParty.Form.Model.Client.Scopes, scopeItem))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    }
-                                                </ul>
-                                                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" />
-                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScope(e, oidcDownParty.Form.Model.Client.Scopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Scope</button>
-                                            </div>
 
                                             @if (downParty.ShowAdvanced)
                                             {
+                                                <div class="form-group active-group active">
+                                                    <Label For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" class="label-control" />
+                                                    <ul class="list-group">
+                                                        @foreach (var resourceScope in oidcDownParty.Form.Model.Client.ResourceScopes)
+                                                        {
+                                                            <li class="list-group-item">
+                                                                <div class="row">
+                                                                    <div class="col-11">
+                                                                        <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
+                                                                        <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" AddOneMoreName="Scope" />
+                                                                    </div>
+                                                                    <div class="col-1 text-right">
+                                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                    <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" />
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Resource and scopes</button>
+                                                </div>
+
+                                                <div class="form-group active-group active">
+                                                    <Label For="@(() => oidcDownParty.Form.Model.Client.Scopes)" class="label-control" />
+                                                    <ul class="list-group">
+                                                        @foreach (var scopeItem in oidcDownParty.Form.Model.Client.Scopes)
+                                                        {
+                                                            <li class="list-group-item">
+                                                                <div class="row">
+                                                                    <div class="col-11">
+                                                                        <FInputText @bind-Value="scopeItem.Scope" For="@(() => scopeItem.Scope)" />
+                                                                        <div>
+                                                                            @if (scopeItem.VoluntaryClaims != null)
+                                                                            {
+                                                                                @foreach (var voluntaryClaim in scopeItem.VoluntaryClaims)
+                                                                                {
+                                                                                    var includeLable = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
+                                                                                    <div class="row">
+                                                                                        <div class="col-7">
+                                                                                            @if (includeLable)
+                                                                                            {
+                                                                                                <div class="active-group active pb-0 mb-0">
+                                                                                                    <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                                    <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
+                                                                                                </div>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                            }
+                                                                                            <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
+                                                                                        </div>
+                                                                                        <div class="col-4">
+                                                                                            @if (includeLable)
+                                                                                            {
+                                                                                                <div class="active-group active pb-0 mb-0">
+                                                                                                    <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                                    <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
+                                                                                                </div>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                            }
+                                                                                        </div>
+                                                                                        <div class="col-1 p-0">
+                                                                                            @if (includeLable)
+                                                                                            {
+                                                                                                <div class="active-group active pb-0 mb-0">
+                                                                                                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                                </div>
+                                                                                            }
+                                                                                            else
+                                                                                            {
+                                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                            }
+                                                                                        </div>
+                                                                                    </div>
+                                                                                }
+                                                                                <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
+                                                                            }
+                                                                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-1 text-right">
+                                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScope(e, oidcDownParty.Form.Model.Client.Scopes, scopeItem))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        }
+                                                    </ul>
+                                                    <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" />
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScope(e, oidcDownParty.Form.Model.Client.Scopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Scope</button>
+                                                </div>
                                                 <div class="form-group active-group active">
                                                     <Label For="@(() => oidcDownParty.Form.Model.Client.Claims)" class="label-control" />
 
@@ -220,13 +221,13 @@
                                                                         @if (includeLable)
                                                                         {
                                                                             <div class="active-group active pb-0 mb-0">
-                                                                                <FInputToggleN @bind-Value="@claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                <FInputToggleN @bind-Value="claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
                                                                                 <Label For="@(() => claimItem.InIdToken)" class="label-control" />
                                                                             </div>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <FInputToggleN @bind-Value="@claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                            <FInputToggleN @bind-Value="claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
                                                                         }
                                                                     </div>
                                                                     <div class="col-1 p-0">
@@ -248,6 +249,14 @@
                                                     <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Claims)" />
                                                     <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
                                                 </div>
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.AccessTokenLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime)" />
+                                                <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
+                                                <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.IdTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.IdTokenLifetime)" />
+                                                <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint" For="@(() => oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint)" TextType="e.d" />
                                             }
                                         }
                                     }

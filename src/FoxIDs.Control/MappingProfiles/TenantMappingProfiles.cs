@@ -84,12 +84,18 @@ namespace FoxIDs.MappingProfiles
             CreateMap<OAuthDownClaim, Api.OAuthDownClaim>()
                 .ReverseMap();
             CreateMap<OAuthDownClient, Api.OAuthDownClient>()
+                .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
+                .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
                 .ReverseMap();
             CreateMap<OAuthDownResource, Api.OAuthDownResource>()
+                .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc)))
                 .ReverseMap();
             CreateMap<OAuthDownResourceScope, Api.OAuthDownResourceScope>()
+                .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => s.Scopes)))
                 .ReverseMap();
             CreateMap<OAuthDownScope, Api.OAuthDownScope>()
+                .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();
 
             CreateMap<OidcDownParty, Api.OidcDownParty>()
@@ -101,8 +107,12 @@ namespace FoxIDs.MappingProfiles
             CreateMap<OidcDownClaim, Api.OidcDownClaim>()
                 .ReverseMap();
             CreateMap<OidcDownClient, Api.OidcDownClient>()
+                .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
+                .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
                 .ReverseMap();
             CreateMap<OidcDownScope, Api.OidcDownScope>()
+                .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();
 
             CreateMap<SamlDownParty, Api.SamlDownParty>()

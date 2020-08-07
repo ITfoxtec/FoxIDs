@@ -3,6 +3,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
+using System.Net.Http;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 
@@ -37,8 +38,8 @@ namespace FoxIDs.Client.Shared.Components
         public async Task InitAsync(TModel model = null, Action<TModel> afterInit = null)
         {
             Model = model ?? new TModel();
-            afterInit?.Invoke(Model);
             await OnAfterInit.InvokeAsync(Model);
+            afterInit?.Invoke(Model);
             error = null;
             EditContext = new EditContext(Model);
             validationMessageStore = new ValidationMessageStore(EditContext);
@@ -94,7 +95,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
+                catch (HttpRequestException ex)
                 {
                     error = ex.Message;
                 }

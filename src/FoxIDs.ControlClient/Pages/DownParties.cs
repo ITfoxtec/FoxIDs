@@ -18,6 +18,7 @@ using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using BlazorInputFile;
 using Microsoft.AspNetCore.Components.Web;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages
 {
@@ -139,7 +140,7 @@ namespace FoxIDs.Client.Pages
                     var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
                     await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
                     {
-                        if(afterMap.Resource == null)
+                        if (afterMap.Resource == null)
                         {
                             afterMap.Resource = new OAuthDownResourceViewModel();
                         }
@@ -159,7 +160,7 @@ namespace FoxIDs.Client.Pages
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
+                catch (HttpRequestException ex)
                 {
                     downParty.Error = ex.Message;
                 }
@@ -176,7 +177,7 @@ namespace FoxIDs.Client.Pages
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
+                catch (HttpRequestException ex)
                 {
                     downParty.Error = ex.Message;
                 }
@@ -213,13 +214,13 @@ namespace FoxIDs.Client.Pages
                                 });
                             }
                         }
-                    }));     
+                    }));
                 }
                 catch (AuthenticationException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
-                catch (Exception ex)
+                catch (HttpRequestException ex)
                 {
                     downParty.Error = ex.Message;
                 }

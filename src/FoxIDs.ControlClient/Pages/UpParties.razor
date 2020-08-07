@@ -93,6 +93,7 @@
                                 </div>
                             }
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
                                 @if (!loginUpParty.CreateMode)
                                 {
                                     <button type="button" class="btn btn-link" @onclick="@(() => loginUpParty.DeleteAcknowledge = true)">Delete</button>
@@ -218,6 +219,7 @@
                                 </div>
                             }
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
                                 @if (!upParty.CreateMode)
                                 {
                                     <button type="button" class="btn btn-link" @onclick="@(() => upParty.DeleteAcknowledge = true)">Delete</button>

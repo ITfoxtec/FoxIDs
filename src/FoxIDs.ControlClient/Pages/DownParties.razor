@@ -294,6 +294,10 @@
                                 </div>
                             }
                             <div class="modal-footer">
+                                @if (oidcDownParty.ShowClientTab)
+                                {
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                }
                                 @if (!downParty.CreateMode)
                                 {
                                     <button type="button" class="btn btn-link" @onclick="@(() => downParty.DeleteAcknowledge = true)">Delete</button>
@@ -424,6 +428,7 @@
                                 </div>
                             }
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
                                 @if (!downParty.CreateMode)
                                 {
                                     <button type="button" class="btn btn-link" @onclick="@(() => downParty.DeleteAcknowledge = true)">Delete</button>

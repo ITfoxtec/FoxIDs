@@ -31,6 +31,10 @@ namespace FoxIDs.Logic
                 {
                     (item as OAuthClientSecret).Info = secret.Substring(0, 3);
                 }
+                else
+                {
+                    (item as OAuthClientSecret).Info = "No info...";
+                }
             }
 
             item.HashAlgorithm = $"{defaultHashAlgorithm}:{defaultIterations}";

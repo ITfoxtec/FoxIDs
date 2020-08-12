@@ -84,6 +84,23 @@ namespace FoxIDs.Controllers
                 if (!await (party is Api.IDownParty downParty ? validatePartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : Task.FromResult(true))) return BadRequest(ModelState);
                 if (!await validateModelAsync(party, mParty)) return BadRequest(ModelState);
 
+                if(party is Api.OidcDownParty)
+                {
+                    var tempMParty = await tenantService.GetAsync<MParty>(mParty.Id);
+                    if((tempMParty as OidcDownParty)?.Client?.Secrets?.Count > 0)
+                    {
+                        (mParty as OidcDownParty).Client.Secrets = (tempMParty as OidcDownParty).Client.Secrets;
+                    }
+                }
+                else if (party is Api.OAuthDownParty)
+                {
+                    var tempMParty = await tenantService.GetAsync<MParty>(mParty.Id);
+                    if ((tempMParty as OAuthDownParty)?.Client?.Secrets?.Count > 0)
+                    {
+                        (mParty as OAuthDownParty).Client.Secrets = (tempMParty as OAuthDownParty).Client.Secrets;
+                    }
+                }
+
                 await tenantService.UpdateAsync(mParty);
 
                 return Ok(mapper.Map<AParty>(mParty));

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
@@ -16,9 +18,9 @@ namespace FoxIDs.Models.Api
         public string PartyName { get; set; }
 
         /// <summary>
-        /// Secret.
+        /// Secrets.
         /// </summary>
-        [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        public string Secret { get; set; }
+        [Length(1, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
+        public List<string> Secrets { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models;
 using FoxIDs.Models.Api;

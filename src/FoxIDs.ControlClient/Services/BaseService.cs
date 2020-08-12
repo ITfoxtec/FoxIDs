@@ -7,8 +7,8 @@ namespace FoxIDs.Client.Services
 {
     public abstract class BaseService
     {
-        private readonly HttpClient httpClient;
-        private readonly RouteBindingLogic routeBindingLogic;
+        protected readonly HttpClient httpClient;
+        protected readonly RouteBindingLogic routeBindingLogic;
 
         public BaseService(HttpClient httpClient, RouteBindingLogic routeBindingLogic)
         {

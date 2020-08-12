@@ -13,11 +13,14 @@ namespace FoxIDs.Client.Models.ViewModels
             Scopes = new List<OidcDownScope>();
             Claims = new List<OidcDownClaim>();
             ResponseTypes = new List<string> { "code" };
+            ExistingSecrets = new List<OAuthClientSecretViewModel>();
+            Secrets = new List<string>();
         }
 
-        [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
+        public List<OAuthClientSecretViewModel> ExistingSecrets { get; set; }
+
+        [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Secrets")]
-        public List<OAuthClientSecretRequest> Secrets { get; set; }
+        public List<string> Secrets { get; set; }
     }
 }

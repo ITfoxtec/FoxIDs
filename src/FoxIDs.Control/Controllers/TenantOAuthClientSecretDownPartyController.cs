@@ -30,14 +30,21 @@ namespace FoxIDs.Controllers
             this.secretHashLogic = secretHashLogic;
         }
 
-        protected async Task<ActionResult<Api.OAuthClientSecretResponse>> Get(string partyName)
+        protected async Task<ActionResult<List<Api.OAuthClientSecretResponse>>> Get(string partyName)
         {
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
 
                 var oauthDownParty = await tenantService.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, partyName));
-                return Ok(mapper.Map<List<Api.OAuthClientSecretResponse>>(oauthDownParty.Client.Secrets).Select(c => { c.Name = new[] { partyName, c.Name }.ToDotList(); return c; }));
+                if (oauthDownParty?.Client?.Secrets?.Count > 0)
+                {
+                    return Ok(mapper.Map<List<Api.OAuthClientSecretResponse>>(oauthDownParty.Client.Secrets).Set(s => s.ForEach(es => es.Name = new[] { partyName, es.Name }.ToDotList())));
+                }
+                else
+                {
+                    return Ok(new List<Api.OAuthClientSecretResponse>());
+                }
             }
             catch (CosmosDataException ex)
             {
@@ -50,31 +57,34 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<Api.OAuthClientSecretResponse>> Post(Api.OAuthClientSecretRequest party)
+        protected async Task<ActionResult> Post(Api.OAuthClientSecretRequest secretRequest)
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
 
-                var oauthDownParty = await tenantService.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, party.PartyName));
+                var oauthDownParty = await tenantService.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, secretRequest.PartyName));
 
-                var secret = new OAuthClientSecret();
-                await secretHashLogic.AddSecretHashAsync(secret, party.Secret);
-                if(oauthDownParty.Client.Secrets == null)
+                foreach(var s in secretRequest.Secrets)
                 {
-                    oauthDownParty.Client.Secrets = new List<OAuthClientSecret>();
+                    var secret = new OAuthClientSecret();
+                    await secretHashLogic.AddSecretHashAsync(secret, s);
+                    if (oauthDownParty.Client.Secrets == null)
+                    {
+                        oauthDownParty.Client.Secrets = new List<OAuthClientSecret>();
+                    }
+                    oauthDownParty.Client.Secrets.Add(secret);
                 }
-                oauthDownParty.Client.Secrets.Add(secret);
                 await tenantService.UpdateAsync(oauthDownParty);
 
-                return Created(mapper.Map<Api.OAuthClientSecretResponse>(secret).Set(s => s.Name = new[] { oauthDownParty.Name, s.Name }.ToDotList()));
+                return Created(new Api.OAuthDownParty { Name = secretRequest.PartyName });
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create secret on client '{typeof(TParty).Name}' by name '{party.PartyName}'.");
-                    return Conflict(typeof(TParty).Name, party.PartyName);
+                    logger.Warning(ex, $"Conflict, Create secret on client '{typeof(TParty).Name}' by name '{secretRequest.PartyName}'.");
+                    return Conflict(typeof(TParty).Name, secretRequest.PartyName);
                 }
                 throw;
             }

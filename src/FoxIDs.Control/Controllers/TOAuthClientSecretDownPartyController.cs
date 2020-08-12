@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using FoxIDs.Logic;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
 
 namespace FoxIDs.Controllers
 {
@@ -23,18 +24,17 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="partyName">OAuth 2.0 party name.</param>
         /// <returns>OAuth 2.0 client secrets for down party.</returns>
-        [ProducesResponseType(typeof(Api.OAuthClientSecretResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Api.OAuthClientSecretResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OAuthClientSecretResponse>> GetOAuthClientSecretDownParty(string partyName) => await Get(partyName);
+        public async Task<ActionResult<List<Api.OAuthClientSecretResponse>>> GetOAuthClientSecretDownParty(string partyName) => await Get(partyName);
 
         /// <summary>
         /// Create OAuth 2.0 client secret for down party.
         /// </summary>
-        /// <param name="party">OAuth 2.0 client secret for down party.</param>
-        /// <returns>OAuth 2.0 client secret for down party.</returns>
-        [ProducesResponseType(typeof(Api.OAuthClientSecretResponse), StatusCodes.Status201Created)]
+        /// <param name="secretRequest">OAuth 2.0 client secret for down party.</param>
+        [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OAuthClientSecretResponse>> PostOAuthClientSecretDownParty([FromBody] Api.OAuthClientSecretRequest party) => await Post(party);
+        public async Task<ActionResult<Api.OAuthDownParty>> PostOAuthClientSecretDownParty([FromBody] Api.OAuthClientSecretRequest secretRequest) => await Post(secretRequest);
 
         /// <summary>
         /// Delete OAuth 2.0 client secret for down party.

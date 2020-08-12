@@ -19,6 +19,7 @@ using System.Linq;
 using BlazorInputFile;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 
 namespace FoxIDs.Client.Pages
 {
@@ -138,8 +139,10 @@ namespace FoxIDs.Client.Pages
                 {
                     var generalOidcDownParty = downParty as GeneralOidcDownPartyViewModel;
                     var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
+                    var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(downParty.Name);
                     await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
                     {
+                        afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
                         if (afterMap.Resource == null)
                         {
                             afterMap.Resource = new OAuthDownResourceViewModel();
@@ -270,10 +273,31 @@ namespace FoxIDs.Client.Pages
         }
 
         #region Oidc
-        private void OidcDownPartyViewModelAfterInit(OidcDownPartyViewModel model)
+        private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
         {
             model.Client = model.Client ?? new OidcDownClientViewModel();
             model.Resource = model.Resource ?? new OAuthDownResourceViewModel();
+
+            if(oidcDownParty.CreateMode)
+            {
+                model.Client.Scopes.Add(new OidcDownScope { Scope = "offline_access" });
+                model.Client.Scopes.Add(new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim> 
+                {
+                    new OidcDownClaim { Claim = "name", InIdToken = true }, new OidcDownClaim { Claim = "given_name", InIdToken = true }, new OidcDownClaim { Claim = "middle_name", InIdToken = true }, new OidcDownClaim { Claim = "family_name", InIdToken = true }, 
+                    new OidcDownClaim { Claim = "nickname", InIdToken = false }, new OidcDownClaim { Claim = "preferred_username", InIdToken = false }, 
+                    new OidcDownClaim { Claim = "birthdate", InIdToken = false }, new OidcDownClaim { Claim = "gender", InIdToken = false }, new OidcDownClaim { Claim = "picture", InIdToken = false }, new OidcDownClaim { Claim = "profile", InIdToken = false }, 
+                    new OidcDownClaim { Claim = "website", InIdToken = false }, new OidcDownClaim { Claim = "locale", InIdToken = true }, new OidcDownClaim { Claim = "zoneinfo", InIdToken = false }, new OidcDownClaim { Claim = "updated_at", InIdToken = false }
+                } });
+                model.Client.Scopes.Add(new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "email", InIdToken = true }, new OidcDownClaim { Claim = "email_verified", InIdToken = false } } });
+                model.Client.Scopes.Add(new OidcDownScope { Scope = "address", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "address", InIdToken = true } } });
+                model.Client.Scopes.Add(new OidcDownScope { Scope = "phone", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "phone_number", InIdToken = true }, new OidcDownClaim { Claim = "phone_number_verified", InIdToken = false } } });
+            }
+        }
+
+        private void RemoveOidcClientSecret(MouseEventArgs e, List<OAuthClientSecretViewModel> existingSecrets, string removeName)
+        {
+            var existingSecret = existingSecrets.Where(s => s.Name.Equals(removeName, StringComparison.Ordinal)).Single();
+            existingSecret.Removed = true;
         }
 
         private void AddOidcResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
@@ -343,7 +367,16 @@ namespace FoxIDs.Client.Pages
                 else
                 {
                     await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
+                    foreach (var existingSecret in generalOidcDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
+                    {
+                        await DownPartyService.DeleteOidcClientSecretDownPartyAsync(existingSecret.Name);
+                    }
                 }
+                if (generalOidcDownParty.Form.Model.Client.Secrets.Count() > 0)
+                {
+                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOidcDownParty.Form.Model.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets });
+                }
+
                 generalOidcDownParty.Name = generalOidcDownParty.Form.Model.Name;
                 generalOidcDownParty.Edit = false;
             }

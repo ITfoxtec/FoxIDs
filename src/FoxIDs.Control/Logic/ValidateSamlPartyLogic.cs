@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
 using System.Collections.Generic;
-using FoxIDs.Models.Api;
 using System.Linq;
 using ITfoxtec.Identity;
 using System.ComponentModel.DataAnnotations;
@@ -45,7 +44,7 @@ namespace FoxIDs.Logic
                 ValidateSigningKeys(modelState, nameof(samlDownParty.Keys), samlDownParty.Keys);
         }
 
-        private bool ValidateSigningKeys(ModelStateDictionary modelState, string propertyName, List<JsonWebKey> keys)
+        private bool ValidateSigningKeys(ModelStateDictionary modelState, string propertyName, List<Api.JsonWebKey> keys)
         {
             var isValid = true;
             try
@@ -85,7 +84,7 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        private bool ValidateLogout(ModelStateDictionary modelState, SamlUpParty samlUpParty)
+        private bool ValidateLogout(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
         {
             var isValid = true;
             try
@@ -111,7 +110,7 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        private bool ValidateLogout(ModelStateDictionary modelState, SamlDownParty samlDownParty)
+        private bool ValidateLogout(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)
         {
             var isValid = true;
             try

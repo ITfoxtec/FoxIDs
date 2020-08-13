@@ -93,7 +93,8 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<OAuthDownResourceScope, Api.OAuthDownResourceScope>()
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => s.Scopes)))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.Resource, opt => opt.MapFrom(s => s.Resource.ToLower()));
             CreateMap<OAuthDownScope, Api.OAuthDownScope>()
                 .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();

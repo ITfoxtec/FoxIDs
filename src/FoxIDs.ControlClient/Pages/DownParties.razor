@@ -156,7 +156,7 @@
                                                             <div class="row">
                                                                 <div class="col-11">
                                                                     <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
-                                                                    <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" AddOneMoreName="Scope" />
+                                                                    <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
                                                                 </div>
                                                                 <div class="col-1 text-right">
                                                                     <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
@@ -183,10 +183,10 @@
                                                                         {
                                                                             @foreach (var voluntaryClaim in scopeItem.VoluntaryClaims)
                                                                             {
-                                                                                var includeLable = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
+                                                                                var includeLabel = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
                                                                                 <div class="row">
                                                                                     <div class="col-7">
-                                                                                        @if (includeLable)
+                                                                                        @if (includeLabel)
                                                                                         {
                                                                                             <div class="active-group active pb-0 mb-0">
                                                                                                 <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
@@ -200,7 +200,7 @@
                                                                                         <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
                                                                                     </div>
                                                                                     <div class="col-4">
-                                                                                        @if (includeLable)
+                                                                                        @if (includeLabel)
                                                                                         {
                                                                                             <div class="active-group active pb-0 mb-0">
                                                                                                 <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
@@ -213,7 +213,7 @@
                                                                                         }
                                                                                     </div>
                                                                                     <div class="col-1 p-0">
-                                                                                        @if (includeLable)
+                                                                                        @if (includeLabel)
                                                                                         {
                                                                                             <div class="active-group active pb-0 mb-0">
                                                                                                 <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
@@ -228,7 +228,7 @@
                                                                             }
                                                                             <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
                                                                         }
-                                                                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
                                                                     </div>
                                                                 </div>
                                                                 <div class="col-1 text-right">

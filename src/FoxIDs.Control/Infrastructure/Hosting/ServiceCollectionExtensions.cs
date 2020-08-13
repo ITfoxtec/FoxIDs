@@ -32,7 +32,7 @@ namespace FoxIDs.Infrastructure.Hosting
             
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<ValidatePartyLogic>();
-            services.AddTransient<ValidateOAuthLogic>();
+            services.AddTransient<ValidateOAuthOidcLogic>();
             services.AddTransient<ValidateSamlPartyLogic>();
 
             return services;

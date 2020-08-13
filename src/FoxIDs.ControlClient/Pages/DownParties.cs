@@ -325,13 +325,13 @@ namespace FoxIDs.Client.Pages
             scopes.Remove(removeScope);
         }
 
-        private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, List<OidcDownClaim> voluntaryClaims)
+        private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, OidcDownScope scope)
         {
-            if(voluntaryClaims == null)
+            if(scope.VoluntaryClaims == null)
             {
-                voluntaryClaims = new List<OidcDownClaim>();
+                scope.VoluntaryClaims = new List<OidcDownClaim>();
             }
-            voluntaryClaims.Add(new OidcDownClaim());
+            scope.VoluntaryClaims.Add(new OidcDownClaim());
         }
 
         private void RemoveOidcScopeVoluntaryClaim(MouseEventArgs e, List<OidcDownClaim> voluntaryClaims, OidcDownClaim removeVoluntaryClaim)

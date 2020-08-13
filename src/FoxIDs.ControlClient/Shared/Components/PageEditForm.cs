@@ -1,4 +1,5 @@
-﻿using FoxIDs.Client.Infrastructure.Security;
+﻿using FoxIDs.Client.Infrastructure;
+using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -98,6 +99,10 @@ namespace FoxIDs.Client.Shared.Components
                 catch (HttpRequestException ex)
                 {
                     error = ex.Message;
+                }
+                catch (FoxIDsApiException aex)
+                {
+                    error = aex.Message;
                 }
             }
         }

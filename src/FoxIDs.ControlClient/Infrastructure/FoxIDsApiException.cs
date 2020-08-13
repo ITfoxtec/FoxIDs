@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ITfoxtec.Identity;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.Serialization;
@@ -30,7 +31,7 @@ namespace FoxIDs.Client.Infrastructure
 
         protected FoxIDsApiException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
-        public override string Message => $"{base.Message}{Environment.NewLine}Status code: {StatusCode} ({(int)StatusCode}){Environment.NewLine}Response: {Response.Substring(0, Response.Length >= 512 ? 512 : Response.Length)}";
+        public override string Message => Response.IsNullOrWhiteSpace() ? base.Message : Response.Substring(0, Response.Length >= 512 ? 512 : Response.Length);
 
         public override string ToString()
         {

@@ -15,11 +15,11 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOAuthDownPartyController : TenantPartyApiController<Api.OAuthDownParty, OAuthDownParty>
     {
-        private readonly ValidateOAuthLogic validateOAuthLogic;
+        private readonly ValidateOAuthOidcLogic validateOAuthOidcLogic;
 
-        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic, ValidateOAuthLogic validateOAuthLogic) : base(logger, mapper, tenantService, validatePartyLogic)
+        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic, ValidateOAuthOidcLogic validateOAuthOidcLogic) : base(logger, mapper, tenantService, validatePartyLogic)
         {
-            this.validateOAuthLogic = validateOAuthLogic;
+            this.validateOAuthOidcLogic = validateOAuthOidcLogic;
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>OAuth 2.0 down party.</returns>
         [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OAuthDownParty>> PostOAuthDownParty([FromBody] Api.OAuthDownParty party) => await Post(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthLogic.ValidateResourceScopesAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OAuthDownParty>> PostOAuthDownParty([FromBody] Api.OAuthDownParty party) => await Post(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateResourceScopesAsync(ModelState, mp));
 
         /// <summary>
         /// Update OAuth 2.0 down party.
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>OAuth 2.0 down party.</returns>
         [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OAuthDownParty>> PutOAuthDownParty([FromBody] Api.OAuthDownParty party) => await Put(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthLogic.ValidateResourceScopesAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OAuthDownParty>> PutOAuthDownParty([FromBody] Api.OAuthDownParty party) => await Put(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateResourceScopesAsync(ModelState, mp));
 
         /// <summary>
         /// Delete OAuth 2.0 down party.

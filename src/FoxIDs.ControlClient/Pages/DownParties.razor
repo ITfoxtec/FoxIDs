@@ -123,20 +123,27 @@
                                                         {
                                                             @if(!existingSecret.Removed)
                                                             {
-                                                                <li class="list-group-item">
-                                                                    <div class="row">
-                                                                        <div class="col-11">
-                                                                            @existingSecret.Info
+                                                                <li class="list-group-item p-0">
+                                                                    <div class="d-flex">
+                                                                        <div class="mr-auto px-3 py-1">
+                                                                            @if (existingSecret.Info.IsNullOrWhiteSpace())
+                                                                            {
+                                                                                <i>No info...</i>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                @existingSecret.Info<span>...</span>
+                                                                            }
                                                                         </div>
-                                                                        <div class="col-1 text-right">
-                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClientSecret(e, oidcDownParty.Form.Model.Client.ExistingSecrets, existingSecret.Name))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                                        <div class="p-0">
+                                                                            <button type="button" class="btn btn-link px-2 py-1" title="Remove" @onclick="@(e => RemoveOidcClientSecret(e, oidcDownParty.Form.Model.Client.ExistingSecrets, existingSecret.Name))"><span class="oi oi-delete" aria-hidden="true"></span></button>
                                                                         </div>
                                                                     </div>
                                                                 </li>
                                                             }
                                                         }
                                                     </ul>
-                                                    <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.Secrets" For="@(() => oidcDownParty.Form.Model.Client.Secrets)" IncludeActiveFormGroup="false" DynamicFirstRow="true" />
+                                                    <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.Secrets" For="@(() => oidcDownParty.Form.Model.Client.Secrets)" AddValue="NewOidcClientSecret" IncludeActiveFormGroup="false" DynamicFirstRow="true" />
                                                 </div>
                                             }
 

@@ -42,6 +42,9 @@
     [Parameter]
     public string AddOneMoreName { get; set; } = null;
 
+    [Parameter]
+    public Func<string> AddValue { get; set; }
+
     protected override void OnParametersSet()
     {
         if (ValueList == null)
@@ -66,7 +69,7 @@
 
     private async Task AddAsync(MouseEventArgs e)
     {
-        ValueList.Add(null);
+        ValueList.Add(AddValue != null ? AddValue.Invoke() : null);
         await ValueListChanged.InvokeAsync(ValueList);
     }
 

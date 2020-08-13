@@ -19,7 +19,7 @@ using System.Linq;
 using BlazorInputFile;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
-using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Client.Pages
 {
@@ -278,7 +278,7 @@ namespace FoxIDs.Client.Pages
             model.Client = model.Client ?? new OidcDownClientViewModel();
             model.Resource = model.Resource ?? new OAuthDownResourceViewModel();
 
-            if(oidcDownParty.CreateMode)
+            if (oidcDownParty.CreateMode)
             {
                 model.Client.Scopes.Add(new OidcDownScope { Scope = "offline_access" });
                 model.Client.Scopes.Add(new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim> 
@@ -292,6 +292,11 @@ namespace FoxIDs.Client.Pages
                 model.Client.Scopes.Add(new OidcDownScope { Scope = "address", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "address", InIdToken = true } } });
                 model.Client.Scopes.Add(new OidcDownScope { Scope = "phone", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "phone_number", InIdToken = true }, new OidcDownClaim { Claim = "phone_number_verified", InIdToken = false } } });
             }
+        }
+
+        private string NewOidcClientSecret()
+        {
+            return RandomGenerator.Generate(32); 
         }
 
         private void RemoveOidcClientSecret(MouseEventArgs e, List<OAuthClientSecretViewModel> existingSecrets, string removeName)

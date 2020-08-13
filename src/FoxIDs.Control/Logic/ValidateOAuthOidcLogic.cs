@@ -11,6 +11,10 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
+
+
+//Flytte default resoure scope...
+
     public class ValidateOAuthOidcLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
@@ -22,9 +26,14 @@ namespace FoxIDs.Logic
             this.tenantService = tenantService;
         }
 
+        public async Task<bool> ValidateModelAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        {
+            return await ValidateClientResourceScopesAsync(modelState, oauthDownParty) && ValidateClientScopes(modelState, oauthDownParty) && ValidateResourceScopes(modelState, oauthDownParty);
+        }
+
         // validate response type
 
-        public async Task<bool> ValidateResourceScopesAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        private async Task<bool> ValidateClientResourceScopesAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {
             var isValid = true;
             if (oauthDownParty.Client?.ResourceScopes?.Count() > 0)
@@ -96,6 +105,60 @@ namespace FoxIDs.Logic
                     isValid = false;
                     logger.Warning(vex);
                     modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}.{nameof(OAuthDownResourceScope.Scopes)}".ToCamelCase(), vex.Message);
+                }
+            }
+            return isValid;
+        }
+
+        private bool ValidateClientScopes<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        {
+            var isValid = true;
+            if (oauthDownParty.Client?.Scopes?.Count() > 0)
+            {
+                try
+                {
+                    var duplicatedScope = oauthDownParty.Client.Scopes.GroupBy(s => s).Where(g => g.Count() > 1).FirstOrDefault();
+                    if (duplicatedScope != null)
+                    {
+                        throw new ValidationException($"Duplicated scope in client, scope '{duplicatedScope.Key}'.");
+                    }
+                    foreach(var scopeItem in oauthDownParty.Client.Scopes)
+                    {
+                        var duplicatedVoluntaryClaim = scopeItem.VoluntaryClaims?.GroupBy(s => s).Where(g => g.Count() > 1).FirstOrDefault();
+                        if (duplicatedVoluntaryClaim != null)
+                        {
+                            throw new ValidationException($"Duplicated voluntary claim in scope, scope '{scopeItem.Scope} voluntary claim '{duplicatedVoluntaryClaim.Key}'.");
+                        }
+                    }
+                }
+                catch (ValidationException vex)
+                {
+                    isValid = false;
+                    logger.Warning(vex);
+                    modelState.TryAddModelError($"{nameof(oauthDownParty.Resource)}.{nameof(oauthDownParty.Resource.Scopes)}".ToCamelCase(), vex.Message);
+                }
+            }
+            return isValid;
+        }
+
+        private bool ValidateResourceScopes<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim 
+        {
+            var isValid = true;
+            if (oauthDownParty.Resource?.Scopes?.Count() > 0)
+            {
+                try
+                {
+                    var duplicatedScope = oauthDownParty.Resource.Scopes.GroupBy(s => s).Where(g => g.Count() > 1).FirstOrDefault();
+                    if (duplicatedScope != null)
+                    {
+                        throw new ValidationException($"Duplicated scope in resource, scope '{duplicatedScope.Key}'.");
+                    }
+                }
+                catch (ValidationException vex)
+                {
+                    isValid = false;
+                    logger.Warning(vex);
+                    modelState.TryAddModelError($"{nameof(oauthDownParty.Resource)}.{nameof(oauthDownParty.Resource.Scopes)}".ToCamelCase(), vex.Message);
                 }
             }
             return isValid;

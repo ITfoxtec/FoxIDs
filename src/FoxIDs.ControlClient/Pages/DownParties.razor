@@ -152,11 +152,18 @@
                                                 <ul class="list-group">
                                                     @foreach (var resourceScope in oidcDownParty.Form.Model.Client.ResourceScopes)
                                                     {
+                                                        var includeLabel = resourceScope.Scopes?.Count > 0;
                                                         <li class="list-group-item">
                                                             <div class="row">
                                                                 <div class="col-11">
                                                                     <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
-                                                                    <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                                                                    <div class="@(includeLabel ? "form-group active-group" : string.Empty)">
+                                                                        <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                                                                        @if (includeLabel)
+                                                                        {
+                                                                            <Label For="@(() => resourceScope.Scopes)" class="label-control" />
+                                                                        }
+                                                                    </div>
                                                                 </div>
                                                                 <div class="col-1 text-right">
                                                                     <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcResourceScope(e, oidcDownParty.Form.Model.Client.ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>

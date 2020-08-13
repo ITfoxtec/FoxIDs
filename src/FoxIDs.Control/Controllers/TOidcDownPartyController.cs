@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC down party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OidcDownParty>> PostOidcDownParty([FromBody] Api.OidcDownParty party) => await Post(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateResourceScopesAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OidcDownParty>> PostOidcDownParty([FromBody] Api.OidcDownParty party) => await Post(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Update OIDC down party.
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC down party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OidcDownParty>> PutOidcDownParty([FromBody] Api.OidcDownParty party) => await Put(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateResourceScopesAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OidcDownParty>> PutOidcDownParty([FromBody] Api.OidcDownParty party) => await Put(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Delete OIDC down party.

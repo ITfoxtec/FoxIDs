@@ -11,10 +11,6 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-
-
-//Flytte default resoure scope...
-
     public class ValidateOAuthOidcLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;

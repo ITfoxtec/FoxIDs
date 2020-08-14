@@ -1,8 +1,10 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -15,6 +17,7 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
+        private readonly List<string> acceptedResponseTypeValues = new List<string> { "code", "token", "id_token" };
 
         public ValidateOAuthOidcLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
@@ -24,10 +27,42 @@ namespace FoxIDs.Logic
 
         public async Task<bool> ValidateModelAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {
-            return await ValidateClientResourceScopesAsync(modelState, oauthDownParty) && ValidateClientScopes(modelState, oauthDownParty) && ValidateResourceScopes(modelState, oauthDownParty);
+            return ValidateResponseType(modelState, oauthDownParty) &&
+                await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
+                ValidateClientScopes(modelState, oauthDownParty) && 
+                ValidateResourceScopes(modelState, oauthDownParty);
         }
 
-        // validate response type
+        private bool ValidateResponseType<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        {
+            var isValid = true;
+            try
+            {
+                var responseTypes = oauthDownParty.Client.ResponseTypes.Select(rt => rt.ToSpaceList());
+                foreach(var responseType in responseTypes)
+                {
+                    var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).FirstOrDefault();
+                    if (duplicatedResponseType != null)
+                    {
+                        throw new ValidationException($"Duplicated response type value '{duplicatedResponseType.Key}'.");
+                    }
+                    foreach(var item in responseType)
+                    {
+                        if(!acceptedResponseTypeValues.Where(v => v.Equals(item, StringComparison.Ordinal)).Any())
+                        {
+                            throw new ValidationException($"Invalid response type '{responseType}'.");
+                        }
+                    }
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}.{nameof(OAuthDownResourceScope.Scopes)}".ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
 
         private async Task<bool> ValidateClientResourceScopesAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {

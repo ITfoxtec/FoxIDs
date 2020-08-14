@@ -22,7 +22,7 @@ using System.Net.Http;
 using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Client.Pages
-{
+{ 
     public partial class DownParties 
     {
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
@@ -142,20 +142,28 @@ namespace FoxIDs.Client.Pages
                     var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(downParty.Name);
                     await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
                     {
-                        afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
-                        if (afterMap.Resource == null)
+                        if (afterMap.Client == null)
                         {
-                            afterMap.Resource = new OAuthDownResourceViewModel();
+                            afterMap.Client = new OidcDownClientViewModel();
                         }
-                        var defaultScopeIndex = afterMap.Resource.Scopes.FindIndex(match => match.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
-                        if(defaultScopeIndex > -1)
+                        afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
+                        var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
+                        if(defaultResourceScopeIndex > -1)
                         {
-                            afterMap.Resource.DefaultScope = true;
-                            afterMap.Resource.Scopes.RemoveAt(defaultScopeIndex);
+                            afterMap.Client.DefaultResourceScope = true;
+                            var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
+                            if (defaultResourceScope.Scopes?.Count() > 0)
+                            {
+                                foreach(var scope in defaultResourceScope.Scopes)
+                                {
+                                    afterMap.Client.DefaultResourceScopeScopes.Add(scope);
+                                }
+                            }
+                            afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
                         }
                         else
                         {
-                            afterMap.Resource.DefaultScope = false;
+                            afterMap.Client.DefaultResourceScope = false;
                         }
                     }));
                 }
@@ -355,11 +363,11 @@ namespace FoxIDs.Client.Pages
             {
                 var oidcDownParty = generalOidcDownParty.Form.Model.Map<OidcDownParty>(afterMap: afterMap =>
                 {
-                    if (generalOidcDownParty.Form.Model.Resource.DefaultScope && !afterMap.Resource.Scopes.Where(s => s.Equals(generalOidcDownParty.Form.Model.Name, StringComparison.Ordinal)).Any())
+                    if (generalOidcDownParty.Form.Model.Client.DefaultResourceScope)
                     {
-                        afterMap.Resource.Scopes.Add(generalOidcDownParty.Form.Model.Name);
+                        afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOidcDownParty.Form.Model.Name, Scopes = generalOidcDownParty.Form.Model.Client.DefaultResourceScopeScopes });
                     }
-                    if (afterMap.Resource.Scopes.Count <= 0)
+                    if (!(afterMap.Resource.Scopes?.Count > 0))
                     {
                         afterMap.Resource = null;
                     }

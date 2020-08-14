@@ -9,6 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         public OidcDownClientViewModel()
         {
+            DefaultResourceScopeScopes = new List<string>();
             ResourceScopes = new List<OAuthDownResourceScope>();
             Scopes = new List<OidcDownScope>();
             Claims = new List<OidcDownClaim>();
@@ -16,6 +17,11 @@ namespace FoxIDs.Client.Models.ViewModels
             ExistingSecrets = new List<OAuthClientSecretViewModel>();
             Secrets = new List<string>();
         }
+
+        public bool DefaultResourceScope { get; set; } = true;
+
+        [Display(Name = "Scopes")]
+        public List<string> DefaultResourceScopeScopes { get; set; }
 
         public List<OAuthClientSecretViewModel> ExistingSecrets { get; set; }
 

@@ -11,8 +11,6 @@ namespace FoxIDs.Client.Models.ViewModels
             Scopes = new List<string>();
         }
 
-        public bool DefaultScope { get; set; } = true;
-
         [Length(0, Constants.Models.OAuthDownParty.Resource.ScopesMax, Constants.Models.OAuthDownParty.ScopesLength)]
         [Display(Name = "Scopes")]
         public List<string> Scopes { get; set; }

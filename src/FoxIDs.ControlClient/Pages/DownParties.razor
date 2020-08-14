@@ -147,19 +147,68 @@
                                                 </div>
                                             }
 
+                                            @*<div class="form-group active-group active">
+                                                <Label For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" class="label-control" />
+                                                <div class="card">
+                                                    <div class="card-body px-3 py-2">
+                                                        <div class="form-check form-check-inline">
+                                                            @if (oidcDownParty.Form.Model.Resource.DefaultScope)
+                                                            {
+                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" checked="checked" @onchange="@((e) => oidcDownParty.Form.Model.Resource.DefaultScope = (bool)e.Value)" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => oidcDownParty.Form.Model.Resource.DefaultScope = (bool)e.Value)" />
+                                                            }
+                                                            <label class="form-check-label" for="oidcdefaultresource">Add default scope '@oidcDownParty.Form.Model.Name' for the application itself</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" />
+                                            </div>*@
+
+
+
                                             <div class="form-group active-group active">
                                                 <Label For="@(() => oidcDownParty.Form.Model.Client.ResourceScopes)" class="label-control" />
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="@(oidcDownParty.Form.Model.Client.DefaultResourceScope ? "form-check form-check-inline pl-1 pb-3" : "form-check form-check-inline pl-1")">
+                                                            @if (oidcDownParty.Form.Model.Client.DefaultResourceScope)
+                                                            {
+                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" checked="checked" @onchange="@((e) => oidcDownParty.Form.Model.Client.DefaultResourceScope = (bool)e.Value)" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => oidcDownParty.Form.Model.Client.DefaultResourceScope = (bool)e.Value)" />
+                                                            }
+                                                            <label class="form-check-label" for="oidcdefaultresource">Default resource scope '@oidcDownParty.Form.Model.Name' for the application itself</label>
+                                                        </div>
+                                                        @if (oidcDownParty.Form.Model.Client.DefaultResourceScope)
+                                                        {
+                                                            var includeDefaultResourceScopeScopesLabel = oidcDownParty.Form.Model.Client.DefaultResourceScopeScopes?.Count > 0;
+                                                            <div class="@(includeDefaultResourceScopeScopesLabel ? "form-group active-group" : string.Empty)">
+                                                                <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.DefaultResourceScopeScopes" For="@(() => oidcDownParty.Form.Model.Client.DefaultResourceScopeScopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                                                                @if (includeDefaultResourceScopeScopesLabel)
+                                                                {
+                                                                    <Label For="@(() => oidcDownParty.Form.Model.Client.DefaultResourceScopeScopes)" class="label-control" />
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
                                                 <ul class="list-group">
                                                     @foreach (var resourceScope in oidcDownParty.Form.Model.Client.ResourceScopes)
                                                     {
-                                                        var includeLabel = resourceScope.Scopes?.Count > 0;
+                                                        
                                                         <li class="list-group-item">
                                                             <div class="row">
                                                                 <div class="col-11">
                                                                     <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
-                                                                    <div class="@(includeLabel ? "form-group active-group" : string.Empty)">
+                                                                    @{var includeResourceScopeScopesLabel = resourceScope.Scopes?.Count > 0;}
+                                                                    <div class="@(includeResourceScopeScopesLabel ? "form-group active-group" : string.Empty)">
                                                                         <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
-                                                                        @if (includeLabel)
+                                                                        @if (includeResourceScopeScopesLabel)
                                                                         {
                                                                             <Label For="@(() => resourceScope.Scopes)" class="label-control" />
                                                                         }
@@ -322,23 +371,8 @@
                                         @if (oidcDownParty.Form.Model.Resource != null)
                                         {
                                             <div class="form-group active-group active">
-                                                <Label For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" class="label-control" />
-                                                <div class="card">
-                                                    <div class="card-body px-3 py-2">
-                                                        <div class="form-check form-check-inline">
-                                                            @if (oidcDownParty.Form.Model.Resource.DefaultScope)
-                                                            {
-                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" checked="checked" @onchange="@((e) => oidcDownParty.Form.Model.Resource.DefaultScope = (bool)e.Value)" />
-                                                            }
-                                                            else
-                                                            {
-                                                                <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => oidcDownParty.Form.Model.Resource.DefaultScope = (bool)e.Value)" />
-                                                            }
-                                                            <label class="form-check-label" for="oidcdefaultresource">Add default scope '@oidcDownParty.Form.Model.Name' for the application itself</label>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" />
+                                                <Label For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" class="label-control" />
                                             </div>
                                         }
                                     }

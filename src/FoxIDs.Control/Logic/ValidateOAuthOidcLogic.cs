@@ -36,30 +36,33 @@ namespace FoxIDs.Logic
         private bool ValidateResponseType<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {
             var isValid = true;
-            try
+            if (oauthDownParty.Client != null)
             {
-                var responseTypes = oauthDownParty.Client.ResponseTypes.Select(rt => rt.ToSpaceList());
-                foreach(var responseType in responseTypes)
+                try
                 {
-                    var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).FirstOrDefault();
-                    if (duplicatedResponseType != null)
+                    var responseTypes = oauthDownParty.Client.ResponseTypes.Select(rt => rt.ToSpaceList());
+                    foreach (var responseType in responseTypes)
                     {
-                        throw new ValidationException($"Duplicated response type value '{duplicatedResponseType.Key}'.");
-                    }
-                    foreach(var item in responseType)
-                    {
-                        if(!acceptedResponseTypeValues.Where(v => v.Equals(item, StringComparison.Ordinal)).Any())
+                        var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).FirstOrDefault();
+                        if (duplicatedResponseType != null)
                         {
-                            throw new ValidationException($"Invalid response type '{responseType}'.");
+                            throw new ValidationException($"Duplicated response type value '{duplicatedResponseType.Key}'.");
+                        }
+                        foreach (var item in responseType)
+                        {
+                            if (!acceptedResponseTypeValues.Where(v => v.Equals(item, StringComparison.Ordinal)).Any())
+                            {
+                                throw new ValidationException($"Invalid response type '{responseType}'.");
+                            }
                         }
                     }
                 }
-            }
-            catch (ValidationException vex)
-            {
-                isValid = false;
-                logger.Warning(vex);
-                modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}.{nameof(OAuthDownResourceScope.Scopes)}".ToCamelCase(), vex.Message);
+                catch (ValidationException vex)
+                {
+                    isValid = false;
+                    logger.Warning(vex);
+                    modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}.{nameof(OAuthDownResourceScope.Scopes)}".ToCamelCase(), vex.Message);
+                }
             }
             return isValid;
         }

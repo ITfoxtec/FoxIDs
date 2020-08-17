@@ -113,6 +113,7 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.OAuth2)
             {
                 var oauthDownParty = new GeneralOAuthDownPartyViewModel();
+                oauthDownParty.ShowClientTab = false;
                 oauthDownParty.CreateMode = true;
                 oauthDownParty.Edit = true;
                 downParties.Insert(0, oauthDownParty);
@@ -180,6 +181,7 @@ namespace FoxIDs.Client.Pages
             {
                 try
                 {
+                    (downParty as GeneralOAuthDownPartyViewModel).ShowClientTab = false;
                     var generalOAuthDownParty = downParty as GeneralOAuthDownPartyViewModel;
                     var oauthDownParty = await DownPartyService.GetOAuthDownPartyAsync(downParty.Name);
                     await generalOAuthDownParty.Form.InitAsync(oauthDownParty.Map<OAuthDownPartyViewModel>());
@@ -425,6 +427,12 @@ namespace FoxIDs.Client.Pages
         #endregion
 
         #region OAuth
+        private void OAuthDownPartyViewModelAfterInit(OAuthDownPartyViewModel model)
+        {
+            model.Resource = model.Resource ?? new OAuthDownResourceViewModel();
+        }
+
+
         private async Task OnEditOAuthDownPartyValidSubmitAsync(GeneralOAuthDownPartyViewModel generalOAuthDownParty, EditContext editContext)
         {
             try

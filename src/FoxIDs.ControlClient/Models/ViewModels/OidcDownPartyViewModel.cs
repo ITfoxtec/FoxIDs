@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -7,10 +6,6 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcDownPartyViewModel : IValidatableObject, IAllowUpPartyNames
     {
-        public OidcDownPartyViewModel()
-        {
-        }
-
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]

@@ -6,6 +6,7 @@ namespace FoxIDs.Models.Api
     {
         [Required]
         [MaxLength(Constants.Models.OAuthDownParty.Client.ClaimLength)]
+        [Display(Name = "Claims")]
         public string Claim { get; set; }
     }
 }

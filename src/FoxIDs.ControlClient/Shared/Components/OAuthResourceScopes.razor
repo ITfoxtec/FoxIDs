@@ -1,0 +1,79 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => ResourceScopes)" class="label-control" />
+    <div class="card">
+        <div class="card-body">
+            <div class="@(DefaultResourceScope ? "form-check form-check-inline pl-1 pb-3" : "form-check form-check-inline pl-1")">
+                @if (DefaultResourceScope)
+                {
+                    <input type="checkbox" class="form-check-input" id="oidcdefaultresource" checked="checked" @onchange="@((e) => DefaultResourceScope = (bool)e.Value)" />
+                }
+                else
+                {
+                    <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => DefaultResourceScope = (bool)e.Value)" />
+                }
+                <label class="form-check-label" for="oidcdefaultresource">Default resource scope '@DownPartyNameModel.Name' for the application itself</label>
+            </div>
+            @if (DefaultResourceScope)
+            {
+                var includeDefaultResourceScopeScopesLabel = DefaultResourceScopeScopes?.Count > 0;
+                <div class="@(includeDefaultResourceScopeScopesLabel ? "form-group active-group" : string.Empty)">
+                    <FInputTextList @bind-ValueList="DefaultResourceScopeScopes" For="@(() => DefaultResourceScopeScopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                    @if (includeDefaultResourceScopeScopesLabel)
+                    {
+                        <Label For="@(() => DefaultResourceScopeScopes)" class="label-control" />
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="list-group">
+        @foreach (var resourceScope in ResourceScopes)
+        {
+
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
+                        @{var includeResourceScopeScopesLabel = resourceScope.Scopes?.Count > 0;}
+                        <div class="@(includeResourceScopeScopesLabel ? "form-group active-group" : string.Empty)">
+                            <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                            @if (includeResourceScopeScopesLabel)
+                            {
+                                <Label For="@(() => resourceScope.Scopes)" class="label-control" />
+                            }
+                        </div>
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveResourceScope(e, ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => ResourceScopes)" />
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddResourceScope(e, ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Resource and scopes</button>
+</div>
+
+@code {
+    [Parameter]
+    public IDownPartyName DownPartyNameModel { get; set; }
+
+    [Parameter]
+    public List<OAuthDownResourceScope> ResourceScopes { get; set; }
+
+    [Parameter]
+    public bool DefaultResourceScope { get; set; }
+
+    [Parameter]
+    public List<string> DefaultResourceScopeScopes { get; set; }
+
+    private void AddResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
+    {
+        resourceScopes.Add(new OAuthDownResourceScope());
+    }
+
+    private void RemoveResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes, OAuthDownResourceScope removeResourceScope)
+    {
+        resourceScopes.Remove(removeResourceScope);
+    }
+}

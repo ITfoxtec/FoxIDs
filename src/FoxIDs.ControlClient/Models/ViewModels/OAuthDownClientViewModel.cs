@@ -5,14 +5,14 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcDownClientViewModel : OidcDownClient
+    public class OAuthDownClientViewModel : OAuthDownClient
     {
-        public OidcDownClientViewModel()
+        public OAuthDownClientViewModel()
         {
             DefaultResourceScopeScopes = new List<string>();
             ResourceScopes = new List<OAuthDownResourceScope>();
-            Scopes = new List<OidcDownScope>();
-            Claims = new List<OidcDownClaim>();
+            Scopes = new List<OAuthDownScope>();
+            Claims = new List<OAuthDownClaim>();
             ResponseTypes = new List<string>();
             ExistingSecrets = new List<OAuthClientSecretViewModel>();
             Secrets = new List<string>();

@@ -9,9 +9,11 @@ namespace FoxIDs.Models.Api
         [Required]
         [MaxLength(Constants.Models.OAuthDownParty.ScopesLength)]
         [RegularExpression(Constants.Models.OAuthDownParty.ScopeRegExPattern)]
+        [Display(Name = "Scope")]
         public string Scope { get; set; }
 
         [Length(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
+        [Display(Name = "Voluntary claims")]
         public List<OAuthDownClaim> VoluntaryClaims { get; set; }
     }
 }

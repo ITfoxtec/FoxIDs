@@ -19,10 +19,9 @@ using System.Linq;
 using BlazorInputFile;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
-using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Client.Pages
-{ 
+{
     public partial class DownParties 
     {
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
@@ -113,7 +112,6 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.OAuth2)
             {
                 var oauthDownParty = new GeneralOAuthDownPartyViewModel();
-                oauthDownParty.ShowClientTab = false;
                 oauthDownParty.CreateMode = true;
                 oauthDownParty.Edit = true;
                 downParties.Insert(0, oauthDownParty);
@@ -145,26 +143,34 @@ namespace FoxIDs.Client.Pages
                     {
                         if (afterMap.Client == null)
                         {
-                            afterMap.Client = new OidcDownClientViewModel();
-                        }
-                        afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
-                        var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
-                        if(defaultResourceScopeIndex > -1)
-                        {
-                            afterMap.Client.DefaultResourceScope = true;
-                            var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
-                            if (defaultResourceScope.Scopes?.Count() > 0)
-                            {
-                                foreach(var scope in defaultResourceScope.Scopes)
-                                {
-                                    afterMap.Client.DefaultResourceScopeScopes.Add(scope);
-                                }
-                            }
-                            afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
+                            generalOidcDownParty.EnableClientTab = false;
                         }
                         else
                         {
-                            afterMap.Client.DefaultResourceScope = false;
+                            afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
+                            var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
+                            if (defaultResourceScopeIndex > -1)
+                            {
+                                afterMap.Client.DefaultResourceScope = true;
+                                var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
+                                if (defaultResourceScope.Scopes?.Count() > 0)
+                                {
+                                    foreach (var scope in defaultResourceScope.Scopes)
+                                    {
+                                        afterMap.Client.DefaultResourceScopeScopes.Add(scope);
+                                    }
+                                }
+                                afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
+                            }
+                            else
+                            {
+                                afterMap.Client.DefaultResourceScope = false;
+                            }
+                        }
+
+                        if (afterMap.Resource == null)
+                        {
+                            generalOidcDownParty.EnableResourceTab = false;
                         }
                     }));
                 }
@@ -181,10 +187,43 @@ namespace FoxIDs.Client.Pages
             {
                 try
                 {
-                    (downParty as GeneralOAuthDownPartyViewModel).ShowClientTab = false;
                     var generalOAuthDownParty = downParty as GeneralOAuthDownPartyViewModel;
                     var oauthDownParty = await DownPartyService.GetOAuthDownPartyAsync(downParty.Name);
-                    await generalOAuthDownParty.Form.InitAsync(oauthDownParty.Map<OAuthDownPartyViewModel>());
+                    var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(downParty.Name);
+                    await generalOAuthDownParty.Form.InitAsync(oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
+                    {
+                        if (afterMap.Client == null)
+                        {
+                            generalOAuthDownParty.EnableClientTab = false;
+                        }
+                        else
+                        {
+                            afterMap.Client.ExistingSecrets = oauthDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
+                            var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOAuthDownParty.Name, StringComparison.Ordinal));
+                            if (defaultResourceScopeIndex > -1)
+                            {
+                                afterMap.Client.DefaultResourceScope = true;
+                                var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
+                                if (defaultResourceScope.Scopes?.Count() > 0)
+                                {
+                                    foreach (var scope in defaultResourceScope.Scopes)
+                                    {
+                                        afterMap.Client.DefaultResourceScopeScopes.Add(scope);
+                                    }
+                                }
+                                afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
+                            }
+                            else
+                            {
+                                afterMap.Client.DefaultResourceScope = false;
+                            }
+                        }
+
+                        if (afterMap.Resource == null)
+                        {
+                            generalOAuthDownParty.EnableResourceTab = false;
+                        }
+                    }));
                 }
                 catch (AuthenticationException)
                 {
@@ -285,11 +324,13 @@ namespace FoxIDs.Client.Pages
         #region Oidc
         private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
         {
-            model.Client = model.Client ?? new OidcDownClientViewModel();
-            model.Resource = model.Resource ?? new OAuthDownResourceViewModel();
-
             if (oidcDownParty.CreateMode)
             {
+                model.Client = model.Client ?? new OidcDownClientViewModel();
+                model.Resource = model.Resource ?? new OAuthDownResource();
+
+                model.Client.ResponseTypes.Add("code");
+
                 model.Client.Scopes.Add(new OidcDownScope { Scope = "offline_access" });
                 model.Client.Scopes.Add(new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim> 
                 {
@@ -304,26 +345,9 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private string NewOidcClientSecret()
-        {
-            return RandomGenerator.Generate(32); 
-        }
+        private void OnOidcDownPartyClientTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Client = enableTab ? new OidcDownClientViewModel() : null;
 
-        private void RemoveOidcClientSecret(MouseEventArgs e, List<OAuthClientSecretViewModel> existingSecrets, string removeName)
-        {
-            var existingSecret = existingSecrets.Where(s => s.Name.Equals(removeName, StringComparison.Ordinal)).Single();
-            existingSecret.Removed = true;
-        }
-
-        private void AddOidcResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
-        {
-            resourceScopes.Add(new OAuthDownResourceScope());
-        }
-
-        private void RemoveOidcResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes, OAuthDownResourceScope removeResourceScope)
-        {
-            resourceScopes.Remove(removeResourceScope);
-        }
+        private void OnOidcDownPartyResourceTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
 
         private void AddOidcScope(MouseEventArgs e, List<OidcDownScope> scopes)
         {
@@ -427,11 +451,56 @@ namespace FoxIDs.Client.Pages
         #endregion
 
         #region OAuth
-        private void OAuthDownPartyViewModelAfterInit(OAuthDownPartyViewModel model)
+        private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
         {
-            model.Resource = model.Resource ?? new OAuthDownResourceViewModel();
+            if (oauthDownParty.CreateMode)
+            {
+                model.Client = model.Client ?? new OAuthDownClientViewModel();
+                model.Resource = model.Resource ?? new OAuthDownResource();
+
+                model.Client.ResponseTypes.Add("code");
+
+                model.Client.Scopes.Add(new OAuthDownScope { Scope = "offline_access" });
+            }
         }
 
+        private void OnOAuthDownPartyClientTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Client = enableTab ? new OAuthDownClientViewModel() : null;
+
+        private void OnOAuthDownPartyResourceTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
+
+        private void AddOAuthScope(MouseEventArgs e, List<OAuthDownScope> scopes)
+        {
+            scopes.Add(new OAuthDownScope());
+        }
+
+        private void RemoveOAuthScope(MouseEventArgs e, List<OAuthDownScope> scopes, OAuthDownScope removeScope)
+        {
+            scopes.Remove(removeScope);
+        }
+
+        private void AddOAuthScopeVoluntaryClaim(MouseEventArgs e, OAuthDownScope scope)
+        {
+            if (scope.VoluntaryClaims == null)
+            {
+                scope.VoluntaryClaims = new List<OAuthDownClaim>();
+            }
+            scope.VoluntaryClaims.Add(new OAuthDownClaim());
+        }
+
+        private void RemoveOAuthScopeVoluntaryClaim(MouseEventArgs e, List<OAuthDownClaim> voluntaryClaims, OAuthDownClaim removeVoluntaryClaim)
+        {
+            voluntaryClaims.Remove(removeVoluntaryClaim);
+        }
+
+        private void AddOAuthClaim(MouseEventArgs e, List<OAuthDownClaim> claims)
+        {
+            claims.Add(new OAuthDownClaim());
+        }
+
+        private void RemoveOAuthClaim(MouseEventArgs e, List<OAuthDownClaim> claims, OAuthDownClaim removeClaim)
+        {
+            claims.Remove(removeClaim);
+        }
 
         private async Task OnEditOAuthDownPartyValidSubmitAsync(GeneralOAuthDownPartyViewModel generalOAuthDownParty, EditContext editContext)
         {

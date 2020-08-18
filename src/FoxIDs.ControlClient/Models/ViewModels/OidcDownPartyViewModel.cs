@@ -1,10 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcDownPartyViewModel : IValidatableObject, IAllowUpPartyNames
+    public class OidcDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -26,7 +27,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// OAuth 2.0 down resource.
         /// </summary>
         [ValidateComplexType]        
-        public OAuthDownResourceViewModel Resource { get; set; } 
+        public OAuthDownResource Resource { get; set; } 
 
         /// <summary>
         /// Allow cors origins.

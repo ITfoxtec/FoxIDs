@@ -252,6 +252,17 @@ h4 {
     color: #a94442;
 }
 
+.modal-header .header-input-group {
+    margin-top: -7px;
+    margin-right: auto;
+    display: flex;
+    justify-content: space-between
+}
+
+    .modal-header .header-input-group .input-toggle {
+        padding-left: 8px
+    }
+
 .modal-dialog-scrollable .modal-content {
     overflow: auto;
 }

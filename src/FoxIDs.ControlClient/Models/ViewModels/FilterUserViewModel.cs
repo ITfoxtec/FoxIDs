@@ -8,7 +8,6 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Search by user email.
         /// </summary>
         [MaxLength(Constants.Models.User.EmailLength)]
-        [RegularExpression(Constants.Models.User.EmailRegExPattern)]
         [Display(Name = "Search user")]
         public string FilterEmail { get; set; }
     }

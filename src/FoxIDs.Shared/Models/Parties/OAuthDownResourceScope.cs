@@ -9,10 +9,11 @@ namespace FoxIDs.Models
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         [JsonProperty(PropertyName = "resource")]
         public string Resource { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopesLength)]
+        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopesLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
         [JsonProperty(PropertyName = "scopes")]
         public List<string> Scopes { get; set; }
     }

@@ -8,8 +8,8 @@ namespace FoxIDs.Models
         public static string PartitionIdFormat(Track.IdKey idKey) => $"{idKey.TenantName}:{idKey.TrackName}";
         
         [Required]
-        [MaxLength(70)]
-        [RegularExpression(@"^[\w:_-]*$")]
+        [MaxLength(Constants.Models.DocumentPartitionIdLength)]
+        [RegularExpression(Constants.Models.DocumentPartitionIdExPattern)]
         [JsonProperty(PropertyName = "partition_id")]
         public string PartitionId { get; set; }
     }

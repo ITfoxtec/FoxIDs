@@ -6,8 +6,8 @@ namespace FoxIDs.Models
     public class Party : PartyDataElement, IDataDocument
     {
         [Required]
-        [MaxLength(70)]
-        [RegularExpression(@"^[\w:_-]*$")]
+        [MaxLength(Constants.Models.DocumentPartitionIdLength)]
+        [RegularExpression(Constants.Models.DocumentPartitionIdExPattern)]
         [JsonProperty(PropertyName = "partition_id")]
         public string PartitionId { get; set; }
 
@@ -15,7 +15,7 @@ namespace FoxIDs.Models
         {
             [Required]
             [MaxLength(Constants.Models.Party.NameLength)]
-            [RegularExpression(@"^[\w-_]*$")]
+            [RegularExpression(Constants.Models.Party.NameRegExPattern)]
             public string PartyName { get; set; }
         }
     }

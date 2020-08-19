@@ -38,6 +38,17 @@ namespace FoxIDs
 
         public static class Models
         {
+            public const int MasterPartitionIdLength = 10;
+            public const string MasterPartitionIdExPattern = @"^[\w@]*$";
+            public const int DocumentPartitionIdLength = 70;
+            public const string DocumentPartitionIdExPattern = @"^[\w:_-]*$";
+
+            public static class Master
+            {
+                public const int IdLength = 10;
+                public const string IdRegExPattern = @"^[\w@]*$";
+            }
+
             public static class RiskPassword
             {
                 public const int IdLength = 70;
@@ -104,7 +115,9 @@ namespace FoxIDs
                 public const int ClaimsMapMax = 200;
 
                 public const int ClaimsMapJwtClaimLength = 50;
+                public const string ClaimsMapJwtClaimRegExPattern = @"^[\w:\-.+]*$";
                 public const int ClaimsMapSamlClaimLength = 300;
+                public const string ClaimsMapSamlClaimRegExPattern = @"^[\w:\/\-.+]*$";
 
                 public const int ClaimValuesMin = 1;
                 public const int ClaimValuesMax = 100;

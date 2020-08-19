@@ -8,16 +8,16 @@ namespace FoxIDs.Models
         public static string PartitionIdFormat(IdKey idKey) => $"{idKey.Master}";
 
         [Required]
-        [MaxLength(10)]
-        [RegularExpression(@"^[\w@]*$")]
+        [MaxLength(Constants.Models.MasterPartitionIdLength)]
+        [RegularExpression(Constants.Models.MasterPartitionIdExPattern)]
         [JsonProperty(PropertyName = "partition_id")]
         public string PartitionId { get; set; }
 
         public class IdKey
         {
             [Required]
-            [MaxLength(10)]
-            [RegularExpression(@"^[\w@]*$")]
+            [MaxLength(Constants.Models.Master.IdLength)]
+            [RegularExpression(Constants.Models.Master.IdRegExPattern)]
             public string Master => "@master";
         }
     }

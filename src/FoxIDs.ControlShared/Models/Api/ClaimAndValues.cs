@@ -8,6 +8,7 @@ namespace FoxIDs.Models.Api
     {
         [Required]
         [MaxLength(Constants.Models.Claim.ClaimsMapJwtClaimLength)]
+        [RegularExpression(Constants.Models.Claim.ClaimsMapJwtClaimRegExPattern)]
         [Display(Name = "Claim")]
         public string Claim { get; set; }
 

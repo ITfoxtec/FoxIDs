@@ -7,6 +7,7 @@ namespace FoxIDs.Models
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 

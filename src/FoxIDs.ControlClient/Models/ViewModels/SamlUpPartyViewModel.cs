@@ -68,7 +68,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authn url")]
         public string AuthnUrl { get; set; }
 
-        [Required]
+        [ValidateComplexType]
         [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "One or more signature validation certificates")]
         public List<JsonWebKey> Keys { get; set; }

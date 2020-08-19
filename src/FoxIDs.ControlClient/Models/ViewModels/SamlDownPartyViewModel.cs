@@ -17,6 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Down Party name")]
         public string Name { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow Up Party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
@@ -25,6 +26,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional custom issuer (default auto generated)")]
         public string IdSIssuer { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
         [Display(Name = "Issue of claim (in addition to default claims)")]
         public List<string> Claims { get; set; }
@@ -85,6 +87,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authn response binding")]
         public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
+        [ValidateComplexType]
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) url")]
         public List<string> AcsUrls { get; set; } 
@@ -103,6 +106,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional logged out url")]
         public string LoggedOutUrl { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "Optional one or more signature validation certificates")]
         public List<JsonWebKey> Keys { get; set; }

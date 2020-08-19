@@ -28,6 +28,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]
         public List<ClaimAndValues> Claims { get; set; }

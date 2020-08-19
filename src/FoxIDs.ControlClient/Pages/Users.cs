@@ -4,6 +4,7 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -136,6 +137,19 @@ namespace FoxIDs.Client.Pages
         private void RemoveClaim(MouseEventArgs e, List<ClaimAndValues> claims, ClaimAndValues claimAndValues)
         {
             claims.Remove(claimAndValues);
+        }
+
+        private void UserViewModelAfterInit(GeneralUserViewModel generalUser, UserViewModel model)
+        {
+            if (generalUser.CreateMode)
+            {
+                model.Password = NewPassword();
+            }
+        }
+
+        private string NewPassword()
+        {
+            return RandomGenerator.Generate(6);
         }
 
         private async Task OnEditUserValidSubmitAsync(GeneralUserViewModel generalUser, EditContext editContext)

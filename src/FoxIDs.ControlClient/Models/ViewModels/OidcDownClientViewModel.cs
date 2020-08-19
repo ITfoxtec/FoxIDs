@@ -25,6 +25,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public List<OAuthClientSecretViewModel> ExistingSecrets { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Secrets")]
         public List<string> Secrets { get; set; }

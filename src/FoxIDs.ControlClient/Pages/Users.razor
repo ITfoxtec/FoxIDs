@@ -27,7 +27,7 @@
             }
             @if (user.Edit)
             {
-                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
+                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnAfterInit="@(m => UserViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
                     <div class="modal-header">
                         User
                     </div>
@@ -75,14 +75,7 @@
                                         <div class="row">
                                             <div class="col-11">
                                                 <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
-                                                @{var includeClaimValuesLabel = claimAndValues.Values?.Count > 0;}
-                                                <div class="@(includeClaimValuesLabel ? "form-group active-group" : string.Empty)">
-                                                    <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
-                                                    @if (includeClaimValuesLabel)
-                                                    {
-                                                        <Label For="@(() => claimAndValues.Values)" class="label-control" />
-                                                    }
-                                                </div>
+                                                <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" />
                                             </div>
                                             <div class="col-1 text-right">
                                                 <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveClaim(e, user.Form.Model.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>

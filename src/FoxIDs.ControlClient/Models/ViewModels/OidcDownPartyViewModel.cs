@@ -13,6 +13,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Down Party name")]
         public string Name { get; set; }
 
+        [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow Up Party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
@@ -27,11 +28,12 @@ namespace FoxIDs.Client.Models.ViewModels
         /// OAuth 2.0 down resource.
         /// </summary>
         [ValidateComplexType]        
-        public OAuthDownResource Resource { get; set; } 
+        public OAuthDownResource Resource { get; set; }
 
         /// <summary>
         /// Allow cors origins.
         /// </summary>
+        [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         [Display(Name = "Allow cors origins")]
         public List<string> AllowCorsOrigins { get; set; }

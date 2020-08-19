@@ -22,15 +22,15 @@ namespace FoxIDs.Client.Services
             return url.Replace("{tenant}", tenantName);
         }
 
-        protected async Task<IEnumerable<T>> FilterAsync<T>(string url, string filterName, string tenantName = null) 
+        protected async Task<IEnumerable<T>> FilterAsync<T>(string url, string filterName, string parmName = "filterName", string tenantName = null) 
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url, tenantName)}?filterName={filterName}");
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url, tenantName)}?{parmName}={filterName}");
             return await response.ToObjectAsync<IEnumerable<T>>();
         }
 
-        protected async Task<T> GetAsync<T>(string url, string name, string tenantName = null)
+        protected async Task<T> GetAsync<T>(string url, string value, string parmName = "name", string tenantName = null)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url, tenantName)}?name={name}");
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url, tenantName)}?{parmName}={value}");
             return await response.ToObjectAsync<T>();
         }
 
@@ -44,9 +44,9 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url, tenantName), data);
         }
 
-        protected async Task DeleteAsync(string url, string name, string tenantName = null)
+        protected async Task DeleteAsync(string url, string value, string parmName = "name", string tenantName = null)
         {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url, tenantName)}?name={name}");
+            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url, tenantName)}?{parmName}={value}");
         }
     }
 }

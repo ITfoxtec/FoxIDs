@@ -14,8 +14,8 @@ namespace FoxIDs.Client.Services
         public TrackService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
         { }
 
-        public async Task<IEnumerable<Track>> FilterTrackAsync(string filterName, string tenantName = null) => await FilterAsync<Track>(filterApiUri, filterName, tenantName);
+        public async Task<IEnumerable<Track>> FilterTrackAsync(string filterName, string tenantName = null) => await FilterAsync<Track>(filterApiUri, filterName, tenantName: tenantName);
 
-        public async Task CreateTrackAsync(Track track, string tenantName = null) => await CreateAsync(apiUri, track, tenantName);
+        public async Task CreateTrackAsync(Track track, string tenantName = null) => await CreateAsync(apiUri, track, tenantName: tenantName);
     }
 }

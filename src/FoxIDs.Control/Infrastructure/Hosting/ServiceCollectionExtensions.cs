@@ -28,6 +28,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic();
 
+            services.AddTransient<AccountLogic>();
             services.AddTransient<SecretHashLogic>();
             
             services.AddTransient<MasterTenantLogic>();

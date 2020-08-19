@@ -18,8 +18,8 @@ namespace FoxIDs.MappingProfiles
         {
             this.httpContextAccessor = httpContextAccessor;
             Mapping();
-            UpMapping();
-            DownMapping();
+            UpPartyMapping();
+            DownPartyMapping();
         }
 
         private void Mapping()
@@ -46,6 +46,14 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<User, Api.User>()
+                .ReverseMap()
+                .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormat(RouteBinding, s.Email.ToLower()).GetAwaiter().GetResult()));
+
+            CreateMap<ClaimAndValues, Api.ClaimAndValues>()
+                .ReverseMap();
+
             CreateMap<JsonWebKey, Api.JsonWebKey>()
                 .ReverseMap()
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
@@ -60,7 +68,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
         }
 
-        private void UpMapping()
+        private void UpPartyMapping()
         {
             CreateMap<LoginUpParty, Api.LoginUpParty>()
                 .ReverseMap()
@@ -73,7 +81,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
         }
 
-        private void DownMapping()
+        private void DownPartyMapping()
         {
             CreateMap<OAuthDownParty, Api.OAuthDownParty>()
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name.ToLower())))

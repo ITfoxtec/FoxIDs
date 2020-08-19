@@ -128,7 +128,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Tenant).Name}' by id '{name}'.");
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Tenant).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Tenant).Name, name);
                 }
                 throw;

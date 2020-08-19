@@ -54,19 +54,19 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Create track.
         /// </summary>
-        /// <param name="tenant">Track.</param>
+        /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
         [ProducesResponseType(typeof(Api.Track), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<Api.Track>> PostTrack([FromBody] Api.Track tenant)
+        public async Task<ActionResult<Api.Track>> PostTrack([FromBody] Api.Track track)
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
 
-                var mTrack = mapper.Map<Track>(tenant);
+                var mTrack = mapper.Map<Track>(track);
 
-                var certificate = await tenant.Name.CreateSelfSignedCertificateAsync();
+                var certificate = await track.Name.CreateSelfSignedCertificateAsync();
                 mTrack.PrimaryKey = new TrackKey()
                 {
                     ExternalName = certificate.Thumbprint,
@@ -81,8 +81,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.Track).Name}' by name '{tenant.Name}'.");
-                    return Conflict(typeof(Api.Track).Name, tenant.Name);
+                    logger.Warning(ex, $"Conflict, Create '{typeof(Api.Track).Name}' by name '{track.Name}'.");
+                    return Conflict(typeof(Api.Track).Name, track.Name);
                 }
                 throw;
             }
@@ -95,13 +95,13 @@ namespace FoxIDs.Controllers
         ///// <returns>Track.</returns>
         //[ProducesResponseType(typeof(Api.Track), StatusCodes.Status200OK)]
         //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public async Task<ActionResult<Api.Track>> PutTrack([FromBody] Api.Track tenant)
+        //public async Task<ActionResult<Api.Track>> PutTrack([FromBody] Api.Track track)
         //{
         //    try
         //    {
-        //        if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
+        //        if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
 
-        //        var mTrack = mapper.Map<Track>(tenant);
+        //        var mTrack = mapper.Map<Track>(track);
         //        await tenantService.UpdateAsync(mTrack);
 
         //        return Created(mapper.Map<Api.Track>(mTrack));
@@ -136,7 +136,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Track).Name}' by id '{name}'.");
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.Track).Name}' by name '{name}'.");
                     return NotFound(typeof(Api.Track).Name, name);
                 }
                 throw;

@@ -31,6 +31,10 @@ namespace FoxIDs.Controllers
         {
             return Created(new { name = value.Name }, value);
         }
+        public virtual CreatedResult Created(IEmailValue value)
+        {
+            return Created(new { name = value.Email }, value);
+        }
 
         public virtual CreatedResult Created(object queryValues, object value)
         {

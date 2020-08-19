@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class UserRequest
+    public class User : IEmailValue
     {
         [Required]
         [MaxLength(Constants.Models.User.EmailLength)]
@@ -12,6 +12,11 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
         [Display(Name = "Email")]
         public string Email { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.User.UserIdLength)]
+        [Display(Name = "User id (unique and persistent)")]
+        public string UserId { get; set; }
 
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]

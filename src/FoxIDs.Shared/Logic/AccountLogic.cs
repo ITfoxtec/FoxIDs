@@ -2,7 +2,6 @@
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -103,10 +102,7 @@ namespace FoxIDs.Logic
 
         private async Task ValidatePasswordPolicy(string email, string password)
         {
-            if (password.Length < RouteBinding.PasswordLength)
-            {
-                throw new PasswordLengthException($"Password is to short, user '{email}'.");
-            }
+            CheckPasswordLength(email, password);
 
             if (RouteBinding.CheckPasswordComplexity)
             {
@@ -114,13 +110,17 @@ namespace FoxIDs.Logic
             }
 
             if (RouteBinding.CheckPasswordRisk)
-            {                
-                var passwordSha1Hash = Sha1Hash(password);              
-                if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
-                {
-                    throw new PasswordRiskException($"Password has appeared in a data breach and is at risk, user '{email}'.");
-                }
-            }           
+            {
+                await CheckPasswordRisk(email, password);
+            }
+        }
+
+        private void CheckPasswordLength(string email, string password)
+        {
+            if (password.Length < RouteBinding.PasswordLength)
+            {
+                throw new PasswordLengthException($"Password is to short, user '{email}'.");
+            }
         }
 
         private void CheckPasswordComplexity(string email, string password)
@@ -177,6 +177,15 @@ namespace FoxIDs.Logic
                 {
                     throw new PasswordUrlTextComplexityException($"Password contains url text that does not comply with complexity, user '{email}'.");
                 }
+            }
+        }
+
+        private async Task CheckPasswordRisk(string email, string password)
+        {
+            var passwordSha1Hash = Sha1Hash(password);
+            if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
+            {
+                throw new PasswordRiskException($"Password has appeared in a data breach and is at risk, user '{email}'.");
             }
         }
 

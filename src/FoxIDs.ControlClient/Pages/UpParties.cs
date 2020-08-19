@@ -222,7 +222,7 @@ namespace FoxIDs.Client.Pages
             {
                 if (generalLoginUpParty.CreateMode)
                 {
-                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>());
+                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>());
                 }
                 else
                 {

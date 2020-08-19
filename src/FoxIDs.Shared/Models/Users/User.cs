@@ -17,6 +17,21 @@ namespace FoxIDs.Models
             return $"user:{idKey.TenantName}:{idKey.TrackName}:{idKey.Email}";
         }
 
+        public static async Task<string> IdFormat(RouteBinding routeBinding, string email)
+        {
+            if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
+            if (email == null) new ArgumentNullException(nameof(email));
+
+            var idKey = new IdKey
+            {
+                TenantName = routeBinding.TenantName,
+                TrackName = routeBinding.TrackName,
+                Email = email
+            };
+
+            return await IdFormat(idKey);
+        }
+
         [Required]
         [MaxLength(Constants.Models.User.IdLength)]
         [RegularExpression(Constants.Models.User.IdRegExPattern)]

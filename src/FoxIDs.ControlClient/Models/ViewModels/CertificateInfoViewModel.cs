@@ -8,6 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Subject { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }
+        public bool IsValid { get; set; }
         public string Thumbprint { get; set; }
         public JsonWebKey Jwk { get; set; }
     }

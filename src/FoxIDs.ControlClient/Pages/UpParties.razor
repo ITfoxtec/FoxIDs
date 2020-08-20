@@ -130,8 +130,8 @@
                                             <li class="list-group-item p-0">
                                                 <div class="d-flex">
                                                     <div class="mr-auto p-2">
-                                                        <strong>@certificateInfo.Subject</strong><br />
-                                                        Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
+                                                        <strong>@certificateInfo.Subject</strong><br />                                                        
+                                                        <span class="@(certificateInfo.IsValid ? "" : "text-danger")" >Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()</span><br />
                                                         Thumbprint: @certificateInfo.Thumbprint
                                                     </div>
                                                     <div class="p-2">

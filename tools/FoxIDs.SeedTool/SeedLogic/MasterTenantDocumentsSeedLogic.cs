@@ -111,7 +111,6 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             var trackKey = new TrackKey()
             {
-                ExternalName = certificate.Thumbprint,
                 Type = TrackKeyType.Contained,
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };

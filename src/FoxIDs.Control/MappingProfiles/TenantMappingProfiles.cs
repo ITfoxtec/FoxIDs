@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
@@ -54,7 +55,16 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ClaimAndValues, Api.ClaimAndValues>()
                 .ReverseMap();
 
+            CreateMap<Track, Api.TrackKeys>();            
+
+            CreateMap<TrackKey, Api.TrackKey>()
+                .ForMember(d => d.Key, opt => opt.MapFrom(s => s.Key.GetPublicKey()))
+                .ReverseMap();
+
+            CreateMap<Api.TrackKeyRequest, TrackKey>();
+
             CreateMap<JsonWebKey, Api.JsonWebKey>()
+                //.ForMember(d => d, opt => opt.MapFrom(s => s.GetPublicKey()))
                 .ReverseMap()
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
                 .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));

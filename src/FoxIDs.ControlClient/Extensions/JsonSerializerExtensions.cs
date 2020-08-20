@@ -10,7 +10,7 @@ namespace FoxIDs.Client
         static JsonSerializerExtensions()
         {
             JsonSerializerOptions.IgnoreNullValues = true;
-            JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }
 

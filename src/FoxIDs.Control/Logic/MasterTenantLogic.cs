@@ -43,7 +43,6 @@ namespace FoxIDs.Logic
             var certificate = await $"{tenantName}.{mTrack.Name}".CreateSelfSignedCertificateAsync();
             mTrack.PrimaryKey = new TrackKey()
             {
-                ExternalName = certificate.Thumbprint,
                 Type = TrackKeyType.Contained,
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };

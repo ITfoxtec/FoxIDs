@@ -37,8 +37,8 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                var MTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
-                return Ok(mapper.Map<Api.Track>(MTrack));
+                var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
+                return Ok(mapper.Map<Api.Track>(mTrack));
             }
             catch (CosmosDataException ex)
             {
@@ -69,7 +69,6 @@ namespace FoxIDs.Controllers
                 var certificate = await track.Name.CreateSelfSignedCertificateAsync();
                 mTrack.PrimaryKey = new TrackKey()
                 {
-                    ExternalName = certificate.Thumbprint,
                     Type = TrackKeyType.Contained,
                     Key = await certificate.ToJsonWebKeyAsync(true)
                 };

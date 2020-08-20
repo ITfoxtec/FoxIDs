@@ -169,9 +169,9 @@ namespace FoxIDs.Client.Pages
                                 Subject = certificate.Subject,
                                 ValidFrom = certificate.NotBefore,
                                 ValidTo = certificate.NotAfter,
-                                IsValid = IsCertificateValid(certificate),
+                                IsValid = certificate.IsValid(),
                                 Thumbprint = certificate.Thumbprint,
-                                Jwk = key
+                                Key = key
                             });
                         }
                     }));
@@ -185,14 +185,6 @@ namespace FoxIDs.Client.Pages
                     upParty.Error = ex.Message;
                 }
             }
-        }
-
-        private bool IsCertificateValid(X509Certificate2 certificate)
-        {
-            var localTime = DateTime.Now;
-            if(certificate.NotBefore > localTime) return false;
-            if(certificate.NotAfter < localTime) return false;
-            return true;
         }
 
         private string UpPartyInfoText(GeneralUpPartyViewModel upParty)
@@ -313,9 +305,9 @@ namespace FoxIDs.Client.Pages
                             Subject = certificate.Subject,
                             ValidFrom = certificate.NotBefore,
                             ValidTo = certificate.NotAfter,
-                            IsValid = IsCertificateValid(certificate),
+                            IsValid = certificate.IsValid(),
                             Thumbprint = certificate.Thumbprint,
-                            Jwk = jwk
+                            Key = jwk
                         });
                         generalSamlUpParty.Form.Model.Keys.Add(jwk);
                     }
@@ -332,7 +324,7 @@ namespace FoxIDs.Client.Pages
         private void RemoveSamlUpPartyCertificate(GeneralSamlUpPartyViewModel generalSamlUpParty, CertificateInfoViewModel certificateInfo)
         {
             generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
-            if (generalSamlUpParty.Form.Model.Keys.Remove(certificateInfo.Jwk))
+            if (generalSamlUpParty.Form.Model.Keys.Remove(certificateInfo.Key))
             {
                 generalSamlUpParty.CertificateInfoList.Remove(certificateInfo);
             }

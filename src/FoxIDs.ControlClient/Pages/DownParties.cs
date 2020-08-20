@@ -262,7 +262,7 @@ namespace FoxIDs.Client.Pages
                                     ValidFrom = certificate.NotBefore,
                                     ValidTo = certificate.NotAfter,
                                     Thumbprint = certificate.Thumbprint,
-                                    Jwk = key
+                                    Key = key
                                 });
                             }
                         }
@@ -591,7 +591,7 @@ namespace FoxIDs.Client.Pages
                             ValidFrom = certificate.NotBefore,
                             ValidTo = certificate.NotAfter,
                             Thumbprint = certificate.Thumbprint,
-                            Jwk = jwk
+                            Key = jwk
                         });
                         generalSamlDownParty.Form.Model.Keys.Add(jwk);
                     }
@@ -608,7 +608,7 @@ namespace FoxIDs.Client.Pages
         private void RemoveSamlDownPartyCertificate(GeneralSamlDownPartyViewModel generalSamlDownParty, CertificateInfoViewModel certificateInfo)
         {
             generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
-            if (generalSamlDownParty.Form.Model.Keys.Remove(certificateInfo.Jwk))
+            if (generalSamlDownParty.Form.Model.Keys.Remove(certificateInfo.Key))
             {
                 generalSamlDownParty.CertificateInfoList.Remove(certificateInfo);
             }

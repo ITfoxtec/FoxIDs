@@ -10,6 +10,6 @@ namespace FoxIDs.Client.Models.ViewModels
         public DateTime ValidTo { get; set; }
         public bool IsValid { get; set; }
         public string Thumbprint { get; set; }
-        public JsonWebKey Jwk { get; set; }
+        public JsonWebKey Key { get; set; }
     }
 }

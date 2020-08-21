@@ -19,13 +19,13 @@ namespace FoxIDs.Controllers
         private const string dataType = "party:up";
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TFilterUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TFilterUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
             {
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mUpPartys = filterName.IsNullOrWhiteSpace() ? await tenantService.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantService.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
+                var mUpPartys = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
                 foreach(var mUpParty in mUpPartys.OrderBy(p => p.Name))
                 {

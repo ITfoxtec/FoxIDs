@@ -20,14 +20,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
         private readonly MasterTenantLogic masterTenantLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, MasterTenantLogic masterTenantLogic) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
             this.masterTenantLogic = masterTenantLogic;
         }
 
@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
                 name = name.ToLower();
-                var MTenant = await tenantService.GetTenantByNameAsync(name);
+                var MTenant = await tenantRepository.GetTenantByNameAsync(name);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
             catch (CosmosDataException ex)
@@ -73,7 +73,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
 
                 var mTenant = mapper.Map<Tenant>(tenant);
-                await tenantService.CreateAsync(mTenant);
+                await tenantRepository.CreateAsync(mTenant);
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                 var mLoginUpParty = await masterTenantLogic.CreateLoginDocumentAsync(tenant.Name);
@@ -114,13 +114,13 @@ namespace FoxIDs.Controllers
                 //TODO delete all sub elements
                 // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
                 //            Add the ability to delete ALL data in a partition
-                var mTracks = await tenantService.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
+                var mTracks = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
-                    await tenantService.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = name, TrackName = mTrack.Name });
-                    await tenantService.DeleteAsync<Track>(mTrack.Id);
+                    await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = name, TrackName = mTrack.Name });
+                    await tenantRepository.DeleteAsync<Track>(mTrack.Id);
                 }
-                await tenantService.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
+                await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
 
                 return NoContent();
             }

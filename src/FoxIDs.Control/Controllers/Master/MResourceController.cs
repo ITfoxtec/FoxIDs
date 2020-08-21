@@ -13,13 +13,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterRepository masterService;
+        private readonly IMasterRepository masterRepository;
 
-        public MResourceController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterService) : base(logger)
+        public MResourceController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.masterService = masterService;
+            this.masterRepository = masterRepository;
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
             var resourceEnvelope = mapper.Map<ResourceEnvelope>(model);
             resourceEnvelope.Id = ResourceEnvelope.IdFormat(new MasterDocument.IdKey());
     
-            await masterService.SaveAsync(resourceEnvelope);
+            await masterRepository.SaveAsync(resourceEnvelope);
 
             return NoContent();
         }

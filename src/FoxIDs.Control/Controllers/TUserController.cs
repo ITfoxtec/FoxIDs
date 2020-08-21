@@ -19,14 +19,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
         private readonly AccountLogic accountLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, AccountLogic accountLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, AccountLogic accountLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
         }
 
@@ -43,7 +43,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantService.GetAsync<User>(await Model.User.IdFormat(RouteBinding, email));
+                var mUser = await tenantRepository.GetAsync<User>(await Model.User.IdFormat(RouteBinding, email));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (CosmosDataException ex)
@@ -113,11 +113,11 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(user)) return BadRequest(ModelState);
 
-                var mUser = await tenantService.GetAsync<User>(await Model.User.IdFormat(RouteBinding, user.Email));
+                var mUser = await tenantRepository.GetAsync<User>(await Model.User.IdFormat(RouteBinding, user.Email));
 
                 var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
-                await tenantService.UpdateAsync(mUser);
+                await tenantRepository.UpdateAsync(mUser);
 
                 return Created(mapper.Map<Api.User>(mUser));
             }
@@ -144,7 +144,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                await tenantService.DeleteAsync<User>(await Model.User.IdFormat(RouteBinding, email));
+                await tenantRepository.DeleteAsync<User>(await Model.User.IdFormat(RouteBinding, email));
                 return NoContent();
             }
             catch (CosmosDataException ex)

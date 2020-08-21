@@ -15,13 +15,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TTrackKeyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TTrackKeyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
 
-                var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName});
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName});
                 return Ok(mapper.Map<Api.TrackKeys>(mTrack));
             }
             catch (CosmosDataException ex)
@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeyRequest.TrackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeyRequest.TrackName });
                 if(trackKeyRequest.IsPrimary)
                 {
                     mTrack.PrimaryKey = mTrackKey;
@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
                     mTrack.SecondaryKey = mTrackKey;
                 }
 
-                await tenantService.UpdateAsync(mTrack);
+                await tenantRepository.UpdateAsync(mTrack);
 
                 return Created(mapper.Map<Api.TrackKeys>(mTrack));
             }
@@ -130,11 +130,11 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
 
-                var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName });
                 if(mTrack.SecondaryKey != null)
                 {
                     mTrack.SecondaryKey = null;
-                    await tenantService.UpdateAsync(mTrack);
+                    await tenantRepository.UpdateAsync(mTrack);
                 }
 
                 return NoContent();

@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
         private const string dataType = "track";
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TFilterTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TFilterTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTracks = filterName.IsNullOrWhiteSpace() ? await tenantService.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantService.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && p.Name.Contains(filterName));
+                var mTracks = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && p.Name.Contains(filterName));
                 var aTracks = new HashSet<Api.Track>(mTracks.Count());
                 foreach(var mTrack in mTracks.OrderBy(t => t.Name))
                 {

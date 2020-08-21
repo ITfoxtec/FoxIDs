@@ -18,14 +18,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
         private readonly ValidatePartyLogic validatePartyLogic;
 
-        public TenantPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic) : base(logger)
+        public TenantPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
             this.validatePartyLogic = validatePartyLogic;
         }
 
@@ -35,7 +35,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                var MParty = await tenantService.GetAsync<MParty>(await GetId(name));
+                var MParty = await tenantRepository.GetAsync<MParty>(await GetId(name));
                 return Ok(mapper.Map<AParty>(MParty));
             }
             catch (CosmosDataException ex)
@@ -59,7 +59,7 @@ namespace FoxIDs.Controllers
                 if (!await (party is Api.IDownParty downParty ? validatePartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : Task.FromResult(true))) return BadRequest(ModelState);
                 if (!await validateModelAsync(party, mParty)) return BadRequest(ModelState);
 
-                await tenantService.CreateAsync(mParty);
+                await tenantRepository.CreateAsync(mParty);
 
                 return Created(mapper.Map<AParty>(mParty));
             }
@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers
 
                 if(party is Api.OidcDownParty)
                 {
-                    var tempMParty = await tenantService.GetAsync<MParty>(mParty.Id);
+                    var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
                     if((tempMParty as OidcDownParty)?.Client?.Secrets?.Count > 0)
                     {
                         (mParty as OidcDownParty).Client.Secrets = (tempMParty as OidcDownParty).Client.Secrets;
@@ -94,14 +94,14 @@ namespace FoxIDs.Controllers
                 }
                 else if (party is Api.OAuthDownParty)
                 {
-                    var tempMParty = await tenantService.GetAsync<MParty>(mParty.Id);
+                    var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
                     if ((tempMParty as OAuthDownParty)?.Client?.Secrets?.Count > 0)
                     {
                         (mParty as OAuthDownParty).Client.Secrets = (tempMParty as OAuthDownParty).Client.Secrets;
                     }
                 }
 
-                await tenantService.UpdateAsync(mParty);
+                await tenantRepository.UpdateAsync(mParty);
 
                 return Ok(mapper.Map<AParty>(mParty));
             }
@@ -122,7 +122,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                await tenantService.DeleteAsync<MParty>(await GetId(name));
+                await tenantRepository.DeleteAsync<MParty>(await GetId(name));
                 return NoContent();
             }
             catch (CosmosDataException ex)

@@ -15,13 +15,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
             catch (CosmosDataException ex)
@@ -72,7 +72,7 @@ namespace FoxIDs.Controllers
                     Type = TrackKeyType.Contained,
                     Key = await certificate.ToJsonWebKeyAsync(true)
                 };
-                await tenantService.CreateAsync(mTrack);
+                await tenantRepository.CreateAsync(mTrack);
 
                 return Created(mapper.Map<Api.Track>(mTrack));
             }
@@ -101,7 +101,7 @@ namespace FoxIDs.Controllers
         //        if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
 
         //        var mTrack = mapper.Map<Track>(track);
-        //        await tenantService.UpdateAsync(mTrack);
+        //        await tenantRepository.UpdateAsync(mTrack);
 
         //        return Created(mapper.Map<Api.Track>(mTrack));
         //    }
@@ -128,7 +128,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
 
-                await tenantService.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
+                await tenantRepository.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
                 return NoContent();
             }
             catch (CosmosDataException ex)

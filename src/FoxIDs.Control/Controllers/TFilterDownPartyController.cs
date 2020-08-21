@@ -19,13 +19,13 @@ namespace FoxIDs.Controllers
         private const string dataType = "party:down";
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TFilterDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TFilterDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
             {
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mDownPartys = filterName.IsNullOrWhiteSpace() ? await tenantService.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantService.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
+                var mDownPartys = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
                 var aDownPartys = new HashSet<Api.DownParty>(mDownPartys.Count());
                 foreach(var mDownParty in mDownPartys.OrderBy(p => p.Name))
                 {

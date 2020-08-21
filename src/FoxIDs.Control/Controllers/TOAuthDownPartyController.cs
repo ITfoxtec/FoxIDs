@@ -17,7 +17,7 @@ namespace FoxIDs.Controllers
     {
         private readonly ValidateOAuthOidcLogic validateOAuthOidcLogic;
 
-        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic, ValidateOAuthOidcLogic validateOAuthOidcLogic) : base(logger, mapper, tenantService, validatePartyLogic)
+        public TOAuthDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic, ValidateOAuthOidcLogic validateOAuthOidcLogic) : base(logger, mapper, tenantRepository, validatePartyLogic)
         {
             this.validateOAuthOidcLogic = validateOAuthOidcLogic;
         }

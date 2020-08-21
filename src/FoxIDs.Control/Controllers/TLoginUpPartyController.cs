@@ -15,7 +15,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TLoginUpPartyController : TenantPartyApiController<Api.LoginUpParty, LoginUpParty>
     {
-        public TLoginUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService, ValidatePartyLogic validatePartyLogic) : base(logger, mapper, tenantService, validatePartyLogic)
+        public TLoginUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic) : base(logger, mapper, tenantRepository, validatePartyLogic)
         { }
 
         /// <summary>

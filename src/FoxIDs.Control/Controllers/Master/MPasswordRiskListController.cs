@@ -14,12 +14,12 @@ namespace FoxIDs.Controllers
     public class MPasswordRiskListController : MasterApiController
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly IMasterRepository masterService;
+        private readonly IMasterRepository masterRepository;
 
-        public MPasswordRiskListController(TelemetryScopedLogger logger, IMasterRepository masterService) : base(logger)
+        public MPasswordRiskListController(TelemetryScopedLogger logger, IMasterRepository masterRepository) : base(logger)
         {
             this.logger = logger;
-            this.masterService = masterService;
+            this.masterRepository = masterRepository;
         }
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
                 });
             }
 
-            await masterService.SaveBulkAsync(riskPasswords);
+            await masterRepository.SaveBulkAsync(riskPasswords);
 
             return NoContent();
         }
@@ -53,7 +53,7 @@ namespace FoxIDs.Controllers
                 // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
                 //            Add the ability to delete ALL data in a partition
                 var passwordRiskList = new RiskPassword { Id = await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash }) };
-                await masterService.DeleteAsync(passwordRiskList);
+                await masterRepository.DeleteAsync(passwordRiskList);
                 return NoContent();
             }
             catch (CosmosDataException ex)

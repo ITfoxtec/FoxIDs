@@ -18,13 +18,13 @@ namespace FoxIDs.Controllers
         private const string dataType = "user";
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TFilterUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TFilterUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, };
-                var mUsers = filterEmail.IsNullOrWhiteSpace() ? await tenantService.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : await tenantService.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && u.Email.Contains(filterEmail));
+                var mUsers = filterEmail.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && u.Email.Contains(filterEmail));
                 var aUsers = new HashSet<Api.User>(mUsers.Count());
                 foreach(var mUser in mUsers.OrderBy(t => t.Email))
                 {

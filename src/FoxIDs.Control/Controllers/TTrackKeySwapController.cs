@@ -15,13 +15,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
 
-        public TTrackKeySwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantService) : base(logger)
+        public TTrackKeySwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(trackKeySwap)) return BadRequest(ModelState);
 
-                var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeySwap.TrackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeySwap.TrackName });
                 try
                 {
                     if (mTrack.SecondaryKey == null)
@@ -56,7 +56,7 @@ namespace FoxIDs.Controllers
                 mTrack.SecondaryKey = mTrack.PrimaryKey;
                 mTrack.PrimaryKey = tempSecondaryKey;
 
-                await tenantService.UpdateAsync(mTrack);
+                await tenantRepository.UpdateAsync(mTrack);
 
                 return Created(mapper.Map<Api.TrackKeys>(mTrack));
             }

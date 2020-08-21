@@ -3,6 +3,7 @@ using FoxIDs.Client.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
+using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Components;
@@ -10,7 +11,6 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
@@ -19,6 +19,8 @@ namespace FoxIDs.Client.Pages
 {
     public partial class Certificates
     {
+        private Modal swapCertificateModal;
+        private string swapCertificateError;
         private List<GeneralTrackCertificateViewModel> certificates = new List<GeneralTrackCertificateViewModel>();
         private string certificateLoadError;
 
@@ -65,11 +67,23 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowSwapCertificate()
+        private async Task ShowSwapCertificateAsync()
         {
-            certificateLoadError = null;
-
-
+            swapCertificateError = null;
+            try
+            {
+                await TrackService.SwapTrackKeyAsync(new TrackKeySwap { TrackName = Constants.Routes.MasterTrackName });
+                await DefaultLoadAsync();
+                swapCertificateModal.Hide();
+            }
+            catch (AuthenticationException)
+            {
+                await(OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                swapCertificateError = ex.Message;
+            }
         }
 
         private void ShowCreateSecondaryCertificate(GeneralTrackCertificateViewModel generalCertificate)
@@ -93,11 +107,14 @@ namespace FoxIDs.Client.Pages
 
         private void CertificateViewModelAfterInit(GeneralTrackCertificateViewModel generalCertificate, TrackCertificateInfoViewModel model)
         {
+            model.IsPrimary = generalCertificate.IsPrimary;
+
             if (generalCertificate.Edit)
             {
                 model.Subject = generalCertificate.Subject;
                 model.ValidFrom = generalCertificate.ValidFrom;
                 model.ValidTo = generalCertificate.ValidTo;
+                model.IsValid = generalCertificate.IsValid;
                 model.Thumbprint = generalCertificate.Thumbprint;
             }
         }
@@ -127,18 +144,24 @@ namespace FoxIDs.Client.Pages
                     try
                     {
                         var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var msJwk = await certificate.ToJsonWebKeyAsync();
+                        var msJwk = await certificate.ToJsonWebKeyAsync(true);
+                        if (!msJwk.HasPrivateKey)
+                        {
+                            generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required.");
+                            return;
+                        }                        
+
                         var jwk = msJwk.Map<JsonWebKey>(afterMap =>
                         {
                             afterMap.X5c = new List<string>(msJwk.X5c);
                         });
 
-                        generalCertificate.Subject = certificate.Subject;
-                        generalCertificate.ValidFrom = certificate.NotBefore;
-                        generalCertificate.ValidTo = certificate.NotAfter;
-                        generalCertificate.IsValid = certificate.IsValid();
-                        generalCertificate.Thumbprint = certificate.Thumbprint;
-                        generalCertificate.Key = jwk;
+                        generalCertificate.Form.Model.Subject = certificate.Subject;
+                        generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;
+                        generalCertificate.Form.Model.ValidTo = certificate.NotAfter;
+                        generalCertificate.Form.Model.IsValid = certificate.IsValid();
+                        generalCertificate.Form.Model.Thumbprint = certificate.Thumbprint;
+                        generalCertificate.Form.Model.Key = jwk;
                     }
                     catch (Exception ex)
                     {
@@ -167,7 +190,9 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.Subject = generalCertificate.Form.Model.Subject;
                 generalCertificate.ValidFrom = generalCertificate.Form.Model.ValidFrom;
                 generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;
+                generalCertificate.IsValid = generalCertificate.Form.Model.IsValid;
                 generalCertificate.Thumbprint = generalCertificate.Form.Model.Thumbprint;
+                generalCertificate.CreateMode = false;
                 generalCertificate.Edit = false;
             }
             catch (FoxIDsApiException ex)
@@ -189,6 +214,7 @@ namespace FoxIDs.Client.Pages
             {
                 await TrackService.DeleteTrackKeyAsync(Constants.Routes.MasterTrackName);
                 generalCertificate.CreateMode = true;
+                generalCertificate.Edit = false; 
                 generalCertificate.Subject = null;
                 generalCertificate.Form.Model.Subject = null;
             }

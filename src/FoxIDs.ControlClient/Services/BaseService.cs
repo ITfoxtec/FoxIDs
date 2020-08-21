@@ -34,12 +34,12 @@ namespace FoxIDs.Client.Services
             return await response.ToObjectAsync<T>();
         }
 
-        protected async Task CreateAsync<T>(string url, T data, string tenantName = null)
+        protected async Task PostAsync<T>(string url, T data, string tenantName = null)
         {
             using var response = await httpClient.PostAsFormatJsonAsync(await GetTenantApiUrlAsync(url, tenantName), data);
         }
 
-        protected async Task UpdateAsync<T>(string url, T data, string tenantName = null)
+        protected async Task PutAsync<T>(string url, T data, string tenantName = null)
         {
             using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url, tenantName), data);
         }

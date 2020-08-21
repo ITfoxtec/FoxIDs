@@ -16,7 +16,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterName) => await FilterAsync<Tenant>(filterApiUri, filterName);
 
-        public async Task CreateTenantAsync(CreateTenantRequest tenant) => await CreateAsync(apiUri, tenant);
+        public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
     }
 }

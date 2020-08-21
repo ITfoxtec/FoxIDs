@@ -64,7 +64,6 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Api.TrackKeyRequest, TrackKey>();
 
             CreateMap<JsonWebKey, Api.JsonWebKey>()
-                //.ForMember(d => d, opt => opt.MapFrom(s => s.GetPublicKey()))
                 .ReverseMap()
                 .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
                 .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));

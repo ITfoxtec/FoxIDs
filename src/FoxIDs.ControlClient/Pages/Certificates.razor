@@ -6,7 +6,10 @@
         <h3>Certificates</h3>
     </div>
     <div class="p-2">
-        <button type="button" class="btn btn-primary" @onclick="@(() => ShowSwapCertificate())">Swap certificate</button>
+        @if (certificates.Any(c => !c.IsPrimary && !c.CreateMode))
+        {
+            <button type="button" class="btn btn-primary" @onclick="@(() => { swapCertificateError = null; swapCertificateModal.Show(); })">Swap certificate</button>
+        }
     </div>
 </div>
 
@@ -40,17 +43,17 @@
                                 <InputFile multiple OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
                                 @certificate.CertificateFileStatus
                             </div>
-                            <Label For="@(() => certificate.Form.Model)" class="label-control" />
+                            <label class="label-control">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</label>
                             <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
                             <ul class="list-group">
                                 <li class="list-group-item p-0">
-                                    @if (!certificate.Subject.IsNullOrWhiteSpace())
+                                    @if (!certificate.Form.Model.Subject.IsNullOrWhiteSpace())
                                     {
                                         <div class="d-flex">
                                             <div class="mr-auto p-2">
-                                                <strong>@certificate.Subject</strong><br />
-                                                <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
-                                                Thumbprint: @certificate.Thumbprint
+                                                <strong>@certificate.Form.Model.Subject</strong><br />
+                                                <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
+                                                Thumbprint: @certificate.Form.Model.Thumbprint
                                             </div>
                                         </div>
                                     }
@@ -78,7 +81,7 @@
                         {
                             <button type="button" class="btn btn-link" @onclick="@(() => certificate.DeleteAcknowledge = true)">Delete</button>
                         }
-                        @if(certificate.Key != null)
+                        @if(certificate.Form.Model.Key != null)
                         {
                             <button type="submit" class="btn btn-primary">@(certificate.CreateMode ? "Create" : "Update")</button>
                         }
@@ -104,3 +107,24 @@
         </div>
     </div>
 }
+
+<Modal @ref="swapCertificateModal" Title="Swap certificate">
+    <div class="modal-body">
+        @if (!swapCertificateError.IsNullOrWhiteSpace())
+        {
+            <div class="alert alert-danger" role="alert">
+                @swapCertificateError
+            </div>
+        }
+        <div class="alert alert-danger" role="alert">
+            <div>
+                You are about to swap the primary and secondary certificate, are you sure?
+            </div>
+
+            <div class="mt-3">
+                <button type="button" class="btn btn-secondary" @onclick="@(async () => await ShowSwapCertificateAsync())">Yes swap certificate</button>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => swapCertificateModal.Hide())">No</button>
+            </div>
+        </div>
+    </div>
+</Modal>

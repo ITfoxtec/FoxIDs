@@ -38,15 +38,6 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
 
                 var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName});
-                //var keys = new Api.TrackKeys
-                //{
-                //    Name = name,
-                //    PrimaryKey = mapper.Map<Api.TrackKey>(mTrack.PrimaryKey),
-                //};
-                //if(mTrack.SecondaryKey != null)
-                //{
-                //    keys.SecondaryKey = mapper.Map<Api.TrackKey>(mTrack.SecondaryKey);
-                //}
                 return Ok(mapper.Map<Api.TrackKeys>(mTrack));
             }
             catch (CosmosDataException ex)
@@ -67,35 +58,54 @@ namespace FoxIDs.Controllers
         /// <returns>Track keys.</returns>
         [ProducesResponseType(typeof(Api.TrackKeys), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.TrackKeys>> PutTrack([FromBody] Api.TrackKeyRequest trackKeyRequest)
+        public async Task<ActionResult<Api.TrackKeys>> PutTrackKey([FromBody] Api.TrackKeyRequest trackKeyRequest)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(trackKeyRequest)) return BadRequest(ModelState);
-                if (trackKeyRequest.Type != Api.TrackKeyType.Contained)
+                try
                 {
-                    throw new ValidationException($"Currently only {Api.TrackKeyType.Contained} keys is supported in the API.");
+
+                    if (trackKeyRequest.Type != Api.TrackKeyType.Contained)
+                    {
+                        throw new ValidationException($"Currently only {Api.TrackKeyType.Contained} keys is supported in the API.");
+                    }
+                }
+                catch (ValidationException vex)
+                {
+                    logger.Warning(vex);
+                    ModelState.TryAddModelError(nameof(trackKeyRequest.Type), vex.Message);
+                    return BadRequest(ModelState);
+                }
+
+                var mTrackKey = mapper.Map<TrackKey>(trackKeyRequest);
+                try
+                {
+                    if (!mTrackKey.Key.HasPrivateKey)
+                    {
+                        throw new ValidationException("Private key is required.");
+                    }
+                }
+                catch (ValidationException vex)
+                {
+                    logger.Warning(vex);
+                    ModelState.TryAddModelError(nameof(trackKeyRequest.Key), vex.Message);
+                    return BadRequest(ModelState);
                 }
 
                 var mTrack = await tenantService.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeyRequest.TrackName });
                 if(trackKeyRequest.IsPrimary)
                 {
-                    mTrack.PrimaryKey = mapper.Map<TrackKey>(trackKeyRequest);
+                    mTrack.PrimaryKey = mTrackKey;
                 }
                 else
                 {
-                    mTrack.SecondaryKey = mapper.Map<TrackKey>(trackKeyRequest);
+                    mTrack.SecondaryKey = mTrackKey;
                 }
 
                 await tenantService.UpdateAsync(mTrack);
 
                 return Created(mapper.Map<Api.TrackKeys>(mTrack));
-            }
-            catch (ValidationException vex)
-            {
-                logger.Warning(vex);
-                ModelState.TryAddModelError(nameof(trackKeyRequest.Type), vex.Message);
-                return BadRequest(ModelState);
             }
             catch (CosmosDataException ex)
             {
@@ -114,7 +124,7 @@ namespace FoxIDs.Controllers
         /// <param name="trackName">Track name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteTrack(string trackName)
+        public async Task<IActionResult> DeleteTrackKey(string trackName)
         {
             try
             {

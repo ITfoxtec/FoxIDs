@@ -21,6 +21,7 @@ namespace FoxIDs.Client.Models.ViewModels
             Subject = certificate.Subject;
             ValidFrom = certificate.NotBefore;
             ValidTo = certificate.NotAfter;
+            IsValid = certificate.IsValid();
             Thumbprint = certificate.Thumbprint;
         }
 

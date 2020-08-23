@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace FoxIDs.Logic
 {
     [Serializable]
-    public class PasswordEmailTextComplexityException : Exception
+    public class PasswordEmailTextComplexityException : AccountException
     {
         public PasswordEmailTextComplexityException() { }
         public PasswordEmailTextComplexityException(string message) : base(message) { }

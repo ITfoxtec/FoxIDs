@@ -89,6 +89,11 @@ namespace FoxIDs.Controllers
                 logger.Warning(ueex, $"Conflict, Create '{typeof(Api.User).Name}' by email '{createUserRequest.Email}'.");
                 return Conflict(ueex.Message);
             }
+            catch (AccountException aex)
+            {
+                ModelState.TryAddModelError(nameof(createUserRequest.Password), aex.Message);
+                return BadRequest(ModelState, aex);
+            }            
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)

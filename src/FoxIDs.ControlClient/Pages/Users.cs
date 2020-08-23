@@ -139,19 +139,6 @@ namespace FoxIDs.Client.Pages
             claims.Remove(claimAndValues);
         }
 
-        private void UserViewModelAfterInit(GeneralUserViewModel generalUser, UserViewModel model)
-        {
-            if (generalUser.CreateMode)
-            {
-                model.Password = NewPassword();
-            }
-        }
-
-        private string NewPassword()
-        {
-            return RandomGenerator.Generate(6);
-        }
-
         private async Task OnEditUserValidSubmitAsync(GeneralUserViewModel generalUser, EditContext editContext)
         {
             try

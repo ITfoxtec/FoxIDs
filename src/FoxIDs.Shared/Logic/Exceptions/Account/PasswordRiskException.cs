@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace FoxIDs.Logic
 {
     [Serializable]
-    public class PasswordRiskException : Exception
+    public class PasswordRiskException : AccountException
     {
         public PasswordRiskException() { }
         public PasswordRiskException(string message) : base(message) { }

@@ -27,7 +27,7 @@
             }
             @if (user.Edit)
             {
-                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnAfterInit="@(m => UserViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
+                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
                     <div class="modal-header">
                         User
                     </div>
@@ -35,7 +35,7 @@
                         @if (user.CreateMode)
                         {
                             <FInputText @bind-Value="user.Form.Model.Email" For="@(() => user.Form.Model.Email)" Focus="true" />
-                            <FInputText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
+                            <FInputPassword @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
                         }
                         else
                         {

@@ -75,6 +75,9 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<SamlBinding, Api.SamlBinding>()
                 .ReverseMap();
+
+            CreateMap<Api.TrackResourceItem, ResourceItem>()
+                .ReverseMap();
         }
 
         private void UpPartyMapping()

@@ -15,20 +15,20 @@ namespace FoxIDs.Models
             return $"resource:{idKey.Master}";
         }
 
-        [MaxLength(70)]
-        [RegularExpression(@"^[\w@:_-]*$")]
+        [MaxLength(Constants.Models.Resource.EnvelopeIdLength)]
+        [RegularExpression(Constants.Models.Resource.EnvelopeIdRegExPattern)]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
-        [Length(0, 20, 5)]
+        [Length(Constants.Models.Resource.SupportedCulturesMin, Constants.Models.Resource.SupportedCulturesMax, Constants.Models.Resource.SupportedCulturesLength)]
         [JsonProperty(PropertyName = "supported_cultures")]
         public List<string> SupportedCultures { get; set; }        
 
-        [Length(1, 5000)]
+        [Length(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         [JsonProperty(PropertyName = "names")]
         public List<ResourceName> Names { get; set; }
 
-        [Length(1, 5000)]
+        [Length(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }
     }

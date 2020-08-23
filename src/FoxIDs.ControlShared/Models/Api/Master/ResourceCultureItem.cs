@@ -6,11 +6,11 @@ namespace FoxIDs.Models.Api
     public class ResourceCultureItem
     {
         [Required]
-        [MaxLength(5)]
+        [MaxLength(Constants.Models.Resource.CultureLength)]
         public string Culture { get; set; }
 
         [Required]
-        [MaxLength(500)]
+        [MaxLength(Constants.Models.Resource.ValueLength)]
         public string Value { get; set; }
     }
 }

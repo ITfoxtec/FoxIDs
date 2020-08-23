@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace FoxIDs.Client.Services
         private const string keyApiUri = "api/{tenant}/master/!trackkey";
         private const string keySwapApiUri = "api/{tenant}/master/!trackkeyswap";
         private const string filterApiUri = "api/{tenant}/master/!filtertrack";
+        private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
+        private const string resourceApiUri = "api/{tenant}/master/!trackresource";
 
         public TrackService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
         { }
@@ -25,5 +28,12 @@ namespace FoxIDs.Client.Services
         public async Task DeleteTrackKeyAsync(string trackName) => await DeleteAsync(keyApiUri, trackName, parmName: nameof(trackName));
 
         public async Task SwapTrackKeyAsync(TrackKeySwap trackKeySwap) => await PostAsync(keySwapApiUri, trackKeySwap);
+
+        public async Task<IEnumerable<ResourceName>> FilterResourceNameAsync(string filterName, string tenantName = null) => await FilterAsync<ResourceName>(filterResourceNameApiUri, filterName, tenantName: tenantName);
+
+        public async Task<ResourceItem> GetTrackResourceAsync(string trackName, int resourceId) => await GetAsync<ResourceItem>(resourceApiUri, trackName, Convert.ToString(resourceId), parmName1: nameof(trackName), parmName2: nameof(resourceId));
+        public async Task UpdateTrackResourceAsync(TrackResourceItem trackResourceItem) => await PutAsync(resourceApiUri, trackResourceItem);
+        public async Task DeleteTrackResourceAsync(string trackName, int resourceId) => await DeleteAsync(resourceApiUri, trackName, Convert.ToString(resourceId), parmName1: nameof(trackName), parmName2: nameof(resourceId));
+
     }
 }

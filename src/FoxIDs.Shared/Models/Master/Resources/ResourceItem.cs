@@ -11,7 +11,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
 
-        [Length(1, 5000)]
+        [Length(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         [JsonProperty(PropertyName = "items")]
         public List<ResourceCultureItem> Items { get; set; }
     }

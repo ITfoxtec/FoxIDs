@@ -68,6 +68,20 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
             }
 
+            public static class Resource
+            {
+                public const int EnvelopeIdLength = 70;
+                public const string EnvelopeIdRegExPattern = @"^[\w@:_-]*$";
+                public const int SupportedCulturesMin = 0;
+                public const int SupportedCulturesMax = 50;
+                public const int SupportedCulturesLength = 5;
+                public const int ResourcesMin = 1;
+                public const int ResourcesMax = 5000;
+                public const int CultureLength = 5;
+                public const int NameLength = 500;
+                public const int ValueLength = 500;
+            }
+
             public static class Tenant
             {
                 public const int IdLength = 50;

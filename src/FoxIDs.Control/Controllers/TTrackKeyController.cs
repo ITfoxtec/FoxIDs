@@ -65,7 +65,6 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(trackKeyRequest)) return BadRequest(ModelState);
                 try
                 {
-
                     if (trackKeyRequest.Type != Api.TrackKeyType.Contained)
                     {
                         throw new ValidationException($"Currently only {Api.TrackKeyType.Contained} keys is supported in the API.");

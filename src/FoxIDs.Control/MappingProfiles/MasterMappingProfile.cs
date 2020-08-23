@@ -19,6 +19,8 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<ResourceItem, Api.ResourceItem>()
                 .ReverseMap();
+            CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
+                .ReverseMap();
         }
     }
 }

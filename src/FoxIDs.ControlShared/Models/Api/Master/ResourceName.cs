@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Api
     public class ResourceName
     {
         [Required]
-        [MaxLength(500)]
+        [MaxLength(Constants.Models.Resource.NameLength)]
         public string Name { get; set; }
 
         [Required]

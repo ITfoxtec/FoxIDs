@@ -1,18 +1,17 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using FoxIDs.Models;
 using System.Collections.Generic;
 
 namespace FoxIDs.Models.Api
 {
     public class Resource
     {
-        [Length(0, 20, 5)]
+        [Length(Constants.Models.Resource.SupportedCulturesMin, Constants.Models.Resource.SupportedCulturesMax, Constants.Models.Resource.SupportedCulturesLength)]
         public List<string> SupportedCultures { get; set; }
 
-        [Length(1, 5000)]
+        [Length(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         public List<ResourceName> Names { get; set; }
 
-        [Length(1, 5000)]
+        [Length(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
         public List<ResourceItem> Resources { get; set; }
     }
 }

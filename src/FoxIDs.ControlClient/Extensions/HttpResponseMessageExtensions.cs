@@ -1,4 +1,6 @@
 ﻿using FoxIDs.Client.Infrastructure;
+using ITfoxtec.Identity;
+using System;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -16,6 +18,11 @@ namespace FoxIDs.Client
         public static async Task<T> ToObjectAsync<T>(this HttpResponseMessage response)
         {
             var responseText = await response.Content.ReadAsStringAsync();
+            if(responseText.IsNullOrWhiteSpace())
+            {
+                return default;
+            }
+
             try
             {
                 return responseText.JsonDeserialize<T>();

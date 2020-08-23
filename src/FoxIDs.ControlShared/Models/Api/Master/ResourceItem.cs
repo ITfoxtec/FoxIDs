@@ -8,9 +8,12 @@ namespace FoxIDs.Models.Api
     public class ResourceItem
     {
         [Required]
+        [Display(Name = "Id")]
         public int Id { get; set; }
 
-        [Length(1, 5000)]
+        [ValidateComplexType]
+        [Length(Constants.Models.Resource.ResourcesMin, Constants.Models.Resource.ResourcesMax)]
+        [Display(Name = "Texts")]
         public List<ResourceCultureItem> Items { get; set; }
     }
 }

@@ -21,6 +21,9 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<ResourceCultureItem, Api.ResourceCultureItem>()
                 .ReverseMap();
+
+            CreateMap<RiskPassword, Api.RiskPassword>()
+                .ReverseMap();
         }
     }
 }

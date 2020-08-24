@@ -15,6 +15,7 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddSharedRepository(this IServiceCollection services)
         {            
             services.AddSingleton<IRepositoryClient, RepositoryClient>();
+            services.AddSingleton<IRepositoryCosmosClient, RepositoryCosmosClient>();
             services.AddSingleton<IMasterRepository, MasterRepository>();
             services.AddSingleton<ITenantRepository, TenantRepository>();
 

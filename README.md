@@ -91,9 +91,9 @@ The seed tool add generic text resources as a document in Cosmos DB. The resourc
 
 Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`. 
 
-#### 2.3 Create passwords risk list
+#### 2.3 Create risk passwords
 
-The seed tool can add passwords risk list of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+The seed tool can add risk passwords of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
@@ -105,9 +105,11 @@ Add the local pwned passwords file path to the seed tool configured.
 }
 ```
 
-> Be aware that it takes long time to upload the entire password risk list. This step can be omitted and postponed to later.
+> Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.
 
-Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords risk list`.
+> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (RU/s) temporarily.
+
+Run the seed tool executable `SeedTool.exe`, select `P` for `Create risk passwords`.
 
 #### 2.4 Add sample configuration to at track
 

@@ -34,12 +34,17 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task DeleteAsync<T>(T item) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync<T>(T item) where T : MasterDocument
+        public Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
         {
             throw new NotImplementedException();
         }

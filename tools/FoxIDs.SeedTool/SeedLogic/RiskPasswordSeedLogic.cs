@@ -27,7 +27,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         public async Task SeedAsync()
         {
-            Console.WriteLine("Creating risk password list");
+            Console.WriteLine("Creating risk passwords");
             var riskPasswords = new List<RiskPasswordApiModel>();            
             using (var streamReader = File.OpenText(settings.PwnedPasswordsPath))
             {
@@ -40,7 +40,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                     if (passwordCount >= 100)
                     {
                         riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = passwordCount });
-                        if (riskPasswords.Count == 1000)
+                        if (riskPasswords.Count >= 10000)
                         {
                             Console.WriteLine($"Saving risk passwords, current password count '{passwordCount}'");
                             await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);

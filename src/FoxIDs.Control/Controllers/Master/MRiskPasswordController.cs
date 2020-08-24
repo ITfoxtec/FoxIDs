@@ -78,31 +78,24 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Delete risk password.
+        /// Delete risk passwords.
         /// </summary>
-        /// <param name="passwordSha1Hash">Password SHA1 hash.</param>
+        /// <param name="riskPasswordDelete">Risk passwords to delete.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteRiskPassword(string passwordSha1Hash)
+        public async Task<IActionResult> DeleteRiskPassword([FromBody] Api.RiskPasswordDelete riskPasswordDelete)
         {
-            try
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var ids = new List<string>();
+            foreach (var passwordSha1Hash in riskPasswordDelete.PasswordSha1Hashs)
             {
-                //TODO delete all elements
-                // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
-                //            Add the ability to delete ALL data in a partition
-                var passwordRiskList = new RiskPassword { Id = await RiskPassword.IdFormat(passwordSha1Hash) };
-                await masterRepository.DeleteAsync(passwordRiskList);
-                return NoContent();
+                ids.Add(await RiskPassword.IdFormat(passwordSha1Hash));
             }
-            catch (CosmosDataException ex)
-            {
-                if (ex.StatusCode == HttpStatusCode.NotFound)
-                {
-                    logger.Warning(ex, $"Delete by password sha1 hash '{passwordSha1Hash}'.");
-                    return NotFound();
-                }
-                throw;
-            }
+
+            await masterRepository.DeleteBulkAsync<RiskPassword>(ids);
+
+            return NoContent();
         }
     }
 }

@@ -18,8 +18,8 @@ namespace FoxIDs.Repository
         //Task<int> GetQueryCountAsync<T>(T item, Expression<Func<T, bool>> whereQuery) where T : MasterDocument;
         //Task<int> GetQueryCountAsync<T>(string partitionId, Expression<Func<T, bool>> whereQuery) where T : MasterDocument;
         Task SaveAsync<T>(T item) where T : MasterDocument;
-        Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument;
         Task DeleteAsync<T>(T item) where T : MasterDocument;
-
+        Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument;
+        Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument;
     }
 }

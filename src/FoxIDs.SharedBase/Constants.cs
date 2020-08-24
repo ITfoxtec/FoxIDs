@@ -38,8 +38,8 @@ namespace FoxIDs
 
         public static class Models
         {
-            public const int MasterPartitionIdLength = 10;
-            public const string MasterPartitionIdExPattern = @"^[\w@]*$";
+            public const int MasterPartitionIdLength = 30;
+            public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
             public const int DocumentPartitionIdLength = 70;
             public const string DocumentPartitionIdExPattern = @"^[\w:_-]*$";
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace FoxIDs.Models.Api
 {
-    public class RiskPasswordRequest
+    public class RiskPasswordDelete
     {
         [Length(1, 10000)]
-        public List<RiskPassword> RiskPasswords { get; set; }
+        public List<string> PasswordSha1Hashs { get; set; }
     }
 }

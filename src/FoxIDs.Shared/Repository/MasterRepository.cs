@@ -10,6 +10,7 @@ using FoxIDs.Infrastructure;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Cosmos = Microsoft.Azure.Cosmos;
 
 namespace FoxIDs.Repository
 {
@@ -20,15 +21,17 @@ namespace FoxIDs.Repository
         private string collectionId;
         private Uri collectionUri;
         //private DocumentCollection documentCollection;
+        private Cosmos.Container container;
         private readonly TelemetryLogger logger;
 
-        public MasterRepository(TelemetryLogger logger, IRepositoryClient repositoryClient)
+        public MasterRepository(TelemetryLogger logger, IRepositoryClient repositoryClient, IRepositoryCosmosClient repositoryCosmosClient)
         {
             client = repositoryClient.Client;
             databaseId = repositoryClient.DatabaseId;
             collectionId = repositoryClient.CollectionId;
             collectionUri = repositoryClient.CollectionUri;
             //documentCollection = repositoryClient.DocumentCollection;
+            container = repositoryCosmosClient.Container;
             this.logger = logger;
         }
 
@@ -211,6 +214,7 @@ namespace FoxIDs.Repository
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
 
             item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
             await item.ValidateObjectAsync();
 
             double totalRU = 0;
@@ -226,49 +230,6 @@ namespace FoxIDs.Repository
             finally
             {
                 logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
-            }
-        }
-
-        public async Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
-        {
-            if (items?.Count <= 0) new ArgumentNullException(nameof(items));
-            var firstItem = items.First();
-            if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
-
-            var partitionId = firstItem.Id.IdToMasterPartitionId();
-            foreach(var item in items)
-            {
-                item.PartitionId = partitionId;
-            }
-            await items.ValidateObjectAsync();
-
-            double totalRU = 0;
-            try
-            {
-                //TODO Bulk save
-                // Bulk currently not working!!! Microsoft.Azure.CosmosDB.BulkExecutor 2.3.0-preview2
-                //var bulkExecutor = new BulkExecutor(client, documentCollection);
-                //await bulkExecutor.InitializeAsync();
-
-                //var response = await bulkExecutor.BulkImportAsync(
-                //                documents: items,
-                //                enableUpsert: true);
-                //totalRU += response.TotalRequestUnitsConsumed;
-
-                // Bulk workaround
-                foreach (var item in items)
-                {
-                    var response = await client.UpsertDocumentAsync(collectionUri, item, new RequestOptions { PartitionKey = new PartitionKey(item.PartitionId) });
-                    totalRU += response.RequestCharge;
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new CosmosDataException(partitionId, ex);
-            }
-            finally
-            {
-                logger.Metric($"CosmosDB RU, @master - save bulk type '{typeof(T)}'.", totalRU);
             }
         }
 
@@ -293,6 +254,88 @@ namespace FoxIDs.Repository
             finally
             {
                 logger.Metric($"CosmosDB RU, @master - delete id '{item.Id}', partitionId '{partitionId}'.", totalRU);
+            }
+        }
+
+        public async Task SaveBulkAsync<T>(List<T> items) where T : MasterDocument
+        {
+            if (items?.Count <= 0) new ArgumentNullException(nameof(items));
+            var firstItem = items.First();
+            if (firstItem.Id.IsNullOrEmpty()) throw new ArgumentNullException($"First item {nameof(firstItem.Id)}.", items.GetType().Name);
+
+            var partitionId = firstItem.Id.IdToMasterPartitionId();
+            foreach (var item in items)
+            {
+                item.PartitionId = partitionId;
+                item.SetDataType();
+                await item.ValidateObjectAsync();
+            }
+
+            double totalRU = 0;
+            try
+            {
+                var partitionKey = new Cosmos.PartitionKey(partitionId);
+                var concurrentTasks = new List<Task>(items.Count);
+                foreach (var item in items)
+                {
+                    concurrentTasks.Add(container.UpsertItemAsync(item, partitionKey)
+                        .ContinueWith(async (responseTask) =>
+                        {
+                            if (responseTask.Exception != null)
+                            {
+                                logger.Error(responseTask.Exception);
+                            }
+                            totalRU += (await responseTask).RequestCharge;
+                        }));
+                }
+
+                await Task.WhenAll(concurrentTasks);
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(partitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - save bulk count '{items.Count}' type '{typeof(T)}'.", totalRU);
+            }
+        }
+
+        public async Task DeleteBulkAsync<T>(List<string> ids) where T : MasterDocument
+        {
+            if (ids?.Count <= 0) new ArgumentNullException(nameof(ids));
+            var firstId = ids.First();
+            if (firstId.IsNullOrEmpty()) throw new ArgumentNullException($"First id {nameof(firstId)}.", ids.GetType().Name);
+
+            var partitionId = firstId.IdToMasterPartitionId();
+
+            double totalRU = 0;
+            try
+            {
+                var partitionKey = new Cosmos.PartitionKey(partitionId);
+                var concurrentTasks = new List<Task>(ids.Count);
+                foreach (var id in ids)
+                {
+                    concurrentTasks.Add(container.DeleteItemAsync<T>(id, partitionKey)
+                        .ContinueWith(async (responseTask) =>
+                        {
+                            if (responseTask.Exception != null)
+                            {
+                                logger.Error(responseTask.Exception);
+                            }
+                            totalRU += (await responseTask).RequestCharge;
+                        }));
+                }
+
+                await Task.WhenAll(concurrentTasks);
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(partitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - delete bulk count '{ids.Count}' type '{typeof(T)}'.", totalRU);
             }
         }
 

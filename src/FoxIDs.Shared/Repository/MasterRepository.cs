@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using System.Net;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace FoxIDs.Repository
 {
@@ -53,6 +54,43 @@ namespace FoxIDs.Repository
             {
                 logger.Metric($"CosmosDB RU, @master - exists id '{id}'.", totalRU);
             }
+        }
+
+        public async Task<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        {
+            var partitionId = IdToMasterPartitionId<T>();
+            var orderedQueryable = GetQueryAsync<T>(partitionId);
+            var query = (whereQuery == null) ? orderedQueryable : orderedQueryable.Where(whereQuery);
+
+            // RequestCharge not supported for count.
+            //double totalRU = 0;
+            try
+            {
+                //var response = await query.ExecuteNextAsync<T>();
+                //totalRU += response.RequestCharge;
+                return await query.CountAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(partitionId, ex);
+            }
+            finally
+            {
+                //logger.Metric($"CosmosDB RU, @master - count '{typeof(T)}'.", totalRU);
+            }
+        }
+
+        private string IdToMasterPartitionId<T>() where T : MasterDocument
+        {
+            if (typeof(T) == typeof(RiskPassword))
+            {
+                return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
+            }
+            else
+            {
+                return MasterDocument.PartitionIdFormat(new MasterDocument.IdKey());
+            }
+
         }
 
         public async Task<T> GetAsync<T>(string id, bool requered = true) where T : MasterDocument
@@ -300,17 +338,9 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId) where T : MasterDocument
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1) where T : IDataDocument
         {
-            return GetQueryAsync<T>(new FeedOptions() { MaxItemCount = 1, PartitionKey = new PartitionKey(partitionId) });
-        }
-        //private IOrderedQueryable<T> GetAllQueryAsync<T>(string partitionId) where T : MasterDocument
-        //{
-        //    return GetQueryAsync<T>(new FeedOptions() { MaxItemCount = -1, PartitionKey = new PartitionKey(partitionId) });
-        //}
-        private IOrderedQueryable<T> GetQueryAsync<T>(FeedOptions feedOptions) where T : MasterDocument
-        {
-            return client.CreateDocumentQuery<T>(collectionUri, feedOptions);
+            return client.CreateDocumentQuery<T>(collectionUri, new FeedOptions() { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount });
         }
 
         private string PartitionIdFormat<T>(MasterDocument.IdKey idKey) where T : MasterDocument

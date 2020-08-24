@@ -37,7 +37,7 @@ namespace FoxIDs.SeedTool.Infrastructure
         private static void AddSeedLogic(ServiceCollection services)
         {
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
-            services.AddTransient<PasswordRiskListSeedLogic>();
+            services.AddTransient<RiskPasswordSeedLogic>();
             services.AddTransient<ResourceSeedLogic>();
         }
 

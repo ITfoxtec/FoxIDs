@@ -2,6 +2,7 @@
 using FoxIDs.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace FoxIDs.UnitTests.Mocks
@@ -16,6 +17,11 @@ namespace FoxIDs.UnitTests.Mocks
             }
 
             return Task.FromResult(false);
+        }
+
+        public Task<int> CountAsync<T>(Expression<Func<T, bool>> whereQuery = null) where T : MasterDocument
+        {
+            throw new NotImplementedException();
         }
 
         public Task<T> GetAsync<T>(string id, bool requered = true) where T : MasterDocument

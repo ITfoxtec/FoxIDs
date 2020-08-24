@@ -1,11 +1,18 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
     public class RiskPassword
     {
-        [Length(1, 1000)]
-        public List<RiskPasswordItem> RiskPasswords { get; set; }
+        [Required]
+        [MaxLength(Constants.Models.RiskPassword.PasswordSha1HashLength)]
+        [RegularExpression(Constants.Models.RiskPassword.PasswordSha1HashRegExPattern)]
+        public string PasswordSha1Hash { get; set; }
+
+        [Required]
+        [Min(Constants.Models.RiskPassword.CountMin)]
+        public long Count { get; set; }
     }
 }

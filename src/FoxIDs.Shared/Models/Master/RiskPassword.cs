@@ -16,6 +16,18 @@ namespace FoxIDs.Models
             return $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
         }
 
+        public static async Task<string> IdFormat(string passwordSha1Hash)
+        {
+            if (passwordSha1Hash == null) new ArgumentNullException(nameof(passwordSha1Hash));
+
+            var idKey = new IdKey
+            {
+                PasswordSha1Hash = passwordSha1Hash
+            };
+
+            return await IdFormat(idKey);
+        }
+
         public static new string PartitionIdFormat(MasterDocument.IdKey idKey) => $"{idKey.Master}:prisks";
 
         [MaxLength(Constants.Models.RiskPassword.IdLength)]

@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
-using ITfoxtec.Identity;
 using FoxIDs.Logic;
 using System.Security.Claims;
 using System.Collections.Generic;

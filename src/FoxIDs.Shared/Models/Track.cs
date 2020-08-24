@@ -25,7 +25,7 @@ namespace FoxIDs.Models
             var idKey = new IdKey
             {
                 TenantName = routeBinding.TenantName,
-                TrackName = routeBinding.TrackName,
+                TrackName = name,
             };
 
             return await IdFormat(idKey);

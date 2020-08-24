@@ -39,7 +39,7 @@ namespace FoxIDs.SeedTool
                         break;
 
                     case 'p':
-                        await serviceProvider.GetService<PasswordRiskListSeedLogic>().SeedAsync();
+                        await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
                         break;
 
                     default:

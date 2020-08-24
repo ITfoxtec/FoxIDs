@@ -29,6 +29,8 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<UpPartyService>();
             services.AddScoped<UserService>();
 
+            services.AddScoped<RiskPasswordService>();
+
             return services;
         }
 

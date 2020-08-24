@@ -182,19 +182,10 @@ namespace FoxIDs.Logic
 
         private async Task CheckPasswordRisk(string email, string password)
         {
-            var passwordSha1Hash = Sha1Hash(password);
+            var passwordSha1Hash = password.Sha1Hash();
             if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
             {
                 throw new PasswordRiskException($"Password has appeared in a data breach and is at risk, user '{email}'.");
-            }
-        }
-
-        private string Sha1Hash(string password)
-        {
-            using (var sha1Provider = new SHA1CryptoServiceProvider())
-            {
-                var hash = sha1Provider.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return string.Concat(hash.Select(b => b.ToString("X2")));
             }
         }
     }

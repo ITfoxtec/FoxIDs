@@ -1,10 +1,12 @@
-﻿using FoxIDs.Client.Infrastructure.Security;
+﻿using FoxIDs.Client.Infrastructure;
+using FoxIDs.Client.Infrastructure.Security;
+using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
+using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 
@@ -14,7 +16,7 @@ namespace FoxIDs.Client.Pages
     {
         private string riskPasswordLoadError;
         private RiskPasswordInfo riskPasswordInfo;
-        //private List<GeneralTrackCertificateViewModel> certificates = new List<GeneralTrackCertificateViewModel>();
+        private PageEditForm<TestRiskPasswordViewModel> testRiskPasswordForm { get; set; }
 
         [Inject]
         public RiskPasswordService RiskPasswordService { get; set; }
@@ -45,5 +47,28 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task OnTestRiskPasswordValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                var passwordSha1Hash = testRiskPasswordForm.Model.Password.Sha1Hash();
+                var riskPassword = await RiskPasswordService.GetRiskPasswordAsync(passwordSha1Hash);
+                if(riskPassword != null)
+                {
+                    testRiskPasswordForm.Model.IsValid = false;
+                }
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    testRiskPasswordForm.Model.IsValid = true;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
     }
 }

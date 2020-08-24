@@ -28,9 +28,9 @@ namespace FoxIDs.Client.Services
             return await response.ToObjectAsync<IEnumerable<T>>();
         }
 
-        protected async Task<T> GetAsync<T>(string url, string tenantName = null)
+        protected async Task<T> GetAsync<T>(string url)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url, tenantName)}");
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}");
             return await response.ToObjectAsync<T>();
         }
 

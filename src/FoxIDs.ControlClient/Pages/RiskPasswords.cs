@@ -20,7 +20,7 @@ namespace FoxIDs.Client.Pages
     {
         private ElementReference inputTypeFileElement;
         private string riskPasswordLoadError;
-        private GeneralUploadRiskPasswordViewModel uploadRiskPassword { get; set; }
+        private GeneralUploadRiskPasswordViewModel uploadRiskPassword { get; set; } = new GeneralUploadRiskPasswordViewModel();
         private PageEditForm<TestRiskPasswordViewModel> testRiskPasswordForm { get; set; }
 
         [Inject]
@@ -35,15 +35,16 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await DefaultLoadAsync();
+            await DefaultRiskPasswordLoadAsync();
         }
 
-        private async Task DefaultLoadAsync()
+        private async Task DefaultRiskPasswordLoadAsync()
         {
             riskPasswordLoadError = null;
             try
             {
-                uploadRiskPassword = new GeneralUploadRiskPasswordViewModel(await RiskPasswordService.GetRiskPasswordInfoAsync());
+                var riskPasswordInfo = await RiskPasswordService.GetRiskPasswordInfoAsync();
+                uploadRiskPassword.RiskPasswordCount = riskPasswordInfo?.RiskPasswordCount;
             }
             catch (AuthenticationException)
             {
@@ -155,6 +156,7 @@ namespace FoxIDs.Client.Pages
                 }
             }
             uploadRiskPassword.UploadState = GeneralUploadRiskPasswordViewModel.UploadStates.Done;
+            await DefaultRiskPasswordLoadAsync();
         }
 
         private async Task OnTestRiskPasswordValidSubmitAsync(EditContext editContext)

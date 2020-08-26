@@ -10,10 +10,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public const string DefaultCertificateFileStatus = "Drop pwned passwords file here or click to select";
         public const long CertificateMaxFileSize = (long)50 * 1024 * 1024 * 1024; // 50GB
 
-        public GeneralUploadRiskPasswordViewModel(RiskPasswordInfo riskPasswordInfo)
-        {
-            RiskPasswordCount = riskPasswordInfo.RiskPasswordCount;
-        }
+        public GeneralUploadRiskPasswordViewModel()
+        { }
 
         public UploadStates UploadState { get; set; }
 

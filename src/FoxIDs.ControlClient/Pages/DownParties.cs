@@ -42,7 +42,17 @@ namespace FoxIDs.Client.Pages
         {
             upPartyHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/upparties";
             await base.OnInitializedAsync();
+            TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
+            if (TrackSelectedLogic.IsTrackSelected)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task OnTrackSelectedAsync(Track track)
+        {
             await DefaultLoadAsync();
+            StateHasChanged();
         }
 
         private async Task DefaultLoadAsync()

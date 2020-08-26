@@ -13,13 +13,6 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]
         public string Name { get; set; }
 
-        //[Required]
-        //[JsonProperty(PropertyName = "primary_key")]
-        //public TrackKey PrimaryKey { get; set; }
-
-        //[JsonProperty(PropertyName = "secondary_key")]
-        //public TrackKey SecondaryKey { get; set; }
-
         [Length(Constants.Models.Claim.ClaimsMapMin, Constants.Models.Claim.ClaimsMapMax)]
         public List<ClaimMap> ClaimMappings { get; set; }
 

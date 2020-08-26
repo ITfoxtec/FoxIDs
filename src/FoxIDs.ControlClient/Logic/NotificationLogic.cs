@@ -5,7 +5,6 @@ namespace FoxIDs.Client.Logic
 {
     public class NotificationLogic
     {
-
         public async Task TenantUpdatedAsync()
         {
             if(OnTenantUpdatedAsync != null)

@@ -16,10 +16,12 @@ namespace FoxIDs.Client.Services
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/master/!trackresource";
 
-        public TrackService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
+        public TrackService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<Track>> FilterTrackAsync(string filterName, string tenantName = null) => await FilterAsync<Track>(filterApiUri, filterName, tenantName: tenantName);
+
+        public async Task<Track> GetTrackAsync(string name) => await GetAsync<Track>(apiUri, name);
 
         public async Task CreateTrackAsync(Track track, string tenantName = null) => await PostAsync(apiUri, track, tenantName: tenantName);
 

@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
+using System.Security.Authentication;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using FoxIDs.Client.Infrastructure.Security;
 
 namespace FoxIDs.Client.Shared
 {
@@ -19,8 +23,16 @@ namespace FoxIDs.Client.Shared
         private PageEditForm<CreateTenantViewModel> createTenantForm;
         private bool createTenantDone;
         private List<string> createTenantReceipt = new List<string>();
+        private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
+        private Modal selectTrackModal;
+        private string selectMasterTrackError;
+        private string selectTrackError;
+        private IEnumerable<Track> selectTrackTasks;
         private Modal myProfileModal;
         private IEnumerable<Claim> myProfileClaims;
+
+        [Inject]
+        public OpenidConnectPkce OpenidConnectPkce { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -29,7 +41,13 @@ namespace FoxIDs.Client.Shared
         public NotificationLogic NotificationLogic { get; set; }
 
         [Inject]
+        public TrackSelectedLogic TrackSelectedLogic { get; set; }
+
+        [Inject]
         public TenantService TenantService { get; set; }
+
+        [Inject]
+        public TrackService TrackService { get; set; }
 
         [CascadingParameter]
         private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -46,6 +64,7 @@ namespace FoxIDs.Client.Shared
             if (user.Identity.IsAuthenticated)
             {
                 myProfileClaims = user.Claims;
+                await ShowSelectTrackModalAsync();
             }
             await base.OnParametersSetAsync();
         }
@@ -87,6 +106,70 @@ namespace FoxIDs.Client.Shared
                     throw;
                 }
             }
-        }       
+        }
+
+
+        private async Task ShowSelectTrackModalAsync()
+        {
+            if (TrackSelectedLogic.IsTrackSelected)
+            {
+                return;
+            }
+
+            if(RouteBindingLogic.IsMasterTenant)
+            {
+                try
+                {
+                    await SelectTrackAsync(await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName));
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+            }
+            else
+            {
+                selectTrackError = null;
+                selectTrackModal.Show();
+
+                try
+                {
+                    selectTrackTasks = await TrackService.FilterTrackAsync(null);
+                }
+                catch (AuthenticationException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (Exception ex)
+                {
+                    selectTrackError = ex.Message;
+                }
+            }
+        }
+
+        private async Task OnSelectTrackFilterValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                selectTrackTasks = await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    selectTrackFilterForm.SetFieldError(nameof(selectTrackFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task SelectTrackAsync(Track track)
+        {
+            await TrackSelectedLogic.TrackSelectedAsync(track);
+            selectTrackModal.Hide();
+        }
     }
 }

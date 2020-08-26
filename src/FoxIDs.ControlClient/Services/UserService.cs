@@ -8,10 +8,10 @@ namespace FoxIDs.Client.Services
 {
     public class UserService : BaseService
     {
-        private const string apiUri = "api/{tenant}/master/!user";
-        private const string filterApiUri = "api/{tenant}/master/!filteruser";
+        private const string apiUri = "api/{tenant}/{track}/!user";
+        private const string filterApiUri = "api/{tenant}/{track}/!filteruser";
 
-        public UserService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
+        public UserService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<User>> FilterUserAsync(string filterEmail) => await FilterAsync<User>(filterApiUri, filterEmail, parmName: nameof(filterEmail));

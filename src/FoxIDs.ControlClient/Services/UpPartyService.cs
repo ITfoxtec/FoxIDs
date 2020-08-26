@@ -8,11 +8,11 @@ namespace FoxIDs.Client.Services
 {
     public class UpPartyService : BaseService
     {
-        private const string filterApiUri = "api/{tenant}/master/!filterupparty";
-        private const string loginApiUri = "api/{tenant}/master/!loginupparty";
-        private const string samlApiUri = "api/{tenant}/master/!samlupparty";
+        private const string filterApiUri = "api/{tenant}/{track}/!filterupparty";
+        private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
+        private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
 
-        public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
+        public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName) => await FilterAsync<UpParty>(filterApiUri, filterName);

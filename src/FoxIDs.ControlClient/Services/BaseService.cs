@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Client.Logic;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,17 +10,29 @@ namespace FoxIDs.Client.Services
     {
         protected readonly HttpClient httpClient;
         protected readonly RouteBindingLogic routeBindingLogic;
+        private readonly TrackSelectedLogic trackSelectedLogic;
 
-        public BaseService(HttpClient httpClient, RouteBindingLogic routeBindingLogic)
+        public BaseService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic)
         {
             this.httpClient = httpClient;
             this.routeBindingLogic = routeBindingLogic;
+            this.trackSelectedLogic = trackSelectedLogic;
         }
 
         protected async Task<string> GetTenantApiUrlAsync(string url, string tenantName = null)
         {
             tenantName = tenantName ?? await routeBindingLogic.GetTenantNameAsync();
-            return url.Replace("{tenant}", tenantName);
+            url = url.Replace("{tenant}", tenantName);
+            if (url.Contains("{track}"))
+            {
+                if (!trackSelectedLogic.IsTrackSelected)
+                {
+                    throw new Exception("Track not selected.");
+                }
+                var trackName = trackSelectedLogic.Track.Name;
+                url = url.Replace("{track}", trackName);
+            }
+            return url;
         }
 
         protected async Task<IEnumerable<T>> FilterAsync<T>(string url, string filterName, string parmName = "filterName", string tenantName = null) 

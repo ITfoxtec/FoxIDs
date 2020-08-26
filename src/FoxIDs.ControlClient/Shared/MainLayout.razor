@@ -11,7 +11,7 @@
                         <i>Master tenant and track</i>
                     </li>
                 }
-                else
+                else if(TrackSelectedLogic.IsTrackSelected)
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -51,9 +51,9 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="meNavbarDropdown">
                         <button class="dropdown-item btn btn-link" @onclick="@(() => { myProfileModal.Show(); })">
-                            My Profile<br/>
+                            My Profile<br />
                             <small>@context.User.Claims.Where(c => c.Type == JwtClaimTypes.Email).Select(c => c.Value).FirstOrDefault()</small>
-                        </button>                        
+                        </button>
                         <div class="dropdown-divider"></div>
                         <LoginDisplay />
                     </div>
@@ -124,6 +124,35 @@
             }
         </div>
     </PageEditForm>
+</Modal>
+
+<Modal @ref="selectTrackModal" Title="Select Track">
+    <div class="modal-body">
+        <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
+            <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />
+        </PageEditForm>
+
+        @if (!selectTrackError.IsNullOrWhiteSpace())
+        {
+            <div class="alert alert-danger" role="alert">
+                @selectTrackError
+            </div>
+        }
+
+        <ul class="list-group list-group-flush">
+            @if (selectTrackTasks != null)
+            {
+                @foreach (var track in selectTrackTasks)
+                {
+                    <li class="list-group-item">
+                        <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
+                            @track.Name
+                        </button>
+                    </li>
+                }
+            }
+        </ul>
+    </div>
 </Modal>
 
 <Modal @ref="myProfileModal" Title="My Profile - show claims">

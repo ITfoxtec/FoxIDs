@@ -8,14 +8,14 @@ namespace FoxIDs.Client.Services
 {
     public class DownPartyService : BaseService
     {
-        private const string filterApiUri = "api/{tenant}/master/!filterdownparty";
-        private const string oidcApiUri = "api/{tenant}/master/!oidcdownparty";
-        private const string oidcclientsecretApiUri = "api/{tenant}/master/!oidcclientsecretdownparty";
-        private const string oauthApiUri = "api/{tenant}/master/!oauthdownparty";
-        private const string oauthclientsecretApiUri = "api/{tenant}/master/!oauthclientsecretdownparty";
-        private const string samlApiUri = "api/{tenant}/master/!samldownparty";
+        private const string filterApiUri = "api/{tenant}/{track}/!filterdownparty";
+        private const string oidcApiUri = "api/{tenant}/{track}/!oidcdownparty";
+        private const string oidcclientsecretApiUri = "api/{tenant}/{track}/!oidcclientsecretdownparty";
+        private const string oauthApiUri = "api/{tenant}/{track}/!oauthdownparty";
+        private const string oauthclientsecretApiUri = "api/{tenant}/{track}/!oauthclientsecretdownparty";
+        private const string samlApiUri = "api/{tenant}/{track}/!samldownparty";
 
-        public DownPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic) : base(httpClient, routeBindingLogic)
+        public DownPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<DownParty>> FilterDownPartyAsync(string filterName) => await FilterAsync<DownParty>(filterApiUri, filterName);

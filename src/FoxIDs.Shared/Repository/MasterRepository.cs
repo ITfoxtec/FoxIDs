@@ -40,14 +40,15 @@ namespace FoxIDs.Repository
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
             var partitionId = id.IdToMasterPartitionId();
-            var query = GetQueryAsync<T>(partitionId).Where(d => d.Id == id).Select(d => d.Id).Take(1).AsDocumentQuery();
+            var query = GetQueryAsync<T>(partitionId).Where(d => d.Id == id);
 
-            double totalRU = 0;
+            // RequestCharge not supported for count.
+            //double totalRU = 0;
             try
             {
-                var response = await query.ExecuteNextAsync<T>();
-                totalRU += response.RequestCharge;
-                return response.Any();
+                //var response = await query.ExecuteNextAsync<T>();
+                //totalRU += response.RequestCharge;
+                return (await query.CountAsync()) > 0;
             }
             catch (Exception ex)
             {
@@ -55,7 +56,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                logger.Metric($"CosmosDB RU, @master - exists id '{id}'.", totalRU);
+                //logger.Metric($"CosmosDB RU, @master - exists id '{id}'.", totalRU);
             }
         }
 

@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.7" />
     <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="2.0.0.20200" />
   </ItemGroup>
 
   <ItemGroup>

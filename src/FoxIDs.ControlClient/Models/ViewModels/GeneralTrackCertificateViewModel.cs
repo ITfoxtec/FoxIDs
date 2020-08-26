@@ -7,7 +7,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class GeneralTrackCertificateViewModel : TrackCertificateInfoViewModel
     {
-        public const string DefaultCertificateFileStatus = "Drop certificate files here or click to select";
+        public const string DefaultCertificateFileStatus = "Drop certificate file here or click to select";
         public const int CertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
 
         public GeneralTrackCertificateViewModel(bool isPrimary)

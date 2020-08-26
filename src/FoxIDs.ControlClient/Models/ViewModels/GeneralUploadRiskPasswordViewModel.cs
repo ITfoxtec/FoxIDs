@@ -1,0 +1,42 @@
+﻿using FoxIDs.Client.Shared.Components;
+using FoxIDs.Models.Api;
+
+namespace FoxIDs.Client.Models.ViewModels
+{
+    public class GeneralUploadRiskPasswordViewModel : RiskPasswordInfo
+    {
+        public const int RiskPasswordMoreThenCount = 100;
+        public const int UploadRiskPasswordBlokCount = 1000;
+        public const string DefaultCertificateFileStatus = "Drop pwned passwords file here or click to select";
+        public const long CertificateMaxFileSize = (long)50 * 1024 * 1024 * 1024; // 50GB
+
+        public GeneralUploadRiskPasswordViewModel(RiskPasswordInfo riskPasswordInfo)
+        {
+            RiskPasswordCount = riskPasswordInfo.RiskPasswordCount;
+        }
+
+        public UploadStates UploadState { get; set; }
+
+        public bool Edit { get; set; }
+
+        public bool ShowAdvanced { get; set; }
+
+        public bool CreateMode { get; set; }
+
+        public bool DeleteAcknowledge { get; set; }
+
+        public string Error { get; set; }
+
+        public PageEditForm<UploadRiskPasswordViewModel> Form { get; set; }
+
+        public string CertificateFileStatus { get; set; } = DefaultCertificateFileStatus;
+
+        public enum UploadStates
+        {
+            Init,
+            Ready,
+            Active,
+            Done
+        }
+    }
+}

@@ -6,6 +6,7 @@ using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Tewr.Blazor.FileReader;
 
 namespace FoxIDs.Client.Infrastructure.Hosting
 {
@@ -48,6 +49,8 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             });
 
             services.AddTransient<CheckResponseMessageHandler>();
+
+            services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
 
             return services;
         }

@@ -53,11 +53,11 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Create risk passwords.
+        /// Update risk passwords.
         /// </summary>
         /// <param name="riskPasswordRequest">Risk passwords.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> PostRiskPassword([FromBody] Api.RiskPasswordRequest riskPasswordRequest)
+        public async Task<IActionResult> PutRiskPassword([FromBody] Api.RiskPasswordRequest riskPasswordRequest)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 

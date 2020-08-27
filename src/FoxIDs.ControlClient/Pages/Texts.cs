@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var resourceItem = await TrackService.GetTrackResourceAsync(Constants.Routes.MasterTrackName, resource.Id);
+                var resourceItem = await TrackService.GetTrackResourceAsync(resource.Id);
                 if (resourceItem == null)
                 {
                     resource.CreateMode = true;
@@ -137,10 +137,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>(afterMap: afterMap =>
-                {
-                    afterMap.TrackName = Constants.Routes.MasterTrackName;
-                }));
+                await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>());
                 resource.CreateMode = false;
                 resource.Edit = false;
             }
@@ -161,7 +158,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.DeleteTrackResourceAsync(Constants.Routes.MasterTrackName, resource.Id);
+                await TrackService.DeleteTrackResourceAsync(resource.Id);
                 resource.CreateMode = true;
                 resource.Edit = false;
                 resource.Form.Model.Name = null;

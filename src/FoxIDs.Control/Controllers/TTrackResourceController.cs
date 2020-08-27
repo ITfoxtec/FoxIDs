@@ -10,6 +10,7 @@ using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -29,18 +30,15 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get track resource.
         /// </summary>
-        /// <param name="trackName">Track name.</param>
         /// <param name="resourceId">Resource id.</param>
         /// <returns>Resource item.</returns>
         [ProducesResponseType(typeof(Api.ResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.ResourceItem>> GetTrackResource(string trackName, int resourceId)
+        public async Task<ActionResult<Api.ResourceItem>> GetTrackResource(int resourceId)
         {
             try
             {
-                if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
-
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName});
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
                 var resourceItem = mTrack.Resources?.SingleOrDefault(r => r.Id == resourceId);
                 return Ok(mapper.Map<Api.ResourceItem>(resourceItem));
@@ -49,8 +47,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get Track.Resource track name '{trackName}' and resource id '{trackName}'.");
-                    return NotFound("Track.Resource", trackName);
+                    logger.Warning(ex, $"NotFound, Get Track.Resource resource id '{resourceId}'.");
+                    return NotFound("Track.Resource", Convert.ToString(resourceId));
                 }
                 throw;
             }
@@ -83,7 +81,7 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackResourceItem.TrackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
                 if (mTrack.Resources == null)
                 {
@@ -108,8 +106,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by name '{trackResourceItem.TrackName}'.");
-                    return NotFound(typeof(Api.TrackResourceItem).Name, trackResourceItem.TrackName);
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by resource id '{trackResourceItem.Id}'.");
+                    return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id));
                 }
                 throw;
             }
@@ -118,17 +116,14 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete track resource.
         /// </summary>
-        /// <param name="trackName">Track name.</param>
         /// <param name="resourceId">Resource id.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteTrackResource(string trackName, int resourceId)
+        public async Task<IActionResult> DeleteTrackResource(int resourceId)
         {
             try
             {
-                if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
-
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 if(mTrack.Resources?.Count > 0)
                 {
                     var itemIndex = mTrack.Resources.FindIndex(r => r.Id == resourceId);
@@ -145,8 +140,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete Track.Resource by track name '{trackName}' and resource id '{trackName}'.");
-                    return NotFound("Track.Resource", trackName);
+                    logger.Warning(ex, $"NotFound, Delete Track.Resource by resource id '{resourceId}'.");
+                    return NotFound("Track.Resource", Convert.ToString(resourceId));
                 }
                 throw;
             }

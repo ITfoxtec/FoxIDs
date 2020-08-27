@@ -29,7 +29,17 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
+            TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
+            if (TrackSelectedLogic.IsTrackSelected)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task OnTrackSelectedAsync(Track track)
+        {
             await DefaultLoadAsync();
+            StateHasChanged();
         }
 
         private async Task DefaultLoadAsync()

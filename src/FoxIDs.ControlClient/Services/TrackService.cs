@@ -10,9 +10,10 @@ namespace FoxIDs.Client.Services
     public class TrackService : BaseService
     {
         private const string apiUri = "api/{tenant}/master/!track";
-        private const string keyApiUri = "api/{tenant}/master/!trackkey";
-        private const string keySwapApiUri = "api/{tenant}/master/!trackkeyswap";
         private const string filterApiUri = "api/{tenant}/master/!filtertrack";
+
+        private const string keyApiUri = "api/{tenant}/{track}/!trackkey";
+        private const string keySwapApiUri = "api/{tenant}/{track}/!trackkeyswap";
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
 
@@ -25,9 +26,9 @@ namespace FoxIDs.Client.Services
 
         public async Task CreateTrackAsync(Track track) => await PostAsync(apiUri, track);
 
-        public async Task<TrackKeys> GetTrackKeyAsync(string trackName) => await GetAsync<TrackKeys>(keyApiUri, trackName, parmName: nameof(trackName));
+        public async Task<TrackKeys> GetTrackKeyAsync() => await GetAsync<TrackKeys>(keyApiUri);
         public async Task UpdateTrackKeyAsync(TrackKeyRequest trackKeyRequest) => await PutAsync(keyApiUri, trackKeyRequest);
-        public async Task DeleteTrackKeyAsync(string trackName) => await DeleteAsync(keyApiUri, trackName, parmName: nameof(trackName));
+        public async Task DeleteTrackKeyAsync() => await DeleteAsync(keyApiUri);
 
         public async Task SwapTrackKeyAsync(TrackKeySwap trackKeySwap) => await PostAsync(keySwapApiUri, trackKeySwap);
 

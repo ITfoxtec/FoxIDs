@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get Track.Resource resource id '{resourceId}'.");
+                    logger.Warning(ex, $"NotFound, Get Track.Resource by track name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
                     return NotFound("Track.Resource", Convert.ToString(resourceId));
                 }
                 throw;
@@ -106,7 +106,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by resource id '{trackResourceItem.Id}'.");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by track name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
                     return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id));
                 }
                 throw;
@@ -140,7 +140,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete Track.Resource by resource id '{resourceId}'.");
+                    logger.Warning(ex, $"NotFound, Delete Track.Resource by track name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
                     return NotFound("Track.Resource", Convert.ToString(resourceId));
                 }
                 throw;

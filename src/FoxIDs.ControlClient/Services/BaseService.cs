@@ -69,6 +69,11 @@ namespace FoxIDs.Client.Services
             using var response = await httpClient.PutAsFormatJsonAsync(await GetTenantApiUrlAsync(url), data);
         }
 
+        protected async Task DeleteAsync(string url)
+        {
+            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}");
+        }
+
         protected async Task DeleteAsync(string url, string value, string parmName = "name")
         {
             await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");

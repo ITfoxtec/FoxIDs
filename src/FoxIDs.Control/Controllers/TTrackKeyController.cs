@@ -27,25 +27,22 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get track keys.
         /// </summary>
-        /// <param name="trackName">Track name.</param>
         /// <returns>Track keys.</returns>
         [ProducesResponseType(typeof(Api.TrackKeys), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.TrackKeys>> GetTrackKey(string trackName)
+        public async Task<ActionResult<Api.TrackKeys>> GetTrackKey()
         {
             try
             {
-                if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
-
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName});
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName});
                 return Ok(mapper.Map<Api.TrackKeys>(mTrack));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKeys).Name}' by track name '{trackName}'.");
-                    return NotFound(typeof(Api.TrackKeys).Name, trackName);
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKeys).Name}' by track name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackKeys).Name, RouteBinding.TrackName);
                 }
                 throw;
             }
@@ -92,7 +89,7 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeyRequest.TrackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 if(trackKeyRequest.IsPrimary)
                 {
                     mTrack.PrimaryKey = mTrackKey;
@@ -110,8 +107,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKeyRequest).Name}' by track name '{trackKeyRequest.TrackName}'.");
-                    return NotFound(typeof(Api.TrackKeyRequest).Name, trackKeyRequest.TrackName);
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKeyRequest).Name}' by track name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackKeyRequest).Name, RouteBinding.TrackName);
                 }
                 throw;
             }
@@ -120,16 +117,13 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete secondary track key.
         /// </summary>
-        /// <param name="trackName">Track name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteTrackKey(string trackName)
+        public async Task<IActionResult> DeleteTrackKey()
         {
             try
             {
-                if (!ModelState.TryValidateRequiredParameter(trackName, nameof(trackName))) return BadRequest(ModelState);
-
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 if(mTrack.SecondaryKey != null)
                 {
                     mTrack.SecondaryKey = null;
@@ -142,8 +136,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackKey).Name}' by track name '{trackName}'.");
-                    return NotFound(typeof(Api.TrackKey).Name, trackName);
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackKey).Name}' by track name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackKey).Name, RouteBinding.TrackName);
                 }
                 throw;
             }

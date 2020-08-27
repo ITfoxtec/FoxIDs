@@ -36,8 +36,21 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(trackKeySwap)) return BadRequest(ModelState);
+                try
+                {
+                    if (!trackKeySwap.SwapKeys)
+                    {
+                        throw new ValidationException($"Required '{nameof(trackKeySwap.SwapKeys)}' to be true.");
+                    }
+                }
+                catch (ValidationException vex)
+                {
+                    logger.Warning(vex);
+                    ModelState.TryAddModelError(nameof(trackKeySwap.SwapKeys), vex.Message);
+                    return BadRequest(ModelState);
+                }
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = trackKeySwap.TrackName });
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 try
                 {
                     if (mTrack.SecondaryKey == null)
@@ -48,7 +61,7 @@ namespace FoxIDs.Controllers
                 catch (ValidationException vex)
                 {
                     logger.Warning(vex);
-                    ModelState.TryAddModelError(nameof(trackKeySwap.TrackName), vex.Message);
+                    ModelState.TryAddModelError(nameof(trackKeySwap.SwapKeys), vex.Message);
                     return BadRequest(ModelState);
                 }
 
@@ -64,8 +77,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Swap Track key '{typeof(Api.TrackKeySwap).Name}' by track name '{trackKeySwap.TrackName}'.");
-                    return NotFound(typeof(Api.TrackKeySwap).Name, trackKeySwap.TrackName);
+                    logger.Warning(ex, $"NotFound, Swap Track key '{typeof(Api.TrackKeySwap).Name}' by track name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackKeySwap).Name, RouteBinding.TrackName);
                 }
                 throw;
             }

@@ -14,6 +14,7 @@ using System;
 using System.Security.Authentication;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
@@ -25,11 +26,17 @@ namespace FoxIDs.Client.Shared
         private List<string> createTenantReceipt = new List<string>();
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
         private Modal selectTrackModal;
-        private string selectMasterTrackError;
+        private bool selectTrackInitialized = false;
         private string selectTrackError;
         private IEnumerable<Track> selectTrackTasks;
         private Modal myProfileModal;
         private IEnumerable<Claim> myProfileClaims;
+
+        [CascadingParameter]
+        private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+        [Inject]
+        public AuthenticationStateProvider authenticationStateProvider { get; set; }
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
@@ -49,9 +56,6 @@ namespace FoxIDs.Client.Shared
         [Inject]
         public TrackService TrackService { get; set; }
 
-        [CascadingParameter]
-        private Task<AuthenticationState> authenticationStateTask { get; set; }
-
         protected override async Task OnInitializedAsync()
         {
             await RouteBindingLogic.InitRouteBindingAsync();
@@ -60,12 +64,17 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnParametersSetAsync()
         {
+            //var accessToken = await (authenticationStateProvider as OidcAuthenticationStateProvider).GetAccessToken();
+            //if (!accessToken.IsNullOrEmpty())
+            //{
+
             var user = (await authenticationStateTask).User;
             if (user.Identity.IsAuthenticated)
             {
-                myProfileClaims = user.Claims;
                 await ShowSelectTrackModalAsync();
+                myProfileClaims = user.Claims;
             }
+            //}
             await base.OnParametersSetAsync();
         }
 
@@ -111,12 +120,13 @@ namespace FoxIDs.Client.Shared
 
         private async Task ShowSelectTrackModalAsync()
         {
-            if (TrackSelectedLogic.IsTrackSelected)
+            if (selectTrackModal == null || selectTrackInitialized || TrackSelectedLogic.IsTrackSelected)
             {
                 return;
             }
+            selectTrackInitialized = true;
 
-            if(RouteBindingLogic.IsMasterTenant)
+            if (RouteBindingLogic.IsMasterTenant)
             {
                 try
                 {
@@ -131,19 +141,23 @@ namespace FoxIDs.Client.Shared
             {
                 selectTrackError = null;
                 selectTrackModal.Show();
+                await LoadSelectTrackAsync();
+            }
+        }
 
-                try
-                {
-                    selectTrackTasks = await TrackService.FilterTrackAsync(null);
-                }
-                catch (AuthenticationException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (Exception ex)
-                {
-                    selectTrackError = ex.Message;
-                }
+        private async Task LoadSelectTrackAsync()
+        {
+            try
+            {
+                selectTrackTasks = await TrackService.FilterTrackAsync(null);
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                selectTrackError = ex.Message;
             }
         }
 

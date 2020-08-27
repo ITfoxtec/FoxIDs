@@ -9,6 +9,7 @@
       "type": "string"
     },
     "siteLocation": {
+      "value": "West Europe",
       "type": "string",
       "metadata": {
         "description": "Site location."

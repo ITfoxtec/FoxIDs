@@ -5,18 +5,15 @@ namespace FoxIDs.Models
 {
     public class UpPartyLink
     {
-        //[RegularExpression(Constants.Models.PartyIdRegExPattern)]
-        //[JsonProperty(PropertyName = "id")]
-        //public override string Id { get; set; }
-
         [Required]
-        [MaxLength(Constants.Models.PartyNameLength)]
+        [MaxLength(Constants.Models.Party.NameLength)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "type")]
-        public PartyType Type { get; set; }
+        public PartyTypes Type { get; set; }
 
     }
 }

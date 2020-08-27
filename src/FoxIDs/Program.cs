@@ -3,6 +3,8 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.AzureKeyVault;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace FoxIDs
 {
@@ -15,7 +17,6 @@ namespace FoxIDs
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseApplicationInsights()
                 .ConfigureKestrel(options => options.AddServerHeader = false)
                 .ConfigureAppConfiguration((context, builder) =>
                 {
@@ -26,6 +27,23 @@ namespace FoxIDs
                         builder.AddAzureKeyVault(builtConfig["Settings:KeyVault:EndpointUri"], keyVaultClient, new DefaultKeyVaultSecretManager());
                     }
                 })
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .ConfigureLogging((context, logging) =>
+                {
+                    var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey").Value;
+
+                    if (string.IsNullOrWhiteSpace(instrumentationKey))
+                    {
+                        return;
+                    }
+
+                    // When not in development, remove other loggers like console, debug, event source etc. and only use ApplicationInsights logging
+                    if (!context.HostingEnvironment.IsDevelopment())
+                    {
+                        logging.ClearProviders();
+                    }
+
+                    logging.AddApplicationInsights(instrumentationKey);
+                });
     }
 }

@@ -29,8 +29,6 @@ namespace FoxIDs.Infrastructure.Filters
                 {
                     logger.Error(context.Exception);
 
-                    var tokenResponse = new TokenResponse();
-
                     if (context.Exception is OAuthRequestException)
                     {
                         context.Result = OAuthRequestExceptionToJsonResult(context.Exception as OAuthRequestException);

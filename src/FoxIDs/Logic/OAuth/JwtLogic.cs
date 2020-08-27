@@ -47,11 +47,11 @@ namespace FoxIDs.Logic
             {
                 if (responseTypes.Contains(IdentityConstants.ResponseTypes.Token))
                 {
-                    idTokenClaims.AddClaim(JwtClaimTypes.AtHash, await accessToken.LeftMostBase64urlEncodingHash(algorithm));
+                    idTokenClaims.AddClaim(JwtClaimTypes.AtHash, await accessToken.LeftMostBase64urlEncodedHash(algorithm));
                 }
                 if (responseTypes.Contains(IdentityConstants.ResponseTypes.Code))
                 {
-                    idTokenClaims.AddClaim(JwtClaimTypes.CHash, await code.LeftMostBase64urlEncodingHash(algorithm));
+                    idTokenClaims.AddClaim(JwtClaimTypes.CHash, await code.LeftMostBase64urlEncodedHash(algorithm));
                 }
             }
 
@@ -98,6 +98,27 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 logger.Error(ex, $"Party client JWT not valid. Client id '{client.ClientId}', Route '{RouteBinding.Route}'.");
+                return null;
+            }
+        }
+
+        public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, bool validateAudience = false, bool validateLifetime = true)
+        {
+            var issuerSigningKeys = new List<JsonWebKey>();
+            issuerSigningKeys.Add(RouteBinding.PrimaryKey.Key);
+            if (RouteBinding.SecondaryKey != null)
+            {
+                issuerSigningKeys.Add(RouteBinding.SecondaryKey.Key);
+            }
+
+            try
+            {
+                (var claimsPrincipal, var securityToken) = await Task.FromResult(JwtHandler.ValidateToken(token, Issuer(RouteBinding), issuerSigningKeys, validateAudience: validateAudience, validateLifetime: validateLifetime));
+                return claimsPrincipal;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"JWT not valid. Route '{RouteBinding.Route}'.");
                 return null;
             }
         }

@@ -38,6 +38,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }
 
+        [JsonProperty(PropertyName = "enable_pkce")]
+        public bool? EnablePkce { get; set; } = false;
+
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)] 
         [JsonProperty(PropertyName = "authorization_code_lifetime")]
         public int? AuthorizationCodeLifetime { get; set; }

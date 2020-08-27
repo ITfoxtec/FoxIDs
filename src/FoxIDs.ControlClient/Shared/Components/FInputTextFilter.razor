@@ -1,0 +1,17 @@
+﻿@inherits FInputBase<string>
+
+<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
+    <div class="input-group">
+        <input @ref="inputElement" type="text" @bind="@CurrentValue" class="form-control input-control" />
+        <Label For="@For" class="label-control" />
+        <div class="input-group-append">
+            <button type="submit" class="btn btn-primary">Go</button>
+        </div>
+    </div>
+    <ValidationMessage For="@For" />
+</div>
+
+@code {
+    [Parameter]
+    public bool IncludeActiveFormGroup { get; set; } = true;
+}

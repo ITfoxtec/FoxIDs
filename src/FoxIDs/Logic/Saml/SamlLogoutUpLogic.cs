@@ -24,14 +24,16 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -63,9 +65,9 @@ namespace FoxIDs.Logic
 
             switch (party.LogoutBinding.RequestBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await LogoutAsync(party, new Saml2RedirectBinding(), logoutRequest);
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await LogoutAsync(party, new Saml2PostBinding(), logoutRequest);
                 default:
                     throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
@@ -83,6 +85,7 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> LogoutAsync<T>(SamlUpParty party, Saml2Binding<T> binding, LogoutRequest logoutRequest)
         {
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningCertificate: true);
+            await formActionLogic.AddFormActionByUrlAsync(samlConfig.SingleLogoutDestination.OriginalString);
 
             binding.RelayState = SequenceString;
 
@@ -133,9 +136,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
             switch (party.LogoutBinding.ResponseBinding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return await LogoutResponseAsync(party, new Saml2RedirectBinding());
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return await LogoutResponseAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"SAML binding '{party.LogoutBinding.ResponseBinding}' not supported.");
@@ -186,9 +189,9 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     if(status == Saml2StatusCodes.Success)
                     {
                         return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
@@ -197,7 +200,7 @@ namespace FoxIDs.Logic
                     {
                         throw new EndpointException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.") { RouteBinding = RouteBinding };
                     }
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sessionIndex);
 
                 default:

@@ -8,7 +8,6 @@ using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -23,16 +22,20 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
         private readonly OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic;
         private readonly OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic;
 
-        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> oauthAuthCodeGrantLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
             this.jwtLogic = jwtLogic;
             this.oauthAuthCodeGrantLogic = oauthAuthCodeGrantLogic;
             this.oauthResourceScopeLogic = oauthResourceScopeLogic;
@@ -48,16 +51,23 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Party Client not configured.");
             }
 
-            var queryDictionary = QueryHelpers.ParseQuery(HttpContext.Request.QueryString.Value).ToDictionary();
+            var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();
-            //var codeChallengeRequest = queryDictionary.ToObject<CodeChallengeRequest>();
 
             logger.ScopeTrace($"Authentication request '{authenticationRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("clientId", authenticationRequest.ClientId);
 
+            var codeChallengeSecret = party.Client.EnablePkce.Value ? queryDictionary.ToObject<CodeChallengeSecret>() : null;
+            if (codeChallengeSecret != null)
+            {
+                codeChallengeSecret.Validate();
+                logger.ScopeTrace($"CodeChallengeSecret '{codeChallengeSecret.ToJsonIndented()}'.");
+            }
+
             try
             {
-                ValidateAuthenticationRequest(party.Client, authenticationRequest);
+                var requireCodeFlow = party.Client.EnablePkce.Value && codeChallengeSecret != null;
+                ValidateAuthenticationRequest(party.Client, authenticationRequest, requireCodeFlow);
                 logger.ScopeTrace("Down, OIDC Authentication request accepted.", triggerEvent: true);
 
                 if(!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
@@ -73,19 +83,22 @@ namespace FoxIDs.Logic
                     State = authenticationRequest.State,
                     ResponseMode = authenticationRequest.ResponseMode,
                     Nonce = authenticationRequest.Nonce,
+                    CodeChallenge = codeChallengeSecret?.CodeChallenge,
+                    CodeChallengeMethod = codeChallengeSecret?.CodeChallengeMethod,
                 });
+                await formActionLogic.CreateFormActionByUrlAsync(authenticationRequest.RedirectUri);
 
                 var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
                 switch (type)
                 {
-                    case PartyType.Login:
-                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirect(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
-                    case PartyType.OAuth2:
+                    case PartyTypes.Login:
+                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
+                    case PartyTypes.OAuth2:
                         throw new NotImplementedException();
-                    case PartyType.Oidc:
+                    case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First());
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
 
                     default:
@@ -129,13 +142,21 @@ namespace FoxIDs.Logic
             return loginRequest;
         }
 
-        private void ValidateAuthenticationRequest(OidcDownClient client, AuthenticationRequest authenticationRequest)
+        private void ValidateAuthenticationRequest(OidcDownClient client, AuthenticationRequest authenticationRequest, bool requireCodeFlow)
         {
             try
             {
                 var responseType = authenticationRequest.ResponseType.ToSpaceList();
                 bool isImplicitFlow = !responseType.Contains(IdentityConstants.ResponseTypes.Code);
                 authenticationRequest.Validate(isImplicitFlow);
+
+                if (requireCodeFlow)
+                {
+                    if(responseType.Where(rt => !rt.Equals(IdentityConstants.ResponseTypes.Code)).Any())
+                    {
+                        throw new OAuthRequestException($"Require '{IdentityConstants.ResponseTypes.Code}' flow with PKCE.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    }
+                }
 
                 if (!client.RedirectUris.Any(u => u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
                 {
@@ -216,6 +237,8 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+
             var authenticationResponse = new AuthenticationResponse
             {
                 TokenType = IdentityConstants.TokenTypes.Bearer,
@@ -232,7 +255,7 @@ namespace FoxIDs.Logic
 
             if (responseTypes.Contains(IdentityConstants.ResponseTypes.Code))
             {
-                authenticationResponse.Code = await oauthAuthCodeGrantLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce);
+                authenticationResponse.Code = await oauthAuthCodeGrantLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
             }
 
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                
@@ -258,6 +281,7 @@ namespace FoxIDs.Logic
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
+            await formActionLogic.RemoveFormActionSequenceDataAsync();
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
@@ -293,6 +317,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("downPartyId", partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
+            await formActionLogic.RemoveFormActionSequenceDataAsync();
 
             return await AuthenticationResponseErrorAsync(sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }

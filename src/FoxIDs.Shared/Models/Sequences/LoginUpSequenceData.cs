@@ -33,6 +33,5 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "c")]
         public string Culture { get; set; }
-
     }
 }

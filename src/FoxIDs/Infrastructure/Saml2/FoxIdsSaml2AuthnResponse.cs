@@ -41,11 +41,11 @@ namespace FoxIDs.Infrastructure.Saml2
                 subjectClaims = AddNameIdAsNameClaim(subjectClaims);
             }
 
-            var now = DateTimeOffset.UtcNow;
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(subjectClaims),
-                Expires = now.AddMinutes(issuedTokenLifetime).UtcDateTime,
+                NotBefore = tokenIssueTime.AddSeconds(-settings.SamlTokenAddNotBeforeTime).UtcDateTime,
+                Expires = tokenIssueTime.AddSeconds(issuedTokenLifetime).UtcDateTime,
                 Audience = appliesToAddress,
                 Issuer = Issuer
             };
@@ -81,7 +81,7 @@ namespace FoxIDs.Infrastructure.Saml2
             var subjectConfirmationData = new Saml2SubjectConfirmationData
             {
                 Recipient = Destination,
-                NotBefore = tokenIssueTime.AddSeconds(settings.SamlTokenAddNotBeforeTime).UtcDateTime,
+                NotBefore = tokenIssueTime.AddSeconds(-settings.SamlTokenAddNotBeforeTime).UtcDateTime,
                 NotOnOrAfter = tokenIssueTime.AddSeconds(subjectConfirmationLifetime).UtcDateTime,
             };
 

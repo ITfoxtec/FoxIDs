@@ -1,0 +1,22 @@
+﻿@inject OpenidConnectPkce OpenidConnectPkce
+
+<AuthorizeView>
+    <Authorized>
+        <button class="dropdown-item btn btn-link" @onclick="LogoutAsync">Logout</button>
+    </Authorized>
+    <NotAuthorized>
+        <button class="dropdown-item btn btn-link" @onclick="LoginAsync">Login</button>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code{
+    private async Task LoginAsync(MouseEventArgs args)
+    {
+        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+    }
+
+    private async Task LogoutAsync(MouseEventArgs args)
+    {
+        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLogoutAsync();
+    }
+}

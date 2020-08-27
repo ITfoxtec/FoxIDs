@@ -1,0 +1,30 @@
+﻿@inherits FInputBase<bool>
+
+<div class="@(IncludeActiveFormGroup ? "active-group" : string.Empty)">
+    <div class="form-check form-check-inline">
+        @if (CurrentValue)
+        {
+            <input @ref="inputElement" type="checkbox" class="form-check-input" checked="checked" @onchange="@(async (e) => await SelectChangedAsync(e))" />
+        }
+        else
+        {
+            <input @ref="inputElement" type="checkbox" class="form-check-input" @onchange="@(async (e) => await SelectChangedAsync(e))" />
+        }
+        <Label For="@For" class="form-check-label" />
+        <ValidationMessage For="@For" />
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public bool IncludeActiveFormGroup { get; set; } = true;
+
+    [Parameter]
+    public EventCallback<bool> OnValidChange { get; set; }
+
+    private async Task SelectChangedAsync(ChangeEventArgs e)
+    {
+        CurrentValue = (bool)e.Value;
+        await OnValidChange.InvokeAsync(CurrentValue);
+    }
+}

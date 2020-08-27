@@ -6,7 +6,7 @@ namespace FoxIDs.Models
     public class ResourceName
     {
         [Required]
-        [MaxLength(500)]
+        [MaxLength(Constants.Models.Resource.NameLength)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 

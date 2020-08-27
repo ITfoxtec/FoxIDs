@@ -24,15 +24,17 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
         private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
         private readonly OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
             this.jwtLogic = jwtLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
@@ -47,13 +49,12 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Party Client not configured.");
             }
 
-            var queryDictionary = QueryHelpers.ParseQuery(HttpContext.Request.QueryString.Value).ToDictionary();
-            var endSessionRequest = queryDictionary.ToObject<EndSessionRequest>();
+            var endSessionRequest = HttpContext.Request.Query.ToObject<EndSessionRequest>();
 
             logger.ScopeTrace($"end session request '{endSessionRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("clientId", party.Client.ClientId);
 
-            ValidateEndSessionRequest( party.Client, endSessionRequest);
+            ValidateEndSessionRequest(party.Client, endSessionRequest);
             logger.ScopeTrace("Down, OIDC End session request accepted.", triggerEvent: true);
 
             (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, endSessionRequest.IdTokenHint);
@@ -68,7 +69,10 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"ID Token hint is required.") { RouteBinding = RouteBinding };
                 }
             }
-            if (validIdToken) logger.ScopeTrace("Valid ID token hint.");
+            else
+            {
+                logger.ScopeTrace("Valid ID token hint.");
+            }
 
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantAsync(party.Client, sessionId);
 
@@ -77,12 +81,13 @@ namespace FoxIDs.Logic
                 RedirectUri = endSessionRequest.PostLogoutRedirectUri,
                 State = endSessionRequest.State,
             });
+            await formActionLogic.CreateFormActionByUrlAsync(endSessionRequest.PostLogoutRedirectUri);
 
             var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
             switch (type)
             {
-                case PartyType.Login:
+                case PartyTypes.Login:
                     var logoutRequest = new LogoutRequest
                     {
                         DownParty = party,
@@ -91,11 +96,11 @@ namespace FoxIDs.Logic
                         PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace(),
                     };
                     return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), logoutRequest);
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     throw new NotImplementedException();
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
                         throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up Party.") { RouteBinding = RouteBinding };
@@ -176,6 +181,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
+            await formActionLogic.RemoveFormActionSequenceDataAsync();
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
     }

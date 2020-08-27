@@ -1,0 +1,124 @@
+﻿@page "/{tenantName}/users"
+@inherits PageBase
+
+<div class="d-flex">
+    <div class="mr-auto p-2">
+        <h3>Users</h3>
+    </div>
+    <div class="p-2">
+        <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreateUser())">Create User</button>
+    </div>
+</div>
+
+
+<PageEditForm @ref="userFilterForm" TModel="FilterUserViewModel" OnValidSubmit="OnUserFilterValidSubmitAsync">
+    <FInputTextFilter @bind-Value="userFilterForm.Model.FilterEmail" For="@(() => userFilterForm.Model.FilterEmail)" />
+</PageEditForm>
+
+<ul class="list-group">
+    @foreach (var user in users)
+    {
+        <li class="list-group-item @(user.Edit ? "active" : string.Empty)">
+            @if (!user.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @user.Error
+                </div>
+            }
+            @if (user.Edit)
+            {
+                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
+                    <div class="modal-header">
+                        User
+                    </div>
+                    <div class="modal-body">
+                        @if (user.CreateMode)
+                        {
+                            <FInputText @bind-Value="user.Form.Model.Email" For="@(() => user.Form.Model.Email)" Focus="true" />
+                            <FInputPassword @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
+                        }
+                        else
+                        {
+                            <div class="active-group active">
+                                <div class="card bg-light">
+                                    <div class="card-body px-3 py-2">
+                                        @user.Form.Model.Email
+                                    </div>
+                                </div>
+                                <Label For="@(() => user.Form.Model.Email)" class="label-control" />
+                            </div>
+                            <input type="hidden" @bind="user.Form.Model.Email" />
+                            <div class="active-group active">
+                                <div class="card bg-light">
+                                    <div class="card-body px-3 py-2">
+                                        @user.Form.Model.Password
+                                    </div>
+                                </div>
+                                <Label For="@(() => user.Form.Model.Password)" class="label-control" />
+                            </div>
+                            <input type="hidden" @bind="user.Form.Model.Password" />
+                            <div class="active-group active">
+                                <div class="card bg-light">
+                                    <div class="card-body px-3 py-2">
+                                        @user.Form.Model.UserId
+                                    </div>
+                                </div>
+                                <Label For="@(() => user.Form.Model.UserId)" class="label-control" />
+                            </div>
+                        }
+
+                        <div class="form-group active-group active">
+                            <ul class="list-group">
+                                @foreach (var claimAndValues in user.Form.Model.Claims)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
+                                                <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" />
+                                            </div>
+                                            <div class="col-1 text-right">
+                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveClaim(e, user.Form.Model.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <ValidationMessage For="@(() => user.Form.Model.Claims)" />
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddClaim(e, user.Form.Model.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                        </div>
+                    </div>
+                    @if (!user.CreateMode && user.DeleteAcknowledge)
+                    {
+                        <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                <div>
+                                    You are about to delete User "@user.Email", are you sure?
+                                </div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteUserAsync(user))">Yes delete user</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => user.DeleteAcknowledge = false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        @if (!user.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link" @onclick="@(() => user.DeleteAcknowledge = true)">Delete</button>
+                        }
+                        <button type="submit" class="btn btn-primary">@(user.CreateMode ? "Create" : "Update")</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => UserCancel(user))">Cancel</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUserAsync(user))">
+                    @UserInfoText(user)
+                </button>
+            }
+        </li>
+    }
+</ul>

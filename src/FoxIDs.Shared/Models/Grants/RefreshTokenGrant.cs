@@ -34,7 +34,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "client_id")]
         public string ClientId { get; set; }
 
-        [MaxLength(150)]
+        [MaxLength(2000)]
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 

@@ -8,7 +8,7 @@ namespace FoxIDs.Models
     {
         [Range(Constants.Models.OidcDownParty.Client.IdTokenLifetimeMin, Constants.Models.OidcDownParty.Client.IdTokenLifetimeMax)]
         [JsonProperty(PropertyName = "id_token_lifetime")]
-        public int IdTokenLifetime { get; set; }
+        public int IdTokenLifetime { get; set; } = 300;
 
         [JsonProperty(PropertyName = "require_logout_id_token_hint")]
         public bool RequireLogoutIdTokenHint { get; set; }

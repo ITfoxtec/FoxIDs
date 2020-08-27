@@ -1,0 +1,130 @@
+﻿@page "/{tenantName}/certificates"
+@inherits PageBase
+
+<div class="d-flex">
+    <div class="mr-auto p-2">
+        <h3>Certificates</h3>
+    </div>
+    <div class="p-2">
+        @if (certificates.Any(c => !c.IsPrimary && !c.CreateMode))
+        {
+            <button type="button" class="btn btn-primary" @onclick="@(() => { swapCertificateError = null; swapCertificateModal.Show(); })">Swap certificate</button>
+        }
+    </div>
+</div>
+
+@if (!certificateLoadError.IsNullOrWhiteSpace())
+{
+    <div class="alert alert-danger" role="alert">
+        @certificateLoadError
+    </div>
+}
+
+@foreach (var certificate in certificates.OrderByDescending(c => c.IsPrimary))
+{
+    <h4 class="@(certificate.IsPrimary ? "" : "pt-4")">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</h4>
+    <div class="card">
+        <div class="card-body @(certificate.Edit ? "active" : string.Empty)">
+            @if (!certificate.Error.IsNullOrWhiteSpace())
+            {
+                <div class="alert alert-danger" role="alert">
+                    @certificate.Error
+                </div>
+            }
+            @if (certificate.Edit)
+            {
+                <PageEditForm @ref="certificate.Form" TModel="TrackCertificateInfoViewModel"  OnAfterInit="@(m => CertificateViewModelAfterInit(certificate, m))" OnValidSubmit="@(async (editContext) => await OnEditCertificateValidSubmitAsync(certificate, editContext))">
+                    <div class="modal-header">
+                        Certificate
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group active-group active">
+                            <div class="drag-drop-zone input-control">
+                                <InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
+                                @certificate.CertificateFileStatus
+                            </div>
+                            <label class="label-control">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</label>
+                            <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
+                            <ul class="list-group">
+                                <li class="list-group-item p-0">
+                                    @if (!certificate.Form.Model.Subject.IsNullOrWhiteSpace())
+                                    {
+                                        <div class="d-flex">
+                                            <div class="mr-auto p-2">
+                                                <strong>@certificate.Form.Model.Subject</strong><br />
+                                                <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
+                                                Thumbprint: @certificate.Form.Model.Thumbprint
+                                            </div>
+                                        </div>
+                                    }
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    @if (!certificate.IsPrimary && !certificate.CreateMode && certificate.DeleteAcknowledge)
+                    {
+                        <div class="modal-footer">
+                            <div class="alert alert-danger" role="alert">
+                                <div>
+                                    You are about to delete Secondary Certificate "@certificate.Subject", are you sure?
+                                </div>
+
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSecondaryCertificateAsync(certificate))">Yes delete</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => certificate.DeleteAcknowledge = false)">No</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="modal-footer">
+                        @if (!certificate.IsPrimary && !certificate.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link" @onclick="@(() => certificate.DeleteAcknowledge = true)">Delete</button>
+                        }
+                        @if(certificate.Form.Model.Key != null)
+                        {
+                            <button type="submit" class="btn btn-primary">@(certificate.CreateMode ? "Create" : "Update")</button>
+                        }
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => CertificateCancel(certificate))">Cancel</button>
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                @if (!certificate.IsPrimary && certificate.CreateMode)
+                {
+                    <button type="button" class="btn btn-link p-0" @onclick="@(() => ShowCreateSecondaryCertificate(certificate))"><span class="oi oi-plus" aria-hidden="true"></span> Add Secondary Certificate</button>
+                }
+                else
+                {
+                    <button class="btn btn-link text-left p-0" @onclick="@(() => ShowUpdateCertificate(certificate))">
+                        <strong>@certificate.Subject</strong>
+                    </button><br />
+                    <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
+                    <span>Thumbprint:</span> @certificate.Thumbprint
+                }
+            }
+        </div>
+    </div>
+}
+
+<Modal @ref="swapCertificateModal" Title="Swap certificate">
+    <div class="modal-body">
+        @if (!swapCertificateError.IsNullOrWhiteSpace())
+        {
+            <div class="alert alert-danger" role="alert">
+                @swapCertificateError
+            </div>
+        }
+        <div class="alert alert-danger" role="alert">
+            <div>
+                You are about to swap the primary and secondary certificate, are you sure?
+            </div>
+
+            <div class="mt-3">
+                <button type="button" class="btn btn-secondary" @onclick="@(async () => await ShowSwapCertificateAsync())">Yes swap certificate</button>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => swapCertificateModal.Hide())">No</button>
+            </div>
+        </div>
+    </div>
+</Modal>

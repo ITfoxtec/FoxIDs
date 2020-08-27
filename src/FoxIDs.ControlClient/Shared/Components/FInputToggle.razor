@@ -1,0 +1,74 @@
+﻿@inherits FInputBase<bool>
+
+<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
+    <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-outline-secondary off")" @onclick="@(async () => await ToggleCurrentValueAsync())" data-toggle="toggle" role="button" style="width: @TextWidth; height: 38px;">
+        <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
+        <div class="toggle-group">
+            <label class="btn btn-outline-primary toggle-on">@onText</label>
+            <label class="btn btn-outline-secondary toggle-off">@offText</label>
+            <span class="toggle-handle btn btn-light"></span>
+        </div>
+    </div>
+    @if (IncludeLabelAndValidationMessage)
+    {
+        <Label For="@For" class="label-control" />
+        <ValidationMessage For="@For" />
+    }
+</div>
+
+@code {
+    private string onText = "On";
+    private string offText = "Off";
+
+    [Parameter]
+    public bool IncludeActiveFormGroup { get; set; } = true;
+
+    [Parameter]
+    public bool IncludeLabelAndValidationMessage { get; set; } = true;
+
+    [Parameter]
+    public string TextWidth { get; set; } = "65px";
+
+    [Parameter]
+    public string TextType { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnValidChange { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (TextType?.Equals("e.d", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            onText = "Enable";
+            offText = "Disable";
+            TextWidth = "105px";
+        }
+        else if (TextType?.Contains(',') == true)
+        {
+            var textSplit = TextType.Split(',');
+            if(textSplit.Length == 2)
+            {
+                onText = textSplit[0];
+                offText = textSplit[1];
+            }
+        }
+        base.OnInitialized();
+    }
+
+    private async Task ToggleCurrentValueAsync()
+    {
+        var oldCurrentValue = CurrentValue;
+        if (CurrentValue == true)
+        {
+            CurrentValue = false;
+        }
+        else
+        {
+            CurrentValue = true;
+        }
+        if (oldCurrentValue != CurrentValue)
+        {
+            await OnValidChange.InvokeAsync(CurrentValue);
+        }
+    }
+}

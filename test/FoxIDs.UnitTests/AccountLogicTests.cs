@@ -1,13 +1,5 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using FoxIDs.Infrastructure;
 using FoxIDs.Logic;
-using FoxIDs.Repository;
-using Microsoft.ApplicationInsights;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Routing;
-using Moq;
 using Xunit;
 using FoxIDs.Models;
 using FoxIDs.UnitTests.MockHelpers;

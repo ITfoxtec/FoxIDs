@@ -9,20 +9,22 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Models
 {
-    public class SamlDownParty : DownParty
+    public class SamlDownParty : DownParty, IValidatableObject
     {
         public SamlDownParty()
         {
-            Type = PartyType.Saml2;
+            Type = PartyTypes.Saml2;
         }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "ids_issuer")]
         public string IdSIssuer { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
+        [JsonProperty(PropertyName = "claim_transformations")]
+        public List<SamlClaimTransformation> ClaimTransformations { get; set; }
 
-        [Length(Constants.Models.SamlParty.Down.ClaimsMin, Constants.Models.SamlParty.Down.ClaimsMax, Constants.Models.SamlParty.Down.ClaimsLength)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
@@ -64,7 +66,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "acs_urls")]
         public List<string> AcsUrls { get; set; }
 
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "logout_binding")]
         public SamlBinding LogoutBinding { get; set; }
 
@@ -76,8 +78,18 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logged_out_url")]
         public string LoggedOutUrl { get; set; }
 
-        [Length(Constants.Models.SamlParty.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (AllowUpParties?.Count <= 0)
+            {
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
+            }
+            return results;
+        }
     }
 }

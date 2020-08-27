@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
         {
             if(SessionEnabled(loginUpParty))
             {
-                logger.ScopeTrace($"Create session for User '{user.Email}' session exists, User id '{user.UserId}', Session id '{sessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace($"Create session for User '{user.Email}', User id '{user.UserId}', Session id '{sessionId}', Route '{RouteBinding.Route}'.");
 
                 var session = new SessionCookie
                 {
@@ -41,9 +41,26 @@ namespace FoxIDs.Logic
                 session.LastUpdated = authTime;
                 session.AuthMethods = authMethods;
                 await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                logger.SetScopeProperty("sessionId", session.SessionId);
-                logger.ScopeTrace($"Session created, Session id '{session.SessionId}'.");
+                logger.ScopeTrace($"Session created, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
             }
+        }
+
+        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, SessionCookie session)
+        {
+            logger.ScopeTrace($"Update session, Route '{RouteBinding.Route}'.");
+
+            var sessionEnabled = SessionEnabled(loginUpParty);
+            var sessionValid = SessionValid(loginUpParty, session);
+
+            if (sessionEnabled && sessionValid)
+            {
+                session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
+                logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<(SessionCookie, User)> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty)
@@ -68,7 +85,7 @@ namespace FoxIDs.Logic
 
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
-                        logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.");
+                        logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
 
                         return (session, user);
                     }
@@ -110,7 +127,7 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        public async Task DeleteSessionAsync(RouteBinding RouteBinding)
+        public async Task<SessionCookie> DeleteSessionAsync(RouteBinding RouteBinding)
         {
             logger.ScopeTrace($"Delete session, Route '{RouteBinding.Route}'.");
             var session = await sessionCookieRepository.GetAsync();
@@ -118,11 +135,27 @@ namespace FoxIDs.Logic
             {
                 await sessionCookieRepository.DeleteAsync();
                 logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
+                return session;
             }
             else
             {
                 logger.ScopeTrace("Session do not exists.");
+                return null;
             }
+        }
+
+        public async Task TryDeleteSessionAsync()
+        {
+            try
+            {
+                var session = await sessionCookieRepository.GetAsync();
+                if (session != null)
+                {
+                    await sessionCookieRepository.DeleteAsync();
+                }
+            }
+            catch
+            { }
         }
 
         private bool SessionEnabled(LoginUpParty loginUpParty)
@@ -169,6 +202,5 @@ namespace FoxIDs.Logic
                 return false;
             }
         }
-
     }
 }

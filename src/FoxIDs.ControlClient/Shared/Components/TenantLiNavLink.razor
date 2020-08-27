@@ -1,0 +1,57 @@
+﻿@implements IDisposable
+@inject RouteBindingLogic RouteBindingLogic
+@inject NavigationManager NavigationManager
+
+<li class="@liCssClass">
+    <a class="nav-link" href="@tenantHref">@ChildContent</a>
+</li>
+
+@code {
+    private const string liCssClassDefault = "nav-item";
+    private string liCssClass = liCssClassDefault;
+    private bool isActive = false;
+    private string tenantHref;
+    private string tenantAlternativHref;
+
+    [Parameter]
+    public string Href { get; set; }
+
+    [Parameter]
+    public string Tag { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        NavigationManager.LocationChanged += LocationChanged;
+        tenantHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Href}";
+        if(!Tag.IsNullOrEmpty())
+        {
+            tenantAlternativHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Tag}";
+        }
+        UpdateLiCssClass(NavigationManager.Uri);
+        base.OnInitialized();
+    }
+
+    private void UpdateLiCssClass(string currentLocation)
+    {
+        var newIsActive = currentLocation.Contains(tenantHref, StringComparison.OrdinalIgnoreCase);
+        if (isActive != newIsActive)
+        {
+            isActive = newIsActive;
+            liCssClass = isActive ? $"{liCssClassDefault} active" : liCssClassDefault;
+            StateHasChanged();
+        }
+    }
+
+    private void LocationChanged(object sender, LocationChangedEventArgs args)
+    {
+        UpdateLiCssClass(args.Location);
+    }
+
+    void IDisposable.Dispose()
+    {
+        NavigationManager.LocationChanged -= LocationChanged;
+    }
+}

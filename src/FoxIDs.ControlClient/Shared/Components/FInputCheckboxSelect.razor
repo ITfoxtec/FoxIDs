@@ -1,0 +1,65 @@
+﻿@using System.Linq.Expressions
+ 
+<div class="active-group active">
+    <div class="card">
+        <div class="card-body px-3 py-2">
+            @if (Items != null)
+            {
+                @foreach (var item in Items)
+                {
+                    <div class="form-check form-check-inline">
+                        @if (IsSelected(item))
+                        {
+                            <input type="checkbox" class="form-check-input" id="@ItemToId(item)" checked="checked" @onchange="@((e) => SelectChanged(e, item))" />
+                        }
+                        else
+                        {
+                            <input type="checkbox" class="form-check-input" id="@ItemToId(item)" @onchange="@((e) => SelectChanged(e, item))" />
+                        }
+                        <label class="form-check-label" for="@ItemToId(item)">@item</label>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <Label For="@For" class="label-control" />
+    <ValidationMessage For="@For" />
+</div>
+
+@code {
+    [Parameter]
+    public List<string> Items { get; set; }
+
+    [Parameter]
+    public List<string> SelectedItems { get; set; }
+
+    [Parameter]
+    public Expression<Func<object>> For { get; set; }
+
+    private string ItemToId(string item) => item.Base64UrlEncode();
+
+    private bool IsSelected(string item)
+    {
+        return SelectedItems?.Where(s => s.Equals(item, StringComparison.Ordinal)).Any() == true;
+    }
+
+    private void SelectChanged(ChangeEventArgs e, string item)
+    {
+        var selected = (bool)e.Value;
+
+        if (IsSelected(item))
+        {
+            if (!selected)
+            {
+                SelectedItems.Remove(item);
+            }
+        }
+        else
+        {
+            if (selected)
+            {
+                SelectedItems.Add(item);
+            }
+        }
+    }
+}

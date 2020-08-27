@@ -2,15 +2,15 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>SeedTool</AssemblyName>
     <StartupObject></StartupObject>
     <RootNamespace>FoxIDs.SeedTool</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ITfoxtec.Identity" Version="1.0.9" />
-    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="ITfoxtec.Identity" Version="1.1.8" />
     <PackageReference Include="UrlCombine" Version="2.0.0" />
   </ItemGroup>
 

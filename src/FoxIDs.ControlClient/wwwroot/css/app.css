@@ -1,0 +1,301 @@
+﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+
+app {
+}
+
+a {
+    color: #df8935;
+}
+
+    a:hover {
+        color: #d87513;
+    }
+
+.btn-link {
+    color: #df8935;
+}
+
+    .btn-link:hover {
+        color: #d87513;
+    }
+
+h3 {
+    font-weight: 300;
+    padding-bottom: 8px;
+}
+
+h4 {
+    font-weight: 300;
+    padding-bottom: 8px;
+}
+
+.main-container {
+    padding-top: 30px;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1000;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+/*Navbar*/
+.navbar.navbar-main {
+    border-bottom: 3px solid #fc7e01;
+    background-color: #ffffff !important;
+}
+
+.navbar .navbar-brand {
+    font-size: 1.5rem;
+}
+
+.navbar .searchDropdown {
+    min-width: 400px;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.oi.oi-plus {
+    font-size: 12px;
+}
+
+.navbar.navbar-second {
+    padding: 0rem 1rem;
+}
+
+    .navbar.navbar-second .active {
+        border-bottom: 1px solid #fc7e01;
+    }
+
+    .navbar.navbar-second .nav-item {
+        padding: .5rem 0rem;
+    }
+
+.dropdown-item.active, .dropdown-item:active {
+    color: #fff;
+    background-color: #ea7c0f;
+}
+
+.btn:focus, .btn.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.btn-primary {
+    background-color: #f19031;
+    border-color: #f19031;
+}
+
+    .btn-primary:hover {
+        color: #fff;
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+    .btn-primary.focus, .btn-primary:focus {
+        color: #fff;
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+        .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+            box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+        }
+
+    .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show > .btn-primary.dropdown-toggle {
+        background-color: #ea7c0f;
+        border-color: #ea7c0f;
+    }
+
+.btn-outline-primary {
+    color: #788489 !important;
+    border-color: #f19031 !important;
+}
+    .btn-outline-primary:hover, .btn-outline-primary.focus, .btn-outline-primary:focus {
+        color: #788489 !important;
+        background-color: #fff !important;
+        border-color: #f19031 !important;
+    }
+
+.toggle.btn-outline-primary .toggle-handle {
+    background-color: #f19031 !important;
+    border-color: #f19031 !important;
+}
+
+.btn-outline-secondary {
+    color: #788489 !important;
+}
+
+    .btn-outline-secondary:hover, .btn-outline-secondary.focus, .btn-outline-secondary:focus {
+        color: #788489 !important;
+        background-color: #fff !important;
+    }
+
+
+.toggle.btn-outline-secondary .toggle-handle {
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;  
+}
+
+.form-group {
+    margin-bottom: 1.3rem;
+}
+
+/*.form-check-input {
+    margin-left: 0!important;
+    height: 2.2rem;
+    width: 2.2rem;
+}
+*/
+.form-control:focus {
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.button-group {
+    padding-top: 15px;
+    margin-top: 15px;
+}
+
+.list-group-item.active, .list-group-item:active {
+    color: inherit;
+    background-color: #fff;
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.card-body.active, .card-body:active {
+    color: inherit;
+    background-color: #fff;
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.active-group {
+    position: relative;
+    padding: 15px 0px;
+    margin: 5px 0px;
+}
+
+    .active-group .input-control {
+        z-index: 1;
+        box-flex: 1;
+        flex-grow: 1;
+        flex-shrink: 1;
+        background-color: transparent;
+    }
+
+    .active-group .label-control {
+        display: block;
+        color: #788489;
+        padding-left: 0.8rem;
+        top: 1.35rem;
+        transition: transform 150ms cubic-bezier(0.4,0,0.2,1),opacity 150ms cubic-bezier(0.4,0,0.2,1);
+        z-index: 1;
+        -moz-transform-origin: bottom left;
+        transform-origin: bottom left;
+        -moz-transition: all .3s cubic-bezier(0.4,0,0.2,1);
+        transition: all .3s cubic-bezier(0.4,0,0.2,1);
+        -moz-transition-property: color,bottom,transform;
+        transition-property: color,bottom,transform;
+        pointer-events: none;
+        position: absolute;
+    }
+
+    .active-group .input-control:focus ~ .label-control {
+        -webkit-transform: scale(.85) translateY(-2.4rem);
+        transform: scale(.85) translateY(-2.4rem);
+        color: #df8935;
+    }
+
+    .active-group.active .label-control {
+        -webkit-transform: scale(.85) translateY(-2.4rem);
+        transform: scale(.85) translateY(-2.4rem);
+    }
+
+    .active-group .input-control:not(:focus):-webkit-autofill ~ .label-control {
+        -webkit-transform: scale(.85) translateY(-2.4rem);
+        transform: scale(.85) translateY(-2.4rem);
+    }
+
+    .active-group .input-group {
+        position: initial;
+    }
+
+.active-group-outline {
+    margin-bottom: 5px;
+}
+
+.active-group-outline .active-group {
+    margin-bottom: 0px;
+}
+
+.input-control.invalid {
+    border-color: #a94442;
+    -webkit-animation: borderFadein 1.5s;
+    animation: borderFadein 1.5s
+}
+
+.validation-message {
+    color: #a94442;
+}
+
+.validation-errors {
+    color: #a94442;
+}
+
+.modal-header .header-input-group {
+    margin-top: -7px;
+    margin-right: auto;
+    display: flex;
+    justify-content: space-between
+}
+
+    .modal-header .header-input-group .input-toggle {
+        padding-left: 8px
+    }
+
+.modal-dialog-scrollable .modal-content {
+    overflow: auto;
+}
+
+.drag-drop-zone {
+    border: 2px dashed #df8935;
+    padding: 0.5rem  0.3rem  0.5rem  0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+    color: #aeaeae;
+    font-size: 1.0rem;
+    cursor: pointer;
+    position: relative;
+}
+
+    .drag-drop-zone:hover {
+        background-color: #f5f5f5;
+    }
+
+    .drag-drop-zone input[type=file] {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }

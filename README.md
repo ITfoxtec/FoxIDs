@@ -1,12 +1,12 @@
 # FoxIDs
 
-FoxIDs is an open source security service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+FoxIDs is an open source security cloud service (identity service) supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
 
-FoxIDs is a cloud service which is deployed in you Azure tenant and repay on Azure resources. In the future is will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaktion fee.
+FoxIDs is a cloud service which can be deployed in you Azure tenant and rely on Azure resources. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 
 > For [Getting started](https://github.com/ITfoxtec/FoxIDs/wiki/Getting-started) guide and more documentation please see the [Wiki](https://github.com/ITfoxtec/FoxIDs/wiki).
 
-> FoxIDs is .NET Core 2.2 and the web sites is ASP.NET Core.
+> FoxIDs is .NET Core 3.1 and the web sites is ASP.NET Core.
 
 ## Deployment
 
@@ -18,7 +18,7 @@ You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, F
 
 The ARM deployment script deploys:
 
-- Two App Services one for FoxIDs and one for the FoxIDs API. Both App Services is hosted in the same App Service plan. 
+- Two App Services one for FoxIDs and one for the FoxIDs Control (client and api). Both App Services is hosted in the same App Service plan. 
 - FoxIDs is deployed to the two App Services from the `release-current` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
 - Key vault. Secrets are placed in Key vault.
 - Document DB.
@@ -47,16 +47,16 @@ The ARM deployment script deploys:
 
 > You can either download the seed tool (Win_x64) from [releases](https://github.com/ITfoxtec/FoxIDs/releases) or compile it from source code.
 
-In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs api.
+In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs Control api.
 
 > The seed tool is configured in the `appsettings.json` file.
 
-Add the FodIDs and FoxIDs api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidsapixxxx` or by configuring custom domains.
+Add the FodIDs and FoxIDs Control api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidscontrolapixxxx` or by configuring custom domains.
 
 ```json
 "SeedSettings": {
     "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net", 
-    "FoxIDsApiEndpoint": "https://foxidsapixxxx.azurewebsites.net" 
+    "FoxIDsControlApiEndpoint": "https://foxidscontrolapixxxx.azurewebsites.net" 
 }
 ```
 
@@ -75,7 +75,7 @@ The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the 
 
 Run the seed tool executable `SeedTool.exe`, select `M` for `Create master tenant documents`. When asked please write the first administrator users email.
 
-> IMPORTANT: Remember password and secrets.
+> IMPORTANT: Remember password and secret.
 
 Add the seed tool client secret to the seed tool configured.
 
@@ -91,9 +91,9 @@ The seed tool add generic text resources as a document in Cosmos DB. The resourc
 
 Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`. 
 
-#### 2.3 Create passwords risk list
+#### 2.3 Create risk passwords
 
-The seed tool can add passwords risk list of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+The seed tool can add risk passwords of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
@@ -105,9 +105,11 @@ Add the local pwned passwords file path to the seed tool configured.
 }
 ```
 
-> Be aware that it takes long time to upload the entire password risk list. This step can be omitted and postponed to later.
+> Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.
 
-Run the seed tool executable `SeedTool.exe`, select `P` for `Create passwords risk list`.
+> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (RU/s) temporarily.
+
+Run the seed tool executable `SeedTool.exe`, select `P` for `Create risk passwords`.
 
 #### 2.4 Add sample configuration to at track
 
@@ -122,11 +124,8 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 FoxIDs
 https://localhost:44330
 
-FoxIDs API
+FoxIDs Control (Blazor WebAssembly client and API)
 https://localhost:44331
-
-*FoxIDs Portal
-https://localhost:44332 - not created yet*
 
 *FoxIDs web
 https://localhost:44333 - not created yet*

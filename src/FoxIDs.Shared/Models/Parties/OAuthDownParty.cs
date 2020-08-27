@@ -16,14 +16,14 @@ namespace FoxIDs.Models
     {
         public OAuthDownParty()
         {
-            Type = PartyType.OAuth2;
+            Type = PartyTypes.OAuth2;
         }
 
         private TClient client;
         /// <summary>
         /// OAuth 2.0 down client.
         /// </summary>
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "client")]
         public TClient Client
         {
@@ -39,7 +39,7 @@ namespace FoxIDs.Models
         /// <summary>
         /// OAuth 2.0 down resource.
         /// </summary>
-        [ValidateObject]
+        [ValidateComplexType]
         [JsonProperty(PropertyName = "resource")]
         public OAuthDownResource Resource
         {
@@ -51,6 +51,10 @@ namespace FoxIDs.Models
             }
         }
 
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
+        [JsonProperty(PropertyName = "claim_transformations")]
+        public List<OAuthClaimTransformation> ClaimTransformations { get; set; }
+
         /// <summary>
         /// Allow cors origins.
         /// </summary>
@@ -61,6 +65,10 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (Client != null && AllowUpParties?.Count <= 0)
+            {
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required if the field {nameof(Resource)} is defined.", new[] { nameof(Client), nameof(AllowUpParties) }));
+            }
             if (Client == null && Resource == null)
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));

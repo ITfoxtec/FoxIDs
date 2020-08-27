@@ -1,15 +1,19 @@
-﻿using FoxIDs.Infrastructure.KeyVault;
+﻿using Azure.Core;
+using Azure.Identity;
+using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Localization;
 using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Helpers;
-using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
 using StackExchange.Redis;
 
@@ -24,6 +28,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<LocalizationLogic>();            
 
             services.AddTransient<SequenceLogic>();
+            services.AddTransient<FormActionLogic>();
             services.AddTransient<TrackKeyLogic>();
 
             services.AddTransient<LoginUpLogic>();
@@ -31,6 +36,10 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SecretHashLogic>();
             services.AddTransient<AccountLogic>();
             services.AddTransient<SessionLogic>();
+            services.AddTransient<ClaimTransformationsLogic>();            
+
+            services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<JwtLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<JwtLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
@@ -46,6 +55,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcTokenDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();            
             services.AddTransient<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
@@ -69,30 +79,28 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IHostingEnvironment env)
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment env)
         {
             services.AddSharedInfrastructure();
-
-            services.AddSingleton<ITelemetryInitializer, SiteTelemetryInitializer>();
 
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();
             services.AddSingleton<IValidationAttributeAdapterProvider, LocalizedValidationAttributeAdapterProvider>();
 
+            services.AddScoped<FoxIDsRouteTransformer>();
+            services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
+
+            services.AddSingleton<OidcDiscoveryHandler>();
+
             if (env.IsProduction())
             {
-                services.AddSingleton(serviceProvider =>
-                {
-                    return FoxIDsKeyVaultClient.GetManagedClient();
-                });
+                services.AddSingleton<TokenCredential, DefaultAzureCredential>();
             }
             else
             {
-                services.AddTransient<TokenHelper>();
-                services.AddSingleton(serviceProvider =>
+                services.AddSingleton<TokenCredential>(serviceProvider =>
                 {
-                    var tokenHelper = serviceProvider.GetService<TokenHelper>();
-                    return FoxIDsKeyVaultClient.GetClient(settings, tokenHelper);
+                    return new ClientSecretCredential(settings.KeyVault.TenantId, settings.KeyVault.ClientId, settings.KeyVault.ClientSecret);
                 });
             }
 

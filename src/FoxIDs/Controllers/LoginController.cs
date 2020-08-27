@@ -19,7 +19,7 @@ using Microsoft.Extensions.Localization;
 namespace FoxIDs.Controllers
 {
     [Sequence]
-    public class LoginController : EndpointController, IAllowIframeOnDomains
+    public class LoginController : EndpointController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
@@ -29,8 +29,6 @@ namespace FoxIDs.Controllers
         private readonly AccountLogic accountLogic;
         private readonly LoginUpLogic loginUpLogic;
         private readonly LogoutUpLogic logoutUpLogic;
-
-        public List<string> AllowIframeOnDomains { get; private set; }
 
         public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic accountLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
         {
@@ -52,12 +50,12 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
-                if (session != null && ValidSession(sequenceData, session))
+                var validSession = ValidSession(sequenceData, session);
+                if (validSession && sequenceData.LoginAction != LoginAction.RequereLogin)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -72,7 +70,7 @@ namespace FoxIDs.Controllers
                         SequenceString = SequenceString,
                         CssStyle = loginUpParty.CssStyle,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
-                        EnableCreateUser = loginUpParty.EnableCreateUser.Value,
+                        EnableCreateUser = !validSession && loginUpParty.EnableCreateUser.Value,
                         Email = sequenceData.EmailHint.IsNullOrWhiteSpace() ? string.Empty : sequenceData.EmailHint,
                     });
                 }
@@ -86,13 +84,15 @@ namespace FoxIDs.Controllers
 
         private bool ValidSession(LoginUpSequenceData sequenceData, SessionCookie session)
         {
+            if (session == null) return false;
+
             if (sequenceData.MaxAge.HasValue && DateTimeOffset.UtcNow.ToUnixTimeSeconds() - session.CreateTime > sequenceData.MaxAge.Value)
             {
                 logger.ScopeTrace($"Session max age not accepted, Max age '{sequenceData.MaxAge}', Session created '{session.CreateTime}'.");
                 return false;
             }
 
-            if (!sequenceData.UserId.IsNullOrEmpty() && session.UserId != sequenceData.UserId)
+            if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserId.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
             {
                 logger.ScopeTrace("Session user and requested user do not match.");
                 return false;
@@ -124,7 +124,6 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -152,24 +151,24 @@ namespace FoxIDs.Controllers
                         if (session != null && user.UserId != session.UserId)
                         {
                             logger.ScopeTrace("Authenticated user and session user do not match.");
-                            // TODO invalid user in login
-                            throw new NotImplementedException();
+                            // TODO invalid user login
+                            throw new NotImplementedException("Authenticated user and session user do not match.");
                         }
 
                         if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
                         {
                             logger.ScopeTrace("Authenticated user and requested user do not match.");
-                            // TODO invalid user in login
-                            throw new NotImplementedException();
+                            // TODO invalid user login
+                            throw new NotImplementedException("Authenticated user and requested user do not match.");
                         }
 
-                        return await LoginResponse(loginUpParty, user);
+                        return await LoginResponse(loginUpParty, user, session);
                     }
                     catch (AccountException aex)
                     {
                         if (aex is InvalidPasswordException || aex is UserNotExistsException)
                         {
-                            logger.ScopeTrace(aex.Message);
+                            logger.ScopeTrace(aex.Message, triggerEvent: true);
                             ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
                         }
                         else
@@ -187,16 +186,24 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user)
+        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user, SessionCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var authMethods = new List<string>();
             authMethods.Add(IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
-            var sessionId = RandomGenerator.Generate(24);
 
-            await sessionLogic.CreateSessionAsync(loginUpParty, user, authTime, authMethods, sessionId);
+            string sessionId = null;
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session))
+            {
+                sessionId = session.SessionId;
+            }
+            else
+            {
+                sessionId = RandomGenerator.Generate(24);
+                await sessionLogic.CreateSessionAsync(loginUpParty, user, authTime, authMethods, sessionId);
+            }
 
-            return await loginUpLogic.LoginResponseAsync(user, authTime, authMethods, sessionId);
+            return await loginUpLogic.LoginResponseAsync(loginUpParty, user, authTime, authMethods, sessionId);
         }
 
         public async Task<IActionResult> Logout()
@@ -207,7 +214,6 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
@@ -227,7 +233,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    logger.ScopeTrace("Delete session and logout.");
+                    logger.ScopeTrace($"User '{session.Email}', delete session and logout.", triggerEvent: true);
                     await sessionLogic.DeleteSessionAsync(RouteBinding);
                     return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
                 }
@@ -246,7 +252,6 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -266,8 +271,8 @@ namespace FoxIDs.Controllers
                 {
                     if (logout.LogoutChoice == LogoutChoice.Logout)
                     {
-                        logger.ScopeTrace("Delete session and logout response.");
-                        await sessionLogic.DeleteSessionAsync(RouteBinding);
+                        var session = await sessionLogic.DeleteSessionAsync(RouteBinding);
+                        logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and logout.", triggerEvent: true);
                         return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
                     }
                     else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
@@ -327,12 +332,11 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 logger.ScopeTrace("Show create user dialog.");
@@ -353,7 +357,6 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                AllowIframeOnDomains = loginUpParty.AllowIframeOnDomains;
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -372,7 +375,7 @@ namespace FoxIDs.Controllers
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
                 if (ModelState.IsValid)

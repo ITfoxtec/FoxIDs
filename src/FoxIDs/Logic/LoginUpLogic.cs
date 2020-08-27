@@ -21,15 +21,17 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
 
-        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
         }
 
-        public async Task<IActionResult> LoginRedirect(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, Login redirect.");
             var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
@@ -51,7 +53,7 @@ namespace FoxIDs.Logic
             return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");
         }
 
-        public async Task<IActionResult> LoginResponseAsync(User user, long authTime, IEnumerable<string> authMethods, string sessionId)
+        public async Task<IActionResult> LoginResponseAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
         {
             logger.ScopeTrace("Up, Login response.");
 
@@ -70,14 +72,16 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
 
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     var claimsLogic = serviceProvider.GetService<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
                     var samlClaims = await claimsLogic.FromJwtToSamlClaims(claims);
                     samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Email.OriginalString);
@@ -98,11 +102,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyType}'.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, ErrorToOAuth2OidcString(error), errorDescription);
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status: ErrorToSamlStatus(error));
 
                 default:
@@ -143,6 +147,5 @@ namespace FoxIDs.Logic
                     throw new NotImplementedException();
             }
         }
-
     }
 }

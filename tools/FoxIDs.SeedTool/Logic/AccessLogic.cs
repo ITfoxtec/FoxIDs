@@ -23,7 +23,7 @@ namespace FoxIDs.SeedTool.Logic
             if (cacheExpiresAt < DateTimeOffset.UtcNow.AddSeconds(-5).ToUnixTimeSeconds())
             {
                 Console.WriteLine("Getting seed client access token.");
-                (var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.ClientId, settings.ClientSecret, settings.RedirectUri, "foxids_api:foxids_master");
+                (var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.ClientId, settings.ClientSecret, settings.RedirectUri, "foxids_control_api:foxids_master");
                 accessTokenCache = accessToken;
                 cacheExpiresAt = DateTimeOffset.UtcNow.ToUnixTimeSeconds() + expiresIn;
                 Console.WriteLine($"Access token {accessToken.Substring(0, 40)}...");

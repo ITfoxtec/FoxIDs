@@ -53,11 +53,11 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
             {
-                case PartyType.OAuth2:
+                case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyType.Oidc:
+                case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
-                case PartyType.Saml2:
+                case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, sessionIndex: sessionId);
 
                 default:

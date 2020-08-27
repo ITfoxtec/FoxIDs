@@ -1,0 +1,58 @@
+﻿@page "/{tenantName}/tenants"
+@inherits PageBase
+
+<div class="d-flex">
+    <div class="mr-auto p-2">
+        <h3>Tenants</h3>
+    </div>
+</div>
+
+<PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
+    <FInputTextFilter @bind-Value="searchTenantForm.Model.FilterName" For="@(() => searchTenantForm.Model.FilterName)" />
+</PageEditForm>
+
+<ul class="list-group list-group-flush">
+    @foreach (var tenant in tenants)
+    {
+        <li class="list-group-item">
+            <button class="btn btn-link" @onclick="@(() => ShowTenant(@tenant.Name))">
+                @tenant.Name
+            </button>
+        </li>
+    }
+</ul>
+
+<Modal @ref="tenantModal" Title="Tenant">
+    <div class="modal-body">
+        @if (!deleteTenantError.IsNullOrWhiteSpace())
+        {
+            <div class="alert alert-danger" role="alert">
+                @deleteTenantError
+            </div>
+        }
+        <div class="mt-1 mb-3">
+            Tenant name: @tenantInfo.Name
+        </div>
+        @if (deleteTenantAcknowledge)
+        {
+            <div class="alert alert-danger" role="alert">
+                <div>
+                    You are about to delete tenant "@tenantInfo.Name", are you sure?
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteTenantAsync(tenantInfo.Name))">Yes delete tenant</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTenantAcknowledge = false)">No</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="modal-footer">
+        @if (!Constants.Routes.MasterTenantName.Equals(tenantInfo?.Name, StringComparison.OrdinalIgnoreCase))
+        {
+            <a class="btn btn-link" href="@tenantInfo.LoginUri" target="_blank" @onclick="@(() => tenantModal.Hide())">Open tenant</a>
+            <button type="button" class="btn btn-link" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
+        }
+        <button type="button" class="btn btn-secondary" @onclick="@(() => tenantModal.Hide())">Close</button>
+    </div>
+</Modal>

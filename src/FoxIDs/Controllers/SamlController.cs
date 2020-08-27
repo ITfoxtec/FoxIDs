@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML SP Metadata request, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlMetadataLogic>().SpMetadataAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML IdP Metadata request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlMetadataLogic>().IdPMetadataAsync(RouteBinding.DownParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
@@ -67,7 +67,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML Authn response, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnResponseAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
@@ -105,7 +105,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML Logged Out response, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutResponseAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
@@ -134,7 +134,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML Authn request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnRequestAsync(RouteBinding.DownParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
@@ -163,7 +163,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML Logout request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
-                    case PartyType.Saml2:
+                    case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutRequestAsync(RouteBinding.DownParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");

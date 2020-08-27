@@ -1,28 +1,31 @@
 ﻿using System;
+using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace FoxIDs
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             CurrentEnvironment = env;
         }
 
         private IConfiguration Configuration { get; }
-        private IHostingEnvironment CurrentEnvironment { get; }
+        private IWebHostEnvironment CurrentEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
+            services.AddApplicationInsightsTelemetryProcessor<TelemetryScopedProcessor>();
+
             var settings = services.BindConfig<FoxIDsSettings>(Configuration, nameof(Settings));
             // Also add as Settings
             services.AddSingleton<Settings>(settings);
@@ -37,41 +40,38 @@ namespace FoxIDs
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
-            services.AddMvc(options => options.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
-                .AddMvcLocalization();
+            services.AddCors();
+
+            services.AddControllersWithViews()
+                .AddMvcLocalization()
+                .AddNewtonsoftJson(options => { options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; }); 
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            //IApplicationLifetime lifetime
-            //lifetime.ApplicationStarted.Register(() =>
-            //{
-            //    ...  Logge start event ... ?? https://github.com/Microsoft/ApplicationInsights-aspnetcore/issues/339
-            //});
-
             if (CurrentEnvironment.IsDevelopment())
             {
-                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = true;
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler($"/{Constants.Routes.DefaultWebSiteController}/Error");
+                app.UseExceptionHandler($"/{Constants.Routes.DefaultSiteController}/Error");
                 app.UseHsts();
             }
 
             app.UseHttpsRedirection();
+            //app.UseStatusCodePages(context => throw new Exception($"Page '{context.HttpContext.Request.Path}', status code: {context.HttpContext.Response.StatusCode} {ReasonPhrases.GetReasonPhrase(context.HttpContext.Response.StatusCode)}"));
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyClientIpMiddleware();
 
-            app.UseMvc(routes =>
-            {                
-                routes.Routes.Add(new FoxIDsRouter(routes.DefaultHandler));
+            app.UseRouteBindingMiddleware();
+            app.UseCors();
 
-                routes.MapRoute(
-                    name: "default",
-                    template: $"{{controller={Constants.Routes.DefaultWebSiteController}}}/{{action={Constants.Routes.DefaultWebSiteAction}}}/{{id?}}");
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapDynamicControllerRoute<FoxIDsRouteTransformer>($"{{**{Constants.Routes.RouteTransformerPathKey}}}");
             });
         }
     }

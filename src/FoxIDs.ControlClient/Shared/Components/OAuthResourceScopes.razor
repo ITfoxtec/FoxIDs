@@ -1,0 +1,73 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => ClientResourceScope.ResourceScopes)" class="label-control" />
+    <div class="card">
+        <div class="card-body">
+            <div class="@(ClientResourceScope.DefaultResourceScope ? "form-check form-check-inline pl-1 pb-3" : "form-check form-check-inline pl-1")">
+                @if (ClientResourceScope.DefaultResourceScope)
+                {
+                    <input type="checkbox" class="form-check-input" id="oidcdefaultresource" checked="checked" @onchange="@((e) => ClientResourceScope.DefaultResourceScope = (bool)e.Value)" />
+                }
+                else
+                {
+                    <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => ClientResourceScope.DefaultResourceScope = (bool)e.Value)" />
+                }
+                <label class="form-check-label" for="oidcdefaultresource">Default resource scope '@DownPartyNameModel.Name' for the application itself</label>
+            </div>
+            @if (ClientResourceScope.DefaultResourceScope)
+            {
+                var includeDefaultResourceScopeScopesLabel = ClientResourceScope.DefaultResourceScopeScopes?.Count > 0;
+                <div class="@(includeDefaultResourceScopeScopesLabel ? "form-group active-group" : string.Empty)">
+                    <FInputTextList @bind-ValueList="ClientResourceScope.DefaultResourceScopeScopes" For="@(() => ClientResourceScope.DefaultResourceScopeScopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                    @if (includeDefaultResourceScopeScopesLabel)
+                    {
+                        <Label For="@(() => ClientResourceScope.DefaultResourceScopeScopes)" class="label-control" />
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <ul class="list-group">
+        @foreach (var resourceScope in ClientResourceScope.ResourceScopes)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="resourceScope.Resource" For="@(() => resourceScope.Resource)" />
+                        @{var includeResourceScopeScopesLabel = resourceScope.Scopes?.Count > 0;}
+                        <div class="@(includeResourceScopeScopesLabel ? "form-group active-group" : string.Empty)">
+                            <FInputTextList @bind-ValueList="resourceScope.Scopes" For="@(() => resourceScope.Scopes)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Scope" />
+                            @if (includeResourceScopeScopesLabel)
+                            {
+                                <Label For="@(() => resourceScope.Scopes)" class="label-control" />
+                            }
+                        </div>
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveResourceScope(e, ClientResourceScope.ResourceScopes, resourceScope))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => ClientResourceScope.ResourceScopes)" />
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddResourceScope(e, ClientResourceScope.ResourceScopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Resource and scopes</button>
+</div>
+
+@code {
+    [Parameter]
+    public IDownPartyName DownPartyNameModel { get; set; }
+
+    [Parameter]
+    public IClientResourceScope ClientResourceScope { get; set; }
+
+
+    private void AddResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
+    {
+        resourceScopes.Add(new OAuthDownResourceScope());
+    }
+
+    private void RemoveResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes, OAuthDownResourceScope removeResourceScope)
+    {
+        resourceScopes.Remove(removeResourceScope);
+    }
+}

@@ -1,0 +1,40 @@
+@*@typeparam TValue*@
+@using System.Reflection
+@using System.ComponentModel.DataAnnotations;
+@using System.Linq.Expressions;
+
+<label @attributes="AdditionalAttributes">@label</label>
+
+@code {
+    [Parameter]
+    public Expression<Func<object>> For { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IDictionary<string, object> AdditionalAttributes { get; set; }
+
+    private string label => GetDisplayName();
+
+    private string GetDisplayName()
+    {
+        try
+        {
+            var expression = For.Body as MemberExpression;
+            if(expression == null)
+            {
+                var ue = For.Body as UnaryExpression;
+                if (ue != null)
+                {
+                    expression = ue.Operand as MemberExpression;
+                }
+            }
+
+            var all = expression.Member.GetCustomAttributes();
+            var value = expression.Member.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+            return value?.Name ?? expression.Member.Name ?? "";
+        }
+        catch
+        {
+            return For.Name;
+        }
+    }
+}

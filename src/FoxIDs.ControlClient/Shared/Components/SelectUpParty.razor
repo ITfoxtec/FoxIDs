@@ -1,0 +1,61 @@
+﻿@typeparam TModel
+
+<div class="form-group active-group @(EditDownPartyForm.Model.AllowUpPartyNames.Count() > 0 ? "active" : "")">
+    <ul class="list-group">
+        @if (EditDownPartyForm.Model.AllowUpPartyNames.Count() <= 0)
+        {
+            <li class="list-group-item p-0">
+                <div class="d-flex">
+                    <div class="mr-auto px-3 py-1">
+                    </div>
+                    <div class="p-0">
+                        <button type="button" class="btn btn-link px-2 py-1" title="Remove" disabled><span class="oi oi-delete" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </li>
+        }
+        else
+        {
+            @foreach (var allowUpPartyName in EditDownPartyForm.Model.AllowUpPartyNames)
+            {
+                <li class="list-group-item p-0">
+                    <div class="d-flex">
+                        <div class="mr-auto px-3 py-1">
+                            @allowUpPartyName
+                        </div>
+                        <div class="p-0">
+                            <button type="button" class="btn btn-link px-2 py-1" title="Remove" @onclick="@(() => OnRemoveUpPartyNameAsync(allowUpPartyName))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                        </div>
+                    </div>
+                </li>
+            }
+        }
+    </ul>
+    <Label For="@(() => EditDownPartyForm.Model.AllowUpPartyNames)" class="label-control" />
+    <ValidationMessage For="@(() => EditDownPartyForm.Model.AllowUpPartyNames)" />
+
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+            <button type="button" class="nav-link dropdown-toggle btn btn-link btn-xs" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @onclick="@(async () => await LoadDefaultUpPartyFilter())">
+                <span class="oi oi-plus" aria-hidden="true"></span> Add allow up party
+            </button>
+
+            <div class="dropdown-menu searchDropdown" aria-labelledby="allowUpPartyNamesDropdown">
+                <PageEditForm @ref="upPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyNamesFilterValidSubmitAsync">
+                    <div class="form-group active-group pb-0">
+                        <FInputTextFilter @bind-Value="upPartyNamesFilterForm.Model.FilterName" For="@(() => upPartyNamesFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                    </div>
+                </PageEditForm>
+                @if (upPartyFilters != null)
+                {
+                    @foreach (var upPartyFilter in upPartyFilters)
+                    {
+                        <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
+                            @upPartyFilter.Name, type: @upPartyFilter.Type
+                        </button>
+                    }
+                }
+            </div>
+        </li>
+    </ul>
+</div>

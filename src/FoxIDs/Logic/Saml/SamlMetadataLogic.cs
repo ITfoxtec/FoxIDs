@@ -110,13 +110,13 @@ namespace FoxIDs.Logic
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
-        private Uri ToSamleBindingUri(SamlBindingType binding)
+        private Uri ToSamleBindingUri(SamlBindingTypes binding)
         {
             switch (binding)
             {
-                case SamlBindingType.Redirect:
+                case SamlBindingTypes.Redirect:
                     return ProtocolBindings.HttpRedirect;
-                case SamlBindingType.Post:
+                case SamlBindingTypes.Post:
                     return ProtocolBindings.HttpPost;
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");

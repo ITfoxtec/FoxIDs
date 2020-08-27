@@ -1,0 +1,21 @@
+﻿@page "/{tenantName}/"
+@inherits PageBase
+@inject RouteBindingLogic routeBinding
+@inject NavigationManager NavigationManager
+
+@code {
+    [Parameter]
+    public string TenantName { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (routeBinding.IsMasterTenant)
+        {
+            NavigationManager.NavigateTo($"{TenantName}/tenants");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"{TenantName}/downparties");
+        }
+    }
+}

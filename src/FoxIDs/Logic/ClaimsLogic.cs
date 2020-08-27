@@ -23,7 +23,7 @@ namespace FoxIDs.Logic
 
         public Task<List<Claim>> FilterJwtClaims(TClient client, IEnumerable<Claim> jwtClaims, IEnumerable<string> selectedScopes, bool includeIdTokenClaims = false, bool includeAccessTokenClaims = false)
         {
-            if (jwtClaims?.Count() <= 0)
+            if (jwtClaims == null)
             {
                 return Task.FromResult(new List<Claim>(jwtClaims));
             }

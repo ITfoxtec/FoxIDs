@@ -22,7 +22,7 @@ namespace FoxIDs.SeedTool
                 Console.WriteLine("Select seed action");
                 Console.WriteLine("M: Create master tenant documents");
                 Console.WriteLine("R: Add text resources");
-                Console.WriteLine("P: Create passwords risk list");
+                Console.WriteLine("P: Create risk passwords");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -39,7 +39,7 @@ namespace FoxIDs.SeedTool
                         break;
 
                     case 'p':
-                        await serviceProvider.GetService<PasswordRiskListSeedLogic>().SeedAsync();
+                        await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
                         break;
 
                     default:

@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
             this.claimsLogic = claimsLogic;
         }
 
-        public async Task<string> CreateAuthCodeGrantAsync(TClient client, List<Claim> claims, string redirectUri, string scope, string nonce)
+        public async Task<string> CreateAuthCodeGrantAsync(TClient client, List<Claim> claims, string redirectUri, string scope, string nonce, string codeChallenge, string codeChallengeMethod)
         {
             logger.ScopeTrace($"Create Authorization code grant, Route '{RouteBinding.Route}'.");
 
@@ -42,6 +42,8 @@ namespace FoxIDs.Logic
                 RedirectUri = redirectUri,
                 Scope = scope,
                 Nonce = nonce,
+                CodeChallenge = codeChallenge,
+                CodeChallengeMethod = codeChallengeMethod
             };
             await grant.SetIdAsync(new AuthCodeTtlGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Code = code });
             await tenantRepository.SaveAsync(grant);
@@ -72,7 +74,6 @@ namespace FoxIDs.Logic
             {
                 throw new OAuthRequestException($"Client id '{clientId}' do not match related grant.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
-
 
             logger.ScopeTrace($"Authorization code grant valid, Code '{code}'.");
             return grant;

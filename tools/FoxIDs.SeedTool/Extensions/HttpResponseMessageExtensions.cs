@@ -15,8 +15,8 @@ namespace FoxIDs.SeedTool
                     return;
                 case HttpStatusCode.NoContent:
                     return;
-                case HttpStatusCode.Found:
-                    return;
+                //case HttpStatusCode.Found:
+                //    return;
 
                 default:
                     var result = await responseMessage.Content.ReadAsStringAsync();

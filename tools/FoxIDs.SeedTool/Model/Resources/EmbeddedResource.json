@@ -345,6 +345,42 @@
           "value": "Wrong email or password"
         }
       ]
+    },
+    {
+      "id": 25,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Error"
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "items": [
+        {
+          "culture": "en",
+          "value": "An unknown error has occurred. Please try again."
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Timeout"
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "items": [
+        {
+          "culture": "en",
+          "value": "It should take a maximum of {1} minutes from start to finish. Please try again."
+        }
+      ]
     }
   ]
 }

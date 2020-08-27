@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 namespace FoxIDs
 {
@@ -8,7 +7,7 @@ namespace FoxIDs
     {
         public static RouteBinding GetRouteBinding(this HttpContext httpContext)
         {
-            return httpContext.GetRouteData().DataTokens[Constants.Routes.RouteBindingKey] as RouteBinding;
+            return httpContext.Items[Constants.Routes.RouteBindingKey] as RouteBinding;
         }
         public static RouteBinding TryGetRouteBinding(this HttpContext httpContext)
         {
@@ -23,7 +22,7 @@ namespace FoxIDs
 
         public static string GetRouteSequenceString(this HttpContext httpContext)
         {
-            return httpContext.GetRouteData().DataTokens[Constants.Routes.SequenceStringKey] as string;
+            return httpContext.Items[Constants.Routes.SequenceStringKey] as string;
         }
     }
 }

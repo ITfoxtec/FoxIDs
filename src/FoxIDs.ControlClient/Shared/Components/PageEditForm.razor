@@ -1,0 +1,13 @@
+﻿@typeparam TModel
+
+<EditForm EditContext="@EditContext" OnSubmit="OnSubmitAsync">
+    <ObjectGraphDataAnnotationsValidator />
+    @if (!error.IsNullOrWhiteSpace())
+    {
+        <div class="mt-4 alert alert-danger" role="alert">
+            @error
+        </div>
+    }
+
+    @ChildContent
+</EditForm>

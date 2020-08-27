@@ -41,8 +41,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.");
-                logger.SetScopeProperty("sequenceId", sequence.Id);
+                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id } });
             }
             catch (Exception ex)
             {
@@ -71,6 +70,10 @@ namespace FoxIDs.Logic
                 try
                 {
                     var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
+                    if (sequence != null)
+                    {
+                        logger.SetScopeProperty("sequenceId", sequence.Id);
+                    }
                     return Task.FromResult(sequence);
                 }
                 catch
@@ -90,8 +93,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
 
-                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.");
-                logger.SetScopeProperty("sequenceId", sequence.Id);
+                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id } });
             }
             catch (SequenceException)
             {
@@ -110,19 +112,30 @@ namespace FoxIDs.Logic
             var sequence = HttpContext.GetSequence();
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime + settings.SequenceDataAddLifetime)
+                AbsoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime)
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence), data.ToJson(), options);
         }
 
-        public async Task<T> GetSequenceDataAsync<T>(bool remove = true) where T : ISequenceData
+        public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false) where T : ISequenceData
         {
-            var sequence = HttpContext.GetSequence();
+            var sequence = HttpContext.GetSequence(allowNull);
+            if(allowNull && sequence == null)
+            {
+                return default;
+            }
             var key = DataKey(typeof(T), sequence);
             var data = await distributedCache.GetStringAsync(key);
             if(data == null)
             {
-                throw new SequenceException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
+                if(allowNull)
+                {
+                    return default;
+                }
+                else
+                {
+                    throw new SequenceException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
+                }
             }
 
             if(remove)
@@ -147,14 +160,14 @@ namespace FoxIDs.Logic
 
         private string DataKey(Type type, Sequence sequence)
         {
-            var RouteBinding = HttpContext.GetRouteBinding();
-            return $"{RouteBinding.TenantName}.{RouteBinding.TrackName}.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
+            var routeBinding = HttpContext.GetRouteBinding();
+            return $"{routeBinding.TenantName}.{routeBinding.TrackName}.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
         }
 
         private IDataProtector CreateProtector()
         {
-            var RouteBinding = HttpContext.GetRouteBinding();
-            return dataProtectionProvider.CreateProtector(new[] { RouteBinding.TenantName, RouteBinding.TrackName, typeof(SequenceLogic).Name });
+            var routeBinding = HttpContext.GetRouteBinding();
+            return dataProtectionProvider.CreateProtector(new[] { routeBinding.TenantName, routeBinding.TrackName, typeof(SequenceLogic).Name });
         }
 
         private void CheckTimeout(Sequence sequence) 

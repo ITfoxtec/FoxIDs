@@ -1,0 +1,661 @@
+﻿@page "/{tenantName}/downparties"
+@inherits PageBase
+
+<div class="d-flex">
+    <div class="mr-auto p-2">
+        <h3>Parties</h3>
+    </div>
+    <div class="p-2">
+        <div class="btn-group" role="group">
+            <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Down Party
+            </button>
+            <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownParty(PartyTypes.Oidc))">OpenID Connect</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2))">OAuth 2.0</button>
+                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownParty(PartyTypes.Saml2))">Saml 2.0</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Down Parties</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@upPartyHref">Up Parties</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
+        <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" />
+    </PageEditForm>
+
+    <ul class="list-group">
+        @foreach (var downParty in downParties)
+        {
+            <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
+                @if (!downParty.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @downParty.Error
+                    </div>
+                }
+                @if (downParty.Edit)
+                {
+                    if (downParty.Type == PartyTypes.Oidc)
+                    {
+                        var oidcDownParty = downParty as GeneralOidcDownPartyViewModel;
+                        <PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAfterInit="@(m => OidcDownPartyViewModelAfterInit(oidcDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
+                            <div class="modal-header">
+                                <div>
+                                    OpenID Connect
+                                </div>
+                                <div class="header-input-group">
+                                    <div class="input-toggle">
+                                        <FInputToggle @bind-Value="oidcDownParty.EnableClientTab" OnValidChange="@(v => OnOidcDownPartyClientTabChange(oidcDownParty, v))" TextType="Client&nbsp;on,Client&nbsp;off" TextWidth="110px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                    </div>
+                                    <div class="input-toggle">
+                                        <FInputToggle @bind-Value="oidcDownParty.EnableResourceTab" OnValidChange="@(v => OnOidcDownPartyResourceTabChange(oidcDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                    </div>
+                                </div>
+                                @if (oidcDownParty.ShowClientTab)
+                                {
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                }
+                            </div>
+                            <div class="modal-body">
+                                <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
+
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item">
+                                        @if (oidcDownParty.ShowClientTab)
+                                        {
+                                            <a class="nav-link active">OpenID Connect Client</a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oidcDownParty.ShowClientTab = true)">OpenID Connect Client</button>
+                                        }
+                                    </li>
+                                    <li class="nav-item">
+                                        @if (oidcDownParty.ShowClientTab)
+                                        {
+                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oidcDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
+                                        }
+                                        else
+                                        {
+                                            <a class="nav-link active">OAuth 2.0 Resource</a>
+                                        }
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content pt-3">
+                                    @if (oidcDownParty.ShowClientTab)
+                                    {
+                                        <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
+                                        @if (!oidcDownParty.EnableClientTab)
+                                        {
+                                            <i>Inactive</i>
+                                        }
+                                        @if (oidcDownParty.Form.Model.Client != null)
+                                        {
+                                            <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                                            @if (downParty.ShowAdvanced)
+                                            {
+                                                <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
+                                            }
+                                            <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
+                                            <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
+                                            <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
+                                            <OAuthSecrets EnablePkce="oidcDownParty.Form.Model.Client.EnablePkce" ClientSecret="oidcDownParty.Form.Model.Client" />
+                                            <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
+
+                                            <div class="form-group active-group active">
+                                                <Label For="@(() => oidcDownParty.Form.Model.Client.Scopes)" class="label-control" />
+                                                <ul class="list-group">
+                                                    @foreach (var scopeItem in oidcDownParty.Form.Model.Client.Scopes)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <div class="row">
+                                                                <div class="col-11">
+                                                                    <FInputText @bind-Value="scopeItem.Scope" For="@(() => scopeItem.Scope)" />
+                                                                    <div>
+                                                                        @if (scopeItem.VoluntaryClaims != null)
+                                                                        {
+                                                                            @foreach (var voluntaryClaim in scopeItem.VoluntaryClaims)
+                                                                            {
+                                                                                var includeLabel = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
+                                                                                <div class="row">
+                                                                                    <div class="col-7">
+                                                                                        @if (includeLabel)
+                                                                                        {
+                                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                                <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                                <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
+                                                                                            </div>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                        }
+                                                                                        <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
+                                                                                    </div>
+                                                                                    <div class="col-4">
+                                                                                        @if (includeLabel)
+                                                                                        {
+                                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                                <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                                <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
+                                                                                            </div>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                        }
+                                                                                    </div>
+                                                                                    <div class="col-1 p-0">
+                                                                                        @if (includeLabel)
+                                                                                        {
+                                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                            </div>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            }
+                                                                            <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
+                                                                        }
+                                                                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-1 text-right">
+                                                                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScope(e, oidcDownParty.Form.Model.Client.Scopes, scopeItem))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Scopes)" />
+                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScope(e, oidcDownParty.Form.Model.Client.Scopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Scope</button>
+                                            </div>
+
+                                            @if (downParty.ShowAdvanced)
+                                            {
+                                                <div class="form-group active-group active">
+                                                    <Label For="@(() => oidcDownParty.Form.Model.Client.Claims)" class="label-control" />
+
+                                                    <div class="card">
+                                                        <div class="card-body px-3 py-2">
+                                                            @foreach (var claimItem in oidcDownParty.Form.Model.Client.Claims)
+                                                            {
+                                                                var includeLable = oidcDownParty.Form.Model.Client.Claims.IndexOf(claimItem) <= 0;
+                                                                <div class="row">
+                                                                    <div class="col-7">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                                <Label For="@(() => claimItem.Claim)" class="label-control" />
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                        }
+                                                                        <ValidationMessage For="@(() => claimItem.Claim)" />
+                                                                    </div>
+                                                                    <div class="col-4">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <FInputToggleN @bind-Value="claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                <Label For="@(() => claimItem.InIdToken)" class="label-control" />
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <FInputToggleN @bind-Value="claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                        }
+                                                                    </div>
+                                                                    <div class="col-1 p-0">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Claims)" />
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
+                                                </div>
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.AccessTokenLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime)" />
+                                                <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
+                                                <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.IdTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.IdTokenLifetime)" />
+                                                <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint" For="@(() => oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint)" TextType="e.d" />
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <ValidationMessage For="@(() => oidcDownParty.Form.Model.Resource)" />
+                                        @if (!oidcDownParty.EnableResourceTab)
+                                        {
+                                            <i>Inactive</i>
+                                        }
+                                        @if (oidcDownParty.Form.Model.Resource != null)
+                                        {
+                                            <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            @if (!downParty.CreateMode && downParty.DeleteAcknowledge)
+                            {
+                                <div class="modal-footer">
+                                    <div class="alert alert-danger" role="alert">
+                                        <div>
+                                            You are about to delete OpenID Connect Down Party "@downParty.Name", are you sure?
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteOidcDownPartyAsync(oidcDownParty))">Yes delete</button>
+                                            <button type="button" class="btn btn-secondary" @onclick="@(() => downParty.DeleteAcknowledge = false)">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                @if (oidcDownParty.ShowClientTab)
+                                {
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                }
+                                @if (!downParty.CreateMode)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="@(() => downParty.DeleteAcknowledge = true)">Delete</button>
+                                }
+                                <button type="submit" class="btn btn-primary">@(@downParty.CreateMode ? "Create" : "Update")</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancel(downParty))">Cancel</button>
+                            </div>
+                        </PageEditForm>
+                    }
+                    else if (downParty.Type == PartyTypes.OAuth2)
+                    {
+                        var oauthDownParty = downParty as GeneralOAuthDownPartyViewModel;
+                        <PageEditForm @ref="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAfterInit="@(m => OAuthDownPartyViewModelAfterInit(oauthDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthDownPartyValidSubmitAsync(oauthDownParty, editContext))">
+                            <div class="modal-header">
+                                <div>
+                                    OAuth 2.0
+                                </div>
+                                <div class="header-input-group">
+                                    <div class="input-toggle">
+                                        <FInputToggle @bind-Value="oauthDownParty.EnableClientTab" OnValidChange="@(v => OnOAuthDownPartyClientTabChange(oauthDownParty, v))" TextType="Client&nbsp;on,Client&nbsp;off" TextWidth="110px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                    </div>
+                                    <div class="input-toggle">
+                                        <FInputToggle @bind-Value="oauthDownParty.EnableResourceTab" OnValidChange="@(v => OnOAuthDownPartyResourceTabChange(oauthDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                    </div>
+                                </div>
+                                @if (oauthDownParty.ShowClientTab)
+                                {
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                }
+                            </div>
+                            <div class="modal-body">
+                                <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" Focus="true" />
+
+                                <ul class="nav nav-tabs">
+                                    <li class="nav-item">
+                                        
+                                        @if (oauthDownParty.ShowClientTab)
+                                        {
+                                            <a class="nav-link active">OAuth 2.0 Client</a>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = true)">OAuth 2.0 Client</button>
+                                        }
+                                    </li>
+                                    <li class="nav-item">                                        
+                                        @if (oauthDownParty.ShowClientTab)
+                                        {
+                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
+                                        }
+                                        else
+                                        {
+                                            <a class="nav-link active">OAuth 2.0 Resource</a>
+                                        }
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content pt-3">
+                                    @if (oauthDownParty.ShowClientTab)
+                                    {
+                                        @if (!oauthDownParty.EnableClientTab)
+                                        {
+                                            <i>Inactive</i>
+                                        }
+                                        @if (oauthDownParty.Form.Model.Client != null)
+                                        {
+                                            <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                                            @if (downParty.ShowAdvanced)
+                                            {
+                                                <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.AllowCorsOrigins" For="@(() => oauthDownParty.Form.Model.AllowCorsOrigins)" />
+                                            }
+                                            <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" />
+                                            <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
+                                            <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.EnablePkce" For="@(() => oauthDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
+                                            <OAuthSecrets EnablePkce="oauthDownParty.Form.Model.Client.EnablePkce" ClientSecret="oauthDownParty.Form.Model.Client"  />
+                                            <OAuthResourceScopes DownPartyNameModel="oauthDownParty.Form.Model" ClientResourceScope="oauthDownParty.Form.Model.Client" />
+
+                                            <div class="form-group active-group active">
+                                                <Label For="@(() => oauthDownParty.Form.Model.Client.Scopes)" class="label-control" />
+                                                <ul class="list-group">
+                                                    @foreach (var scopeItem in oauthDownParty.Form.Model.Client.Scopes)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <div class="row">
+                                                                <div class="col-11">
+                                                                    <FInputText @bind-Value="scopeItem.Scope" For="@(() => scopeItem.Scope)" />
+                                                                    <div>
+                                                                        @if (scopeItem.VoluntaryClaims != null)
+                                                                        {
+                                                                            @foreach (var voluntaryClaim in scopeItem.VoluntaryClaims)
+                                                                            {
+                                                                                var includeLabel = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
+                                                                                <div class="row">
+                                                                                    <div class="col-11">
+                                                                                        @if (includeLabel)
+                                                                                        {
+                                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                                <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                                <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
+                                                                                            </div>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                        }
+                                                                                        <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
+                                                                                    </div>
+                                                                                    <div class="col-1 p-0">
+                                                                                        @if (includeLabel)
+                                                                                        {
+                                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                            </div>
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                            }
+                                                                            <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
+                                                                        }
+                                                                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-1 text-right">
+                                                                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthScope(e, oauthDownParty.Form.Model.Client.Scopes, scopeItem))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    }
+                                                </ul>
+                                                <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client.Scopes)" />
+                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthScope(e, oauthDownParty.Form.Model.Client.Scopes))"><span class="oi oi-plus" aria-hidden="true"></span> Add Scope</button>
+                                            </div>
+
+                                            @if (downParty.ShowAdvanced)
+                                            {
+                                                <div class="form-group active-group active">
+                                                    <Label For="@(() => oauthDownParty.Form.Model.Client.Claims)" class="label-control" />
+
+                                                    <div class="card">
+                                                        <div class="card-body px-3 py-2">
+                                                            @foreach (var claimItem in oauthDownParty.Form.Model.Client.Claims)
+                                                            {
+                                                                var includeLable = oauthDownParty.Form.Model.Client.Claims.IndexOf(claimItem) <= 0;
+                                                                <div class="row">
+                                                                    <div class="col-11">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                                <Label For="@(() => claimItem.Claim)" class="label-control" />
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                        }
+                                                                        <ValidationMessage For="@(() => claimItem.Claim)" />
+                                                                    </div>
+                                                                    <div class="col-1 p-0">
+                                                                        @if (includeLable)
+                                                                        {
+                                                                            <div class="active-group active pb-0 mb-0">
+                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                            </div>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                        }
+                                                                    </div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                    <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client.Claims)" />
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
+                                                </div>
+                                                <FInputNumberN @bind-Value="oauthDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oauthDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
+                                                <FInputNumber @bind-Value="oauthDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oauthDownParty.Form.Model.Client.AccessTokenLifetime)" />
+                                                <FInputNumberN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenLifetime" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenLifetime)" />
+                                                <FInputNumberN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime)" />
+                                                <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
+                                                <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @if (!oauthDownParty.EnableResourceTab)
+                                        {
+                                            <i>Inactive</i>
+                                        }
+                                        @if (oauthDownParty.Form.Model.Resource != null)
+                                        {
+                                            <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Resource.Scopes" For="@(() => oauthDownParty.Form.Model.Resource.Scopes)" />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            @if (!downParty.CreateMode && downParty.DeleteAcknowledge)
+                            {
+                                <div class="modal-footer">
+                                    <div class="alert alert-danger" role="alert">
+                                        <div>
+                                            You are about to delete OAuth 2.0 Down Party "@downParty.Name", are you sure?
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteOAuthDownPartyAsync(oauthDownParty))">Yes delete</button>
+                                            <button type="button" class="btn btn-secondary" @onclick="@(() => downParty.DeleteAcknowledge = false)">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                @if (oauthDownParty.ShowClientTab)
+                                {
+                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                }
+                                @if (!downParty.CreateMode)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="@(() => downParty.DeleteAcknowledge = true)">Delete</button>
+                                }
+                                <button type="submit" class="btn btn-primary">@(@downParty.CreateMode ? "Create" : "Update")</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancel(downParty))">Cancel</button>
+                            </div>
+                        </PageEditForm>
+                    }
+                    else if (downParty.Type == PartyTypes.Saml2)
+                    {
+                        var samlDownParty = downParty as GeneralSamlDownPartyViewModel;
+                        <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
+                            <div class="modal-header">
+                                SAML 2.0
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                            </div>
+                            <div class="modal-body">
+                                <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" Focus="true" />
+                                <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                                <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
+                                <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
+                                <div class="row active-group-outline">
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                </div>
+                                <FInputText @bind-Value="samlDownParty.Form.Model.LoggedOutUrl" For="@(() => samlDownParty.Form.Model.LoggedOutUrl)" />
+                                <FInputText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
+                                <div class="row active-group-outline">
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <div class="form-group active-group">
+                                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
+                                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                            </FInputSelect>
+                                        </div>
+                                    </div>
+                                </div>                                
+                                @if (downParty.ShowAdvanced)
+                                {
+                                    <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" />
+                                    <div class="form-group active-group active">
+                                        <div class="drag-drop-zone input-control">
+                                            <InputFile multiple OnChange="@(async (files) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, files))" />
+                                            @samlDownParty.CertificateFileStatus
+                                        </div>
+                                        <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
+                                        <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
+                                        <ul class="list-group">
+                                            @foreach (var certificateInfo in samlDownParty.CertificateInfoList)
+                                            {
+                                                <li class="list-group-item">
+                                                    <div class="d-flex">
+                                                        <div class="mr-auto p-2">
+                                                            <strong>@certificateInfo.Subject</strong><br />
+                                                            Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
+                                                            Thumbprint: @certificateInfo.Thumbprint
+                                                        </div>
+                                                        <div class="p-2">
+                                                            <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                    <FInputSelect @bind-Value="samlDownParty.Form.Model.SignatureAlgorithm" For="@(() => samlDownParty.Form.Model.SignatureAlgorithm)">
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha384Signature">RSA-SHA-384</option>
+                                        <option value="@Saml2SecurityAlgorithms.RsaSha512Signature">RSA-SHA-512</option>
+                                    </FInputSelect>
+                                    <FInputSelect @bind-Value="samlDownParty.Form.Model.CertificateValidationMode" For="@(() => samlDownParty.Form.Model.CertificateValidationMode)">
+                                        <option value="@X509CertificateValidationMode.None">None</option>
+                                        <option value="@X509CertificateValidationMode.ChainTrust">Chain trust</option>
+                                        <option value="@X509CertificateValidationMode.PeerTrust">Peer trust</option>
+                                        <option value="@X509CertificateValidationMode.PeerOrChainTrust">Peer or chain trust</option>
+                                    </FInputSelect>
+                                    <FInputSelect @bind-Value="samlDownParty.Form.Model.RevocationMode" For="@(() => samlDownParty.Form.Model.RevocationMode)">
+                                        <option value="@X509RevocationMode.NoCheck">No check</option>
+                                        <option value="@X509RevocationMode.Offline">Offline</option>
+                                        <option value="@X509RevocationMode.Online">Online</option>
+                                    </FInputSelect>
+                                    <FInputText @bind-Value="samlDownParty.Form.Model.IdSIssuer" For="@(() => samlDownParty.Form.Model.IdSIssuer)" />
+                                    <FInputNumber @bind-Value="samlDownParty.Form.Model.SubjectConfirmationLifetime" For="@(() => samlDownParty.Form.Model.SubjectConfirmationLifetime)" />
+                                    <FInputNumber @bind-Value="samlDownParty.Form.Model.IssuedTokenLifetime" For="@(() => samlDownParty.Form.Model.IssuedTokenLifetime)" />
+                                    <FInputNumber @bind-Value="samlDownParty.Form.Model.MetadataLifetime" For="@(() => samlDownParty.Form.Model.MetadataLifetime)" />
+                                }
+                            </div>
+                            @if (!downParty.CreateMode && downParty.DeleteAcknowledge)
+                            {
+                                <div class="modal-footer">
+                                    <div class="alert alert-danger" role="alert">
+                                        <div>
+                                            You are about to delete SAML 2.0 Down Party "@downParty.Name", are you sure?
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSamlDownPartyAsync(samlDownParty))">Yes delete</button>
+                                            <button type="button" class="btn btn-secondary" @onclick="@(() => downParty.DeleteAcknowledge = false)">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+                                @if (!downParty.CreateMode)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="@(() => downParty.DeleteAcknowledge = true)">Delete</button>
+                                }
+                                <button type="submit" class="btn btn-primary">@(@downParty.CreateMode ? "Create" : "Update")</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancel(downParty))">Cancel</button>
+                            </div>
+                        </PageEditForm>
+                    }
+                }
+                else
+                {
+                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateDownPartyAsync(downParty))">
+                        @DownPartyInfoText(downParty)
+                    </button>
+                }
+            </li>
+        }
+    </ul>
+</div>

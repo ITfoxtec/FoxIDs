@@ -1,0 +1,8 @@
+@inject OpenidConnectPkce openIDConnectPkce
+
+@code {   
+    protected override async Task OnInitializedAsync()
+    {
+        await (openIDConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+    }
+}

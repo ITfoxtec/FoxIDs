@@ -1,10 +1,13 @@
 ﻿using FoxIDs.Client.Infrastructure;
+using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
+using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Shared.Components
@@ -13,6 +16,9 @@ namespace FoxIDs.Client.Shared.Components
     {
         private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
         private IEnumerable<UpParty> upPartyFilters;
+
+        [Inject]
+        public OpenidConnectPkce OpenidConnectPkce { get; set; }
 
         [Inject]
         public UpPartyService UpPartyService { get; set; }
@@ -41,6 +47,10 @@ namespace FoxIDs.Client.Shared.Components
             try
             {
                 upPartyFilters = await UpPartyService.FilterUpPartyAsync(upPartyNamesFilterForm.Model.FilterName);
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
             catch (FoxIDsApiException ex)
             {

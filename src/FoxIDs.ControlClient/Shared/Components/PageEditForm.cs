@@ -4,6 +4,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Security.Authentication;
 using System.Threading.Tasks;
@@ -58,6 +59,7 @@ namespace FoxIDs.Client.Shared.Components
 
         public void SetError(string error)
         {
+            Debug.WriteLine(error);
             this.error = error;
             StateHasChanged();
         }
@@ -70,6 +72,7 @@ namespace FoxIDs.Client.Shared.Components
 
         public void SetFieldError(string fieldname, string error)
         {
+            Debug.WriteLine(error);
             validationMessageStore.Add(EditContext.Field(fieldname), error);
             EditContext.NotifyValidationStateChanged();
         }
@@ -103,6 +106,14 @@ namespace FoxIDs.Client.Shared.Components
                 catch (FoxIDsApiException aex)
                 {
                     error = aex.Message;
+                }
+            }
+            else
+            {
+                var validationMessages = EditContext.GetValidationMessages();
+                foreach(var message  in validationMessages)
+                {
+                    Debug.WriteLine(message);
                 }
             }
         }

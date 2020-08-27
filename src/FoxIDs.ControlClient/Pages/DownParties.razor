@@ -95,6 +95,7 @@
                                 <div class="tab-content pt-3">
                                     @if (oidcDownParty.ShowClientTab)
                                     {
+                                        <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
                                         @if (!oidcDownParty.EnableClientTab)
                                         {
                                             <i>Inactive</i>
@@ -109,8 +110,8 @@
                                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                                             <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
-                                            <OAuthSecrets EnablePkce="oidcDownParty.Form.Model.Client.EnablePkce" ExistingSecrets="oidcDownParty.Form.Model.Client.ExistingSecrets" Secrets="oidcDownParty.Form.Model.Client.Secrets" />
-                                            <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ResourceScopes="oidcDownParty.Form.Model.Client.ResourceScopes" DefaultResourceScope="oidcDownParty.Form.Model.Client.DefaultResourceScope" DefaultResourceScopeScopes="oidcDownParty.Form.Model.Client.DefaultResourceScopeScopes" />
+                                            <OAuthSecrets EnablePkce="oidcDownParty.Form.Model.Client.EnablePkce" ClientSecret="oidcDownParty.Form.Model.Client" />
+                                            <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
 
                                             <div class="form-group active-group active">
                                                 <Label For="@(() => oidcDownParty.Form.Model.Client.Scopes)" class="label-control" />
@@ -255,6 +256,7 @@
                                     }
                                     else
                                     {
+                                        <ValidationMessage For="@(() => oidcDownParty.Form.Model.Resource)" />
                                         @if (!oidcDownParty.EnableResourceTab)
                                         {
                                             <i>Inactive</i>
@@ -360,8 +362,8 @@
                                             <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" />
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                                             <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.EnablePkce" For="@(() => oauthDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
-                                            <OAuthSecrets EnablePkce="oauthDownParty.Form.Model.Client.EnablePkce" ExistingSecrets="oauthDownParty.Form.Model.Client.ExistingSecrets" Secrets="oauthDownParty.Form.Model.Client.Secrets" />
-                                            <OAuthResourceScopes DownPartyNameModel="oauthDownParty.Form.Model" ResourceScopes="oauthDownParty.Form.Model.Client.ResourceScopes" DefaultResourceScope="oauthDownParty.Form.Model.Client.DefaultResourceScope" DefaultResourceScopeScopes="oauthDownParty.Form.Model.Client.DefaultResourceScopeScopes" />
+                                            <OAuthSecrets EnablePkce="oauthDownParty.Form.Model.Client.EnablePkce" ClientSecret="oauthDownParty.Form.Model.Client"  />
+                                            <OAuthResourceScopes DownPartyNameModel="oauthDownParty.Form.Model" ClientResourceScope="oauthDownParty.Form.Model.Client" />
 
                                             <div class="form-group active-group active">
                                                 <Label For="@(() => oauthDownParty.Form.Model.Client.Scopes)" class="label-control" />

@@ -2,12 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sourceCodeRepositoryURL": {
-      "type": "string"
-    },
-    "sourceCodeBranch": {
-      "type": "string"
-    },
     "siteLocation": {
       "defaultValue": "West Europe",
       "type": "string",
@@ -90,6 +84,20 @@
       "type": "string",
       "metadata": {
         "description": "The size of the Sendgrid Plan."
+      }
+    },
+    "repoURL": {
+      "type": "string",
+      "defaultValue": "https://github.com/ITfoxtec/FoxIDs.git",
+      "metadata": {
+        "description": "The URL for the GitHub repository that contains the project to deploy."
+      }
+    },
+    "branch": {
+      "type": "string",
+      "defaultValue": "release-current",
+      "metadata": {
+        "description": "The branch of the GitHub repository to use."
       }
     }
   },
@@ -372,8 +380,8 @@
         "[resourceId('Microsoft.Web/Sites/config', variables('foxidsSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
-        "branch": "[parameters('sourceCodeBranch')]",
+        "RepoUrl": "[parameters('repoURL')]",
+        "branch": "[parameters('branch')]",
         "IsManualIntegration": "true"
       }
     },
@@ -386,8 +394,8 @@
         "[resourceId('Microsoft.Web/Sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
-        "branch": "[parameters('sourceCodeBranch')]",
+        "RepoUrl": "[parameters('repoURL')]",
+        "branch": "[parameters('branch')]",
         "IsManualIntegration": "true"
       }
     },

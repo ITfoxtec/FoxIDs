@@ -6,16 +6,18 @@
       "type": "string"
     },
     "branch": {
+      "defaultValue": "release-current",
       "type": "string"
     },
     "siteLocation": {
-      "value": "West Europe",
+      "defaultValue": "West Europe",
       "type": "string",
       "metadata": {
         "description": "Site location."
       }
     },
     "prefixName": {
+      "defaultValue": "foxids",
       "type": "string",
       "metadata": {
         "description": "Prefix of resource names."

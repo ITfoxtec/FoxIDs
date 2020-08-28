@@ -2,13 +2,6 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "repoUrl": {
-      "type": "string"
-    },
-    "branch": {
-      "defaultValue": "release-current",
-      "type": "string"
-    },
     "siteLocation": {
       "defaultValue": "West Europe",
       "type": "string",
@@ -373,8 +366,8 @@
         "[resourceId('Microsoft.Web/Sites/config', variables('foxidsSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('repoUrl')]",
-        "branch": "[parameters('branch')]",
+        "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
+        "branch": "[parameters('sourceCodeBranch')]",
         "IsManualIntegration": "true"
       }
     },
@@ -387,8 +380,8 @@
         "[resourceId('Microsoft.Web/Sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('repoUrl')]",
-        "branch": "[parameters('branch')]",
+        "RepoUrl": "[parameters('sourceCodeRepositoryURL')]",
+        "branch": "[parameters('sourceCodeBranch')]",
         "IsManualIntegration": "true"
       }
     },

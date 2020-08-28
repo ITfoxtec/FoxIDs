@@ -5,7 +5,7 @@
     <select @ref="inputElement" @bind="@CurrentValueAsString" class="form-control input-control">
         @if (ShowDefaultOption)
         {
-            <option value="0" hidden disabled>- Please Select -</option>
+            <option value="0" disabled="disabled">- Please Select -</option>
         }
         @ChildContent
     </select>

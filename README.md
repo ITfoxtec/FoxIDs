@@ -16,6 +16,8 @@ You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, F
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Frelease-current%2Fazuredeploy.json)
 
+[![OLD Deploy to Azure](https://azuredeploy.net/deploybutton.svg)](https://deploy.azure.com/?repository=https://github.com/ITfoxtec/FoxIDs/tree/release-current?ptmpl=parameters.azuredeploy.json)
+
 The ARM deployment script deploys:
 
 - Two App Services one for FoxIDs and one for the FoxIDs Control (client and api). Both App Services is hosted in the same App Service plan. 

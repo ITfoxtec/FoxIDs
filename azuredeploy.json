@@ -88,7 +88,7 @@
     }
   },
   "variables": {
-    "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
+    "suffix": "[concat('_', uniqueString(resourceGroup().id, resourceGroup().location))]",
     "foxidsSiteName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "foxidsControlSiteName": "[toLower(concat(parameters('prefixName'), 'control', variables('suffix')))]",
     "serverfarmsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",

@@ -3,9 +3,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@Title</h5>
-                <button type="button" class="close" title="Close" @onclick="@(() => Hide())" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                @if (!DisableClose) {
+                    <button type="button" class="close" title="Close" @onclick="@(() => Hide())" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                }
             </div>
             @ChildContent
         </div>
@@ -16,6 +18,9 @@
     bool show = false;
 
     public bool IsShown => show;
+
+    [Parameter]
+    public bool DisableClose { get; set; }
 
     [Parameter]
     public string Title { get; set; }

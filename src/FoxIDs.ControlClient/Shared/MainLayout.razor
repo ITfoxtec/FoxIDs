@@ -19,7 +19,9 @@
                         </a>
                         <div class="dropdown-menu searchDropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
-                                <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />
+                                <div class="form-group active-group pb-2">
+                                    <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
+                                </div>
                             </PageEditForm>
 
                             @if (!selectTrackError.IsNullOrWhiteSpace())
@@ -138,7 +140,7 @@
             </PageEditForm>
         </Modal>
 
-        <Modal @ref="selectTrackModal" Title="Select Track">
+        <Modal @ref="selectTrackModal" Title="Select Track" DisableClose="true">
             <div class="modal-body">
                 <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
                     <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />

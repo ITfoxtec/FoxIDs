@@ -43,8 +43,8 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
-                name = name.ToLower();
                 var MTenant = await tenantRepository.GetTenantByNameAsync(name);
                 return Ok(mapper.Map<Api.Tenant>(MTenant));
             }
@@ -71,6 +71,8 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
+                tenant.Name = tenant.Name?.ToLower();
+                tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
 
                 var mTenant = mapper.Map<Tenant>(tenant);
                 await tenantRepository.CreateAsync(mTenant);
@@ -105,8 +107,9 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
-                if(name.Equals(Constants.Routes.MasterTenantName, StringComparison.OrdinalIgnoreCase))
+                if (name.Equals(Constants.Routes.MasterTenantName, StringComparison.OrdinalIgnoreCase))
                 {
                     throw new InvalidOperationException("The master track can not be deleted.");
                 }

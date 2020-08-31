@@ -34,6 +34,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
                 var MParty = await tenantRepository.GetAsync<MParty>(await GetId(name));
                 return Ok(mapper.Map<AParty>(MParty));
@@ -121,6 +122,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
                 await tenantRepository.DeleteAsync<MParty>(await GetId(name));
                 return NoContent();

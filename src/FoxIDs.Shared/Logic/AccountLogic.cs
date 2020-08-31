@@ -7,8 +7,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -48,7 +46,7 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
 
             var user = new User { UserId = Guid.NewGuid().ToString() };
-            await user.SetIdAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            await user.SetIdAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email?.ToLower() });
 
             await secretHashLogic.AddSecretHashAsync(user, password);
             if (claims?.Count() > 0)

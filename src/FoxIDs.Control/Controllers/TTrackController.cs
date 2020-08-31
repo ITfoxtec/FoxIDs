@@ -36,6 +36,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name});
                 return Ok(mapper.Map<Api.Track>(mTrack));
@@ -63,6 +64,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
+                track.Name = track.Name?.ToLower();
 
                 var mTrack = mapper.Map<Track>(track);
 
@@ -127,6 +129,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
                 await tenantRepository.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
                 return NoContent();

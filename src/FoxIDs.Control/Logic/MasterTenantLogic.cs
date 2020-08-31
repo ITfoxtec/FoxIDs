@@ -38,9 +38,9 @@ namespace FoxIDs.Logic
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
             };
-            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName });
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName });
 
-            var certificate = await $"{tenantName}.{mTrack.Name}".CreateSelfSignedCertificateAsync();
+            var certificate = await $"{tenantName?.ToLower()}.{mTrack.Name}".CreateSelfSignedCertificateAsync();
             mTrack.PrimaryKey = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
@@ -61,7 +61,7 @@ namespace FoxIDs.Logic
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.Never
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName, PartyName = loginName });
+            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = loginName });
 
             await tenantService.CreateAsync(mLoginUpParty);
             return mLoginUpParty;
@@ -72,9 +72,9 @@ namespace FoxIDs.Logic
             var mUser = new User
             {
                 UserId = Guid.NewGuid().ToString(),
-                Email = email 
+                Email = email?.ToLower()
             };
-            await mUser.SetIdAsync(new User.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName, Email = email });
+            await mUser.SetIdAsync(new User.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, Email = email?.ToLower() });
             await secretHashLogic.AddSecretHashAsync(mUser, password);
             //mUser.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
 
@@ -87,7 +87,7 @@ namespace FoxIDs.Logic
             {
                 Name = controlApiResourceName
             };
-            await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName, PartyName = controlApiResourceName });
+            await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = controlApiResourceName });
             mControlApiResourceDownParty.Resource = new OAuthDownResource
             {
                 Scopes = new[] { controlApiResourceTenantScope }.ToList()
@@ -102,12 +102,12 @@ namespace FoxIDs.Logic
             {
                 Name = controlClientName
             };
-            await mControlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName, PartyName = controlClientName });
-            mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type } };
+            await mControlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = controlClientName });
+            mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
             mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
             mControlClientDownParty.Client = new OidcDownClient
             {
-                RedirectUris = GetControlClientRedirectUris(tenantName, controlClientBaseUri).ToList(),
+                RedirectUris = GetControlClientRedirectUris(tenantName?.ToLower(), controlClientBaseUri).ToList(),
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceTenantScope }.ToList() } },
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),

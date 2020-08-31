@@ -35,6 +35,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
+                partyName = partyName?.ToLower();
 
                 var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, partyName));
                 if (oauthDownParty?.Client?.Secrets?.Count > 0)
@@ -62,6 +63,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
+                secretRequest.PartyName = secretRequest.PartyName?.ToLower();
 
                 var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, secretRequest.PartyName));
 
@@ -95,6 +97,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
+                name = name?.ToLower();
 
                 var partyName = name.GetFirstInDotList();
                 var secretId = name.GetLastInDotList();

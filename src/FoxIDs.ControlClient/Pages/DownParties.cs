@@ -118,7 +118,7 @@ namespace FoxIDs.Client.Pages
                 oidcDownParty.EnableResourceTab = false;
                 oidcDownParty.CreateMode = true;
                 oidcDownParty.Edit = true;
-                downParties.Insert(0, oidcDownParty);
+                downParties.Add(oidcDownParty);
             }
             else if (type == PartyTypes.OAuth2)
             {
@@ -126,14 +126,14 @@ namespace FoxIDs.Client.Pages
                 oauthDownParty.EnableResourceTab = false;
                 oauthDownParty.CreateMode = true;
                 oauthDownParty.Edit = true;
-                downParties.Insert(0, oauthDownParty);
+                downParties.Add(oauthDownParty);
             }
             else if (type == PartyTypes.Saml2)
             {
                 var samlDownParty = new GeneralSamlDownPartyViewModel();
                 samlDownParty.CreateMode = true;
                 samlDownParty.Edit = true;
-                downParties.Insert(0, samlDownParty); 
+                downParties.Add(samlDownParty); 
             }
         }
 

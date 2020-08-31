@@ -93,7 +93,7 @@ namespace FoxIDs.Client.Pages
             var user = new GeneralUserViewModel();
             user.CreateMode = true;
             user.Edit = true;
-            users.Insert(0, user);
+            users.Add(user);
         }
 
         private async Task ShowUpdateUserAsync(GeneralUserViewModel generalUser)

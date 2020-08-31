@@ -111,7 +111,7 @@ namespace FoxIDs.Client.Pages
                 var loginUpParty = new GeneralLoginUpPartyViewModel();
                 loginUpParty.CreateMode = true;
                 loginUpParty.Edit = true;
-                upParties.Insert(0, loginUpParty);
+                upParties.Add(loginUpParty);
             }
             else if (type == PartyTypes.Oidc)
             {
@@ -122,7 +122,7 @@ namespace FoxIDs.Client.Pages
                 var samlUpParty = new GeneralSamlUpPartyViewModel();
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
-                upParties.Insert(0, samlUpParty);
+                upParties.Add(samlUpParty);
             }
         }
 

@@ -131,7 +131,7 @@ namespace FoxIDs.Logic
 
         private void CheckPasswordComplexityCharRepeate(string email, string password)
         {
-            var maxCharRepeate = RouteBinding.PasswordLength / 2;
+            var maxCharRepeate = password.Length  / 2;
 
             var charCounts = password.GroupBy(c => c).Select(g => g.Count());
             if(charCounts.Any(c => c >= maxCharRepeate))

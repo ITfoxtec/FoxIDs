@@ -34,7 +34,7 @@ namespace FoxIDs.Models.Api
 
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)]
         [Display(Name = "Authorization code lifetime")]
-        public int? AuthorizationCodeLifetime { get; set; }
+        public int? AuthorizationCodeLifetime { get; set; } = 30;
 
         /// <summary>
         /// Default 60 minutes.
@@ -45,11 +45,11 @@ namespace FoxIDs.Models.Api
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMax)]
         [Display(Name = "Refresh token lifetime")]
-        public int? RefreshTokenLifetime { get; set; }
+        public int? RefreshTokenLifetime { get; set; } = 2160;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMax)]
         [Display(Name = "Refresh token absolute lifetime")]
-        public int? RefreshTokenAbsoluteLifetime { get; set; }
+        public int? RefreshTokenAbsoluteLifetime { get; set; } = 10080;
 
         [Display(Name = "Only use refresh token one time")]
         public bool? RefreshTokenUseOneTime { get; set; }

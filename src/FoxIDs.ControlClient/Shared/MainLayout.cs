@@ -14,7 +14,6 @@ using System;
 using System.Security.Authentication;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
@@ -24,6 +23,8 @@ namespace FoxIDs.Client.Shared
         private PageEditForm<CreateTenantViewModel> createTenantForm;
         private bool createTenantDone;
         private List<string> createTenantReceipt = new List<string>();
+        private Modal createTrackModal;
+        private PageEditForm<CreateTrackViewModel> createTrackForm;
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
         private Modal selectTrackModal;
         private bool selectTrackInitialized = false;
@@ -64,17 +65,12 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnParametersSetAsync()
         {
-            //var accessToken = await (authenticationStateProvider as OidcAuthenticationStateProvider).GetAccessToken();
-            //if (!accessToken.IsNullOrEmpty())
-            //{
-
             var user = (await authenticationStateTask).User;
             if (user.Identity.IsAuthenticated)
             {
                 await ShowSelectTrackModalAsync();
                 myProfileClaims = user.Claims;
             }
-            //}
             await base.OnParametersSetAsync();
         }
 
@@ -117,6 +113,67 @@ namespace FoxIDs.Client.Shared
             }
         }
 
+        private void ShowCreateTrackModal()
+        {
+            createTrackForm.Init();
+            createTrackModal.Show();
+        }
+
+        private async Task OnCreateTrackValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                await TrackService.CreateTrackAsync(createTrackForm.Model.Map<Track>());
+                createTrackModal.Hide();
+                if (selectTrackFilterForm.Model != null)
+                {
+                    selectTrackFilterForm.Model.FilterName = null;
+                }
+                await LoadSelectTrackAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    createTrackForm.SetFieldError(nameof(createTrackForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private void ShowSettingTrackModal()
+        {
+            createTrackForm.Init();
+            createTrackModal.Show();
+        }
+
+        private async Task OnSettingTrackValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                await TrackService.CreateTrackAsync(createTrackForm.Model.Map<Track>());
+                createTrackModal.Hide();
+                if (selectTrackFilterForm.Model != null)
+                {
+                    selectTrackFilterForm.Model.FilterName = null;
+                }
+                await LoadSelectTrackAsync();
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    createTrackForm.SetFieldError(nameof(createTrackForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
 
         private async Task ShowSelectTrackModalAsync()
         {

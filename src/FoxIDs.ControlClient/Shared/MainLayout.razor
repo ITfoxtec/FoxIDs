@@ -54,7 +54,10 @@
                 else
                 {
                     <li class="nav-item">
-                        <a class="nav-link"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</a>
+                        <button class="nav-link btn btn-link" @onclick="@(() => ShowCreateTrackModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link btn btn-link" @onclick="@(() => ShowSettingTrackModal())"><span class="oi oi-cog" aria-hidden="true"></span></button>
                     </li>
                 }
                 <li class="nav-item dropdown">
@@ -112,66 +115,83 @@
 
 <AuthorizeView>
     <Authorized>
-        <Modal @ref="createTenantModal" Title="Create Tenant">
-            <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
+        @*@if (RouteBindingLogic.IsMasterTenant)
+        {*@
+            <Modal @ref="createTenantModal" Title="Create Tenant">
+                <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
+                    <div class="modal-body">
+                        <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />
+                        <FInputText @bind-Value="createTenantForm.Model.AdministratorEmail" For="@(() => createTenantForm.Model.AdministratorEmail)" />
+                        <FInputPassword @bind-Value="createTenantForm.Model.AdministratorPassword" For="@(() => createTenantForm.Model.AdministratorPassword)" />
+
+                        <ul class="list-group list-group-flush">
+                            @foreach (var receipt in createTenantReceipt)
+                            {
+                                <li class="list-group-item"><span class="oi oi-check" style="color: #62cd62;" aria-hidden="true"></span> @receipt</li>
+                            }
+                        </ul>
+                    </div>
+                    <div class="modal-footer">
+                        @if (!createTenantDone)
+                        {
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            </Modal>
+
+            <Modal @ref="selectTrackModal" Title="Select Track" DisableClose="true">
                 <div class="modal-body">
-                    <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />
-                    <FInputText @bind-Value="createTenantForm.Model.AdministratorEmail" For="@(() => createTenantForm.Model.AdministratorEmail)" />
-                    <FInputPassword @bind-Value="createTenantForm.Model.AdministratorPassword" For="@(() => createTenantForm.Model.AdministratorPassword)" />
+                    <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
+                        <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />
+                    </PageEditForm>
+
+                    @if (!selectTrackError.IsNullOrWhiteSpace())
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @selectTrackError
+                        </div>
+                    }
 
                     <ul class="list-group list-group-flush">
-                        @foreach (var receipt in createTenantReceipt)
+                        @if (selectTrackTasks != null)
                         {
-                            <li class="list-group-item"><span class="oi oi-check" style="color: #62cd62;" aria-hidden="true"></span> @receipt</li>
+                            @foreach (var track in selectTrackTasks)
+                            {
+                                <li class="list-group-item">
+                                    <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
+                                        @track.Name
+                                    </button>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <i>Loading...</i>
                         }
                     </ul>
                 </div>
-                <div class="modal-footer">
-                    @if (!createTenantDone)
-                    {
-                        <button type="submit" class="btn btn-primary">Create</button>
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
-                    }
-                </div>
-            </PageEditForm>
-        </Modal>
-
-        <Modal @ref="selectTrackModal" Title="Select Track" DisableClose="true">
-            <div class="modal-body">
-                <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
-                    <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />
-                </PageEditForm>
-
-                @if (!selectTrackError.IsNullOrWhiteSpace())
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @selectTrackError
+            </Modal>
+        @*}
+        else
+        {*@
+            <Modal @ref="createTrackModal" Title="Create Track">
+                <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
+                    <div class="modal-body">
+                        <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
                     </div>
-                }
-
-                <ul class="list-group list-group-flush">
-                    @if (selectTrackTasks != null)
-                    {
-                        @foreach (var track in selectTrackTasks)
-                        {
-                            <li class="list-group-item">
-                                <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                    @track.Name
-                                </button>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <i>Loading...</i>
-                    }
-                </ul>
-            </div>
-        </Modal>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
+                    </div>
+                </PageEditForm>
+            </Modal>
+        @*}*@
 
         <Modal @ref="myProfileModal" Title="My Profile - show claims">
             <div class="modal-body">

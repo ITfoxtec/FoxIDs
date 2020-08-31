@@ -39,14 +39,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> CreateUser(string email, string password, List<Claim> claims = null)
+        public async Task<User> CreateUser(string email, string password, List<Claim> claims = null, string tenantName = null, string trackName = null)
         {
             logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding.Route}'.");
 
             ValidateEmail(email);
 
             var user = new User { UserId = Guid.NewGuid().ToString() };
-            await user.SetIdAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email?.ToLower() });
+            await user.SetIdAsync(new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, Email = email?.ToLower() });
 
             await secretHashLogic.AddSecretHashAsync(user, password);
             if (claims?.Count() > 0)

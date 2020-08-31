@@ -85,6 +85,11 @@ namespace FoxIDs.Controllers
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }
+            catch (AccountException aex)
+            {
+                ModelState.TryAddModelError(nameof(tenant.AdministratorPassword), aex.Message);
+                return BadRequest(ModelState, aex);
+            }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)

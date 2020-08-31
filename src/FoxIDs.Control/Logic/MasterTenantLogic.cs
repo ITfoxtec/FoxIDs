@@ -19,12 +19,12 @@ namespace FoxIDs.Logic
         const string controlApiResourceTenantScope = "foxids_tenant";
 
         private readonly ITenantRepository tenantService;
-        private readonly SecretHashLogic secretHashLogic;
+        private readonly AccountLogic accountLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantService, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantRepository tenantService, AccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantService = tenantService;
-            this.secretHashLogic = secretHashLogic;
+            this.accountLogic = accountLogic;
         }
 
         public async Task CreateMasterTrackDocumentAsync(string tenantName)
@@ -69,16 +69,8 @@ namespace FoxIDs.Logic
 
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password)
         {
-            var mUser = new User
-            {
-                UserId = Guid.NewGuid().ToString(),
-                Email = email?.ToLower()
-            };
-            await mUser.SetIdAsync(new User.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, Email = email?.ToLower() });
-            await secretHashLogic.AddSecretHashAsync(mUser, password);
-            //mUser.Claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
-
-            await tenantService.CreateAsync(mUser);
+            //var claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
+            await accountLogic.CreateUser(email, password, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName);
         }
 
         public async Task CreateFoxIDsControlApiResourceDocumentAsync(string tenantName)

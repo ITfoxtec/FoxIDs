@@ -26,14 +26,7 @@
                     <div class="modal-body">
                         @if (!resource.Form.Model.Name.IsNullOrEmpty())
                         {
-                            <div class="active-group active">
-                                <div class="card bg-light">
-                                    <div class="card-body px-3 py-2">
-                                        @resource.Form.Model.Name
-                                    </div>
-                                </div>
-                                <Label For="@(() => resource.Form.Model.Name)" class="label-control" />
-                            </div>
+                            <FFieldText @bind-Value="resource.Form.Model.Name" For="@(() => resource.Form.Model.Name)" />
                             <div class="form-group active-group active">
                                 <Label For="@(() => resource.Form.Model.Items)" class="label-control" />
                                 <div class="card">

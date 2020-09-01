@@ -67,7 +67,14 @@
                                 }
                             </div>
                             <div class="modal-body">
-                                <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
+                                @if (oidcDownParty.CreateMode)
+                                {
+                                    <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
+                                }
+                                else
+                                {
+                                    <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
+                                }
 
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
@@ -319,11 +326,18 @@
                                 }
                             </div>
                             <div class="modal-body">
-                                <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" Focus="true" />
+                                @if (oauthDownParty.CreateMode)
+                                {
+                                    <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" Focus="true" />
+                                }
+                                else
+                                {
+                                    <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
+                                }
 
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
-                                        
+
                                         @if (oauthDownParty.ShowClientTab)
                                         {
                                             <a class="nav-link active">OAuth 2.0 Client</a>
@@ -333,7 +347,7 @@
                                             <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = true)">OAuth 2.0 Client</button>
                                         }
                                     </li>
-                                    <li class="nav-item">                                        
+                                    <li class="nav-item">
                                         @if (oauthDownParty.ShowClientTab)
                                         {
                                             <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
@@ -362,7 +376,7 @@
                                             <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" />
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                                             <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.EnablePkce" For="@(() => oauthDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
-                                            <OAuthSecrets EnablePkce="oauthDownParty.Form.Model.Client.EnablePkce" ClientSecret="oauthDownParty.Form.Model.Client"  />
+                                            <OAuthSecrets EnablePkce="oauthDownParty.Form.Model.Client.EnablePkce" ClientSecret="oauthDownParty.Form.Model.Client" />
                                             <OAuthResourceScopes DownPartyNameModel="oauthDownParty.Form.Model" ClientResourceScope="oauthDownParty.Form.Model.Client" />
 
                                             <div class="form-group active-group active">
@@ -529,7 +543,14 @@
                                 <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
                             </div>
                             <div class="modal-body">
-                                <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" Focus="true" />
+                                @if (samlDownParty.CreateMode)
+                                {
+                                    <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" Focus="true" />
+                                }
+                                else
+                                {
+                                    <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
+                                }
                                 <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                                 <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
                                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
@@ -570,7 +591,7 @@
                                             </FInputSelect>
                                         </div>
                                     </div>
-                                </div>                                
+                                </div>
                                 @if (downParty.ShowAdvanced)
                                 {
                                     <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" />

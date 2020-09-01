@@ -197,14 +197,7 @@
                             @deleteTrackError
                         </div>
                     }
-                    <div class="active-group active">
-                        <div class="card bg-light">
-                            <div class="card-body px-3 py-2">
-                                @updateTrackForm.Model.Name
-                            </div>
-                        </div>
-                        <Label For="@(() => updateTrackForm.Model.Name)" class="label-control" />
-                    </div>
+                    <FFieldText @bind-Value="updateTrackForm.Model.Name" For="@(() => updateTrackForm.Model.Name)" />
                     <FInputNumber @bind-Value="updateTrackForm.Model.SequenceLifetime" For="@(() => updateTrackForm.Model.SequenceLifetime)" Focus="true" />
                     <FInputNumber @bind-Value="updateTrackForm.Model.PasswordLength" For="@(() => updateTrackForm.Model.PasswordLength)" />
                     <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordComplexity" For="@(() => updateTrackForm.Model.CheckPasswordComplexity)" />

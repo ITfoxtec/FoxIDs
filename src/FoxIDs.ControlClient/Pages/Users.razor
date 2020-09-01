@@ -41,32 +41,11 @@
                         }
                         else
                         {
-                            <div class="active-group active">
-                                <div class="card bg-light">
-                                    <div class="card-body px-3 py-2">
-                                        @user.Form.Model.Email
-                                    </div>
-                                </div>
-                                <Label For="@(() => user.Form.Model.Email)" class="label-control" />
-                            </div>
+                            <FFieldText @bind-Value="user.Form.Model.Email" For="@(() => user.Form.Model.Email)" />
                             <input type="hidden" @bind="user.Form.Model.Email" />
-                            <div class="active-group active">
-                                <div class="card bg-light">
-                                    <div class="card-body px-3 py-2">
-                                        @user.Form.Model.Password
-                                    </div>
-                                </div>
-                                <Label For="@(() => user.Form.Model.Password)" class="label-control" />
-                            </div>
+                            <FFieldText @bind-Value="user.Form.Model.Password" For="@(() => user.Form.Model.Password)" />
                             <input type="hidden" @bind="user.Form.Model.Password" />
-                            <div class="active-group active">
-                                <div class="card bg-light">
-                                    <div class="card-body px-3 py-2">
-                                        @user.Form.Model.UserId
-                                    </div>
-                                </div>
-                                <Label For="@(() => user.Form.Model.UserId)" class="label-control" />
-                            </div>
+                            <FFieldText @bind-Value="user.Form.Model.UserId" For="@(() => user.Form.Model.UserId)" />
                         }
 
                         <div class="form-group active-group active">

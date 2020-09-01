@@ -25,6 +25,10 @@ namespace FoxIDs.Client.Shared
         private List<string> createTenantReceipt = new List<string>();
         private Modal createTrackModal;
         private PageEditForm<CreateTrackViewModel> createTrackForm;
+        private Modal updateTrackModal;
+        private PageEditForm<UpdateTrackViewModel> updateTrackForm;
+        private string deleteTrackError;
+        private bool deleteTrackAcknowledge = false;
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
         private Modal selectTrackModal;
         private bool selectTrackInitialized = false;
@@ -144,29 +148,27 @@ namespace FoxIDs.Client.Shared
             }
         }
 
-        private void ShowSettingTrackModal()
+        private async Task ShowUpdateTrackModalAsync()
         {
-            createTrackForm.Init();
-            createTrackModal.Show();
+            deleteTrackError = null;
+            deleteTrackAcknowledge = false;
+            var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
+            await updateTrackForm.InitAsync(track.Map<UpdateTrackViewModel>());
+            updateTrackModal.Show();
         }
 
-        private async Task OnSettingTrackValidSubmitAsync(EditContext editContext)
+        private async Task OnUpdateTrackValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                await TrackService.CreateTrackAsync(createTrackForm.Model.Map<Track>());
-                createTrackModal.Hide();
-                if (selectTrackFilterForm.Model != null)
-                {
-                    selectTrackFilterForm.Model.FilterName = null;
-                }
-                await LoadSelectTrackAsync();
+                await TrackService.UpdateTrackAsync(updateTrackForm.Model.Map<Track>());
+                updateTrackModal.Hide();
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    createTrackForm.SetFieldError(nameof(createTrackForm.Model.Name), ex.Message);
+                    updateTrackForm.SetFieldError(nameof(updateTrackForm.Model.Name), ex.Message);
                 }
                 else
                 {
@@ -174,6 +176,30 @@ namespace FoxIDs.Client.Shared
                 }
             }
         }
+
+        private async Task DeleteTrackAsync()
+        {
+            try
+            {
+                await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name);
+                updateTrackModal.Hide();
+                if (selectTrackFilterForm.Model != null)
+                {
+                    selectTrackFilterForm.Model.FilterName = null;
+                }
+                await LoadSelectTrackAsync();
+                selectTrackModal.Show();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                deleteTrackError = ex.Message;
+            }
+        }
+
 
         private async Task ShowSelectTrackModalAsync()
         {

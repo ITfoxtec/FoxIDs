@@ -101,7 +101,7 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.UpdateAsync(mTrack);
 
-                return Created(mapper.Map<Api.TrackKeys>(mTrack));
+                return Ok(mapper.Map<Api.TrackKeys>(mTrack));
             }
             catch (CosmosDataException ex)
             {

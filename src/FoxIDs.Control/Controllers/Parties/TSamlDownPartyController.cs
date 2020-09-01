@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// Saml down party api.
     /// </summary>
-    public class TSamlDownPartyController : TenantPartyApiController<Api.SamlDownParty, SamlDownParty>
+    public class TSamlDownPartyController : GenericPartyApiController<Api.SamlDownParty, SamlDownParty>
     {
         private readonly ValidateSamlPartyLogic validateSamlPartyLogic;
 

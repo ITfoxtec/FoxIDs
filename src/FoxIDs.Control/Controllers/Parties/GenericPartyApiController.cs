@@ -14,14 +14,14 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// Abstract party api.
     /// </summary>
-    public abstract class TenantPartyApiController<AParty, MParty> : TenantApiController where AParty : Api.INameValue where MParty : Party
+    public abstract class GenericPartyApiController<AParty, MParty> : TenantApiController where AParty : Api.INameValue where MParty : Party
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly ValidatePartyLogic validatePartyLogic;
 
-        public TenantPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic) : base(logger)
+        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

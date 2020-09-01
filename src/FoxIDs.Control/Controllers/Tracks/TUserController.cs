@@ -125,7 +125,7 @@ namespace FoxIDs.Controllers
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);
 
-                return Created(mapper.Map<Api.User>(mUser));
+                return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (CosmosDataException ex)
             {

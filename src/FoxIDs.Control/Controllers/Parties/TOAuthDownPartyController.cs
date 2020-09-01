@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// OAuth 2.0 down party api.
     /// </summary>
-    public class TOAuthDownPartyController : TenantPartyApiController<Api.OAuthDownParty, OAuthDownParty>
+    public class TOAuthDownPartyController : GenericPartyApiController<Api.OAuthDownParty, OAuthDownParty>
     {
         private readonly ValidateOAuthOidcLogic validateOAuthOidcLogic;
 

@@ -89,34 +89,40 @@ namespace FoxIDs.Controllers
             }
         }
 
-        ///// <summary>
-        ///// Update track.
-        ///// </summary>
-        ///// <param name="tenant">Track.</param>
-        ///// <returns>Track.</returns>
-        //[ProducesResponseType(typeof(Api.Track), StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //public async Task<ActionResult<Api.Track>> PutTrack([FromBody] Api.Track track)
-        //{
-        //    try
-        //    {
-        //        if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
+        /// <summary>
+        /// Update track.
+        /// </summary>
+        /// <param name="track">Track.</param>
+        /// <returns>Track.</returns>
+        [ProducesResponseType(typeof(Api.Track), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Api.Track>> PutTrack([FromBody] Api.Track track)
+        {
+            try
+            {
+                if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
+                track.Name = track.Name?.ToLower();
 
-        //        var mTrack = mapper.Map<Track>(track);
-        //        await tenantRepository.UpdateAsync(mTrack);
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name });
+                mTrack.SequenceLifetime = track.SequenceLifetime;
+                mTrack.PasswordLength = track.PasswordLength;
+                mTrack.CheckPasswordComplexity = track.CheckPasswordComplexity;
+                mTrack.CheckPasswordRisk = track.CheckPasswordRisk;
+                mTrack.AllowIframeOnDomains = track.AllowIframeOnDomains;
+                await tenantRepository.UpdateAsync(mTrack);
 
-        //        return Created(mapper.Map<Api.Track>(mTrack));
-        //    }
-        //    catch (CosmosDataException ex)
-        //    {
-        //        if (ex.StatusCode == HttpStatusCode.NotFound)
-        //        {
-        //            logger.Warning(ex, $"NotFound, Update '{typeof(Api.Track).Name}' by name '{tenant.Name}'.");
-        //            return NotFound(typeof(Api.Track).Name, tenant.Name);
-        //        }
-        //        throw;
-        //    }
-        //}
+                return Ok(mapper.Map<Api.Track>(mTrack));
+            }
+            catch (CosmosDataException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Track).Name}' by name '{track.Name}'.");
+                    return NotFound(typeof(Api.Track).Name, track.Name);
+                }
+                throw;
+            }
+        }
 
         /// <summary>
         /// Delete track.

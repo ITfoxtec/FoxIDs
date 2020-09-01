@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// OpenID Connect down party api.
     /// </summary>
-    public class TOidcDownPartyController : TenantPartyApiController<Api.OidcDownParty, OidcDownParty>
+    public class TOidcDownPartyController : GenericPartyApiController<Api.OidcDownParty, OidcDownParty>
     {
         private readonly ValidateOAuthOidcLogic validateOAuthOidcLogic;
 

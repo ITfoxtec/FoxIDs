@@ -23,8 +23,9 @@ namespace FoxIDs.Client.Services
         public async Task<IEnumerable<Track>> FilterTrackAsync(string filterName) => await FilterAsync<Track>(filterApiUri, filterName);
 
         public async Task<Track> GetTrackAsync(string name) => await GetAsync<Track>(apiUri, name);
-
         public async Task CreateTrackAsync(Track track) => await PostAsync(apiUri, track);
+        public async Task UpdateTrackAsync(Track track) => await PutAsync(apiUri, track);
+        public async Task DeleteTrackAsync(string name) => await DeleteAsync(apiUri, name);
 
         public async Task<TrackKeys> GetTrackKeyAsync() => await GetAsync<TrackKeys>(keyApiUri);
         public async Task UpdateTrackKeyAsync(TrackKeyRequest trackKeyRequest) => await PutAsync(keyApiUri, trackKeyRequest);

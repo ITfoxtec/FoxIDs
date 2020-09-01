@@ -13,12 +13,6 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]
         public string Name { get; set; }
 
-        [Length(Constants.Models.Claim.ClaimsMapMin, Constants.Models.Claim.ClaimsMapMax)]
-        public List<ClaimMap> ClaimMappings { get; set; }
-
-        [Length(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
-        public List<ResourceItem> Resources { get; set; }
-
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
         public int SequenceLifetime { get; set; } = 600;
 

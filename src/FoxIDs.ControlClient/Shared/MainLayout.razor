@@ -48,16 +48,16 @@
                 @if (RouteBindingLogic.IsMasterTenant)
                 {
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link" @onclick="@(() => ShowCreateTenantModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
+                        <button class="nav-link btn btn-link" @onclick="ShowCreateTenantModal"><span class="oi oi-plus" aria-hidden="true"></span> Create Tenant</button>
                     </li>
                 }
                 else
                 {
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link" @onclick="@(() => ShowCreateTrackModal())"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</button>
+                        <button class="nav-link btn btn-link" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</button>
                     </li>
                     <li class="nav-item">
-                        <button class="nav-link btn btn-link" @onclick="@(() => ShowSettingTrackModal())"><span class="oi oi-cog" aria-hidden="true"></span></button>
+                        <button class="nav-link btn btn-link" @onclick="ShowUpdateTrackModalAsync"><span class="oi oi-cog" aria-hidden="true"></span></button>
                     </li>
                 }
                 <li class="nav-item dropdown">
@@ -115,83 +115,130 @@
 
 <AuthorizeView>
     <Authorized>
-        @*@if (RouteBindingLogic.IsMasterTenant)
-        {*@
-            <Modal @ref="createTenantModal" Title="Create Tenant">
-                <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
-                    <div class="modal-body">
-                        <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />
-                        <FInputText @bind-Value="createTenantForm.Model.AdministratorEmail" For="@(() => createTenantForm.Model.AdministratorEmail)" />
-                        <FInputPassword @bind-Value="createTenantForm.Model.AdministratorPassword" For="@(() => createTenantForm.Model.AdministratorPassword)" />
-
-                        <ul class="list-group list-group-flush">
-                            @foreach (var receipt in createTenantReceipt)
-                            {
-                                <li class="list-group-item"><span class="oi oi-check" style="color: #62cd62;" aria-hidden="true"></span> @receipt</li>
-                            }
-                        </ul>
-                    </div>
-                    <div class="modal-footer">
-                        @if (!createTenantDone)
-                        {
-                            <button type="submit" class="btn btn-primary">Create</button>
-                            <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
-                        }
-                        else
-                        {
-                            <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
-                        }
-                    </div>
-                </PageEditForm>
-            </Modal>
-
-            <Modal @ref="selectTrackModal" Title="Select Track" DisableClose="true">
+        <Modal @ref="createTenantModal" Title="Create Tenant">
+            <PageEditForm @ref="createTenantForm" TModel="CreateTenantViewModel" OnValidSubmit="OnCreateTenantValidSubmitAsync">
                 <div class="modal-body">
-                    <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
-                        <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />
-                    </PageEditForm>
-
-                    @if (!selectTrackError.IsNullOrWhiteSpace())
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            @selectTrackError
-                        </div>
-                    }
+                    <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />
+                    <FInputText @bind-Value="createTenantForm.Model.AdministratorEmail" For="@(() => createTenantForm.Model.AdministratorEmail)" />
+                    <FInputPassword @bind-Value="createTenantForm.Model.AdministratorPassword" For="@(() => createTenantForm.Model.AdministratorPassword)" />
 
                     <ul class="list-group list-group-flush">
-                        @if (selectTrackTasks != null)
+                        @foreach (var receipt in createTenantReceipt)
                         {
-                            @foreach (var track in selectTrackTasks)
-                            {
-                                <li class="list-group-item">
-                                    <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                        @track.Name
-                                    </button>
-                                </li>
-                            }
-                        }
-                        else
-                        {
-                            <i>Loading...</i>
+                            <li class="list-group-item"><span class="oi oi-check" style="color: #62cd62;" aria-hidden="true"></span> @receipt</li>
                         }
                     </ul>
                 </div>
-            </Modal>
-        @*}
-        else
-        {*@
-            <Modal @ref="createTrackModal" Title="Create Track">
-                <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
-                    <div class="modal-body">
-                        <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
-                    </div>
-                    <div class="modal-footer">
+                <div class="modal-footer">
+                    @if (!createTenantDone)
+                    {
                         <button type="submit" class="btn btn-primary">Create</button>
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
-                    </div>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
+                    }
+                </div>
+            </PageEditForm>
+        </Modal>
+
+        <Modal @ref="selectTrackModal" Title="Select Track" DisableClose="true">
+            <div class="modal-body">
+                <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
+                    <FInputTextFilter @bind-Value="selectTrackFilterForm.Model.FilterName" For="@(() => selectTrackFilterForm.Model.FilterName)" />
                 </PageEditForm>
-            </Modal>
-        @*}*@
+
+                @if (!selectTrackError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @selectTrackError
+                    </div>
+                }
+
+                <ul class="list-group list-group-flush">
+                    @if (selectTrackTasks != null)
+                    {
+                        @foreach (var track in selectTrackTasks)
+                        {
+                            <li class="list-group-item">
+                                <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
+                                    @track.Name
+                                </button>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <i>Loading...</i>
+                    }
+                </ul>
+            </div>
+        </Modal>
+
+        <Modal @ref="createTrackModal" Title="Create Track">
+            <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
+                <div class="modal-body">
+                    <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
+                </div>
+            </PageEditForm>
+        </Modal>
+
+        <Modal @ref="updateTrackModal" Title="Track">
+            <PageEditForm @ref="updateTrackForm" TModel="UpdateTrackViewModel" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
+                <div class="modal-body">
+                    @if (!deleteTrackError.IsNullOrWhiteSpace())
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @deleteTrackError
+                        </div>
+                    }
+                    <div class="active-group active">
+                        <div class="card bg-light">
+                            <div class="card-body px-3 py-2">
+                                @updateTrackForm.Model.Name
+                            </div>
+                        </div>
+                        <Label For="@(() => updateTrackForm.Model.Name)" class="label-control" />
+                    </div>
+                    <FInputNumber @bind-Value="updateTrackForm.Model.SequenceLifetime" For="@(() => updateTrackForm.Model.SequenceLifetime)" Focus="true" />
+                    <FInputNumber @bind-Value="updateTrackForm.Model.PasswordLength" For="@(() => updateTrackForm.Model.PasswordLength)" />
+                    <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordComplexity" For="@(() => updateTrackForm.Model.CheckPasswordComplexity)" />
+                    <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordRisk" For="@(() => updateTrackForm.Model.CheckPasswordRisk)" />
+                    @{var includeAllowIframeOnDomainsLabel = updateTrackForm.Model.AllowIframeOnDomains?.Count > 0;}
+                    <div class="form-group active-group active">
+                        <Label For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" class="label-control" />
+                        <FInputTextList @bind-ValueList="updateTrackForm.Model.AllowIframeOnDomains" For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Domain" />
+                    </div>
+
+                    @if (deleteTrackAcknowledge)
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            <div>
+                                You are about to delete track "@updateTrackForm.Model.Name", are you sure?
+                            </div>
+
+                            <div class="mt-3">
+                                <button type="button" class="btn btn-secondary" @onclick="DeleteTrackAsync">Yes delete track</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTrackAcknowledge = false)">No</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @if (!Constants.Routes.MasterTrackName.Equals(updateTrackForm.Model.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete track</button>
+                    }
+                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => updateTrackModal.Hide())">Cancel</button>
+                </div>
+            </PageEditForm>
+        </Modal>
 
         <Modal @ref="myProfileModal" Title="My Profile - show claims">
             <div class="modal-body">

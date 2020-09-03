@@ -76,6 +76,10 @@
                                     <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
                                 }
 
+                                <div class="mb-3 alert alert-info" role="alert">
+                                    For every Login Up Party a separate user repository is created. User login sessions is also connected to a Login Up Party.
+                                </div>
+
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
                                         @if (oidcDownParty.ShowClientTab)

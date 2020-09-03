@@ -21,7 +21,7 @@ namespace FoxIDs.Client.Infrastructure.Security
         {
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
-                Authority = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.Authority),
+                Authority = await ReplaceTenantNameAsync(ReplaceClientId(globalOpenidClientPkceSettings.Authority)),
                 ClientId = globalOpenidClientPkceSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
                 Scope = GetScope(),
@@ -36,7 +36,7 @@ namespace FoxIDs.Client.Infrastructure.Security
         {
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
-                Authority = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.Authority),
+                Authority = await ReplaceTenantNameAsync(ReplaceClientId(globalOpenidClientPkceSettings.Authority)),
                 ClientId = globalOpenidClientPkceSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
                 Scope = GetScope(),
@@ -45,6 +45,11 @@ namespace FoxIDs.Client.Infrastructure.Security
             };
 
             await LogoutAsync(openidConnectPkceSettings);
+        }
+
+        private string ReplaceClientId(string value)
+        {
+            return value.Replace("{client_id}", globalOpenidClientPkceSettings.ClientId, StringComparison.OrdinalIgnoreCase);
         }
 
         private async Task<string> ReplaceTenantNameAsync(string value)

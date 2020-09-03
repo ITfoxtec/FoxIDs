@@ -77,10 +77,10 @@
                                 }
 
                                 <div class="mb-3 alert alert-info" role="alert">
-                                    
-                                    Authority: https://foxidsxxxx.azurewebsites.net/{tenant_name}/master/{client_id}(login)/
-
-
+                                    <i>Authority and OIDC Discovery example for a Up Party with the name 'login' as the target.</i>
+                                    @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name); }
+                                    <div>Authority: @authority</div>
+                                    <div>OIDC Discovery: <a href="@oidcDiscovery" target="_blank">@oidcDiscovery</a></div>
                                 </div>
 
                                 <ul class="nav nav-tabs">
@@ -341,6 +341,12 @@
                                 {
                                     <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
                                 }
+                                <div class="mb-3 alert alert-info" role="alert">
+                                    <i>Authority and OIDC Discovery example for a Up Party with the name 'login' as the target.</i>
+                                    @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name); }
+                                    <div>Authority: @authority</div>
+                                    <div>OIDC Discovery: <a href="@oidcDiscovery" target="_blank">@oidcDiscovery</a></div>
+                                </div>
 
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
@@ -558,6 +564,12 @@
                                 {
                                     <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
                                 }
+                                <div class="mb-3 alert alert-info" role="alert">
+                                    <i>SAML 2.0 Metadata example for a Up Party with the name 'login' as the target.</i>
+                                    @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name); }
+                                    <div>SAML 2.0 Metadata: <a href="@samlMetadata" target="_blank">@samlMetadata</a></div>
+                                </div>
+
                                 <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                                 <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
                                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />

@@ -19,6 +19,7 @@ using System.Linq;
 using BlazorInputFile;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 
 namespace FoxIDs.Client.Pages
 {
@@ -34,6 +35,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public DownPartyService DownPartyService { get; set; }
+
+        [Inject]
+        public OpenidConnectPkceSettings OpenidConnectPkceSettings { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -341,6 +345,19 @@ namespace FoxIDs.Client.Pages
         private void RemoveAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
         {
             arg.model.AllowUpPartyNames.Remove(arg.upPartyName);
+        }
+
+        private (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
+        {
+            var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
+            var authority = $"{tenantOpenidConnectPkceSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/";
+            return (authority, new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString);
+        }
+
+        private string GetSamlMetadata(string partyName)
+        {
+            var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
+            return $"{tenantOpenidConnectPkceSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/saml/idpmetadata";
         }
 
         #region Oidc

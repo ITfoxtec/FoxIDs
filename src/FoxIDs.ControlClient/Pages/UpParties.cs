@@ -18,6 +18,7 @@ using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 
 namespace FoxIDs.Client.Pages
 {
@@ -32,6 +33,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public UpPartyService UpPartyService { get; set; }
+
+        [Inject]
+        public OpenidConnectPkceSettings OpenidConnectPkceSettings { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -224,6 +228,12 @@ namespace FoxIDs.Client.Pages
             {
                 upParty.Edit = false;
             }
+        }
+
+        private string GetSamlMetadata(string partyName)
+        {
+            var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
+            return $"{tenantOpenidConnectPkceSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/saml/spmetadata";
         }
 
         #region Login

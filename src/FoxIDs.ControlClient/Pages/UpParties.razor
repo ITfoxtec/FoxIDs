@@ -127,6 +127,11 @@
                                 {
                                     <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
                                 }
+                                <div class="mb-3 alert alert-info" role="alert">
+                                    @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name); }
+                                    <div>SAML 2.0 Metadata: <a href="@samlMetadata" target="_blank">@samlMetadata</a></div>
+                                </div>
+
                                 <FInputText @bind-Value="samlUpParty.Form.Model.Issuer" For="@(() => samlUpParty.Form.Model.Issuer)" Focus="!samlUpParty.CreateMode" />
                                 <div class="form-group active-group active">
                                     <div class="drag-drop-zone input-control">

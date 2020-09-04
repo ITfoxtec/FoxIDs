@@ -80,7 +80,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddAuthenticationAndAuthorization(this IServiceCollection services, FoxIDsApiSettings settings)
+        public static IServiceCollection AddAuthenticationAndAuthorization(this IServiceCollection services, FoxIDsControlSettings settings)
         {
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 

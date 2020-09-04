@@ -292,6 +292,7 @@
       "properties": {
         "name": "[variables('foxidsSiteName')]",
         "siteConfig": {
+          "ftpsState": "Disabled",
           "alwaysOn": true,
           "webSocketsEnabled": false,
           "metadata": [
@@ -325,6 +326,7 @@
       "properties": {
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
+          "ftpsState": "Disabled",
           "alwaysOn": true,
           "webSocketsEnabled": false,
           "metadata": [
@@ -353,7 +355,6 @@
         "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
       ],
       "properties": {
-        "ftpsState": "Disabled",
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
@@ -375,7 +376,6 @@
         "[resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))]"
       ],
       "properties": {
-        "ftpsState": "Disabled",
         "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",

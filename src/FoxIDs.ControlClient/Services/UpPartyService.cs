@@ -12,7 +12,7 @@ namespace FoxIDs.Client.Services
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
 
-        public UpPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
+        public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName) => await FilterAsync<UpParty>(filterApiUri, filterName);

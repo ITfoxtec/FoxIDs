@@ -8,16 +8,23 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Tewr.Blazor.FileReader;
 using FoxIDs.Client.Models.Config;
+using FoxIDs.Client.Infrastructure.Security;
+using Blazored.SessionStorage;
+using ITfoxtec.Identity.Discovery;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.IdentityModel.Logging;
 
 namespace FoxIDs.Client.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        const string httpClientLogicalName = "FoxIDs.ControlAPI";
+        public const string HttpClientSecureLogicalName = "FoxIDs.ControlAPI.Secure";
+        public const string HttpClientLogicalName = "FoxIDs.ControlAPI";
 
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddScoped<RouteBindingLogic>();
+            services.AddScoped<ControlClientSettingLogic>();
             services.AddScoped<NotificationLogic>();
             services.AddScoped<TrackSelectedLogic>();
 
@@ -26,6 +33,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
+            services.AddScoped<ClientService>();
             services.AddScoped<TenantService>();
             services.AddScoped<TrackService>();
             services.AddScoped<DownPartyService>();
@@ -39,11 +47,14 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, WebAssemblyHostConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
         {
-            services.AddHttpClient(httpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
+            services.AddHttpClient(HttpClientSecureLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
                .AddHttpMessageHandler<AccessTokenMessageHandler>()
                .AddHttpMessageHandler<CheckResponseMessageHandler>();
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientSecureLogicalName));
 
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));
+            services.AddHttpClient(HttpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))   
+                .AddHttpMessageHandler<CheckResponseMessageHandler>();
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientLogicalName));
 
             var settings = new ClientSettings();
             configuration.Bind("Settings", settings);
@@ -54,6 +65,25 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddTransient<CheckResponseMessageHandler>();
 
             services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
+
+            return services;
+        }
+
+        private static IServiceCollection AddTenantOpenidConnectPkce(this IServiceCollection services)
+        {
+            IdentityModelEventSource.ShowPII = true;
+
+            services.AddBlazoredSessionStorage();
+
+            services.AddSingleton<OpenidConnectPkceSettings>();
+            services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
+            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));
+
+            services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
+            services.AddTransient<AccessTokenMessageHandler>();
+
+            services.AddOptions();
+            services.AddAuthorizationCore();
 
             return services;
         }

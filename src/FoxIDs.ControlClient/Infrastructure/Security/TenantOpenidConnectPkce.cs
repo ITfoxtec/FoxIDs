@@ -12,16 +12,20 @@ namespace FoxIDs.Client.Infrastructure.Security
     public class TenantOpenidConnectPkce : OpenidConnectPkce
     {
         private readonly RouteBindingLogic routeBindingBase;
+        private readonly ControlClientSettingLogic controlClientSettingLogic;
         private readonly ClientSettings clientSettings;
 
-        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, authenticationStateProvider)
+        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ControlClientSettingLogic controlClientSettingLogic, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, authenticationStateProvider)
         {
             this.routeBindingBase = routeBindingBase;
+            this.controlClientSettingLogic = controlClientSettingLogic;
             this.clientSettings = clientSettings;
         }
 
         public async Task TenantLoginAsync()
         {
+            await controlClientSettingLogic.InitLoadAsync();
+
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
                 Authority = await GetAuthority(),
@@ -37,6 +41,8 @@ namespace FoxIDs.Client.Infrastructure.Security
 
         public async Task TenantLogoutAsync()
         {
+            await controlClientSettingLogic.InitLoadAsync();
+
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
                 Authority = await GetAuthority(),

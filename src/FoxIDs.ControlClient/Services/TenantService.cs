@@ -11,7 +11,7 @@ namespace FoxIDs.Client.Services
         private const string apiUri = "api/{tenant}/master/!tenant";
         private const string filterApiUri = "api/{tenant}/master/!filtertenant";
 
-        public TenantService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
+        public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterName) => await FilterAsync<Tenant>(filterApiUri, filterName);

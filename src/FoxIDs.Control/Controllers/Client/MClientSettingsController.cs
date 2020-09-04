@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FoxIDs.Controllers.Client
 {
-    public class ClientSettingsController : ApiController
+    public class MClientSettingsController : ApiController
     {
         private readonly FoxIDsControlSettings settings;
 
-        public ClientSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger) : base(logger)
+        public MClientSettingsController(FoxIDsControlSettings settings, TelemetryScopedLogger logger) : base(logger)
         {
             this.settings = settings;
         }

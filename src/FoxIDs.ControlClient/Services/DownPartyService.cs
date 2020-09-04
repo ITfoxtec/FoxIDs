@@ -15,7 +15,7 @@ namespace FoxIDs.Client.Services
         private const string oauthclientsecretApiUri = "api/{tenant}/{track}/!oauthclientsecretdownparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samldownparty";
 
-        public DownPartyService(HttpClient httpClient, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClient, routeBindingLogic, trackSelectedLogic)
+        public DownPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
         public async Task<IEnumerable<DownParty>> FilterDownPartyAsync(string filterName) => await FilterAsync<DownParty>(filterApiUri, filterName);

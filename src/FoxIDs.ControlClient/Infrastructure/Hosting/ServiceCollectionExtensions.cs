@@ -18,9 +18,6 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public const string HttpClientSecureLogicalName = "FoxIDs.ControlAPI.Secure";
-        public const string HttpClientLogicalName = "FoxIDs.ControlAPI";
-
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddScoped<RouteBindingLogic>();
@@ -47,14 +44,14 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, WebAssemblyHostConfiguration configuration, IWebAssemblyHostEnvironment hostEnvironment)
         {
-            services.AddHttpClient(HttpClientSecureLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
+            services.AddHttpClient(BaseService.HttpClientSecureLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
                .AddHttpMessageHandler<AccessTokenMessageHandler>()
                .AddHttpMessageHandler<CheckResponseMessageHandler>();
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientSecureLogicalName));
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientSecureLogicalName));
 
-            services.AddHttpClient(HttpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))   
+            services.AddHttpClient(BaseService.HttpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))   
                 .AddHttpMessageHandler<CheckResponseMessageHandler>();
-            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(HttpClientLogicalName));
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientLogicalName));
 
             var settings = new ClientSettings();
             configuration.Bind("Settings", settings);

@@ -1,5 +1,4 @@
-﻿using FoxIDs.Client.Infrastructure.Hosting;
-using FoxIDs.Client.Logic;
+﻿using FoxIDs.Client.Logic;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,13 +8,15 @@ namespace FoxIDs.Client.Services
 {
     public abstract class BaseService
     {
+        public const string HttpClientSecureLogicalName = "FoxIDs.ControlAPI.Secure";
+        public const string HttpClientLogicalName = "FoxIDs.ControlAPI";
         protected readonly HttpClient httpClient;
         protected readonly RouteBindingLogic routeBindingLogic;
         private readonly TrackSelectedLogic trackSelectedLogic;
 
         public BaseService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic, bool secureService = true)
         {
-            httpClient = httpClientFactory.CreateClient(secureService ? ServiceCollectionExtensions.HttpClientSecureLogicalName : ServiceCollectionExtensions.HttpClientLogicalName);
+            httpClient = httpClientFactory.CreateClient(secureService ? HttpClientSecureLogicalName : HttpClientLogicalName);
             this.routeBindingLogic = routeBindingLogic;
             this.trackSelectedLogic = trackSelectedLogic;
         }

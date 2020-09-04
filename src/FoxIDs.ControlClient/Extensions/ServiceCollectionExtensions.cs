@@ -5,23 +5,19 @@ using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
-using System;
 using System.Net.Http;
 
 namespace FoxIDs.Client
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddTenantOpenidConnectPkce(this IServiceCollection services, Action<TenantOpenidConnectPkceSettings> settings)
+        public static IServiceCollection AddTenantOpenidConnectPkce(this IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
 
             services.AddBlazoredSessionStorage();
 
-            var openIDClientPkceSettings = new TenantOpenidConnectPkceSettings();
-            settings(openIDClientPkceSettings);
-            services.AddSingleton<OpenidConnectPkceSettings>(openIDClientPkceSettings);
-
+            services.AddSingleton<OpenidConnectPkceSettings>();
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));
 

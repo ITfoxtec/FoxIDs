@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Tewr.Blazor.FileReader;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Infrastructure.Hosting
 {
@@ -44,10 +45,11 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(httpClientLogicalName));
 
-            services.AddTenantOpenidConnectPkce(settings =>
-            {
-                configuration.Bind("IdentitySettings", settings);
-            });
+            var settings = new ClientSettings();
+            configuration.Bind("Settings", settings);
+            services.AddSingleton(settings);
+
+            services.AddTenantOpenidConnectPkce();
 
             services.AddTransient<CheckResponseMessageHandler>();
 

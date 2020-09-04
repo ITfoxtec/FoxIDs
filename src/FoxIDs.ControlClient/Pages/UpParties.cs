@@ -232,8 +232,8 @@ namespace FoxIDs.Client.Pages
 
         private string GetSamlMetadata(string partyName)
         {
-            var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
-            return $"{tenantOpenidConnectPkceSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/saml/spmetadata";
+            //var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
+            return $"{""/*tenantOpenidConnectPkceSettings.FoxIDsEndpoint*/}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/saml/spmetadata";
         }
 
         #region Login

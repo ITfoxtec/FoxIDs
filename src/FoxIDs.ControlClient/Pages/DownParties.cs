@@ -349,15 +349,15 @@ namespace FoxIDs.Client.Pages
 
         private (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
         {
-            var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
-            var authority = $"{tenantOpenidConnectPkceSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/";
+            //var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
+            var authority = $"{"" /*tenantOpenidConnectPkceSettings.FoxIDsEndpoint*/}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/";
             return (authority, new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString);
         }
 
         private string GetSamlMetadata(string partyName)
         {
-            var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
-            return $"{tenantOpenidConnectPkceSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/saml/idpmetadata";
+            //var tenantOpenidConnectPkceSettings = OpenidConnectPkceSettings as TenantOpenidConnectPkceSettings;
+            return $"{"" /*tenantOpenidConnectPkceSettings.FoxIDsEndpoint*/}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/saml/idpmetadata";
         }
 
         #region Oidc

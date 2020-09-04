@@ -1,5 +1,6 @@
 ﻿using Blazored.SessionStorage;
 using FoxIDs.Client.Logic;
+using FoxIDs.Client.Models.Config;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -11,10 +12,12 @@ namespace FoxIDs.Client.Infrastructure.Security
     public class TenantOpenidConnectPkce : OpenidConnectPkce
     {
         private readonly RouteBindingLogic routeBindingBase;
+        private readonly ClientSettings clientSettings;
 
-        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, authenticationStateProvider)
+        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, authenticationStateProvider)
         {
             this.routeBindingBase = routeBindingBase;
+            this.clientSettings = clientSettings;
         }
 
         public async Task TenantLoginAsync()
@@ -22,11 +25,11 @@ namespace FoxIDs.Client.Infrastructure.Security
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
                 Authority = await GetAuthority(),
-                ClientId = globalOpenidClientPkceSettings.ClientId,
+                ClientId = clientSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
                 Scope = GetScope(),
-                LoginCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LoginCallBackPath),
-                LogoutCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LogoutCallBackPath)
+                LoginCallBackPath = await ReplaceTenantNameAsync(clientSettings.LoginCallBackPath),
+                LogoutCallBackPath = await ReplaceTenantNameAsync(clientSettings.LogoutCallBackPath)
             };
 
             await LoginAsync(openidConnectPkceSettings);
@@ -37,11 +40,11 @@ namespace FoxIDs.Client.Infrastructure.Security
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
                 Authority = await GetAuthority(),
-                ClientId = globalOpenidClientPkceSettings.ClientId,
+                ClientId = clientSettings.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
                 Scope = GetScope(),
-                LoginCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LoginCallBackPath),
-                LogoutCallBackPath = await ReplaceTenantNameAsync(globalOpenidClientPkceSettings.LogoutCallBackPath)
+                LoginCallBackPath = await ReplaceTenantNameAsync(clientSettings.LoginCallBackPath),
+                LogoutCallBackPath = await ReplaceTenantNameAsync(clientSettings.LogoutCallBackPath)
             };
 
             await LogoutAsync(openidConnectPkceSettings);
@@ -54,20 +57,20 @@ namespace FoxIDs.Client.Infrastructure.Security
 
         private async Task<string> GetAuthority()
         {
-            var authority = globalOpenidClientPkceSettings.Authority.Replace("{client_id}", globalOpenidClientPkceSettings.ClientId, StringComparison.OrdinalIgnoreCase);
+            var authority = clientSettings.Authority.Replace("{client_id}", clientSettings.ClientId, StringComparison.OrdinalIgnoreCase);
             authority = await ReplaceTenantNameAsync(authority);
-            return authority.Replace("https://foxids_endpoint", (globalOpenidClientPkceSettings as TenantOpenidConnectPkceSettings).FoxIDsEndpoint, StringComparison.OrdinalIgnoreCase);
+            return authority.Replace("{foxids_endpoint}", clientSettings.FoxIDsEndpoint, StringComparison.OrdinalIgnoreCase);
         }
 
         private string GetScope()
         {
             if(routeBindingBase.IsMasterTenant)
             {
-                return $"{globalOpenidClientPkceSettings.Scope} {(globalOpenidClientPkceSettings as TenantOpenidConnectPkceSettings).MasterScope}";
+                return $"{clientSettings.Scope} {clientSettings.MasterScope}";
             }
             else
             {
-                return globalOpenidClientPkceSettings.Scope;
+                return clientSettings.Scope;
             }
         }
     }

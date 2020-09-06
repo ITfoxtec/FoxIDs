@@ -35,8 +35,9 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<AccountLogic>();
             services.AddTransient<SecretHashLogic>();
-            
+
             services.AddTransient<MasterTenantLogic>();
+            services.AddTransient<TrackLogic>();
             services.AddTransient<ValidatePartyLogic>();
             services.AddTransient<ValidateOAuthOidcLogic>();
             services.AddTransient<ValidateSamlPartyLogic>();

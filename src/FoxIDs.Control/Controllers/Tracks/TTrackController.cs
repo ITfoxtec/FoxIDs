@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using ITfoxtec.Identity;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -16,12 +17,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackLogic trackLogic;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackLogic trackLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackLogic = trackLogic;
         }
 
         /// <summary>
@@ -67,14 +70,8 @@ namespace FoxIDs.Controllers
                 track.Name = track.Name?.ToLower();
 
                 var mTrack = mapper.Map<Track>(track);
-
-                var certificate = await track.Name.CreateSelfSignedCertificateAsync();
-                mTrack.PrimaryKey = new TrackKey()
-                {
-                    Type = TrackKeyType.Contained,
-                    Key = await certificate.ToJsonWebKeyAsync(true)
-                };
-                await tenantRepository.CreateAsync(mTrack);
+                await trackLogic.CreateTrackDocumentAsync(mTrack);
+                await trackLogic.CreateLoginDocumentAsync(mTrack);
 
                 return Created(mapper.Map<Api.Track>(mTrack));
             }

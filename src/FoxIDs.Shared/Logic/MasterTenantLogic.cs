@@ -19,18 +19,17 @@ namespace FoxIDs.Logic
         const string controlApiResourceTenantScope = "foxids_tenant";
         const string controlApiResourceMasterScope = "foxids_master";
 
-        private readonly ITenantRepository tenantService;
+        private readonly ITenantRepository tenantRepository;
         private readonly AccountLogic accountLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantService, AccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantRepository tenantRepository, AccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.tenantService = tenantService;
+            this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
         }
 
         public async Task CreateMasterTrackDocumentAsync(string tenantName)
         {
-
             var mTrack = new Track
             {
                 Name = Constants.Routes.MasterTrackName,
@@ -48,7 +47,7 @@ namespace FoxIDs.Logic
                 Key = await certificate.ToJsonWebKeyAsync(true)
             };
 
-            await tenantService.CreateAsync(mTrack);
+            await tenantRepository.CreateAsync(mTrack);
         }
 
         public async Task<LoginUpParty> CreateLoginDocumentAsync(string tenantName)
@@ -64,7 +63,7 @@ namespace FoxIDs.Logic
             };
             await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = loginName });
 
-            await tenantService.CreateAsync(mLoginUpParty);
+            await tenantRepository.CreateAsync(mLoginUpParty);
             return mLoginUpParty;
         }
 
@@ -92,7 +91,7 @@ namespace FoxIDs.Logic
                 Scopes = scopes
             };
 
-            await tenantService.CreateAsync(mControlApiResourceDownParty);
+            await tenantRepository.CreateAsync(mControlApiResourceDownParty);
         }
 
         public async Task CreateControlClientDocmentAsync(string tenantName, string controlClientBaseUri, LoginUpParty loginUpParty, bool includeMasterTenantScope = false)
@@ -127,7 +126,7 @@ namespace FoxIDs.Logic
                 RequireLogoutIdTokenHint = true,
             };
             
-            await tenantService.CreateAsync(mControlClientDownParty);
+            await tenantRepository.CreateAsync(mControlClientDownParty);
         }
 
         private List<string> GetControlClientAllowCorsOrigins(string controlClientBaseUri)

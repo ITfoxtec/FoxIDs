@@ -17,14 +17,14 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             return new Track.IdKey
             {
-                TenantName = route[0].ToLower(),
-                TrackName = route[1].ToLower()
+                TenantName = route[0]?.ToLower(),
+                TrackName = route[1]?.ToLower()
             };
         }
 
         protected override string GetPartyNameAndbinding(string[] route)
         {
-            return route[2].ToLower();
+            return route[2]?.ToLower();
         }
     }
 }

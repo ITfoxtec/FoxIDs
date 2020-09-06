@@ -1,8 +1,6 @@
-﻿using FoxIDs.Logic.Seed;
-using FoxIDs.Models;
+﻿using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
 
@@ -13,10 +11,7 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsApiRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        //protected override async Task SeedAsync(IServiceProvider requestServices)
-        //{
-        //    await requestServices.GetService<SeedLogic>().SeedAsync();
-        //}
+        protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;
 
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {

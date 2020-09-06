@@ -30,7 +30,7 @@ namespace FoxIDs.Infrastructure.Hosting
             var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
             try
             {
-                //await SeedAsync(httpContext.RequestServices);
+                await SeedAsync(httpContext.RequestServices);
 
                 var route = httpContext.Request.Path.Value.Split('/').Where(r => !r.IsNullOrWhiteSpace()).ToArray();
 
@@ -48,7 +48,7 @@ namespace FoxIDs.Infrastructure.Hosting
             await next(httpContext);
         }
 
-        //protected abstract Task SeedAsync(IServiceProvider requestServices);
+        protected abstract ValueTask SeedAsync(IServiceProvider requestServices);
 
         protected abstract Track.IdKey GetTrackIdKey(string[] route);
 

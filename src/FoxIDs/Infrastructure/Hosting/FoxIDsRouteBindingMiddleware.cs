@@ -11,7 +11,7 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        //protected override Task SeedAsync(IServiceProvider requestServices) => Task.CompletedTask;        
+        protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;        
 
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {

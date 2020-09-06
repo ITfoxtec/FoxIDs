@@ -20,6 +20,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="Models\Master\SeedResources\EmbeddedResource.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Models\Master\SeedResources\EmbeddedResource.json" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.14.0" />
 		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.12.0" />

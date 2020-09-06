@@ -2,6 +2,7 @@
 using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
+using FoxIDs.Logic.Seed;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity.Discovery;
@@ -27,6 +28,10 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddSharedLogic();
+            
+            services.AddTransient<SeedLogic>();
+            services.AddTransient<ResourceSeedLogic>();
+            services.AddTransient<MasterTenantDocumentsSeedLogic>();
 
             services.AddTransient<AccountLogic>();
             services.AddTransient<SecretHashLogic>();

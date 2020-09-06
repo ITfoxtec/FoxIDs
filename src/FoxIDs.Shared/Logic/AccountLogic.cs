@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
 
         public async Task ThrowIfUserExists(string email)
         {
-            logger.ScopeTrace($"Check if user exists '{email}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace($"Check if user exists '{email}', Route '{RouteBinding?.Route}'.");
 
             ValidateEmail(email);
 
@@ -39,10 +39,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> CreateUser(string email, string password, List<Claim> claims = null, string tenantName = null, string trackName = null)
+        public async Task<User> CreateUser(string email, string password, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true)
         {
-            logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding?.Route}'.");
 
+            email = email?.ToLower();
             ValidateEmail(email);
 
             var user = new User { UserId = Guid.NewGuid().ToString() };
@@ -54,8 +55,11 @@ namespace FoxIDs.Logic
                 user.Claims = claims.ToClaimAndValues();
             }
 
-            await ThrowIfUserExists(email);
-            await ValidatePasswordPolicy(email, password);
+            if(checkUserAndPasswordPolicy)
+            {
+                await ThrowIfUserExists(email);
+                await ValidatePasswordPolicy(email, password);
+            }
             await tenantRepository.CreateAsync(user);
 
             logger.ScopeTrace($"User '{email}' created, with user id '{user.UserId}'.");
@@ -65,7 +69,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> ValidateUser(string email, string password)
         {
-            logger.ScopeTrace($"Validating user '{email}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace($"Validating user '{email}', Route '{RouteBinding?.Route}'.");
 
             ValidateEmail(email);
 

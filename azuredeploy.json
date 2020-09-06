@@ -105,6 +105,8 @@
     "suffix": "[uniqueString(resourceGroup().id, resourceGroup().location)]",
     "foxidsSiteName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "foxidsControlSiteName": "[toLower(concat(parameters('prefixName'), 'control', variables('suffix')))]",
+    "foxidsSiteEndpoint": "[concat('https://', variables('foxidsSiteName'), '.azurewebsites.net')]",
+    "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]",
     "serverfarmsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "appInsightsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "redisName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
@@ -380,7 +382,8 @@
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
-        "Settings:FoxIDsEndpoint": "[concat('https://', variables('foxidsSiteName'), '.azurewebsites.net')]",
+        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
+        "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
         "Settings:Sendgrid:SmtpServer": "[reference(resourceId('Sendgrid.Email/accounts', variables('sendgridAccountName'))).smtpServer]"

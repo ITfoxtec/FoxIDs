@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
-using FoxIDs.Models;
-using Model = FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +40,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantRepository.GetAsync<User>(await Model.User.IdFormat(RouteBinding, email?.ToLower()));
+                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormat(RouteBinding, email?.ToLower()));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (CosmosDataException ex)
@@ -119,9 +117,9 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(user)) return BadRequest(ModelState);
                 user.Email = user.Email?.ToLower();
 
-                var mUser = await tenantRepository.GetAsync<User>(await Model.User.IdFormat(RouteBinding, user.Email));
+                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormat(RouteBinding, user.Email));
 
-                var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
+                var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);
 
@@ -151,7 +149,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
                 email = email?.ToLower();
 
-                await tenantRepository.DeleteAsync<User>(await Model.User.IdFormat(RouteBinding, email));
+                await tenantRepository.DeleteAsync<Models.User>(await Models.User.IdFormat(RouteBinding, email));
                 return NoContent();
             }
             catch (CosmosDataException ex)

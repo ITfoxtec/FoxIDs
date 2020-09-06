@@ -1,6 +1,8 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -8,6 +10,8 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         public FoxIDsRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
+
+        //protected override Task SeedAsync(IServiceProvider requestServices) => Task.CompletedTask;        
 
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {

@@ -127,13 +127,15 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                await TrackService.CreateTrackAsync(createTrackForm.Model.Map<Track>());
+                var track = createTrackForm.Model.Map<Track>();
+                await TrackService.CreateTrackAsync(track);
                 createTrackModal.Hide();
                 if (selectTrackFilterForm.Model != null)
                 {
                     selectTrackFilterForm.Model.FilterName = null;
                 }
                 await LoadSelectTrackAsync();
+                await TrackSelectedLogic.TrackSelectedAsync(track);
             }
             catch (FoxIDsApiException ex)
             {

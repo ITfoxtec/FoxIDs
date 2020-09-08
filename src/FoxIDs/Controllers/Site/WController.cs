@@ -55,9 +55,9 @@ namespace FoxIDs.Controllers
 
             if (exception is SequenceTimeoutException)
             {
-                var timeout = new TimeSpan(0, 0, HttpContext.GetRouteBinding().SequenceLifetime);
+                var timeout = new TimeSpan(0, 0, (exception as SequenceTimeoutException).SequenceLifetime);
                 errorViewModel.ErrorTitle = localizer["Timeout"];
-                errorViewModel.Error = string.Format(localizer["It should take a maximum of {1} minutes from start to finish. Please try again."], timeout.TotalMinutes);
+                errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
             }
 
             return View(errorViewModel);

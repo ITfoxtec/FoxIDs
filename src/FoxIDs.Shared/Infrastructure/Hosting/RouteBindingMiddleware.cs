@@ -34,10 +34,14 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 var route = httpContext.Request.Path.Value.Split('/').Where(r => !r.IsNullOrWhiteSpace()).ToArray();
 
-                var routeBinding = await GetRouteDataAsync(scopedLogger, GetTrackIdKey(route), GetPartyNameAndbinding(route));
-                httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
+                var trackIdKey = GetTrackIdKey(route);
+                if (trackIdKey != null)
+                {
+                    var routeBinding = await GetRouteDataAsync(scopedLogger, trackIdKey, GetPartyNameAndbinding(route));
+                    httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
 
-                scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
+                    scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
+                }
             }
             catch (ValidationException vex)
             {
@@ -59,7 +63,7 @@ namespace FoxIDs.Infrastructure.Hosting
             var track = await GetTrackAsync(tenantRepository, trackIdKey);
             var routeBinding = new RouteBinding
             {
-                RouteUrl = $"{trackIdKey.TenantName}{$"/{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}"}",
+                RouteUrl = $"{trackIdKey.TenantName}/{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 PartyNameAndBinding = partyNameAndBinding,

@@ -177,7 +177,7 @@ namespace FoxIDs.Logic
 
             if (createTime.AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime) < now)
             {
-                throw new SequenceTimeoutException($"Sequence timeout, id '{sequence.Id}'.");
+                throw new SequenceTimeoutException($"Sequence timeout, id '{sequence.Id}'.") { SequenceLifetime = HttpContext.GetRouteBinding().SequenceLifetime };
             }
         }
     }

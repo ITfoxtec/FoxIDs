@@ -113,7 +113,7 @@
       "id": 27
     },
     {
-      "name": "It should take a maximum of {1} minutes from start to finish. Please try again.",
+      "name": "It should take a maximum of {0} minutes from start to finish. Please try again.",
       "id": 28
     }
   ],
@@ -394,7 +394,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "It should take a maximum of {1} minutes from start to finish. Please try again."
+          "value": "It should take a maximum of {0} minutes from start to finish. Please try again."
         }
       ]
     }

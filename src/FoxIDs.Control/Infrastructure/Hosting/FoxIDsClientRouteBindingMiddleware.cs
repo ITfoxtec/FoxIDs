@@ -29,7 +29,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                throw new NotSupportedException($"Client route '{string.Join('/', route)}' not supported.");
+                throw new NotSupportedException($"FoxIDs client route '{string.Join('/', route)}' not supported.");
             }
 
             return trackIdKey;

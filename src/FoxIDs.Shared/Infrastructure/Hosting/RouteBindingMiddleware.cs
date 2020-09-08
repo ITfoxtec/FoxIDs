@@ -34,13 +34,18 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 var route = httpContext.Request.Path.Value.Split('/').Where(r => !r.IsNullOrWhiteSpace()).ToArray();
 
-                var trackIdKey = GetTrackIdKey(route);
-                if (trackIdKey != null)
+                if (await PreAsync(httpContext, route))
                 {
-                    var routeBinding = await GetRouteDataAsync(scopedLogger, trackIdKey, GetPartyNameAndbinding(route));
-                    httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
+                    var trackIdKey = GetTrackIdKey(route);
+                    if (trackIdKey != null)
+                    {
+                        var routeBinding = await GetRouteDataAsync(scopedLogger, trackIdKey, GetPartyNameAndbinding(route));
+                        httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
 
-                    scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
+                        scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
+                    }
+
+                    await next(httpContext);
                 }
             }
             catch (ValidationException vex)
@@ -48,11 +53,11 @@ namespace FoxIDs.Infrastructure.Hosting
                 scopedLogger.Error(vex);
                 throw;
             }
-
-            await next(httpContext);
         }
 
         protected abstract ValueTask SeedAsync(IServiceProvider requestServices);
+
+        protected abstract ValueTask<bool> PreAsync(HttpContext httpContext, string[] route);
 
         protected abstract Track.IdKey GetTrackIdKey(string[] route);
 

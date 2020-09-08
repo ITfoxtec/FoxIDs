@@ -57,7 +57,12 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private void HandleWebSiteRoute(RouteValueDictionary values, string[] route)
         {
-            if (route.Length >= 1)
+            if(route.Length == 0)
+            {
+                values[Constants.Routes.RouteControllerKey] = Constants.Routes.DefaultSiteController;
+                values[Constants.Routes.RouteActionKey] = Constants.Routes.DefaultSiteAction;
+            }
+            else if (route.Length >= 1)
             {
                 values[Constants.Routes.RouteControllerKey] = route[0];
                 if (route.Length >= 2)

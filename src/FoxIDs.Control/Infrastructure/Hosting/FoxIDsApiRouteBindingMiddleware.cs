@@ -13,6 +13,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;
 
+        protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
+
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {
             var trackIdKey = new Track.IdKey();

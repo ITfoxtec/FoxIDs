@@ -11,11 +11,17 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;        
+        protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;
+
+        protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
 
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {
-            if (route.Length >= 1 && route[0].Equals(Constants.Routes.DefaultSiteController, StringComparison.InvariantCultureIgnoreCase))
+            if (route.Length == 0)
+            {
+                return null;
+            }
+            else if (route.Length >= 1 && route[0].Equals(Constants.Routes.DefaultSiteController, StringComparison.InvariantCultureIgnoreCase))
             {
                 return null;
             }
@@ -44,5 +50,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 return null;
             }
         }
+
     }
 }

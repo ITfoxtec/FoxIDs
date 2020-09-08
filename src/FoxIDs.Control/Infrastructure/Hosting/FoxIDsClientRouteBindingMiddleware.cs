@@ -18,21 +18,30 @@ namespace FoxIDs.Infrastructure.Hosting
             return new ValueTask(requestServices.GetService<SeedLogic>().SeedAsync());
         }
 
+        protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route)
+        {
+            if (route.Length == 0)
+            {
+                httpContext.Response.Redirect(Constants.Routes.MasterTenantName);
+                return new ValueTask<bool>(false);
+            }
+            return new ValueTask<bool>(true);
+        }
+
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {
-            var trackIdKey = new Track.IdKey();
-            trackIdKey.TrackName = Constants.Routes.MasterTrackName;
-
             if (route.Length >= 1)
             {
-                trackIdKey.TenantName = route[0].ToLower();
+                return new Track.IdKey
+                {
+                    TrackName = Constants.Routes.MasterTrackName,
+                    TenantName = route[0].ToLower()
+                };
             }
             else
             {
                 throw new NotSupportedException($"FoxIDs client route '{string.Join('/', route)}' not supported.");
             }
-
-            return trackIdKey;
         }
 
         protected override string GetPartyNameAndbinding(string[] route)

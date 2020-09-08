@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="ITfoxtec.Identity" Version="1.1.7" />
+    <PackageReference Include="ITfoxtec.Identity" Version="1.1.8" />
     <PackageReference Include="UrlCombine" Version="2.0.0" />
   </ItemGroup>
 

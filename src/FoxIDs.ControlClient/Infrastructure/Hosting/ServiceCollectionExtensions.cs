@@ -13,6 +13,7 @@ using Blazored.SessionStorage;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.Logging;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace FoxIDs.Client.Infrastructure.Hosting
 {
@@ -81,6 +82,11 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddOptions();
             services.AddAuthorizationCore();
+
+            // Added to resolve errror: Newtonsoft.Json.JsonSerializationException: Unable to find a default constructor to use for type System.IdentityModel.Tokens.Jwt.JwtPayload. Path 'sub', line 1, position 7.
+            // https://github.com/mono/linker/issues/870
+            _ = new JwtHeader();
+            _ = new JwtPayload();
 
             return services;
         }

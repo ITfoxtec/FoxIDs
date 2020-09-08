@@ -117,8 +117,8 @@ namespace FoxIDs.Logic
                 Scopes = GetControlClientScopes(),
                 EnablePkce = true,
                 AuthorizationCodeLifetime = 10,
-                IdTokenLifetime = 1800, // 30 minutes
-                AccessTokenLifetime = 1800, // 30 minutes
+                IdTokenLifetime = 7200, // 2 hours
+                AccessTokenLifetime = 7200, // 2 hours
                 RefreshTokenLifetime = 86400, // 24 hours
                 RefreshTokenAbsoluteLifetime = 86400, // 24 hours
                 RefreshTokenUseOneTime = true,

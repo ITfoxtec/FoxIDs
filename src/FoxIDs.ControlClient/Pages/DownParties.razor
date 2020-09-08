@@ -258,12 +258,12 @@
                                                     <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
                                                 </div>
                                                 <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
+                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.IdTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.IdTokenLifetime)" />
                                                 <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.AccessTokenLifetime)" />
                                                 <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetime)" />
                                                 <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime)" />
                                                 <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
                                                 <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
-                                                <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.IdTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.IdTokenLifetime)" />
                                                 <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint" For="@(() => oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint)" TextType="e.d" />
                                             }
                                         }

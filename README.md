@@ -10,10 +10,10 @@ FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the futur
 
 ## Deployment
 
-Deploy FoxIDs in your Azure tenant. 
-
-> After sucessfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol). 
+> After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant. 
 > The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
+
+Deploy FoxIDs in your Azure tenant. 
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Frelease-current%2Fazuredeploy.json)
 
@@ -25,7 +25,7 @@ Deploy FoxIDs in your Azure tenant.
 - SendGrid.
 - Application Insights.
 
-**Troubleshooting deployent errors:**
+#### Troubleshooting deployent errors
 
 > **Sendgrid terms.** If you have not already accepted the Sendgrid legal terms for the selected plan in the subscription you will get the error 
 > *"User failed validation to purchase resources. Error message: 'Legal terms have not been accepted for this item on this subscription: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'. To accept legal terms using PowerShell, please use Get-AzureRmMarketplaceTerms and Set-AzureRmMarketplaceTerms API(https://go.microsoft.com/fwlink/?linkid=862451) or deploy via the Azure portal to accept the terms'"* 
@@ -39,31 +39,19 @@ Deploy FoxIDs in your Azure tenant.
 >
 > Then delete the falling resource groups and redeploy.
 
-### 2. Seed
+### Seed
 
+#### Upload risk passwords
 
-
-#### 2.3 Create risk passwords
-
-The seed tool can add risk passwords of insecure passwords to use in Cosmos DB documents as SHA-1 hashes. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+You can upload risk passwrods on the Rrisk Passwords tap. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
-Add the local pwned passwords file path to the seed tool configured.
-
-```json
-"SeedSettings": {
-  "PwnedPasswordsPath": "c:\\... xxx ...\\pwned-passwords-sha1-ordered-by-count-v4.txt"
-}
-```
-
 > Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.
 
-> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (RU/s) temporarily.
+> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 4000 RU/s) temporarily.
 
-Run the seed tool executable `SeedTool.exe`, select `P` for `Create risk passwords`.
-
-#### 2.4 Add sample configuration to at track
+#### Add sample configuration to a track
 
 It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track).
 
@@ -78,6 +66,3 @@ https://localhost:44330
 
 FoxIDs Control (Blazor WebAssembly client and API)
 https://localhost:44331
-
-*FoxIDs web
-https://localhost:44333 - not created yet*

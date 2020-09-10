@@ -2,7 +2,7 @@
 
 FoxIDs is an open source security service (identity service) supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
 
-FoxIDs is a cloud service ready to be deployed in you Azure tenant and rely on Azure cloud resources. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 
 > For [Getting started](https://github.com/ITfoxtec/FoxIDs/wiki/Getting-started) guide and more documentation please see the [Wiki](https://github.com/ITfoxtec/FoxIDs/wiki).
 
@@ -10,15 +10,14 @@ FoxIDs is a cloud service ready to be deployed in you Azure tenant and rely on A
 
 ## Deployment
 
-You can [deploy FoxIDs](#1-Azure-deployment) in your Azure tenant. Afterwords, FoxIDs is initialized with the [seed tool](#2-Seed), to create the master certificate and the first admin user.
+Deploy FoxIDs in your Azure tenant. 
 
-### 1. Azure deployment
+> After sucessfully deployment open FoxIDs Control Client https://foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol). 
+> The default admin user is: admin@foxids.com with password: FirstAccess!
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Frelease-current%2Fazuredeploy.json)
 
-The ARM deployment script deploys:
-
-- Two App Services one for FoxIDs and one for the FoxIDs Control (client and api). Both App Services is hosted in the same App Service plan. 
+- Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan. 
 - FoxIDs is deployed to the two App Services from the `release-current` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
 - Key vault. Secrets are placed in Key vault.
 - Document DB.
@@ -28,11 +27,8 @@ The ARM deployment script deploys:
 
 **Troubleshooting deployent errors:**
 
-> **Deployment timeout.** If you receive a deployment error like *"The gateway did not receive a response from 'Microsoft.DocumentDB' within the specified time period." or "The gateway did not receive a response from 'Microsoft.Web' within the specified time period."* 
->
-> The deployment have probably succeed anyway, please verify in [Azure portal](https://portal.azure.com).
-
-> **Sendgrid terms.** If you have not already accepted the Sendgrid legal terms for the selected plan in the subscription you will get the error *"User failed validation to purchase resources. Error message: 'Legal terms have not been accepted for this item on this subscription: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'. To accept legal terms using PowerShell, please use Get-AzureRmMarketplaceTerms and Set-AzureRmMarketplaceTerms API(https://go.microsoft.com/fwlink/?linkid=862451) or deploy via the Azure portal to accept the terms'"* 
+> **Sendgrid terms.** If you have not already accepted the Sendgrid legal terms for the selected plan in the subscription you will get the error 
+> *"User failed validation to purchase resources. Error message: 'Legal terms have not been accepted for this item on this subscription: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'. To accept legal terms using PowerShell, please use Get-AzureRmMarketplaceTerms and Set-AzureRmMarketplaceTerms API(https://go.microsoft.com/fwlink/?linkid=862451) or deploy via the Azure portal to accept the terms'"* 
 >
 > You need to accept the terms either by deploying a Sendgrid instance in [Azure portal](https://portal.azure.com) or with PowerShell. 
 > The following PowerShell commands accept the Sendgrid terms for the free plan:
@@ -45,51 +41,7 @@ The ARM deployment script deploys:
 
 ### 2. Seed
 
-> You can either download the seed tool (Win_x64) from [releases](https://github.com/ITfoxtec/FoxIDs/releases) or compile it from source code.
 
-In the first initial seed step the seed tool saves documents directly in to the Cosmos DB. All subsequently seed steps is executed by calling the FoxIDs Control api.
-
-> The seed tool is configured in the `appsettings.json` file.
-
-Add the FodIDs and FoxIDs Control api endpoints to the seed tool configured. They can be added by updating the instance names `foxidsxxxx` and `foxidscontrolapixxxx` or by configuring custom domains.
-
-```json
-"SeedSettings": {
-    "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net", 
-    "FoxIDsControlApiEndpoint": "https://foxidscontrolapixxxx.azurewebsites.net" 
-}
-```
-
-#### 2.1 Create master tenant documents
-
-The Cosmos DB instance is configured in the seed tool. In the `EndpointUri` the `foxidsxxx` is changed to the Cosmos DB instance name. And the Cosmos DB primary key is configured in the `PrimaryKey`. Both endpoint and primary key can be found in [Azure portal](https://portal.azure.com).
-
-```json
-"SeedSettings": {
-  "CosmosDb": {
-    "EndpointUri": "https://foxidsxxx.documents.azure.com:443/",
-    "PrimaryKey": "xxx...xxx"
-  }
-}
-```
-
-Run the seed tool executable `SeedTool.exe`, select `M` for `Create master tenant documents`. When asked please write the first administrator users email.
-
-> IMPORTANT: Remember password and secret.
-
-Add the seed tool client secret to the seed tool configured.
-
-```json
-"SeedSettings": {
-  "ClientSecret": "xxx"
-}
-```
-
-#### 2.2 Add text resources
-
-The seed tool add generic text resources as a document in Cosmos DB. The resources can later be customized per track in the track configuration in Cosmos DB.
-
-Run the seed tool executable `SeedTool.exe`, select `R` for `Add text resources`. 
 
 #### 2.3 Create risk passwords
 

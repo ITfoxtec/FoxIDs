@@ -12,8 +12,8 @@ FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the futur
 
 Deploy FoxIDs in your Azure tenant. 
 
-> After sucessfully deployment open FoxIDs Control Client https://foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol). 
-> The default admin user is: admin@foxids.com with password: FirstAccess!
+> After sucessfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol). 
+> The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Frelease-current%2Fazuredeploy.json)
 

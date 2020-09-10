@@ -1,12 +1,12 @@
 # FoxIDs
 
-FoxIDs is an open source security cloud service (identity service) supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+FoxIDs is an open source security service (identity service) supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
 
-FoxIDs is a cloud service which can be deployed in you Azure tenant and rely on Azure resources. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be deployed in you Azure tenant and rely on Azure cloud resources. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 
 > For [Getting started](https://github.com/ITfoxtec/FoxIDs/wiki/Getting-started) guide and more documentation please see the [Wiki](https://github.com/ITfoxtec/FoxIDs/wiki).
 
-> FoxIDs is .NET Core 3.1 and the web sites is ASP.NET Core.
+> FoxIDs is .NET Core 3.1 and the Control Client is Blazor .NET Standard 2.1.
 
 ## Deployment
 

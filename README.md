@@ -61,8 +61,8 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 
 ## Development
 
-FoxIDs
-https://localhost:44330
+FoxIDs  
+https<i>:</i>//localhost:44330
 
-FoxIDs Control (Blazor WebAssembly client and API)
-https://localhost:44331
+FoxIDs Control (Blazor WebAssembly client and API)  
+https<i>:</i>//localhost:44331

@@ -241,7 +241,8 @@
         ],
         "enabledForDeployment": false,
         "enabledForDiskEncryption": false,
-        "enabledForTemplateDeployment": false
+        "enabledForTemplateDeployment": false,
+        "enableSoftDelete": true
       }
     },
     {

@@ -10,7 +10,7 @@ FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the futur
 
 ## Deployment
 
-> After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant. 
+> After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
 > The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
 Deploy FoxIDs in your Azure tenant. 
@@ -47,8 +47,7 @@ You can upload risk passwrods on the Rrisk Passwords tap. The insecure passwords
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
-> Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.
-
+> Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.  
 > The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 4000 RU/s) temporarily.
 
 #### Add sample configuration to a track

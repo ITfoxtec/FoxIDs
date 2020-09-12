@@ -25,7 +25,7 @@ Deploy FoxIDs in your Azure tenant.
 After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
 The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
-![FoxIDs Control Client - Master tenant](https://github.com/ITfoxtec/FoxIDs/wiki/images/Master-tenant.png)
+![FoxIDs Control Client - Master tenant](https://github.com/ITfoxtec/FoxIDs/wiki/images/master-tenant2.png)
 
 #### Troubleshooting deployent errors
 

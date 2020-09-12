@@ -37,7 +37,7 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (Client != null && AllowUpPartyNames?.Count <= 0)
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the field {nameof(Resource)} is defined.", new[] { nameof(Client), nameof(AllowUpPartyNames) }));
+                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the Client is defined.", new[] { nameof(Client), nameof(AllowUpPartyNames) }));
             }
             if (Client == null && Resource == null)
             {

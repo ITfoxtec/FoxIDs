@@ -43,7 +43,9 @@ Deploy FoxIDs in your Azure tenant.
 
 #### Upload risk passwords
 
-You can upload risk passwrods on the Rrisk Passwords tap. The insecure passwords (pwned passwords) is from [haveibeenpwned.com](https://haveibeenpwned.com)
+You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
+
+![Upload risk passwrods](https://github.com/ITfoxtec/FoxIDs/wiki/images/upload-risk-passwords.png)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 

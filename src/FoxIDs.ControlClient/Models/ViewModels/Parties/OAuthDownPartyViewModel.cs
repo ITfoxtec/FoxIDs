@@ -41,10 +41,6 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (Client != null && AllowUpPartyNames?.Count <= 0)
-            {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the field {nameof(Resource)} is defined.", new[] { nameof(Client), nameof(AllowUpPartyNames) }));
-            }
             if (Client == null && Resource == null)
             {
                 results.Add(new ValidationResult($"Either the field {nameof(Client)} or the field {nameof(Resource)} is required.", new[] { nameof(Client), nameof(Resource) }));

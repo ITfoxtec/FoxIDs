@@ -4,7 +4,7 @@ FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Co
 
 FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
-- API and Client called FoxIDs Control. The Client is used to configure FoxIDs, or alternatively by calling the API directly.
+- Client and API called FoxIDs Control. The Client is used to configure FoxIDs, or alternatively by calling the API directly.
 
 FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 
@@ -71,5 +71,5 @@ Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow<
 FoxIDs  
 https<i>:</i>//localhost:44330
 
-FoxIDs Control (Blazor WebAssembly client and API)  
+FoxIDs Control (Blazor WebAssembly Client and API)  
 https<i>:</i>//localhost:44331

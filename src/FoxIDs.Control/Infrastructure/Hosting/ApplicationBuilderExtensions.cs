@@ -19,7 +19,7 @@ namespace FoxIDs.Infrastructure.Hosting
 #if DEBUG
             builder.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint($"/api/swagger/{Constants.Api.Version}/swagger.json", "FoxIDs Control API");
+                c.SwaggerEndpoint($"/api/swagger/{Constants.ControlApi.Version}/swagger.json", "FoxIDs Control API");
                 c.RoutePrefix = "api";
             });
 #endif

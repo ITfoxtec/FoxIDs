@@ -1,5 +1,5 @@
-﻿using ITfoxtec.Identity;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 
 namespace FoxIDs.Infrastructure.Security
 {
@@ -16,7 +16,11 @@ namespace FoxIDs.Infrastructure.Security
         {
             options.AddPolicy(Name, policy =>
             {
-                policy.RequireScope("foxids_control_api:foxids_tenant");
+                policy.Requirements.Add(new ScopeRoleAuthorizationRequirement { ScopeRoleList = new List<ScopeRoleAuthorizationRequirement.ScopeRole>
+                {
+                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.Scope.Tenant },
+                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.Scope.TenantUser, Role = Constants.ControlApi.Role.TenantAdmin },
+                }});
             });
         }
     }

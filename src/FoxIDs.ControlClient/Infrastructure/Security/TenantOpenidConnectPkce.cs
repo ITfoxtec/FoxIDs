@@ -29,7 +29,7 @@ namespace FoxIDs.Client.Infrastructure.Security
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
                 Authority = await GetAuthority(),
-                ClientId = clientSettings.ClientId,
+                ClientId = Constants.ControlClient.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
                 Scope = GetScope(),
                 LoginCallBackPath = await ReplaceTenantNameAsync(clientSettings.LoginCallBackPath),
@@ -46,7 +46,7 @@ namespace FoxIDs.Client.Infrastructure.Security
             var openidConnectPkceSettings = new OpenidConnectPkceSettings
             {
                 Authority = await GetAuthority(),
-                ClientId = clientSettings.ClientId,
+                ClientId = Constants.ControlClient.ClientId,
                 ResponseMode = globalOpenidClientPkceSettings.ResponseMode,
                 Scope = GetScope(),
                 LoginCallBackPath = await ReplaceTenantNameAsync(clientSettings.LoginCallBackPath),
@@ -63,7 +63,7 @@ namespace FoxIDs.Client.Infrastructure.Security
 
         private async Task<string> GetAuthority()
         {
-            var authority = clientSettings.Authority.Replace("{client_id}", clientSettings.ClientId, StringComparison.OrdinalIgnoreCase);
+            var authority = clientSettings.Authority.Replace("{client_id}", Constants.ControlClient.ClientId, StringComparison.OrdinalIgnoreCase);
             authority = await ReplaceTenantNameAsync(authority);
             return authority.Replace("{foxids_endpoint}", clientSettings.FoxIDsEndpoint, StringComparison.OrdinalIgnoreCase);
         }
@@ -72,11 +72,11 @@ namespace FoxIDs.Client.Infrastructure.Security
         {
             if(routeBindingBase.IsMasterTenant)
             {
-                return $"{clientSettings.Scope} {clientSettings.MasterScope}";
+                return $"email {Constants.ControlApi.Scope.TenantUser} {Constants.ControlApi.Scope.MasterUser}";
             }
             else
             {
-                return clientSettings.Scope;
+                return $"email {Constants.ControlApi.Scope.TenantUser}";
             }
         }
     }

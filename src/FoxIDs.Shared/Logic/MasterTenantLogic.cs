@@ -2,9 +2,9 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using UrlCombineLib;
 
@@ -13,11 +13,6 @@ namespace FoxIDs.Logic
     public class MasterTenantLogic : LogicBase
     {
         const string loginName = "login";
-        const string controlApiResourceName = "foxids_control_api";
-        const string controlClientName = "foxids_control_client";
-
-        const string controlApiResourceTenantScope = "foxids_tenant";
-        const string controlApiResourceMasterScope = "foxids_master";
 
         private readonly ITenantRepository tenantRepository;
         private readonly AccountLogic accountLogic;
@@ -69,22 +64,23 @@ namespace FoxIDs.Logic
 
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password)
         {
-            //var claims = new List<ClaimAndValues> { new ClaimAndValues { Claim = JwtClaimTypes.Role, Values = adminUserRoles.ToList() } };
-            await accountLogic.CreateUser(email, password, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false);
+            var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Role.TenantAdmin) };
+            await accountLogic.CreateUser(email, password, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false);
         }
 
         public async Task CreateFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)
         {
             var mControlApiResourceDownParty = new OAuthDownParty
             {
-                Name = controlApiResourceName
+                Name = Constants.ControlApi.ResourceName
             };
-            await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = controlApiResourceName });
+            await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlApi.ResourceName });
            
-            var scopes = new List<string> { controlApiResourceTenantScope };
+            var scopes = new List<string> { Constants.ControlApi.Scope.Tenant, Constants.ControlApi.Scope.TenantUser };
             if (includeMasterTenantScope)
             {
-                scopes.Add(controlApiResourceMasterScope);
+                scopes.Add(Constants.ControlApi.Scope.Master);
+                scopes.Add(Constants.ControlApi.Scope.MasterUser);
             }
             mControlApiResourceDownParty.Resource = new OAuthDownResource()
             {
@@ -98,21 +94,21 @@ namespace FoxIDs.Logic
         {
             var mControlClientDownParty = new OidcDownParty
             {
-                Name = controlClientName
+                Name = Constants.ControlClient.ClientId
             };
-            await mControlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = controlClientName });
+            await mControlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlClient.ClientId });
             mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
             mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
 
-            var scopes = new List<string> { controlApiResourceTenantScope };
+            var scopes = new List<string> { Constants.ControlApi.Scope.TenantUser };
             if (includeMasterTenantScope)
             {
-                scopes.Add(controlApiResourceMasterScope);
+                scopes.Add(Constants.ControlApi.Scope.MasterUser);
             }
             mControlClientDownParty.Client = new OidcDownClient
             {
                 RedirectUris = GetControlClientRedirectUris(tenantName?.ToLower(), controlClientBaseUri).ToList(),
-                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = scopes } },
+                ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = Constants.ControlApi.ResourceName, Scopes = scopes } },
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),
                 EnablePkce = true,

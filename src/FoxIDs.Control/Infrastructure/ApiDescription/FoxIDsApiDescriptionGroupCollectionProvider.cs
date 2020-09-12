@@ -67,7 +67,7 @@ namespace FoxIDs.Infrastructure.ApiDescription
 
                     //TODO Work around. When solved change back to use ApiDescriptionActionData.
                     //action.SetProperty(new ApiDescriptionActionData { GroupName = Constants.Api.Version });
-                    SetApiDescriptionActionData(action, Constants.Api.Version);
+                    SetApiDescriptionActionData(action, Constants.ControlApi.Version);
                 }
             }
 
@@ -125,7 +125,7 @@ namespace FoxIDs.Infrastructure.ApiDescription
 
         private IEnumerable<string> GetHttpMethods(ControllerActionDescriptor action)
         {
-            var httpMethods = Constants.Api.SupportedApiHttpMethods.Where(m => action.ActionName.StartsWith(m, StringComparison.OrdinalIgnoreCase)).ToList();
+            var httpMethods = Constants.ControlApi.SupportedApiHttpMethods.Where(m => action.ActionName.StartsWith(m, StringComparison.OrdinalIgnoreCase)).ToList();
             if (httpMethods.Any())
             {
                 return httpMethods;

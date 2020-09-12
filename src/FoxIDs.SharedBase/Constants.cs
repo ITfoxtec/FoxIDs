@@ -263,10 +263,30 @@ namespace FoxIDs
             }
         }
 
-        public static class Api
+        public static class ControlClient
+        {
+            public const string ClientId = "foxids_control_client";
+        }
+
+        public static class ControlApi
         {
             public const string Version = "v1";
             public readonly static string[] SupportedApiHttpMethods = { "GET", "PUT", "POST", "DELETE" };
+
+            public const string ResourceName = "foxids_control_api";
+
+            public static class Scope
+            {
+                public readonly static string Master = $"{ResourceName}:foxids_master";
+                public readonly static string MasterUser = $"{ResourceName}:foxids_master_user";
+                public readonly static string Tenant = $"{ResourceName}:foxids_tenant";
+                public readonly static string TenantUser = $"{ResourceName}:foxids_tenant_user";
+            }
+
+            public static class Role
+            {
+                public const string TenantAdmin = "foxids_tenant_admin";
+            }
         }
 
         public static class Sequence
@@ -329,7 +349,7 @@ namespace FoxIDs
             /// Default Access Token claims.
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Email, FoxI.JwtClaimTypes.GivenName, FoxI.JwtClaimTypes.FamilyName } ).ToArray();
+                new string[] { JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Email, FoxI.JwtClaimTypes.GivenName, FoxI.JwtClaimTypes.FamilyName, FoxI.JwtClaimTypes.Role } ).ToArray();
 
             /// <summary>
             /// Default SAML claims.

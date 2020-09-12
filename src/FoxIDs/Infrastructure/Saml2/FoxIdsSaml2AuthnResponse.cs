@@ -81,7 +81,6 @@ namespace FoxIDs.Infrastructure.Saml2
             var subjectConfirmationData = new Saml2SubjectConfirmationData
             {
                 Recipient = Destination,
-                NotBefore = tokenIssueTime.AddSeconds(-settings.SamlTokenAddNotBeforeTime).UtcDateTime,
                 NotOnOrAfter = tokenIssueTime.AddSeconds(subjectConfirmationLifetime).UtcDateTime,
             };
 

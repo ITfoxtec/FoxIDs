@@ -10,9 +10,6 @@ FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the futur
 
 ## Deployment
 
-> After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
-> The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
-
 Deploy FoxIDs in your Azure tenant. 
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Frelease-current%2Fazuredeploy.json)
@@ -24,6 +21,11 @@ Deploy FoxIDs in your Azure tenant.
 - Redis cache.
 - SendGrid.
 - Application Insights.
+
+After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
+The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
+
+![FoxIDs Control Client - Master tenant](https://github.com/ITfoxtec/FoxIDs/wiki/images/master-tenant.png)
 
 #### Troubleshooting deployent errors
 
@@ -45,7 +47,7 @@ Deploy FoxIDs in your Azure tenant.
 
 You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
 
-![Upload risk passwrods](https://github.com/ITfoxtec/FoxIDs/wiki/images/upload-risk-passwords.png)
+![FoxIDs Control Client - Upload risk passwrods](https://github.com/ITfoxtec/FoxIDs/wiki/images/upload-risk-passwords.png)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 

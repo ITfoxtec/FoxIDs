@@ -18,8 +18,8 @@ namespace FoxIDs.Infrastructure.Security
             {
                 policy.Requirements.Add(new ScopeRoleAuthorizationRequirement { ScopeRoleList = new List<ScopeRoleAuthorizationRequirement.ScopeRole>
                 {
-                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.Scope.Master },
-                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.Scope.MasterUser, Role = Constants.ControlApi.Role.TenantAdmin },
+                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.ResourceAndScope.Master },
+                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.ResourceAndScope.MasterUser, Role = Constants.ControlApi.Role.TenantAdmin },
                 }});
             });
         }

@@ -96,7 +96,7 @@ namespace FoxIDs.Client.Shared
                 }));
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
-                createTenantReceipt.Add("Master track created.");
+                createTenantReceipt.Add("Master track with user repository created.");
                 createTenantReceipt.Add("Master track default up party login created.");
                 createTenantReceipt.Add("First master track administrator user created.");
                 createTenantReceipt.Add("Master track down party control api created.");

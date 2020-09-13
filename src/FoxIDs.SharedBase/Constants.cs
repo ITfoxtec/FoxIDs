@@ -275,12 +275,20 @@ namespace FoxIDs
 
             public const string ResourceName = "foxids_control_api";
 
+            public static class ResourceAndScope
+            {
+                public readonly static string Master = $"{ResourceName}:{Scope.Master}";
+                public readonly static string MasterUser = $"{ResourceName}:{Scope.MasterUser}";
+                public readonly static string Tenant = $"{ResourceName}:{Scope.Tenant}";
+                public readonly static string TenantUser = $"{ResourceName}:{Scope.TenantUser}";
+            }
+
             public static class Scope
             {
-                public readonly static string Master = $"{ResourceName}:foxids_master";
-                public readonly static string MasterUser = $"{ResourceName}:foxids_master_user";
-                public readonly static string Tenant = $"{ResourceName}:foxids_tenant";
-                public readonly static string TenantUser = $"{ResourceName}:foxids_tenant_user";
+                public const string Master = "foxids_master";
+                public const string MasterUser = "foxids_master_user";
+                public const string Tenant = "foxids_tenant";
+                public const string TenantUser = "foxids_tenant_user";
             }
 
             public static class Role

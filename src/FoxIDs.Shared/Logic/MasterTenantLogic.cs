@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Role.TenantAdmin) };
-            await accountLogic.CreateUser(email, password, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false);
+            await accountLogic.CreateUser(email, password, changePassword: true, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false);
         }
 
         public async Task CreateFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)

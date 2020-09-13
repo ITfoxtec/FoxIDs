@@ -20,9 +20,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Display(Name = "Require password change")]
+        public bool ChangePassword { get; set; }
 
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]

@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
-                EmailHint = loginRequest.EmailHint,
+                Email = loginRequest.EmailHint,
                 Culture = loginRequest.Culture
             });
             return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");

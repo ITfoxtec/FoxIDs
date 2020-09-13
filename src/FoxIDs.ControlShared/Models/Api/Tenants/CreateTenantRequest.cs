@@ -18,7 +18,7 @@ namespace FoxIDs.Models.Api
         /// Administrator users password.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string AdministratorPassword { get; set; }
 

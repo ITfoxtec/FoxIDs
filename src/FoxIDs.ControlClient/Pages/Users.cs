@@ -122,6 +122,15 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private void UserViewModelAfterInit(GeneralUserViewModel generalUser, UserViewModel user)
+        {
+            if (generalUser.CreateMode)
+            {
+                user.ChangePassword = true;
+            }
+        }
+
+
         private string UserInfoText(GeneralUserViewModel generalUser)
         {
             return $"User - {generalUser.Email}";

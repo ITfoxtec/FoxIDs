@@ -79,7 +79,7 @@ namespace FoxIDs.Controllers
                         }
                     }
                 }
-                var mUser = await accountLogic.CreateUser(createUserRequest.Email, createUserRequest.Password, claims);
+                var mUser = await accountLogic.CreateUser(createUserRequest.Email, createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims);
                 return Created(mapper.Map<Api.User>(mUser));
             }
             catch(UserExistsException ueex)
@@ -119,6 +119,7 @@ namespace FoxIDs.Controllers
 
                 var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormat(RouteBinding, user.Email));
 
+                mUser.ChangePassword = user.ChangePassword;
                 var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);

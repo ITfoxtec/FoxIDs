@@ -28,8 +28,8 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "ma")]
         public int? MaxAge { get; set; }
 
-        [JsonProperty(PropertyName = "eh")]
-        public string EmailHint { get; set; }
+        [JsonProperty(PropertyName = "e")]
+        public string Email { get; set; }
 
         [JsonProperty(PropertyName = "c")]
         public string Culture { get; set; }

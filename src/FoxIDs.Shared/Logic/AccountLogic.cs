@@ -2,6 +2,7 @@
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -39,7 +40,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> CreateUser(string email, string password, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true)
+        public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true)
         {
             logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding?.Route}'.");
 
@@ -60,6 +61,7 @@ namespace FoxIDs.Logic
                 await ThrowIfUserExists(email);
                 await ValidatePasswordPolicy(email, password);
             }
+            user.ChangePassword = changePassword;
             await tenantRepository.CreateAsync(user);
 
             logger.ScopeTrace($"User '{email}' created, with user id '{user.UserId}'.");
@@ -74,7 +76,7 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
 
             var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, false);
+            var user = await tenantRepository.GetAsync<User>(id);
 
             if (user == null)
             {
@@ -85,12 +87,60 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}'.");
             if (await secretHashLogic.ValidateSecretAsync(user, password))
             {
-                logger.ScopeTrace($"User '{email}', password valid.", triggerEvent: true);
-                return user;
+                if(user.ChangePassword)
+                {
+                    logger.ScopeTrace($"User '{email}', password valid, user have to change password.", triggerEvent: true);
+                    throw new ChangePasswordException($"Change password, user '{email}'.");
+                }
+                else
+                {
+                    logger.ScopeTrace($"User '{email}', password valid.", triggerEvent: true);
+                    return user;
+                }
             }
             else
             {
                 throw new InvalidPasswordException($"Password invalid, user '{email}'."); // UI message: Wrong email or password / Wrong password
+            }
+        }
+
+        public async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
+        {
+            logger.ScopeTrace($"Change password user '{email}', Route '{RouteBinding?.Route}'.");
+
+            ValidateEmail(email);
+
+            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var user = await tenantRepository.GetAsync<User>(id);
+
+            if (user == null)
+            {
+                await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
+                throw new UserNotExistsException($"User '{email}' do not exist.");
+            }
+
+            logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}'.");
+            if (await secretHashLogic.ValidateSecretAsync(user, currentPassword))
+            {
+                logger.ScopeTrace($"User '{email}', current password valid, changing password.", triggerEvent: true);
+
+                if(currentPassword.Equals(newPassword, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{email}'.");
+                }
+
+                await ValidatePasswordPolicy(email, newPassword);
+
+                await secretHashLogic.AddSecretHashAsync(user, newPassword);
+                user.ChangePassword = false;
+                await tenantRepository.SaveAsync(user);
+
+                logger.ScopeTrace($"User '{email}', password changed.", triggerEvent: true);
+                return user;
+            }
+            else
+            {
+                throw new InvalidPasswordException($"Current password invalid, user '{email}'."); 
             }
         }
 

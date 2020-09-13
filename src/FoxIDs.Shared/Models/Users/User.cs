@@ -58,6 +58,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "hash_salt")]
         public string HashSalt { get; set; }
 
+        [JsonProperty(PropertyName = "change_password")]
+        public bool ChangePassword  { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.User.EmailLength)]
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]

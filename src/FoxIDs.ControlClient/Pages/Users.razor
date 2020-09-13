@@ -29,7 +29,7 @@
             }
             @if (user.Edit)
             {
-                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
+                <PageEditForm @ref="user.Form" TModel="UserViewModel" OnAfterInit="@(m => UserViewModelAfterInit(user, m))" OnValidSubmit="@(async (editContext) => await OnEditUserValidSubmitAsync(user, editContext))">
                     <div class="modal-header">
                         User
                     </div>
@@ -47,8 +47,10 @@
                             <input type="hidden" @bind="user.Form.Model.Password" />
                             <FFieldText @bind-Value="user.Form.Model.UserId" For="@(() => user.Form.Model.UserId)" />
                         }
+                        <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" />
 
                         <div class="form-group active-group active">
+                            <Label For="@(() => user.Form.Model.Claims)" class="label-control" />
                             <ul class="list-group">
                                 @foreach (var claimAndValues in user.Form.Model.Claims)
                                 {

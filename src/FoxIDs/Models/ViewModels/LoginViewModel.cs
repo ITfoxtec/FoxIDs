@@ -12,13 +12,13 @@ namespace FoxIDs.Models.ViewModels
 
         [Display(Name = "Email")]
         [Required]
-        [MaxLength(60)]
+        [MaxLength(Constants.Models.User.EmailLength)]
         [EmailAddress]
         public string Email { get; set; }
 
         [Display(Name = "Password")]
         [Required]
-        [MaxLength(50)]
+        [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
     }

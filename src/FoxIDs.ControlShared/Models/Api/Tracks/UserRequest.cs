@@ -13,6 +13,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Display(Name = "Change password")]
+        public bool ChangePassword { get; set; }
+
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]
         public List<ClaimAndValues> Claims { get; set; }

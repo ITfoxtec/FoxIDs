@@ -27,7 +27,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Administrator password.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         [Display(Name = "Administrator password")]
         public string AdministratorPassword { get; set; }

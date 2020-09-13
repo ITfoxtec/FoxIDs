@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class TestRiskPasswordViewModel
     {
         [Required]
-        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

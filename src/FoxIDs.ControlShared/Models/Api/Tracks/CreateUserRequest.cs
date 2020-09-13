@@ -14,10 +14,13 @@ namespace FoxIDs.Models.Api
         public string Email { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SecretHash.SecretLength)]
+        [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
+
+        [Display(Name = "Change password")]
+        public bool ChangePassword { get; set; }
 
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]

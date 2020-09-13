@@ -23,18 +23,16 @@
                 <span asp-validation-for="Password"></span>
             </div>
             <div class="form-group button-group">
-                <div>
                 <input type="submit" value="@Localizer["Login"]" class="btn btn-primary" />
                 @if (Model.EnableCancelLogin)
                 {
-                    <a href="CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                    <a href="cancellogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
                 }
-                </div>
             </div>
             @if (Model.EnableCreateUser)
             {
                 <div class="form-group create-user-group">
-                    <a href="CreateUser/_@Model.SequenceString" class="link">@Localizer["Create User"]</a>
+                    <a href="createuser/_@Model.SequenceString" class="link">@Localizer["Create User"]</a>
                 </div>
             }
         </form>

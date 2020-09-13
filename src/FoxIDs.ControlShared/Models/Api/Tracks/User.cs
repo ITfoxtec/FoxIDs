@@ -13,6 +13,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Display(Name = "Change password")]
+        public bool ChangePassword { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]

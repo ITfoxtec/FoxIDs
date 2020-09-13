@@ -71,7 +71,7 @@ namespace FoxIDs.Controllers
                         CssStyle = loginUpParty.CssStyle,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
                         EnableCreateUser = !validSession && loginUpParty.EnableCreateUser.Value,
-                        Email = sequenceData.EmailHint.IsNullOrWhiteSpace() ? string.Empty : sequenceData.EmailHint,
+                        Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
                     });
                 }
 
@@ -99,21 +99,6 @@ namespace FoxIDs.Controllers
             }
 
             return true;
-        }
-
-        public async Task<IActionResult> CancelLogin()
-        {
-            try
-            {
-                logger.ScopeTrace("Cancel login.");
-
-                return await loginUpLogic.LoginResponseErrorAsync(LoginSequenceError.LoginCanceled, "Login canceled by user.");
-
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Cancel login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
         }
 
         [HttpPost]
@@ -164,6 +149,10 @@ namespace FoxIDs.Controllers
 
                         return await LoginResponse(loginUpParty, user, session);
                     }
+                    catch (ChangePasswordException cpex)
+                    {
+                        return await StartChangePassword(login.Email, sequenceData);
+                    }
                     catch (AccountException aex)
                     {
                         if (aex is InvalidPasswordException || aex is UserNotExistsException)
@@ -205,6 +194,22 @@ namespace FoxIDs.Controllers
 
             return await loginUpLogic.LoginResponseAsync(loginUpParty, user, authTime, authMethods, sessionId);
         }
+
+        public async Task<IActionResult> CancelLogin()
+        {
+            try
+            {
+                logger.ScopeTrace("Cancel login.");
+
+                return await loginUpLogic.LoginResponseErrorAsync(LoginSequenceError.LoginCanceled, "Login canceled by user.");
+
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Cancel login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
 
         public async Task<IActionResult> Logout()
         {
@@ -392,7 +397,7 @@ namespace FoxIDs.Controllers
                             claims.AddClaim(JwtClaimTypes.FamilyName, createUser.FamilyName);
                         }
 
-                        var user = await accountLogic.CreateUser(createUser.Email, createUser.Password, claims);
+                        var user = await accountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
                         if (user != null)
                         {
                             return await LoginResponse(loginUpParty, user);
@@ -403,29 +408,29 @@ namespace FoxIDs.Controllers
                         logger.ScopeTrace(uex.Message);
                         ModelState.AddModelError(nameof(createUser.Email), localizer["A user with the email already exists."]);
                     }
-                    catch (PasswordLengthException cex)
+                    catch (PasswordLengthException plex)
                     {
-                        logger.ScopeTrace(cex.Message);
+                        logger.ScopeTrace(plex.Message);
                         ModelState.AddModelError(nameof(createUser.Password), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
                     }
-                    catch (PasswordComplexityException cex)
+                    catch (PasswordComplexityException pcex)
                     {
-                        logger.ScopeTrace(cex.Message);
+                        logger.ScopeTrace(pcex.Message);
                         ModelState.AddModelError(nameof(createUser.Password), localizer["Please use a mix of letters, numbers and symbols"]);
                     }
-                    catch (PasswordEmailTextComplexityException tex)
+                    catch (PasswordEmailTextComplexityException pecex)
                     {
-                        logger.ScopeTrace(tex.Message);
+                        logger.ScopeTrace(pecex.Message);
                         ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use the email or parts of it."]);
                     }
-                    catch (PasswordUrlTextComplexityException tex)
+                    catch (PasswordUrlTextComplexityException pucex)
                     {
-                        logger.ScopeTrace(tex.Message);
+                        logger.ScopeTrace(pucex.Message);
                         ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the url."]);
                     }
-                    catch (PasswordRiskException rex)
+                    catch (PasswordRiskException prex)
                     {
-                        logger.ScopeTrace(rex.Message);
+                        logger.ScopeTrace(prex.Message);
                         ModelState.AddModelError(nameof(createUser.Password), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                     }
                 }
@@ -435,6 +440,132 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Create user failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> StartChangePassword(string email, LoginUpSequenceData sequenceData)
+        {
+            sequenceData.Email = email;
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+            return new RedirectResult($"changepassword/_{SequenceString}");
+        }
+
+        public async Task<IActionResult> ChangePassword()
+        {
+            try
+            {
+                logger.ScopeTrace("Start change password.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                _ = ValidSession(sequenceData, session);
+
+                logger.ScopeTrace("Show change password dialog.");
+                return View(nameof(ChangePassword), new ChangePasswordViewModel
+                {
+                    SequenceString = SequenceString,
+                    CssStyle = loginUpParty.CssStyle,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
+                    Email = sequenceData.Email,
+                });
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Change password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePassword)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+
+                Func<IActionResult> viewError = () =>
+                {
+                    changePassword.SequenceString = SequenceString;
+                    changePassword.CssStyle = loginUpParty.CssStyle;
+                    changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin.Value;
+                    return View(nameof(ChangePassword), changePassword);
+                };
+
+                if (!ModelState.IsValid)
+                {
+                    return viewError();
+                }
+
+                logger.ScopeTrace("Change password post.");
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        var user = await accountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
+
+                        var session = await sessionLogic.GetSessionAsync(loginUpParty);
+                        if (session != null && user.UserId != session.UserId)
+                        {
+                            logger.ScopeTrace("Authenticated user and session user do not match.");
+                            // TODO invalid user login
+                            throw new NotImplementedException("Authenticated user and session user do not match.");
+                        }
+
+                        if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
+                        {
+                            logger.ScopeTrace("Authenticated user and requested user do not match.");
+                            // TODO invalid user login
+                            throw new NotImplementedException("Authenticated user and requested user do not match.");
+                        }
+
+                        return await LoginResponse(loginUpParty, user, session);
+                    }
+                    catch (InvalidPasswordException ipex)
+                    {
+                        logger.ScopeTrace(ipex.Message, triggerEvent: true);
+                        ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer["Wrong password"]);
+                    }                    
+                    catch (NewPasswordEqualsCurrentException npeex)
+                    {
+                        logger.ScopeTrace(npeex.Message);
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a new password."]);
+                    }
+                    catch (PasswordLengthException plex)
+                    {
+                        logger.ScopeTrace(plex.Message);
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
+                    }
+                    catch (PasswordComplexityException pcex)
+                    {
+                        logger.ScopeTrace(pcex.Message);
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                    }
+                    catch (PasswordEmailTextComplexityException pecex)
+                    {
+                        logger.ScopeTrace(pecex.Message);
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                    }
+                    catch (PasswordUrlTextComplexityException pucex)
+                    {
+                        logger.ScopeTrace(pucex.Message);
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use parts of the url."]);
+                    }
+                    catch (PasswordRiskException prex)
+                    {
+                        logger.ScopeTrace(prex.Message);
+                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    }
+                }
+
+                return viewError();
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Change password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

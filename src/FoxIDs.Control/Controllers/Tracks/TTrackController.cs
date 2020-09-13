@@ -134,6 +134,10 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
+                //TODO delete all sub elements
+                // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
+                //            Add the ability to delete ALL data in a partition
+                await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
                 await tenantRepository.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
                 return NoContent();
             }

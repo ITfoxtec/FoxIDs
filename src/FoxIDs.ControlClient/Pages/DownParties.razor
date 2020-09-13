@@ -147,13 +147,13 @@
                                                                                         @if (includeLabel)
                                                                                         {
                                                                                             <div class="active-group active pb-0 mb-0">
-                                                                                                <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                                <input type="text" @bind="@voluntaryClaim.Claim" class="form-control input-control" />
                                                                                                 <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
                                                                                             </div>
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                            <input type="text" @bind="@voluntaryClaim.Claim" class="form-control input-control" />
                                                                                         }
                                                                                         <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
                                                                                     </div>
@@ -215,13 +215,13 @@
                                                                         @if (includeLable)
                                                                         {
                                                                             <div class="active-group active pb-0 mb-0">
-                                                                                <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                                <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
                                                                                 <Label For="@(() => claimItem.Claim)" class="label-control" />
                                                                             </div>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                            <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
                                                                         }
                                                                         <ValidationMessage For="@(() => claimItem.Claim)" />
                                                                     </div>
@@ -412,13 +412,13 @@
                                                                                         @if (includeLabel)
                                                                                         {
                                                                                             <div class="active-group active pb-0 mb-0">
-                                                                                                <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                                <input type="text" @bind="@voluntaryClaim.Claim" class="form-control input-control" />
                                                                                                 <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
                                                                                             </div>
                                                                                         }
                                                                                         else
                                                                                         {
-                                                                                            <input type="text" value="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                                            <input type="text" @bind="@voluntaryClaim.Claim" class="form-control input-control" />
                                                                                         }
                                                                                         <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
                                                                                     </div>
@@ -467,13 +467,13 @@
                                                                         @if (includeLable)
                                                                         {
                                                                             <div class="active-group active pb-0 mb-0">
-                                                                                <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                                <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
                                                                                 <Label For="@(() => claimItem.Claim)" class="label-control" />
                                                                             </div>
                                                                         }
                                                                         else
                                                                         {
-                                                                            <input type="text" value="@claimItem.Claim" class="form-control input-control" />
+                                                                            <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
                                                                         }
                                                                         <ValidationMessage For="@(() => claimItem.Claim)" />
                                                                     </div>

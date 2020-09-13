@@ -2,6 +2,7 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -111,6 +112,7 @@ namespace FoxIDs.Logic
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = Constants.ControlApi.ResourceName, Scopes = scopes } },
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),
+                Claims = GetControlClientClaims(),
                 EnablePkce = true,
                 AuthorizationCodeLifetime = 10,
                 IdTokenLifetime = 7200, // 2 hours
@@ -160,6 +162,11 @@ namespace FoxIDs.Logic
                     }
                 },
             };
+        }
+
+        private List<OidcDownClaim> GetControlClientClaims()
+        {
+            return new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Role } };
         }
 
         private IEnumerable<string> GetControlClientRedirectUris(string tenantName, string baseUrl)

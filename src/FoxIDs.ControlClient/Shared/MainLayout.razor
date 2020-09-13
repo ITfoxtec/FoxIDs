@@ -180,10 +180,24 @@
             <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
                 <div class="modal-body">
                     <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
+
+                    <ul class="list-group list-group-flush">
+                        @foreach (var receipt in createTrackReceipt)
+                        {
+                            <li class="list-group-item"><span class="oi oi-check" style="color: #62cd62;" aria-hidden="true"></span> @receipt</li>
+                        }
+                    </ul>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Create</button>
-                    <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
+                    @if (!createTrackDone)
+                    {
+                        <button type="submit" class="btn btn-primary">Create</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Close</button>
+                    }
                 </div>
             </PageEditForm>
         </Modal>

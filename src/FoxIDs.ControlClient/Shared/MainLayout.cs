@@ -25,6 +25,8 @@ namespace FoxIDs.Client.Shared
         private List<string> createTenantReceipt = new List<string>();
         private Modal createTrackModal;
         private PageEditForm<CreateTrackViewModel> createTrackForm;
+        private bool createTrackDone;
+        private List<string> createTrackReceipt = new List<string>();
         private Modal updateTrackModal;
         private PageEditForm<UpdateTrackViewModel> updateTrackForm;
         private string deleteTrackError;
@@ -97,10 +99,10 @@ namespace FoxIDs.Client.Shared
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
                 createTenantReceipt.Add("Master track with user repository created.");
-                createTenantReceipt.Add("Master track default up party login created.");
+                createTenantReceipt.Add("Master track default Login Up Party created.");
                 createTenantReceipt.Add("First master track administrator user created.");
-                createTenantReceipt.Add("Master track down party control api created.");
-                createTenantReceipt.Add("Master track down party control client created.");
+                createTenantReceipt.Add("Master track control api down party created.");
+                createTenantReceipt.Add("Master track control client down party created.");
 
                 await NotificationLogic.TenantUpdatedAsync();
             }
@@ -119,6 +121,8 @@ namespace FoxIDs.Client.Shared
 
         private void ShowCreateTrackModal()
         {
+            createTrackDone = false;
+            createTrackReceipt = new List<string>();
             createTrackForm.Init();
             createTrackModal.Show();
         }
@@ -129,7 +133,11 @@ namespace FoxIDs.Client.Shared
             {
                 var track = createTrackForm.Model.Map<Track>();
                 await TrackService.CreateTrackAsync(track);
-                createTrackModal.Hide();
+                createTrackDone = true;
+                createTrackReceipt.Add("Track created.");
+                createTrackReceipt.Add("User repository created.");
+                createTrackReceipt.Add("Default Login Up Party created.");
+
                 if (selectTrackFilterForm.Model != null)
                 {
                     selectTrackFilterForm.Model.FilterName = null;

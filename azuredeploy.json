@@ -95,7 +95,7 @@
     },
     "branch": {
       "type": "string",
-      "defaultValue": "release-current",
+      "defaultValue": "master",
       "metadata": {
         "description": "The branch of the GitHub repository to use."
       }

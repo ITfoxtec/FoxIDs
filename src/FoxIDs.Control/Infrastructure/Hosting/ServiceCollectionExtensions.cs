@@ -60,7 +60,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<OidcDiscoveryHandler>();
 
-            //if (env.IsProduction())
+            //if (!env.IsDevelopment())
             //{
             //    services.AddSingleton(serviceProvider =>
             //    {

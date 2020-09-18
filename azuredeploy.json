@@ -288,8 +288,6 @@
       ],
       "kind": "app",
       "identity": {
-        "principalId": null,
-        "tenantId": null,
         "type": "SystemAssigned"
       },
       "properties": {
@@ -322,8 +320,6 @@
       ],
       "kind": "app",
       "identity": {
-        "principalId": null,
-        "tenantId": null,
         "type": "SystemAssigned"
       },
       "properties": {

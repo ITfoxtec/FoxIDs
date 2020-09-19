@@ -213,6 +213,9 @@
                     }
                     <FFieldText @bind-Value="updateTrackForm.Model.Name" For="@(() => updateTrackForm.Model.Name)" />
                     <FInputNumber @bind-Value="updateTrackForm.Model.SequenceLifetime" For="@(() => updateTrackForm.Model.SequenceLifetime)" Focus="true" />
+                    <FInputNumber @bind-Value="updateTrackForm.Model.MaxFailingLogins" For="@(() => updateTrackForm.Model.MaxFailingLogins)" />
+                    <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginCountLifetime" For="@(() => updateTrackForm.Model.FailingLoginCountLifetime)" />
+                    <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginObservationPeriod" For="@(() => updateTrackForm.Model.FailingLoginObservationPeriod)" />
                     <FInputNumber @bind-Value="updateTrackForm.Model.PasswordLength" For="@(() => updateTrackForm.Model.PasswordLength)" />
                     <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordComplexity" For="@(() => updateTrackForm.Model.CheckPasswordComplexity)" />
                     <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordRisk" For="@(() => updateTrackForm.Model.CheckPasswordRisk)" />

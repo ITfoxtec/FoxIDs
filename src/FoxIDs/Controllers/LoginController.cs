@@ -26,18 +26,18 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly SessionLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
-        private readonly AccountLogic accountLogic;
+        private readonly UserAccountLogic userAccountLogic;
         private readonly LoginUpLogic loginUpLogic;
         private readonly LogoutUpLogic logoutUpLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic accountLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, UserAccountLogic userAccountLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
             this.sessionLogic = sessionLogic;
             this.sequenceLogic = sequenceLogic;
-            this.accountLogic = accountLogic;
+            this.userAccountLogic = userAccountLogic;
             this.loginUpLogic = loginUpLogic;
             this.logoutUpLogic = logoutUpLogic;
         }
@@ -130,7 +130,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        var user = await accountLogic.ValidateUser(login.Email, login.Password);
+                        var user = await userAccountLogic.ValidateUser(login.Email, login.Password);
 
                         var session = await sessionLogic.GetSessionAsync(loginUpParty);
                         if (session != null && user.UserId != session.UserId)
@@ -151,7 +151,13 @@ namespace FoxIDs.Controllers
                     }
                     catch (ChangePasswordException cpex)
                     {
+                        logger.ScopeTrace(cpex.Message, triggerEvent: true);
                         return await StartChangePassword(login.Email, sequenceData);
+                    }
+                    catch (UserObservationPeriodException uoex)
+                    {
+                        logger.ScopeTrace(uoex.Message, triggerEvent: true);
+                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
                     }
                     catch (AccountException aex)
                     {
@@ -397,7 +403,7 @@ namespace FoxIDs.Controllers
                             claims.AddClaim(JwtClaimTypes.FamilyName, createUser.FamilyName);
                         }
 
-                        var user = await accountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
+                        var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
                         if (user != null)
                         {
                             return await LoginResponse(loginUpParty, user);
@@ -405,7 +411,7 @@ namespace FoxIDs.Controllers
                     }
                     catch (UserExistsException uex)
                     {
-                        logger.ScopeTrace(uex.Message);
+                        logger.ScopeTrace(uex.Message, triggerEvent: true);
                         ModelState.AddModelError(nameof(createUser.Email), localizer["A user with the email already exists."]);
                     }
                     catch (PasswordLengthException plex)
@@ -505,7 +511,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        var user = await accountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
+                        var user = await userAccountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
 
                         var session = await sessionLogic.GetSessionAsync(loginUpParty);
                         if (session != null && user.UserId != session.UserId)
@@ -523,6 +529,11 @@ namespace FoxIDs.Controllers
                         }
 
                         return await LoginResponse(loginUpParty, user, session);
+                    }
+                    catch (UserObservationPeriodException uoex)
+                    {
+                        logger.ScopeTrace(uoex.Message, triggerEvent: true);
+                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
                     }
                     catch (InvalidPasswordException ipex)
                     {

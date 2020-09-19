@@ -57,6 +57,18 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "sequence_lifetime")] 
         public int SequenceLifetime { get; set; }
 
+        [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)] 
+        [JsonProperty(PropertyName = "max_failing_logins")]
+        public int MaxFailingLogins { get; set; }
+
+        [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
+        [JsonProperty(PropertyName = "failing_login_count_lifetime")]
+        public int FailingLoginCountLifetime { get; set; }
+
+        [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
+        [JsonProperty(PropertyName = "failing_login_observation_period")]
+        public int FailingLoginObservationPeriod { get; set; }
+
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [JsonProperty(PropertyName = "password_length")]
         public int PasswordLength { get; set; }

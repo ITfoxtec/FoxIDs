@@ -16,6 +16,15 @@ namespace FoxIDs.Models.Api
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
         public int SequenceLifetime { get; set; } = 600;
 
+        [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
+        public int MaxFailingLogins { get; set; }
+
+        [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
+        public int FailingLoginCountLifetime { get; set; }
+
+        [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
+        public int FailingLoginObservationPeriod { get; set; }
+
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         public int PasswordLength { get; set; } = 6;
 

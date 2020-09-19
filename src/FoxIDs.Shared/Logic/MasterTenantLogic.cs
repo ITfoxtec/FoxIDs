@@ -29,7 +29,10 @@ namespace FoxIDs.Logic
             var mTrack = new Track
             {
                 Name = Constants.Routes.MasterTrackName,
-                SequenceLifetime = 600,
+                SequenceLifetime = 900,
+                MaxFailingLogins = 5,
+                FailingLoginCountLifetime = 36000,
+                FailingLoginObservationPeriod = 900,
                 PasswordLength = 8,
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true

@@ -2,7 +2,6 @@
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -15,10 +14,10 @@ namespace FoxIDs.Logic
 {
     public class AccountLogic : LogicBase
     {
-        private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantRepository;
-        private readonly IMasterRepository masterRepository;
-        private readonly SecretHashLogic secretHashLogic;
+        protected readonly TelemetryScopedLogger logger;
+        protected readonly ITenantRepository tenantRepository;
+        protected readonly IMasterRepository masterRepository;
+        protected readonly SecretHashLogic secretHashLogic;
 
         public AccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
@@ -69,82 +68,7 @@ namespace FoxIDs.Logic
             return user;
         }
 
-        public async Task<User> ValidateUser(string email, string password)
-        {
-            logger.ScopeTrace($"Validating user '{email}', Route '{RouteBinding?.Route}'.");
-
-            ValidateEmail(email);
-
-            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id);
-
-            if (user == null)
-            {
-                await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(password);
-                throw new UserNotExistsException($"User '{email}' do not exist."); // UI message: Wrong email or password / Your email was not found
-            }
-
-            logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}'.");
-            if (await secretHashLogic.ValidateSecretAsync(user, password))
-            {
-                if(user.ChangePassword)
-                {
-                    logger.ScopeTrace($"User '{email}', password valid, user have to change password.", triggerEvent: true);
-                    throw new ChangePasswordException($"Change password, user '{email}'.");
-                }
-                else
-                {
-                    logger.ScopeTrace($"User '{email}', password valid.", triggerEvent: true);
-                    return user;
-                }
-            }
-            else
-            {
-                throw new InvalidPasswordException($"Password invalid, user '{email}'."); // UI message: Wrong email or password / Wrong password
-            }
-        }
-
-        public async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
-        {
-            logger.ScopeTrace($"Change password user '{email}', Route '{RouteBinding?.Route}'.");
-
-            ValidateEmail(email);
-
-            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id);
-
-            if (user == null)
-            {
-                await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
-                throw new UserNotExistsException($"User '{email}' do not exist.");
-            }
-
-            logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}'.");
-            if (await secretHashLogic.ValidateSecretAsync(user, currentPassword))
-            {
-                logger.ScopeTrace($"User '{email}', current password valid, changing password.", triggerEvent: true);
-
-                if(currentPassword.Equals(newPassword, StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new NewPasswordEqualsCurrentException($"New password equals current password, user '{email}'.");
-                }
-
-                await ValidatePasswordPolicy(email, newPassword);
-
-                await secretHashLogic.AddSecretHashAsync(user, newPassword);
-                user.ChangePassword = false;
-                await tenantRepository.SaveAsync(user);
-
-                logger.ScopeTrace($"User '{email}', password changed.", triggerEvent: true);
-                return user;
-            }
-            else
-            {
-                throw new InvalidPasswordException($"Current password invalid, user '{email}'."); 
-            }
-        }
-
-        private void ValidateEmail(string email)
+        protected void ValidateEmail(string email)
         {
             if (!new EmailAddressAttribute().IsValid(email))
             {
@@ -152,7 +76,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task ValidatePasswordPolicy(string email, string password)
+        protected async Task ValidatePasswordPolicy(string email, string password)
         {
             CheckPasswordLength(email, password);
 

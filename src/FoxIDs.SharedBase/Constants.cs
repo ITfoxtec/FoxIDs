@@ -101,6 +101,14 @@ namespace FoxIDs
                 public const int ResourcesMax = 5000;
                 public const int SequenceLifetimeMin = 30;
                 public const int SequenceLifetimeMax = 10800;
+
+                public const int MaxFailingLoginsMin = 2;
+                public const int MaxFailingLoginsMax = 20;
+                public const int FailingLoginCountLifetimeMin = 900; // 15 minutes
+                public const int FailingLoginCountLifetimeMax = 345600;  // 96 hours / 4 days
+                public const int FailingLoginObservationPeriodMin = 60; // 1 minute
+                public const int FailingLoginObservationPeriodMax = 14400; // 4 hours
+
                 public const int PasswordLengthMin = 4;
                 public const int PasswordLengthMax = 50;
 

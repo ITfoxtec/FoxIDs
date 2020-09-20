@@ -8,27 +8,27 @@ namespace FoxIDs.Infrastructure.KeyVault
 {
     public static class FoxIDsKeyVaultClient
     {
-        public static KeyVaultClient GetClient(Settings settings, TokenHelper tokenHelper)
-        {
-            var client = new KeyVaultClient(async (authority, resource, scope) =>
-            {
-                try
-                {
-                    var tokenRequest = new ADTokenRequest
-                    {
-                        Resource = resource
-                    };
-                    (var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.KeyVault.ClientId, settings.KeyVault.ClientSecret, $"{authority}/oauth2/token", tokenRequest);
-                    return accessToken;
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception("Error while retrieving a token from Azure AD to Azure Key Vault.", ex);
-                }
-            });
+        //public static KeyVaultClient GetClient(Settings settings, TokenHelper tokenHelper)
+        //{
+        //    var client = new KeyVaultClient(async (authority, resource, scope) =>
+        //    {
+        //        try
+        //        {
+        //            var tokenRequest = new ADTokenRequest
+        //            {
+        //                Resource = resource
+        //            };
+        //            (var accessToken, var expiresIn) = await tokenHelper.GetAccessTokenWithClientCredentialsAsync(settings.KeyVault.ClientId, settings.KeyVault.ClientSecret, $"{authority}/oauth2/token", tokenRequest);
+        //            return accessToken;
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            throw new Exception("Error while retrieving a token from Azure AD to Azure Key Vault.", ex);
+        //        }
+        //    });
 
-            return client;
-        }
+        //    return client;
+        //}
 
         public static KeyVaultClient GetManagedClient()
         {

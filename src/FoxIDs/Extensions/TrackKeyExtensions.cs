@@ -6,9 +6,9 @@ namespace FoxIDs
 {
     public static class TrackKeyExtensions
     {
-        public static JsonWebKey GetPublicKey(this TrackKey trackKey)
+        public static JsonWebKey GetPublicKey(this TrackKeyItem trackKeyItem)
         {
-            return trackKey.Key.GetPublicKey();
+            return trackKeyItem.Key.GetPublicKey();
         }
     }
 }

@@ -97,6 +97,9 @@ namespace FoxIDs
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w-_]*$";
 
+                public const int TrackKeysMin = 0;
+                public const int TrackKeysMax = 2;
+
                 public const int ResourcesMin = 0;
                 public const int ResourcesMax = 5000;
                 public const int SequenceLifetimeMin = 30;

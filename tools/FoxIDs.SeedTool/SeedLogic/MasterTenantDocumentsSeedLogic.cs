@@ -102,7 +102,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             };
             await masterTrack.SetIdAsync(new Track.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack });
             masterTrack.SetTenantPartitionId();
-            masterTrack.PrimaryKey = await CreateX509KeyAsync();
+            masterTrack.Key = await CreateX509KeyAsync();
 
             await simpleTenantRepository.SaveAsync(masterTrack);
             Console.WriteLine($"Track document created and saved in Cosmos DB");
@@ -111,11 +111,10 @@ namespace FoxIDs.SeedTool.SeedLogic
         private async Task<TrackKey> CreateX509KeyAsync()
         {
             var certificate = await settings.MasterTrack.CreateSelfSignedCertificateAsync();
-
             var trackKey = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Key = await certificate.ToJsonWebKeyAsync(true)
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
             };
             return trackKey;
         }

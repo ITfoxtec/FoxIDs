@@ -12,8 +12,8 @@ namespace FoxIDs.Client.Services
         private const string apiUri = "api/{tenant}/master/!track";
         private const string filterApiUri = "api/{tenant}/master/!filtertrack";
 
-        private const string keyApiUri = "api/{tenant}/{track}/!trackkey";
-        private const string keySwapApiUri = "api/{tenant}/{track}/!trackkeyswap";
+        private const string keyContainedApiUri = "api/{tenant}/{track}/!trackkeycontained";
+        private const string keyContainedSwapApiUri = "api/{tenant}/{track}/!trackkeyscontainedwap";
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
 
@@ -27,11 +27,11 @@ namespace FoxIDs.Client.Services
         public async Task UpdateTrackAsync(Track track) => await PutAsync(apiUri, track);
         public async Task DeleteTrackAsync(string name) => await DeleteAsync(apiUri, name);
 
-        public async Task<TrackKeys> GetTrackKeyAsync() => await GetAsync<TrackKeys>(keyApiUri);
-        public async Task UpdateTrackKeyAsync(TrackKeyRequest trackKeyRequest) => await PutAsync(keyApiUri, trackKeyRequest);
-        public async Task DeleteTrackKeyAsync() => await DeleteAsync(keyApiUri);
+        public async Task<TrackKeyItemsContained> GetTrackKeyContainedAsync() => await GetAsync<TrackKeyItemsContained>(keyContainedApiUri);
+        public async Task UpdateTrackKeyContainedAsync(TrackKeyItemContainedRequest trackKeyRequest) => await PutAsync(keyContainedApiUri, trackKeyRequest);
+        public async Task DeleteTrackKeyContainedAsync() => await DeleteAsync(keyContainedApiUri);
 
-        public async Task SwapTrackKeyAsync(TrackKeySwap trackKeySwap) => await PostAsync(keySwapApiUri, trackKeySwap);
+        public async Task SwapTrackKeyContainedAsync(TrackKeyItemContainedSwap trackKeySwap) => await PostAsync(keyContainedSwapApiUri, trackKeySwap);
 
         public async Task<IEnumerable<ResourceName>> FilterResourceNameAsync(string filterName) => await FilterAsync<ResourceName>(filterResourceNameApiUri, filterName);
 

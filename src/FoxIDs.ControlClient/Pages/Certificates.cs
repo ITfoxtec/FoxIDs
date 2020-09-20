@@ -51,7 +51,7 @@ namespace FoxIDs.Client.Pages
             certificateLoadError = null;
             try
             {
-                SetGeneralCertificates(await TrackService.GetTrackKeyAsync());
+                SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
             }
             catch (AuthenticationException)
             {
@@ -63,7 +63,7 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralCertificates(TrackKeys trackKeys)
+        private void SetGeneralCertificates(TrackKeyItemsContained trackKeys)
         {
             certificates.Clear();
             certificates.Add(new GeneralTrackCertificateViewModel(trackKeys.PrimaryKey, true));
@@ -82,7 +82,7 @@ namespace FoxIDs.Client.Pages
             swapCertificateError = null;
             try
             {
-                await TrackService.SwapTrackKeyAsync(new TrackKeySwap { SwapKeys = true });
+                await TrackService.SwapTrackKeyContainedAsync(new TrackKeyItemContainedSwap { SwapKeys = true });
                 await DefaultLoadAsync();
                 swapCertificateModal.Hide();
             }
@@ -192,10 +192,7 @@ namespace FoxIDs.Client.Pages
                     throw new ArgumentNullException("Model.Key");
                 }
 
-                await TrackService.UpdateTrackKeyAsync(generalCertificate.Form.Model.Map<TrackKeyRequest>(afterMap: afterMap => 
-                {
-                    afterMap.Type = TrackKeyType.Contained;
-                }));
+                await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>());
                 generalCertificate.Subject = generalCertificate.Form.Model.Subject;
                 generalCertificate.ValidFrom = generalCertificate.Form.Model.ValidFrom;
                 generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;
@@ -221,7 +218,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.DeleteTrackKeyAsync();
+                await TrackService.DeleteTrackKeyContainedAsync();
                 generalCertificate.CreateMode = true;
                 generalCertificate.Edit = false; 
                 generalCertificate.Subject = null;

@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.Api
 {
-    public class TrackKeys : INameValue
+    public class TrackKeyItemsContained : INameValue
     {
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
@@ -10,8 +10,8 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [Required]
-        public TrackKey PrimaryKey { get; set; }
+        public TrackKeyItemContained PrimaryKey { get; set; }
 
-        public TrackKey SecondaryKey { get; set; }
+        public TrackKeyItemContained SecondaryKey { get; set; }
     }
 }

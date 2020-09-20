@@ -3,6 +3,7 @@
     public enum TrackKeyType
     {
         Contained,
-        KeyVault
+        KeyVaultRenewSelfSigned,
+        KeyVaultUpload,
     }
 }

@@ -40,11 +40,8 @@ namespace FoxIDs.Models
         public override string Id { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "primary_key")]
-        public TrackKey PrimaryKey { get; set; }
-
-        [JsonProperty(PropertyName = "secondary_key")]
-        public TrackKey SecondaryKey { get; set; }
+        [JsonProperty(PropertyName = "key")]
+        public TrackKey Key { get; set; }
 
         [JsonProperty(PropertyName = "claim_mappings")]
         public ClaimMappingsDataElement ClaimMappings { get; set; }

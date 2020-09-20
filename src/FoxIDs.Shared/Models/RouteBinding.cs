@@ -10,15 +10,14 @@ namespace FoxIDs.Models
 
         public string RouteUrl { get; set; }
 
-        public string TenantAndTrackName { get { return $"{TenantName}.{TrackName}"; } }
+        public string TenantDotTrackName { get { return $"{TenantName}.{TrackName}"; } }
+        public string TenantDashTrackName { get { return $"{TenantName}-{TrackName}"; } }
 
         public string Route { get { return $"{TenantName}.{TrackName}.{PartyNameAndBinding}"; } }
 
         public string PartyNameAndBinding { get; set; }
 
-        public TrackKey PrimaryKey { get; set; }
-
-        public TrackKey SecondaryKey { get; set; }
+        public RouteTrackKey Key { get; set; }
 
         public UpParty UpParty { get; set; }
 

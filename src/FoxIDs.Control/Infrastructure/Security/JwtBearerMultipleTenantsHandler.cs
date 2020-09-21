@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using UrlCombineLib;
 using ITfoxtec.Identity.Tokens;
 using FoxIDs.Models.Config;
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 
 namespace FoxIDs.Infrastructure.Security
 {
@@ -36,7 +38,18 @@ namespace FoxIDs.Infrastructure.Security
                 var oidcDiscovery = await oidcDiscoveryHandler.GetOidcDiscoveryAsync(oidcDiscoveryUri);
                 var oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri);
 
-                (var principal, var securityToken) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
+                ClaimsPrincipal principal;
+                try
+                {
+                    (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
+                }
+                catch (SecurityTokenInvalidSignatureException isex)
+                {
+                    Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, uri '{oidcDiscoveryUri}'.");
+                    oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
+                    (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
+                }    
+                
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
             }

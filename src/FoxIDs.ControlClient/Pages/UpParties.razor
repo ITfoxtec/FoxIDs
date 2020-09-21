@@ -56,9 +56,9 @@
                             <div class="modal-body">
                                 @if (loginUpParty.CreateMode)
                                 {
-                                <div class="mb-3 alert alert-info" role="alert">
-                                    The users login using a Login Up Party which holds the users sessions.
-                                </div>
+                                    <div class="mb-3 alert alert-info" role="alert">
+                                        The users login using a Login Up Party which holds the users sessions.
+                                    </div>
                                     <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" Focus="true" />
                                 }
                                 else

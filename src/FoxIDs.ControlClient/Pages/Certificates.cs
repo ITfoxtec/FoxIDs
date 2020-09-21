@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using MTokens = Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs.Client.Pages
 {
@@ -22,7 +24,10 @@ namespace FoxIDs.Client.Pages
         private Modal swapCertificateModal;
         private string swapCertificateError;
         private List<GeneralTrackCertificateViewModel> certificates = new List<GeneralTrackCertificateViewModel>();
+        private Modal changeContainerTypeModal;
+        private string changeContainerTypeError;
         private string certificateLoadError;
+        private TrackKey trackKey;
 
         [Inject]
         public TrackService TrackService { get; set; }
@@ -46,12 +51,45 @@ namespace FoxIDs.Client.Pages
             StateHasChanged();
         }
 
+        private void ShowContainerTypeAsync()
+        {
+            changeContainerTypeError = null;
+            changeContainerTypeModal.Show();
+        }
+
+        private async Task SelectContainerTypeAsync(TrackKeyType type)
+        {
+            changeContainerTypeError = null;
+            try
+            {
+                await TrackService.UpdateTrackKeyTypeAsync(new TrackKey { Type = type });
+                trackKey.Type = type;
+                changeContainerTypeModal.Hide();
+                await DefaultLoadAsync();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                changeContainerTypeError = ex.Message;
+            }
+        }
+
         private async Task DefaultLoadAsync()
         {
             certificateLoadError = null;
             try
             {
-                SetGeneralCertificates(await TrackService.GetTrackKeyAsync());
+                if (trackKey == null)
+                {
+                    trackKey = await TrackService.GetTrackKeyTypeAsync();
+                }
+                if(trackKey.Type == TrackKeyType.Contained)
+                {
+                    SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
+                }
             }
             catch (AuthenticationException)
             {
@@ -63,7 +101,7 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralCertificates(TrackKeys trackKeys)
+        private void SetGeneralCertificates(TrackKeyItemsContained trackKeys)
         {
             certificates.Clear();
             certificates.Add(new GeneralTrackCertificateViewModel(trackKeys.PrimaryKey, true));
@@ -82,7 +120,7 @@ namespace FoxIDs.Client.Pages
             swapCertificateError = null;
             try
             {
-                await TrackService.SwapTrackKeyAsync(new TrackKeySwap { SwapKeys = true });
+                await TrackService.SwapTrackKeyContainedAsync(new TrackKeyItemContainedSwap { SwapKeys = true });
                 await DefaultLoadAsync();
                 swapCertificateModal.Hide();
             }
@@ -183,6 +221,39 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task CreateSelfSignedCertificateAsync(GeneralTrackCertificateViewModel generalCertificate)
+        {
+            generalCertificate.Form.ClearError();
+            try
+            {
+                var trackKeyResponse = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>(afterMap: afterMap => 
+                {
+                    afterMap.CreateSelfSigned = true;
+                    afterMap.Key = null;
+                }));
+                var certificate = new MTokens.JsonWebKey((generalCertificate.Form.Model.IsPrimary ? trackKeyResponse.PrimaryKey : trackKeyResponse.SecondaryKey).JsonSerialize()).ToX509Certificate();
+                generalCertificate.Subject = certificate.Subject;
+                generalCertificate.ValidFrom = certificate.NotBefore;
+                generalCertificate.ValidTo = certificate.NotAfter;
+                generalCertificate.IsValid = certificate.IsValid();
+                generalCertificate.Thumbprint = certificate.Thumbprint;
+                generalCertificate.CreateMode = false;
+                generalCertificate.Edit = false;
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalCertificate.Form.SetError(ex.Message);
+            }
+            catch (FoxIDsApiException aex)
+            {
+                generalCertificate.Form.SetError(aex.Message);
+            }
+        }
+
         private async Task OnEditCertificateValidSubmitAsync(GeneralTrackCertificateViewModel generalCertificate, EditContext editContext)
         {
             try
@@ -192,10 +263,7 @@ namespace FoxIDs.Client.Pages
                     throw new ArgumentNullException("Model.Key");
                 }
 
-                await TrackService.UpdateTrackKeyAsync(generalCertificate.Form.Model.Map<TrackKeyRequest>(afterMap: afterMap => 
-                {
-                    afterMap.Type = TrackKeyType.Contained;
-                }));
+                _ = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>());
                 generalCertificate.Subject = generalCertificate.Form.Model.Subject;
                 generalCertificate.ValidFrom = generalCertificate.Form.Model.ValidFrom;
                 generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;
@@ -221,7 +289,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.DeleteTrackKeyAsync();
+                await TrackService.DeleteTrackKeyContainedAsync();
                 generalCertificate.CreateMode = true;
                 generalCertificate.Edit = false; 
                 generalCertificate.Subject = null;

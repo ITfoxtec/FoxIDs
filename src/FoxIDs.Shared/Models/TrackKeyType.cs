@@ -6,7 +6,9 @@ namespace FoxIDs.Models
     {
         [EnumMember(Value = "contained")]
         Contained,
-        [EnumMember(Value = "key_vault")]
-        KeyVault
+        [EnumMember(Value = "key_vault_renew_self_signed")]
+        KeyVaultRenewSelfSigned,
+        [EnumMember(Value = "key_vault_upload")]
+        KeyVaultUpload,
     }
 }

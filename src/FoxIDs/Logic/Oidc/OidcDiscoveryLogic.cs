@@ -61,10 +61,10 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("downPartyId", partyId);
 
             var jonWebKeySet = new JsonWebKeySet();
-            jonWebKeySet.Keys.Add(RouteBinding.PrimaryKey.GetPublicKey());
-            if (RouteBinding.SecondaryKey != null)
+            jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
+            if (RouteBinding.Key.SecondaryKey != null)
             {
-                jonWebKeySet.Keys.Add(RouteBinding.SecondaryKey.GetPublicKey());
+                jonWebKeySet.Keys.Add(RouteBinding.Key.SecondaryKey.Key.GetPublicKey());
             }
 
             return jonWebKeySet;

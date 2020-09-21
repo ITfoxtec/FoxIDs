@@ -13,10 +13,7 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsClientRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        protected override ValueTask SeedAsync(IServiceProvider requestServices)
-        {
-            return new ValueTask(requestServices.GetService<SeedLogic>().SeedAsync());
-        }
+        protected override ValueTask SeedAsync(IServiceProvider requestServices) => new ValueTask(requestServices.GetService<SeedLogic>().SeedAsync());
 
         protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route)
         {
@@ -44,9 +41,8 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        protected override string GetPartyNameAndbinding(string[] route)
-        {
-            return null;
-        }
+        protected override string GetPartyNameAndbinding(string[] route) => null;
+
+        protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null) => new ValueTask<RouteBinding>(routeBinding);
     }
 }

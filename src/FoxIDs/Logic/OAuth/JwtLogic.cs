@@ -55,7 +55,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            var token = JwtHandler.CreateToken(trackKeyLogic.GetSecurityKey(RouteBinding.PrimaryKey), Issuer(RouteBinding), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm, x509CertificateSHA1Thumbprint: RouteBinding.PrimaryKey.Key.Kid);
+            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm, x509CertificateSHA1Thumbprint: RouteBinding.Key.PrimaryKey.Key.Kid);
             return await token.ToJwtString();
         }
 
@@ -77,17 +77,17 @@ namespace FoxIDs.Logic
 
             accessTokenClaims.AddRange(await claimsLogic.FilterJwtClaims(client, claims, selectedScopes, includeAccessTokenClaims: true));
 
-            var token = JwtHandler.CreateToken(trackKeyLogic.GetSecurityKey(RouteBinding.PrimaryKey), Issuer(RouteBinding), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, x509CertificateSHA1Thumbprint: RouteBinding.PrimaryKey.Key.Kid);
+            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, x509CertificateSHA1Thumbprint: RouteBinding.Key.PrimaryKey.Key.Kid);
             return await token.ToJwtString();
         }
 
         public async Task<ClaimsPrincipal> ValidatePartyClientTokenAsync(TClient client, string token, bool validateLifetime = true)
         {
             var issuerSigningKeys = new List<JsonWebKey>();
-            issuerSigningKeys.Add(RouteBinding.PrimaryKey.Key);
-            if(RouteBinding.SecondaryKey != null)
+            issuerSigningKeys.Add(RouteBinding.Key.PrimaryKey.Key);
+            if(RouteBinding.Key.SecondaryKey != null)
             {
-                issuerSigningKeys.Add(RouteBinding.SecondaryKey.Key);
+                issuerSigningKeys.Add(RouteBinding.Key.SecondaryKey.Key);
             }
 
             try
@@ -105,10 +105,10 @@ namespace FoxIDs.Logic
         public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, bool validateAudience = false, bool validateLifetime = true)
         {
             var issuerSigningKeys = new List<JsonWebKey>();
-            issuerSigningKeys.Add(RouteBinding.PrimaryKey.Key);
-            if (RouteBinding.SecondaryKey != null)
+            issuerSigningKeys.Add(RouteBinding.Key.PrimaryKey.Key);
+            if (RouteBinding.Key.SecondaryKey != null)
             {
-                issuerSigningKeys.Add(RouteBinding.SecondaryKey.Key);
+                issuerSigningKeys.Add(RouteBinding.Key.SecondaryKey.Key);
             }
 
             try

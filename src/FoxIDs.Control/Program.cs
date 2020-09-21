@@ -21,7 +21,7 @@ namespace FoxIDs
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     var builtConfig = config.Build();
-                    if (context.HostingEnvironment.IsProduction())
+                    if (!context.HostingEnvironment.IsDevelopment())
                     {
                         var keyVaultClient = FoxIDsKeyVaultClient.GetManagedClient();
                         config.AddAzureKeyVault(builtConfig["Settings:KeyVault:EndpointUri"], keyVaultClient, new DefaultKeyVaultSecretManager());

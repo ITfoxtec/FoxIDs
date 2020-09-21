@@ -41,9 +41,8 @@ namespace FoxIDs.Infrastructure.Hosting
             return trackIdKey;
         }
 
-        protected override string GetPartyNameAndbinding(string[] route)
-        {
-            return null;
-        }
+        protected override string GetPartyNameAndbinding(string[] route) => null;
+
+        protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null) => new ValueTask<RouteBinding>(routeBinding);
     }
 }

@@ -55,13 +55,18 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ClaimAndValues, Api.ClaimAndValues>()
                 .ReverseMap();
 
-            CreateMap<Track, Api.TrackKeys>();            
-
             CreateMap<TrackKey, Api.TrackKey>()
+                .ReverseMap();
+
+            CreateMap<TrackKey, Api.TrackKeyItemsContained>()
+                .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0].Key.GetPublicKey()))
+                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));
+
+            CreateMap<TrackKeyItem, Api.TrackKeyItemContained>()
                 .ForMember(d => d.Key, opt => opt.MapFrom(s => s.Key.GetPublicKey()))
                 .ReverseMap();
 
-            CreateMap<Api.TrackKeyRequest, TrackKey>();
+            CreateMap<Api.TrackKeyItemContainedRequest, TrackKeyItem>();
 
             CreateMap<JsonWebKey, Api.JsonWebKey>()
                 .ReverseMap()

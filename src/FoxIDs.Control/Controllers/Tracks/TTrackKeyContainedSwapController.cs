@@ -11,13 +11,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackKeySwapController : TenantApiController
+    public class TTrackKeyContainedSwapController : TenantApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
 
-        public TTrackKeySwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackKeyContainedSwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -25,13 +25,13 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Swap track key.
+        /// Swap track key contained.
         /// </summary>
         /// <param name="trackKeySwap">Track to swap.</param>
         /// <returns>Track keys.</returns>
         [ProducesResponseType(typeof(Api.Track), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<Api.TrackKeys>> PostTrackKeySwap([FromBody] Api.TrackKeySwap trackKeySwap)
+        public async Task<ActionResult<Api.TrackKeyItemsContained>> PostTrackKeyContainedSwap([FromBody] Api.TrackKeyItemContainedSwap trackKeySwap)
         {
             try
             {
@@ -53,7 +53,11 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
                 try
                 {
-                    if (mTrack.SecondaryKey == null)
+                    if (mTrack.Key.Type != TrackKeyType.Contained)
+                    {
+                        throw new ValidationException($"Only {Api.TrackKeyType.Contained} keys is supported.");
+                    }
+                    if (mTrack.Key.Keys.Count < 2)
                     {
                         throw new ValidationException("Secondary key is required.");
                     }
@@ -65,20 +69,20 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var tempSecondaryKey = mTrack.SecondaryKey;
-                mTrack.SecondaryKey = mTrack.PrimaryKey;
-                mTrack.PrimaryKey = tempSecondaryKey;
+                var tempSecondaryKey = mTrack.Key.Keys[1];
+                mTrack.Key.Keys[1] = mTrack.Key.Keys[0];
+                mTrack.Key.Keys[0] = tempSecondaryKey;
 
                 await tenantRepository.UpdateAsync(mTrack);
 
-                return Created(mapper.Map<Api.TrackKeys>(mTrack));
+                return Created(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Swap Track key '{typeof(Api.TrackKeySwap).Name}' by track name '{RouteBinding.TrackName}'.");
-                    return NotFound(typeof(Api.TrackKeySwap).Name, RouteBinding.TrackName);
+                    logger.Warning(ex, $"NotFound, Swap Track key contained '{typeof(Api.TrackKeyItemContainedSwap).Name}' by track name '{RouteBinding.TrackName}'.");
+                    return NotFound(typeof(Api.TrackKeyItemContainedSwap).Name, RouteBinding.TrackName);
                 }
                 throw;
             }

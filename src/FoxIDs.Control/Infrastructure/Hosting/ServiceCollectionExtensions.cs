@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Azure.Core;
+using Azure.Identity;
 using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
@@ -60,22 +62,17 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<OidcDiscoveryHandler>();
 
-            //if (env.IsProduction())
-            //{
-            //    services.AddSingleton(serviceProvider =>
-            //    {
-            //        return FoxIDsKeyVaultClient.GetManagedClient();
-            //    });
-            //}
-            //else
-            //{
-            //    services.AddTransient<TokenHelper>();
-            //    services.AddSingleton(serviceProvider =>
-            //    {
-            //        var tokenHelper = serviceProvider.GetService<TokenHelper>();
-            //        return FoxIDsKeyVaultClient.GetClient(settings, tokenHelper);
-            //    });
-            //}
+            if (!env.IsDevelopment())
+            {
+                services.AddSingleton<TokenCredential, DefaultAzureCredential>();
+            }
+            else
+            {
+                services.AddSingleton<TokenCredential>(serviceProvider =>
+                {
+                    return new ClientSecretCredential(settings.KeyVault.TenantId, settings.KeyVault.ClientId, settings.KeyVault.ClientSecret);
+                });
+            }
 
             services.AddHttpContextAccessor();
             services.AddHttpClient();

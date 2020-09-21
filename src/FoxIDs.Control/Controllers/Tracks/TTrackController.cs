@@ -102,6 +102,9 @@ namespace FoxIDs.Controllers
 
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name });
                 mTrack.SequenceLifetime = track.SequenceLifetime;
+                mTrack.MaxFailingLogins = track.MaxFailingLogins;
+                mTrack.FailingLoginCountLifetime = track.FailingLoginCountLifetime;
+                mTrack.FailingLoginObservationPeriod = track.FailingLoginObservationPeriod;
                 mTrack.PasswordLength = track.PasswordLength;
                 mTrack.CheckPasswordComplexity = track.CheckPasswordComplexity;
                 mTrack.CheckPasswordRisk = track.CheckPasswordRisk;

@@ -2,9 +2,7 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -24,10 +22,10 @@ namespace FoxIDs.Logic
         public async Task CreateTrackDocumentAsync(Track mTrack)
         {
             var certificate = await mTrack.Name.CreateSelfSignedCertificateAsync();
-            mTrack.PrimaryKey = new TrackKey()
+            mTrack.Key = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Key = await certificate.ToJsonWebKeyAsync(true)
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
             };
             await tenantRepository.CreateAsync(mTrack);
         }

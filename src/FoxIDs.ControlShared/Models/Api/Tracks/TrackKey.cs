@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
@@ -7,10 +6,5 @@ namespace FoxIDs.Models.Api
     {
         [Required]
         public TrackKeyType Type { get; set; }
-
-        [Required]
-        public JsonWebKey Key { get; set; }
-
-        public string ExternalName { get; set; }
     }
 }

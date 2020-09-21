@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
 
             if (includeSigningCertificate)
             {
-                samlConfig.SigningCertificate = trackKeyLogic.GetSaml2X509Certificate(RouteBinding.PrimaryKey);
+                samlConfig.SigningCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
             }
             samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
 
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
 
             if (includeSigningCertificate)
             {
-                samlConfig.SigningCertificate = trackKeyLogic.GetSaml2X509Certificate(RouteBinding.PrimaryKey);
+                samlConfig.SigningCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
             }
             samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
 

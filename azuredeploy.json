@@ -233,8 +233,9 @@
                 "Get",
                 "List",
                 "Create",
+                "Delete",
                 "Import",
-                "Delete"
+                "Update"
               ]
             }
           }
@@ -288,8 +289,6 @@
       ],
       "kind": "app",
       "identity": {
-        "principalId": null,
-        "tenantId": null,
         "type": "SystemAssigned"
       },
       "properties": {
@@ -322,8 +321,6 @@
       ],
       "kind": "app",
       "identity": {
-        "principalId": null,
-        "tenantId": null,
         "type": "SystemAssigned"
       },
       "properties": {

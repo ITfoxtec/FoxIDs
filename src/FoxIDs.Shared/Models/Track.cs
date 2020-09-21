@@ -40,11 +40,20 @@ namespace FoxIDs.Models
         public override string Id { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "primary_key")]
-        public TrackKey PrimaryKey { get; set; }
+        [JsonProperty(PropertyName = "key")]
+        public TrackKey Key { get; set; }
 
-        [JsonProperty(PropertyName = "secondary_key")]
-        public TrackKey SecondaryKey { get; set; }
+        [Range(Constants.Models.Track.KeyExternalValidityInMonthsMin, Constants.Models.Track.KeyExternalValidityInMonthsMax)]
+        public int KeyExternalValidityInMonths { get; set; } = 3;
+
+        [Range(Constants.Models.Track.KeyExternalAutoRenewDaysBeforeExpiryMin, Constants.Models.Track.KeyExternalAutoRenewDaysBeforeExpiryMax)]
+        public int KeyExternalAutoRenewDaysBeforeExpiry { get; set; } = 10;
+
+        [Range(Constants.Models.Track.KeyExternalPrimaryAfterDaysMin, Constants.Models.Track.KeyExternalPrimaryAfterDaysMax)]
+        public int KeyExternalPrimaryAfterDays { get; set; } = 5;
+
+        [Range(Constants.Models.Track.KeyExternalCacheLifetimeMin, Constants.Models.Track.KeyExternalCacheLifetimeMax)]
+        public int KeyExternalCacheLifetime { get; set; } = 28800; // 8 hours
 
         [JsonProperty(PropertyName = "claim_mappings")]
         public ClaimMappingsDataElement ClaimMappings { get; set; }
@@ -56,6 +65,18 @@ namespace FoxIDs.Models
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
         [JsonProperty(PropertyName = "sequence_lifetime")] 
         public int SequenceLifetime { get; set; }
+
+        [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)] 
+        [JsonProperty(PropertyName = "max_failing_logins")]
+        public int MaxFailingLogins { get; set; }
+
+        [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
+        [JsonProperty(PropertyName = "failing_login_count_lifetime")]
+        public int FailingLoginCountLifetime { get; set; }
+
+        [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
+        [JsonProperty(PropertyName = "failing_login_observation_period")]
+        public int FailingLoginObservationPeriod { get; set; }
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [JsonProperty(PropertyName = "password_length")]

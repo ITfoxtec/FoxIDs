@@ -112,6 +112,11 @@ h4 {
         background-color: #ea7c0f;
         border-color: #ea7c0f;
     }
+    .btn-primary.disabled, .btn-primary:disabled {
+        color: #fff;
+        background-color: #e4b485;
+        border-color: #e4b485;
+    }
 
         .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
             box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);

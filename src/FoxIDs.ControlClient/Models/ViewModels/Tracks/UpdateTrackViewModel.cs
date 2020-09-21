@@ -13,7 +13,19 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] 
         [Display(Name = "Sequence lifetime")]
-        public int SequenceLifetime { get; set; } 
+        public int SequenceLifetime { get; set; }
+
+        [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
+        [Display(Name = "Max failing logins")]
+        public int MaxFailingLogins { get; set; } = 5;
+
+        [Range(Constants.Models.Track.FailingLoginCountLifetimeMin, Constants.Models.Track.FailingLoginCountLifetimeMax)]
+        [Display(Name = "Failing login count lifetime")]
+        public int FailingLoginCountLifetime { get; set; } = 36000;
+
+        [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
+        [Display(Name = "Failing login observation period")]
+        public int FailingLoginObservationPeriod { get; set; } = 900;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [Display(Name = "Password min length")]

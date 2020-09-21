@@ -1,13 +1,11 @@
 ﻿using Azure.Core;
 using Azure.Identity;
-using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Localization;
 using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
-using ITfoxtec.Identity.Helpers;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -34,7 +32,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<LoginUpLogic>();
             services.AddTransient<LogoutUpLogic>();
             services.AddTransient<SecretHashLogic>();
-            services.AddTransient<AccountLogic>();
+            services.AddTransient<FailingLoginLogic>();            
+            services.AddTransient<UserAccountLogic>();
             services.AddTransient<SessionLogic>();
             services.AddTransient<ClaimTransformationsLogic>();            
 
@@ -92,7 +91,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<OidcDiscoveryHandler>();
 
-            if (env.IsProduction())
+            if (!env.IsDevelopment())
             {
                 services.AddSingleton<TokenCredential, DefaultAzureCredential>();
             }
@@ -107,8 +106,11 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddHttpContextAccessor();
             services.AddHttpClient();
 
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
+            services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
             services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString), "data_protection_keys");
+                .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
 
             services.AddStackExchangeRedisCache(options => {
                 options.Configuration = settings.RedisCache.ConnectionString;

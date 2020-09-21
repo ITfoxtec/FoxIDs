@@ -97,10 +97,30 @@ namespace FoxIDs
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w-_]*$";
 
+                public const int KeysMin = 0;
+                public const int KeysMax = 2;
+
+                public const int KeyExternalValidityInMonthsMin = 1;
+                public const int KeyExternalValidityInMonthsMax = 12;
+                public const int KeyExternalAutoRenewDaysBeforeExpiryMin = 4;
+                public const int KeyExternalAutoRenewDaysBeforeExpiryMax = 30;
+                public const int KeyExternalPrimaryAfterDaysMin = 2;
+                public const int KeyExternalPrimaryAfterDaysMax = 20;
+                public const int KeyExternalCacheLifetimeMin = 3600;
+                public const int KeyExternalCacheLifetimeMax = 86400;
+
                 public const int ResourcesMin = 0;
                 public const int ResourcesMax = 5000;
                 public const int SequenceLifetimeMin = 30;
                 public const int SequenceLifetimeMax = 10800;
+
+                public const int MaxFailingLoginsMin = 2;
+                public const int MaxFailingLoginsMax = 20;
+                public const int FailingLoginCountLifetimeMin = 900; // 15 minutes
+                public const int FailingLoginCountLifetimeMax = 345600;  // 96 hours / 4 days
+                public const int FailingLoginObservationPeriodMin = 60; // 1 minute
+                public const int FailingLoginObservationPeriodMax = 14400; // 4 hours
+
                 public const int PasswordLengthMin = 4;
                 public const int PasswordLengthMax = 50;
 

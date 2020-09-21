@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
             var id = resourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
             if(id > 0)
             {
-                if (RouteBinding.Resources?.Count > 0)
+                if (RouteBinding?.Resources?.Count > 0)
                 {
                     var value = GetValue(RouteBinding.Resources, id, culture);
                     if (!value.IsNullOrEmpty())

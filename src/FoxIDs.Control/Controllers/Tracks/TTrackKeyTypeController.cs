@@ -94,7 +94,7 @@ namespace FoxIDs.Controllers
                             mTrack.Key.Keys = null;
                             if (mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                             {
-                                mTrack.Key.ExternalName = await CreateExternalKeyAsync();
+                                mTrack.Key.ExternalName = await CreateExternalKeyAsync(mTrack);
                             }
                             break;
 
@@ -119,20 +119,20 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<string> CreateExternalKeyAsync()
+        private async Task<string> CreateExternalKeyAsync(Track mTrack)
         {
             var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
 
-            var externalName = $"{RouteBinding.TenantDashTrackName}-{RandomGenerator.Generate(8)}";
+            var externalName = $"{RouteBinding.TenantDashTrackName}-{Guid.NewGuid()}";
             var cn = RouteBinding.TenantDashTrackName;
             var certificatePolicy = new CertificatePolicy("self", $"CN={cn}, O=FoxIDs")
             {
                 Exportable = false,
-                ValidityInMonths = 3
+                ValidityInMonths = mTrack.KeyExternalValidityInMonths
             };
             certificatePolicy.LifetimeActions.Add(new LifetimeAction(CertificatePolicyAction.AutoRenew)
             {
-                DaysBeforeExpiry = 10
+                DaysBeforeExpiry = mTrack.KeyExternalAutoRenewDaysBeforeExpiry
             });            
             await certificateClient.StartCreateCertificateAsync(externalName, certificatePolicy);
             return externalName;

@@ -43,6 +43,18 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "key")]
         public TrackKey Key { get; set; }
 
+        [Range(Constants.Models.Track.KeyExternalValidityInMonthsMin, Constants.Models.Track.KeyExternalValidityInMonthsMax)]
+        public int KeyExternalValidityInMonths { get; set; } = 3;
+
+        [Range(Constants.Models.Track.KeyExternalAutoRenewDaysBeforeExpiryMin, Constants.Models.Track.KeyExternalAutoRenewDaysBeforeExpiryMax)]
+        public int KeyExternalAutoRenewDaysBeforeExpiry { get; set; } = 10;
+
+        [Range(Constants.Models.Track.KeyExternalPrimaryAfterDaysMin, Constants.Models.Track.KeyExternalPrimaryAfterDaysMax)]
+        public int KeyExternalPrimaryAfterDays { get; set; } = 5;
+
+        [Range(Constants.Models.Track.KeyExternalCacheLifetimeMin, Constants.Models.Track.KeyExternalCacheLifetimeMax)]
+        public int KeyExternalCacheLifetime { get; set; } = 28800; // 8 hours
+
         [JsonProperty(PropertyName = "claim_mappings")]
         public ClaimMappingsDataElement ClaimMappings { get; set; }
 

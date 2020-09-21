@@ -13,7 +13,7 @@ namespace FoxIDs.Client.Services
         private const string filterApiUri = "api/{tenant}/master/!filtertrack";
 
         private const string keyContainedApiUri = "api/{tenant}/{track}/!trackkeycontained";
-        private const string keyContainedSwapApiUri = "api/{tenant}/{track}/!trackkeyscontainedwap";
+        private const string keyContainedSwapApiUri = "api/{tenant}/{track}/!trackkeycontainedswap";
         private const string keyTypeApiUri = "api/{tenant}/{track}/!trackkeytype";
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";

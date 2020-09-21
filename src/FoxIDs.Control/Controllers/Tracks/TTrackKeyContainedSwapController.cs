@@ -57,7 +57,7 @@ namespace FoxIDs.Controllers
                     {
                         throw new ValidationException($"Only {Api.TrackKeyType.Contained} keys is supported.");
                     }
-                    if (mTrack.Key.Keys.Count > 1)
+                    if (mTrack.Key.Keys.Count < 2)
                     {
                         throw new ValidationException("Secondary key is required.");
                     }
@@ -75,7 +75,7 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.UpdateAsync(mTrack);
 
-                return Created(mapper.Map<Api.TrackKeyItemsContained>(mTrack));
+                return Created(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
             catch (CosmosDataException ex)
             {

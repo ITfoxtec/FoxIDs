@@ -51,6 +51,12 @@ namespace FoxIDs.Client.Pages
             StateHasChanged();
         }
 
+        private void ShowContainerTypeAsync()
+        {
+            changeContainerTypeError = null;
+            changeContainerTypeModal.Show();
+        }
+
         private async Task SelectContainerTypeAsync(TrackKeyType type)
         {
             changeContainerTypeError = null;

@@ -38,7 +38,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     var trackIdKey = GetTrackIdKey(route);
                     if (trackIdKey != null)
                     {
-                        var routeBinding = await GetRouteDataAsync(scopedLogger, trackIdKey, GetPartyNameAndbinding(route));
+                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
 
                         scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
@@ -62,9 +62,9 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected abstract string GetPartyNameAndbinding(string[] route);
 
-        protected abstract ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null);
+        protected abstract ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null);
 
-        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, string partyNameAndBinding = null)
+        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, string partyNameAndBinding = null)
         {
             var track = await GetTrackAsync(tenantRepository, trackIdKey);
             var routeBinding = new RouteBinding
@@ -75,7 +75,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 Resources = track.Resources,
             };
 
-            return await PostRouteDataAsync(scopedLogger, trackIdKey, track, routeBinding, partyNameAndBinding);
+            return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding);
         }
 
         private async Task<Track> GetTrackAsync(ITenantRepository tenantRepository, Track.IdKey idKey)

@@ -28,7 +28,7 @@ namespace FoxIDs.Client.Services
         public async Task DeleteTrackAsync(string name) => await DeleteAsync(apiUri, name);
 
         public async Task<TrackKeyItemsContained> GetTrackKeyContainedAsync() => await GetAsync<TrackKeyItemsContained>(keyContainedApiUri);
-        public async Task UpdateTrackKeyContainedAsync(TrackKeyItemContainedRequest trackKeyRequest) => await PutAsync(keyContainedApiUri, trackKeyRequest);
+        public async Task<TrackKeyItemsContained> UpdateTrackKeyContainedAsync(TrackKeyItemContainedRequest trackKeyRequest) => await PutResponseAsync<TrackKeyItemContainedRequest, TrackKeyItemsContained>(keyContainedApiUri, trackKeyRequest);
         public async Task DeleteTrackKeyContainedAsync() => await DeleteAsync(keyContainedApiUri);
 
         public async Task SwapTrackKeyContainedAsync(TrackKeyItemContainedSwap trackKeySwap) => await PostAsync(keyContainedSwapApiUri, trackKeySwap);

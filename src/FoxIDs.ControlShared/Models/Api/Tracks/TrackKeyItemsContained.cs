@@ -10,8 +10,8 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [Required]
-        public TrackKeyItemContained PrimaryKey { get; set; }
+        public JsonWebKey PrimaryKey { get; set; }
 
-        public TrackKeyItemContained SecondaryKey { get; set; }
+        public JsonWebKey SecondaryKey { get; set; }
     }
 }

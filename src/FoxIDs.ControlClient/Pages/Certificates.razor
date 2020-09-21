@@ -53,7 +53,7 @@
                                             <div class="mr-auto p-2">
                                                 <strong>@certificate.Form.Model.Subject</strong><br />
                                                 <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
-                                                Thumbprint: @certificate.Form.Model.Thumbprint
+                                                <span>Thumbprint: @certificate.Form.Model.Thumbprint</span>
                                             </div>
                                         </div>
                                     }
@@ -81,9 +81,13 @@
                         {
                             <button type="button" class="btn btn-link" @onclick="@(() => certificate.DeleteAcknowledge = true)">Delete</button>
                         }
-                        @if(certificate.Form.Model.Key != null)
+                        @if(certificate.Form.Model.Key == null)
                         {
-                            <button type="submit" class="btn btn-primary">@(certificate.CreateMode ? "Create" : "Update")</button>
+                            <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateSelfSignedCertificateAsync(certificate))">Create self-signed certificate</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-primary">@(certificate.CreateMode ? "Save" : "Update")</button>
                         }
                         <button type="button" class="btn btn-secondary" @onclick="@(() => CertificateCancel(certificate))">Cancel</button>
                     </div>
@@ -101,7 +105,7 @@
                         <strong>@certificate.Subject</strong>
                     </button><br />
                     <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
-                    <span>Thumbprint:</span> @certificate.Thumbprint
+                    <span>Thumbprint: @certificate.Thumbprint</span>
                 }
             }
         </div>

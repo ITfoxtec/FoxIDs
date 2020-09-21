@@ -11,9 +11,11 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using MTokens = Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs.Client.Pages
 {
@@ -183,6 +185,39 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task CreateSelfSignedCertificateAsync(GeneralTrackCertificateViewModel generalCertificate)
+        {
+            generalCertificate.Form.ClearError();
+            try
+            {
+                var trackKeyResponse = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>(afterMap: afterMap => 
+                {
+                    afterMap.CreateSelfSigned = true;
+                    afterMap.Key = null;
+                }));
+                var certificate = new MTokens.JsonWebKey((generalCertificate.Form.Model.IsPrimary ? trackKeyResponse.PrimaryKey : trackKeyResponse.SecondaryKey).JsonSerialize()).ToX509Certificate();
+                generalCertificate.Subject = certificate.Subject;
+                generalCertificate.ValidFrom = certificate.NotBefore;
+                generalCertificate.ValidTo = certificate.NotAfter;
+                generalCertificate.IsValid = certificate.IsValid();
+                generalCertificate.Thumbprint = certificate.Thumbprint;
+                generalCertificate.CreateMode = false;
+                generalCertificate.Edit = false;
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalCertificate.Form.SetError(ex.Message);
+            }
+            catch (FoxIDsApiException aex)
+            {
+                generalCertificate.Form.SetError(aex.Message);
+            }
+        }
+
         private async Task OnEditCertificateValidSubmitAsync(GeneralTrackCertificateViewModel generalCertificate, EditContext editContext)
         {
             try
@@ -192,7 +227,7 @@ namespace FoxIDs.Client.Pages
                     throw new ArgumentNullException("Model.Key");
                 }
 
-                await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>());
+                _ = await TrackService.UpdateTrackKeyContainedAsync(generalCertificate.Form.Model.Map<TrackKeyItemContainedRequest>());
                 generalCertificate.Subject = generalCertificate.Form.Model.Subject;
                 generalCertificate.ValidFrom = generalCertificate.Form.Model.ValidFrom;
                 generalCertificate.ValidTo = generalCertificate.Form.Model.ValidTo;

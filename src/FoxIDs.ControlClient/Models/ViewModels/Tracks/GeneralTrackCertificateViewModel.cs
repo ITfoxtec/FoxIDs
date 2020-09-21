@@ -15,9 +15,9 @@ namespace FoxIDs.Client.Models.ViewModels
             IsPrimary = isPrimary;
         }
 
-        public GeneralTrackCertificateViewModel(TrackKeyItemContained trackKey, bool isPrimary) : this(isPrimary)
+        public GeneralTrackCertificateViewModel(JsonWebKey key, bool isPrimary) : this(isPrimary)
         {
-            var certificate = new MTokens.JsonWebKey(trackKey.Key.JsonSerialize()).ToX509Certificate();
+            var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
             Subject = certificate.Subject;
             ValidFrom = certificate.NotBefore;
             ValidTo = certificate.NotAfter;

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using System.ComponentModel.DataAnnotations;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -75,18 +76,21 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(trackKeyRequest)) return BadRequest(ModelState);
 
                 var mTrackKey = mapper.Map<TrackKeyItem>(trackKeyRequest);
-                try
+                if (!trackKeyRequest.CreateSelfSigned)
                 {
-                    if (!mTrackKey.Key.HasPrivateKey)
+                    try
                     {
-                        throw new ValidationException("Private key is required.");
+                        if (!mTrackKey.Key.HasPrivateKey)
+                        {
+                            throw new ValidationException("Private key is required.");
+                        }
                     }
-                }
-                catch (ValidationException vex)
-                {
-                    logger.Warning(vex);
-                    ModelState.TryAddModelError(nameof(trackKeyRequest.Key), vex.Message);
-                    return BadRequest(ModelState);
+                    catch (ValidationException vex)
+                    {
+                        logger.Warning(vex);
+                        ModelState.TryAddModelError(nameof(trackKeyRequest.Key), vex.Message);
+                        return BadRequest(ModelState);
+                    }
                 }
 
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
@@ -103,6 +107,13 @@ namespace FoxIDs.Controllers
                     ModelState.TryAddModelError(string.Empty, vex.Message);
                     return BadRequest(ModelState);
                 }
+
+                if (trackKeyRequest.CreateSelfSigned)
+                {
+                    var certificate = await RouteBinding.TrackName.CreateSelfSignedCertificateAsync();
+                    mTrackKey.Key = await certificate.ToJsonWebKeyAsync(true);
+                }
+
                 if (trackKeyRequest.IsPrimary)
                 {
                     mTrack.Key.Keys[0] = mTrackKey;
@@ -121,7 +132,7 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.UpdateAsync(mTrack);
 
-                return Ok(mapper.Map<Api.TrackKeyItemsContained>(mTrack));
+                return Ok(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
             catch (CosmosDataException ex)
             {

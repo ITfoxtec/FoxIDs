@@ -59,8 +59,8 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<TrackKey, Api.TrackKeyItemsContained>()
-                .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0]))
-                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1] : null));
+                .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0].Key.GetPublicKey()))
+                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));
 
             CreateMap<TrackKeyItem, Api.TrackKeyItemContained>()
                 .ForMember(d => d.Key, opt => opt.MapFrom(s => s.Key.GetPublicKey()))

@@ -14,6 +14,7 @@ namespace FoxIDs.Client.Services
 
         private const string keyContainedApiUri = "api/{tenant}/{track}/!trackkeycontained";
         private const string keyContainedSwapApiUri = "api/{tenant}/{track}/!trackkeyscontainedwap";
+        private const string keyTypeApiUri = "api/{tenant}/{track}/!trackkeytype";
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
 
@@ -32,6 +33,9 @@ namespace FoxIDs.Client.Services
         public async Task DeleteTrackKeyContainedAsync() => await DeleteAsync(keyContainedApiUri);
 
         public async Task SwapTrackKeyContainedAsync(TrackKeyItemContainedSwap trackKeySwap) => await PostAsync(keyContainedSwapApiUri, trackKeySwap);
+
+        public async Task<TrackKey> GetTrackKeyTypeAsync() => await GetAsync<TrackKey>(keyTypeApiUri);
+        public async Task UpdateTrackKeyTypeAsync(TrackKey trackKeyRequest) => await PutAsync<TrackKey>(keyTypeApiUri, trackKeyRequest);
 
         public async Task<IEnumerable<ResourceName>> FilterResourceNameAsync(string filterName) => await FilterAsync<ResourceName>(filterResourceNameApiUri, filterName);
 

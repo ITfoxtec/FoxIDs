@@ -24,7 +24,10 @@ namespace FoxIDs.Client.Pages
         private Modal swapCertificateModal;
         private string swapCertificateError;
         private List<GeneralTrackCertificateViewModel> certificates = new List<GeneralTrackCertificateViewModel>();
+        private Modal changeContainerTypeModal;
+        private string changeContainerTypeError;
         private string certificateLoadError;
+        private TrackKey trackKey;
 
         [Inject]
         public TrackService TrackService { get; set; }
@@ -48,12 +51,39 @@ namespace FoxIDs.Client.Pages
             StateHasChanged();
         }
 
+        private async Task SelectContainerTypeAsync(TrackKeyType type)
+        {
+            changeContainerTypeError = null;
+            try
+            {
+                await TrackService.UpdateTrackKeyTypeAsync(new TrackKey { Type = type });
+                trackKey.Type = type;
+                changeContainerTypeModal.Hide();
+                await DefaultLoadAsync();
+            }
+            catch (AuthenticationException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                changeContainerTypeError = ex.Message;
+            }
+        }
+
         private async Task DefaultLoadAsync()
         {
             certificateLoadError = null;
             try
             {
-                SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
+                if (trackKey == null)
+                {
+                    trackKey = await TrackService.GetTrackKeyTypeAsync();
+                }
+                if(trackKey.Type == TrackKeyType.Contained)
+                {
+                    SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
+                }
             }
             catch (AuthenticationException)
             {

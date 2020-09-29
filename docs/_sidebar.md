@@ -1,5 +1,3 @@
-# Content
-
 - [Getting Started](getting-started.md)
 - [Samples](samples.md)
 - [Certificates](certificates.md)

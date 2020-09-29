@@ -32,6 +32,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ControlShared", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SharedBase", "src\FoxIDs.SharedBase\FoxIDs.SharedBase.csproj", "{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}"
+	ProjectSection(SolutionItems) = preProject
+		docs\_Sidebar.md = docs\_Sidebar.md
+		docs\Certificates.md = docs\Certificates.md
+		docs\Control-api.md = docs\Control-api.md
+		docs\Control-client.md = docs\Control-client.md
+		docs\FAQ.md = docs\FAQ.md
+		docs\Getting-started.md = docs\Getting-started.md
+		docs\Index.md = docs\Index.md
+		docs\README.md = docs\README.md
+		docs\SAML-2.0.md = docs\SAML-2.0.md
+		docs\Samples.md = docs\Samples.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"
+	ProjectSection(SolutionItems) = preProject
+		docs\images\master-tenant2.png = docs\images\master-tenant2.png
+		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
+		docs\images\upload-risk-passwords.png = docs\images\upload-risk-passwords.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +104,7 @@ Global
 		{841451D6-66A5-4E7A-8952-BFF9A9375B6B} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{56C8921F-64BA-4AD0-A2EA-BAE0A183269F} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
+		{CB88126F-3F28-4511-93E1-2454E239E9C7} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

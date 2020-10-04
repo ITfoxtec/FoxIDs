@@ -1,9 +1,9 @@
 # Samples
 The samples for FoxIDs show login and logout with OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and API call with OAuth 2.0. The samples is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
 
-> The samples need a FoxIDs track to run. The samples are configured in the [FoxIDs.com test track](#FoxIDscom-test-track-for-samples), or you can configure the [samples in your one FoxIDs track](#Configure-samples-in-FoxIDs-track).
+> The samples need a FoxIDs track to run. The samples are configured in the [FoxIDs.com test track](#foxidscom-test-track-for-samples), or you can configure the [samples in your one FoxIDs track](#configure-samples-in-foxids-track).
 
-> The samples can be run locally in Visual Studio on the configured localhost ports. All sample applications will open in a browser tap except the [API sample](#AspNetCoreApi1Sample).
+> The samples can be run locally in Visual Studio on the configured localhost ports. All sample applications will open in a browser tap except the [API sample](#aspnetcoreapi1sample).
 
 ## Sample applications
 
@@ -12,9 +12,9 @@ The sample Visual Studio solution contain the following sample applications.
 ### AspNetCoreOidcAuthorizationCodeSample
 
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.\
-Show how to call the [API sample](#AspNetCoreApi1Sample) secured with an access token. 
+Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#AspNetCoreSamlIdPSample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#Connecting-AD-FS).
+Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#connecting-ad-fs).
 
 Local development domain and port: https://localhost:44340
 
@@ -22,7 +22,7 @@ Local development domain and port: https://localhost:44340
 
 Sample application showing login and logout with OpenID Connect (OIDC) using implicit flow as a service provider.
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#AspNetCoreSamlIdPSample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#Connecting-AD-FS).
+Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#connecting-ad-fs).
 
 Local development domain and port: https://localhost:44341
 
@@ -36,7 +36,7 @@ Local development domain and port: https://localhost:44342
 
 Sample application showing login and logout with SAML 2.0 as a relying party.
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#AspNetCoreSamlIdPSample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#Connecting-AD-FS).
+Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#connecting-ad-fs).
 
 Local development domain and port: https://localhost:44343
 

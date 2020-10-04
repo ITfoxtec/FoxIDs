@@ -6,5 +6,5 @@
 - [Control Client](control-client.md)
 - [Control API](control-api.md)
 - [SAML 2.0](saml-2.0.md)
-  - [Connecting to AD FS](saml-2.0.md#Connecting-ad-fs)
+  - [Connecting to AD FS](saml-2.0.md#connecting-ad-fs)
 - [FAQ](faq.md)

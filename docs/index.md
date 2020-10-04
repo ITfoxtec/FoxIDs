@@ -56,7 +56,7 @@ Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/
 
 #### Add sample configuration to a track
 
-It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track).
+It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](Samples.md#Configure-samples-in-FoxIDs-track).
 
 ## Support
 

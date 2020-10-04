@@ -1,8 +1,8 @@
 # SAML 2.0
-FoxIDs can both act as a SAML 2.0 [IdP (identity provider)](#IdP) and [RP (relying party)](#RP). 
+FoxIDs can both act as a SAML 2.0 [IdP (identity provider)](#idp) and [RP (relying party)](#rp). 
 
 Description of how to connect FoxIDs to:
-* [AD FS](#Connecting-AD-FS)
+* [AD FS](#connecting-ad-fs)
 
 ## IdP
 //TODO
@@ -11,7 +11,7 @@ Description of how to connect FoxIDs to:
 //TODO
 
 ## Connecting AD FS
-AD FS can be connected to FoxIDs with SAML 2.0. Either [AD FS is acting as an IdP](#AD-FS-as-IdP) (identity provider) and FoxIDs is acting as an RP (relying party) or [AD FS is acting as an RP](#AD-FS-as-RP) and FoxIDs is acting as an IdP.
+AD FS can be connected to FoxIDs with SAML 2.0. Either [AD FS is acting as an IdP](#ad-fs-as-idp) (identity provider) and FoxIDs is acting as an RP (relying party) or [AD FS is acting as an RP](#ad-fs-as-rp) and FoxIDs is acting as an IdP.
 
 ### AD FS as IdP
 Configuring AD FS as IdP in the following steps.

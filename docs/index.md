@@ -25,7 +25,7 @@ Deploy FoxIDs in your Azure tenant.
 After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
 The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
-![FoxIDs Control Client - Master tenant](https://github.com/ITfoxtec/FoxIDs/wiki/images/master-tenant2.png)
+![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 
 #### Troubleshooting deployent errors
 
@@ -47,7 +47,7 @@ The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
 You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
 
-![FoxIDs Control Client - Upload risk passwrods](https://github.com/ITfoxtec/FoxIDs/wiki/images/upload-risk-passwords.png)
+![FoxIDs Control Client - Upload risk passwrods](images/upload-risk-passwords.png)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 

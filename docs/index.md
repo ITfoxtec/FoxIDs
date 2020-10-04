@@ -1,4 +1,4 @@
-### FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+**FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.**
 
 FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.

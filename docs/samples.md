@@ -14,7 +14,7 @@ The sample Visual Studio solution contain the following sample applications.
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.\
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#connecting-ad-fs).
+Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: https://localhost:44340
 
@@ -22,7 +22,7 @@ Local development domain and port: https://localhost:44340
 
 Sample application showing login and logout with OpenID Connect (OIDC) using implicit flow as a service provider.
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#connecting-ad-fs).
+Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: https://localhost:44341
 
@@ -36,7 +36,7 @@ Local development domain and port: https://localhost:44342
 
 Sample application showing login and logout with SAML 2.0 as a relying party.
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](https://github.com/ITfoxtec/FoxIDs/wiki/SAML-2.0#connecting-ad-fs).
+Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: https://localhost:44343
 
@@ -49,7 +49,7 @@ Local development domain and port: https://localhost:44344
 ### BlazorOidcPkceSample
 
 Blazor sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.\
-Show how to call the [API sample](#AspNetCoreApi1Sample) secured with an access token. 
+Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Local development domain and port: https://localhost:44345
 

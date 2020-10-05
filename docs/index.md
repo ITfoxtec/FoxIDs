@@ -1,12 +1,16 @@
-### FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+**FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.**
+
+> STATUS: I'm currently working on the documentation and the first FoxIDs beta version.
 
 FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
-- Client and API called FoxIDs Control. The Client is used to configure FoxIDs, or alternatively by calling the API directly.
+- Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
 FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 
-> FoxIDs is .NET Core 3.1 and the Control Client is Blazor .NET Standard 2.1.
+> FoxIDs open source GitHub repository [https://github.com/ITfoxtec/FoxIDs](https://github.com/ITfoxtec/FoxIDs)
+
+> FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
 ## Deployment
 
@@ -61,11 +65,3 @@ It is possible to run the sample applications after they are configured in a Fox
 ## Support
 
 Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow</a> and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.<br />
-
-## Development
-
-FoxIDs  
-https<i>:</i>//localhost:44330
-
-FoxIDs Control (Blazor WebAssembly Client and API)  
-https<i>:</i>//localhost:44331

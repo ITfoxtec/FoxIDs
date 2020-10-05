@@ -2,11 +2,13 @@
 
 FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
-- Client and API called FoxIDs Control. The Client is used to configure FoxIDs, or alternatively by calling the API directly.
+- Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
 FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
 
-> FoxIDs is .NET Core 3.1 and the Control Client is Blazor .NET Standard 2.1.
+> FoxIDs open source GitHub repository [https://github.com/ITfoxtec/FoxIDs](https://github.com/ITfoxtec/FoxIDs)
+
+> FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
 ## Deployment
 

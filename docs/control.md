@@ -1,5 +1,10 @@
-# Control API
+# FoxIDs Control
 //TODO
+
+## Control Client 
+(Blazor WebAssembly) 
+
+## Control API
 
 Localhost swagger: https://localhost:44331/swagger/v1/swagger.json
 

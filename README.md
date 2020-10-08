@@ -31,7 +31,7 @@ Deploy FoxIDs in your Azure tenant.
 After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
 The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
-![FoxIDs Control Client - Master tenant](https://github.com/ITfoxtec/FoxIDs/wiki/images/master-tenant2.png)
+![FoxIDs Control Client - Master tenant](docs/images/master-tenant2.png)
 
 #### Troubleshooting deployent errors
 
@@ -53,7 +53,7 @@ The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
 You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
 
-![FoxIDs Control Client - Upload risk passwrods](https://github.com/ITfoxtec/FoxIDs/wiki/images/upload-risk-passwords.png)
+![FoxIDs Control Client - Upload risk passwrods](docs/images/upload-risk-passwords.png)
 
 Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
@@ -62,11 +62,11 @@ Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/
 
 #### Add sample configuration to a track
 
-It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](https://github.com/ITfoxtec/FoxIDs/wiki/Samples#Configure-samples-in-FoxIDs-track).
+It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](docs/samples.md#configure-samples-in-foxids-track).
 
 ## Support
 
-Please ask your question on <a href="https://stackoverflow.com/">Stack Overflow</a> and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.<br />
+Please ask your question on [Stack Overflow](https://stackoverflow.com) and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.
 
 ## Development
 

@@ -5,6 +5,7 @@ using Newtonsoft.Json.Serialization;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -39,21 +40,21 @@ namespace FoxIDs.SeedTool
         public static Task<HttpResponseMessage> PostJsonAsync(this HttpClient client, string requestUri, object data)
         {
             var request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-            request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, MediaTypeNames.Application.Json);
             return client.SendAsync(request);
         }
 
         public static Task<HttpResponseMessage> UpdateJsonAsync(this HttpClient client, string requestUri, object data)
         {
             var request = new HttpRequestMessage(HttpMethod.Put, requestUri);
-            request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, MediaTypeNames.Application.Json);
             return client.SendAsync(request);
         }
 
         public static Task<HttpResponseMessage> PatchJsonAsync(this HttpClient client, string requestUri, object data)
         {
             var request = new HttpRequestMessage(new HttpMethod("PATCH"), requestUri);
-            request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, "application/json");
+            request.Content = new StringContent(JsonConvert.SerializeObject(data, Settings), Encoding.UTF8, MediaTypeNames.Application.Json);
             return client.SendAsync(request);
         }
 

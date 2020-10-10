@@ -19,7 +19,7 @@ Please ask your question on [Stack Overflow](https://stackoverflow.com) and emai
 
 # FoxIDs architecture
 
-FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding company's entire security service.
+FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company’s Azure subscription where only one tenant is configured in FoxIDs holding company’s entire security service.
 
 FoxIDs structure:
 - **Tenant** contain the company, organization, individual etc. security service. A tenant holds the tracks.

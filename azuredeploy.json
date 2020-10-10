@@ -62,17 +62,6 @@
         "description": "Specifies whether the key vault is a standard vault or a premium vault."
       }
     },
-    "cacheSku": {
-      "defaultValue": "Standard",
-      "allowedValues": [
-        "Basic",
-        "Standard"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "The pricing tier of the new Azure Redis Cache."
-      }
-    },
     "sendgridPlan": {
       "defaultValue": "Free",
       "allowedValues": [
@@ -172,7 +161,7 @@
       "location": "[variables('location')]",
       "properties": {
         "sku": {
-          "name": "[parameters('cacheSku')]",
+          "name": "Standard",
           "family": "C",
           "capacity": "0"
         },

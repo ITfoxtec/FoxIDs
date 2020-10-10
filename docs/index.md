@@ -13,24 +13,27 @@ FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.
 
 ## Free and Open Source
 
-FoxIDs is free and open source, the GitHub repository is [https://github.com/ITfoxtec/FoxIDs](https://github.com/ITfoxtec/FoxIDs).  
-The [license](../LICENSE) grant all (individuals, companies etc.) access to use FoxIDs for free. The license restricts reselling FoxIDs e.g. as a cloud service to third party for a fee, without a supplementary agreement.
+FoxIDs is free and the open source GitHub repository is [https://github.com/ITfoxtec/FoxIDs](https://github.com/ITfoxtec/FoxIDs).  
+The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license restricts reselling FoxIDs e.g. as a cloud service to third parties, without a supplementary agreement.
 
 ## Support
 
 Please ask your question on [Stack Overflow](https://stackoverflow.com) and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.
 
-# FoxIDs architecture
+# How FoxIDs works
 
 FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding company's entire security service.
 
 FoxIDs structure:
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant holds the tracks.
-- **Track** is the production, QA, test etc. environment. Each track contains a user repository. A track holds the up and down parties.
+- **Track** is the production, QA, test etc. environment. Each track contains a user repository. A track holds the up parties and down parties.
 - **Up Party** is the upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
 - **Down party** is the downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
+![FoxIDs structure](images/structure.png)
+
+FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down partis in a track.
 
 
 

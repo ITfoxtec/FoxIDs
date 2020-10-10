@@ -51,6 +51,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 	ProjectSection(SolutionItems) = preProject
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
+		docs\images\structure.png = docs\images\structure.png
+		docs\images\structure.vsdx = docs\images\structure.vsdx
 		docs\images\upload-risk-passwords.png = docs\images\upload-risk-passwords.png
 	EndProjectSection
 EndProject

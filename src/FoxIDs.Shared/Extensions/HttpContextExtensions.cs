@@ -13,6 +13,5 @@ namespace FoxIDs
         {
             return new Uri(context.GetHost());
         }
-
     }
 }

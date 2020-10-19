@@ -57,7 +57,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Authn request binding")]
-        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Redirect;
+        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Post;
 
         [Required]
         [Display(Name = "Authn response binding")]

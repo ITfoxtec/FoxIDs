@@ -30,7 +30,7 @@ After configuring the AD FS SAML 2.0 down party in a FoxIDs track an SAML 2.0 Id
 > FoxIDs SAML 2.0 IdP metadata "https<i>:</i>//foxids.com/*tenant-x*/*track-y*/*adfs-rp-party*/saml/idpmetadata"  
 > for 'tenant-x' and 'track-y' with the down party name 'adfs-rp-party'
 
-Alternatively, FoxIDs can be configured manually as an IdP on the AD FS with the following information’s:
+Alternatively, FoxIDs can be configured manually as an IdP on the AD FS with the following information's:
 
 * The public FoxIDs track ('tenant-x' and 'track-y') certificate
 * Hash algorithm, default SHA-256
@@ -39,7 +39,7 @@ Alternatively, FoxIDs can be configured manually as an IdP on the AD FS with the
 * Single logout service endpoint "https<i>:</i>//foxids.com/*tenant-x*/*track-y*/(*adfs-idp-party*)/saml/logout"
 
 ### 3) FoxIDs issuances claims
-FoxIDs default issue the user’s identity in the NameID claim with format persistent.
+FoxIDs default issue the user's identity in the NameID claim with format persistent.
 
 ## Connect AD FS as IdP
 AD FS can be connected to FoxIDs with SAML 2.0 acting as an IdP where and FoxIDs is acting as an RP.
@@ -61,7 +61,7 @@ After configuring the AD FS SAML 2.0 up party in a FoxIDs track an SAML 2.0 RP m
 > FoxIDs SAML 2.0 RP metadata "https<i>:</i>//foxids.com/*tenant-x*/*track-y*/(*adfs-idp-party*)/saml/spmetadata"  
 > for 'tenant-x' and 'track-y' with the up party name 'adfs-idp-party'
 
-Alternatively, FoxIDs can be configured manually as an RP on the AD FS with the following information’s:
+Alternatively, FoxIDs can be configured manually as an RP on the AD FS with the following information's:
 
 * The public FoxIDs track ('tenant-x' and 'track-y') certificate
 * Hash algorithm, default SHA-256

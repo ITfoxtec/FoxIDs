@@ -37,3 +37,19 @@ FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users,
 
 
 
+
+Down party
+https://foxids.com/*tenant-x*/*track-y*/*down-party-z*/...
+
+Down party and select Up party
+https://foxids.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u*)/...
+
+Down party and select max 5 Up parties *(future support)*
+https://foxids.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u1*,*up-party-u2*,*up-party-u3*,*up-party-u4*,*up-party-u5*)/...
+
+Down party and select all Up parties *(future support)*
+https://foxids.com/*tenant-x*/*track-y*/*down-party-z*(*)/...
+
+
+Up party
+https://foxids.com/*tenant-x*/*track-y*/(*up-party-v*)/...

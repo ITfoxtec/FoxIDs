@@ -22,7 +22,7 @@ AD FS can be connected to FoxIDs with SAML 2.0 acting as an RP where and FoxIDs 
 Configuring AD FS as RP in the following steps.
 
 ### 1) AD FS as a SAML 2.0 RP on FoxIDs
-First the AD FS SAML 2.0 RP is configured in a FoxIDs track as an SAML 2.0 down party through [FoxIDs Control](control.md). The RP down party can either be configured by adding the SAML 2.0 details or using the AD FS metadata "https<i>:</i>//*adfs-domain*/federationmetadata/2007-06/federationmetadata.xml" *(currently not supported)*.
+First the AD FS SAML 2.0 RP is configured in a FoxIDs track as an SAML 2.0 down party through [FoxIDs Control](control.md). The RP down party can either be configured by adding the SAML 2.0 details or using the AD FS metadata "https<i>:</i>//*adfs-domain*/federationmetadata/2007-06/federationmetadata.xml" *(future support)*.
 
 ### 2) FoxIDs as a SAML 2.0 IdP on AD FS
 After configuring the AD FS SAML 2.0 down party in a FoxIDs track an SAML 2.0 IdP metadata is exposed, which can be used to configure FoxIDs as a IdP on AD FS.
@@ -47,7 +47,7 @@ AD FS can be connected to FoxIDs with SAML 2.0 acting as an IdP where and FoxIDs
 Configuring AD FS as IdP in the following steps.
 
 ### 1) AD FS as a SAML 2.0 IdP on FoxIDs
-First the AD FS SAML 2.0 IdP is configured in a FoxIDs track as an SAML 2.0 up party through [FoxIDs Control](control.md). The IdP up party can either be configured by adding the SAML 2.0 details or using the AD FS metadata "https<i>:</i>//*adfs-domain*/federationmetadata/2007-06/federationmetadata.xml" *(currently not supported)*.
+First the AD FS SAML 2.0 IdP is configured in a FoxIDs track as an SAML 2.0 up party through [FoxIDs Control](control.md). The IdP up party can either be configured by adding the SAML 2.0 details or using the AD FS metadata "https<i>:</i>//*adfs-domain*/federationmetadata/2007-06/federationmetadata.xml" *(future support)*.
 
 **Recommended SAML 2.0 bindings**
 * Authn request and response binding: Post

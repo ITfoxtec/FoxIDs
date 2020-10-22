@@ -47,3 +47,8 @@ Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/
 ### Add sample configuration to a track
 
 It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-track).
+
+## Customize domains
+
+The FoxIDs and FoxIDs Control domain can be customized.  
+//TODO – how to customize domains

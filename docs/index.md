@@ -22,16 +22,23 @@ Please ask your question on [Stack Overflow](https://stackoverflow.com) and emai
 
 ## How FoxIDs works
 
-FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding company's entire security service.
+FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding the company's entire security service.
 
-**FoxIDs structure**
+FoxIDs is deployed in two App Services which expose:
+
+- FoxIDs, the security service which handles all the security requests
+- FoxIDs Control, the administration application and API in which FoxIDs is configured
+
+Both is exposed as websites where the [domains can be customized](development.md#customized-domains). FoxIDs also relay on a number of backend service, please see [development](development.md) for details.
+
+FoxIDs structure:
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
 - **Track** is a production, QA, test etc. environment. Each track contains a user repository and a track contains the up parties and down parties.
 - **Up Party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
 - **Down party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
-![FoxIDs structure](images/structure.png)
+![FoxIDs structure](images/structure.svg)
 
 FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.
 

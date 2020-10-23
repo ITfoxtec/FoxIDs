@@ -31,7 +31,7 @@ FoxIDs is deployed in two App Services which expose:
 
 Both is exposed as websites where the [domains can be customized](development.md#customized-domains). FoxIDs also relay on a number of backend service, please see [development](development.md) for details.
 
-## Structure
+### Structure
 
 FoxIDs is divided into logical elements.
 
@@ -44,7 +44,7 @@ FoxIDs is divided into logical elements.
 
 FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.
 
-## Separation
+### Separation
 The structure is used to separate the different tenants, tracks and parties. 
 
 If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the URL `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the URL `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.

@@ -6,7 +6,7 @@
 
 ## Control API
 
-Localhost swagger: https://localhost:44331/swagger/v1/swagger.json
+Localhost swagger: `https://localhost:44331/swagger/v1/swagger.json`
 
 Generate client code with NSwag:
 * Generate code with Visual Studio extension https://github.com/dmitry-pavlov/api-client-generation-tools.

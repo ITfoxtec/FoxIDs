@@ -7,7 +7,7 @@ FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
 - Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
-FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
 > FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
@@ -20,20 +20,58 @@ The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all 
 
 Please ask your question on [Stack Overflow](https://stackoverflow.com) and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.
 
-# How FoxIDs works
+## How FoxIDs works
 
-FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding company's entire security service.
+FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding the company's entire security service.
 
-FoxIDs structure:
+FoxIDs is deployed in two App Services which expose:
 
-- **Tenant** contain the company, organization, individual etc. security service. A tenant holds the tracks.
-- **Track** is the production, QA, test etc. environment. Each track contains a user repository. A track holds the up parties and down parties.
-- **Up Party** is the upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
-- **Down party** is the downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
+- FoxIDs, the security service which handles all the security requests and user authentication
+- [FoxIDs Control](control.md), the administration application and API in which FoxIDs is configured
 
-![FoxIDs structure](images/structure.png)
+Both is exposed as websites where the [domains can be customized](development.md#customized-domains). FoxIDs also relay on a number of backend service, please see [development](development.md) for details.
 
-FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down partis in a track.
+## Structure
+
+FoxIDs is divided into logical elements.
+
+- **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
+- **Track** is a production, QA, test etc. environment. Each track contains a user repository and a track contains the up parties and down parties.
+- **Up Party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
+- **Down party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
+
+![FoxIDs structure](images/structure.svg)
+
+FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.
+
+## Separation
+The structure is used to separate the different tenants, tracks and parties. 
+
+If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the URL `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the URL `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.
+
+A down party is call by adding the down party name as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
+A up party is call by adding the up party name insight round brackets as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. If FoxIDs handles a up party sequence like e.g. user authentication the same URL notation is used thus locking the session cookie to the URL. 
+
+A client (application) starting an OAuth 2.0, OpenID Connect or SAML 2.0 login sequence would like to specify in which up party the user should authenticate. The resulting up party is specified by adding the up party name in round brackets in the URL after the down party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
+
+> The allowed up parties for a down party is configured for each down party in FoxIDs Control.
+
+Selecting multiple up parties *(future support)*:
+
+- Select all up parties allowed for a down party by adding a star in round brackets in the URL after the down party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
+- Select a maximum of 5 up parties allowed for a down party by adding the up parties as a comma separated list in round brackets in the URL after the down party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
+
+A client which use client credentials as authorization grant would not specify the up party. It is likewise optional to specify the up party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.  
+
+
+
+
+
+
+
+
+
+
 
 
 

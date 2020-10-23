@@ -28,8 +28,8 @@ Deploy FoxIDs in your Azure tenant.
 - SendGrid.
 - Application Insights.
 
-After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
-The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
+After successfully deployment open FoxIDs Control Client `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
+The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
 
 ![FoxIDs Control Client - Master tenant](docs/images/master-tenant2.png)
 
@@ -71,7 +71,7 @@ Please ask your question on [Stack Overflow](https://stackoverflow.com) and emai
 ## Development
 
 FoxIDs  
-https<i>:</i>//localhost:44330
+`https://localhost:44330`
 
 FoxIDs Control (Blazor WebAssembly Client and API)  
-https<i>:</i>//localhost:44331
+`https://localhost:44331`

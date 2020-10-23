@@ -12,8 +12,8 @@ Deploy FoxIDs in your Azure tenant.
 - SendGrid.
 - Application Insights.
 
-After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
-The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
+After successfully deployment open FoxIDs Control Client `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
+The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 
@@ -47,3 +47,11 @@ Download the `SHA-1` pwned passwords `ordered by hash` from [haveibeenpwned.com/
 ### Add sample configuration to a track
 
 It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-track).
+
+## Customize domains
+
+The FoxIDs and FoxIDs Control domain can be customized.  
+//TODO – how to customize domains
+
+> FoxIDs default endpoint `https://foxidsxxxx.azurewebsites.net` or custom a domain like e.g. `https://foxidsxxxx.com` or `https://foxids.xxxx.com`  
+> FoxIDs default endpoint `https://foxidscontrolxxxx.azurewebsites.net` or custom a domain like e.g. `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`

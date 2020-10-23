@@ -16,7 +16,7 @@ Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access 
 
 Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
-Local development domain and port: https://localhost:44340
+Local development domain and port: `https://localhost:44340`
 
 ### AspNetCoreOidcImplicitSample
 
@@ -24,13 +24,13 @@ Sample application showing login and logout with OpenID Connect (OIDC) using imp
 
 Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
-Local development domain and port: https://localhost:44341
+Local development domain and port: `https://localhost:44341`
 
 ### AspNetCoreSamlIdPSample
 
 Sample application implementing a SAML 2.0 identity provider (IdP) making it possible to configure at sample SAML 2.0 IdP in the FoxIDs track.
 
-Local development domain and port: https://localhost:44342
+Local development domain and port: `https://localhost:44342`
 
 ### AspNetCoreSamlSample
 
@@ -38,20 +38,20 @@ Sample application showing login and logout with SAML 2.0 as a relying party.
 
 Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
-Local development domain and port: https://localhost:44343
+Local development domain and port: `https://localhost:44343`
 
 ### AspNetCoreApi1Sample
 
 Sample API showing how to secure an API with an access token and how to restrict access by a scope.
 
-Local development domain and port: https://localhost:44344
+Local development domain and port: `https://localhost:44344`
 
 ### BlazorOidcPkceSample
 
 Blazor sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.\
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
-Local development domain and port: https://localhost:44345
+Local development domain and port: `https://localhost:44345`
 
 ## FoxIDs.com test track for samples
 //TODO
@@ -66,7 +66,7 @@ The samples kan be configured in a FoxIDs track with the sample seed tool or man
 
 > The sample seed tool is configured in the `appsettings.json` file.
 
-Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configuration. They can be added by updating the instance names `foxidsxxxx` and `foxidsconsolxxxx` or by configuring custom domains. Or if you are running FoxIDs locally in Visual Studio by configuring FoxIDs localhost https://localhost:44330/ and FoxIDs Control API localhost https://localhost:44331/.
+Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configuration. They can be added by updating the instance names `foxidsxxxx` and `foxidsconsolxxxx` or by configuring custom domains. Or if you are running FoxIDs locally in Visual Studio by configuring FoxIDs localhost `https://localhost:44330/` and FoxIDs Control API localhost `https://localhost:44331/`.
 
 ```json
 "SeedSettings": {

@@ -35,8 +35,6 @@ Both is exposed as websites where the [domains can be customized](development.md
 
 FoxIDs is divided into logical elements.
 
-FoxIDs structure:
-
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
 - **Track** is a production, QA, test etc. environment. Each track contains a user repository and a track contains the up parties and down parties.
 - **Up Party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
@@ -49,9 +47,9 @@ FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users,
 ## Separation
 The structure is used to separate the different tenants, tracks and parties. 
 
-If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the url `https://foxidsxxxx.com/*tenant-x*/`. The tracks are separated in the second folder of the url `https://foxidsxxxx.com/*tenant-x*/*track-y*/` under each tenant.
+If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the url `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the url `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.
 
-A down party is call by adding the down party name as the third folder in the url `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z/`.
+A down party is call by adding the down party name as the third folder in the url `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.
 
 
 If a up party is call or FoxIDs is handling a up party sequence (e.g. user authentication)…

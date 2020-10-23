@@ -12,7 +12,7 @@ Deploy FoxIDs in your Azure tenant.
 - SendGrid.
 - Application Insights.
 
-After successfully deployment open FoxIDs Control Client https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net (the app service starting with foxidscontrol) which brings you to the master tenant.  
+After successfully deployment open FoxIDs Control Client `https<i>:</i>//foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
 The default admin user is: admin<i>@</i>foxids.com with password: FirstAccess!
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
@@ -51,4 +51,4 @@ It is possible to run the sample applications after they are configured in a Fox
 ## Customize domains
 
 The FoxIDs and FoxIDs Control domain can be customized.  
-//TODO – how to customize domains
+//TODO â€“ how to customize domains

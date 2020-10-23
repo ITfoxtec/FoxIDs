@@ -7,7 +7,7 @@ FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
 - Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
-FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
 > FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
@@ -26,10 +26,14 @@ FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxI
 
 FoxIDs is deployed in two App Services which expose:
 
-- FoxIDs, the security service which handles all the security requests
-- FoxIDs Control, the administration application and API in which FoxIDs is configured
+- FoxIDs, the security service which handles all the security requests and user authentication
+- [FoxIDs Control](control.md), the administration application and API in which FoxIDs is configured
 
 Both is exposed as websites where the [domains can be customized](development.md#customized-domains). FoxIDs also relay on a number of backend service, please see [development](development.md) for details.
+
+## Structure
+
+FoxIDs is divided into logical elements.
 
 FoxIDs structure:
 
@@ -42,21 +46,41 @@ FoxIDs structure:
 
 FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.
 
+## Separation
+The structure is used to separate the different tenants, tracks and parties. 
 
+If the FoxIDs is hosted on https<i>:</i>//foxidsxxxx.com/ the tenants are separated in the first folder of the url https<i>:</i>//foxidsxxxx.com/*tenant-x*/. The tracks are separated in the second folder of the url https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/ under each tenant.
+
+A down party is call by adding the down party name as the third folder in the url https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z/.
+
+
+If a up party is call or FoxIDs is handling a up party sequence (e.g. user authentication)…
 
 
 Down party
-https://foxids.com/*tenant-x*/*track-y*/*down-party-z*/...
+https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*/...
 
 Down party and select Up party
-https://foxids.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u*)/...
+https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u*)/...
 
 Down party and select max 5 Up parties *(future support)*
-https://foxids.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u1*,*up-party-u2*,*up-party-u3*,*up-party-u4*,*up-party-u5*)/...
+https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u1*,*up-party-u2*,*up-party-u3*,*up-party-u4*,*up-party-u5*)/...
 
 Down party and select all Up parties *(future support)*
-https://foxids.com/*tenant-x*/*track-y*/*down-party-z*(*)/...
+https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(*)/...
 
 
 Up party
-https://foxids.com/*tenant-x*/*track-y*/(*up-party-v*)/...
+https<i>:</i>//foxidsxxxx.com/*tenant-x*/*track-y*/(*up-party-v*)/...
+
+
+
+
+
+
+
+
+
+
+
+

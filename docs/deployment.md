@@ -52,3 +52,6 @@ It is possible to run the sample applications after they are configured in a Fox
 
 The FoxIDs and FoxIDs Control domain can be customized.  
 //TODO – how to customize domains
+
+> FoxIDs default endpoint "https<i>:</i>//foxidsxxxx.azurewebsites.net" or custom a domain like e.g. "https<i>:</i>//foxidsxxxx.com" or "https<i>:</i>//foxids.xxxx.com"
+> FoxIDs default endpoint "https<i>:</i>//foxidscontrolxxxx.azurewebsites.net" or custom a domain like e.g. "https<i>:</i>//control.foxidsxxxx.com" or "https<i>:</i>//foxidscontrol.xxxx.com"

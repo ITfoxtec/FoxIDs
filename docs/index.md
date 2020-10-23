@@ -47,29 +47,22 @@ FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users,
 ## Separation
 The structure is used to separate the different tenants, tracks and parties. 
 
-If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the url `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the url `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.
+If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the URL `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the URL `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.
 
-A down party is call by adding the down party name as the third folder in the url `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.
+A down party is call by adding the down party name as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
+A up party is call by adding the up party name insight round brackets as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. If FoxIDs handles a up party sequence like e.g. user authentication the same URL notation is used thus locking the session cookie to the URL. 
 
+A client (application) starting an OAuth 2.0, OpenID Connect or SAML 2.0 login sequence would like to specify in which up party the user should authenticate. The resulting up party is specified by adding the up party name in round brackets in the URL after the down party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
-If a up party is call or FoxIDs is handling a up party sequence (e.g. user authentication)…
+The allowed up parties for a down party is configured for each down party in FoxIDs Control.
 
+Selecting multiple up parties *(future support)*:
 
-Down party
-https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*/...
+- Select all up parties allowed for a down party by adding a star in round brackets in the URL after the down party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
+- Select a maximum of 5 up parties allowed for a down party by adding the up parties as a comma separated list in round brackets in the URL after the down party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-u1*,up-party-u2*,up-party-u3,up-party-u4,up-party-u5)/`
 
-Down party and select Up party
-https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u*)/...
+Currently only selection of one up party is supported. Future support for multiple up party selection 
 
-Down party and select max 5 Up parties *(future support)*
-https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(*up-party-u1*,*up-party-u2*,*up-party-u3*,*up-party-u4*,*up-party-u5*)/...
-
-Down party and select all Up parties *(future support)*
-https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(*)/...
-
-
-Up party
-https://foxidsxxxx.com/*tenant-x*/*track-y*/(*up-party-v*)/...
 
 
 

@@ -54,4 +54,4 @@ The FoxIDs and FoxIDs Control domain can be customized.
 //TODO – how to customize domains
 
 > FoxIDs default endpoint `https://foxidsxxxx.azurewebsites.net` or custom a domain like e.g. `https://foxidsxxxx.com` or `https://foxids.xxxx.com`  
-> FoxIDs default endpoint `https://foxidscontrolxxxx.azurewebsites.net` or custom a domain like e.g. `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`
+> FoxIDs Control default endpoint `https://foxidscontrolxxxx.azurewebsites.net` or custom a domain like e.g. `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`

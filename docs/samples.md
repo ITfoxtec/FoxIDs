@@ -58,7 +58,7 @@ Local development domain and port: `https://localhost:44345`
 
 ## Configure samples in FoxIDs track
 
-The samples kan be configured in a FoxIDs track with the sample seed tool or manually through the FoxIDs Control Client.  
+The samples can be configured in a FoxIDs track with the sample seed tool or manually through the FoxIDs Control Client.  
 
 > The sample seed tool is found in the sample solution: tools/SampleSeedTool.
 

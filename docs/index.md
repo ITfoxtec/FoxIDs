@@ -82,7 +82,7 @@ Standard .NET liberals are used to calculate the hash.
 It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm as passwords](#password_hash). If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
 
 ## Certificates
-When a track is created it is default equipped with a self-signed certificate stored in Cosmos DB, called a contained certificate. The certificate can afterword’s be updated / changed and likewise the certificate container type can be changed.
+When a track is created it is default equipped with a self-signed certificate stored in Cosmos DB, called a contained certificate. The certificate can afterword's be updated / changed and likewise the certificate container type can be changed.
 
 There are tree different certificate container types:
 

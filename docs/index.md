@@ -7,7 +7,7 @@ FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
 - Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
-FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [FoxIDs.com](https://foxids.com) and [Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
 > FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
@@ -36,13 +36,13 @@ Both is exposed as websites where the [domains can be customized](development.md
 FoxIDs is divided into logical elements.
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
-- **Track** is a production, QA, test etc. environment. Each track contains a user repository and a track contains the up parties and down parties.
+- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](#user_repository), a unique [certificate](#certificate) and a track contains the up parties and down parties.
 - **Up Party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
 - **Down party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
 ![FoxIDs structure](images/structure.svg)
 
-FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.
+**FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.**
 
 ### Separation
 The structure is used to separate the different tenants, tracks and parties. 
@@ -63,15 +63,44 @@ Selecting multiple up parties *(future support)*:
 
 A client which use client credentials as authorization grant would not specify the up party. It is likewise optional to specify the up party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.  
 
+## User repository 
+Each track contains a user repository where the users is saved in Cosmos DB. The users id, email and other claims are saved as text. The password is never saved needer in logs or in Cosmos DB. Instead a hash of the password is saved in Cosmos DB along with the rest of the user information.
 
+### Password hash
+FoxIDs is designed to support a growing number of algorithms with different iterations by saving information about the hash algorithm used alongside the actually hash in Cosmos DB. Thereby FoxIDs can validate an old hash algorithm and at the same time save new hashes with a new hash algorithm.
 
+Currently FoxIDs support and use hash algorithm `P2HS512:10` which is defined as:
 
+- The HMAC algorithm (RFC 2104) using the SHA-512 hash function (FIPS 180-4).
+- With 10 iterations.
+- Salt is generated from 64 bytes.
+- Derived key length is 80 bytes.
 
+Standard .NET liberals are used to calculate the hash.
 
+## Client secrets
+It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm as passwords](#password_hash). If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
 
+## Certificates
+When a track is created it is default equipped with a self-signed certificate stored in Cosmos DB, called a contained certificate. The certificate can afterword’s be updated / changed and likewise the certificate container type can be changed.
 
+There are tree different certificate container types:
 
+**Contained certificates (default)**
+- Certificates is stored in Cosmos DB including private key.
+- Self-signed certificates is created by FoxIDs or you can upload your one certificates.
+- Support primary and secondary certificates, and certificate swap.
+- Not automatically renewed.
+- No cost per signing.
 
+**Key Vault, renewed self-signed certificates**
+- Certificates is stored in Key Vault and the private key is not exportable.
+- Self-signed certificates is created by Key Vault.
+- Automatically renewed with 3 month validity period. Renewed 10 days before expiration and exposed as the secondary certificate. Promoted to be the primary certificate 5 days before expiration.
+- Key Vault cost per signing.
 
-
+**Key Vault, upload your one certificate *(future support)***
+- Certificates is stored in Key Vault and the private key is not exportable.
+- Not automatically renewed.
+- Key Vault cost per signing.
 

@@ -36,7 +36,7 @@ Both is exposed as websites where the [domains can be customized](development.md
 FoxIDs is divided into logical elements.
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
-- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](#user_repository), a unique [certificate](#certificate) and a track contains the up parties and down parties.
+- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](#user-repository), a unique [certificate](#certificates) and a track contains the up parties and down parties.
 - **Up Party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
 - **Down party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
@@ -79,7 +79,7 @@ Currently FoxIDs support and use hash algorithm `P2HS512:10` which is defined as
 Standard .NET liberals are used to calculate the hash.
 
 ## Client secrets
-It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm as passwords](#password_hash). If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
+It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm as passwords](#password-hash). If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
 
 ## Certificates
 When a track is created it is default equipped with a self-signed certificate stored in Cosmos DB, called a contained certificate. The certificate can afterword's be updated / changed and likewise the certificate container type can be changed.

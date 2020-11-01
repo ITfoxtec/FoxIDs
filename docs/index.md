@@ -13,7 +13,7 @@ FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.
 
 ## Free and Open Source
 
-FoxIDs is free and the open source GitHub repository is [https://github.com/ITfoxtec/FoxIDs](https://github.com/ITfoxtec/FoxIDs).  
+FoxIDs is free and the open source with a [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
 The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license restricts reselling FoxIDs e.g. as a cloud service to third parties, without a supplementary agreement.
 
 ## Support

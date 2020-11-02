@@ -35,7 +35,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}"
 	ProjectSection(SolutionItems) = preProject
 		docs\_sidebar.md = docs\_sidebar.md
-		docs\certificates.md = docs\certificates.md
 		docs\control.md = docs\control.md
 		docs\deployment.md = docs\deployment.md
 		docs\development.md = docs\development.md

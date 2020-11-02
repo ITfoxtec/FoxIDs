@@ -8,7 +8,7 @@ FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
 - Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
-FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [FoxIDs.com](https://foxids.com) and [Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
 > For [Getting started](https://www.itfoxtec.com/FoxIDs/getting-started) guide and more documentation please see the [documentation](https://www.itfoxtec.com/FoxIDs).
 

@@ -123,8 +123,8 @@
                                             }
                                             <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
-                                            <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.EnablePkce" For="@(() => oidcDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
-                                            <OAuthSecrets EnablePkce="oidcDownParty.Form.Model.Client.EnablePkce" ClientSecret="oidcDownParty.Form.Model.Client" />
+                                            <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="e.d" />
+                                            <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
                                             <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
 
                                             <div class="form-group active-group active">
@@ -388,8 +388,8 @@
                                             }
                                             <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" />
                                             <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
-                                            <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.EnablePkce" For="@(() => oauthDownParty.Form.Model.Client.EnablePkce)" TextType="e.d" />
-                                            <OAuthSecrets EnablePkce="oauthDownParty.Form.Model.Client.EnablePkce" ClientSecret="oauthDownParty.Form.Model.Client" />
+                                            <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="e.d" />
+                                            <OAuthSecrets ClientSecret="oauthDownParty.Form.Model.Client" />
                                             <OAuthResourceScopes DownPartyNameModel="oauthDownParty.Form.Model" ClientResourceScope="oauthDownParty.Form.Model.Client" />
 
                                             <div class="form-group active-group active">

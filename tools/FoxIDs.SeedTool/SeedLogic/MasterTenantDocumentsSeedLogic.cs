@@ -214,8 +214,8 @@ namespace FoxIDs.SeedTool.SeedLogic
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceMasterScope, controlApiResourceTenantScope }.ToList() } },
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),
-                EnablePkce = true,
-                AuthorizationCodeLifetime = 10,
+                RequirePkce = true,
+                AuthorizationCodeLifetime = 30,
                 IdTokenLifetime = 1800, // 30 minutes
                 AccessTokenLifetime = 1800, // 30 minutes
                 RefreshTokenLifetime = 86400, // 24 hours
@@ -284,6 +284,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             (var secret, var oauthClientSecret) = await CreateSecretAsync();
             seedClientDownParty.Client.Secrets = new List<OAuthClientSecret> { oauthClientSecret };
+            seedClientDownParty.Client.RequirePkce = false;
             seedClientDownParty.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(seedClientDownParty);

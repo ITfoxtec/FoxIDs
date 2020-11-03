@@ -27,10 +27,10 @@ namespace FoxIDs.Models.Api
         public List<string> RedirectUris { get; set; }
 
         /// <summary>
-        /// Enable PKCE, default false.
+        /// Require PKCE, default true.
         /// </summary>
-        [Display(Name = "Enable PKCE")]
-        public bool? EnablePkce { get; set; } = false;
+        [Display(Name = "Require PKCE")]
+        public bool RequirePkce { get; set; } = true;
 
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)]
         [Display(Name = "Authorization code lifetime")]

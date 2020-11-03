@@ -22,6 +22,8 @@ Session
 
 
 Client secret and PKCE
+	Both PKCE and secret is validated.
+
 
 
 Default both id token and access token with the client as audience. The default client resource can be removed from the access token.

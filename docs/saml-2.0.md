@@ -15,7 +15,7 @@ How to:
 (relying party also called SP, service provider)
 //TODO
 
-### Connect AD FS as RP
+## Connect AD FS as RP
 AD FS can be connected to FoxIDs with SAML 2.0 acting as an RP where and FoxIDs is acting as an IdP.
  
 Configuring AD FS as RP in the following steps.

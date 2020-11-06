@@ -24,7 +24,19 @@ Session
 Client secret and PKCE
 	Both PKCE and secret is validated.
 
+	PKCE and client secret is not validated Implicit Grant.  
+
+
 
 
 Default both id token and access token with the client as audience. The default client resource can be removed from the access token.
 Access token support multiple audiences to API's defined as OAuth 2.0 resources
+	OAuth 2.0 Bearer Token
+
+
+## Client Credentials Grant
+
+PKCE is not validated in Client Credentials Grant
+
+## Resource Owner Password Credentials Grant
+Resource Owner Password Credentials Grant is not supported.

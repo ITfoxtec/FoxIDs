@@ -38,7 +38,7 @@ This would be a web application where the security is handled by the webserver w
 - Specify client name in down party name.
 - Select allowed up parties.
 - Specify redirect uris including both login and logout.
-- Select code as response type or possible but not recemented code + token or code + token + id_token.
+- Select 'code' as response type or possible but not recemented 'code token' or 'code token id_token'.
 - It is not required to use PKCE in a confidant client but recommended to mitigate replay attacks.
 - Specify a secret.
 
@@ -50,7 +50,7 @@ This would be a browser-based riches client or mobile app. The application shoul
 - Specify client name in down party name.
 - Select allowed up parties.
 - Specify redirect uris including both login and logout.
-- Select code as response type.
+- Select 'code' as response type.
 - Use PKCE, default enabled.
 
 ![Configure Authorization Code Flow with PKCE](images/configure-authorization-code-flow-pkce.png)
@@ -62,7 +62,7 @@ It is not recemented to use Implicit Code Flow because it is insecure.
 - Specify client name in down party name.
 - Select allowed up parties.
 - Specify redirect uris including both login and logout.
-- Select token + id_token as response type or possible only token.
+- Select 'token id_token' as response type or possible only 'token'.
 - Disable PKCE.
 - Do not specify a secret.
 

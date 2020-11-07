@@ -37,8 +37,8 @@ FoxIDs is divided into logical elements.
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
 - **Track** is a production, QA, test etc. environment. Each track contains a [user repository](#user-repository), a unique [certificate](#certificates) and a track contains the up parties and down parties.
-- **Up Party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
-- **Down party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
+- **Up-party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
+- **Down-party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
 ![FoxIDs structure](images/structure.svg)
 
@@ -49,19 +49,19 @@ The structure is used to separate the different tenants, tracks and parties.
 
 If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the URL `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the URL `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.
 
-A down party is call by adding the down party name as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
-A up party is call by adding the up party name insight round brackets as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. If FoxIDs handles a up party sequence like e.g. user authentication the same URL notation is used thus locking the session cookie to the URL. 
+A down-party is call by adding the down-party name as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
+A up-party is call by adding the up-party name insight round brackets as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. If FoxIDs handles a up-party sequence like e.g. user authentication the same URL notation is used thus locking the session cookie to the URL. 
 
-A client (application) starting an OAuth 2.0, OpenID Connect or SAML 2.0 login sequence would like to specify in which up party the user should authenticate. The resulting up party is specified by adding the up party name in round brackets in the URL after the down party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
+A client (application) starting an OAuth 2.0, OpenID Connect or SAML 2.0 login sequence would like to specify in which up-party the user should authenticate. The resulting up-party is specified by adding the up-party name in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
-> The allowed up parties for a down party is configured for each down party in FoxIDs Control.
+> The allowed up parties for a down-party is configured for each down-party in FoxIDs Control.
 
 Selecting multiple up parties *(future support)*:
 
-- Select all up parties allowed for a down party by adding a star in round brackets in the URL after the down party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
-- Select a maximum of 5 up parties allowed for a down party by adding the up parties as a comma separated list in round brackets in the URL after the down party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
+- Select all up parties allowed for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
+- Select a maximum of 5 up parties allowed for a down-party by adding the up parties as a comma separated list in round brackets in the URL after the down-party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
 
-A client which use client credentials as authorization grant would not specify the up party. It is likewise optional to specify the up party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.  
+A client which use client credentials as authorization grant would not specify the up-party. It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.  
 
 ## User repository 
 Each track contains a user repository where the users is saved in Cosmos DB. The users id, email and other claims are saved as text. The password is never saved needer in logs or in Cosmos DB. Instead a hash of the password is saved in Cosmos DB along with the rest of the user information.

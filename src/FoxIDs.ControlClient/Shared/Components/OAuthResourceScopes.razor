@@ -11,7 +11,7 @@
                 {
                     <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => ClientResourceScope.DefaultResourceScope = (bool)e.Value)" />
                 }
-                <label class="form-check-label" for="oidcdefaultresource">Default resource scope '@DownPartyNameModel.Name' for the application itself</label>
+                <label class="form-check-label" for="oidcdefaultresource">Default resource '@DownPartyNameModel.Name' for the application itself</label>
             </div>
             @if (ClientResourceScope.DefaultResourceScope)
             {

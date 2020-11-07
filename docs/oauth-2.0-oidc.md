@@ -81,7 +81,7 @@ It is possible to configure both client and API in the same OpenID Connect appli
 
 
 ### Resource and Scopes
-An API is defined as a resource under which it is possible to define scopes. Such scopes is defined as the resource name . scope e.g. `party-api1.read1` or `party-api1.read2`.
+An API is defined as a resource under which it is possible to define scopes. Such scopes is defined as the resource name dot scope e.g. `party-api1.read1` or `party-api1.read2`.
 
 In the client configuration the scopes are defined underneath the resource.
 

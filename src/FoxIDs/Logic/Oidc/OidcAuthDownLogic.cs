@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Authentication request '{authenticationRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("clientId", authenticationRequest.ClientId);
 
-            var codeChallengeSecret = party.Client.EnablePkce.Value ? queryDictionary.ToObject<CodeChallengeSecret>() : null;
+            var codeChallengeSecret = party.Client.RequirePkce ? queryDictionary.ToObject<CodeChallengeSecret>() : null;
             if (codeChallengeSecret != null)
             {
                 codeChallengeSecret.Validate();
@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var requireCodeFlow = party.Client.EnablePkce.Value && codeChallengeSecret != null;
+                var requireCodeFlow = party.Client.RequirePkce && codeChallengeSecret != null;
                 ValidateAuthenticationRequest(party.Client, authenticationRequest, requireCodeFlow);
                 logger.ScopeTrace("Down, OIDC Authentication request accepted.", triggerEvent: true);
 

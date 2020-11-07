@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
 
             var clientCredentials = formDictionary.ToObject<ClientCredentials>();
 
-            var codeVerifierSecret = party.Client.EnablePkce.Value ? formDictionary.ToObject<CodeVerifierSecret>() : null;
+            var codeVerifierSecret = party.Client.RequirePkce ? formDictionary.ToObject<CodeVerifierSecret>() : null;
 
             try
             {
@@ -55,18 +55,12 @@ namespace FoxIDs.Logic
                 {
                     case IdentityConstants.GrantTypes.AuthorizationCode:
                         ValidateAuthCodeRequest(party.Client, tokenRequest);
-                        var validatePkce = party.Client.EnablePkce.Value && codeVerifierSecret != null;
-                        if(!validatePkce)
-                        {
-                            await ValidateSecret(party.Client, tokenRequest, clientCredentials);
-                        }
+                        var validatePkce = party.Client.RequirePkce && codeVerifierSecret != null;
+                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequered: !validatePkce);
                         return await AuthorizationCodeGrant(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
                     case IdentityConstants.GrantTypes.RefreshToken:
                         ValidateRefreshTokenRequest(party.Client, tokenRequest);
-                        if (!party.Client.EnablePkce.Value)
-                        {
-                            await ValidateSecret(party.Client, tokenRequest, clientCredentials);
-                        }
+                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequered: !party.Client.RequirePkce);
                         return await RefreshTokenGrant(party.Client, tokenRequest);
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);

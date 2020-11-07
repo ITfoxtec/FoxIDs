@@ -117,26 +117,36 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected async Task ValidateSecret(TClient client, TokenRequest tokenRequest, ClientCredentials clientCredentials)
+        protected async Task ValidateSecret(TClient client, TokenRequest tokenRequest, ClientCredentials clientCredentials, bool secretValidationRequered = true)
         {
+            if(!secretValidationRequered && clientCredentials.ClientSecret.IsNullOrEmpty())
+            {
+                return;
+            }
+
             if (tokenRequest.ClientId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenRequest.ClientId), tokenRequest.GetTypeName());
             clientCredentials.Validate();
 
-            if (client?.Secrets.Count() <= 0)
+            if(client?.Secrets.Count() <= 0)
             {
-                throw new OAuthRequestException($"Invalid client secret. Secret not configured for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
-            }
-
-            foreach (var secret in client.Secrets)
-            {
-                if (await secretHashLogic.ValidateSecretAsync(secret, clientCredentials.ClientSecret))
+                if(secretValidationRequered)
                 {
-                    logger.ScopeTrace($"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
-                    return;
+                    throw new OAuthRequestException($"Invalid client secret. Secret not configured for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
                 }
             }
+            else
+            {
+                foreach (var secret in client.Secrets)
+                {
+                    if (await secretHashLogic.ValidateSecretAsync(secret, clientCredentials.ClientSecret))
+                    {
+                        logger.ScopeTrace($"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
+                        return;
+                    }
+                }
 
-            throw new OAuthRequestException($"Invalid client secret for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
+                throw new OAuthRequestException($"Invalid client secret for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
+            }
         }
 
         protected async Task ValidatePkce(TClient client, string codeChallenge, string codeChallengeMethod, CodeVerifierSecret codeVerifierSecret)

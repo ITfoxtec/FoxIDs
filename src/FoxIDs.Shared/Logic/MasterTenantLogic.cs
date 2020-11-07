@@ -116,8 +116,8 @@ namespace FoxIDs.Logic
                 ResponseTypes = new[] { "code" }.ToList(),
                 Scopes = GetControlClientScopes(),
                 Claims = GetControlClientClaims(),
-                EnablePkce = true,
-                AuthorizationCodeLifetime = 10,
+                RequirePkce = true,
+                AuthorizationCodeLifetime = 30,
                 IdTokenLifetime = 7200, // 2 hours
                 AccessTokenLifetime = 7200, // 2 hours
                 RefreshTokenLifetime = 86400, // 24 hours

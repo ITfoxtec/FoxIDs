@@ -38,9 +38,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (EnablePkce != true && Secrets.Count() <= 0 && ExistingSecrets.Where(s => !s.Removed).Count() <= 0)
+            if (!RequirePkce && Secrets.Count() <= 0 && ExistingSecrets.Where(s => !s.Removed).Count() <= 0)
             {
-                results.Add(new ValidationResult($"The field Secrets must be between 1 and 10 if PKCE is not enabled.", new[] { nameof(Secrets) }));
+                results.Add(new ValidationResult($"The field Secrets must be between 1 and 10 if PKCE is not require.", new[] { nameof(Secrets) }));
             }
             if (!DefaultResourceScope && ResourceScopes.Count <= 0)
             {

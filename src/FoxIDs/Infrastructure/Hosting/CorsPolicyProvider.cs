@@ -38,8 +38,8 @@ namespace FoxIDs.Infrastructure.Hosting
                         var corsPolicyBuilder = new CorsPolicyBuilder();
 
                         corsPolicyBuilder.WithOrigins(party.AllowCorsOrigins.ToArray())
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
+                            .WithHeaders("x-requested-with")
+                            .WithMethods("GET", "POST");
 
                         corsPolicyBuilder.SetPreflightMaxAge(new TimeSpan(0, 0, settings.CorsPreflightMaxAge));
 

@@ -49,6 +49,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-authorization-code-flow-pkce.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-authorization-code-flow-pkce.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-authorization-code-flow.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-authorization-code-flow.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-client.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-client.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-resource.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-resource.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-default-claims.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-default-claims.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-implicit-code-flow.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-implicit-code-flow.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-oauth-resource.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-oauth-resource.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-client.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-client.png
+		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-resource.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-resource.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\sample_seed-client.png = docs\images\sample_seed-client.png
 		docs\images\structure.png = docs\images\structure.png

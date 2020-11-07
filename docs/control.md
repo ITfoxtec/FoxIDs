@@ -6,6 +6,8 @@
 
 ## Control API
 
+OAuth 2.0 Bearer Token
+
 Localhost swagger: `https://localhost:44331/swagger/v1/swagger.json`
 
 Generate client code with NSwag:

@@ -1,7 +1,7 @@
 ﻿# OAuth 2.0 and OpenID Connect
 OAuth 2.0, OpenID Connect, JWT and JWT claims are first class citizens in FoxIDs. Internally claims are always represented as JWT claims and request / response properties are described with OAuth 2.0 and OpenID Connect attributes. When FoxIDs converts between standards it also converts to the same internal representation using JWT claims and OAuth 2.0 / OpenID Connect attributes.
 
-FoxIDs can act as an [OpenID Provider (OP)](#openid-Provider-OP) supporting authenticating the client using OpenID Connect. The client can request an access token for multiple API`s defined as [OAuth 2.0 resources](#oauth-20-resource).
+FoxIDs can act as an [OpenID Provider (OP)](#openid-provider-op) supporting authenticating the client using OpenID Connect. The client can request an access token for multiple API`s defined as [OAuth 2.0 resources](#oauth-20-resource).
 
 FoxIDs can act as an OAuth 2.0 resource owner supporting [Client Credentials Grant](#client-credentials-grant). [Resource Owner Password Credentials Grant](#resource-owner-password-credentials-grant) is not supported.
 

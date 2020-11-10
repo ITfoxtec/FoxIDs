@@ -12,7 +12,12 @@ namespace FoxIDs.Infrastructure.Security
         /// <summary>
         /// List of scope and role values. One or more scope and role links must match.
         /// </summary>
-        public List<ScopeRole> ScopeRoleList { get; set; }
+        public List<ScopeRole> ScopeRoleList { get; private set; }
+
+        public ScopeRoleAuthorizationRequirement(List<ScopeRole> scopeRoleList)
+        {
+            ScopeRoleList = scopeRoleList;
+        }
 
         /// <summary>
         /// Makes a decision if authorization is allowed based on the scope and role list requirements specified.

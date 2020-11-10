@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
         /// <param name="createUserRequest">User.</param>
         /// <returns>User.</returns>
         [ProducesResponseType(typeof(Api.User), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.User>> PostUser([FromBody] Api.CreateUserRequest createUserRequest)
         {
             try

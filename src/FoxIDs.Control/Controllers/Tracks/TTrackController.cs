@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
         /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
         [ProducesResponseType(typeof(Api.Track), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.Track>> PostTrack([FromBody] Api.Track track)
         {
             try

@@ -7,24 +7,29 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Security
 {
-    public class ScopeRoleAuthorizationRequirement : AuthorizationHandler<ScopeRoleAuthorizationRequirement>, IAuthorizationRequirement
+    public class ScopeAndRoleAuthorizationRequirement : AuthorizationHandler<ScopeAndRoleAuthorizationRequirement>, IAuthorizationRequirement
     {
+        public ScopeAndRoleAuthorizationRequirement(List<ScopeAndRole> scopeRoleList)
+        {
+            if (scopeRoleList == null || !scopeRoleList.Any())
+            {
+                throw new ArgumentNullException(nameof(scopeRoleList), "The list of scope and role pairs is null or empty.");
+            }
+
+            ScopeRoleList = scopeRoleList;
+        }
+
         /// <summary>
         /// List of scope and role values. One or more scope and role links must match.
         /// </summary>
-        public List<ScopeRole> ScopeRoleList { get; private set; }
-
-        public ScopeRoleAuthorizationRequirement(List<ScopeRole> scopeRoleList)
-        {
-            ScopeRoleList = scopeRoleList;
-        }
+        public List<ScopeAndRole> ScopeRoleList { get; }
 
         /// <summary>
         /// Makes a decision if authorization is allowed based on the scope and role list requirements specified.
         /// </summary>
         /// <param name="context">The authorization context.</param>
         /// <param name="requirement">The requirement to evaluate.</param>
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeRoleAuthorizationRequirement requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeAndRoleAuthorizationRequirement requirement)
         {
             if (context.User != null)
             {
@@ -34,7 +39,7 @@ namespace FoxIDs.Infrastructure.Security
                     var scopes = scopeClaimValue.ToSpaceList();
                     foreach (var scope in scopes)
                     {
-                        var scopeRoleItem = ScopeRoleList?.Where(sr => scope.Equals(sr.Scope, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
+                        var scopeRoleItem = requirement.ScopeRoleList.Where(sr => scope.Equals(sr.Scope, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
                         if(scopeRoleItem != null)
                         {
                             if(scopeRoleItem.Role.IsNullOrWhiteSpace())
@@ -57,7 +62,7 @@ namespace FoxIDs.Infrastructure.Security
             return Task.CompletedTask;
         }
 
-        public class ScopeRole
+        public class ScopeAndRole
         {
             public string Scope { get; set; }
             public string Role { get; set; }

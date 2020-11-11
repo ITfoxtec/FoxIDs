@@ -16,10 +16,10 @@ namespace FoxIDs.Infrastructure.Security
         {
             options.AddPolicy(Name, policy =>
             {
-                policy.Requirements.Add(new ScopeRoleAuthorizationRequirement(new List<ScopeRoleAuthorizationRequirement.ScopeRole>
+                policy.Requirements.Add(new ScopeAndRoleAuthorizationRequirement(new List<ScopeAndRoleAuthorizationRequirement.ScopeAndRole>
                 {
-                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.ResourceAndScope.Master },
-                   new ScopeRoleAuthorizationRequirement.ScopeRole { Scope = Constants.ControlApi.ResourceAndScope.MasterUser, Role = Constants.ControlApi.Role.TenantAdmin },
+                   new ScopeAndRoleAuthorizationRequirement.ScopeAndRole { Scope = Constants.ControlApi.ResourceAndScope.Master },
+                   new ScopeAndRoleAuthorizationRequirement.ScopeAndRole { Scope = Constants.ControlApi.ResourceAndScope.MasterUser, Role = Constants.ControlApi.Role.TenantAdmin },
                 }));
             });
         }

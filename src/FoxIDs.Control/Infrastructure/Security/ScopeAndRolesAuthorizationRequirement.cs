@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Security
 {
-    public class ScopeAndRoleAuthorizationRequirement : AuthorizationHandler<ScopeAndRoleAuthorizationRequirement>, IAuthorizationRequirement
+    public class ScopeAndRolesAuthorizationRequirement : AuthorizationHandler<ScopeAndRolesAuthorizationRequirement>, IAuthorizationRequirement
     {
-        public ScopeAndRoleAuthorizationRequirement(List<ScopeAndRole> scopeRoleList)
+        public ScopeAndRolesAuthorizationRequirement(IEnumerable<ScopeAndRoles> scopeRoleList)
         {
-            if (scopeRoleList == null || !scopeRoleList.Any())
+            if (scopeRoleList?.Any() != true)
             {
-                throw new ArgumentNullException(nameof(scopeRoleList), "The list of scope and role pairs is null or empty.");
+                throw new ArgumentNullException(nameof(scopeRoleList), "The list of scope and roles pairs is null or empty.");
             }
 
             ScopeRoleList = scopeRoleList;
@@ -22,14 +22,14 @@ namespace FoxIDs.Infrastructure.Security
         /// <summary>
         /// List of scope and role values. One or more scope and role links must match.
         /// </summary>
-        public List<ScopeAndRole> ScopeRoleList { get; }
+        public IEnumerable<ScopeAndRoles> ScopeRoleList { get; }
 
         /// <summary>
         /// Makes a decision if authorization is allowed based on the scope and role list requirements specified.
         /// </summary>
         /// <param name="context">The authorization context.</param>
         /// <param name="requirement">The requirement to evaluate.</param>
-        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeAndRoleAuthorizationRequirement requirement)
+        protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeAndRolesAuthorizationRequirement requirement)
         {
             if (context.User != null)
             {
@@ -42,14 +42,14 @@ namespace FoxIDs.Infrastructure.Security
                         var scopeRoleItem = requirement.ScopeRoleList.Where(sr => scope.Equals(sr.Scope, StringComparison.OrdinalIgnoreCase)).SingleOrDefault();
                         if(scopeRoleItem != null)
                         {
-                            if(scopeRoleItem.Role.IsNullOrWhiteSpace())
+                            if(scopeRoleItem.Roles?.Any() != true)
                             {
                                 context.Succeed(requirement);
                                 break;
                             }
                             else
                             {
-                                if(context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Role, StringComparison.OrdinalIgnoreCase) && scopeRoleItem.Role.Equals(c.Value, StringComparison.OrdinalIgnoreCase)).Any())
+                                if(context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Role, StringComparison.OrdinalIgnoreCase) && scopeRoleItem.Roles.Any(r => r.Equals(c.Value, StringComparison.OrdinalIgnoreCase))).Any())
                                 {
                                     context.Succeed(requirement);
                                     break;
@@ -62,10 +62,10 @@ namespace FoxIDs.Infrastructure.Security
             return Task.CompletedTask;
         }
 
-        public class ScopeAndRole
+        public class ScopeAndRoles
         {
             public string Scope { get; set; }
-            public string Role { get; set; }
+            public IEnumerable<string> Roles { get; set; }
         }
     }
 }

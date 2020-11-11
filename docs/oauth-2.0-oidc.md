@@ -15,7 +15,7 @@ FoxIDs do not support plain OAuth 2.0 client authorization acting as an OAuth 2.
 ## OpenID Provider (OP)
 An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as an OP.
 
-FoxIDs support login and front channel logout. A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout, if the ID token is included in the logout request.
+FoxIDs support login and front channel logout (end session). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout, if the ID token is included in the logout request.
 Login
 
 Default both id token and access token is issued with the client id as audience. The default resource can be removed from the access token in FoxIDs Control. 
@@ -24,6 +24,8 @@ The application can then call an API with the access token using the OAuth 2.0 B
 
 FoxIDs support both client secret and PKCE. If a client is configured with both PKCE and secret they will both be validated. PKCE and client secret is not validated in implicit flow.  
 There can be configured a maximum of 10 secrets per client.
+
+//TODO UserInfo Endpoint
 
 ### Configuration
 The relaying party (RP) client (application) is configured in a FoxIDs track as an OpenID Connect down-party client.

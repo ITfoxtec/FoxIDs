@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using static FoxIDs.Infrastructure.Security.ScopeAndRolesAuthorizationRequirement;
+﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoxIDs.Infrastructure.Security
 {
@@ -16,11 +17,10 @@ namespace FoxIDs.Infrastructure.Security
         {
             options.AddPolicy(Name, policy =>
             {
-                policy.Requirements.Add(new ScopeAndRolesAuthorizationRequirement(new []
-                {
+                policy.RequireScopeAndRoles(
                    new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.Tenant },
-                   new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.TenantUser, Roles = new [] { Constants.ControlApi.Role.TenantAdmin } },
-                }));
+                   new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.TenantUser, Roles = new [] { Constants.ControlApi.Role.TenantAdmin } }
+                );
             });
         }
     }

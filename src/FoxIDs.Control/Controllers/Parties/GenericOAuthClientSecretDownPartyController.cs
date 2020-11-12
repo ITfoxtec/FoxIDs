@@ -77,7 +77,7 @@ namespace FoxIDs.Controllers
                     }
                     oauthDownParty.Client.Secrets.Add(secret);
                 }
-                secretRequest.Secrets = new List<string>(oauthDownParty.Client.Secrets.Count);
+                secretRequest.Secrets = oauthDownParty.Client.Secrets.Select(s => s.Id).ToList();
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
                 await tenantRepository.UpdateAsync(oauthDownParty);
 

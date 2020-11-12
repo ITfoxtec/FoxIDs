@@ -193,7 +193,8 @@ namespace FoxIDs.Logic
             {
                 return true;
             }
-            else if (lastUpdated.AddSeconds(loginUpParty.SessionLifetime) >= now && created.AddSeconds(loginUpParty.SessionAbsoluteLifetime) >= now)
+            else if (lastUpdated.AddSeconds(loginUpParty.SessionLifetime) >= now && 
+                (loginUpParty.SessionAbsoluteLifetime <= 0 || created.AddSeconds(loginUpParty.SessionAbsoluteLifetime) >= now))
             {
                 return true;
             }

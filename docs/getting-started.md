@@ -1,9 +1,6 @@
 # Getting Started
 FoxIDs support either being installed in your one tenant or you can in the future use FoxIDs at [FoxIDs.com](https://foxids.com).
 
-> For more information see [her](index.md).
-
-
 ## FoxIDs in your Azure tenant
 
 1. [Deploy FoxIDs](deployment.md) in your Azure tenant.

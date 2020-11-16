@@ -8,7 +8,7 @@
     <div class="p-2">
         <div class="btn-group" role="group">
             <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="oi oi-plus" aria-hidden="true"></span> Create Down Party
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Down-party
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
                 <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateDownParty(PartyTypes.Oidc))">OpenID Connect</button>
@@ -77,7 +77,7 @@
                                 }
 
                                 <div class="mb-3 alert alert-info" role="alert">
-                                    <i>Authority and OIDC Discovery example for a Up Party with the name 'login' as the target.</i>
+                                    <i>Authority and OIDC Discovery example for a Up-party with the name 'login' as the target.</i>
                                     @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name); }
                                     <div>Authority: @authority</div>
                                     <div>OIDC Discovery: <a href="@oidcDiscovery" target="_blank">@oidcDiscovery</a></div>
@@ -287,7 +287,7 @@
                                 <div class="modal-footer">
                                     <div class="alert alert-danger" role="alert">
                                         <div>
-                                            You are about to delete OpenID Connect Down Party "@downParty.Name", are you sure?
+                                            You are about to delete OpenID Connect Down-party "@downParty.Name", are you sure?
                                         </div>
 
                                         <div class="mt-3">
@@ -342,7 +342,7 @@
                                     <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
                                 }
                                 <div class="mb-3 alert alert-info" role="alert">
-                                    <i>Authority and OIDC Discovery example for a Up Party with the name 'login' as the target.</i>
+                                    <i>Authority and OIDC Discovery example for a Up-party with the name 'login' as the target.</i>
                                     @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name); }
                                     <div>Authority: @authority</div>
                                     <div>OIDC Discovery: <a href="@oidcDiscovery" target="_blank">@oidcDiscovery</a></div>
@@ -523,7 +523,7 @@
                                 <div class="modal-footer">
                                     <div class="alert alert-danger" role="alert">
                                         <div>
-                                            You are about to delete OAuth 2.0 Down Party "@downParty.Name", are you sure?
+                                            You are about to delete OAuth 2.0 Down-party "@downParty.Name", are you sure?
                                         </div>
 
                                         <div class="mt-3">
@@ -565,7 +565,7 @@
                                     <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
                                 }
                                 <div class="mb-3 alert alert-info" role="alert">
-                                    <i>SAML 2.0 Metadata example for a Up Party with the name 'login' as the target.</i>
+                                    <i>SAML 2.0 Metadata example for a Up-party with the name 'login' as the target.</i>
                                     @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name); }
                                     <div>SAML 2.0 Metadata: <a href="@samlMetadata" target="_blank">@samlMetadata</a></div>
                                 </div>
@@ -667,7 +667,7 @@
                                 <div class="modal-footer">
                                     <div class="alert alert-danger" role="alert">
                                         <div>
-                                            You are about to delete SAML 2.0 Down Party "@downParty.Name", are you sure?
+                                            You are about to delete SAML 2.0 Down-party "@downParty.Name", are you sure?
                                         </div>
 
                                         <div class="mt-3">

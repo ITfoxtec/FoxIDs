@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
         /// <param name="tenant">Tenant.</param>
         /// <returns>Tenant.</returns>
         [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.Tenant>> PostTenant([FromBody] Api.CreateTenantRequest tenant)
         {
             try

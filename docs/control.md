@@ -4,6 +4,8 @@
 ## Control Client 
 (Blazor WebAssembly) 
 
+> Create one or more tracks, do not place configuration in the master track.
+
 ## Control API
 
 OAuth 2.0 Bearer Token

@@ -35,7 +35,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                throw new NotSupportedException($"FoxIDs Api route '{string.Join('/', route)}' not supported.");
+                throw new NotSupportedException($"FoxIDs API route '{string.Join('/', route)}' not supported.");
             }
 
             return trackIdKey;

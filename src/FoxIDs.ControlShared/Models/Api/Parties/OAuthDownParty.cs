@@ -15,7 +15,7 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         /// <summary>
-        /// Allow up party names.
+        /// Allow up-party names.
         /// </summary>
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }

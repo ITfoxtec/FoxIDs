@@ -14,12 +14,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Down Party name")]
+        [Display(Name = "Down-party name")]
         public string Name { get; set; }
 
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow Up Party names")]
+        [Display(Name = "Allow Up-party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]

@@ -29,10 +29,10 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Filter up party.
+        /// Filter up-party.
         /// </summary>
-        /// <param name="filterName">Filter up party name.</param>
-        /// <returns>Up party.</returns>
+        /// <param name="filterName">Filter up-party name.</param>
+        /// <returns>Up-party.</returns>
         [ProducesResponseType(typeof(HashSet<Api.UpParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName)

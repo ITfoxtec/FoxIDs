@@ -90,7 +90,7 @@ namespace FoxIDs.Infrastructure.Security
                 return host.Replace("api", "", StringComparison.OrdinalIgnoreCase);
             }
 
-            throw new InvalidConfigException("Cannot find FoxIDs api endpoint automatically from the the FoxIDs endpoint. The Settings.FoxIDsEndpoint is required.");
+            throw new InvalidConfigException("Cannot find FoxIDs API endpoint automatically from the FoxIDs endpoint. The Settings.FoxIDsEndpoint is required.");
         }
     }
 }

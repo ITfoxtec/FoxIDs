@@ -89,7 +89,7 @@ namespace FoxIDs.Logic
                         }
                         try
                         {
-                            // Test if Down Party exists.
+                            // Test if Down-party exists.
                             var resourceDownParty = await tenantService.GetAsync<OAuthDownParty>(await DownParty.IdFormat(RouteBinding, resourceScope.Resource));
                             if (resourceScope.Scopes?.Count > 0)
                             {
@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
                             if (ex.StatusCode == HttpStatusCode.NotFound)
                             {
                                 isValid = false;
-                                var errorMessage = $"Resource scope down party resource '{resourceScope.Resource}' not found.";
+                                var errorMessage = $"Resource scope down-party resource '{resourceScope.Resource}' not found.";
                                 logger.Warning(ex, errorMessage);
                                 modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}".ToCamelCase(), errorMessage);
                             }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace FoxIDs.Models
 {
     /// <summary>
-    /// Down party.
+    /// Down-party.
     /// </summary>
     public class DownParty : Party
     {

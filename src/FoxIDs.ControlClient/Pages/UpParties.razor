@@ -8,7 +8,7 @@
     <div class="p-2">
         <div class="btn-group" role="group">
             <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="oi oi-plus" aria-hidden="true"></span> Create Up Party
+                <span class="oi oi-plus" aria-hidden="true"></span> Create Up-party
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
                 <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
@@ -57,7 +57,7 @@
                                 @if (loginUpParty.CreateMode)
                                 {
                                     <div class="mb-3 alert alert-info" role="alert">
-                                        The users login using a Login Up Party which holds the users sessions.
+                                        The users login using a Login Up-party which holds the users sessions.
                                     </div>
                                     <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" Focus="true" />
                                 }
@@ -86,7 +86,7 @@
                                 <div class="modal-footer">
                                     <div class="alert alert-danger" role="alert">
                                         <div>
-                                            You are about to delete Login Up Party "@upParty.Name", are you sure?
+                                            You are about to delete Login Up-party "@upParty.Name", are you sure?
                                         </div>
 
                                         <div class="mt-3">
@@ -224,7 +224,7 @@
                                 <div class="modal-footer">
                                     <div class="alert alert-danger" role="alert">
                                         <div>
-                                            You are about to delete SAML 2.0 Up Party "@upParty.Name", are you sure?
+                                            You are about to delete SAML 2.0 Up-party "@upParty.Name", are you sure?
                                         </div>
 
                                         <div class="mt-3">

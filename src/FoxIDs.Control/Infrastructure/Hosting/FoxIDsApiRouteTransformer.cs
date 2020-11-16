@@ -20,7 +20,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                throw new NotSupportedException($"Api route '{string.Join('/', route)}' not supported.");
+                throw new NotSupportedException($"API route '{string.Join('/', route)}' not supported.");
             }
 
             return values;
@@ -50,7 +50,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                throw new NotSupportedException($"Api route '{string.Join('/', route)}' not supported.");
+                throw new NotSupportedException($"API route '{string.Join('/', route)}' not supported.");
             }
         }
     }

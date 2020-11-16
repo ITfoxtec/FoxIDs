@@ -197,7 +197,7 @@ namespace FoxIDs.Infrastructure.Hosting
             var toUpParties = new List<UpPartyLink>();
             if (toUpPartyGroup.Captures.Count > 5)
             {
-                throw new ArgumentException($"More then 5 to up party for down party '{downParty.Id}'.");
+                throw new ArgumentException($"More then 5 to up-party for down-party '{downParty.Id}'.");
             }
 
             foreach (Capture upPartyCapture in toUpPartyGroup.Captures)
@@ -219,7 +219,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     try
                     {
-                        throw new ArgumentException($"Up Party name '{toUpPartyIdKey.PartyName}' not allowed for down party '{downParty.Id}',");
+                        throw new ArgumentException($"Up-party name '{toUpPartyIdKey.PartyName}' not allowed for down-party '{downParty.Id}',");
                     }
                     catch (Exception ex)
                     {
@@ -230,7 +230,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (toUpParties.Count() > 1)
             {
-                throw new NotSupportedException("Currently only 0 and 1 to up party is supported.");
+                throw new NotSupportedException("Currently only 0 and 1 to up-party is supported.");
             }
             return toUpParties;
         }

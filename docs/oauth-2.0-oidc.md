@@ -51,7 +51,7 @@ A confidant client could be a web application where the security is handled by t
 ### Configure public client which use Authorization Code Flow
 This would be a browser-based riches client or mobile app. The application should use PKCE and not a client secret.
 
-- Specify client name in down party name.
+- Specify client name in down-party name.
 - Select allowed up parties.
 - Specify redirect uris including both login and logout.
 - Select `code` as response type.
@@ -63,7 +63,7 @@ This would be a browser-based riches client or mobile app. The application shoul
 This would be a web application where the security is handled by the webserver or a browser-based riches client. The application neither use PKCE or client secret.  
 It is not recemented to use Implicit Code Flow because it is insecure.
 
-- Specify client name in down party name.
+- Specify client name in down-party name.
 - Select allowed up parties.
 - Specify redirect uris including both login and logout.
 - Select `token id_token` as response type or possible only `token`.

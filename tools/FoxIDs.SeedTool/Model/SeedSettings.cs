@@ -38,7 +38,7 @@ namespace FoxIDs.SeedTool.Model
         [Required]
         public string MasterTrack { get; set; }
         /// <summary>
-        /// Seed tool down party (client id).
+        /// Seed tool down-party (client id).
         /// </summary>
         [Required]
         public string DownParty { get; set; }

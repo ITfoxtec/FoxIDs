@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OpenID Connect down party api.
+    /// OpenID Connect down-party api.
     /// </summary>
     public class TOidcDownPartyController : GenericPartyApiController<Api.OidcDownParty, OidcDownParty>
     {
@@ -23,34 +23,34 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get OIDC down party.
+        /// Get OIDC down-party.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>OIDC down party.</returns>
+        /// <returns>OIDC down-party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.OidcDownParty>> GetOidcDownParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create OIDC down party.
+        /// Create OIDC down-party.
         /// </summary>
-        /// <param name="party">OIDC down party.</param>
-        /// <returns>OIDC down party.</returns>
+        /// <param name="party">OIDC down-party.</param>
+        /// <returns>OIDC down-party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.OidcDownParty>> PostOidcDownParty([FromBody] Api.OidcDownParty party) => await Post(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateModelAsync(ModelState, mp));
 
         /// <summary>
-        /// Update OIDC down party.
+        /// Update OIDC down-party.
         /// </summary>
-        /// <param name="party">OIDC down party.</param>
-        /// <returns>OIDC down party.</returns>
+        /// <param name="party">OIDC down-party.</param>
+        /// <returns>OIDC down-party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.OidcDownParty>> PutOidcDownParty([FromBody] Api.OidcDownParty party) => await Put(party, ap => Task.FromResult(true), async (ap, mp) => await validateOAuthOidcLogic.ValidateModelAsync(ModelState, mp));
 
         /// <summary>
-        /// Delete OIDC down party.
+        /// Delete OIDC down-party.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

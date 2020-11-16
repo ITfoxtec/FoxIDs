@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
                             if (ex.StatusCode == HttpStatusCode.NotFound)
                             {
                                 isValid = false;
-                                var errorMessage = $"Resource scope down party resource '{resourceScope.Resource}' not found.";
+                                var errorMessage = $"Resource scope down-party resource '{resourceScope.Resource}' not found.";
                                 logger.Warning(ex, errorMessage);
                                 modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}".ToCamelCase(), errorMessage);
                             }

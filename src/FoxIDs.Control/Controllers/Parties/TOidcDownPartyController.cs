@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OpenID Connect down-party api.
+    /// OpenID Connect down-party API.
     /// </summary>
     public class TOidcDownPartyController : GenericPartyApiController<Api.OidcDownParty, OidcDownParty>
     {

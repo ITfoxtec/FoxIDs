@@ -168,7 +168,7 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         private async Task CreateFoxIDsControlApiResourceDocumentAsync()
         {
-            Console.WriteLine("Creating FoxIDs control api resource");
+            Console.WriteLine("Creating FoxIDs control API resource");
 
             var controlApiResourceDownParty = new OAuthDownParty
             {
@@ -182,7 +182,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             controlApiResourceDownParty.SetTenantPartitionId();
 
             await simpleTenantRepository.SaveAsync(controlApiResourceDownParty);
-            Console.WriteLine($"FoxIDs control api resource document created and saved in Cosmos DB");
+            Console.WriteLine($"FoxIDs control API resource document created and saved in Cosmos DB");
         }
 
         private async Task CreateControlClientDocmentAsync(LoginUpParty loginUpParty)

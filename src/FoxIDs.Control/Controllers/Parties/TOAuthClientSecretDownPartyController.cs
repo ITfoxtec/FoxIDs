@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OAuth 2.0 client secret for down-party api.
+    /// OAuth 2.0 client secret for down-party API.
     /// </summary>
     public class TOAuthClientSecretDownPartyController : GenericClientSecretDownPartyController<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>
     {

@@ -101,7 +101,7 @@ namespace FoxIDs.Client.Shared
                 createTenantReceipt.Add("Master track with user repository created.");
                 createTenantReceipt.Add("Master track default Login Up-party created.");
                 createTenantReceipt.Add("First master track administrator user created.");
-                createTenantReceipt.Add("Master track control api down-party created.");
+                createTenantReceipt.Add("Master track control API down-party created.");
                 createTenantReceipt.Add("Master track control client down-party created.");
 
                 await NotificationLogic.TenantUpdatedAsync();

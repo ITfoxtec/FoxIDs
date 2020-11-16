@@ -43,7 +43,7 @@ namespace FoxIDs.SeedTool.Model
         [Required]
         public string DownParty { get; set; }
         /// <summary>
-        /// FoxIDs tenant/track/downparty authority.
+        /// FoxIDs tenant/track/down-party authority.
         /// </summary>
         public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 
@@ -54,15 +54,15 @@ namespace FoxIDs.SeedTool.Model
         public string FoxIDsControlEndpoint { get; set; }
 
         /// <summary>
-        /// FoxIDs control api endpoint.
+        /// FoxIDs control API endpoint.
         /// </summary>
         public string FoxIDsControlApiEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, "api");
         /// <summary>
-        /// FoxIDs master api control endpoint.
+        /// FoxIDs master API control endpoint.
         /// </summary>
         public string FoxIDsMasterControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, "@master");
         /// <summary>
-        /// FoxIDs master track control api endpoint.
+        /// FoxIDs master track control API endpoint.
         /// </summary>
         public string FoxIDsMasterTrackControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, MasterTenant, MasterTrack);
 

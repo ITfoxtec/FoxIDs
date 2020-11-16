@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Login up-party api.
+    /// Login up-party API.
     /// </summary>
     public class TLoginUpPartyController : GenericPartyApiController<Api.LoginUpParty, LoginUpParty>
     {

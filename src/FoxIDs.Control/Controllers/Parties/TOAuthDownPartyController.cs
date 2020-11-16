@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OAuth 2.0 down-party api.
+    /// OAuth 2.0 down-party API.
     /// </summary>
     public class TOAuthDownPartyController : GenericPartyApiController<Api.OAuthDownParty, OAuthDownParty>
     {

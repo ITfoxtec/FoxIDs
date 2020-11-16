@@ -23,7 +23,7 @@ namespace FoxIDs.Models.Api
         public List<string> ResponseTypes { get; set; }
 
         [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
-        [Display(Name = "Redirect uris")]
+        [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
         /// <summary>

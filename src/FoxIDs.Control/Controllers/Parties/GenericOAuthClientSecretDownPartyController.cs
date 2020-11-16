@@ -13,7 +13,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Abstract OAuth 2.0 client secret for down-party api.
+    /// Abstract OAuth 2.0 client secret for down-party API.
     /// </summary>
     public abstract class GenericClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : TenantApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {

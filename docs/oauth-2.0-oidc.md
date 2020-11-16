@@ -53,7 +53,7 @@ This would be a browser-based riches client or mobile app. The application shoul
 
 - Specify client name in down-party name.
 - Select allowed up parties.
-- Specify redirect uris including both login and logout.
+- Specify redirect URIs including both login and logout.
 - Select `code` as response type.
 - Use PKCE, default enabled.
 
@@ -65,7 +65,7 @@ It is not recemented to use Implicit Code Flow because it is insecure.
 
 - Specify client name in down-party name.
 - Select allowed up parties.
-- Specify redirect uris including both login and logout.
+- Specify redirect URIs including both login and logout.
 - Select `token id_token` as response type or possible only `token`.
 - Disable PKCE.
 - Do not specify a secret.

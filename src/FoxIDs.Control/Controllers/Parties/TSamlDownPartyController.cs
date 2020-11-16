@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Saml down-party api.
+    /// SAML 2.0 down-party API.
     /// </summary>
     public class TSamlDownPartyController : GenericPartyApiController<Api.SamlDownParty, SamlDownParty>
     {

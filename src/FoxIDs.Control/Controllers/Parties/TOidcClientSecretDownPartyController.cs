@@ -12,7 +12,7 @@ using System.Collections.Generic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OIDC client secret for down-party api.
+    /// OIDC client secret for down-party API.
     /// </summary>
     public class TOidcClientSecretDownPartyController : GenericClientSecretDownPartyController<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>
     {

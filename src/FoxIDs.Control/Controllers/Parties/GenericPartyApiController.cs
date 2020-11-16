@@ -12,7 +12,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Abstract party api.
+    /// Abstract party API.
     /// </summary>
     public abstract class GenericPartyApiController<AParty, MParty> : TenantApiController where AParty : Api.INameValue where MParty : Party
     {

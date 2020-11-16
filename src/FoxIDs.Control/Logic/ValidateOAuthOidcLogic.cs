@@ -89,7 +89,7 @@ namespace FoxIDs.Logic
                         }
                         try
                         {
-                            // Test if Down Party exists.
+                            // Test if Down-party exists.
                             var resourceDownParty = await tenantService.GetAsync<OAuthDownParty>(await DownParty.IdFormat(RouteBinding, resourceScope.Resource));
                             if (resourceScope.Scopes?.Count > 0)
                             {

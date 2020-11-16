@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Saml up party api.
+    /// Saml up-party api.
     /// </summary>
     public class TSamlUpPartyController : GenericPartyApiController<Api.SamlUpParty, SamlUpParty>
     {
@@ -23,34 +23,34 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get Saml up party.
+        /// Get Saml up-party.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Saml up party.</returns>
+        /// <returns>Saml up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.SamlUpParty>> GetSamlUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create Saml up party.
+        /// Create Saml up-party.
         /// </summary>
-        /// <param name="party">Saml up party.</param>
-        /// <returns>Saml up party.</returns>
+        /// <param name="party">Saml up-party.</param>
+        /// <returns>Saml up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
 
         /// <summary>
-        /// Update Saml up party.
+        /// Update Saml up-party.
         /// </summary>
-        /// <param name="party">Saml up party.</param>
-        /// <returns>Saml up party.</returns>
+        /// <param name="party">Saml up-party.</param>
+        /// <returns>Saml up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)), (ap, mp) => Task.FromResult(true));
        
         /// <summary>
-        /// Delete Saml up party.
+        /// Delete Saml up-party.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

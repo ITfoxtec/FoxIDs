@@ -38,11 +38,11 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up party not defined.");
+                    throw new NotSupportedException("Up-party not defined.");
                 }
                 if (RouteBinding.ToUpParties?.Count() != 1)
                 {
-                    throw new NotSupportedException("Currently only exactly 1 to up party is supported.");
+                    throw new NotSupportedException("Currently only exactly 1 to up-party is supported.");
                 }
 
                 logger.ScopeTrace($"Authorize request, Down type '{RouteBinding.DownParty.Type}'");
@@ -111,11 +111,11 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up party not defined.");
+                    throw new NotSupportedException("Up-party not defined.");
                 }
                 if (RouteBinding.ToUpParties?.Count() != 1)
                 {
-                    throw new NotSupportedException("Currently only exactly 1 to up party is supported.");
+                    throw new NotSupportedException("Currently only exactly 1 to up-party is supported.");
                 }
 
                 logger.ScopeTrace($"End session, Down type '{RouteBinding.DownParty.Type}'");

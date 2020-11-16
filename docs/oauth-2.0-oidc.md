@@ -32,16 +32,16 @@ FoxIDs support the UserInfo endpoint defined in the OpenID Connect standard.
 ### Configuration
 The relaying party (RP) client (application) is configured in a FoxIDs track as an OpenID Connect down-party client.
 
-> The clients FoxIDs discovery document `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
-> for tenant `tenant-x` and track `track-y` with the down-party name `party-client1`
+> The clients FoxIDs discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
+> if the client is located in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`  
 > An up-party name e.g. `login` can possible be added to the discovery URL `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
 
 ### Configure confidant client which use Authorization Code Flow
-This would be a web application where the security is handled by the webserver which also stores the client secret.
+A confidant client could be a web application where the security is handled by the webserver which also stores the client secret.
 
-- Specify client name in down party name.
-- Select allowed up parties.
-- Specify redirect uris including both login and logout.
+- Specify client name in down-party name.
+- Select allowed up-parties.
+- Specify redirect URIs including both login and logout.
 - Select `code` as response type or possible but not recemented `code token` or `code token id_token`.
 - It is not required to use PKCE in a confidant client but recommended to mitigate replay attacks.
 - Specify a secret.

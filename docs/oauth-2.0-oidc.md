@@ -5,14 +5,14 @@ FoxIDs can act as an down-party [OpenID Provider (OP)](#openid-provider-op) auth
 
 FoxIDs support down-party [Client Credentials Grant](#client-credentials-grant) acting as an OAuth 2.0 resource owner. For security reasons [Resource Owner Password Credentials Grant](#resource-owner-password-credentials-grant) is not supported.
 
+![FoxIDs OAuth 2.0 and OpenID Connect](images/oauth_oidc.svg)
+
 Future support:
 - FoxIDs acting as an up-party OpenID Connect RP (client), authenticating with an external OP.
 - *(Maybe support) FoxIDs acting as an up-party OAuth 2.0 client, authorizing with an external resource owner.*
 - *(Maybe support) FoxIDs acting as an down-party OAuth 2.0 resource owner, supporting plain OAuth 2.0 client authorization.*
 
 FoxIDs do not support plain OAuth 2.0 client authorization acting as an down-party OAuth 2.0 resource owner because it is less secure then using OpenID Connect.
-
-![FoxIDs OAuth 2.0 and OpenID Connect](images/oauth_oidc.svg)
 
 ## Down-party OpenID Provider (OP)
 An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as a down-party OpenID Provider (OP).

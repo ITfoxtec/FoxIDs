@@ -104,14 +104,14 @@ A set of default scopes is added to the client configuration, which subsequently
 
 ![Default scopes](images/configure-default-claims.png)
 
-## OAuth 2.0 Resource
-An API is configured as an OAuth 2.0 resource with a name and one or more scopes.
+## Down-party OAuth 2.0 Resource
+An API is configured as an Down-party OAuth 2.0 resource with a name and one or more scopes.
 
 ![Resource with scopes](images/configure-oauth-resource.png)
 
 A client can subsequently be given access by configuring [Resource and scopes](#resource-and-scopes) in the client.
 
-## Client Credentials Grant
+## Down-party Client Credentials Grant
 An application using Client Credentials Grant could be a backend service secured by a client id and secret. PKCE is not validated in Client Credentials Grant.
 
 - Specify client name in down-party name.
@@ -122,5 +122,5 @@ An application using Client Credentials Grant could be a backend service secured
 
 ![Configure Client Credentials Grant](images/configure-client-credentials-grant.png)
 
-## Resource Owner Password Credentials Grant
+## Down-party Resource Owner Password Credentials Grant
 Resource Owner Password Credentials Grant is not supported because it is insecure and should not be used.

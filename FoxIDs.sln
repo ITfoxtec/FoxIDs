@@ -54,6 +54,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-authorization-code-flow.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-authorization-code-flow.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-client.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-client.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-resource.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-client-api-resource.png
+		docs\images\configure-client-credentials-grant.png = docs\images\configure-client-credentials-grant.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-default-claims.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-default-claims.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-implicit-code-flow.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-implicit-code-flow.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-oauth-resource.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-oauth-resource.png

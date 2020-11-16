@@ -12,7 +12,7 @@ Future support:
 - *(Maybe support) FoxIDs acting as an up-party OAuth 2.0 client, authorizing with an external resource owner.*
 - *(Maybe support) FoxIDs acting as an down-party OAuth 2.0 resource owner, supporting plain OAuth 2.0 client authorization.*
 
-FoxIDs do not support plain OAuth 2.0 client authorization acting as an down-party OAuth 2.0 resource owner because it is less secure then using OpenID Connect.
+FoxIDs do not support plain OAuth 2.0 client authorization acting as a down-party OAuth 2.0 resource owner because it is less secure then using OpenID Connect.
 
 ## Down-party OpenID Provider (OP)
 An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as a down-party OpenID Provider (OP).
@@ -27,7 +27,7 @@ FoxIDs support both client secret and PKCE. If a client is configured with both 
 
 There can be configured a maximum of 10 secrets per client.
 
-FoxIDs support the UserInfo endpoint defined in the OpenID Connect standard.
+FoxIDs support the OpenID Connect UserInfo endpoint.
 
 ### Configuration
 The relaying party (RP) client (application) is configured in a FoxIDs track as an OpenID Connect down-party client.
@@ -36,7 +36,7 @@ The relaying party (RP) client (application) is configured in a FoxIDs track as 
 > if the client is located in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`  
 > An up-party name e.g. `login` can possible be added to the discovery URL `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
 
-### Configure confidant client which use Authorization Code Flow
+### Configure Authorization Code Flow for a confidant client
 A confidant client could be a web application where the security is handled by the webserver which also stores the client secret.
 
 - Specify client name in down-party name.
@@ -48,8 +48,8 @@ A confidant client could be a web application where the security is handled by t
 
 ![Configure Authorization Code Flow](images/configure-authorization-code-flow.png)
 
-### Configure public client which use Authorization Code Flow
-This would be a browser-based riches client or mobile app. The application should use PKCE and not a client secret.
+### Configure Authorization Code Flow for a public client
+A public client could be a browser-based riches client, Blazor client or mobile app. The application should use PKCE and not a client secret.
 
 - Specify client name in down-party name.
 - Select allowed up parties.
@@ -59,9 +59,9 @@ This would be a browser-based riches client or mobile app. The application shoul
 
 ![Configure Authorization Code Flow with PKCE](images/configure-authorization-code-flow-pkce.png)
 
-### Configure public client which use Implicit Code Flow
-This would be a web application where the security is handled by the webserver or a browser-based riches client. The application neither use PKCE or client secret.  
-It is not recemented to use Implicit Code Flow because it is insecure.
+### Configure Implicit Code Flow for a public client
+A public client could be a web application where the security is handled by the webserver or a browser-based riches client. The application neither use PKCE or client secret.  
+*It is not recemented to use Implicit Code Flow because it is insecure.*
 
 - Specify client name in down-party name.
 - Select allowed up parties.
@@ -73,7 +73,7 @@ It is not recemented to use Implicit Code Flow because it is insecure.
 ![Configure Implicit Code Flow with PKCE](images/configure-implicit-code-flow.png)
 
 ### Client and API
-It is possible to configure both client and API in the same OpenID Connect application configuration, where both the client and API is defined with the same name. Furthermore, it is possible to configure resource scopes for the API.
+It is possible to configure both client and API (resource) in the same OpenID Connect down-party configuration, where both the client and API is defined with the same name. Furthermore, it is possible to configure resource scopes for the API.
 
 **Client tap**
 
@@ -85,22 +85,22 @@ It is possible to configure both client and API in the same OpenID Connect appli
 
 
 ### Resource and Scopes
-An API is defined as a resource under which it is possible to define scopes. Such scopes is defined as the resource name dot scope e.g. `party-api1.read1` or `party-api1.read2`.
+An API is defined as a resource under which it is possible to define scopes. Such scopes are defined as the resource name dot scope e.g. `party-api1.read1` or `party-api1.read2`.
 
-In the client configuration the scopes are defined underneath the resource.
+In the client configuration tab, the scopes are defined underneath the resource name field.
 
 ![Resource and scopes - Client](images/configure-resource-scopes-client.png)
 
-In the resource configuration the scopes are defined as a list of scopes.
+In the resource configuration tab, the scopes are defined as a list of scope values.
 
 ![Resource and scopes - Resource](images/configure-resource-scopes-resource.png)
 
-On scope configuration in the client it is validated if the scopes exist on the API. If the client and API is the same application configuration the scopes is automatically added to the resource.
+Scopes configured in the client is validated if the scopes exist on the API. If the client and API is configured in the same down-party configuration, scopes added to the client is automatically added to the resource.
 
 ### Scopes
-The scopes can be configured in the client configuration. A scope can define a set of claims which should be issued.
+The scopes can be configured in the client configuration tab. It is possible to define a set of claims which should be issued for at scope as voluntary claims.
 
-A set of default scopes is added to the client configuration, which subsequently can be changed.
+A set of default scopes is added to the client configuration, which subsequently can be changed or deleted.
 
 ![Default scopes](images/configure-default-claims.png)
 
@@ -109,15 +109,18 @@ An API is configured as an OAuth 2.0 resource with a name and one or more scopes
 
 ![Resource with scopes](images/configure-oauth-resource.png)
 
-Access to the client can afterword`s be configured as [Resource and scopes](#resource-and-scopes) in a client.
+A client can subsequently be given access by configuring [Resource and scopes](#resource-and-scopes) in the client.
 
 ## Client Credentials Grant
-//TODO
+An application using Client Credentials Grant could be a backend service secured by a client id and secret. PKCE is not validated in Client Credentials Grant.
 
-Client id is required.
+- Specify client name in down-party name.
+- Specify redirect URI.
+- Select `token` as response type.
+- Disable PKCE.
+- Specify a secret.
 
-PKCE is not validated in Client Credentials Grant.
-
+![Configure Client Credentials Grant](images/configure-client-credentials-grant.png)
 
 ## Resource Owner Password Credentials Grant
 Resource Owner Password Credentials Grant is not supported because it is insecure and should not be used.

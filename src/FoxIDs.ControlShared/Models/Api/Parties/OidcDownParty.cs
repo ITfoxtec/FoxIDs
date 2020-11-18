@@ -27,7 +27,7 @@ namespace FoxIDs.Models.Api
         public OAuthDownResource Resource { get; set; }
 
         /// <summary>
-        /// Allow cors origins.
+        /// Allow CORS origins.
         /// </summary>
         [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }

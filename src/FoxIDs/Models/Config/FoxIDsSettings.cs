@@ -22,7 +22,7 @@ namespace FoxIDs.Models.Config
         public int PersistentSessionMaxUnlimitedLifetimeYears { get; set; }
 
         /// <summary>
-        /// Cors preflight max age in secunds.
+        /// CORS preflight max age in seconds.
         /// </summary>
         [Required]
         public int CorsPreflightMaxAge { get; set; }

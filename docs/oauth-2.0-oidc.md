@@ -57,6 +57,8 @@ A public client could be a browser-based riches client, Blazor client or mobile 
 - Select `code` as response type.
 - Use PKCE, default enabled.
 
+> Click "Show advanced settings" to configure allowed CORS origins.
+
 ![Configure Authorization Code Flow with PKCE](images/configure-authorization-code-flow-pkce.png)
 
 ### Configure Implicit Code Flow for a public client

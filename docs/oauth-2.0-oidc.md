@@ -14,6 +14,9 @@ Future support:
 
 FoxIDs do not support plain OAuth 2.0 client authorization acting as a down-party OAuth 2.0 resource owner because it is less secure then using OpenID Connect.
 
+## Client secrets
+It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm](login.md#password-hash) as passwords. If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
+
 ## Down-party OpenID Provider (OP)
 An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as a down-party OpenID Provider (OP).
 

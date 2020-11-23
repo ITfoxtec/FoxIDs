@@ -1,12 +1,12 @@
 # FoxIDs Control
 //TODO
 
-## Control Client 
+## FoxIDs Control Client 
 (Blazor WebAssembly) 
 
 > Create one or more tracks, do not place configuration in the master track.
 
-## Control API
+## FoxIDs Control API
 
 OAuth 2.0 Bearer Token
 

@@ -64,5 +64,5 @@ This shows the FoxIDs Control API configuration in the master track, including t
 FoxIDs Control API is called with an access token as described in the OAuth 2.0 Bearer Token standard.
 
 The Swagger (OpenApi) interface document is exposed on `.../api/swagger/v1/swagger.json`.  
-In the future you can also find the Swagger (OpenApi) [interface document](https://control/foxids.com/api/swagger/v1/swagger.json) online.
+In the future you can also find the Swagger (OpenApi) [interface document](https://control.foxids.com/api/swagger/v1/swagger.json) online.
 

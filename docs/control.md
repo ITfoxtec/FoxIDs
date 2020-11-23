@@ -9,7 +9,7 @@ FoxIDs Control Client is a Blazor WebAssembly web client.
 ### Tenant and master track
 If FoxIDs is installed in your one Azure tenant you get access to the master tenant. You firstly need to create a tenant which will contain your entire security configuration. You probably only need one, but it is possible to configure an unlimited number of tenants.  
 
-![Configure tenant](images/configure-tenant.png)
+![Configure tenants](images/configure-tenant.png)
 
 In the future, if you use FoxIDs at [https://FoxIDs.com](https://foxids.com) your one tenant will be pre created on registration.
 
@@ -30,16 +30,13 @@ Configure more tracks, one for each of your environments e.g. dev, qa and prod.
 
 > Create one or more tracks, do not place configuration in the master track.
 
-![Configure certificates](images/configure-certificate.png)
-
+![Configure tracks](images/configure-track.png)
 
 A track contains a user repository and a default created up-party [login](login.md). It is possible to create users and add track specific text translations. 
 
-Add [OAuth 2.0, OpenID Connect](oauth-2.0-oidc.md) and [SAML 2.0](saml-2.0.md) down-parties and down-partis.
+Add [OAuth 2.0, OpenID Connect](oauth-2.0-oidc.md) and [SAML 2.0](saml-2.0.md) down-parties and down-parties.
 
-
-![Configure down-parties and down-partis](images/configure-parties.png)
-
+![Configure down-parties and down-parties](images/configure-parties.png)
 
 Each track contains a primary certificate and possible a secondary certificate. It is possible to swap between the primary and secondary certificate if both is configured, depending on the [certificate](index.md#certificates) container type.
 

@@ -9,7 +9,7 @@ FoxIDs Control (Blazor WebAssembly Client and API)
 
 
 FoxIDs Control API  
-Localhost Swagger (OpenApi) document: `https://localhost:44331/swagger/v1/swagger.json`
+Localhost Swagger (OpenApi) document: `https://localhost:44331/api/swagger/v1/swagger.json`
 
 Generate client code with NSwag:
 - Generate code with Visual Studio extension https://github.com/dmitry-pavlov/api-client-generation-tools.

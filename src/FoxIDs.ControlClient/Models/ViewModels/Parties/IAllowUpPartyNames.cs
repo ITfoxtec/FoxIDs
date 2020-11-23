@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public interface IAllowUpPartyNames
     {
-        [Display(Name = "Allow Up-party names")]
+        [Display(Name = "Allow up-party names")]
         List<string> AllowUpPartyNames { get; set; }
     }
 }

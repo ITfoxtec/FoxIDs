@@ -15,7 +15,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow Up-party names")]
+        [Display(Name = "Allow up-party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         /// <summary>
@@ -31,11 +31,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public OAuthDownResource Resource { get; set; }
 
         /// <summary>
-        /// Allow cors origins.
+        /// Allow CORS origins.
         /// </summary>
         [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
-        [Display(Name = "Allow cors origins")]
+        [Display(Name = "Allow CORS origins")]
         public List<string> AllowCorsOrigins { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

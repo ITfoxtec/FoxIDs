@@ -1,7 +1,7 @@
 ﻿# OAuth 2.0 and OpenID Connect
 OAuth 2.0, OpenID Connect, JWT and JWT claims are first class citizens in FoxIDs. Internally claims are always represented as JWT claims and request / response properties are described with OAuth 2.0 and OpenID Connect attributes. When FoxIDs converts between standards it also converts to the same internal representation using JWT claims and OAuth 2.0 / OpenID Connect attributes.
 
-FoxIDs can act as an down-party [OpenID Provider (OP)](#openid-provider-op) authenticating the client using OpenID Connect. The client can request an access token for multiple API`s defined as [OAuth 2.0 resources](#oauth-20-resource).
+FoxIDs can act as an down-party [OpenID Provider (OP)](#openid-provider-op) authenticating the client using OpenID Connect. The client can request an access token for multiple API's defined as [OAuth 2.0 resources](#oauth-20-resource).
 
 FoxIDs support down-party [Client Credentials Grant](#client-credentials-grant) acting as an OAuth 2.0 resource owner. For security reasons [Resource Owner Password Credentials Grant](#resource-owner-password-credentials-grant) is not supported.
 
@@ -14,12 +14,15 @@ Future support:
 
 FoxIDs do not support plain OAuth 2.0 client authorization acting as a down-party OAuth 2.0 resource owner because it is less secure then using OpenID Connect.
 
+## Client secrets
+It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm](login.md#password-hash) as passwords. If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
+
 ## Down-party OpenID Provider (OP)
 An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as a down-party OpenID Provider (OP).
 
 FoxIDs support login and front channel logout (end session). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout, if the ID token is included in the logout request.
 
-Default both id token and access token are issued with the client’s client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
+Default both id token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
 Access tokens can be issued with a list of audiences and thereby be issued to multiple API`s defined in FoxIDs as OAuth 2.0 resources.  
 The application can then call an API securing the call with the access token using the OAuth 2.0 Bearer Token standard.
 
@@ -56,6 +59,8 @@ A public client could be a browser-based riches client, Blazor client or mobile 
 - Specify redirect URIs including both login and logout.
 - Select `code` as response type.
 - Use PKCE, default enabled.
+
+> Click "Show advanced settings" to configure allowed CORS origins.
 
 ![Configure Authorization Code Flow with PKCE](images/configure-authorization-code-flow-pkce.png)
 

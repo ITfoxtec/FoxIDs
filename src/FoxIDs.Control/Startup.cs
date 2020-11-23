@@ -56,10 +56,7 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app)
         {
-            if (CurrentEnvironment.IsDevelopment())
-            { 
-            }
-            else
+            if (!CurrentEnvironment.IsDevelopment())
             {
                 app.UseHsts();
             }

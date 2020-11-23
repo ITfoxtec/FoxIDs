@@ -36,22 +36,22 @@ namespace FoxIDs.Models.Api
         public bool RequirePkce { get; set; } = true;
 
         [Range(Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMin, Constants.Models.OAuthDownParty.Client.AuthorizationCodeLifetimeMax)]
-        [Display(Name = "Authorization code lifetime")]
+        [Display(Name = "Authorization code lifetime in seconds")]
         public int? AuthorizationCodeLifetime { get; set; } = 30;
 
         /// <summary>
         /// Default 60 minutes.
         /// </summary>
         [Range(Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.AccessTokenLifetimeMax)]
-        [Display(Name = "Access token lifetime")]
+        [Display(Name = "Access token lifetime in seconds")]
         public int? AccessTokenLifetime { get; set; } = 3600;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMax)]
-        [Display(Name = "Refresh token lifetime")]
+        [Display(Name = "Refresh token lifetime in seconds")]
         public int? RefreshTokenLifetime { get; set; } = 2160;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMax)]
-        [Display(Name = "Refresh token absolute lifetime")]
+        [Display(Name = "Refresh token absolute lifetime in seconds")]
         public int? RefreshTokenAbsoluteLifetime { get; set; } = 10080;
 
         [Display(Name = "Only use refresh token one time")]
@@ -64,7 +64,7 @@ namespace FoxIDs.Models.Api
         /// Default 60 minutes.
         /// </summary>
         [Range(Constants.Models.OidcDownParty.Client.IdTokenLifetimeMin, Constants.Models.OidcDownParty.Client.IdTokenLifetimeMax)]
-        [Display(Name = "Id token lifetime")]
+        [Display(Name = "Id token lifetime in seconds")]
         public int? IdTokenLifetime { get; set; } = 3600;
 
         [Display(Name = "Require logout id token hint")]

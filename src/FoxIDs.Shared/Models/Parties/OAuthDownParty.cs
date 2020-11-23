@@ -56,7 +56,7 @@ namespace FoxIDs.Models
         public List<OAuthClaimTransformation> ClaimTransformations { get; set; }
 
         /// <summary>
-        /// Allow cors origins.
+        /// Allow CORS origins.
         /// </summary>
         [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         [JsonProperty(PropertyName = "allow_cors_origins")]

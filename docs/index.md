@@ -4,10 +4,10 @@
 
 FoxIDs consist of two services:
 
-- Identity service called FoxIDs handling user login and all other security traffic.
-- Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
+- Identity service called FoxIDs which handles user login and all other security traffic.
+- Configuration client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
-FoxIDs is a cloud service ready to be [deployed in you Azure tenant](deployment.md). In the future, it will also be possible to use FoxIDs on [FoxIDs.com](https://foxids.com) and [Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
+FoxIDs is a cloud service ready to be [deployed](deployment.md) in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and FoxIDs Control [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
 > FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
@@ -26,7 +26,7 @@ FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxI
 
 FoxIDs is deployed in two App Services which expose:
 
-- FoxIDs, the security service which handles all the security requests and user authentication
+- FoxIDs, the identity service which handles all the security requests and user authentication
 - [FoxIDs Control](control.md), the administration application and API in which FoxIDs is configured
 
 Both is exposed as websites where the [domains can be customized](development.md#customized-domains). FoxIDs also relay on a number of backend service, please see [development](development.md) for details.
@@ -36,7 +36,7 @@ Both is exposed as websites where the [domains can be customized](development.md
 FoxIDs is divided into logical elements.
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
-- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](#user-repository), a unique [certificate](#certificates) and a track contains the up parties and down parties.
+- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](login.md#user-repository), a unique [certificate](#certificates) and a track contains the up parties and down parties.
 - **Up-party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
 - **Down-party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
@@ -62,24 +62,6 @@ Selecting multiple up parties *(future support)*:
 - Select a maximum of 5 up parties allowed for a down-party by adding the up parties as a comma separated list in round brackets in the URL after the down-party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
 
 A client which use client credentials as authorization grant would not specify the up-party. It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.  
-
-## User repository 
-Each track contains a user repository where the users is saved in Cosmos DB. The users id, email and other claims are saved as text. The password is never saved needer in logs or in Cosmos DB. Instead a hash of the password is saved in Cosmos DB along with the rest of the user information.
-
-### Password hash
-FoxIDs is designed to support a growing number of algorithms with different iterations by saving information about the hash algorithm used alongside the actually hash in Cosmos DB. Thereby FoxIDs can validate an old hash algorithm and at the same time save new hashes with a new hash algorithm.
-
-Currently FoxIDs support and use hash algorithm `P2HS512:10` which is defined as:
-
-- The HMAC algorithm (RFC 2104) using the SHA-512 hash function (FIPS 180-4).
-- With 10 iterations.
-- Salt is generated from 64 bytes.
-- Derived key length is 80 bytes.
-
-Standard .NET liberals are used to calculate the hash.
-
-## Client secrets
-It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm as passwords](#password-hash). If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 
 
 ## Certificates
 When a track is created it is default equipped with a self-signed certificate stored in Cosmos DB, called a contained certificate. The certificate can afterword's be updated / changed and likewise the certificate container type can be changed.

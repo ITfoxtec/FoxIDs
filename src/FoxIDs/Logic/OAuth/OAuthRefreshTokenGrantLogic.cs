@@ -99,12 +99,6 @@ namespace FoxIDs.Logic
 
             if (!client.RefreshTokenAbsoluteLifetime.HasValue)
                 throw new EndpointException("Client RefreshTokenAbsoluteLifetime not configured.") { RouteBinding = RouteBinding };
-
-            if (!client.RefreshTokenUseOneTime.HasValue)
-                throw new EndpointException("Client RefreshTokenUseOneTime not configured.") { RouteBinding = RouteBinding };
-
-            if (!client.RefreshTokenLifetimeUnlimited.HasValue)
-                throw new EndpointException("Client RefreshTokenLifetimeUnlimited not configured.") { RouteBinding = RouteBinding };
         }
 
         private string CreateRefreshToken(TClient client)

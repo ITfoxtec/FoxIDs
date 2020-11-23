@@ -65,7 +65,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
-        [Display(Name = "Authn url")]
+        [Display(Name = "Authn URL")]
         public string AuthnUrl { get; set; }
 
         [ValidateComplexType]
@@ -80,7 +80,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public SamlBindingTypes LogoutResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
-        [Display(Name = "Logout url")]
+        [Display(Name = "Logout URL")]
         public string LogoutUrl { get; set; }
     }
 }

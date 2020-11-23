@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow Up-party names")]
+        [Display(Name = "Allow up-party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
@@ -89,7 +89,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
-        [Display(Name = "Assertion consumer service (ACS) url")]
+        [Display(Name = "Assertion consumer service (ACS) URL")]
         public List<string> AcsUrls { get; set; } 
 
         [Display(Name = "Logout request binding")]
@@ -99,11 +99,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public SamlBindingTypes LogoutResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
-        [Display(Name = "Optional single logout url")]
+        [Display(Name = "Optional single logout URL")]
         public string SingleLogoutUrl { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
-        [Display(Name = "Optional logged out url")]
+        [Display(Name = "Optional logged out URL")]
         public string LoggedOutUrl { get; set; }
 
         [ValidateComplexType]

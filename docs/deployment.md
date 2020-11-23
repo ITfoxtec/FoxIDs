@@ -12,7 +12,7 @@ Deploy FoxIDs in your Azure tenant.
 - SendGrid.
 - Application Insights.
 
-After successfully deployment open FoxIDs Control Client `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
+After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
 The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
@@ -35,7 +35,7 @@ The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
 
 ### Upload risk passwords
 
-You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
+You can upload risk passwrods in FoxIDs Control Client master tenant on the Risk Passwords tap. 
 
 ![FoxIDs Control Client - Upload risk passwrods](images/upload-risk-passwords.png)
 

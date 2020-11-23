@@ -12,7 +12,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Claim also in id token, default false.
         /// </summary>
-        [Display(Name = "Include in ID Token")]
+        [Display(Name = "Include in id token")]
         public bool? InIdToken { get; set; } = false;
     }
 }

@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)]
-        [Display(Name = "Session lifetime (active session if greater than 0)")]
+        [Display(Name = "Session lifetime in seconds (active session if greater than 0)")]
         public int SessionLifetime { get; set; } = 36000;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
-        [Display(Name = "Session absolute lifetime (active if greater than 0)")]
+        [Display(Name = "Session absolute lifetime in seconds (active if greater than 0)")]
         public int SessionAbsoluteLifetime { get; set; } = 86400;
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
-        [Display(Name = "Persistent session absolute lifetime (active if greater than 0)")]
+        [Display(Name = "Persistent session absolute lifetime in seconds (active if greater than 0)")]
         public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
 
         /// <summary>
@@ -58,14 +58,14 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
-        /// Default if requered.
+        /// Default if required.
         /// </summary>
         [Required]
         [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequered;
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
-        [Display(Name = "Css style")]
+        [Display(Name = "CSS style")]
         public string CssStyle { get; set; }
     }
 }

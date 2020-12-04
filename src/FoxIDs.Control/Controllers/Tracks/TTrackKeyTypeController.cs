@@ -80,7 +80,7 @@ namespace FoxIDs.Controllers
                     {
                         case TrackKeyType.Contained:
                             mTrack.Key.Type = mTrackKey.Type;
-                            var certificate = await mTrack.Name.CreateSelfSignedCertificateAsync();
+                            var certificate = await mTrack.Name.CreateSelfSignedCertificateByCnAsync();
                             mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } };
                             if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                             {

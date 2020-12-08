@@ -7,7 +7,7 @@ Deploy FoxIDs in your Azure tenant.
 - Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan. 
 - FoxIDs is deployed to the two App Services from the `master` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
 - Key vault. Secrets are placed in Key vault.
-- Document DB.
+- Cosmos DB.
 - Redis cache.
 - SendGrid.
 - Application Insights.

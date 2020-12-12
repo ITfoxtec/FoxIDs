@@ -1,4 +1,5 @@
 ﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Tokens;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using UrlCombineLib;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs.Logic
 {
@@ -55,7 +55,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm, x509CertificateSHA1Thumbprint: RouteBinding.Key.PrimaryKey.Key.Kid);
+            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
             return await token.ToJwtString();
         }
 
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
 
             accessTokenClaims.AddRange(await claimsLogic.FilterJwtClaims(client, claims, selectedScopes, includeAccessTokenClaims: true));
 
-            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, x509CertificateSHA1Thumbprint: RouteBinding.Key.PrimaryKey.Key.Kid);
+            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }
 

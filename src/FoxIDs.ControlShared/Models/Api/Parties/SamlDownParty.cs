@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

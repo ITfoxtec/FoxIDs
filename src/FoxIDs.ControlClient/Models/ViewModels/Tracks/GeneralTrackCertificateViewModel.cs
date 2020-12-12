@@ -1,6 +1,6 @@
 ﻿using FoxIDs.Client.Shared.Components;
-using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using MTokens = Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs.Client.Models.ViewModels

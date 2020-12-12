@@ -303,7 +303,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     throw new Exception($"Track key external certificate '{track.Key.ExternalName}' version '{keyItem.ExternalId}' from Key Vault is null.");
                 }
-                keyItem.Key = await new X509Certificate2(certificateRawValue).ToJsonWebKeyAsync();
+                keyItem.Key = await new X509Certificate2(certificateRawValue).ToFTJsonWebKeyAsync();
             }
             return trackKeyExternal;
         }

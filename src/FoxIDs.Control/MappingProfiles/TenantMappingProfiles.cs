@@ -2,8 +2,6 @@
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
-using System.Collections.Generic;
 using System.Linq;
 using Api = FoxIDs.Models.Api;
 
@@ -67,11 +65,6 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<Api.TrackKeyItemContainedRequest, TrackKeyItem>();
-
-            CreateMap<JsonWebKey, Api.JsonWebKey>()
-                .ReverseMap()
-                .ForMember(d => d.X5c, opt => opt.NullSubstitute(new List<string>()))
-                .ForMember(d => d.KeyOps, opt => opt.NullSubstitute(new List<string>()));
 
             CreateMap<OAuthClientSecret, Api.OAuthClientSecretResponse>()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Id))

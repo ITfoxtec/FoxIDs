@@ -53,7 +53,7 @@
                         <div class="modal-body">
                             <div class="form-group active-group active">
                                 <div class="drag-drop-zone input-control">
-                                    <InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
+                                    <BlazorInputFile.InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
                                     @certificate.CertificateFileStatus
                                 </div>
                                 <label class="label-control">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</label>

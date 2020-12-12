@@ -20,6 +20,7 @@ using BlazorInputFile;
 using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
 using FoxIDs.Client.Models.Config;
+using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Pages
 {
@@ -636,11 +637,7 @@ namespace FoxIDs.Client.Pages
                     try
                     {
                         var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var msJwk = await certificate.ToJsonWebKeyAsync();
-                        var jwk = msJwk.Map<JsonWebKey>(afterMap =>
-                        {
-                            afterMap.X5c = new List<string>(msJwk.X5c);
-                        });
+                        var jwk = await certificate.ToFTJsonWebKeyAsync();
 
                         if (generalSamlDownParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
                         {

@@ -30,7 +30,7 @@ namespace FoxIDs.Logic
             switch (trackKey.Type)
             {
                 case TrackKeyType.Contained:
-                    return trackKey.PrimaryKey.Key;
+                    return trackKey.PrimaryKey.Key.ToSecurityKey();
 
                 case TrackKeyType.KeyVaultRenewSelfSigned:
                     return new RsaSecurityKey(GetRSAKeyVault(trackKey));

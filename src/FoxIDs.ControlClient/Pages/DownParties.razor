@@ -616,7 +616,7 @@
                                     <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" />
                                     <div class="form-group active-group active">
                                         <div class="drag-drop-zone input-control">
-                                            <InputFile multiple OnChange="@(async (files) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, files))" />
+                                            <BlazorInputFile.InputFile multiple OnChange="@(async (files) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, files))" />
                                             @samlDownParty.CertificateFileStatus
                                         </div>
                                         <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />

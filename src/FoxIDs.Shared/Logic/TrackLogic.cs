@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             mTrack.Key = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
             };
             await tenantRepository.CreateAsync(mTrack);
         }

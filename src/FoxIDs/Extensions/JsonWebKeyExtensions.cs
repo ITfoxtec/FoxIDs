@@ -1,6 +1,6 @@
 ﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Cryptography;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FoxIDs
 {

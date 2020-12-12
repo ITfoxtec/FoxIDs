@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ITfoxtec.Identity.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api

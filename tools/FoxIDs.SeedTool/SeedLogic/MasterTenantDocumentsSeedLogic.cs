@@ -114,7 +114,7 @@ namespace FoxIDs.SeedTool.SeedLogic
             var trackKey = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
             };
             return trackKey;
         }

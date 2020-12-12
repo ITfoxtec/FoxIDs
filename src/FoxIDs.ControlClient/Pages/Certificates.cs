@@ -6,6 +6,7 @@ using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
@@ -192,17 +193,12 @@ namespace FoxIDs.Client.Pages
                     try
                     {
                         var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var msJwk = await certificate.ToJsonWebKeyAsync(true);
-                        if (!msJwk.HasPrivateKey)
+                        var jwk = await certificate.ToFTJsonWebKeyAsync(true);
+                        if (!jwk.HasPrivateKey())
                         {
                             generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required.");
                             return;
                         }                        
-
-                        var jwk = msJwk.Map<JsonWebKey>(afterMap =>
-                        {
-                            afterMap.X5c = new List<string>(msJwk.X5c);
-                        });
 
                         generalCertificate.Form.Model.Subject = certificate.Subject;
                         generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;

@@ -4,10 +4,11 @@ using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using System.Linq;
 using System.Threading.Tasks;
 using UrlCombineLib;
+using ITfoxtec.Identity.Models;
+using System.Collections.Generic;
 
 namespace FoxIDs.Logic
 {
@@ -60,7 +61,7 @@ namespace FoxIDs.Logic
         {
             logger.SetScopeProperty("downPartyId", partyId);
 
-            var jonWebKeySet = new JsonWebKeySet();
+            var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };
             jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
             if (RouteBinding.Key.SecondaryKey != null)
             {

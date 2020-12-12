@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity.Models;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api

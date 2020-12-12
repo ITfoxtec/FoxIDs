@@ -80,7 +80,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        if (!mTrackKey.Key.HasPrivateKey)
+                        if (!mTrackKey.Key.HasPrivateKey())
                         {
                             throw new ValidationException("Private key is required.");
                         }
@@ -111,7 +111,7 @@ namespace FoxIDs.Controllers
                 if (trackKeyRequest.CreateSelfSigned)
                 {
                     var certificate = await RouteBinding.TrackName.CreateSelfSignedCertificateByCnAsync();
-                    mTrackKey.Key = await certificate.ToJsonWebKeyAsync(true);
+                    mTrackKey.Key = await certificate.ToFTJsonWebKeyAsync(true);
                 }
 
                 if (trackKeyRequest.IsPrimary)

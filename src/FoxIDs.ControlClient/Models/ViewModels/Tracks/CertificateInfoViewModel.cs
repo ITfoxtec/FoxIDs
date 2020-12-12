@@ -1,4 +1,4 @@
-﻿using FoxIDs.Models.Api;
+﻿using ITfoxtec.Identity.Models;
 using System;
 
 namespace FoxIDs.Client.Models.ViewModels

@@ -48,11 +48,11 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddHttpClient(BaseService.HttpClientSecureLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))
                .AddHttpMessageHandler<AccessTokenMessageHandler>()
                .AddHttpMessageHandler<CheckResponseMessageHandler>();
-            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientSecureLogicalName));
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientSecureLogicalName));
 
             services.AddHttpClient(BaseService.HttpClientLogicalName, client => client.BaseAddress = new Uri(hostEnvironment.BaseAddress))   
                 .AddHttpMessageHandler<CheckResponseMessageHandler>();
-            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientLogicalName));
+            services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(BaseService.HttpClientLogicalName));
 
             var settings = new ClientSettings();
             configuration.Bind("Settings", settings);
@@ -75,10 +75,10 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddSingleton<OpenidConnectPkceSettings>();
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
-            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
+            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));
 
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
-            services.AddScoped<AccessTokenMessageHandler>();
+            services.AddTransient<AccessTokenMessageHandler>();
 
             services.AddOptions();
             services.AddAuthorizationCore();

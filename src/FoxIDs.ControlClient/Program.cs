@@ -10,7 +10,7 @@ namespace FoxIDs.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("#app");
+            builder.RootComponents.Add<App>("app");
             ConfigureServices(builder.Services, builder.Configuration, builder.HostEnvironment);
    
             await builder.Build().RunAsync();

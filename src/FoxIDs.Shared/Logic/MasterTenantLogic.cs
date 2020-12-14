@@ -29,10 +29,10 @@ namespace FoxIDs.Logic
             var mTrack = new Track
             {
                 Name = Constants.Routes.MasterTrackName,
-                SequenceLifetime = 900,
+                SequenceLifetime = 1800,
                 MaxFailingLogins = 5,
                 FailingLoginCountLifetime = 36000,
-                FailingLoginObservationPeriod = 900,
+                FailingLoginObservationPeriod = 600,
                 PasswordLength = 8,
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
@@ -118,10 +118,10 @@ namespace FoxIDs.Logic
                 Claims = GetControlClientClaims(),
                 RequirePkce = true,
                 AuthorizationCodeLifetime = 30,
-                IdTokenLifetime = 7200, // 2 hours
-                AccessTokenLifetime = 7200, // 2 hours
-                RefreshTokenLifetime = 86400, // 24 hours
-                RefreshTokenAbsoluteLifetime = 86400, // 24 hours
+                IdTokenLifetime = 3600, // 1 hours
+                AccessTokenLifetime = 3600, // 1 hours
+                RefreshTokenLifetime = 43200, // 12 hours
+                RefreshTokenAbsoluteLifetime = 43200, // 12 hours
                 RefreshTokenUseOneTime = true,
                 RefreshTokenLifetimeUnlimited = false,
                 RequireLogoutIdTokenHint = true,
@@ -146,16 +146,7 @@ namespace FoxIDs.Logic
                         new OidcDownClaim { Claim = "family_name", InIdToken = true  },
                         new OidcDownClaim { Claim = "given_name", InIdToken = true  },
                         new OidcDownClaim { Claim = "middle_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "nickname" },
-                        new OidcDownClaim { Claim = "preferred_username" },
-                        new OidcDownClaim { Claim = "profile" },
-                        new OidcDownClaim { Claim = "picture" },
-                        new OidcDownClaim { Claim = "website" },
-                        new OidcDownClaim { Claim = "gender" },
-                        new OidcDownClaim { Claim = "birthdate" },
-                        new OidcDownClaim { Claim = "zoneinfo" },
-                        new OidcDownClaim { Claim = "locale" },
-                        new OidcDownClaim { Claim = "updated_at" }
+                        new OidcDownClaim { Claim = "locale" }
                     }
                 },
                 new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim>

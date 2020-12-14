@@ -19,8 +19,7 @@ namespace FoxIDs.Logic
         private static int defaultDerivedKeyBytes = 80;
 
         public SecretHashLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-        {
-        }
+        { }
 
         public Task AddSecretHashAsync(ISecretHash item, string secret)
         {

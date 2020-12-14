@@ -110,11 +110,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         private async Task<TrackKey> CreateX509KeyAsync()
         {
-            var certificate = await settings.MasterTrack.CreateSelfSignedCertificateAsync();
+            var certificate = await settings.MasterTrack.CreateSelfSignedCertificateByCnAsync();
             var trackKey = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
             };
             return trackKey;
         }

@@ -39,11 +39,11 @@ namespace FoxIDs.Logic
             };
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName });
 
-            var certificate = await $"{tenantName?.ToLower()}.{mTrack.Name}".CreateSelfSignedCertificateAsync();
+            var certificate = await $"{tenantName?.ToLower()}.{mTrack.Name}".CreateSelfSignedCertificateByCnAsync();
             mTrack.Key = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
             };
 
             await tenantRepository.CreateAsync(mTrack);

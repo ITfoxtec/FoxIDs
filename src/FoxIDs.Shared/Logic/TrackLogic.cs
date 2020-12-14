@@ -21,11 +21,11 @@ namespace FoxIDs.Logic
 
         public async Task CreateTrackDocumentAsync(Track mTrack)
         {
-            var certificate = await mTrack.Name.CreateSelfSignedCertificateAsync();
+            var certificate = await mTrack.Name.CreateSelfSignedCertificateByCnAsync();
             mTrack.Key = new TrackKey()
             {
                 Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToJsonWebKeyAsync(true) } }
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
             };
             await tenantRepository.CreateAsync(mTrack);
         }

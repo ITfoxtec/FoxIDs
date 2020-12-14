@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using ITfoxtec.Identity.Models;
 using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 

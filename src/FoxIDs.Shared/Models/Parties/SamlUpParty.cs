@@ -1,11 +1,10 @@
-﻿using ITfoxtec.Identity.Discovery;
-using FoxIDs.Infrastructure.DataAnnotations;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.IdentityModel.Tokens;
 using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
+using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Models
 {

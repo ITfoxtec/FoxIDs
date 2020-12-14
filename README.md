@@ -12,7 +12,7 @@ FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the futur
 
 > For [Getting started](https://www.itfoxtec.com/FoxIDs/getting-started) guide and more documentation please see the [documentation](https://www.itfoxtec.com/FoxIDs).
 
-> FoxIDs is .NET Core 3.1 and the Control FoxIDs Control Client is Blazor .NET Standard 2.1.
+> FoxIDs is .NET 5.0 and the Control FoxIDs Control Client is Blazor .NET Standard 2.1.
 
 ## Deployment
 

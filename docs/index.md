@@ -9,7 +9,7 @@ FoxIDs consist of two services:
 
 FoxIDs is a cloud service ready to be [deployed](deployment.md) in you Azure tenant. In the future, it will also be possible to use FoxIDs at [https://FoxIDs.com](https://foxids.com) and FoxIDs Control at [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
-> FoxIDs is .NET Core 3.1 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
+> FoxIDs is .NET 5.0 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
 
 ## Free and Open Source
 

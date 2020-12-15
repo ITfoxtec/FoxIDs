@@ -377,7 +377,8 @@
       "properties": {
         "RepoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
-        "IsManualIntegration": "true"
+        "IsManualIntegration": "false",
+        "deploymentRollbackEnabled": "true"
       }
     },
     {
@@ -391,7 +392,8 @@
       "properties": {
         "RepoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
-        "IsManualIntegration": "true"
+        "IsManualIntegration": "false",
+        "deploymentRollbackEnabled": "true"
       }
     },
     {

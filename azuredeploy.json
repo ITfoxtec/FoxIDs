@@ -283,15 +283,10 @@
       "properties": {
         "name": "[variables('foxidsSiteName')]",
         "siteConfig": {
+          "netFrameworkVersion": "v5.0",
           "ftpsState": "Disabled",
           "alwaysOn": true,
-          "webSocketsEnabled": false,
-          "metadata": [
-            {
-              "name": "CURRENT_STACK",
-              "value": "dotnetcore"
-            }
-          ]
+          "webSocketsEnabled": false
         },
         "reserved": false,
         "serverFarm": "[variables('serverfarmsName')]",
@@ -315,15 +310,10 @@
       "properties": {
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
+          "netFrameworkVersion": "v5.0",
           "ftpsState": "Disabled",
           "alwaysOn": true,
-          "webSocketsEnabled": false,
-          "metadata": [
-            {
-              "name": "CURRENT_STACK",
-              "value": "dotnetcore"
-            }
-          ]
+          "webSocketsEnabled": false
         },
         "reserved": false,
         "serverFarm": "[variables('serverfarmsName')]",

@@ -18,12 +18,12 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [MaxLength(Constants.Models.Claim.ClaimsMapIdLength)]
+        [MaxLength(Constants.Models.Claim.MapIdLength)]
         [RegularExpression(@"^[\w:_-]*$")]
         [JsonProperty(PropertyName = "id")]
         public string Id { get; set; }
 
-        [Length(Constants.Models.Claim.ClaimsMapMin, Constants.Models.Claim.ClaimsMapMax)]
+        [Length(Constants.Models.Claim.MapMin, Constants.Models.Claim.MapMax)]
         [JsonProperty(PropertyName = "mappings")]
         public IEnumerable<ClaimMap> Mappings { get; set; }
 

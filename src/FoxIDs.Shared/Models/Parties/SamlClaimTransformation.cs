@@ -7,12 +7,12 @@ namespace FoxIDs.Models
 {
     public class SamlClaimTransformation : ClaimTransformation
     {
-        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax, Constants.Models.SamlParty.ClaimLength)]
+        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax, Constants.Models.Claim.SamlTypeLength)]
         [JsonProperty(PropertyName = "claims_in")]
         public override List<string> ClaimsIn { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlParty.ClaimLength)]
+        [MaxLength(Constants.Models.Claim.SamlTypeLength)]
         [JsonProperty(PropertyName = "claim_out")]
         public override string ClaimOut { get; set; }
 

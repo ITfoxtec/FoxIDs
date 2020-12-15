@@ -181,9 +181,9 @@ namespace FoxIDs.Logic
             claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
             foreach(var claim in claims)
             {
-                if(claim.Type?.Count() > Constants.Models.SamlParty.ClaimLength)
+                if(claim.Type?.Count() > Constants.Models.Claim.SamlTypeLength)
                 {
-                    throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.SamlParty.ClaimLength)}' is too long.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
                 if (claim.Value?.Count() > Constants.Models.SamlParty.ClaimValueLength)
                 {

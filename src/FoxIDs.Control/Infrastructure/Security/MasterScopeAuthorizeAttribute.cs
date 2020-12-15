@@ -18,8 +18,7 @@ namespace FoxIDs.Infrastructure.Security
             options.AddPolicy(Name, policy =>
             {
                 policy.RequireScopeAndRoles(
-                    new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.Master },
-                    new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.MasterUser, Roles = new[] { Constants.ControlApi.Role.TenantAdmin } }
+                    new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.Master, Roles = new[] { Constants.ControlApi.Role.TenantAdmin } }
                 );
             });
         }

@@ -11,12 +11,10 @@ namespace FoxIDs.Logic
     {
         const string loginName = "login";
         private readonly ITenantRepository tenantRepository;
-        private readonly IHttpContextAccessor httpContextAccessor;
 
         public TrackLogic(ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
-            this.httpContextAccessor = httpContextAccessor;
         }
 
         public async Task CreateTrackDocumentAsync(Track mTrack)
@@ -37,7 +35,7 @@ namespace FoxIDs.Logic
                 Name = loginName,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
-                SessionLifetime = 14440,
+                SessionLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequered
             };

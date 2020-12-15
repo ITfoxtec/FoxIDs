@@ -80,11 +80,10 @@ namespace FoxIDs.Logic
             };
             await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlApi.ResourceName });
            
-            var scopes = new List<string> { Constants.ControlApi.Scope.Tenant, Constants.ControlApi.Scope.TenantUser };
+            var scopes = new List<string> { Constants.ControlApi.Scope.Tenant };
             if (includeMasterTenantScope)
             {
                 scopes.Add(Constants.ControlApi.Scope.Master);
-                scopes.Add(Constants.ControlApi.Scope.MasterUser);
             }
             mControlApiResourceDownParty.Resource = new OAuthDownResource()
             {
@@ -104,10 +103,10 @@ namespace FoxIDs.Logic
             mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
             mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
 
-            var scopes = new List<string> { Constants.ControlApi.Scope.TenantUser };
+            var scopes = new List<string> { Constants.ControlApi.Scope.Tenant };
             if (includeMasterTenantScope)
             {
-                scopes.Add(Constants.ControlApi.Scope.MasterUser);
+                scopes.Add(Constants.ControlApi.Scope.Master);
             }
             mControlClientDownParty.Client = new OidcDownClient
             {

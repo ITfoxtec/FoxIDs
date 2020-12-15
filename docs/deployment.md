@@ -19,17 +19,24 @@ The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
 
 ### Troubleshooting deployent errors
 
-> **Sendgrid terms.** If you have not already accepted the Sendgrid legal terms for the selected plan in the subscription you will get the error 
-> *"User failed validation to purchase resources. Error message: 'Legal terms have not been accepted for this item on this subscription: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'. To accept legal terms using PowerShell, please use Get-AzureRmMarketplaceTerms and Set-AzureRmMarketplaceTerms API(https://go.microsoft.com/fwlink/?linkid=862451) or deploy via the Azure portal to accept the terms'"* 
->
-> You need to accept the terms either by deploying a Sendgrid instance in [Azure portal](https://portal.azure.com) or with PowerShell. 
-> The following PowerShell commands accept the Sendgrid terms for the free plan:
->
->     Connect-AzureRmAccount
->     $terms = Get-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free'
->     Set-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free' -Terms $terms -Accept
->
-> Then delete the falling resource groups and redeploy.
+**Sendgrid terms**  
+If you have not already accepted the Sendgrid legal terms for the selected plan in the subscription you will get the error 
+*"User failed validation to purchase resources. Error message: 'Legal terms have not been accepted for this item on this subscription: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'. To accept legal terms using PowerShell, please use Get-AzureRmMarketplaceTerms and Set-AzureRmMarketplaceTerms API(https://go.microsoft.com/fwlink/?linkid=862451) or deploy via the Azure portal to accept the terms'"* 
+
+You need to accept the terms either by deploying a Sendgrid instance in [Azure portal](https://portal.azure.com) or with PowerShell. 
+The following PowerShell commands accept the Sendgrid terms for the free plan:
+
+    Connect-AzureRmAccount
+    $terms = Get-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free'
+    Set-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free' -Terms $terms -Accept
+
+Then delete the falling resource groups and redeploy.
+
+**Key Vault soft deleted**
+If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
+In this case you can experience getting a `ConflictError` with the error message `Exist soft deleted vault with the same name.`.
+
+The solution is to delete (purge) the old Key Vault, which will release the name.
 
 ## Seed
 

@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         public string IdSIssuer { get; set; }
 
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> Claims { get; set; }
 
         /// <summary>

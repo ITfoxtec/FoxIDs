@@ -6,7 +6,7 @@ using System.Linq;
 namespace FoxIDs
 {
     /// <summary>
-    /// Extension methods for arrays and dictionarys.
+    /// Extension methods for arrays and dictionary's.
     /// </summary>
     public static class ListExtensions
     {
@@ -25,7 +25,7 @@ namespace FoxIDs
         /// <summary>
         /// Converts a dot separated list to a string list.
         /// </summary>
-        public static string[] ToDotList(this string value)
+        public static string[] FromDotList(this string value)
         {
             if (!value.IsNullOrWhiteSpace())
             {
@@ -39,7 +39,7 @@ namespace FoxIDs
         /// </summary>
         public static string GetFirstInDotList(this string value)
         {
-            return value.ToDotList()?.FirstOrDefault() ?? value;
+            return value.FromDotList()?.FirstOrDefault() ?? value;
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace FoxIDs
         /// </summary>
         public static string GetLastInDotList(this string value)
         {
-            return value.ToDotList()?.LastOrDefault() ?? value;
+            return value.FromDotList()?.LastOrDefault() ?? value;
         }
 
         /// <summary>

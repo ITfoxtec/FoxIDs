@@ -72,11 +72,11 @@ namespace FoxIDs.Client.Infrastructure.Security
         {
             if(routeBindingBase.IsMasterTenant)
             {
-                return $"email {Constants.ControlApi.ResourceAndScope.TenantUser} {Constants.ControlApi.ResourceAndScope.MasterUser}";
+                return $"email {Constants.ControlApi.ResourceAndScope.Tenant} {Constants.ControlApi.ResourceAndScope.Master}";
             }
             else
             {
-                return $"email {Constants.ControlApi.ResourceAndScope.TenantUser}";
+                return $"email {Constants.ControlApi.ResourceAndScope.Tenant}";
             }
         }
     }

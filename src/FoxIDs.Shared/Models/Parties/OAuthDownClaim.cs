@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
@@ -6,8 +8,13 @@ namespace FoxIDs.Models
     public class OAuthDownClaim
     {
         [Required]
-        [MaxLength(Constants.Models.OAuthDownParty.Client.ClaimLength)]
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [JsonProperty(PropertyName = "claim")]
         public string Claim { get; set; }
+
+        [Length(Constants.Models.Claim.ValuesOAuthMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "values")]
+        public List<string> Values { get; set; }
     }
 }

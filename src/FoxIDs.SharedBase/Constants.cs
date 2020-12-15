@@ -41,7 +41,7 @@ namespace FoxIDs
             public const int MasterPartitionIdLength = 30;
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
             public const int DocumentPartitionIdLength = 70;
-            public const string DocumentPartitionIdExPattern = @"^[\w:_-]*$";
+            public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
 
             public static class Master
             {
@@ -52,7 +52,7 @@ namespace FoxIDs
             public static class RiskPassword
             {
                 public const int IdLength = 70;
-                public const string IdRegExPattern = @"^[\w@:_-]*$";
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
                 public const int CountMin = 1;
                 public const int PasswordSha1HashLength = 40;
                 public const string PasswordSha1HashRegExPattern = @"^[A-F0-9]*$";
@@ -71,7 +71,7 @@ namespace FoxIDs
             public static class Resource
             {
                 public const int EnvelopeIdLength = 70;
-                public const string EnvelopeIdRegExPattern = @"^[\w@:_-]*$";
+                public const string EnvelopeIdRegExPattern = @"^[\w@:\-]*$";
                 public const int SupportedCulturesMin = 0;
                 public const int SupportedCulturesMax = 50;
                 public const int SupportedCulturesLength = 5;
@@ -85,17 +85,17 @@ namespace FoxIDs
             public static class Tenant
             {
                 public const int IdLength = 50;
-                public const string IdRegExPattern = @"^[\w:_-]*$";
+                public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int NameLength = 30;
-                public const string NameRegExPattern = @"^\w[\w-_]*$";
+                public const string NameRegExPattern = @"^\w[\w\-]*$";
             }
 
             public static class Track
             {
                 public const int IdLength = 80;
-                public const string IdRegExPattern = @"^[\w:_-]*$";
+                public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int NameLength = 30;
-                public const string NameRegExPattern = @"^[\w-_]*$";
+                public const string NameRegExPattern = @"^[\w\-]*$";
 
                 public const int KeysMin = 0;
                 public const int KeysMax = 2;
@@ -144,31 +144,33 @@ namespace FoxIDs
 
             public static class Claim
             {
-                public const int ClaimsMapIdLength = 90;
-                public const int ClaimsMapMin = 0;
-                public const int ClaimsMapMax = 200;
+                public const int JwtTypeLength = 80;
+                public const string JwtTypeRegExPattern = @"^[\w:\/\-.+]*$";
+                public const int SamlTypeLength = 300;
+                public const string SamlTypeRegExPattern = @"^[\w:\/\-.+]*$";
 
-                public const int ClaimsMapJwtClaimLength = 80;
-                public const string ClaimsMapJwtClaimRegExPattern = @"^[\w:\-.+]*$";
-                public const int ClaimsMapSamlClaimLength = 300;
-                public const string ClaimsMapSamlClaimRegExPattern = @"^[\w:\/\-.+]*$";
+                public const int ValuesOAuthMin = 0;
+                public const int ValuesUserMin = 1;
+                public const int ValuesMax = 100;
+                public const int ValueLength = 100;
 
-                public const int ClaimValuesMin = 1;
-                public const int ClaimValuesMax = 100;
+                public const int MapIdLength = 90;
+                public const int MapMin = 0;
+                public const int MapMax = 200;
             }
 
             public static class Party
             {
                 public const int NameLength = 30;
-                public const string NameRegExPattern = @"^[\w-_]*$";
+                public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 110;
-                public const string IdRegExPattern = @"^[\w:_-]*$";
+                public const string IdRegExPattern = @"^[\w:\-]*$";
 
-                public const string NameAndGuidIdRegExPattern = @"^[\w-_]*$";
+                public const string NameAndGuidIdRegExPattern = @"^[\w\-]*$";
 
                 public const int ClaimTransformationMin = 0;
                 public const int ClaimTransformationMax = 100;
-                public const int ClaimTransformationLength = 500;
+                public const int ClaimTransformationLength = 300;
                 public const int ClaimTransformationClaimsMin = 0;
                 public const int ClaimTransformationClaimsMax = 10;
                 public const int ClaimTransformationOrderMin = 0;
@@ -188,7 +190,7 @@ namespace FoxIDs
                 public const int AllowCorsOriginLength = 200;
 
                 public const int ScopesLength = 50;
-                public const string ScopeRegExPattern = @"^[\w-_]*$";
+                public const string ScopeRegExPattern = @"^[\w:\-.]*$";
 
                 public static class Client
                 {
@@ -197,8 +199,7 @@ namespace FoxIDs
                     public const int ScopesMin = 0;
                     public const int ScopesMax = 100;
                     public const int ClaimsMin = 0;
-                    public const int ClaimsMax = 500;
-                    public const int ClaimLength = 50;
+                    public const int ClaimsMax = 100;
                     public const int VoluntaryClaimsMin = 0;
                     public const int VoluntaryClaimsMax = 100;                    
                     public const int ResponseTypesMin = 1;
@@ -257,7 +258,6 @@ namespace FoxIDs
 
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
-                public const int ClaimLength = 500;
                 public const int ClaimValueLength = 500;
 
                 public static class Up
@@ -298,22 +298,18 @@ namespace FoxIDs
             public static class ResourceAndScope
             {
                 public readonly static string Master = $"{ResourceName}:{Scope.Master}";
-                public readonly static string MasterUser = $"{ResourceName}:{Scope.MasterUser}";
                 public readonly static string Tenant = $"{ResourceName}:{Scope.Tenant}";
-                public readonly static string TenantUser = $"{ResourceName}:{Scope.TenantUser}";
             }
 
             public static class Scope
             {
-                public const string Master = "foxids_master";
-                public const string MasterUser = "foxids_master_user";
-                public const string Tenant = "foxids_tenant";
-                public const string TenantUser = "foxids_tenant_user";
+                public const string Master = "foxids:master";
+                public const string Tenant = "foxids:tenant";
             }
 
             public static class Role
             {
-                public const string TenantAdmin = "foxids_tenant_admin";
+                public const string TenantAdmin = "foxids:tenant.admin";
             }
         }
 
@@ -390,11 +386,6 @@ namespace FoxIDs
         {
             public const string SubFormat = "sub_format";
 
-        }
-
-        public static class LengthDefinitions
-        {
-            public const int JwtClaimValue = 100;
         }
     }
 }

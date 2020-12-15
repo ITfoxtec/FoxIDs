@@ -7,12 +7,12 @@ namespace FoxIDs.Models.Api
     public class ClaimAndValues
     {
         [Required]
-        [MaxLength(Constants.Models.Claim.ClaimsMapJwtClaimLength)]
-        [RegularExpression(Constants.Models.Claim.ClaimsMapJwtClaimRegExPattern)]
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [Display(Name = "Claim")]
         public string Claim { get; set; }
 
-        [Length(Constants.Models.Claim.ClaimValuesMin, Constants.Models.Claim.ClaimValuesMax, Constants.LengthDefinitions.JwtClaimValue)]
+        [Length(Constants.Models.Claim.ValuesUserMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength)]
         [Display(Name = "Values")]
         public List<string> Values { get; set; }
     }

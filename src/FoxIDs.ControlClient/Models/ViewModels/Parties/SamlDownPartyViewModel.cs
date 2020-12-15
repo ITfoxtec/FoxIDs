@@ -28,7 +28,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string IdSIssuer { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.SamlParty.ClaimLength)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Issue of claim (in addition to default claims)")]
         public List<string> Claims { get; set; }
 

@@ -25,11 +25,11 @@ namespace FoxIDs.Models.ViewModels
         [Compare(nameof(Password))]
         public string ConfirmPassword { get; set; }
 
-        [MaxLength(Constants.Models.Claim.ClaimsMapJwtClaimLength)]
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [Display(Name = "Given name")]
         public string GivenName { get; set; }
 
-        [MaxLength(Constants.Models.Claim.ClaimsMapJwtClaimLength)]
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [Display(Name = "Family name")]
         public string FamilyName { get; set; }
     }

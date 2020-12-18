@@ -56,7 +56,7 @@ The track properties can be configured by clicking the top right setting icon.
 FoxIDs Control API is a REST API. The API expose a Swagger (OpenApi) interface document.
 
 FoxIDs Control API require that the client calling the API is granted the `foxids:master` scope to access master data or the `foxids:tenant` scope access tenant API. Normally only tenant data is accessed.
-The client can be an OAuth 2.0 client with the administrator role `foxids:tenant.admin` acting as the client itself. Or an OAuth 2.0 / OIDC client with an authenticated user having the administrator role `foxids:tenant.admin`. 
+The client can be an OAuth 2.0 client granted the administrator role `foxids:tenant.admin` acting as the client itself. Or an OAuth 2.0 / OIDC client with an authenticated user granted the administrator role `foxids:tenant.admin`. 
 
 This shows the FoxIDs Control API configuration in the master track with a scope configuration that grants access to tenant data.
 

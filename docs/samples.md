@@ -76,7 +76,7 @@ Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configur
 ```
 
 Create the sample seed OAuth 2.0 client in the FoxIDs Control Client.  
-Set the client id to `sample_seed`, redirect uri to `uri:sample:seed:client`) and response type to `token`. Remember the client secret. Give the sample seed client access to the resource `foxids_control_api` with the scope `foxids_tenant`. The sample seed client is thereby granted access to update the tenant.
+Set the client id to `sample_seed`, redirect Uri to `uri:sample:seed:client`) and response type to `token`. Remember the client secret. Give the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant` and granted the client the administrator role `foxids:tenant.admin`. The sample seed client is thereby granted access to update the tenant.
 
 ![FoxIDs Control Client - sample_seed client](images/sample_seed-client.png)
 

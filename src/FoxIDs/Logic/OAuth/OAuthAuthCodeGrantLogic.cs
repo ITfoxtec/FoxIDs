@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             if (!client.AuthorizationCodeLifetime.HasValue)
                 throw new EndpointException("Client AuthorizationCodeLifetime not configured.") { RouteBinding = RouteBinding };
 
-            var grantClaims = await claimsLogic.FilterJwtClaims(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
+            var grantClaims = await claimsLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var code = RandomGenerator.Generate(64);
             var grant = new AuthCodeTtlGrant

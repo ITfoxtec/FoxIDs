@@ -21,7 +21,7 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public Task<List<Claim>> FilterJwtClaims(TClient client, IEnumerable<Claim> jwtClaims, IEnumerable<string> selectedScopes, bool includeIdTokenClaims = false, bool includeAccessTokenClaims = false)
+        public Task<List<Claim>> FilterJwtClaimsAsync(TClient client, IEnumerable<Claim> jwtClaims, IEnumerable<string> selectedScopes, bool includeIdTokenClaims = false, bool includeAccessTokenClaims = false)
         {
             if (jwtClaims == null)
             {
@@ -79,7 +79,19 @@ namespace FoxIDs.Logic
             return filterClaimTypes;
         }
 
-        public Task<List<Claim>> FromJwtToSamlClaims(IEnumerable<Claim> jwtClaims)
+        public List<Claim> GetClientJwtClaims(TClient client, bool onlyIdTokenClaims = false)
+        {
+            var claims = client.Claims?.Where(c => c.Values?.Count() > 0);
+
+            if (onlyIdTokenClaims)
+            {
+                claims = claims.Cast<OidcDownClaim>().Where(c => c.InIdToken).Cast<TClaim>();
+            }
+
+            return claims.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
+        }
+
+        public Task<List<Claim>> FromJwtToSamlClaimsAsync(IEnumerable<Claim> jwtClaims)
         {
             try
             {
@@ -132,7 +144,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public Task<List<Claim>> FromSamlToJwtClaims(IEnumerable<Claim> samlClaims)
+        public Task<List<Claim>> FromSamlToJwtClaimsAsync(IEnumerable<Claim> samlClaims)
         {
             try
             {

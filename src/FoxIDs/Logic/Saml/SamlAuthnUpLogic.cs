@@ -224,7 +224,7 @@ namespace FoxIDs.Logic
                     if(status == Saml2StatusCodes.Success)
                     {
                         var claimsLogic = serviceProvider.GetService<ClaimsLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaims(claims));
+                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaimsAsync(claims));
                     }
                     else
                     {

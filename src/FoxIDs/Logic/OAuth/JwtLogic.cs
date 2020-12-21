@@ -36,7 +36,13 @@ namespace FoxIDs.Logic
             }
 
             var onlyIdToken = !responseTypes.Contains(IdentityConstants.ResponseTypes.Code) && !responseTypes.Contains(IdentityConstants.ResponseTypes.Token);
-            var idTokenClaims = new List<Claim>(await claimsLogic.FilterJwtClaims(client, claims, selectedScopes, includeIdTokenClaims: true, includeAccessTokenClaims: onlyIdToken));
+            var idTokenClaims = new List<Claim>(await claimsLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeIdTokenClaims: true, includeAccessTokenClaims: onlyIdToken));
+
+            var clientClaims = claimsLogic.GetClientJwtClaims(client, onlyIdTokenClaims: true);
+            if(clientClaims?.Count() > 0)
+            {
+                idTokenClaims.AddRange(clientClaims);
+            }
 
             if(nonce != null)
             {
@@ -75,7 +81,13 @@ namespace FoxIDs.Logic
 
             accessTokenClaims.AddClaim(JwtClaimTypes.ClientId, client.ClientId);
 
-            accessTokenClaims.AddRange(await claimsLogic.FilterJwtClaims(client, claims, selectedScopes, includeAccessTokenClaims: true));
+            accessTokenClaims.AddRange(await claimsLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeAccessTokenClaims: true));
+
+            var clientClaims = claimsLogic.GetClientJwtClaims(client);
+            if (clientClaims?.Count() > 0)
+            {
+                accessTokenClaims.AddRange(clientClaims);
+            }
 
             var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();

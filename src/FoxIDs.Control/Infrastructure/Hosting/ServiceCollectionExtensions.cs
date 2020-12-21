@@ -60,7 +60,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
 
-            services.AddSingleton<OidcDiscoveryHandler>();
+            services.AddSingleton<OidcDiscoveryHandlerService>();
+            services.AddHostedService<OidcDiscoveryBackgroundService>();
 
             if (!env.IsDevelopment())
             {

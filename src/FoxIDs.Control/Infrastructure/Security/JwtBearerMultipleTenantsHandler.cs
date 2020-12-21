@@ -34,7 +34,7 @@ namespace FoxIDs.Infrastructure.Security
                 var authority = UrlCombine.Combine(GetFoxIDsEndpoint(), routeBinding.TenantName, Constants.Routes.MasterTrackName, Options.DownParty);
 
                 var oidcDiscoveryUri = UrlCombine.Combine(authority, IdentityConstants.OidcDiscovery.Path);
-                var oidcDiscoveryHandler = Context.RequestServices.GetService<OidcDiscoveryHandler>();
+                var oidcDiscoveryHandler = Context.RequestServices.GetService<OidcDiscoveryHandlerService>();
                 var oidcDiscovery = await oidcDiscoveryHandler.GetOidcDiscoveryAsync(oidcDiscoveryUri);
                 var oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri);
 

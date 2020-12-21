@@ -89,7 +89,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<FoxIDsRouteTransformer>();
             services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
 
-            services.AddSingleton<OidcDiscoveryHandler>();
+            services.AddSingleton<OidcDiscoveryHandlerService>();
+            services.AddHostedService<OidcDiscoveryBackgroundService>();
 
             if (!env.IsDevelopment())
             {

@@ -10,12 +10,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Down-party name")]
+        [Display(Name = "Down-party name (client ID / resource name)")]
         public string Name { get; set; }
 
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow up-party names")]
+        [Display(Name = "Allow up-party names (client IDs)")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace FoxIDs.Models.Api
         [Required]
         [MaxLength(Constants.Models.Claim.JwtTypeLength)]
         [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Claims")]
+        [Display(Name = "Claim")]
         public string Claim { get; set; }
 
         [Length(Constants.Models.Claim.ValuesOAuthMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength)]

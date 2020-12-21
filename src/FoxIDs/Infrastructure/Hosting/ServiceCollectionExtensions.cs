@@ -37,7 +37,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SessionLogic>();
             services.AddTransient<ClaimTransformationsLogic>();            
 
-            services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcDiscoveryLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<JwtLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();

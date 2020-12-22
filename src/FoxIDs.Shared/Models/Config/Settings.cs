@@ -22,6 +22,12 @@ namespace FoxIDs.Models.Config
         public KeyVaultSettings KeyVault { get; set; }
 
         /// <summary>
+        /// Sendgrid configuration.
+        /// </summary>
+        [Required]
+        public SendgridSettings Sendgrid { get; set; }
+
+        /// <summary>
         /// Enable master seed if true.
         /// </summary>
         public bool MasterSeedEnabled { get; set; }

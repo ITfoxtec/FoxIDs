@@ -14,10 +14,10 @@ namespace FoxIDs.Logic
 {
     public class SendEmailLogic : LogicBase
     {
-        private readonly FoxIDsSettings settings;
+        private readonly Settings settings;
         private readonly TelemetryScopedLogger logger;
 
-        public SendEmailLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SendEmailLogic(Settings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

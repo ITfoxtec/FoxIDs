@@ -224,6 +224,8 @@
                         <Label For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" class="label-control" />
                         <FInputTextList @bind-ValueList="updateTrackForm.Model.AllowIframeOnDomains" For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Domain" />
                     </div>
+                    <FInputText @bind-Value="updateTrackForm.Model.FromEmail" For="@(() => updateTrackForm.Model.FromEmail)" />
+                    <FInputText @bind-Value="updateTrackForm.Model.SendgridApiKey" For="@(() => updateTrackForm.Model.SendgridApiKey)" />
 
                     @if (deleteTrackAcknowledge)
                     {

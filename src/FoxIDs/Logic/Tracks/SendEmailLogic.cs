@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class EmailLogic : LogicBase
+    public class SendEmailLogic : LogicBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
 
-        public EmailLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SendEmailLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -30,7 +30,7 @@ namespace FoxIDs.Logic
             var emailSettings = GetSettings();
             if(!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
             {
-                logger.ScopeTrace($"Send email with Sendgrid using {(RouteBinding.Email == null ? "default" : "track")} settings .");
+                logger.ScopeTrace($"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
                 await SendEmailWithSendgridAsync(emailSettings, toEmail, subject, body);
             }
             else
@@ -40,7 +40,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task SendEmailWithSendgridAsync(Email emailSettings, EmailAddress toEmail, string subject, string body)
+        private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, EmailAddress toEmail, string subject, string body)
         {
             var mail = new SendGridMessage();
             mail.From = new EmailAddress(emailSettings.FromEmail);
@@ -62,9 +62,9 @@ namespace FoxIDs.Logic
             }
         }
 
-        private Email GetSettings()
+        private SendEmail GetSettings()
         {
-            return RouteBinding.Email ?? new Email
+            return RouteBinding.SendEmail ?? new SendEmail
             {
                 FromEmail = settings.Sendgrid.FromEmail,
                 SendgridApiKey = settings.Sendgrid.ApiKey

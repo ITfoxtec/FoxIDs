@@ -43,5 +43,17 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         [Display(Name = "Allow Iframe on domains")]
         public List<string> AllowIframeOnDomains { get; set; }
+
+        [MaxLength(Constants.Models.User.EmailLength)]
+        [EmailAddress]
+        [RegularExpression(Constants.Models.User.EmailRegExPattern)]
+        [Display(Name = "Send emails from email address")]
+        public string FromEmail { get; set; }
+
+        [MaxLength(Constants.Models.Track.SendEmail.SendgridApiKeyLength)]
+        [Display(Name = "Sendgrid API key")]
+        public string SendgridApiKey { get; set; }
+
+        public bool SendMailExist { get; set; }
     }
 }

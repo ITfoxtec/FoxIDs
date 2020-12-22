@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
         /// Update track resource.
         /// </summary>
         /// <param name="trackResourceItem">Resource item.</param>
-        /// <returns>Track.</returns>
+        /// <returns>Resource item.</returns>
         [ProducesResponseType(typeof(Api.TrackResourceItem), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackResourceItem>> PutTrackResource([FromBody] Api.TrackResourceItem trackResourceItem)

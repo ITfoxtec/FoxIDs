@@ -36,7 +36,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<UserAccountLogic>();
             services.AddTransient<SessionLogic>();
             services.AddTransient<ClaimTransformationsLogic>();
-            services.AddTransient<EmailLogic>();            
+            services.AddTransient<SendEmailLogic>();            
 
             services.AddTransient<OidcDiscoveryLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();

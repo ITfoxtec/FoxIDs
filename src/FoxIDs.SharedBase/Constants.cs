@@ -129,6 +129,11 @@ namespace FoxIDs
                 public const int AllowIframeOnDomainsLength = 200;
 
                 public const int MasterTrackControlClientBaseUri = 400;
+
+                public static class SendEmail
+                {
+                    public const int SendgridApiKeyLength = 200;
+                }
             }
 
             public static class User

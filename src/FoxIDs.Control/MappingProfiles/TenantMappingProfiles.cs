@@ -76,6 +76,9 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Api.TrackResourceItem, ResourceItem>()
                 .ReverseMap();
+
+            CreateMap<Api.SendEmail, SendEmail>()
+                .ReverseMap();
         }
 
         private void UpPartyMapping()

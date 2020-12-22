@@ -67,6 +67,7 @@ namespace FoxIDs.Logic
             claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
             claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
             claims.AddClaim(JwtClaimTypes.Email, user.Email);
+            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
             if (user.Claims?.Count() > 0)
             {
                 claims.AddRange(user.Claims.ToClaimList());

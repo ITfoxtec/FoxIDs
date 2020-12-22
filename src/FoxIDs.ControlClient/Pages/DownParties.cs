@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
 using FoxIDs.Client.Models.Config;
 using ITfoxtec.Identity.Models;
+using System.Security.Claims;
 
 namespace FoxIDs.Client.Pages
 {
@@ -613,6 +614,14 @@ namespace FoxIDs.Client.Pages
         #endregion
 
         #region Saml
+        private void SamlDownPartyViewModelAfterInit(GeneralSamlDownPartyViewModel samlDownParty, SamlDownPartyViewModel model)
+        {
+            if (samlDownParty.CreateMode)
+            {
+                model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
+            }
+        }
+
         private async Task OnSamlDownPartyCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
         {
             if (generalSamlDownParty.Form.Model.Keys == null)

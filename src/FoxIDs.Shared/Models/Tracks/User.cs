@@ -67,6 +67,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "email")]
         public string Email { get; set; }
 
+        [JsonProperty(PropertyName = "email_verified")]
+        public bool EmailVerified { get; set; }
+
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }

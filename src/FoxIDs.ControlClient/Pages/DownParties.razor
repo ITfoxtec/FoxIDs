@@ -542,7 +542,7 @@
                     else if (downParty.Type == PartyTypes.Saml2)
                     {
                         var samlDownParty = downParty as GeneralSamlDownPartyViewModel;
-                        <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
+                        <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAfterInit="@(m => SamlDownPartyViewModelAfterInit(samlDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
                             <div class="modal-header">
                                 SAML 2.0
                                 <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>

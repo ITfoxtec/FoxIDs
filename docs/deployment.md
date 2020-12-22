@@ -12,10 +12,14 @@ Deploy FoxIDs in your Azure tenant.
 - SendGrid.
 - Application Insights.
 
-After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
+After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.  
 The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
+
+> Create your one admin users with valid email addresses and grant the users the admin role 'foxids:tenant.admin'.
+>
+> ![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
 
 ### Troubleshooting deployent errors
 
@@ -34,7 +38,7 @@ Then delete the falling resource groups and redeploy.
 
 **Key Vault soft deleted**
 If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
-In this case you can experience getting a `ConflictError` with the error message `Exist soft deleted vault with the same name.`.
+In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
 
 The solution is to delete (purge) the old Key Vault, which will release the name.
 

@@ -88,6 +88,7 @@ namespace FoxIDs.Infrastructure.Hosting
             routeBinding.CheckPasswordComplexity = track.CheckPasswordComplexity.Value;
             routeBinding.CheckPasswordRisk = track.CheckPasswordRisk.Value;
             routeBinding.AllowIframeOnDomains = track.AllowIframeOnDomains;
+            routeBinding.Email = track.Email;
 
             if (!partyNameAndBinding.IsNullOrWhiteSpace())
             {

@@ -16,6 +16,12 @@ namespace FoxIDs.Models.Config
         public RedisCacheSettings RedisCache { get; set; }
 
         /// <summary>
+        /// Sendgrid configuration.
+        /// </summary>
+        [Required]
+        public SendgridSettings Sendgrid { get; set; }        
+
+        /// <summary>
         /// Persistent session max unlimited lifetime in years.
         /// </summary>
         [Required]

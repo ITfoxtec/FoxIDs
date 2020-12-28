@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class UserAccountLogic : AccountLogic
+    public class AccountLogic : BaseAccountLogic
     {
         private readonly FailingLoginLogic failingLoginLogic;
 
-        public UserAccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, masterRepository, secretHashLogic, httpContextAccessor)
+        public AccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, masterRepository, secretHashLogic, httpContextAccessor)
         {
             this.failingLoginLogic = failingLoginLogic;
         }
@@ -26,12 +26,12 @@ namespace FoxIDs.Logic
             var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             var user = await tenantRepository.GetAsync<User>(id, requered: false);
 
-            if (user == null)
+            if (user == null || user.DisableAccount)
             {
                 var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
                 logger.ScopeTrace($"Failing login count increased for not existing user '{email}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(password);
-                throw new UserNotExistsException($"User '{email}' do not exist."); // UI message: Wrong email or password / Your email was not found
+                throw new UserNotExistsException($"User '{email}' do not exist or is disabled."); // UI message: Wrong email or password / Your email was not found
             }
 
             logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount));
@@ -67,12 +67,12 @@ namespace FoxIDs.Logic
             var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             var user = await tenantRepository.GetAsync<User>(id, requered: false);
 
-            if (user == null)
+            if (user == null || user.DisableAccount)
             {
                 var increasedfailingLoginCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
                 logger.ScopeTrace($"Failing login count increased for not existing user '{email}', trying to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingLoginCount), triggerEvent: true);
                 await secretHashLogic.ValidateSecretDefaultTimeUsageAsync(currentPassword);
-                throw new UserNotExistsException($"User '{email}' do not exist, trying to change password.");
+                throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to change password.");
             }
 
             logger.ScopeTrace($"User '{email}' exists, with user id '{user.UserId}', trying to change password.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingLoginCount));
@@ -99,6 +99,24 @@ namespace FoxIDs.Logic
             {
                 throw new InvalidPasswordException($"Current password invalid, user '{email}'.");
             }
+        }
+
+        public async Task SetPasswordUser(User user, string newPassword)
+        {
+            logger.ScopeTrace($"Set password user '{user.Email}', Route '{RouteBinding?.Route}'.");
+
+            if (user.DisableAccount)
+            {
+                throw new UserNotExistsException($"User '{user.Email}' is disabled, trying to set password.");
+            }
+
+            await ValidatePasswordPolicy(user.Email, newPassword);
+
+            await secretHashLogic.AddSecretHashAsync(user, newPassword);
+            user.ChangePassword = false;
+            await tenantRepository.SaveAsync(user);
+
+            logger.ScopeTrace($"User '{user.Email}', password set.", triggerEvent: true);
         }
     }
 }

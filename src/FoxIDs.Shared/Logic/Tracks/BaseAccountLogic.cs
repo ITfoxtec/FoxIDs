@@ -12,14 +12,14 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class AccountLogic : LogicBase
+    public class BaseAccountLogic : LogicBase
     {
         protected readonly TelemetryScopedLogger logger;
         protected readonly ITenantRepository tenantRepository;
         protected readonly IMasterRepository masterRepository;
         protected readonly SecretHashLogic secretHashLogic;
 
-        public AccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public BaseAccountLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IMasterRepository masterRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
@@ -39,14 +39,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true)
+        public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool disableAccount = false)
         {
             logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding?.Route}'.");
 
             email = email?.ToLower();
             ValidateEmail(email);
 
-            var user = new User { UserId = Guid.NewGuid().ToString() };
+            var user = new User { UserId = Guid.NewGuid().ToString(), ConfirmAccount = confirmAccount, EmailVerified = emailVerified, DisableAccount = disableAccount };
             await user.SetIdAsync(new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, Email = email?.ToLower() });
 
             await secretHashLogic.AddSecretHashAsync(user, password);

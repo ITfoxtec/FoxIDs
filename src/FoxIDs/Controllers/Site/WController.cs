@@ -57,7 +57,14 @@ namespace FoxIDs.Controllers
             {
                 var timeout = new TimeSpan(0, 0, (exception as SequenceTimeoutException).SequenceLifetime);
                 errorViewModel.ErrorTitle = localizer["Timeout"];
-                errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
+                if((exception as SequenceTimeoutException).AccountAction == true)
+                {
+                    errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
+                }
+                else
+                {
+                    errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
+                }
             }
 
             return View(errorViewModel);

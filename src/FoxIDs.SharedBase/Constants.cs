@@ -6,6 +6,12 @@ namespace FoxIDs
 {
     public static class Constants
     {
+        public static class DefaultAdminAccount
+        {
+            public const string Email = "admin@foxids.com";
+            public const string Password = "FirstAccess!";
+        }
+
         public static class Routes
         {
             public const string RouteTransformerPathKey = "path";

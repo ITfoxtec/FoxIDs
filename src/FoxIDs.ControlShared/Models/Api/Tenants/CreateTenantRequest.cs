@@ -22,6 +22,12 @@ namespace FoxIDs.Models.Api
         [DataType(DataType.Password)]
         public string AdministratorPassword { get; set; }
 
+        /// <summary>
+        /// True if the administrator account should be confirmed.
+        /// </summary>
+        [Display(Name = "Confirm administrator account")]
+        public bool ConfirmAdministratorAccount { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Track.MasterTrackControlClientBaseUri)]
         public string ControlClientBaseUri { get; set; }

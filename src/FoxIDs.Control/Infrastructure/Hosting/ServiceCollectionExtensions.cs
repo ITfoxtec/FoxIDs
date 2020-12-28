@@ -35,7 +35,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ResourceSeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
 
-            services.AddTransient<AccountLogic>();
+            services.AddTransient<BaseAccountLogic>();
             services.AddTransient<SecretHashLogic>();
 
             services.AddTransient<MasterTenantLogic>();

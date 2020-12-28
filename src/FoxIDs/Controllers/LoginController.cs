@@ -26,11 +26,12 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly SessionLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
-        private readonly UserAccountLogic userAccountLogic;
+        private readonly AccountLogic userAccountLogic;
+        private readonly AccountActionLogic accountActionLogic;
         private readonly LoginUpLogic loginUpLogic;
         private readonly LogoutUpLogic logoutUpLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, UserAccountLogic userAccountLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -38,6 +39,7 @@ namespace FoxIDs.Controllers
             this.sessionLogic = sessionLogic;
             this.sequenceLogic = sequenceLogic;
             this.userAccountLogic = userAccountLogic;
+            this.accountActionLogic = accountActionLogic;
             this.loginUpLogic = loginUpLogic;
             this.logoutUpLogic = logoutUpLogic;
         }
@@ -126,50 +128,52 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace("Login post.");
                 
-                if (ModelState.IsValid)
+                try
                 {
-                    try
-                    {
-                        var user = await userAccountLogic.ValidateUser(login.Email, login.Password);
+                    var user = await userAccountLogic.ValidateUser(login.Email, login.Password);
 
-                        var session = await sessionLogic.GetSessionAsync(loginUpParty);
-                        if (session != null && user.UserId != session.UserId)
-                        {
-                            logger.ScopeTrace("Authenticated user and session user do not match.");
-                            // TODO invalid user login
-                            throw new NotImplementedException("Authenticated user and session user do not match.");
-                        }
+                    if(user.ConfirmAccount && !user.EmailVerified)
+                    {
+                        await accountActionLogic.SendConfirmationEmailAsync(user);
+                    }
 
-                        if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
-                        {
-                            logger.ScopeTrace("Authenticated user and requested user do not match.");
-                            // TODO invalid user login
-                            throw new NotImplementedException("Authenticated user and requested user do not match.");
-                        }
+                    var session = await sessionLogic.GetSessionAsync(loginUpParty);
+                    if (session != null && user.UserId != session.UserId)
+                    {
+                        logger.ScopeTrace("Authenticated user and session user do not match.");
+                        // TODO invalid user login
+                        throw new NotImplementedException("Authenticated user and session user do not match.");
+                    }
 
-                        return await LoginResponse(loginUpParty, user, session);
-                    }
-                    catch (ChangePasswordException cpex)
+                    if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
                     {
-                        logger.ScopeTrace(cpex.Message, triggerEvent: true);
-                        return await StartChangePassword(login.Email, sequenceData);
+                        logger.ScopeTrace("Authenticated user and requested user do not match.");
+                        // TODO invalid user login
+                        throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
-                    catch (UserObservationPeriodException uoex)
+
+                    return await LoginResponse(loginUpParty, user, session);
+                }
+                catch (ChangePasswordException cpex)
+                {
+                    logger.ScopeTrace(cpex.Message, triggerEvent: true);
+                    return await StartChangePassword(login.Email, sequenceData);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
+                }
+                catch (AccountException aex)
+                {
+                    if (aex is InvalidPasswordException || aex is UserNotExistsException)
                     {
-                        logger.ScopeTrace(uoex.Message, triggerEvent: true);
-                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
+                        logger.ScopeTrace(aex.Message, triggerEvent: true);
+                        ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
                     }
-                    catch (AccountException aex)
+                    else
                     {
-                        if (aex is InvalidPasswordException || aex is UserNotExistsException)
-                        {
-                            logger.ScopeTrace(aex.Message, triggerEvent: true);
-                            ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        throw;
                     }
                 }
 
@@ -278,23 +282,16 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace("Logout post.");
 
-                if (ModelState.IsValid)
+                if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
-                    if (logout.LogoutChoice == LogoutChoice.Logout)
-                    {
-                        var session = await sessionLogic.DeleteSessionAsync(RouteBinding);
-                        logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and logout.", triggerEvent: true);
-                        return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
-                    }
-                    else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
-                    {
-                        logger.ScopeTrace("Logout response without logging out.");
-                        return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException();
-                    }
+                    var session = await sessionLogic.DeleteSessionAsync(RouteBinding);
+                    logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and logout.", triggerEvent: true);
+                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
+                }
+                else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
+                {
+                    logger.ScopeTrace("Logout response without logging out.");
+                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
                 }
                 else
                 {
@@ -389,56 +386,53 @@ namespace FoxIDs.Controllers
                     return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }
 
-                if (ModelState.IsValid)
+                try
                 {
-                    try
+                    var claims = new List<Claim>();
+                    if (!createUser.GivenName.IsNullOrWhiteSpace())
                     {
-                        var claims = new List<Claim>();
-                        if (!createUser.GivenName.IsNullOrWhiteSpace())
-                        {
-                            claims.AddClaim(JwtClaimTypes.GivenName, createUser.GivenName);
-                        }
-                        if (!createUser.FamilyName.IsNullOrWhiteSpace())
-                        {
-                            claims.AddClaim(JwtClaimTypes.FamilyName, createUser.FamilyName);
-                        }
+                        claims.AddClaim(JwtClaimTypes.GivenName, createUser.GivenName);
+                    }
+                    if (!createUser.FamilyName.IsNullOrWhiteSpace())
+                    {
+                        claims.AddClaim(JwtClaimTypes.FamilyName, createUser.FamilyName);
+                    }
 
-                        var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
-                        if (user != null)
-                        {
-                            return await LoginResponse(loginUpParty, user);
-                        }
-                    }
-                    catch (UserExistsException uex)
+                    var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
+                    if (user != null)
                     {
-                        logger.ScopeTrace(uex.Message, triggerEvent: true);
-                        ModelState.AddModelError(nameof(createUser.Email), localizer["A user with the email already exists."]);
+                        return await LoginResponse(loginUpParty, user);
                     }
-                    catch (PasswordLengthException plex)
-                    {
-                        logger.ScopeTrace(plex.Message);
-                        ModelState.AddModelError(nameof(createUser.Password), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
-                    }
-                    catch (PasswordComplexityException pcex)
-                    {
-                        logger.ScopeTrace(pcex.Message);
-                        ModelState.AddModelError(nameof(createUser.Password), localizer["Please use a mix of letters, numbers and symbols"]);
-                    }
-                    catch (PasswordEmailTextComplexityException pecex)
-                    {
-                        logger.ScopeTrace(pecex.Message);
-                        ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use the email or parts of it."]);
-                    }
-                    catch (PasswordUrlTextComplexityException pucex)
-                    {
-                        logger.ScopeTrace(pucex.Message);
-                        ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the url."]);
-                    }
-                    catch (PasswordRiskException prex)
-                    {
-                        logger.ScopeTrace(prex.Message);
-                        ModelState.AddModelError(nameof(createUser.Password), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
-                    }
+                }
+                catch (UserExistsException uex)
+                {
+                    logger.ScopeTrace(uex.Message, triggerEvent: true);
+                    ModelState.AddModelError(nameof(createUser.Email), localizer["A user with the email already exists."]);
+                }
+                catch (PasswordLengthException plex)
+                {
+                    logger.ScopeTrace(plex.Message);
+                    ModelState.AddModelError(nameof(createUser.Password), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
+                }
+                catch (PasswordComplexityException pcex)
+                {
+                    logger.ScopeTrace(pcex.Message);
+                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please use a mix of letters, numbers and symbols"]);
+                }
+                catch (PasswordEmailTextComplexityException pecex)
+                {
+                    logger.ScopeTrace(pecex.Message);
+                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use the email or parts of it."]);
+                }
+                catch (PasswordUrlTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(pucex.Message);
+                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the url."]);
+                }
+                catch (PasswordRiskException prex)
+                {
+                    logger.ScopeTrace(prex.Message);
+                    ModelState.AddModelError(nameof(createUser.Password), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewError();
@@ -507,69 +501,66 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace("Change password post.");
 
-                if (ModelState.IsValid)
+                try
                 {
-                    try
-                    {
-                        var user = await userAccountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
+                    var user = await userAccountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
 
-                        var session = await sessionLogic.GetSessionAsync(loginUpParty);
-                        if (session != null && user.UserId != session.UserId)
-                        {
-                            logger.ScopeTrace("Authenticated user and session user do not match.");
-                            // TODO invalid user login
-                            throw new NotImplementedException("Authenticated user and session user do not match.");
-                        }
+                    var session = await sessionLogic.GetSessionAsync(loginUpParty);
+                    if (session != null && user.UserId != session.UserId)
+                    {
+                        logger.ScopeTrace("Authenticated user and session user do not match.");
+                        // TODO invalid user login
+                        throw new NotImplementedException("Authenticated user and session user do not match.");
+                    }
 
-                        if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
-                        {
-                            logger.ScopeTrace("Authenticated user and requested user do not match.");
-                            // TODO invalid user login
-                            throw new NotImplementedException("Authenticated user and requested user do not match.");
-                        }
+                    if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
+                    {
+                        logger.ScopeTrace("Authenticated user and requested user do not match.");
+                        // TODO invalid user login
+                        throw new NotImplementedException("Authenticated user and requested user do not match.");
+                    }
 
-                        return await LoginResponse(loginUpParty, user, session);
-                    }
-                    catch (UserObservationPeriodException uoex)
-                    {
-                        logger.ScopeTrace(uoex.Message, triggerEvent: true);
-                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
-                    }
-                    catch (InvalidPasswordException ipex)
-                    {
-                        logger.ScopeTrace(ipex.Message, triggerEvent: true);
-                        ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer["Wrong password"]);
-                    }                    
-                    catch (NewPasswordEqualsCurrentException npeex)
-                    {
-                        logger.ScopeTrace(npeex.Message);
-                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a new password."]);
-                    }
-                    catch (PasswordLengthException plex)
-                    {
-                        logger.ScopeTrace(plex.Message);
-                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
-                    }
-                    catch (PasswordComplexityException pcex)
-                    {
-                        logger.ScopeTrace(pcex.Message);
-                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
-                    }
-                    catch (PasswordEmailTextComplexityException pecex)
-                    {
-                        logger.ScopeTrace(pecex.Message);
-                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
-                    }
-                    catch (PasswordUrlTextComplexityException pucex)
-                    {
-                        logger.ScopeTrace(pucex.Message);
-                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use parts of the url."]);
-                    }
-                    catch (PasswordRiskException prex)
-                    {
-                        logger.ScopeTrace(prex.Message);
-                        ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
-                    }
+                    return await LoginResponse(loginUpParty, user, session);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
+                }
+                catch (InvalidPasswordException ipex)
+                {
+                    logger.ScopeTrace(ipex.Message, triggerEvent: true);
+                    ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer["Wrong password"]);
+                }                    
+                catch (NewPasswordEqualsCurrentException npeex)
+                {
+                    logger.ScopeTrace(npeex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a new password."]);
+                }
+                catch (PasswordLengthException plex)
+                {
+                    logger.ScopeTrace(plex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
+                }
+                catch (PasswordComplexityException pcex)
+                {
+                    logger.ScopeTrace(pcex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
+                }
+                catch (PasswordEmailTextComplexityException pecex)
+                {
+                    logger.ScopeTrace(pecex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
+                }
+                catch (PasswordUrlTextComplexityException pucex)
+                {
+                    logger.ScopeTrace(pucex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use parts of the URL."]);
+                }
+                catch (PasswordRiskException prex)
+                {
+                    logger.ScopeTrace(prex.Message);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewError();

@@ -16,9 +16,9 @@ namespace FoxIDs.Logic
         const string loginName = "login";
 
         private readonly ITenantRepository tenantRepository;
-        private readonly AccountLogic accountLogic;
+        private readonly BaseAccountLogic accountLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantRepository, AccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
@@ -66,10 +66,10 @@ namespace FoxIDs.Logic
             return mLoginUpParty;
         }
 
-        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password)
+        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool confirmAccount)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Role.TenantAdmin) };
-            await accountLogic.CreateUser(email, password, changePassword: true, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false);
+            await accountLogic.CreateUser(email, password, changePassword: true, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false, confirmAccount: confirmAccount);
         }
 
         public async Task CreateFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)

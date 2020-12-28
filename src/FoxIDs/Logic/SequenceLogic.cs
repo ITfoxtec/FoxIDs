@@ -33,15 +33,50 @@ namespace FoxIDs.Logic
         {
             try
             {
+                (var sequenceString, var sequence) = await StartSeparateSequenceAsync();
+
+                HttpContext.Items[Constants.Sequence.Object] = sequence;
+                HttpContext.Items[Constants.Sequence.String] = sequenceString;
+            }
+            catch (SequenceException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new SequenceException("Unable to start sequence.", ex);
+            }
+        }
+
+        public async Task<(string sequenceString, Sequence sequence)> StartSeparateSequenceAsync(bool? accountAction = null, Sequence currentSequence = null, bool requireeUiUpPartyId = false)
+        {
+            try
+            {
                 var sequence = new Sequence
                 {
                     Id = RandomGenerator.Generate(12),
-                    CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                    CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+                    AccountAction = accountAction
                 };
-                HttpContext.Items[Constants.Sequence.Object] = sequence;
-                HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id } });
+                if(currentSequence?.Culture?.IsNullOrEmpty() == false)
+                {
+                    sequence.Culture = currentSequence.Culture;
+                }
+
+                if(currentSequence?.UiUpPartyId.IsNullOrEmpty() == false)
+                {
+                    sequence.UiUpPartyId = currentSequence.UiUpPartyId;
+                }
+                else if (requireeUiUpPartyId)
+                {
+                    throw new Exception("Required UiUpPartyId is null or empty.");
+                }
+
+                var sequenceString = await CreateSequenceStringAsync(sequence);
+
+                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", accountAction == true ? "true" : "false" } });
+                return (sequenceString: sequenceString, sequence: sequence);
             }
             catch (Exception ex)
             {
@@ -60,6 +95,18 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
                 logger.ScopeTrace($"Sequence culture added, id '{sequence.Id}', culture '{culture}'.");
+            }
+        }
+        public async Task SetUiUpPartyIdAsync(string uiUpPartyId)
+        {
+            if(!uiUpPartyId.IsNullOrEmpty())
+            {
+                var sequence = HttpContext.GetSequence();
+                sequence.UiUpPartyId = uiUpPartyId;
+                HttpContext.Items[Constants.Sequence.Object] = sequence;
+                HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
+
+                logger.ScopeTrace($"Sequence culture added, id '{sequence.Id}', UiUpPartyId '{uiUpPartyId}'.");
             }
         }
 
@@ -93,7 +140,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
 
-                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id } });
+                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", sequence.AccountAction == true ? "true" : "false" } });
             }
             catch (SequenceException)
             {
@@ -101,18 +148,19 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                throw new SequenceException("Sequence is invalid.", ex);
+                throw new SequenceException("Invalid sequence.", ex);
             }
         }
 
-        public async Task SaveSequenceDataAsync<T>(T data) where T : ISequenceData
+        public async Task SaveSequenceDataAsync<T>(T data, Sequence sequence = null) where T : ISequenceData
         {
             await data.ValidateObjectAsync();
 
-            var sequence = HttpContext.GetSequence();
+            sequence = sequence ?? HttpContext.GetSequence();
+            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime)
+                AbsoluteExpiration = absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence), data.ToJson(), options);
         }
@@ -175,9 +223,19 @@ namespace FoxIDs.Logic
             var now = DateTimeOffset.UtcNow;
             var createTime = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime);
 
-            if (createTime.AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime) < now)
+            if(sequence.AccountAction == true)
             {
-                throw new SequenceTimeoutException($"Sequence timeout, id '{sequence.Id}'.") { SequenceLifetime = HttpContext.GetRouteBinding().SequenceLifetime };
+                if (createTime.AddSeconds(settings.AccountActionSequenceLifetime) < now)
+                {
+                    throw new SequenceTimeoutException($"Sequence timeout, id '{sequence.Id}'.") { AccountAction = sequence.AccountAction, SequenceLifetime = settings.AccountActionSequenceLifetime };
+                }
+            }
+            else
+            {
+                if (createTime.AddSeconds(HttpContext.GetRouteBinding().SequenceLifetime) < now)
+                {
+                    throw new SequenceTimeoutException($"Sequence timeout, id '{sequence.Id}'.") { AccountAction = sequence.AccountAction, SequenceLifetime = HttpContext.GetRouteBinding().SequenceLifetime };
+                }
             }
         }
     }

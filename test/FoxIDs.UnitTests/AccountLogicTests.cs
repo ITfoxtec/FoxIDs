@@ -82,7 +82,7 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<PasswordRiskException>(async () => await accountLogic.CreateUser(email, password));
         }
 
-        private AccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
+        private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
         {            
             var routeBinding = new RouteBinding
             {
@@ -99,7 +99,7 @@ namespace FoxIDs.UnitTests
            
             var secretHashLogic = new SecretHashLogic(mockHttpContextAccessor);
 
-            var accountLogic = new AccountLogic(telemetryScopedLogger, fakeTenantRepository, fakeMasterRepository, secretHashLogic, mockHttpContextAccessor);
+            var accountLogic = new BaseAccountLogic(telemetryScopedLogger, fakeTenantRepository, fakeMasterRepository, secretHashLogic, mockHttpContextAccessor);
             return accountLogic;
         }
     }

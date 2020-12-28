@@ -17,9 +17,9 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
-        private readonly AccountLogic accountLogic;
+        private readonly BaseAccountLogic accountLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, AccountLogic accountLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, BaseAccountLogic accountLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -79,7 +79,8 @@ namespace FoxIDs.Controllers
                         }
                     }
                 }
-                var mUser = await accountLogic.CreateUser(createUserRequest.Email, createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims);
+                var mUser = await accountLogic.CreateUser(createUserRequest.Email, createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
+                    confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, disableAccount: createUserRequest.DisableAccount);
                 return Created(mapper.Map<Api.User>(mUser));
             }
             catch(UserExistsException ueex)
@@ -119,7 +120,10 @@ namespace FoxIDs.Controllers
 
                 var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormat(RouteBinding, user.Email));
 
+                mUser.ConfirmAccount = user.ConfirmAccount;
+                mUser.EmailVerified = user.EmailVerified;
                 mUser.ChangePassword = user.ChangePassword;
+                mUser.DisableAccount = user.DisableAccount;
                 var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);

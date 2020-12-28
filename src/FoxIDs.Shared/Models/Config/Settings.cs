@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Config
     public class Settings
     {
         /// <summary>
-        /// FoxIDs control endpoint.
+        /// FoxIDs Control endpoint, used in FoxIDs Control.
         /// </summary>
         public string FoxIDsControlEndpoint { get; set; }
 

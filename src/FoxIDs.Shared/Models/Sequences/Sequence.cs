@@ -12,5 +12,11 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "c")]
         public string Culture { get; set; }
+
+        [JsonProperty(PropertyName = "a")]
+        public bool? AccountAction { get; set; }
+
+        [JsonProperty(PropertyName = "u")]
+        public string UiUpPartyId { get; set; }
     }
 }

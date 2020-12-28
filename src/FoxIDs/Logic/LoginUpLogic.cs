@@ -39,6 +39,7 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
+            await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = loginRequest.DownParty.Id,
@@ -48,7 +49,6 @@ namespace FoxIDs.Logic
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 Email = loginRequest.EmailHint,
-                Culture = loginRequest.Culture
             });
             return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");
         }

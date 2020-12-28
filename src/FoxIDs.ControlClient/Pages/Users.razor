@@ -47,7 +47,10 @@
                             <input type="hidden" @bind="user.Form.Model.Password" />
                             <FFieldText @bind-Value="user.Form.Model.UserId" For="@(() => user.Form.Model.UserId)" />
                         }
+                        <FInputToggle @bind-Value="user.Form.Model.ConfirmAccount" For="@(() => user.Form.Model.ConfirmAccount)" />
+                        <FInputToggle @bind-Value="user.Form.Model.EmailVerified" For="@(() => user.Form.Model.EmailVerified)" TextType="y.n" />
                         <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" />
+                        <FInputToggle @bind-Value="user.Form.Model.AccountStatus" For="@(() => user.Form.Model.AccountStatus)" TextType="e.d" />
 
                         <div class="form-group active-group active">
                             <Label For="@(() => user.Form.Model.Claims)" class="label-control" />

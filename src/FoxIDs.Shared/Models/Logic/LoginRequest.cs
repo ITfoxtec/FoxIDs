@@ -14,7 +14,5 @@ namespace FoxIDs.Models.Logic
         public int? MaxAge { get; set; }
 
         public string EmailHint { get; set; }
-
-        public string Culture { get; set; }
     }
 }

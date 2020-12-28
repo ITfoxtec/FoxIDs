@@ -412,7 +412,9 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(plex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
+                    ModelState.AddModelError(nameof(createUser.Password), RouteBinding.CheckPasswordComplexity ?
+                        localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
+                        localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
@@ -427,7 +429,7 @@ namespace FoxIDs.Controllers
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(pucex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the url."]);
+                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
@@ -540,7 +542,9 @@ namespace FoxIDs.Controllers
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(plex.Message);
-                    ModelState.AddModelError(nameof(changePassword.NewPassword), localizer[$"Please use {RouteBinding.PasswordLength} characters or more{(RouteBinding.CheckPasswordComplexity ? " with a mix of letters, numbers and symbols" : string.Empty)}."]);
+                    ModelState.AddModelError(nameof(changePassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
+                        localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
+                        localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {

@@ -89,7 +89,7 @@
       "id": 21
     },
     {
-      "name": "Please use 8 characters or more with a mix of letters, numbers and symbols.",
+      "name": "Please use {0} characters or more with a mix of letters, numbers and symbols.",
       "id": 22
     },
     {
@@ -115,6 +115,126 @@
     {
       "name": "It should take a maximum of {0} minutes from start to finish. Please try again.",
       "id": 28
+    },
+    {
+      "name": "Change password",
+      "id": 29
+    },
+    {
+      "name": "Current password",
+      "id": 30
+    },
+    {
+      "name": "New password",
+      "id": 31
+    },
+    {
+      "name": "Confirm new password",
+      "id": 32
+    },
+    {
+      "name": "'{0}' and 'NewPassword' do not match.",
+      "id": 33
+    },
+    {
+      "name": "Wrong password",
+      "id": 34
+    },
+    {
+      "name": "'Confirm new password' and 'New password' do not match.",
+      "id": 35
+    },
+    {
+      "name": "Please use a new password.",
+      "id": 36
+    },
+    {
+      "name": "Your account is temporarily locked because of too many login attempts. Please wait for a while and try again.",
+      "id": 37
+    },
+    {
+      "name": "Forgot your password?",
+      "id": 38
+    },
+    {
+      "name": "Don't have an account?",
+      "id": 39
+    },
+    {
+      "name": "Login with your existing user",
+      "id": 40
+    },
+    {
+      "name": "A user with the email already exists.",
+      "id": 41
+    },
+    {
+      "name": "Please use {0} characters or more.",
+      "id": 42
+    },
+    {
+      "name": "Please do not use the email or parts of it.",
+      "id": 43
+    },
+    {
+      "name": "Please do not use parts of the URL.",
+      "id": 44
+    },
+    {
+      "name": "Reset password",
+      "id": 45
+    },
+    {
+      "name": "To reset your password, please provide your email.",
+      "id": 46
+    },
+    {
+      "name": "Send reset email",
+      "id": 47
+    },
+    {
+      "name": "Your password reset request",
+      "id": 48
+    },
+    {
+      "name": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Your password reset request</h2><p style='margin-bottom:30px'>Click on this <a href='{0}'>link</a> to reset your password.</p>",
+      "id": 49
+    },
+    {
+      "name": "If an account associated with that email exists, an email with a password reset link has been sent.",
+      "id": 50
+    },
+    {
+      "name": "Save password",
+      "id": 51
+    },
+    {
+      "name": "Your new password is saved.",
+      "id": 52
+    },
+    {
+      "name": "The reset password did not succeed. Maybe the reset password link was too old or have been used before.",
+      "id": 53
+    },
+    {
+      "name": "Please confirm your email address",
+      "id": 54
+    },
+    {
+      "name": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>",
+      "id": 55
+    },
+    {
+      "name": "Confirmation",
+      "id": 56
+    },
+    {
+      "name": "Your email address and account have been confirmation.",
+      "id": 57
+    },
+    {
+      "name": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before.",
+      "id": 58
     }
   ],
   "resources": [
@@ -340,7 +460,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use 8 characters or more with a mix of letters, numbers and symbols."
+          "value": "Please use {0} characters or more with a mix of letters, numbers and symbols."
         }
       ]
     },
@@ -395,6 +515,276 @@
         {
           "culture": "en",
           "value": "It should take a maximum of {0} minutes from start to finish. Please try again."
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Change password"
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Current password"
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "items": [
+        {
+          "culture": "en",
+          "value": "New password"
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirm new password"
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "items": [
+        {
+          "culture": "en",
+          "value": "'{0}' and 'NewPassword' do not match."
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Wrong password"
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "items": [
+        {
+          "culture": "en",
+          "value": "'Confirm new password' and 'New password' do not match."
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use a new password."
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Forgot your password?"
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Don't have an account?"
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Login with your existing user"
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A user with the email already exists."
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please use {0} characters or more."
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please do not use the email or parts of it."
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please do not use parts of the URL."
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Reset password"
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "items": [
+        {
+          "culture": "en",
+          "value": "To reset your password, please provide your email."
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Send reset email"
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your password reset request"
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Your password reset request</h2><p style='margin-bottom:30px'>Click on this <a href='{0}'>link</a> to reset your password.</p>"
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "items": [
+        {
+          "culture": "en",
+          "value": "If an account associated with that email exists, an email with a password reset link has been sent."
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Save password"
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your new password is saved."
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The reset password did not succeed. Maybe the reset password link was too old or have been used before."
+        }
+      ]
+    },
+    {
+      "id": 54,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please confirm your email address"
+        }
+      ]
+    },
+    {
+      "id": 55,
+      "items": [
+        {
+          "culture": "en",
+          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>"
+        }
+      ]
+    },
+    {
+      "id": 56,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirmation"
+        }
+      ]
+    },
+    {
+      "id": 57,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Your email address and account have been confirmation."
+        }
+      ]
+    },
+    {
+      "id": 58,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before."
         }
       ]
     }

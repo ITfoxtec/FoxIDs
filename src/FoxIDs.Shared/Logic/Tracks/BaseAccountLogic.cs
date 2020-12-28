@@ -27,18 +27,6 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task ThrowIfUserExists(string email)
-        {
-            logger.ScopeTrace($"Check if user exists '{email}', Route '{RouteBinding?.Route}'.");
-
-            ValidateEmail(email);
-
-            if (await tenantRepository.ExistsAsync<User>(await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email })))
-            {
-                throw new UserExistsException($"User '{email}' already exists.");
-            }
-        }
-
         public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool disableAccount = false)
         {
             logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding?.Route}'.");
@@ -47,7 +35,8 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
 
             var user = new User { UserId = Guid.NewGuid().ToString(), ConfirmAccount = confirmAccount, EmailVerified = emailVerified, DisableAccount = disableAccount };
-            await user.SetIdAsync(new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, Email = email?.ToLower() });
+            var userIdKey = new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, Email = email?.ToLower() };
+            await user.SetIdAsync(userIdKey);
 
             await secretHashLogic.AddSecretHashAsync(user, password);
             if (claims?.Count() > 0)
@@ -57,7 +46,10 @@ namespace FoxIDs.Logic
 
             if(checkUserAndPasswordPolicy)
             {
-                await ThrowIfUserExists(email);
+                if (await tenantRepository.ExistsAsync<User>(await User.IdFormat(userIdKey)))
+                {
+                    throw new UserExistsException($"User '{email}' already exists.");
+                }
                 await ValidatePasswordPolicy(email, password);
             }
             user.ChangePassword = changePassword;
@@ -152,7 +144,7 @@ namespace FoxIDs.Logic
             {
                 if (us.Length > 3 && password.Contains(us, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordUrlTextComplexityException($"Password contains url text that does not comply with complexity, user '{email}'.");
+                    throw new PasswordUrlTextComplexityException($"Password contains URL text that does not comply with complexity, user '{email}'.");
                 }
             }
         }

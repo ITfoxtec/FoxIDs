@@ -94,6 +94,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }
 
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "send_email")]
+        public SendEmail SendEmail { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]

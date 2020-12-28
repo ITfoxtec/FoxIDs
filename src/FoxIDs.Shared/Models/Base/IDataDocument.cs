@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace FoxIDs.Models
+﻿namespace FoxIDs.Models
 {
     public interface IDataDocument : IDataElement
     {

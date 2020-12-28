@@ -111,9 +111,10 @@ namespace FoxIDs.Infrastructure.Hosting
         private async Task<string> SetSequanceAndGetSupportedCultureAsync(HttpContext httpContext, TelemetryScopedLogger scopedLogger, string routeAction)
         {
             var routeBinding = httpContext.GetRouteBinding();
-            var sequence = await SetSequanceAsync(httpContext, scopedLogger, routeAction);
+            var sequence = await SetSequanceAsync(httpContext, routeAction);
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {
+                scopedLogger.SetScopeProperty("sequence_culture", sequence.Culture);
                 return await localizationLogic.GetSupportedCultureAsync(new[] { sequence.Culture }, routeBinding);
             }
             else
@@ -123,7 +124,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task<Sequence> SetSequanceAsync(HttpContext httpContext, TelemetryScopedLogger scopedLogger, string routeAction)
+        private async Task<Sequence> SetSequanceAsync(HttpContext httpContext, string routeAction)
         {
             var sequenceString = routeAction.Substring(1);
             var sequence = await sequenceLogic.TryReadSequenceAsync(sequenceString);

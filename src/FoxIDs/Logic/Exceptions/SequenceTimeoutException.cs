@@ -11,6 +11,7 @@ namespace FoxIDs.Logic
         public SequenceTimeoutException(string message, Exception innerException) : base(message, innerException) { }
         protected SequenceTimeoutException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 
+        public bool? AccountAction { get; set; }
         public int SequenceLifetime { get; set; }
     }
 }

@@ -14,6 +14,7 @@ using System;
 using System.Security.Authentication;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
@@ -163,7 +164,15 @@ namespace FoxIDs.Client.Shared
             deleteTrackError = null;
             deleteTrackAcknowledge = false;
             var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
-            await updateTrackForm.InitAsync(track.Map<UpdateTrackViewModel>());
+            var updateTrackViewModel = track.Map<UpdateTrackViewModel>();
+            var trackSendEmail = await TrackService.GetTrackSendEmailAsync();
+            if(trackSendEmail != null)
+            {
+                updateTrackViewModel.SendMailExist = true;
+                updateTrackViewModel.FromEmail = trackSendEmail.FromEmail;
+                updateTrackViewModel.SendgridApiKey = trackSendEmail.SendgridApiKey;
+            }
+            await updateTrackForm.InitAsync(updateTrackViewModel);
             updateTrackModal.Show();
         }
 
@@ -172,6 +181,18 @@ namespace FoxIDs.Client.Shared
             try
             {
                 await TrackService.UpdateTrackAsync(updateTrackForm.Model.Map<Track>());
+                if(!updateTrackForm.Model.FromEmail.IsNullOrWhiteSpace() && !updateTrackForm.Model.SendgridApiKey.IsNullOrWhiteSpace())
+                {
+                    await TrackService.UpdateTrackSendEmailAsync(new SendEmail
+                    { 
+                        FromEmail = updateTrackForm.Model.FromEmail,
+                        SendgridApiKey = updateTrackForm.Model.SendgridApiKey
+                    });
+                }
+                else if(updateTrackForm.Model.SendMailExist)
+                {
+                    await TrackService.DeleteTrackSendEmailAsync();
+                }
                 updateTrackModal.Hide();
             }
             catch (FoxIDsApiException ex)

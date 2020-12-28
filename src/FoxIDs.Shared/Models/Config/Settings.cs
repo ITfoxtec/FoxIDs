@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Config
     public class Settings
     {
         /// <summary>
-        /// FoxIDs control endpoint.
+        /// FoxIDs Control endpoint, used in FoxIDs Control.
         /// </summary>
         public string FoxIDsControlEndpoint { get; set; }
 
@@ -20,6 +20,12 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public KeyVaultSettings KeyVault { get; set; }
+
+        /// <summary>
+        /// Sendgrid configuration.
+        /// </summary>
+        [Required]
+        public SendgridSettings Sendgrid { get; set; }
 
         /// <summary>
         /// Enable master seed if true.

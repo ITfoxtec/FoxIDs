@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
 
             CheckeConfiguration(client);
 
-            var grantClaims = await claimsLogic.FilterJwtClaims(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
+            var grantClaims = await claimsLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var refreshToken = CreateRefreshToken(client);
             await CreateGrantInternal(client, grantClaims.ToClaimAndValues(), scope, refreshToken);

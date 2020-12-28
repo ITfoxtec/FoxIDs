@@ -6,6 +6,12 @@ namespace FoxIDs
 {
     public static class Constants
     {
+        public static class DefaultAdminAccount
+        {
+            public const string Email = "admin@foxids.com";
+            public const string Password = "FirstAccess!";
+        }
+
         public static class Routes
         {
             public const string RouteTransformerPathKey = "path";
@@ -129,6 +135,11 @@ namespace FoxIDs
                 public const int AllowIframeOnDomainsLength = 200;
 
                 public const int MasterTrackControlClientBaseUri = 400;
+
+                public static class SendEmail
+                {
+                    public const int SendgridApiKeyLength = 200;
+                }
             }
 
             public static class User
@@ -367,18 +378,18 @@ namespace FoxIDs
             /// Default ID Token claims.
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Email, FoxI.JwtClaimTypes.GivenName, FoxI.JwtClaimTypes.FamilyName } ).ToArray();
+                new string[] { JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat, FoxI.JwtClaimTypes.Email, FoxI.JwtClaimTypes.GivenName, FoxI.JwtClaimTypes.FamilyName } ).ToArray();
+                new string[] { JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname, ClaimTypes.AuthenticationMethod, ClaimTypes.AuthenticationInstant };
+            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod, ClaimTypes.AuthenticationInstant };
 
         }
 

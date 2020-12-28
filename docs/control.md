@@ -16,7 +16,7 @@ In the future if you use FoxIDs at [https://FoxIDs.com](https://foxids.com). You
 A tenant contains a master track, from where the entire tenant is configured. The master track contains a user repository and on creation only one administrator user.
 
 Select and open the tenant you just created. At first the tenant only contains a master track, normally you should not change the master track configuration or add new up- parties or down-parties.  
-It is possible to create more user in the master track. A user become an administrator by adding the administrator role `foxids_tenant_admin` like shown below.
+It is possible to create more user in the master track. A user become an administrator by adding the administrator role `foxids:tenant.admin` like shown below.
 
 ![Configure administrator user](images/configure-tenant-adminuser.png)
 
@@ -55,9 +55,10 @@ The track properties can be configured by clicking the top right setting icon.
 ## FoxIDs Control API
 FoxIDs Control API is a REST API. The API expose a Swagger (OpenApi) interface document.
 
-FoxIDs Control API can be called by an OAuth 2.0 client either acting as the client itself or as an OAuth 2.0 / OIDC client with an authenticated user. FoxIDs Control API require the `foxids_tenant` scope if the client acts as itself. And the `foxids_tenant_user` scope if the client acts on-behalf of an authenticated user where the user and the user's `foxids_tenant_admin` role is included in the access token.
+FoxIDs Control API require that the client calling the API is granted the `foxids:master` scope to access master data or the `foxids:tenant` scope access tenant API. Normally only tenant data is accessed.
+The client can be an OAuth 2.0 client granted the administrator role `foxids:tenant.admin` acting as the client itself. Or an OAuth 2.0 / OIDC client with an authenticated user granted the administrator role `foxids:tenant.admin`. 
 
-This shows the FoxIDs Control API configuration in the master track, including the scope configuration.
+This shows the FoxIDs Control API configuration in the master track with a scope configuration that grants access to tenant data.
 
 ![Configure foxids_control_api](images/configure-foxids_control_api.png)
 

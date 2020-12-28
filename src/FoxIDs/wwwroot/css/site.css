@@ -68,33 +68,33 @@ code {
 
 @media (min-width: 576px) {
     .page-content {
-        -ms-flex: 0 0 66.666667%;
-        flex: 0 0 66.666667%;
-        max-width: 66.666667%;
+        -ms-flex: 0 0 75%;
+        flex: 0 0 75%;
+        max-width: 75%;
     }
 }
 
 @media (min-width: 768px) {
     .page-content {
-        -ms-flex: 0 0 58.333333%;
-        flex: 0 0 58.333333%;
-        max-width: 58.333333%;
+        -ms-flex: 0 0 60%;
+        flex: 0 0 60%;
+        max-width: 60%;
     }
 }
 
 @media (min-width: 992px) {
     .page-content {
-        -ms-flex: 0 0 41.666667%;
-        flex: 0 0 41.666667%;
-        max-width: 41.666667%;
+        -ms-flex: 0 0 47%;
+        flex: 0 0 47%;
+        max-width: 47%;
     }
 }
 
 @media (min-width: 1200px) {
     .page-content {
-        -ms-flex: 0 0 41.666667%;
-        flex: 0 0 41.666667%;
-        max-width: 41.666667%;
+        -ms-flex: 0 0 40%;
+        flex: 0 0 40%;
+        max-width: 40%;
     }
 }
 
@@ -116,6 +116,27 @@ code {
         .btn-primary:not(:disabled):not(.disabled):active:focus, .btn-primary:not(:disabled):not(.disabled).active:focus,
         .show > .btn-primary.dropdown-toggle:focus {
             box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+        }
+
+.btn-light {
+    border-color: #dae0e5;
+}
+
+.btn-link {
+    color: #df8935;
+}
+
+    .btn-link:hover {
+        color: #d87513;
+    }
+
+    .btn-link:not(:disabled):not(.disabled):active, .btn-link:not(:disabled):not(.disabled).active,
+    .show > .btn-link.dropdown-toggle {
+        color: #d87513;
+    }
+        .btn-link:not(:disabled):not(.disabled):active:focus, .btn-link:not(:disabled):not(.disabled).active:focus,
+        .show > .btn-link.dropdown-toggle:focus {
+            box-shadow: 0 0 0 0;
         }
 
 .btn:focus, .btn.focus {

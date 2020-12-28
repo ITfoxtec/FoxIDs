@@ -33,11 +33,12 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<LogoutUpLogic>();
             services.AddTransient<SecretHashLogic>();
             services.AddTransient<FailingLoginLogic>();            
-            services.AddTransient<UserAccountLogic>();
+            services.AddTransient<AccountLogic>();
+            services.AddTransient<AccountActionLogic>();
             services.AddTransient<SessionLogic>();
-            services.AddTransient<ClaimTransformationsLogic>();            
+            services.AddTransient<ClaimTransformationsLogic>();         
 
-            services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcDiscoveryLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<JwtLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
@@ -89,7 +90,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<FoxIDsRouteTransformer>();
             services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
 
-            services.AddSingleton<OidcDiscoveryHandler>();
+            services.AddSingleton<OidcDiscoveryHandlerService>();
+            services.AddHostedService<OidcDiscoveryBackgroundService>();
 
             if (!env.IsDevelopment())
             {

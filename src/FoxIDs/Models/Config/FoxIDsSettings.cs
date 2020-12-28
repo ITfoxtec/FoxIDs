@@ -28,9 +28,21 @@ namespace FoxIDs.Models.Config
         public int CorsPreflightMaxAge { get; set; }
 
         /// <summary>
-        /// Add time before where the token is valid in secunds.
+        /// Add time before where the token is valid in seconds.
         /// </summary>
         [Required]
         public double SamlTokenAddNotBeforeTime { get; set; }
+
+        /// <summary>
+        /// Account action sequence lifetime in seconds.
+        /// </summary>
+        [Required]
+        public int AccountActionSequenceLifetime { get; set; }
+
+        /// <summary>
+        /// Confirmation email wait period in seconds.
+        /// </summary>
+        [Required]
+        public int ConfirmationEmailWaitPeriod { get; set; }        
     }
 }

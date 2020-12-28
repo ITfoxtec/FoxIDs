@@ -43,6 +43,11 @@
             offText = "Disable";
             TextWidth = "105px";
         }
+        else if (TextType?.Equals("y.n", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            onText = "Yes";
+            offText = "No";
+        }
         else if (TextType?.Contains(',') == true)
         {
             var textSplit = TextType.Split(',');

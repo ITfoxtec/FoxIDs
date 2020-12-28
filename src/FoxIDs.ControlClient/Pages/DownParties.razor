@@ -129,6 +129,13 @@
 
                                             <div class="form-group active-group active">
                                                 <Label For="@(() => oidcDownParty.Form.Model.Client.Scopes)" class="label-control" />
+                                                @if (oidcDownParty.Form.Model.Client.Scopes.Count() <= 0)
+                                                {
+                                                    <div class="card">
+                                                        <div class="card-body px-3 py-2">
+                                                        </div>
+                                                    </div>
+                                                }
                                                 <ul class="list-group">
                                                     @foreach (var scopeItem in oidcDownParty.Form.Model.Client.Scopes)
                                                     {
@@ -204,58 +211,44 @@
                                             {
                                                 <div class="form-group active-group active">
                                                     <Label For="@(() => oidcDownParty.Form.Model.Client.Claims)" class="label-control" />
-
-                                                    <div class="card">
-                                                        <div class="card-body px-3 py-2">
-                                                            @foreach (var claimItem in oidcDownParty.Form.Model.Client.Claims)
-                                                            {
-                                                                var includeLable = oidcDownParty.Form.Model.Client.Claims.IndexOf(claimItem) <= 0;
+                                                    @if (oidcDownParty.Form.Model.Client.Claims.Count() <= 0)
+                                                    {
+                                                        <div class="card">
+                                                            <div class="card-body px-3 py-2">
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <ul class="list-group">
+                                                        @foreach (var claimAndValues in oidcDownParty.Form.Model.Client.Claims)
+                                                        {
+                                                            <li class="list-group-item">
                                                                 <div class="row">
-                                                                    <div class="col-7">
-                                                                        @if (includeLable)
-                                                                        {
-                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
-                                                                                <Label For="@(() => claimItem.Claim)" class="label-control" />
+                                                                    <div class="col-11">
+                                                                        <div class="row">
+                                                                            <div class="col-8">
+                                                                                <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
                                                                             </div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
-                                                                        }
-                                                                        <ValidationMessage For="@(() => claimItem.Claim)" />
+                                                                            <div class="col-4">
+                                                                                <FInputToggleN @bind-Value="claimAndValues.InIdToken" For="@(() => claimAndValues.InIdToken)" TextType="e.d" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="active-group active @(claimAndValues.Values?.Count() > 0 ? "pb-0 mb-0" : "p-0 m-0")">
+                                                                            <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                                                            @if (claimAndValues.Values?.Count() > 0)
+                                                                            {
+                                                                                <Label For="@(() => claimAndValues.Values)" class="label-control" />
+                                                                            }
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="col-4">
-                                                                        @if (includeLable)
-                                                                        {
-                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                <FInputToggleN @bind-Value="claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-                                                                                <Label For="@(() => claimItem.InIdToken)" class="label-control" />
-                                                                            </div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <FInputToggleN @bind-Value="claimItem.InIdToken" For="@(() => claimItem.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-                                                                        }
-                                                                    </div>
-                                                                    <div class="col-1 p-0">
-                                                                        @if (includeLable)
-                                                                        {
-                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                                            </div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                                        }
+                                                                    <div class="col-1 text-right">
+                                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
                                                                     </div>
                                                                 </div>
-                                                            }
-                                                        </div>
-                                                    </div>
+                                                            </li>
+                                                        }
+                                                    </ul>
                                                     <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Claims)" />
-                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
                                                 </div>
                                                 <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
                                                 <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.IdTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.IdTokenLifetime)" />
@@ -394,6 +387,13 @@
 
                                             <div class="form-group active-group active">
                                                 <Label For="@(() => oauthDownParty.Form.Model.Client.Scopes)" class="label-control" />
+                                                @if(oauthDownParty.Form.Model.Client.Scopes.Count() <= 0)
+                                                {
+                                                    <div class="card">
+                                                        <div class="card-body px-3 py-2">
+                                                        </div>
+                                                    </div>
+                                                }
                                                 <ul class="list-group">
                                                     @foreach (var scopeItem in oauthDownParty.Form.Model.Client.Scopes)
                                                     {
@@ -454,47 +454,39 @@
 
                                             @if (downParty.ShowAdvanced)
                                             {
-                                                <div class="form-group active-group active">
+                                               <div class="form-group active-group active">
                                                     <Label For="@(() => oauthDownParty.Form.Model.Client.Claims)" class="label-control" />
-
-                                                    <div class="card">
-                                                        <div class="card-body px-3 py-2">
-                                                            @foreach (var claimItem in oauthDownParty.Form.Model.Client.Claims)
-                                                            {
-                                                                var includeLable = oauthDownParty.Form.Model.Client.Claims.IndexOf(claimItem) <= 0;
+                                                    @if(oauthDownParty.Form.Model.Client.Claims.Count() <= 0)
+                                                    {
+                                                        <div class="card">
+                                                            <div class="card-body px-3 py-2">
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                    <ul class="list-group">
+                                                        @foreach (var claimAndValues in oauthDownParty.Form.Model.Client.Claims)
+                                                        {
+                                                            <li class="list-group-item">
                                                                 <div class="row">
                                                                     <div class="col-11">
-                                                                        @if (includeLable)
-                                                                        {
-                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
-                                                                                <Label For="@(() => claimItem.Claim)" class="label-control" />
-                                                                            </div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <input type="text" @bind="@claimItem.Claim" class="form-control input-control" />
-                                                                        }
-                                                                        <ValidationMessage For="@(() => claimItem.Claim)" />
+                                                                        <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
+                                                                        <div class="active-group active @(claimAndValues.Values?.Count() > 0 ? "pb-0 mb-0" : "p-0 m-0")">
+                                                                            <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                                                            @if (claimAndValues.Values?.Count() > 0)
+                                                                            {
+                                                                                <Label For="@(() => claimAndValues.Values)" class="label-control" />
+                                                                            }
+                                                                        </div>
                                                                     </div>
-                                                                    <div class="col-1 p-0">
-                                                                        @if (includeLable)
-                                                                        {
-                                                                            <div class="active-group active pb-0 mb-0">
-                                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                                            </div>
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims, claimItem))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                                                        }
+                                                                    <div class="col-1 text-right">
+                                                                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
                                                                     </div>
                                                                 </div>
-                                                            }
-                                                        </div>
-                                                    </div>
+                                                            </li>
+                                                        }
+                                                    </ul>
                                                     <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client.Claims)" />
-                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claim</button>
+                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthClaim(e, oauthDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
                                                 </div>
                                                 <FInputNumberN @bind-Value="oauthDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oauthDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
                                                 <FInputNumber @bind-Value="oauthDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oauthDownParty.Form.Model.Client.AccessTokenLifetime)" />
@@ -550,7 +542,7 @@
                     else if (downParty.Type == PartyTypes.Saml2)
                     {
                         var samlDownParty = downParty as GeneralSamlDownPartyViewModel;
-                        <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
+                        <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAfterInit="@(m => SamlDownPartyViewModelAfterInit(samlDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
                             <div class="modal-header">
                                 SAML 2.0
                                 <button type="button" class="btn btn-link btn-xs" @onclick="@(() => downParty.ShowAdvanced = !downParty.ShowAdvanced)">@(downParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>

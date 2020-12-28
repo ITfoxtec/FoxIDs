@@ -79,7 +79,7 @@ namespace FoxIDs.Controllers
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                 var mLoginUpParty = await masterTenantLogic.CreateLoginDocumentAsync(tenant.Name);
-                await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword);
+                await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ConfirmAdministratorAccount);
                 await masterTenantLogic.CreateFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 

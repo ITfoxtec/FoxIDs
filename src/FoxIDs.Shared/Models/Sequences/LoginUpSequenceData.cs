@@ -30,8 +30,5 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
-
-        [JsonProperty(PropertyName = "c")]
-        public string Culture { get; set; }
     }
 }

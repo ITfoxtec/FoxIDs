@@ -38,6 +38,11 @@
             offText = "Disable";
             width = "105px";
         }
+        else if (TextType?.Equals("y.n", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            onText = "Yes";
+            offText = "No";
+        }
         base.OnInitialized();
     }
 

@@ -19,6 +19,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Email")]
         public string Email { get; set; }
 
+        [Display(Name = "Confirm account")]
+        public bool ConfirmAccount { get; set; }
+
+        [Display(Name = "Email verified")]
+        public bool EmailVerified { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
@@ -26,6 +32,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Require password change")]
         public bool ChangePassword { get; set; }
+
+        [Display(Name = "Account status")]
+        public bool AccountStatus { get; set; }
 
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]

@@ -19,6 +19,17 @@ namespace FoxIDs
         }
 
         /// <summary>
+        /// Retrieves the first claim value that is matched by the specified predicate.
+        /// </summary>
+        /// <param name="claims">A claim collection.</param>
+        /// <param name="predicate">The function that performs the matching logic.</param>
+        public static string FindFirstValue(this IEnumerable<ClaimAndValues> claims, Func<ClaimAndValues, bool> predicate)
+        {
+            return claims.Where(predicate).Select(c => c.Values?.FirstOrDefault()).FirstOrDefault();
+        }
+
+
+        /// <summary>
         /// Add Claim to List&lt;Claim&gt;.
         /// </summary>
         public static void AddClaim(this List<Claim> list, string type, string value)

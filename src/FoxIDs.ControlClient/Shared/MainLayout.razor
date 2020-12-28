@@ -121,6 +121,7 @@
                     <FInputText @bind-Value="createTenantForm.Model.Name" For="@(() => createTenantForm.Model.Name)" Focus="true" />
                     <FInputText @bind-Value="createTenantForm.Model.AdministratorEmail" For="@(() => createTenantForm.Model.AdministratorEmail)" />
                     <FInputPassword @bind-Value="createTenantForm.Model.AdministratorPassword" For="@(() => createTenantForm.Model.AdministratorPassword)" />
+                    <FInputToggle @bind-Value="createTenantForm.Model.ConfirmAdministratorAccount" For="@(() => createTenantForm.Model.ConfirmAdministratorAccount)" />
 
                     <ul class="list-group list-group-flush">
                         @foreach (var receipt in createTenantReceipt)
@@ -224,6 +225,8 @@
                         <Label For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" class="label-control" />
                         <FInputTextList @bind-ValueList="updateTrackForm.Model.AllowIframeOnDomains" For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Domain" />
                     </div>
+                    <FInputText @bind-Value="updateTrackForm.Model.FromEmail" For="@(() => updateTrackForm.Model.FromEmail)" />
+                    <FInputText @bind-Value="updateTrackForm.Model.SendgridApiKey" For="@(() => updateTrackForm.Model.SendgridApiKey)" />
 
                     @if (deleteTrackAcknowledge)
                     {

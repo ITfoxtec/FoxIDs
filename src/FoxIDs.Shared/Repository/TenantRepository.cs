@@ -41,25 +41,8 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var partitionId = id.IdToTenantPartitionId();
-            var query = GetQueryAsync<T>(partitionId).Where(d => d.Id == id).Select(d => d.Id).Take(1).AsDocumentQuery();
-
-            double totalRU = 0;
-            try
-            {
-                var response = await query.ExecuteNextAsync<T>();
-                totalRU += response.RequestCharge;
-                return response.Any();
-            }
-            catch (Exception ex)
-            {
-                throw new CosmosDataException(id, partitionId, ex);
-            }
-            finally
-            {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - exists id '{id}'.", totalRU);
-            }
+            var item = await ReadDocumentAsync<T>(id, id.IdToTenantPartitionId(), false);
+            return item != null;
         }
 
         public async Task<T> GetAsync<T>(string id, bool requered = true, bool delete = false) where T : IDataDocument

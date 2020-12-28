@@ -24,6 +24,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public string AdministratorEmail { get; set; }
 
         /// <summary>
+        /// True if the administrator account should be confirmed.
+        /// </summary>
+        [Display(Name = "Confirm administrator account")]
+        public bool ConfirmAdministratorAccount { get; set; }
+
+        /// <summary>
         /// Administrator password.
         /// </summary>
         [Required]

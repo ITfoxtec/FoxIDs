@@ -31,6 +31,7 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
+            await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = logoutRequest.DownParty.Id,

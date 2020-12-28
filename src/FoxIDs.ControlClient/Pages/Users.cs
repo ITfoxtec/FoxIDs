@@ -110,6 +110,7 @@ namespace FoxIDs.Client.Pages
                 await generalUser.Form.InitAsync(user.Map<UserViewModel>(), afterInit: afterInit => 
                 {
                     afterInit.Password = "****";
+                    afterInit.AccountStatus = !user.DisableAccount;
                 });
             }
             catch (AuthenticationException)
@@ -126,10 +127,12 @@ namespace FoxIDs.Client.Pages
         {
             if (generalUser.CreateMode)
             {
+                user.ConfirmAccount = true;
+                user.EmailVerified = false;
                 user.ChangePassword = true;
+                user.AccountStatus = !generalUser.DisableAccount;
             }
         }
-
 
         private string UserInfoText(GeneralUserViewModel generalUser)
         {
@@ -164,11 +167,11 @@ namespace FoxIDs.Client.Pages
             {
                 if (generalUser.CreateMode)
                 {
-                    await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>());
+                    await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>(afterMap: afterMap => afterMap.DisableAccount = !generalUser.Form.Model.AccountStatus));
                 }
                 else
                 {
-                    await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>());
+                    await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>(afterMap: afterMap => afterMap.DisableAccount = !generalUser.Form.Model.AccountStatus));
                 }
                 generalUser.Email = generalUser.Form.Model.Email;
                 generalUser.Edit = false;

@@ -39,6 +39,7 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
+            await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyId = loginRequest.DownParty.Id,
@@ -48,7 +49,6 @@ namespace FoxIDs.Logic
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 Email = loginRequest.EmailHint,
-                Culture = loginRequest.Culture
             });
             return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/login/_{SequenceString}");
         }
@@ -67,6 +67,7 @@ namespace FoxIDs.Logic
             claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
             claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
             claims.AddClaim(JwtClaimTypes.Email, user.Email);
+            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
             if (user.Claims?.Count() > 0)
             {
                 claims.AddRange(user.Claims.ToClaimList());
@@ -83,7 +84,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
                 case PartyTypes.Saml2:
                     var claimsLogic = serviceProvider.GetService<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-                    var samlClaims = await claimsLogic.FromJwtToSamlClaims(claims);
+                    var samlClaims = await claimsLogic.FromJwtToSamlClaimsAsync(claims);
                     samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Email.OriginalString);
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, claims: samlClaims);
 

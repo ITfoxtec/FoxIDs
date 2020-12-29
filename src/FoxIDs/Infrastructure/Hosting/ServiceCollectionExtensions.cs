@@ -23,7 +23,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic();
 
-            services.AddSingleton<LocalizationLogic>();            
+            services.AddSingleton<LocalizationLogic>();
 
             services.AddTransient<SequenceLogic>();
             services.AddTransient<FormActionLogic>();
@@ -35,6 +35,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<FailingLoginLogic>();            
             services.AddTransient<AccountLogic>();
             services.AddTransient<AccountActionLogic>();
+            services.AddTransient<SendEmailLogic>();
             services.AddTransient<SessionLogic>();
             services.AddTransient<ClaimTransformationsLogic>();         
 

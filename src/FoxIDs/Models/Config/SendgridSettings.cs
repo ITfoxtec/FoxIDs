@@ -7,13 +7,11 @@ namespace FoxIDs.Models.Config
         /// <summary>
         /// From email.
         /// </summary>
-        [Required]
         public string FromEmail { get; set; }
 
         /// <summary>
         /// API key.
         /// </summary>
-        [Required]
         public string ApiKey { get; set; }
     }
 }

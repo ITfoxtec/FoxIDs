@@ -79,7 +79,7 @@
     "sendgridFromEmail": {
       "type": "string",
       "metadata": {
-        "description": "Optional, Sendgrid from email."
+        "description": "Optional, Sendgrid from email address."
       }
     },
     "sendgridApiKey": {

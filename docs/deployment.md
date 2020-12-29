@@ -14,22 +14,23 @@ The Azure deployment include:
 - Application Insights.
 
 ### Send emails with Sendgrid
-FoxIDs relay on Sendgrid to send emails to the users for account verification and reset password.  
-You can optionally configure a Sendgrid from email and Sendgrid API Key in the Azure deployment configuration. You can either [create Sendgrid in Azure](https://docs.microsoft.com/en-us/azure/sendgrid-dotnet-how-to-send-email) or directly on [Sendgrid](https://Sendgrid.com), there are more free emails in a Azure manage Sendgrid.
+FoxIDs relay on Sendgrid to send emails to the users for account verification and password reset.  
+You can optionally configure a Sendgrid from email address and Sendgrid API key in the Azure deployment configuration. You can either [create Sendgrid in Azure](https://docs.microsoft.com/en-us/azure/sendgrid-dotnet-how-to-send-email) or directly on [Sendgrid](https://Sendgrid.com), there are more free emails in an Azure manage Sendgrid.
 
 > Remember to setup up [domain authentication](https://sendgrid.com/docs/ui/account-and-settings/how-to-set-up-domain-authentication/) in Sendgrid for the from email.
 
-Sendgrid from email and API Key can at a later time be configure per track.
+A Sendgrid from email address and API Key can at a later time be configure per track.
 
 ### First login and admin users
-After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.  
-The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
+After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
+
+> The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 
 > Create your one admin users with a valid email address and grant the users the admin role 'foxids:tenant.admin'.
->
-> ![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
+
+![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
 
 ### Troubleshooting deployent errors
 

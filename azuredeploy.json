@@ -347,7 +347,7 @@
     },
     {
       "type": "Microsoft.Web/sites/sourcecontrols",
-      "apiVersion": "2015-04-01",
+      "apiVersion": "2018-11-01",
       "name": "[concat(variables('foxidsSiteName'), '/web')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/Sites', variables('foxidsSiteName'))]",
@@ -356,13 +356,13 @@
       "properties": {
         "RepoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
-        "IsManualIntegration": "false",
-        "deploymentRollbackEnabled": "true"
+        "IsManualIntegration": false,
+        "deploymentRollbackEnabled": true
       }
     },
     {
       "type": "Microsoft.Web/sites/sourcecontrols",
-      "apiVersion": "2015-04-01",
+      "apiVersion": "2018-11-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/web')]",
       "dependsOn": [
         "[resourceId('Microsoft.Web/Sites', variables('foxidsControlSiteName'))]",
@@ -371,8 +371,8 @@
       "properties": {
         "RepoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
-        "IsManualIntegration": "false",
-        "deploymentRollbackEnabled": "true"
+        "IsManualIntegration": false,
+        "deploymentRollbackEnabled": true
       }
     },
     {

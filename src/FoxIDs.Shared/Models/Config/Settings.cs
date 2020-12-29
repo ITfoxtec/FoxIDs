@@ -25,5 +25,10 @@ namespace FoxIDs.Models.Config
         /// Enable master seed if true.
         /// </summary>
         public bool MasterSeedEnabled { get; set; }
+
+        /// <summary>
+        /// Log global trace if true.
+        /// </summary>
+        public bool LogGlobalTrace { get; set; }
     }
 }

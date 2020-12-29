@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Config;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
@@ -139,10 +140,11 @@ namespace FoxIDs.UnitTests
 
         private ClaimTransformationsLogic ClaimTransformationsLogicInstance()
         {
+            var settings = new Settings();
             var routeBinding = new RouteBinding();
             var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
-            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
+            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(settings, mockHttpContextAccessor);
 
             return new ClaimTransformationsLogic(telemetryScopedLogger, mockHttpContextAccessor);
         }

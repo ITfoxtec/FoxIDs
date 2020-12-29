@@ -31,11 +31,18 @@ namespace FoxIDs.Logic
             var emailSettings = GetSettings();
             if(emailSettings.FromEmail.IsNullOrWhiteSpace() || emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
             {
-                logger.ScopeTrace("Email settings is not configured.");
+                try
+                {
+                    throw new Exception("Email settings is not configured.");
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                }
                 return;
             }
 
-            if(!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
+            if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
             {
                 logger.ScopeTrace($"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
                 await SendEmailWithSendgridAsync(emailSettings, toEmail, subject, body);

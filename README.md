@@ -20,32 +20,41 @@ Deploy FoxIDs in your Azure tenant.
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
+The Azure deployment include:
+
 - Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan. 
 - FoxIDs is deployed to the two App Services from the `master` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
 - Key vault. Secrets are placed in Key vault.
 - Cosmos DB.
 - Redis cache.
-- SendGrid.
 - Application Insights.
 
-After successfully deployment open FoxIDs Control Client `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol) which brings you to the master tenant.  
-The default admin user is: `admin@foxids.com` with password: `FirstAccess!`
+### Send emails with Sendgrid
+FoxIDs relay on Sendgrid to send emails to the users for account verification and password reset.  
+You can optionally configure a Sendgrid from email address and Sendgrid API key in the Azure deployment configuration. You can either [create Sendgrid in Azure](https://docs.microsoft.com/en-us/azure/sendgrid-dotnet-how-to-send-email) or directly on [Sendgrid](https://Sendgrid.com), there are more free emails in an Azure manage Sendgrid.
+
+> Remember to setup up [domain authentication](https://sendgrid.com/docs/ui/account-and-settings/how-to-set-up-domain-authentication/) in Sendgrid for the from email.
+
+A Sendgrid from email address and API Key can at a later time be configure per track.
+
+### First login and admin users
+After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
+
+> The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)
 
 ![FoxIDs Control Client - Master tenant](docs/images/master-tenant2.png)
 
+> Create your one admin users with a valid email address and grant the users the admin role 'foxids:tenant.admin'.
+
+![FoxIDs Control Client - Master tenant admin user](docs/images/master-tenant-admin-user.png)
+
 #### Troubleshooting deployent errors
 
-> **Sendgrid terms.** If you have not already accepted the Sendgrid legal terms for the selected plan in the subscription you will get the error 
-> *"User failed validation to purchase resources. Error message: 'Legal terms have not been accepted for this item on this subscription: 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'. To accept legal terms using PowerShell, please use Get-AzureRmMarketplaceTerms and Set-AzureRmMarketplaceTerms API(https://go.microsoft.com/fwlink/?linkid=862451) or deploy via the Azure portal to accept the terms'"* 
->
-> You need to accept the terms either by deploying a Sendgrid instance in [Azure portal](https://portal.azure.com) or with PowerShell. 
-> The following PowerShell commands accept the Sendgrid terms for the free plan:
->
->     Connect-AzureRmAccount
->     $terms = Get-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free'
->     Set-AzureRmMarketplaceTerms -Publisher 'SendGrid' -Product 'sendgrid_azure' -Name 'free' -Terms $terms -Accept
->
-> Then delete the falling resource groups and redeploy.
+**Key Vault soft deleted**
+If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
+In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
+
+The solution is to delete (purge) the old Key Vault, which will release the name.
 
 ### Seed
 

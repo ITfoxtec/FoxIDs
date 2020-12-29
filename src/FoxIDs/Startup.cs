@@ -60,7 +60,6 @@ namespace FoxIDs
             }
 
             app.UseHttpsRedirection();
-            //app.UseStatusCodePages(context => throw new Exception($"Page '{context.HttpContext.Request.Path}', status code: {context.HttpContext.Response.StatusCode} {ReasonPhrases.GetReasonPhrase(context.HttpContext.Response.StatusCode)}"));
             app.UseStaticFilesCacheControl(CurrentEnvironment);
             app.UseProxyClientIpMiddleware();
 

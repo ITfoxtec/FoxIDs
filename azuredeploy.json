@@ -62,6 +62,20 @@
         "description": "Specifies whether the key vault is a standard vault or a premium vault."
       }
     },
+    "sendgridFromEmail": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional, Sendgrid from email address."
+      }
+    },
+    "sendgridApiKey": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Optional, Sendgrid API key."
+      }
+    },
     "repoURL": {
       "type": "string",
       "defaultValue": "https://github.com/ITfoxtec/FoxIDs.git",
@@ -74,18 +88,6 @@
       "defaultValue": "master",
       "metadata": {
         "description": "The branch of the GitHub repository to use."
-      }
-    },
-    "sendgridFromEmail": {
-      "type": "string",
-      "metadata": {
-        "description": "Optional, Sendgrid from email address."
-      }
-    },
-    "sendgridApiKey": {
-      "type": "string",
-      "metadata": {
-        "description": "Optional, Sendgrid API key."
       }
     }
   },

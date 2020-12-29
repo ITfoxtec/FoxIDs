@@ -15,10 +15,10 @@ namespace FoxIDs.Logic
 {
     public class SendEmailLogic : LogicBase
     {
-        private readonly Settings settings;
+        private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
 
-        public SendEmailLogic(Settings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SendEmailLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -29,6 +29,12 @@ namespace FoxIDs.Logic
             if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
 
             var emailSettings = GetSettings();
+            if(emailSettings.FromEmail.IsNullOrWhiteSpace() || emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
+            {
+                logger.ScopeTrace("Email settings is not configured.");
+                return;
+            }
+
             if(!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
             {
                 logger.ScopeTrace($"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
@@ -67,8 +73,8 @@ namespace FoxIDs.Logic
         {
             return RouteBinding.SendEmail ?? new SendEmail
             {
-                FromEmail = settings.Sendgrid.FromEmail,
-                SendgridApiKey = settings.Sendgrid.ApiKey
+                FromEmail = settings.Sendgrid?.FromEmail,
+                SendgridApiKey = settings.Sendgrid?.ApiKey
             };
         }
     }

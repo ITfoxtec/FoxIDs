@@ -78,12 +78,14 @@
     },
     "sendgridFromEmail": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Optional, Sendgrid from email address."
       }
     },
     "sendgridApiKey": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Optional, Sendgrid API key."
       }

@@ -507,6 +507,11 @@ namespace FoxIDs.Controllers
                 {
                     var user = await userAccountLogic.ChangePasswordUser(changePassword.Email, changePassword.CurrentPassword, changePassword.NewPassword);
 
+                    if (user.ConfirmAccount && !user.EmailVerified)
+                    {
+                        await accountActionLogic.SendConfirmationEmailAsync(user);
+                    }
+
                     var session = await sessionLogic.GetSessionAsync(loginUpParty);
                     if (session != null && user.UserId != session.UserId)
                     {

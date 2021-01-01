@@ -22,8 +22,8 @@ Deploy FoxIDs in your Azure tenant.
 
 The Azure deployment include:
 
-- Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan. 
-- FoxIDs is deployed to the two App Services from the `master` branch with Kudu. Thereafter, it is possible to manually initiate the Kudu update.
+- Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
+- FoxIDs is deployed to the two App Services test slots from the `master` branch with Kudu. When the branch is updated an automatically deployment update is initiated with webhooks. Deployment updates is automatically promoted from the test slots to the production slots. Consider chanting the production promotion to manually initiated in a production environment.
 - Key vault. Secrets are placed in Key vault.
 - Cosmos DB.
 - Redis cache.

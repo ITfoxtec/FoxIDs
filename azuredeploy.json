@@ -391,6 +391,7 @@
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
+        "MasterSeedEnabled": false,
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]"
       }
@@ -459,7 +460,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri" ]
       }
     },   
     {
@@ -468,8 +469,12 @@
       "name": "[concat(variables('foxidsSiteName'), '/test/web')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsSiteName'))]",
+        "[resourceId('Microsoft.Web/sites/config', variables('foxidsSiteName'), 'slotconfignames')]",
         "[resourceId('Microsoft.Web/sites/slots', variables('foxidsSiteName'), 'test')]",
-        "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsSiteName'), 'test', 'appsettings')]"
+        "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsSiteName'), 'test', 'appsettings')]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--CosmosDb--PrimaryKey')]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--RedisCache--ConnectionString')]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--Sendgrid--ApiKey')]"
       ],
       "properties": {
         "RepoUrl": "[parameters('repoURL')]",
@@ -484,8 +489,12 @@
       "name": "[concat(variables('foxidsControlSiteName'), '/test/web')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
+        "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'slotconfignames')]",
         "[resourceId('Microsoft.Web/sites/slots', variables('foxidsControlSiteName'), 'test')]",
-        "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsControlSiteName'), 'test', 'appsettings')]"
+        "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsControlSiteName'), 'test', 'appsettings')]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--CosmosDb--PrimaryKey')]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--RedisCache--ConnectionString')]",
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--Sendgrid--ApiKey')]"
       ],
       "properties": {
         "RepoUrl": "[parameters('repoURL')]",
@@ -512,7 +521,7 @@
       "name": "[concat(variables('keyVaultName'), '/Settings--CosmosDb--PrimaryKey')]",
       "dependsOn": [
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
-        "[concat('Microsoft.Cache/Redis/', variables('redisName'))]"
+        "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosDbName'))]"
       ],
       "properties": {
         "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', variables('cosmosDbName')), '2015-11-06').primaryMasterKey]"

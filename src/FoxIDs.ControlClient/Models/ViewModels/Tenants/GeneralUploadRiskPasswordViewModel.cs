@@ -7,8 +7,8 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         public const int RiskPasswordMoreThenCount = 100;
         public const int UploadRiskPasswordBlokCount = 2000;
-        public const string DefaultCertificateFileStatus = "Drop pwned passwords file here or click to select";
-        public const long CertificateMaxFileSize = (long)50 * 1024 * 1024 * 1024; // 50GB
+        public const string DefaultRiskPasswordFileStatus = "Drop pwned passwords file here or click to select";
+        public const long RiskPasswordMaxFileSize = (long)50 * 1024 * 1024 * 1024; // 50GB
 
         public GeneralUploadRiskPasswordViewModel()
         { }
@@ -27,7 +27,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PageEditForm<UploadRiskPasswordViewModel> Form { get; set; }
 
-        public string CertificateFileStatus { get; set; } = DefaultCertificateFileStatus;
+        public string RiskPasswordFileStatus { get; set; } = DefaultRiskPasswordFileStatus;
 
         public enum UploadStates
         {

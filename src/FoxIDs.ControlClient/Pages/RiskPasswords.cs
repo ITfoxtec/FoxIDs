@@ -81,7 +81,7 @@ namespace FoxIDs.Client.Pages
 
         private void OnUploadRiskPasswordFileSelected()
         {
-            uploadRiskPassword.CertificateFileStatus = "Pwned passwords file selected";
+            uploadRiskPassword.RiskPasswordFileStatus = "Pwned passwords file selected";
             uploadRiskPassword.UploadState = GeneralUploadRiskPasswordViewModel.UploadStates.Ready;
         }
 
@@ -92,9 +92,9 @@ namespace FoxIDs.Client.Pages
             foreach (var file in await fileReaderService.CreateReference(inputTypeFileElement).EnumerateFilesAsync())
             {
                 var fileInfo = await file.ReadFileInfoAsync();
-                if (fileInfo.Size > GeneralUploadRiskPasswordViewModel.CertificateMaxFileSize)
+                if (fileInfo.Size > GeneralUploadRiskPasswordViewModel.RiskPasswordMaxFileSize)
                 {
-                    uploadRiskPassword.Form.SetFieldError(nameof(uploadRiskPassword.Form.Model.File), $"That's too big. Max size: {GeneralUploadRiskPasswordViewModel.CertificateMaxFileSize} bytes.");
+                    uploadRiskPassword.Form.SetFieldError(nameof(uploadRiskPassword.Form.Model.File), $"That's too big. Max size: {GeneralUploadRiskPasswordViewModel.RiskPasswordMaxFileSize} bytes.");
                     return;
                 }
 

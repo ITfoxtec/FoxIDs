@@ -78,10 +78,13 @@ namespace FoxIDs.Controllers
                 await tenantRepository.CreateAsync(mTenant);
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
-                var mLoginUpParty = await masterTenantLogic.CreateLoginDocumentAsync(tenant.Name);
+                var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ConfirmAdministratorAccount);
-                await masterTenantLogic.CreateFoxIDsControlApiResourceDocumentAsync(tenant.Name);
-                await masterTenantLogic.CreateControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
+                await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
+                await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
+
+                await CreateTrackDocumentAsync(tenant.Name, "test");
+                await CreateTrackDocumentAsync(tenant.Name, "-"); // production
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -99,6 +102,13 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task CreateTrackDocumentAsync(string tenantName, string trackName)
+        {
+            var mTrack = mapper.Map<Track>(new Api.Track { Name = trackName });
+            await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack);
+            await masterTenantLogic.CreateLoginDocumentAsync(tenantName, mTrack.Name);
         }
 
         /// <summary>

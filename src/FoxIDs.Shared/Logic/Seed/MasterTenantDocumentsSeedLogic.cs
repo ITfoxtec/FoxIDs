@@ -31,10 +31,10 @@ namespace FoxIDs.Logic.Seed
                 await CreateAndValidateMasterTenantDocumentAsync();
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName);
-                var mLoginUpParty = await masterTenantLogic.CreateLoginDocumentAsync(Constants.Routes.MasterTenantName);
+                var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MasterTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MasterTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, false);
-                await masterTenantLogic.CreateFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MasterTenantName, includeMasterTenantScope: true);
-                await masterTenantLogic.CreateControlClientDocmentAsync(Constants.Routes.MasterTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
+                await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MasterTenantName, includeMasterTenantScope: true);
+                await masterTenantLogic.CreateMasterControlClientDocmentAsync(Constants.Routes.MasterTenantName, settings.FoxIDsControlEndpoint, mLoginUpParty, includeMasterTenantScope: true);
             }
             catch (Exception ex)
             {

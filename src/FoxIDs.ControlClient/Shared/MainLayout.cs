@@ -104,6 +104,8 @@ namespace FoxIDs.Client.Shared
                 createTenantReceipt.Add("First master track administrator user created.");
                 createTenantReceipt.Add("Master track FoxIDs Control API down-party created.");
                 createTenantReceipt.Add("Master track FoxIDs Control client down-party created.");
+                createTenantReceipt.Add("Test track with user repository created.");
+                createTenantReceipt.Add("Production track with user repository created.");
 
                 await NotificationLogic.TenantUpdatedAsync();
             }
@@ -174,6 +176,21 @@ namespace FoxIDs.Client.Shared
             }
             await updateTrackForm.InitAsync(updateTrackViewModel);
             updateTrackModal.Show();
+        }
+
+        private string FormatTrackName(string trackName)
+        {
+            if ("-".Equals(trackName, StringComparison.Ordinal))
+            {
+                return "Production (-)";
+            }
+
+            return trackName;
+        }
+
+        private void UpdateTrackViewModelAfterInit(UpdateTrackViewModel updateTrackViewModel)
+        {
+            updateTrackViewModel.Name = FormatTrackName(updateTrackViewModel.Name);
         }
 
         private async Task OnUpdateTrackValidSubmitAsync(EditContext editContext)

@@ -2,7 +2,6 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -49,7 +48,20 @@ namespace FoxIDs.Logic
             await tenantRepository.CreateAsync(mTrack);
         }
 
-        public async Task<LoginUpParty> CreateLoginDocumentAsync(string tenantName)
+        public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack)
+        {
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = mTrack.Name });
+
+            var certificate = await mTrack.Name.CreateSelfSignedCertificateByCnAsync();
+            mTrack.Key = new TrackKey()
+            {
+                Type = TrackKeyType.Contained,
+                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
+            };
+            await tenantRepository.CreateAsync(mTrack);
+        }
+
+        public async Task<LoginUpParty> CreateMasterLoginDocumentAsync(string tenantName)
         {
             var mLoginUpParty = new LoginUpParty
             {
@@ -66,13 +78,30 @@ namespace FoxIDs.Logic
             return mLoginUpParty;
         }
 
+        public async Task<LoginUpParty> CreateLoginDocumentAsync(string tenantName, string trackName)
+        {
+            var mLoginUpParty = new LoginUpParty
+            {
+                Name = loginName,
+                EnableCreateUser = true,
+                EnableCancelLogin = false,
+                SessionLifetime = 36000, // 10 hours
+                PersistentSessionLifetimeUnlimited = false,
+                LogoutConsent = LoginUpPartyLogoutConsent.IfRequered
+            };
+            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = loginName });
+
+            await tenantRepository.CreateAsync(mLoginUpParty);
+            return mLoginUpParty;
+        }
+
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool confirmAccount)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Role.TenantAdmin) };
             await accountLogic.CreateUser(email, password, changePassword: true, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false, confirmAccount: confirmAccount);
         }
 
-        public async Task CreateFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)
+        public async Task CreateMasterFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)
         {
             var mControlApiResourceDownParty = new OAuthDownParty
             {
@@ -93,7 +122,7 @@ namespace FoxIDs.Logic
             await tenantRepository.CreateAsync(mControlApiResourceDownParty);
         }
 
-        public async Task CreateControlClientDocmentAsync(string tenantName, string controlClientBaseUri, LoginUpParty loginUpParty, bool includeMasterTenantScope = false)
+        public async Task CreateMasterControlClientDocmentAsync(string tenantName, string controlClientBaseUri, LoginUpParty loginUpParty, bool includeMasterTenantScope = false)
         {
             var mControlClientDownParty = new OidcDownParty
             {

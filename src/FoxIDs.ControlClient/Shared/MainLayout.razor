@@ -15,7 +15,7 @@
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @TrackSelectedLogic.Track.Name
+                            @FormatTrackName(TrackSelectedLogic.Track.Name)
                         </a>
                         <div class="dropdown-menu searchDropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
@@ -36,7 +36,7 @@
                                 @foreach (var track in selectTrackTasks)
                                 {
                                     <button class="dropdown-item btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                        @track.Name
+                                        @FormatTrackName(track.Name)
                                     </button>
                                 }
                             }
@@ -164,7 +164,7 @@
                         {
                             <li class="list-group-item">
                                 <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                    @track.Name
+                                    @FormatTrackName(track.Name)
                                 </button>
                             </li>
                         }
@@ -204,7 +204,7 @@
         </Modal>
 
         <Modal @ref="updateTrackModal" Title="Track">
-            <PageEditForm @ref="updateTrackForm" TModel="UpdateTrackViewModel" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
+            <PageEditForm @ref="updateTrackForm" TModel="UpdateTrackViewModel" OnAfterInit="UpdateTrackViewModelAfterInit" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
                 <div class="modal-body">
                     @if (!deleteTrackError.IsNullOrWhiteSpace())
                     {

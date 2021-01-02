@@ -289,7 +289,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
+        public async Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -304,12 +304,15 @@ namespace FoxIDs.Repository
                 var response = await query.ExecuteNextAsync<T>();
                 totalRU += response.RequestCharge;
                 var li = response.ToHashSet();
+                var count = 0;
                 foreach (var item in li) 
                 {
                     var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
                     var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(item.Id), requestOptions);
+                    count++;
                     totalRU += deleteResponse.RequestCharge;
                 }
+                return count;
             }
             catch (Exception ex)
             {

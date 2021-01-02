@@ -26,9 +26,8 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
-        private readonly OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -36,7 +35,6 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.formActionLogic = formActionLogic;
             this.jwtLogic = jwtLogic;
-            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -73,8 +71,6 @@ namespace FoxIDs.Logic
             {
                 logger.ScopeTrace("Valid ID token hint.");
             }
-
-            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantAsync(party.Client, sessionId);
 
             await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
             {

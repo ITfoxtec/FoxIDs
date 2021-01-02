@@ -70,25 +70,22 @@ namespace FoxIDs.Logic
             return (grant, newRefreshToken);
         }
 
-        public async Task DeleteRefreshTokenGrantAsync(TClient client, string sessionId)
+        public async Task DeleteRefreshTokenGrantsAsync(string sessionId)
         {
             if (sessionId.IsNullOrWhiteSpace()) return;
 
-            logger.ScopeTrace($"Delete Refresh Token grant, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
+            logger.ScopeTrace($"Delete Refresh Token grants, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-            RefreshTokenGrant grant = await tenantRepository.DeleteAsync<RefreshTokenTtlGrant>(idKey, d => d.SessionId == sessionId);
-            if (grant != null)
+            var ttlGrantCount = await tenantRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.SessionId == sessionId);
+            if (ttlGrantCount > 0)
             {
-                logger.ScopeTrace($"TTL Refresh Token grant deleted, Refresh Token '{grant.RefreshToken}', Session ID '{sessionId}'.");
+                logger.ScopeTrace($"TTL Refresh Token grants deleted, Session ID '{sessionId}'.");
             }
-            else
+            var grantCount = await tenantRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.SessionId == sessionId);
+            if (grantCount > 0)
             {
-                grant = await tenantRepository.DeleteAsync<RefreshTokenGrant>(idKey, d => d.SessionId == sessionId);
-                if (grant != null)
-                {
-                    logger.ScopeTrace($"Refresh Token grant deleted, Refresh Token '{grant.RefreshToken}', Session ID '{sessionId}'.");
-                }
+                logger.ScopeTrace($"Refresh Token grants deleted, Session ID '{sessionId}'.");
             }
         }
 

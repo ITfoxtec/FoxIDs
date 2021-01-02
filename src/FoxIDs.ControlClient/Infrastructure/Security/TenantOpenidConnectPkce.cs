@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Threading.Tasks;
+using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs.Client.Infrastructure.Security
 {
@@ -72,11 +73,11 @@ namespace FoxIDs.Client.Infrastructure.Security
         {
             if(routeBindingBase.IsMasterTenant)
             {
-                return $"email {Constants.ControlApi.ResourceAndScope.Tenant} {Constants.ControlApi.ResourceAndScope.Master}";
+                return $"{DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant} {Constants.ControlApi.ResourceAndScope.Master}";
             }
             else
             {
-                return $"email {Constants.ControlApi.ResourceAndScope.Tenant}";
+                return $"{DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant}";
             }
         }
     }

@@ -30,8 +30,9 @@ namespace FoxIDs.Controllers
         private readonly AccountActionLogic accountActionLogic;
         private readonly LoginUpLogic loginUpLogic;
         private readonly LogoutUpLogic logoutUpLogic;
+        private readonly OAuthRefreshTokenGrantLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, OAuthRefreshTokenGrantLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -42,6 +43,7 @@ namespace FoxIDs.Controllers
             this.accountActionLogic = accountActionLogic;
             this.loginUpLogic = loginUpLogic;
             this.logoutUpLogic = logoutUpLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
         public async Task<IActionResult> Login()
@@ -309,6 +311,11 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> LogoutResponse(LoginUpParty loginUpParty, string sessionId, bool postLogoutRedirect, LogoutChoice logoutChoice)
         {
+            if (logoutChoice == LogoutChoice.Logout)
+            {
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sessionId);
+            }
+
             if (postLogoutRedirect)
             {
                 return await logoutUpLogic.LogoutResponseAsync(sessionId);

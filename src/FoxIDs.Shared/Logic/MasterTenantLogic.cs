@@ -119,8 +119,8 @@ namespace FoxIDs.Logic
                 AuthorizationCodeLifetime = 30,
                 IdTokenLifetime = 3600, // 1 hours
                 AccessTokenLifetime = 3600, // 1 hours
-                RefreshTokenLifetime = 43200, // 12 hours
-                RefreshTokenAbsoluteLifetime = 43200, // 12 hours
+                RefreshTokenLifetime = 7200, // 2 hours
+                RefreshTokenAbsoluteLifetime = 21600, // 6 hours
                 RefreshTokenUseOneTime = true,
                 RefreshTokenLifetimeUnlimited = false,
                 RequireLogoutIdTokenHint = true,

@@ -67,7 +67,7 @@ You can upload risk passwrods in FoxIDs Control Client master tenant on the Rris
 Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
 > Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.  
-> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 4000 RU/s) temporarily.
+> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 20000 RU/s) temporarily.
 
 #### Add sample configuration to a track
 

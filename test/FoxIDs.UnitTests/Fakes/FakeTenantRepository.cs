@@ -20,27 +20,27 @@ namespace FoxIDs.UnitTests.Mocks
             return Task.FromResult(false);
         }
 
-        public Task<T> GetAsync<T>(string id, bool requered = true, bool delete = false) where T : IDataDocument
+        public Task<T> GetAsync<T>(string id, bool required = true, bool delete = false) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<Tenant> GetTenantByNameAsync(string tenantName, bool requered = true)
+        public Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool requered = true)
+        public Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true)
         {
             throw new NotImplementedException();
         }
 
-        public Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool requered = true)
+        public Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool required = true)
         {
             throw new NotImplementedException();
         }
 
-        public Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool requered = true)
+        public Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true)
         {
             throw new NotImplementedException();
         }

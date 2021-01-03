@@ -9,11 +9,11 @@ namespace FoxIDs.Repository
     public interface ITenantRepository
     {
         Task<bool> ExistsAsync<T>(string id) where T : IDataDocument;
-        Task<T> GetAsync<T>(string id, bool requered = true, bool delete = false) where T : IDataDocument;
-        Task<Tenant> GetTenantByNameAsync(string tenantName, bool requered = true);
-        Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool requered = true);
-        Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool requered = true);
-        Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool requered = true);
+        Task<T> GetAsync<T>(string id, bool required = true, bool delete = false) where T : IDataDocument;
+        Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true);
+        Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true);
+        Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool required = true);
+        Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true);
 
         Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument;
 

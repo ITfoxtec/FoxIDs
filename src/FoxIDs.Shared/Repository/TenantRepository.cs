@@ -45,42 +45,42 @@ namespace FoxIDs.Repository
             return item != null;
         }
 
-        public async Task<T> GetAsync<T>(string id, bool requered = true, bool delete = false) where T : IDataDocument
+        public async Task<T> GetAsync<T>(string id, bool required = true, bool delete = false) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadDocumentAsync<T>(id, id.IdToTenantPartitionId(), requered, delete);
+            return await ReadDocumentAsync<T>(id, id.IdToTenantPartitionId(), required, delete);
         }
 
-        public async Task<Tenant> GetTenantByNameAsync(string tenantName, bool requered = true)
+        public async Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true)
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
 
-            return await ReadDocumentAsync<Tenant>(await Tenant.IdFormat(tenantName), Tenant.PartitionIdFormat(), requered);
+            return await ReadDocumentAsync<Tenant>(await Tenant.IdFormat(tenantName), Tenant.PartitionIdFormat(), required);
         }
 
-        public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool requered = true)
+        public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadDocumentAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), required);
         }
 
-        public async Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool requered = true)
+        public async Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool required = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadDocumentAsync<UpParty>(await UpParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<UpParty>(await UpParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), required);
         }
 
-        public async Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool requered = true)
+        public async Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadDocumentAsync<DownParty>(await DownParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), requered);
+            return await ReadDocumentAsync<DownParty>(await DownParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), required);
         }
 
-        private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool requered, bool delete = false) where T : IDataDocument
+        private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -105,7 +105,7 @@ namespace FoxIDs.Repository
             }
             catch (DocumentClientException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound && !requered)
+                if (ex.StatusCode == HttpStatusCode.NotFound && !required)
                 {
                     return default(T);
                 }

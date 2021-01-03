@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, requered: false);
+            var user = await tenantRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
             {
@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, requered: false);
+            var user = await tenantRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
             {

@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
                     logger.ScopeTrace($"Verify confirmation email '{sequenceData.Email}'.");
 
                     var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
-                    var user = await tenantRepository.GetAsync<User>(id, requered: false);
+                    var user = await tenantRepository.GetAsync<User>(id, required: false);
                     if (user == null || user.DisableAccount)
                     {
                         throw new ConfirmationException($"User with email '{sequenceData.Email}' do not exists or is disabled.");
@@ -128,7 +128,7 @@ namespace FoxIDs.Logic
             try
             {
                 var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-                var user = await tenantRepository.GetAsync<User>(id, requered: false);
+                var user = await tenantRepository.GetAsync<User>(id, required: false);
                 if (user == null || user.DisableAccount)
                 {
                     throw new ResetPasswordException($"User with email '{email}' is not verified.");
@@ -164,7 +164,7 @@ namespace FoxIDs.Logic
                     logger.ScopeTrace($"Verify reset password email '{sequenceData.Email}'.");
 
                     var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
-                    var user = await tenantRepository.GetAsync<User>(id, requered: false);
+                    var user = await tenantRepository.GetAsync<User>(id, required: false);
                     if (user == null || user.DisableAccount)
                     {
                         throw new ResetPasswordException($"User with email '{sequenceData.Email}' do not exists or is disabled.");

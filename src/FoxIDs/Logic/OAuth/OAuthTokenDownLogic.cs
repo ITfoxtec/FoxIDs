@@ -117,9 +117,9 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected async Task ValidateSecret(TClient client, TokenRequest tokenRequest, ClientCredentials clientCredentials, bool secretValidationRequered = true)
+        protected async Task ValidateSecret(TClient client, TokenRequest tokenRequest, ClientCredentials clientCredentials, bool secretValidationRequired = true)
         {
-            if(!secretValidationRequered && clientCredentials.ClientSecret.IsNullOrEmpty())
+            if(!secretValidationRequired && clientCredentials.ClientSecret.IsNullOrEmpty())
             {
                 return;
             }
@@ -129,7 +129,7 @@ namespace FoxIDs.Logic
 
             if(client?.Secrets.Count() <= 0)
             {
-                if(secretValidationRequered)
+                if(secretValidationRequired)
                 {
                     throw new OAuthRequestException($"Invalid client secret. Secret not configured for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
                 }

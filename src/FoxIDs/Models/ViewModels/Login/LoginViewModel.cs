@@ -10,6 +10,8 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCreateUser { get; set; }
 
+        public bool EnableResetPassword { get; set; }
+
         [Display(Name = "Email")]
         [Required]
         [MaxLength(Constants.Models.User.EmailLength)]

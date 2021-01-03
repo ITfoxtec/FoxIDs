@@ -34,22 +34,28 @@ namespace FoxIDs.Models.Api
         public bool? PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         /// <summary>
-        /// Default true.
+        /// Default false.
         /// </summary>
         [Required]
-        public bool? EnableCancelLogin { get; set; } = false;
+        public bool EnableCancelLogin { get; set; } = false;
 
         /// <summary>
         /// Default true.
         /// </summary>
         [Required]
-        public bool? EnableCreateUser { get; set; } = true;
+        public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
-        /// Default if requered.
+        /// Default false.
         /// </summary>
         [Required]
-        public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequered;
+        public bool DisableResetPassword { get; set; } = false;
+
+        /// <summary>
+        /// Default if required.
+        /// </summary>
+        [Required]
+        public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequired;
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         public string CssStyle { get; set; }

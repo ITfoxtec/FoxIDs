@@ -56,11 +56,11 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.AuthorizationCode:
                         ValidateAuthCodeRequest(party.Client, tokenRequest);
                         var validatePkce = party.Client.RequirePkce && codeVerifierSecret != null;
-                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequered: !validatePkce);
+                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !validatePkce);
                         return await AuthorizationCodeGrant(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
                     case IdentityConstants.GrantTypes.RefreshToken:
                         ValidateRefreshTokenRequest(party.Client, tokenRequest);
-                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequered: !party.Client.RequirePkce);
+                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !party.Client.RequirePkce);
                         return await RefreshTokenGrant(party.Client, tokenRequest);
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);

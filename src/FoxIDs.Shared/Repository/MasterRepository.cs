@@ -97,11 +97,11 @@ namespace FoxIDs.Repository
 
         }
 
-        public async Task<T> GetAsync<T>(string id, bool requered = true) where T : MasterDocument
+        public async Task<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadDocumentAsync<T>(id, id.IdToMasterPartitionId(), requered);
+            return await ReadDocumentAsync<T>(id, id.IdToMasterPartitionId(), required);
         }
 
         //public Task<FeedResponse<TResult>> GetQueryAsync<T, TResult>(T item, Expression<Func<T, bool>> whereQuery, Expression<Func<T, TResult>> selector) where T : MasterDocument
@@ -168,7 +168,7 @@ namespace FoxIDs.Repository
         //    }
         //}
 
-        private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool requered, bool delete = false) where T : MasterDocument
+        private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -193,7 +193,7 @@ namespace FoxIDs.Repository
             }
             catch (DocumentClientException ex)
             {
-                if (ex.StatusCode == HttpStatusCode.NotFound && !requered)
+                if (ex.StatusCode == HttpStatusCode.NotFound && !required)
                 {
                     return default(T);
                 }

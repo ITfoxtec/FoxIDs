@@ -119,11 +119,11 @@ namespace FoxIDs.Logic
             var id = await RefreshTokenGrant.IdFormat(grantIdKey);
             if (refreshToken.StartsWith('u'))
             {
-                return await tenantRepository.GetAsync<RefreshTokenGrant>(id, requered: false, delete: client.RefreshTokenUseOneTime == true);
+                return await tenantRepository.GetAsync<RefreshTokenGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);
             }
             else if (refreshToken.StartsWith('t'))
             {
-                return await tenantRepository.GetAsync<RefreshTokenTtlGrant>(id, requered: false, delete: client.RefreshTokenUseOneTime == true);
+                return await tenantRepository.GetAsync<RefreshTokenTtlGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);
             }
             else
             {

@@ -6,8 +6,8 @@ namespace FoxIDs.Models
     {
         [EnumMember(Value = "always")]
         Always,
-        [EnumMember(Value = "if_requered")]
-        IfRequered,
+        [EnumMember(Value = "if_required")]
+        IfRequired,
         [EnumMember(Value = "never")]
         Never
     }

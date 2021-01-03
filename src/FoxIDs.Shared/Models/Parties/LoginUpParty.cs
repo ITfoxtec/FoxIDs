@@ -30,11 +30,15 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
-        public bool? EnableCancelLogin { get; set; }
+        public bool EnableCancelLogin { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "enable_create_user")]
-        public bool? EnableCreateUser { get; set; }
+        public bool EnableCreateUser { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "disable_reset_password")]
+        public bool DisableResetPassword { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]

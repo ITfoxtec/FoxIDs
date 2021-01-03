@@ -24,7 +24,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<T> GetAsync<T>(string id, bool requered = true) where T : MasterDocument
+        public Task<T> GetAsync<T>(string id, bool required = true) where T : MasterDocument
         {
             throw new NotImplementedException();
         }

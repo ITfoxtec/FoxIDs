@@ -73,8 +73,9 @@ namespace FoxIDs.Controllers
                     {
                         SequenceString = SequenceString,
                         CssStyle = loginUpParty.CssStyle,
-                        EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
-                        EnableCreateUser = !validSession && loginUpParty.EnableCreateUser.Value,
+                        EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                        EnableResetPassword = !loginUpParty.DisableResetPassword,
+                        EnableCreateUser = !validSession && loginUpParty.EnableCreateUser,
                         Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
                     });
                 }
@@ -118,8 +119,9 @@ namespace FoxIDs.Controllers
                 {
                     login.SequenceString = SequenceString;
                     login.CssStyle = loginUpParty.CssStyle;
-                    login.EnableCancelLogin = loginUpParty.EnableCancelLogin.Value;
-                    login.EnableCreateUser = loginUpParty.EnableCreateUser.Value;
+                    login.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    login.EnableResetPassword = !loginUpParty.DisableResetPassword;
+                    login.EnableCreateUser = loginUpParty.EnableCreateUser;
                     return View(nameof(Login), login);
                 };
 
@@ -243,7 +245,7 @@ namespace FoxIDs.Controllers
                     // TODO return error, not possible to logout
                 }
 
-                if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequered && sequenceData.RequireLogoutConsent))
+                if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace("Show logout consent dialog.");
                     return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
@@ -476,7 +478,7 @@ namespace FoxIDs.Controllers
                 {
                     SequenceString = SequenceString,
                     CssStyle = loginUpParty.CssStyle,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin.Value,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     Email = sequenceData.Email,
                 });
             }
@@ -499,7 +501,7 @@ namespace FoxIDs.Controllers
                 {
                     changePassword.SequenceString = SequenceString;
                     changePassword.CssStyle = loginUpParty.CssStyle;
-                    changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin.Value;
+                    changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(nameof(ChangePassword), changePassword);
                 };
 

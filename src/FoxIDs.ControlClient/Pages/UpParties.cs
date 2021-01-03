@@ -144,7 +144,7 @@ namespace FoxIDs.Client.Pages
                 {
                     var generalLoginUpParty = upParty as GeneralLoginUpPartyViewModel;
                     var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upParty.Name);
-                    await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>());
+                    await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap => afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword));
                 }
                 catch (AuthenticationException)
                 {
@@ -243,11 +243,11 @@ namespace FoxIDs.Client.Pages
             {
                 if (generalLoginUpParty.CreateMode)
                 {
-                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>());
+                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap => afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword));
                 }
                 else
                 {
-                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>());
+                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap => afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword));
                 }
                 generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;
                 generalLoginUpParty.Edit = false;

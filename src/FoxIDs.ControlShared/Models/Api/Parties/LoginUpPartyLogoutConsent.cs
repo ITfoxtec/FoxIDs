@@ -3,7 +3,7 @@
     public enum LoginUpPartyLogoutConsent
     {
         Always,
-        IfRequered,
+        IfRequired,
         Never
     }
 }

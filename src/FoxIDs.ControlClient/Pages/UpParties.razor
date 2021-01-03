@@ -56,9 +56,9 @@
                             <div class="modal-body">
                                 @if (loginUpParty.CreateMode)
                                 {
-                                <div class="mb-3 alert alert-info" role="alert">
-                                    The user is authenticated with the track's user repository and the user session is connected to this up-party login configuration.
-                                </div>
+                                    <div class="mb-3 alert alert-info" role="alert">
+                                        The user is authenticated with the track's user repository and the user session is connected to this up-party login configuration.
+                                    </div>
                                     <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" Focus="true" />
                                 }
                                 else
@@ -67,8 +67,9 @@
                                 }
                                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
+                                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
                                 <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
-                                    <option value="@LoginUpPartyLogoutConsent.IfRequered">If requered</option>
+                                    <option value="@LoginUpPartyLogoutConsent.IfRequired">If required</option>
                                     <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
                                     <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
                                 </FInputSelect>

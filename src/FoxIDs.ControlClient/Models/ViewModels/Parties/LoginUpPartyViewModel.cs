@@ -44,7 +44,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         /// <summary>
-        /// Default true.
+        /// Default false.
         /// </summary>
         [Required]
         [Display(Name = "Cancel login")]
@@ -58,11 +58,18 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool EnableCreateUser { get; set; } = true;
 
         /// <summary>
+        /// Default true.
+        /// </summary>
+        [Required]
+        [Display(Name = "Reset password")]
+        public bool EnableResetPassword { get; set; } = true;
+
+        /// <summary>
         /// Default if required.
         /// </summary>
         [Required]
         [Display(Name = "Logout consent")]
-        public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequered;
+        public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequired;
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [Display(Name = "CSS style")]

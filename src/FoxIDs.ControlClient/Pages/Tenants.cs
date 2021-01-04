@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Security.Authentication;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 
 namespace FoxIDs.Client.Pages
@@ -49,7 +49,7 @@ namespace FoxIDs.Client.Pages
                 await OnValidSubmitAsync(null);
                 StateHasChanged();
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -84,7 +84,7 @@ namespace FoxIDs.Client.Pages
             {
                 tenants = await TenantService.FilterTenantAsync(null);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -111,7 +111,7 @@ namespace FoxIDs.Client.Pages
                 await OnTenantUpdatedAsync();
                 tenantModal.Hide();
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

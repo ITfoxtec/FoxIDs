@@ -48,7 +48,7 @@ namespace FoxIDs.Client.Shared.Components
             {
                 upPartyFilters = await UpPartyService.FilterUpPartyAsync(upPartyNamesFilterForm.Model.FilterName);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

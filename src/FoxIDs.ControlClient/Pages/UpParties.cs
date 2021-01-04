@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Security.Authentication;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using BlazorInputFile;
 using System.IO;
@@ -64,7 +64,7 @@ namespace FoxIDs.Client.Pages
             {
                 SetGeneralUpParties(await UpPartyService.FilterUpPartyAsync(null));
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -146,7 +146,7 @@ namespace FoxIDs.Client.Pages
                     var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upParty.Name);
                     await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap => afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword));
                 }
-                catch (AuthenticationException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -191,7 +191,7 @@ namespace FoxIDs.Client.Pages
                         }
                     }));
                 }
-                catch (AuthenticationException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -272,7 +272,7 @@ namespace FoxIDs.Client.Pages
                 await UpPartyService.DeleteLoginUpPartyAsync(generalLoginUpParty.Name);
                 upParties.Remove(generalLoginUpParty);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -390,7 +390,7 @@ namespace FoxIDs.Client.Pages
                 await UpPartyService.DeleteSamlUpPartyAsync(generalSamlUpParty.Name);
                 upParties.Remove(generalSamlUpParty);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

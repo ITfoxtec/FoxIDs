@@ -95,7 +95,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     await OnValidSubmit.InvokeAsync(EditContext);
                 }
-                catch(AuthenticationException)
+                catch(TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }

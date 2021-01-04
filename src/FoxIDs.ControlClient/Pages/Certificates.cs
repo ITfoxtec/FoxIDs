@@ -6,14 +6,13 @@ using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MTokens = Microsoft.IdentityModel.Tokens;
@@ -68,7 +67,7 @@ namespace FoxIDs.Client.Pages
                 changeContainerTypeModal.Hide();
                 await DefaultLoadAsync();
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -92,7 +91,7 @@ namespace FoxIDs.Client.Pages
                     SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
                 }
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -125,7 +124,7 @@ namespace FoxIDs.Client.Pages
                 await DefaultLoadAsync();
                 swapCertificateModal.Hide();
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await(OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -236,7 +235,7 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.CreateMode = false;
                 generalCertificate.Edit = false;
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -291,7 +290,7 @@ namespace FoxIDs.Client.Pages
                 generalCertificate.Subject = null;
                 generalCertificate.Form.Model.Subject = null;
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

@@ -4,14 +4,13 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
-using ITfoxtec.Identity.Util;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages
@@ -49,7 +48,7 @@ namespace FoxIDs.Client.Pages
             {
                 SetGeneralUpParties(await UserService.FilterUserAsync(null));
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -113,7 +112,7 @@ namespace FoxIDs.Client.Pages
                     afterInit.AccountStatus = !user.DisableAccount;
                 });
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -196,7 +195,7 @@ namespace FoxIDs.Client.Pages
                 await UserService.DeleteUserAsync(generalUser.Email);
                 users.Remove(generalUser);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

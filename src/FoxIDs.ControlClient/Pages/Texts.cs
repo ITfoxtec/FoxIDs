@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Security.Authentication;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Pages
@@ -48,7 +48,7 @@ namespace FoxIDs.Client.Pages
             {
                 SetGeneralResources(await TrackService.FilterResourceNameAsync(null));
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -110,7 +110,7 @@ namespace FoxIDs.Client.Pages
                     });
                 }
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -173,7 +173,7 @@ namespace FoxIDs.Client.Pages
                 resource.Edit = false;
                 resource.Form.Model.Name = null;
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

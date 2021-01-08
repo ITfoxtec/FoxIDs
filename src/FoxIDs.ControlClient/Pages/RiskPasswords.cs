@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
-using System.Security.Authentication;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Text;
 using System.Threading.Tasks;
 using Tewr.Blazor.FileReader;
@@ -46,7 +46,7 @@ namespace FoxIDs.Client.Pages
                 var riskPasswordInfo = await RiskPasswordService.GetRiskPasswordInfoAsync();
                 uploadRiskPassword.RiskPasswordCount = riskPasswordInfo?.RiskPasswordCount;
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

@@ -72,7 +72,7 @@ namespace FoxIDs.Client.Logic
             {
                 if (!tenanSession.Equals(tenantName, StringComparison.OrdinalIgnoreCase))
                 {
-                    await (authenticationStateProvider as OidcAuthenticationStateProvider).DeleteSessionAsync();
+                    await (authenticationStateProvider as OidcAuthenticationStateProvider).DeleteSessionAsync(true);
                     await sessionStorage.SetItemAsync(tenanSessionKey, tenantName);
                 }
             }

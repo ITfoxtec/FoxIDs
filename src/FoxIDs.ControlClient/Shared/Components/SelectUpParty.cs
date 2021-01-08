@@ -7,7 +7,6 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Collections.Generic;
-using System.Security.Authentication;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Shared.Components
@@ -48,7 +47,7 @@ namespace FoxIDs.Client.Shared.Components
             {
                 upPartyFilters = await UpPartyService.FilterUpPartyAsync(upPartyNamesFilterForm.Model.FilterName);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

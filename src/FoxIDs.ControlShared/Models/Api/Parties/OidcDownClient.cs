@@ -48,11 +48,11 @@ namespace FoxIDs.Models.Api
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenLifetimeMax)]
         [Display(Name = "Refresh token lifetime in seconds")]
-        public int? RefreshTokenLifetime { get; set; } = 2160;
+        public int? RefreshTokenLifetime { get; set; } = 21600;
 
         [Range(Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMin, Constants.Models.OAuthDownParty.Client.RefreshTokenAbsoluteLifetimeMax)]
         [Display(Name = "Refresh token absolute lifetime in seconds")]
-        public int? RefreshTokenAbsoluteLifetime { get; set; } = 10080;
+        public int? RefreshTokenAbsoluteLifetime { get; set; } = 100800;
 
         [Display(Name = "Only use refresh token one time")]
         public bool? RefreshTokenUseOneTime { get; set; }

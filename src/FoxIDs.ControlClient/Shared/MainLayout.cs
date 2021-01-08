@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System;
-using System.Security.Authentication;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
@@ -238,7 +237,7 @@ namespace FoxIDs.Client.Shared
                 await LoadSelectTrackAsync();
                 selectTrackModal.Show();
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -263,7 +262,7 @@ namespace FoxIDs.Client.Shared
                 {
                     await SelectTrackAsync(await TrackService.GetTrackAsync(Constants.Routes.MasterTrackName));
                 }
-                catch (AuthenticationException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -282,7 +281,7 @@ namespace FoxIDs.Client.Shared
             {
                 selectTrackTasks = await TrackService.FilterTrackAsync(null);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Security.Authentication;
+using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
@@ -67,7 +67,7 @@ namespace FoxIDs.Client.Pages
             {
                 SetGeneralDownParties(await DownPartyService.FilterDownPartyAsync(null));
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -197,7 +197,7 @@ namespace FoxIDs.Client.Pages
                         }
                     }));
                 }
-                catch (AuthenticationException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -253,7 +253,7 @@ namespace FoxIDs.Client.Pages
                         }
                     }));
                 }
-                catch (AuthenticationException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -296,7 +296,7 @@ namespace FoxIDs.Client.Pages
                         }
                     }));
                 }
-                catch (AuthenticationException)
+                catch (TokenUnavailableException)
                 {
                     await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
                 }
@@ -481,7 +481,7 @@ namespace FoxIDs.Client.Pages
                 await DownPartyService.DeleteOidcDownPartyAsync(generalOidcDownParty.Name);
                 downParties.Remove(generalOidcDownParty);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -602,7 +602,7 @@ namespace FoxIDs.Client.Pages
                 await DownPartyService.DeleteOAuthDownPartyAsync(generalOAuthDownParty.Name);
                 downParties.Remove(generalOAuthDownParty);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }
@@ -727,7 +727,7 @@ namespace FoxIDs.Client.Pages
                 await DownPartyService.DeleteSamlDownPartyAsync(generalSamlDownParty.Name);
                 downParties.Remove(generalSamlDownParty);
             }
-            catch (AuthenticationException)
+            catch (TokenUnavailableException)
             {
                 await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
             }

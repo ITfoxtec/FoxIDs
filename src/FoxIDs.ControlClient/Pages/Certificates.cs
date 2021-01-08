@@ -82,10 +82,8 @@ namespace FoxIDs.Client.Pages
             certificateLoadError = null;
             try
             {
-                if (trackKey == null)
-                {
-                    trackKey = await TrackService.GetTrackKeyTypeAsync();
-                }
+                trackKey = await TrackService.GetTrackKeyTypeAsync();
+
                 if(trackKey.Type == TrackKeyType.Contained)
                 {
                     SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());

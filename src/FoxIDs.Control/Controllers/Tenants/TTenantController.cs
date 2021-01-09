@@ -71,7 +71,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
-                tenant.Name = tenant.Name?.ToLower();
+                tenant.Name = tenant.Name.ToLower();
                 tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
 
                 var mTenant = mapper.Map<Tenant>(tenant);

@@ -19,7 +19,7 @@ namespace FoxIDs.Logic
 
         public async Task CreateTrackDocumentAsync(Track mTrack)
         {
-            var certificate = await mTrack.Name.CreateSelfSignedCertificateByCnAsync();
+            var certificate = await (RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
             mTrack.Key = new TrackKey()
             {
                 Type = TrackKeyType.Contained,

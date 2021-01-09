@@ -63,12 +63,12 @@ namespace FoxIDs.Logic
 
         private string FailingLoginCountRadisKey(string email)
         {
-            return $"failing_login_count_{RouteBinding.TenantDashTrackName}_{email}";
+            return $"failing_login_count_{RouteBinding.TenantNameDotTrackName}_{email}";
         }
 
         private string FailingLoginLockedRadisKey(string email)
         {
-            return $"failing_login_locked_{RouteBinding.TenantDashTrackName}_{email}";
+            return $"failing_login_locked_{RouteBinding.TenantNameDotTrackName}_{email}";
         }
     }
 }

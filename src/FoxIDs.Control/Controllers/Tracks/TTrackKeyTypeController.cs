@@ -80,7 +80,7 @@ namespace FoxIDs.Controllers
                     {
                         case TrackKeyType.Contained:
                             mTrack.Key.Type = mTrackKey.Type;
-                            var certificate = await mTrack.Name.CreateSelfSignedCertificateByCnAsync();
+                            var certificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                             mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } };
                             if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                             {
@@ -123,9 +123,8 @@ namespace FoxIDs.Controllers
         {
             var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
 
-            var externalName = $"{RouteBinding.TenantDashTrackName}-{Guid.NewGuid()}";
-            var cn = RouteBinding.TenantDashTrackName;
-            var certificatePolicy = new CertificatePolicy("self", $"CN={cn}, O=FoxIDs")
+            var externalName = $"{RouteBinding.TenantNameDashTrackName}-{Guid.NewGuid()}";
+            var certificatePolicy = new CertificatePolicy("self", RouteBinding.GetCertificateSubject())
             {
                 Exportable = false,
                 ValidityInMonths = mTrack.KeyExternalValidityInMonths

@@ -110,7 +110,7 @@ namespace FoxIDs.Controllers
 
                 if (trackKeyRequest.CreateSelfSigned)
                 {
-                    var certificate = await RouteBinding.TrackName.CreateSelfSignedCertificateByCnAsync();
+                    var certificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                     mTrackKey.Key = await certificate.ToFTJsonWebKeyAsync(true);
                 }
 

@@ -229,7 +229,7 @@ namespace FoxIDs.Logic
 
         private string ConfirmationEmailWaitPeriodRadisKey(string email)
         {
-            return $"confirmation_email_wait_period_{RouteBinding.TenantDashTrackName}_{email}";
+            return $"confirmation_email_wait_period_{RouteBinding.TenantNameDotTrackName}_{email}";
         }
     }
 }

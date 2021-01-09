@@ -1,4 +1,6 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
@@ -9,9 +11,25 @@ namespace FoxIDs
     /// </summary>
     public static class X509Certificate2Extensions
     {
-        public static Task<X509Certificate2> CreateSelfSignedCertificateByCnAsync(this string cn)
+        public static string GetCertificateSubject(this RouteBinding routeBinding)
         {
-            return $"CN={cn}, O=FoxIDs".CreateSelfSignedCertificateAsync();
+            return (routeBinding.TenantName, routeBinding.TrackName).GetCertificateSubject();
+        }
+
+        private static string GetCertificateSubject(this (string tenantName, string trackName) subjectData)
+        {
+            return $"CN={subjectData.tenantName}{(subjectData.trackName.Equals("-", StringComparison.Ordinal) ? string.Empty : $"-{subjectData.trackName}")}, O=FoxIDs";
+        }
+
+        public static Task<X509Certificate2> CreateSelfSignedCertificateBySubjectAsync(this RouteBinding routeBinding)
+        {
+            return (routeBinding.TenantName, routeBinding.TrackName).CreateSelfSignedCertificateBySubjectAsync();
+        }
+
+        public static Task<X509Certificate2> CreateSelfSignedCertificateBySubjectAsync(this (string tenantName, string trackName) subjectData)
+        {
+            var subject = (subjectData.tenantName, subjectData.trackName).GetCertificateSubject();
+            return subject.CreateSelfSignedCertificateAsync();
         }
     }
 }

@@ -12,7 +12,7 @@ namespace FoxIDs.Client.Models.ViewModels
         {
             DefaultResourceScopeScopes = new List<string>();
             ResourceScopes = new List<OAuthDownResourceScope>();
-            Scopes = new List<OAuthDownScope>();
+            ScopesViewModel = new List<OAuthDownScopeViewModel>();
             Claims = new List<OAuthDownClaim>();
             ResponseTypes = new List<string>();
             ExistingSecrets = new List<OAuthClientSecretViewModel>();
@@ -23,6 +23,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(0, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public new List<OAuthDownResourceScope> ResourceScopes { get; set; }
+
+        [ValidateComplexType]
+        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
+        [Display(Name = "Scopes")]
+        public List<OAuthDownScopeViewModel> ScopesViewModel { get; set; }
 
         public bool DefaultResourceScope { get; set; } = true;
 

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
+using ITfoxtec.Identity.Saml2.Claims;
 
 namespace FoxIDs.Logic
 {
@@ -147,21 +148,22 @@ namespace FoxIDs.Logic
                 binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
                 logger.ScopeTrace("Up, Successful SAML Authn response.", triggerEvent: true);
 
-                var claims = saml2AuthnResponse.ClaimsIdentity?.Claims;
                 if (saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() <= 0)
                 {
                     throw new SamlRequestException("Empty claims collection.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
 
-                if (!claims.Any(c => c.Type == ClaimTypes.NameIdentifier))
+                var claims = new List<Claim>(saml2AuthnResponse.ClaimsIdentity.Claims.Where(c => c.Type != ClaimTypes.NameIdentifier));
+                var nameIdClaim = GetNameIdClaim(party.Name, saml2AuthnResponse.ClaimsIdentity.Claims);
+                if(nameIdClaim != null)
                 {
-                    claims = AddNameIdClaim(claims); 
+                    claims.Add(nameIdClaim);
                 }
 
-                claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
-                claims = ValidateClaims(party, claims);
+                var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+                var validClaims = ValidateClaims(party, transformedClaims);
 
-                return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, claims);
+                return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims);
             }
             catch (SamlRequestException ex)
             {
@@ -191,6 +193,49 @@ namespace FoxIDs.Logic
                 }
             }
             return claims;
+        }
+
+        private Claim GetNameIdClaim(string partyName, IEnumerable<Claim> claims)
+        {
+            var nameIdValue = string.Empty;
+            var nameIdFormat = string.Empty;
+
+            var nameIdClaim = claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault();
+            if(nameIdClaim != null)
+            {
+                nameIdValue = nameIdClaim.Value;
+                nameIdFormat = nameIdClaim.Properties.Where(p => p.Key == Saml2ClaimTypes.NameIdFormat).Select(p => p.Value).FirstOrDefault();
+            }
+            
+            if (nameIdValue.IsNullOrEmpty())
+            {
+                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Upn);
+            }
+            
+            if (nameIdValue.IsNullOrEmpty())
+            {
+                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Email);
+            }
+            
+            if (nameIdValue.IsNullOrEmpty())
+            {
+                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Name);
+            }
+
+            if (!nameIdValue.IsNullOrEmpty())
+            {
+                var partyNameIdValue = $"{partyName}|{nameIdValue}";
+                var claim = new Claim(ClaimTypes.NameIdentifier, partyNameIdValue);
+                if (!nameIdFormat.IsNullOrEmpty())
+                {
+                    claim.Properties.Add(Saml2ClaimTypes.NameIdFormat, nameIdFormat);
+                }
+                return claim;
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private List<Claim> AddNameIdClaim(IEnumerable<Claim> claims)

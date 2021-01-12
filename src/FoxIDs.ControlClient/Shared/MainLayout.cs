@@ -38,6 +38,7 @@ namespace FoxIDs.Client.Shared
         private IEnumerable<Track> selectTrackTasks;
         private Modal myProfileModal;
         private IEnumerable<Claim> myProfileClaims;
+        private Modal notAccessModal;
 
         [CascadingParameter]
         private Task<AuthenticationState> authenticationStateTask { get; set; }
@@ -72,12 +73,21 @@ namespace FoxIDs.Client.Shared
         protected override async Task OnParametersSetAsync()
         {
             var user = (await authenticationStateTask).User;
-            if (user.Identity.IsAuthenticated)
+            if (user.Identity.IsAuthenticated && user.IsInRole(Constants.ControlApi.Role.TenantAdmin))
             {
                 await ShowSelectTrackModalAsync();
                 myProfileClaims = user.Claims;
             }
+            else if(notAccessModal != null)
+            {
+                notAccessModal.Show();
+            }
             await base.OnParametersSetAsync();
+        }
+
+        private async Task LogoutAsync()
+        {
+            await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLogoutAsync();
         }
 
         private void ShowCreateTenantModal()
@@ -246,7 +256,6 @@ namespace FoxIDs.Client.Shared
                 deleteTrackError = ex.Message;
             }
         }
-
 
         private async Task ShowSelectTrackModalAsync()
         {

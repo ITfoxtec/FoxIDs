@@ -188,7 +188,7 @@ namespace FoxIDs.Logic
 
         private List<OidcDownClaim> GetControlClientClaims()
         {
-            return new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Role } };
+            return new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Role, InIdToken = true } };
         }
 
         private IEnumerable<string> GetControlClientRedirectUris(string tenantName, string baseUrl)

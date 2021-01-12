@@ -5,6 +5,7 @@ namespace FoxIDs.Models
 {
     public class PartyDataElement : DataElement
     {
+        [Required]
         [MaxLength(Constants.Models.Party.IdLength)]
         [RegularExpression(Constants.Models.Party.IdRegExPattern)]
         [JsonProperty(PropertyName = "id")]

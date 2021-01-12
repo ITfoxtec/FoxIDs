@@ -185,6 +185,8 @@ namespace FoxIDs.Client.Pages
                             {
                                 afterMap.Client.DefaultResourceScope = false;
                             }
+
+                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OidcDownScopeViewModel>>();
                         }
 
                         if (afterMap.Resource == null)
@@ -241,6 +243,8 @@ namespace FoxIDs.Client.Pages
                             {
                                 afterMap.Client.DefaultResourceScope = false;
                             }
+
+                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OAuthDownScopeViewModel>>();
                         }
 
                         if (afterMap.Resource == null)
@@ -370,17 +374,17 @@ namespace FoxIDs.Client.Pages
 
                 model.Client.ResponseTypes.Add("code");
 
-                model.Client.Scopes.Add(new OidcDownScope { Scope = "offline_access" });
-                model.Client.Scopes.Add(new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim> 
+                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "offline_access" });
+                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim> 
                 {
                     new OidcDownClaim { Claim = "name", InIdToken = true }, new OidcDownClaim { Claim = "given_name", InIdToken = true }, new OidcDownClaim { Claim = "middle_name", InIdToken = true }, new OidcDownClaim { Claim = "family_name", InIdToken = true }, 
                     new OidcDownClaim { Claim = "nickname", InIdToken = false }, new OidcDownClaim { Claim = "preferred_username", InIdToken = false }, 
                     new OidcDownClaim { Claim = "birthdate", InIdToken = false }, new OidcDownClaim { Claim = "gender", InIdToken = false }, new OidcDownClaim { Claim = "picture", InIdToken = false }, new OidcDownClaim { Claim = "profile", InIdToken = false }, 
                     new OidcDownClaim { Claim = "website", InIdToken = false }, new OidcDownClaim { Claim = "locale", InIdToken = true }, new OidcDownClaim { Claim = "zoneinfo", InIdToken = false }, new OidcDownClaim { Claim = "updated_at", InIdToken = false }
                 } });
-                model.Client.Scopes.Add(new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "email", InIdToken = true }, new OidcDownClaim { Claim = "email_verified", InIdToken = false } } });
-                model.Client.Scopes.Add(new OidcDownScope { Scope = "address", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "address", InIdToken = true } } });
-                model.Client.Scopes.Add(new OidcDownScope { Scope = "phone", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "phone_number", InIdToken = true }, new OidcDownClaim { Claim = "phone_number_verified", InIdToken = false } } });
+                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "email", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "email", InIdToken = true }, new OidcDownClaim { Claim = "email_verified", InIdToken = false } } });
+                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "address", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "address", InIdToken = true } } });
+                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "phone", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "phone_number", InIdToken = true }, new OidcDownClaim { Claim = "phone_number_verified", InIdToken = false } } });
             }
         }
 
@@ -388,14 +392,14 @@ namespace FoxIDs.Client.Pages
 
         private void OnOidcDownPartyResourceTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
 
-        private void AddOidcScope(MouseEventArgs e, List<OidcDownScope> scopes)
+        private void AddOidcScope(MouseEventArgs e, List<OidcDownScopeViewModel> scopesViewModel)
         {
-            scopes.Add(new OidcDownScope());
+            scopesViewModel.Add(new OidcDownScopeViewModel { ShowVoluntaryClaims = true });
         }
 
-        private void RemoveOidcScope(MouseEventArgs e, List<OidcDownScope> scopes, OidcDownScope removeScope)
+        private void RemoveOidcScope(MouseEventArgs e, List<OidcDownScopeViewModel> scopesViewModel, OidcDownScopeViewModel removeScope)
         {
-            scopes.Remove(removeScope);
+            scopesViewModel.Remove(removeScope);
         }
 
         private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, OidcDownScope scope)
@@ -435,6 +439,10 @@ namespace FoxIDs.Client.Pages
                     if (!(afterMap.Resource?.Scopes?.Count > 0))
                     {
                         afterMap.Resource = null;
+                    }
+                    if(generalOidcDownParty.Form.Model.Client?.ScopesViewModel?.Count() > 0)
+                    {
+                        afterMap.Client.Scopes = generalOidcDownParty.Form.Model.Client.ScopesViewModel.Map<List<OidcDownScope>>();
                     }
                 });            
 
@@ -502,7 +510,7 @@ namespace FoxIDs.Client.Pages
 
                 model.Client.ResponseTypes.Add("code");
 
-                model.Client.Scopes.Add(new OAuthDownScope { Scope = "offline_access" });
+                model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = "offline_access" });
             }
         }
 
@@ -510,14 +518,14 @@ namespace FoxIDs.Client.Pages
 
         private void OnOAuthDownPartyResourceTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
 
-        private void AddOAuthScope(MouseEventArgs e, List<OAuthDownScope> scopes)
+        private void AddOAuthScope(MouseEventArgs e, List<OAuthDownScopeViewModel> scopesViewModel)
         {
-            scopes.Add(new OAuthDownScope());
+            scopesViewModel.Add(new OAuthDownScopeViewModel { ShowVoluntaryClaims = true });
         }
 
-        private void RemoveOAuthScope(MouseEventArgs e, List<OAuthDownScope> scopes, OAuthDownScope removeScope)
+        private void RemoveOAuthScope(MouseEventArgs e, List<OAuthDownScopeViewModel> scopesViewModel, OAuthDownScopeViewModel removeScope)
         {
-            scopes.Remove(removeScope);
+            scopesViewModel.Remove(removeScope);
         }
 
         private void AddOAuthScopeVoluntaryClaim(MouseEventArgs e, OAuthDownScope scope)
@@ -557,6 +565,10 @@ namespace FoxIDs.Client.Pages
                     if (!(afterMap.Resource?.Scopes?.Count > 0))
                     {
                         afterMap.Resource = null;
+                    }
+                    if (generalOAuthDownParty.Form.Model.Client?.ScopesViewModel?.Count() > 0)
+                    {
+                        afterMap.Client.Scopes = generalOAuthDownParty.Form.Model.Client.ScopesViewModel.Map<List<OAuthDownScope>>();
                     }
                 });
 

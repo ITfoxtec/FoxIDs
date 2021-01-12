@@ -349,6 +349,10 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                if (!loginUpParty.EnableCreateUser)
+                {
+                    throw new InvalidOperationException("Create user not enabled.");
+                }
 
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 if (session != null)
@@ -374,6 +378,10 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                if (!loginUpParty.EnableCreateUser)
+                {
+                    throw new InvalidOperationException("Create user not enabled.");
+                }
 
                 Func<IActionResult> viewError = () =>
                 {

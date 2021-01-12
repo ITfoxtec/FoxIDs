@@ -266,6 +266,19 @@
                 </ul>
             </div>
         </Modal>
+
+        <Modal @ref="notAccessModal" Title="Not access" DisableClose="true">
+            <div class="modal-body">
+                <div class="alert alert-danger" role="alert">
+                    You do not have access.
+                </div>
+                <div class="row">
+                    <div class="col text-center">
+                        <button class="btn btn-secondary" @onclick="LogoutAsync">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </Modal>
     </Authorized>
 </AuthorizeView>
 

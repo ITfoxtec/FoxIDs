@@ -38,10 +38,10 @@ namespace FoxIDs.Controllers
 
                 var verified = await accountActionLogic.VerifyConfirmationAsync();
 
-                var upParty = await tenantRepository.GetAsync<UiUpPartyData>(Sequence.UiUpPartyId);
+                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 return View(new ConfirmationViewModel
                 {
-                    CssStyle = upParty.CssStyle,
+                    CssStyle = uiLoginUpParty.CssStyle,
                     Verified = verified
                 });
             }
@@ -57,11 +57,16 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace("Start forgot password.");
 
-                var uiUpParty = await tenantRepository.GetAsync<UiUpPartyData>(Sequence.UiUpPartyId);
+                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                if (uiLoginUpParty.DisableResetPassword)
+                {
+                    throw new InvalidOperationException("Reset password not enabled.");
+                }
+
                 return View(new ForgotPasswordViewModel
                 {
                     SequenceString = SequenceString,
-                    CssStyle = uiUpParty.CssStyle,
+                    CssStyle = uiLoginUpParty.CssStyle,
                     Receipt = false
                 });
             }
@@ -81,10 +86,15 @@ namespace FoxIDs.Controllers
 
                 await accountActionLogic.SendResetPasswordEmailAsync(forgotPassword.Email);
 
-                var uiUpParty = await tenantRepository.GetAsync<UiUpPartyData>(Sequence.UiUpPartyId);
+                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                if (uiLoginUpParty.DisableResetPassword)
+                {
+                    throw new InvalidOperationException("Reset password not enabled.");
+                }
+
                 return View(new ForgotPasswordViewModel
                 {
-                    CssStyle = uiUpParty.CssStyle,
+                    CssStyle = uiLoginUpParty.CssStyle,
                     Receipt = true
                 });
             }
@@ -102,10 +112,15 @@ namespace FoxIDs.Controllers
 
                 (var verified, _) = await accountActionLogic.VerifyResetPasswordAsync();
 
-                var uiUpParty = await tenantRepository.GetAsync<UiUpPartyData>(Sequence.UiUpPartyId);
+                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                if (uiLoginUpParty.DisableResetPassword)
+                {
+                    throw new InvalidOperationException("Reset password not enabled.");
+                }
+
                 return View(new ResetPasswordViewModel
                 {
-                    CssStyle = uiUpParty.CssStyle,
+                    CssStyle = uiLoginUpParty.CssStyle,
                     Verified = verified,
                     Receipt = false
                 });
@@ -126,10 +141,15 @@ namespace FoxIDs.Controllers
 
                 (var verified, var user) = await accountActionLogic.VerifyResetPasswordAsync();
 
-                var uiUpParty = await tenantRepository.GetAsync<UiUpPartyData>(Sequence.UiUpPartyId);
+                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                if (uiLoginUpParty.DisableResetPassword)
+                {
+                    throw new InvalidOperationException("Reset password not enabled.");
+                }
+
                 Func<bool, IActionResult> viewResponse = (receipt) =>
                 {
-                    resetPassword.CssStyle = uiUpParty.CssStyle;
+                    resetPassword.CssStyle = uiLoginUpParty.CssStyle;
                     resetPassword.Verified = verified;
                     resetPassword.Receipt = receipt;
                     return View(resetPassword);

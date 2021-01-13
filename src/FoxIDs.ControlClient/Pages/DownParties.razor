@@ -182,20 +182,20 @@
                                                                             <div class="col-3">
                                                                                 @if (includeLabel)
                                                                                 {
-                                                                                <div class="active-group active pb-0 mb-0">
-                                                                                    @if (scopeItem.ShowVoluntaryClaims)
-                                                                                    {
-                                                                                        <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-                                                                                    }
-                                                                                    else
-                                                                                    {
-                                                                                        <div class="card">
-                                                                                            <div class="card-body px-3 py-2">
+                                                                                    <div class="active-group active pb-0 mb-0">
+                                                                                        @if (scopeItem.ShowVoluntaryClaims)
+                                                                                        {
+                                                                                            <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                                        }
+                                                                                        else
+                                                                                        {
+                                                                                            <div class="card">
+                                                                                                <div class="card-body px-3 py-2">
+                                                                                                </div>
                                                                                             </div>
-                                                                                        </div>
-                                                                                    }
-                                                                                    <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
-                                                                                </div>
+                                                                                        }
+                                                                                        <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
+                                                                                    </div>
                                                                                 }
                                                                                 else if (scopeItem.ShowVoluntaryClaims)
                                                                                 {
@@ -234,7 +234,10 @@
                                                                     }
                                                                     <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
                                                                 }
-                                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                @if (scopeItem.ShowVoluntaryClaims)
+                                                                {
+                                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                }
                                                             </div>
                                                         </li>
                                                     }
@@ -474,7 +477,7 @@
                                                                                 <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
                                                                             </div>
                                                                             <div class="col-1 p-0">
-                                                                                @if (scopeItem.ShowVoluntaryClaims) 
+                                                                                @if (scopeItem.ShowVoluntaryClaims)
                                                                                 {
                                                                                     @if (includeLabel)
                                                                                     {
@@ -505,7 +508,10 @@
                                                                     }
                                                                     <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
                                                                 }
-                                                                <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                @if (scopeItem.ShowVoluntaryClaims)
+                                                                {
+                                                                    <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOAuthScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                                                }
                                                             </div>
                                                         </li>
                                                     }

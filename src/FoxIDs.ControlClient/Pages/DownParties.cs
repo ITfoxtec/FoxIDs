@@ -186,7 +186,7 @@ namespace FoxIDs.Client.Pages
                                 afterMap.Client.DefaultResourceScope = false;
                             }
 
-                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OidcDownScopeViewModel>>();
+                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OidcDownScopeViewModel>>() ?? new List<OidcDownScopeViewModel>();
                         }
 
                         if (afterMap.Resource == null)
@@ -244,7 +244,7 @@ namespace FoxIDs.Client.Pages
                                 afterMap.Client.DefaultResourceScope = false;
                             }
 
-                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OAuthDownScopeViewModel>>();
+                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OAuthDownScopeViewModel>>() ?? new List<OAuthDownScopeViewModel>();
                         }
 
                         if (afterMap.Resource == null)

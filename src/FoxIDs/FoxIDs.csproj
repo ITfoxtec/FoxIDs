@@ -47,8 +47,5 @@
     <Content Update="Views\Login\LoggedIn.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
-    <Content Update="Views\Shared\_Layout.cshtml">
-      <Pack>$(IncludeRazorContentInPack)</Pack>
-    </Content>
   </ItemGroup>
 </Project>

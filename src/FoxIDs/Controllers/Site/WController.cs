@@ -31,13 +31,7 @@ namespace FoxIDs.Controllers
 
         public IActionResult Index()
         {
-            //TODO create info web page
-            return Content("<html><body><h1>FoxIDs</h1></body></html>", "text/html");
-            //if (environment.IsDevelopment())
-            //{
-            //    return Content("<html><body>FoxIDs do not redirect to website in development mode.</body></html>", "text/html");
-            //}
-            //return Redirect(!settings.WebsiteUrl.IsNullOrEmpty() ? settings.WebsiteUrl : $"https://www.{Request.Host.ToUriComponent()}"); 
+            return View();
         }
         
         public async Task<IActionResult> Error()

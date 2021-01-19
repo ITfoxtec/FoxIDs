@@ -1,12 +1,18 @@
 # FoxIDs
 
-FoxIDs is an open source identity as a service (IDaaS) supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
+FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and convention between the standards.
 
 > STATUS: I'm currently working on the documentation and the first FoxIDs beta version.
 
 FoxIDs consist of two services:
+
 - Identity service called FoxIDs handling user login and all other security traffic.
 - Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
+
+Deployment or as a service:
+
+- FoxIDs is a cloud service ready to be [deployed](https://www.itfoxtec.com/FoxIDs/deployment) in you Azure tenant.
+- Or you can use FoxIDs as an identity as a service (IDaaS) at [https://FoxIDs.com](https://foxids.com).
 
 FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 

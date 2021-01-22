@@ -63,8 +63,8 @@ The FoxIDs and FoxIDs Control domains can be customized.
 
 > Important: change the primary domain before adding tenants.
 
-FoxIDs default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom a domain like e.g. `https://foxidsxxxx.com` or `https://foxids.xxxx.com`  
-FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a domain like e.g. `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`
+FoxIDs default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom a domain like e.g., `https://foxidsxxxx.com` or `https://foxids.xxxx.com`  
+FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a domain like e.g., `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`
 
 Custom domains are configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link. The FoxIDs site support one primary domain and multiple secondary domains, where the FoxIDs Control only support one primary domain.
 
@@ -81,3 +81,7 @@ Additionally primary custom domain configuration:
 
 - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs sites primary custom domains.
 - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites primary custom domains.
+
+## Specify default page
+
+An alternative default page can be configured for the FoxIDs site using the `Settings:WebsiteUrl` setting. If configured a full URL is required like e.g., `https://www.foxidsxxxx.com`.

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using System;
 using Microsoft.Extensions.Localization;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -31,6 +32,11 @@ namespace FoxIDs.Controllers
 
         public IActionResult Index()
         {
+            if(!settings.WebsiteUrl.IsNullOrEmpty())
+            {
+                return Redirect(settings.WebsiteUrl);
+            }
+
             return View();
         }
         

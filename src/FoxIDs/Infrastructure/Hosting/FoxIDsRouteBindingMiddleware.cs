@@ -49,7 +49,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 return null;
             }
-            else if (route.Length >= 2)
+            else if (route.Length > 2)
             {
                 return new Track.IdKey
                 {
@@ -57,9 +57,13 @@ namespace FoxIDs.Infrastructure.Hosting
                     TrackName = route[1].ToLower()
                 };
             }
+            else if (route.Length == 2)
+            {
+                throw new NotSupportedException($"FoxIDs route '{string.Join('/', route)}' without an action is not supported.");
+            }
             else
             {
-                throw new NotSupportedException($"FoxIDs route '{string.Join('/', route)}' not supported.");
+                throw new NotSupportedException($"FoxIDs route '{string.Join('/', route)}' is not supported.");
             }
         }
 

@@ -10,7 +10,7 @@
     "outputFileName": "wwwroot/js/site1.min.js",
     "inputFiles": [
       "node_modules/jquery/dist/jquery.min.js",
-      "node_modules/bootstrap/dist/js/bootstrap.min.js",
+      "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
       "wwwroot/js/site.js"
     ],
     "minify": {
@@ -32,9 +32,9 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.js",
+    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
     "inputFiles": [
-      "node_modules/bootstrap/dist/js/bootstrap.js"
+      "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
     ]
   },
   {

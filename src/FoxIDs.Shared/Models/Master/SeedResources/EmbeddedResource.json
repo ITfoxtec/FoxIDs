@@ -105,7 +105,7 @@
       "id": 25
     },
     {
-      "name": "An unknown error has occurred. Please try again.",
+      "name": "An error has occurred. Please try again.",
       "id": 26
     },
     {
@@ -496,7 +496,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "An unknown error has occurred. Please try again."
+          "value": "An error has occurred. Please try again."
         }
       ]
     },

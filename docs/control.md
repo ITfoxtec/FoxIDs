@@ -11,7 +11,7 @@ If FoxIDs is [deployed](development.md) in your one Azure tenant you get access 
 
 ![Configure tenants](images/configure-tenant.png)
 
-> If you use FoxIDs at [https://FoxIDs.com](https://foxids.com). Your one tenant will be pre created on registration.
+> If you use FoxIDs at [FoxIDs.com](https://foxids.com). Your one tenant will be pre created on registration.
 
 A tenant contains a master track, from where the entire tenant is configured. The master track contains a user repository and on creation only one administrator user.
 

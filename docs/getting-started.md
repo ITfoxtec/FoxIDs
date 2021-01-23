@@ -1,5 +1,5 @@
 # Getting Started
-FoxIDs support either being installed in your one Azure tenant or you can use FoxIDs at [https://FoxIDs.com](https://foxids.com).
+FoxIDs support either being installed in your one Azure tenant or you can use FoxIDs at [FoxIDs.com](https://foxids.com).
 
 ## FoxIDs in your Azure tenant
 
@@ -13,7 +13,7 @@ FoxIDs support either being installed in your one Azure tenant or you can use Fo
 
 ## Register at FoxIDs.com 
 
-1. Register at [https://FoxIDs.com](https://foxids.com), where you get access to your one tenant.
+1. Register at [FoxIDs.com](https://foxids.com), where you get access to your one tenant.
 2. Optionally run the [samples](samples.md) in the pre-configured [sample track](samples.md#foxidscom-test-track-for-samples).
 3. Configure the tenant in [FoxIDs Control Client](control.md#foxids-control-client).
 

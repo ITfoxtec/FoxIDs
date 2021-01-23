@@ -1,7 +1,8 @@
-﻿using FoxIDs.Logic;
-using FoxIDs.Repository;
+﻿using FoxIDs.Repository;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
+using System;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -25,6 +26,14 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services)
         {
             IdentityModelEventSource.ShowPII = true;
+
+            services.AddHsts(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
+
+            services.AddCors();
 
             services.AddSingleton<TelemetryLogger>();
             services.AddSingleton<TenantTrackLogger>();

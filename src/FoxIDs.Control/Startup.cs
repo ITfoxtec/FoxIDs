@@ -6,7 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Net.Http.Headers;
-using System;
 using System.Text.Json.Serialization;
 
 namespace FoxIDs
@@ -36,14 +35,6 @@ namespace FoxIDs
             services.AddLogic();
 
             services.AddAuthenticationAndAuthorization(settings);
-
-            services.AddHsts(options =>
-            {
-                options.IncludeSubDomains = true;
-                options.MaxAge = TimeSpan.FromDays(365);
-            });
-
-            services.AddCors();
 
             services.AddControllersWithViews()
                 .AddJsonOptions(options =>

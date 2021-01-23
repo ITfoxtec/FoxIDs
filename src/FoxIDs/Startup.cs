@@ -1,5 +1,4 @@
-﻿using System;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Hosting;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Builder;
@@ -33,14 +32,6 @@ namespace FoxIDs
             services.AddInfrastructure(settings, CurrentEnvironment);
             services.AddRepository();
             services.AddLogic();
-
-            services.AddHsts(options =>
-            {
-                options.IncludeSubDomains = true;
-                options.MaxAge = TimeSpan.FromDays(365);
-            });
-
-            services.AddCors();
 
             services.AddControllersWithViews()
                 .AddMvcLocalization()

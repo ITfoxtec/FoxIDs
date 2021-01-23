@@ -11,12 +11,12 @@ FoxIDs consist of two services:
 
 Deployment or as a service:
 
-- FoxIDs is a cloud service ready to be [deployed](https://www.itfoxtec.com/FoxIDs/deployment) in you Azure tenant.
+- FoxIDs is a cloud service ready to be [deployed](https://www.foxids.com/docs/deployment) in you Azure tenant.
 - Or you can use FoxIDs as an identity as a service (IDaaS) at [https://FoxIDs.com](https://foxids.com).
 
 FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
 
-> For [Getting started](https://www.itfoxtec.com/FoxIDs/getting-started) guide and more documentation please see the [documentation](https://www.itfoxtec.com/FoxIDs).
+> For [Getting started](https://www.foxids.com/docs/getting-started) guide and more documentation please see the [documentation](https://www.foxids.com/docs).
 
 > FoxIDs is .NET 5.0 and the Control FoxIDs Control Client is Blazor .NET Standard 2.1.
 

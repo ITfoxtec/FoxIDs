@@ -66,12 +66,12 @@ The samples can be configured in a FoxIDs track with the sample seed tool or man
 
 > The sample seed tool is configured in the `appsettings.json` file.
 
-Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configuration. They can be added by updating the instance names `foxidsxxxx` and `foxidsconsolxxxx` or by configuring custom domains. Or if you are running FoxIDs locally in Visual Studio by configuring FoxIDs localhost `https://localhost:44330/` and FoxIDs Control API localhost `https://localhost:44331/`.
+Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configuration. They can be added by updating the instance names `https://foxids.com` and `https://control.foxids.com/api`. If you are running FoxIDs locally in Visual Studio the endpoints is configured to FoxIDs localhost `https://localhost:44330/` and FoxIDs Control API localhost `https://localhost:44331/`.
 
 ```json
 "SeedSettings": {
-    "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net", 
-    "FoxIDsConsolApiEndpoint": "https://foxidsconsolxxxx.azurewebsites.net/api"
+    "FoxIDsEndpoint": "https://foxids.com", 
+    "FoxIDsConsolApiEndpoint": "https://control.foxids.com/api"
 }
 ```
 
@@ -81,7 +81,8 @@ Create the sample seed OAuth 2.0 client in the FoxIDs Control Client:
 2. Set the client id to `sample_seed`, redirect Uri to `uri:sample:seed:client`) and response type to `token`. Add a client secret and Remember the secret.
 3. In the resource and scopes section. Remove the default resource scope and give the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
 4. In the scopes section. Remove all scopes.
-5. Click show advanced settings. In the claims section. Granted the client the administrator role `foxids:tenant.admin`. 
+5. Click show advanced settings. 
+6. In the claims section. Granted the client the administrator role `foxids:tenant.admin`. 
 
 The sample seed client is thereby granted access to update the tenant.
 

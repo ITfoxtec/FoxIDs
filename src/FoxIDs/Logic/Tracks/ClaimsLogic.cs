@@ -85,10 +85,10 @@ namespace FoxIDs.Logic
 
             if (onlyIdTokenClaims)
             {
-                claims = claims.Cast<OidcDownClaim>().Where(c => c.InIdToken).Cast<TClaim>();
+                claims = claims?.Cast<OidcDownClaim>().Where(c => c.InIdToken).Cast<TClaim>();
             }
 
-            return claims.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
+            return claims?.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
         }
 
         public Task<List<Claim>> FromJwtToSamlClaimsAsync(IEnumerable<Claim> jwtClaims)

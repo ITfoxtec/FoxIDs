@@ -16,11 +16,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public OidcDiscoveryLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
+            this.trackIssuerLogic = trackIssuerLogic;
         }
 
         public async Task<OidcDiscovery> OpenidConfiguration(string partyId)
@@ -30,7 +32,7 @@ namespace FoxIDs.Logic
 
             var oidcDiscovery = new OidcDiscovery
             {
-                Issuer = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName),
+                Issuer = trackIssuerLogic.GetIssuer(),
                 AuthorizationEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Authorize),
                 TokenEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Token),
                 UserInfoEndpoint = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.UserInfo),

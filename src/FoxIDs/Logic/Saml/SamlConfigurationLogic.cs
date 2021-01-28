@@ -3,8 +3,6 @@ using ITfoxtec.Identity.Saml2;
 using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using System;
-using System.Security.Cryptography.X509Certificates;
-using System.ServiceModel.Security;
 using UrlCombineLib;
 
 namespace FoxIDs.Logic
@@ -12,10 +10,12 @@ namespace FoxIDs.Logic
     public class Saml2ConfigurationLogic : LogicBase
     {
         private readonly TrackKeyLogic trackKeyLogic;
+        private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public Saml2ConfigurationLogic(TrackKeyLogic trackKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public Saml2ConfigurationLogic(TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.trackKeyLogic = trackKeyLogic;
+            this.trackIssuerLogic = trackIssuerLogic;
         }
 
         public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningCertificate = false)
@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                samlConfig.Issuer = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName);
+                samlConfig.Issuer = trackIssuerLogic.GetIssuer();
             }
 
             samlConfig.AllowedAudienceUris.Add(samlConfig.Issuer);
@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                samlConfig.Issuer = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName);
+                samlConfig.Issuer = trackIssuerLogic.GetIssuer();
             }
 
             if (party.Keys?.Count > 0)

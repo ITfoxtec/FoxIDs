@@ -12,9 +12,7 @@ FoxIDs consist of two services:
 Deployment or as a service:
 
 - FoxIDs is a cloud service ready to be [deployed](https://www.foxids.com/docs/deployment) in you Azure tenant.
-- Or you can use FoxIDs as an identity as a service (IDaaS) at [https://FoxIDs.com](https://foxids.com).
-
-FoxIDs is a cloud service ready to be deployed in you Azure tenant. In the future, it will also be possible to use FoxIDs on [https://FoxIDs.com](https://foxids.com) and [https://Control.FoxIDs.com](https://control.foxids.com) for at small transaction fee.
+- Or you can use FoxIDs as an identity as a service (IDaaS) at [FoxIDs.com](https://foxids.com).
 
 > For [Getting started](https://www.foxids.com/docs/getting-started) guide and more documentation please see the [documentation](https://www.foxids.com/docs).
 

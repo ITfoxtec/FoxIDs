@@ -17,13 +17,15 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly TrackKeyLogic trackKeyLogic;
+        private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ClaimsLogic<TClient, TScope, TClaim> claimsLogic;
         private readonly OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic;
 
-        public JwtLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, ClaimsLogic<TClient, TScope, TClaim> claimsLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public JwtLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsLogic<TClient, TScope, TClaim> claimsLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;
+            this.trackIssuerLogic = trackIssuerLogic;
             this.claimsLogic = claimsLogic;
             this.oauthResourceScopeLogic = oauthResourceScopeLogic;
         }
@@ -61,7 +63,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
+            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), trackIssuerLogic.GetIssuer(), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
             return await token.ToJwtString();
         }
 
@@ -89,7 +91,7 @@ namespace FoxIDs.Logic
                 accessTokenClaims.AddRange(clientClaims);
             }
 
-            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), Issuer(RouteBinding), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
+            var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), trackIssuerLogic.GetIssuer(), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }
 
@@ -104,7 +106,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var claimsPrincipal, var securityToken) = await Task.FromResult(JwtHandler.ValidateToken(token, Issuer(RouteBinding), issuerSigningKeys, audience: client.ClientId, validateLifetime: validateLifetime));
+                (var claimsPrincipal, var securityToken) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(), issuerSigningKeys, audience: client.ClientId, validateLifetime: validateLifetime));
                 return claimsPrincipal;
             }
             catch (Exception ex)
@@ -125,7 +127,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var claimsPrincipal, var securityToken) = await Task.FromResult(JwtHandler.ValidateToken(token, Issuer(RouteBinding), issuerSigningKeys, validateAudience: validateAudience, validateLifetime: validateLifetime));
+                (var claimsPrincipal, var securityToken) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(), issuerSigningKeys, validateAudience: validateAudience, validateLifetime: validateLifetime));
                 return claimsPrincipal;
             }
             catch (Exception ex)
@@ -133,11 +135,6 @@ namespace FoxIDs.Logic
                 logger.Error(ex, $"JWT not valid. Route '{RouteBinding.Route}'.");
                 return null;
             }
-        }
-
-        private string Issuer(RouteBinding RouteBinding)
-        {
-            return UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName);
         }
     }
 }

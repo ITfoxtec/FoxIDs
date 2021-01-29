@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -43,7 +44,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (!RequirePkce && Secrets.Count() <= 0 && ExistingSecrets.Where(s => !s.Removed).Count() <= 0)
+            if (ResponseTypes.Contains(IdentityConstants.ResponseTypes.Code) && !RequirePkce && Secrets.Count() <= 0 && ExistingSecrets.Where(s => !s.Removed).Count() <= 0)
             {
                 results.Add(new ValidationResult($"The field Secrets must be between 1 and 10 if PKCE is not require.", new[] { nameof(Secrets) }));
             }

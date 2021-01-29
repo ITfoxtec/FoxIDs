@@ -2,7 +2,10 @@
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.MappingProfiles
@@ -108,6 +111,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)))
                 .ReverseMap();
             CreateMap<OAuthDownResource, Api.OAuthDownResource>()
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc)))
@@ -132,6 +136,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)))
                 .ReverseMap();
             CreateMap<OidcDownScope, Api.OidcDownScope>()
                 .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
@@ -143,6 +148,27 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n })));
+        }
+
+        private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)
+        {
+            var responseTypesResult = new List<string>();
+            foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()
+                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt))))
+            {
+                if(responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
+                {
+                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Invalid ResponseType '{responseType}'");
+                }
+                responseTypesResult.Add(responseType.ToSpaceList());
+            }
+
+            var duplicatedResponseType = responseTypesResult.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+            if (duplicatedResponseType != null)
+            {
+                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated ResponseType '{duplicatedResponseType}'");
+            }
+            return responseTypesResult;
         }
     }
 }

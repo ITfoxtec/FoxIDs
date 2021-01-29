@@ -33,6 +33,10 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IApplicationBuilder UseApiRouteBindingMiddleware(this IApplicationBuilder app)
         {
             return app.UseMiddleware<FoxIDsApiRouteBindingMiddleware>();
+        } 
+        public static IApplicationBuilder UseApiExceptionMiddleware(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<FoxIDsApiExceptionMiddleware>();
         }
     }
 }

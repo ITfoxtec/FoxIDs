@@ -66,6 +66,10 @@ namespace FoxIDs.Controllers
                     errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
                 }
             }
+            else
+            {
+                errorViewModel.TechnicalError = exception.Message;
+            }
 
             return View(errorViewModel);
         }

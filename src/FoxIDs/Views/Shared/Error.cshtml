@@ -1,4 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
+@using ITfoxtec.Identity 
 @inject IViewLocalizer Localizer
 @model ErrorViewModel
 
@@ -27,6 +28,10 @@ else
 </p>
 
 <p>
-    Tid: <code>@Model.CreateTime</code><br />
+    Time: <code>@Model.CreateTime</code><br />
     Request ID: <code>@Model.RequestId</code>
+    @if (!Model.TechnicalError.IsNullOrEmpty()) 
+    {
+        <br /><span>Technical error: <code>@Model.TechnicalError</code></span>
+    }
 </p>

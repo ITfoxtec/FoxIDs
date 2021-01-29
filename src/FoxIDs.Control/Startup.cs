@@ -69,6 +69,7 @@ namespace FoxIDs
                 });
 
                 app.UseRouting();
+                app.UseApiExceptionMiddleware();
                 #pragma warning disable ASP0001 // Authorization middleware is incorrectly configured.
                 app.UseAuthorization();
                 #pragma warning restore ASP0001 // Authorization middleware is incorrectly configured.

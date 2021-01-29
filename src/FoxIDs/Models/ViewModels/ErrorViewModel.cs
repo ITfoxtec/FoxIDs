@@ -12,6 +12,8 @@ namespace FoxIDs.Models.ViewModels
         public string ErrorTitle { get; set; }
         public string Error { get; set; }
 
+        public string TechnicalError { get; set; }
+
         public bool ShowErrorTitle => !ErrorTitle.IsNullOrWhiteSpace();
         public bool ShowError => !Error.IsNullOrWhiteSpace();
     }

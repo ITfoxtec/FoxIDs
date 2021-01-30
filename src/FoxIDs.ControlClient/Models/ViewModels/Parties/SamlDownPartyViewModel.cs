@@ -24,8 +24,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        [Display(Name = "Optional custom issuer (default auto generated)")]
-        public string IdSIssuer { get; set; }
+        [Display(Name = "Optional custom IdP issuer (default auto generated)")]
+        public string IdPIssuer { get; set; }
 
         [ValidateComplexType]
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]

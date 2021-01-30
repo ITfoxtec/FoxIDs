@@ -18,8 +18,11 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
+        /// <summary>
+        /// Optional custom IdP issuer (default auto generated).
+        /// </summary>
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        public string IdSIssuer { get; set; }
+        public string IdPIssuer { get; set; }
 
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> Claims { get; set; }

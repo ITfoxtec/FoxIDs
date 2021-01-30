@@ -15,8 +15,11 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Optional custom RP issuer (default auto generated).
+        /// </summary>
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        public string IdSIssuer { get; set; }
+        public string RpIssuer { get; set; }
 
         /// <summary>
         /// Default 20 days.

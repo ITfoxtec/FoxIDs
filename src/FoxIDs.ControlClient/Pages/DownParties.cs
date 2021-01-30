@@ -39,6 +39,9 @@ namespace FoxIDs.Client.Pages
         public DownPartyService DownPartyService { get; set; }
 
         [Inject]
+        public ControlClientSettingLogic ControlClientSettingLogic { get; set; }
+
+        [Inject]
         public ClientSettings ClientSettings { get; set; }
 
         [Parameter]
@@ -48,6 +51,7 @@ namespace FoxIDs.Client.Pages
         {
             upPartyHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/upparties";
             await base.OnInitializedAsync();
+            await ControlClientSettingLogic.InitLoadAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {

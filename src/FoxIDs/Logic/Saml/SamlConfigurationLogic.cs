@@ -21,9 +21,9 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            if (!party.IdSIssuer.IsNullOrEmpty())
+            if (!party.RpIssuer.IsNullOrEmpty())
             {
-                samlConfig.Issuer = party.IdSIssuer;
+                samlConfig.Issuer = party.RpIssuer;
             }
             else
             {
@@ -58,9 +58,9 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlDownConfig(SamlDownParty party, bool includeSigningCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            if (!party.IdSIssuer.IsNullOrEmpty())
+            if (!party.IdPIssuer.IsNullOrEmpty())
             {
-                samlConfig.Issuer = party.IdSIssuer;
+                samlConfig.Issuer = party.IdPIssuer;
             }
             else
             {

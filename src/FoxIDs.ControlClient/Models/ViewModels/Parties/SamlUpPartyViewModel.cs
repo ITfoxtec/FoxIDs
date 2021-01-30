@@ -19,8 +19,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Name { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        [Display(Name = "Optional custom issuer (default auto generated)")]
-        public string IdSIssuer { get; set; }
+        [Display(Name = "Optional custom RP issuer (default auto generated)")]
+        public string RpIssuer { get; set; }
 
         /// <summary>
         /// Default 20 days.

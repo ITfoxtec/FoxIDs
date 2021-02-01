@@ -21,9 +21,9 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            if (!party.RpIssuer.IsNullOrEmpty())
+            if (!party.SpIssuer.IsNullOrEmpty())
             {
-                samlConfig.Issuer = party.RpIssuer;
+                samlConfig.Issuer = party.SpIssuer;
             }
             else
             {

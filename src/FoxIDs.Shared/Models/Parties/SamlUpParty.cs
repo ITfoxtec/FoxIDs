@@ -16,8 +16,8 @@ namespace FoxIDs.Models
         }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        [JsonProperty(PropertyName = "rp_issuer")]
-        public string RpIssuer { get; set; }
+        [JsonProperty(PropertyName = "sp_issuer")]
+        public string SpIssuer { get; set; }
 
         [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
         [JsonProperty(PropertyName = "claim_transformations")]

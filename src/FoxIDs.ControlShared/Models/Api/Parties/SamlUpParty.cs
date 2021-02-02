@@ -16,10 +16,10 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         /// <summary>
-        /// Optional custom RP issuer (default auto generated).
+        /// Optional custom SP issuer (default auto generated).
         /// </summary>
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        public string RpIssuer { get; set; }
+        public string SpIssuer { get; set; }
 
         /// <summary>
         /// Default 20 days.

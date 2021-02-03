@@ -85,23 +85,29 @@
 
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
-                                        @if (oidcDownParty.ShowClientTab)
+                                        @if (oidcDownParty.EnableClientTab)
                                         {
-                                            <a class="nav-link active">OpenID Connect Client</a>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oidcDownParty.ShowClientTab = true)">OpenID Connect Client</button>
+                                            @if (oidcDownParty.ShowClientTab)
+                                            {
+                                                <a class="nav-link active">OpenID Connect Client</a>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-link nav-link" @onclick="@(() => oidcDownParty.ShowClientTab = true)">OpenID Connect Client</button>
+                                            }
                                         }
                                     </li>
                                     <li class="nav-item">
-                                        @if (oidcDownParty.ShowClientTab)
+                                        @if (oidcDownParty.EnableResourceTab)
                                         {
-                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oidcDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
-                                        }
-                                        else
-                                        {
-                                            <a class="nav-link active">OAuth 2.0 Resource</a>
+                                            @if (oidcDownParty.ShowClientTab)
+                                            {
+                                                <button type="button" class="btn btn-link nav-link" @onclick="@(() => oidcDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
+                                            }
+                                            else
+                                            {
+                                                <a class="nav-link active">OAuth 2.0 Resource</a>
+                                            }
                                         }
                                     </li>
                                 </ul>
@@ -112,7 +118,15 @@
                                         <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
                                         @if (!oidcDownParty.EnableClientTab)
                                         {
-                                            <i>Inactive</i>
+                                            @if (oidcDownParty.EnableResourceTab)
+                                            {
+                                                oidcDownParty.ShowClientTab = false;
+                                                StateHasChanged();
+                                            }
+                                            else
+                                            {
+                                                <i>Inactive</i>
+                                            }
                                         }
                                         @if (oidcDownParty.Form.Model.Client != null)
                                         {
@@ -305,7 +319,15 @@
                                         <ValidationMessage For="@(() => oidcDownParty.Form.Model.Resource)" />
                                         @if (!oidcDownParty.EnableResourceTab)
                                         {
-                                            <i>Inactive</i>
+                                            @if (oidcDownParty.EnableClientTab)
+                                            {
+                                                oidcDownParty.ShowClientTab = true;
+                                                StateHasChanged();
+                                            }
+                                            else
+                                            {
+                                                <i>Inactive</i>
+                                            }
                                         }
                                         @if (oidcDownParty.Form.Model.Resource != null)
                                         {
@@ -382,24 +404,29 @@
 
                                 <ul class="nav nav-tabs">
                                     <li class="nav-item">
-
-                                        @if (oauthDownParty.ShowClientTab)
+                                        @if (oauthDownParty.EnableClientTab)
                                         {
-                                            <a class="nav-link active">OAuth 2.0 Client</a>
-                                        }
-                                        else
-                                        {
-                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = true)">OAuth 2.0 Client</button>
+                                            @if (oauthDownParty.ShowClientTab)
+                                            {
+                                                <a class="nav-link active">OAuth 2.0 Client</a>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = true)">OAuth 2.0 Client</button>
+                                            }
                                         }
                                     </li>
                                     <li class="nav-item">
-                                        @if (oauthDownParty.ShowClientTab)
+                                        @if (oauthDownParty.EnableResourceTab)
                                         {
-                                            <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
-                                        }
-                                        else
-                                        {
-                                            <a class="nav-link active">OAuth 2.0 Resource</a>
+                                            @if (oauthDownParty.ShowClientTab)
+                                            {
+                                                <button type="button" class="btn btn-link nav-link" @onclick="@(() => oauthDownParty.ShowClientTab = false)">OAuth 2.0 Resource</button>
+                                            }
+                                            else
+                                            {
+                                                <a class="nav-link active">OAuth 2.0 Resource</a>
+                                            }
                                         }
                                     </li>
                                 </ul>
@@ -409,8 +436,16 @@
                                     {
                                         @if (!oauthDownParty.EnableClientTab)
                                         {
-                                            <i>Inactive</i>
-                                        }
+                                            @if (oauthDownParty.EnableResourceTab)
+                                            {
+                                                oauthDownParty.ShowClientTab = false;
+                                                StateHasChanged();
+                                            }
+                                            else
+                                            {
+                                                <i>Inactive</i>
+                                            }
+                                        } 
                                         @if (oauthDownParty.Form.Model.Client != null)
                                         {
                                             <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
@@ -426,7 +461,7 @@
 
                                             <div class="form-group active-group active">
                                                 <Label For="@(() => oauthDownParty.Form.Model.Client.ScopesViewModel)" class="label-control" />
-                                                @if(oauthDownParty.Form.Model.Client.ScopesViewModel.Count() <= 0)
+                                                @if (oauthDownParty.Form.Model.Client.ScopesViewModel.Count() <= 0)
                                                 {
                                                     <div class="card">
                                                         <div class="card-body px-3 py-2">
@@ -522,9 +557,9 @@
 
                                             @if (downParty.ShowAdvanced)
                                             {
-                                               <div class="form-group active-group active">
+                                                <div class="form-group active-group active">
                                                     <Label For="@(() => oauthDownParty.Form.Model.Client.Claims)" class="label-control" />
-                                                    @if(oauthDownParty.Form.Model.Client.Claims.Count() <= 0)
+                                                    @if (oauthDownParty.Form.Model.Client.Claims.Count() <= 0)
                                                     {
                                                         <div class="card">
                                                             <div class="card-body px-3 py-2">
@@ -569,7 +604,15 @@
                                     {
                                         @if (!oauthDownParty.EnableResourceTab)
                                         {
-                                            <i>Inactive</i>
+                                            @if (oauthDownParty.EnableClientTab)
+                                            {
+                                                oauthDownParty.ShowClientTab = true;
+                                                StateHasChanged();
+                                            }
+                                            else
+                                            {
+                                                <i>Inactive</i>
+                                            }
                                         }
                                         @if (oauthDownParty.Form.Model.Resource != null)
                                         {

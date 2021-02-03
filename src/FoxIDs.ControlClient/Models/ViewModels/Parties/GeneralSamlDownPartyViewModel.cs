@@ -22,5 +22,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<CertificateInfoViewModel> CertificateInfoList { get; set; } = new List<CertificateInfoViewModel>();
 
         public string CertificateFileStatus { get; set; } = DefaultCertificateFileStatus;
+
+        public bool ShowSamlTab { get; set; } = true;
+        public bool ShowClaimTransformTab { get; set; }
     }
 }

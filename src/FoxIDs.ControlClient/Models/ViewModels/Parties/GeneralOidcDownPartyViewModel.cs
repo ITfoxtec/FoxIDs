@@ -1,10 +1,9 @@
 ﻿using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
-using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class GeneralOidcDownPartyViewModel : GeneralDownPartyViewModel
+    public class GeneralOidcDownPartyViewModel : GeneralDownPartyViewModel, IGeneralOAuthDownPartyTabViewModel
     {
         public GeneralOidcDownPartyViewModel() : base(PartyTypes.Oidc)
         { }
@@ -21,5 +20,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool EnableResourceTab { get; set; } = false;
 
         public bool ShowClientTab { get; set; } = true;
+        public bool ShowResourceTab { get; set; }
+        public bool ShowClaimTransformTab { get; set; }
     }
 }

@@ -22,6 +22,7 @@ using System.Net.Http;
 using FoxIDs.Client.Models.Config;
 using ITfoxtec.Identity.Models;
 using System.Security.Claims;
+using FoxIDs.Client.Models;
 
 namespace FoxIDs.Client.Pages
 {
@@ -312,6 +313,47 @@ namespace FoxIDs.Client.Pages
                 {
                     downParty.Error = ex.Message;
                 }
+            }
+        }
+
+        private void ShowOAuthTab(IGeneralOAuthDownPartyTabViewModel downParty, OAuthTabTypes oauthTabTypes)
+        {
+            switch (oauthTabTypes)
+            {
+                case OAuthTabTypes.Client:
+                    downParty.ShowClientTab = true;
+                    downParty.ShowResourceTab = false;
+                    downParty.ShowClaimTransformTab = false;
+                    break;
+                case OAuthTabTypes.Resource:
+                    downParty.ShowClientTab = false;
+                    downParty.ShowResourceTab = true;
+                    downParty.ShowClaimTransformTab = false;
+                    break;
+                case OAuthTabTypes.ClaimsTransform:
+                    downParty.ShowClientTab = false;
+                    downParty.ShowResourceTab = false;
+                    downParty.ShowClaimTransformTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private void ShowSamlTab(GeneralSamlDownPartyViewModel downParty, SamlTabTypes samlTabTypes)
+        {
+            switch (samlTabTypes)
+            {
+                case SamlTabTypes.Saml:
+                    downParty.ShowSamlTab = true;
+                    downParty.ShowClaimTransformTab = false;
+                    break;
+                case SamlTabTypes.ClaimsTransform:
+                    downParty.ShowSamlTab = false;
+                    downParty.ShowClaimTransformTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
         }
 

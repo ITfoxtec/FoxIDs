@@ -36,7 +36,7 @@
 
     private void UpdateLiCssClass(string currentLocation)
     {
-        var newIsActive = currentLocation.Contains(tenantHref, StringComparison.OrdinalIgnoreCase);
+        var newIsActive = currentLocation.Contains(tenantHref, StringComparison.OrdinalIgnoreCase) || (!tenantAlternativHref.IsNullOrEmpty() && currentLocation.Contains(tenantAlternativHref, StringComparison.OrdinalIgnoreCase));
         if (isActive != newIsActive)
         {
             isActive = newIsActive;

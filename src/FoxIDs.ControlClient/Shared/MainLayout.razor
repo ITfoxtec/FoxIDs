@@ -15,7 +15,7 @@
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @FormatTrackName(TrackSelectedLogic.Track.Name)
+                            @TrackSelectedLogic.Track.Name.FormatTrackName()
                         </a>
                         <div class="dropdown-menu searchDropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
@@ -36,7 +36,7 @@
                                 @foreach (var track in selectTrackTasks)
                                 {
                                     <button class="dropdown-item btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                        @FormatTrackName(track.Name)
+                                        @track.Name.FormatTrackName()
                                     </button>
                                 }
                             }
@@ -58,7 +58,8 @@
                     </li>
                 }
                 <li class="nav-item">
-                    <button class="nav-link btn btn-link" @onclick="ShowUpdateTrackModalAsync"><span class="oi oi-cog" aria-hidden="true" title="Track settings"></span></button>
+                    <a class="nav-link" href="@trackSettingsHref"><span class="oi oi-cog" aria-hidden="true" title="Track settings"></span></a>
+                    @*<button class="nav-link btn btn-link" @onclick="ShowUpdateTrackModalAsync"><span class="oi oi-cog" aria-hidden="true" title="Track settings"></span></button>*@
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="meNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -164,7 +165,7 @@
                         {
                             <li class="list-group-item">
                                 <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                    @FormatTrackName(track.Name)
+                                    @track.Name.FormatTrackName()
                                 </button>
                             </li>
                         }
@@ -199,56 +200,6 @@
                     {
                         <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Close</button>
                     }
-                </div>
-            </PageEditForm>
-        </Modal>
-
-        <Modal @ref="updateTrackModal" Title="Track">
-            <PageEditForm @ref="updateTrackForm" TModel="UpdateTrackViewModel" OnAfterInit="UpdateTrackViewModelAfterInit" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
-                <div class="modal-body">
-                    @if (!deleteTrackError.IsNullOrWhiteSpace())
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            @deleteTrackError
-                        </div>
-                    }
-                    <FFieldText @bind-Value="updateTrackForm.Model.Name" For="@(() => updateTrackForm.Model.Name)" />
-                    <FInputNumber @bind-Value="updateTrackForm.Model.SequenceLifetime" For="@(() => updateTrackForm.Model.SequenceLifetime)" Focus="true" />
-                    <FInputNumber @bind-Value="updateTrackForm.Model.MaxFailingLogins" For="@(() => updateTrackForm.Model.MaxFailingLogins)" />
-                    <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginCountLifetime" For="@(() => updateTrackForm.Model.FailingLoginCountLifetime)" />
-                    <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginObservationPeriod" For="@(() => updateTrackForm.Model.FailingLoginObservationPeriod)" />
-                    <FInputNumber @bind-Value="updateTrackForm.Model.PasswordLength" For="@(() => updateTrackForm.Model.PasswordLength)" />
-                    <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordComplexity" For="@(() => updateTrackForm.Model.CheckPasswordComplexity)" />
-                    <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordRisk" For="@(() => updateTrackForm.Model.CheckPasswordRisk)" />
-                    @{var includeAllowIframeOnDomainsLabel = updateTrackForm.Model.AllowIframeOnDomains?.Count > 0;}
-                    <div class="form-group active-group active">
-                        <Label For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" class="label-control" />
-                        <FInputTextList @bind-ValueList="updateTrackForm.Model.AllowIframeOnDomains" For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Domain" />
-                    </div>
-                    <FInputText @bind-Value="updateTrackForm.Model.FromEmail" For="@(() => updateTrackForm.Model.FromEmail)" />
-                    <FInputText @bind-Value="updateTrackForm.Model.SendgridApiKey" For="@(() => updateTrackForm.Model.SendgridApiKey)" />
-
-                    @if (deleteTrackAcknowledge)
-                    {
-                        <div class="alert alert-danger" role="alert">
-                            <div>
-                                You are about to delete track "@updateTrackForm.Model.Name" including the user repository, are you sure?
-                            </div>
-
-                            <div class="mt-3">
-                                <button type="button" class="btn btn-secondary" @onclick="DeleteTrackAsync">Yes delete track</button>
-                                <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTrackAcknowledge = false)">No</button>
-                            </div>
-                        </div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    @if (!Constants.Routes.MasterTrackName.Equals(updateTrackForm.Model.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete track</button>
-                    }
-                    <button type="submit" class="btn btn-primary">Update</button>
-                    <button type="button" class="btn btn-secondary" @onclick="@(() => updateTrackModal.Hide())">Cancel</button>
                 </div>
             </PageEditForm>
         </Modal>

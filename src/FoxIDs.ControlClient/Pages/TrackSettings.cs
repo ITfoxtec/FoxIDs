@@ -96,16 +96,9 @@ namespace FoxIDs.Client.Pages
                     await TrackService.DeleteTrackSendEmailAsync();
                 }
             }
-            catch (FoxIDsApiException ex)
+            catch (Exception ex)
             {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    updateTrackForm.SetFieldError(nameof(updateTrackForm.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
+                updateTrackForm.SetError(ex.Message);
             }
         }
 

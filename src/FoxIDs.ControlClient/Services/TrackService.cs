@@ -18,6 +18,7 @@ namespace FoxIDs.Client.Services
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
+        private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
 
         public TrackService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -36,7 +37,7 @@ namespace FoxIDs.Client.Services
         public async Task SwapTrackKeyContainedAsync(TrackKeyItemContainedSwap trackKeySwap) => await PostAsync(keyContainedSwapApiUri, trackKeySwap);
 
         public async Task<TrackKey> GetTrackKeyTypeAsync() => await GetAsync<TrackKey>(keyTypeApiUri);
-        public async Task UpdateTrackKeyTypeAsync(TrackKey trackKeyRequest) => await PutAsync<TrackKey>(keyTypeApiUri, trackKeyRequest);
+        public async Task UpdateTrackKeyTypeAsync(TrackKey trackKeyRequest) => await PutAsync(keyTypeApiUri, trackKeyRequest);
 
         public async Task<IEnumerable<ResourceName>> FilterResourceNameAsync(string filterName) => await FilterAsync<ResourceName>(filterResourceNameApiUri, filterName);
 
@@ -45,7 +46,10 @@ namespace FoxIDs.Client.Services
         public async Task DeleteTrackResourceAsync(int resourceId) => await DeleteAsync(resourceApiUri, Convert.ToString(resourceId), parmName: nameof(resourceId));
 
         public async Task<SendEmail> GetTrackSendEmailAsync() => await GetAsync<SendEmail>(sendEmailApiUri);
-        public async Task UpdateTrackSendEmailAsync(SendEmail sendEmail) => await PutAsync<SendEmail>(sendEmailApiUri, sendEmail);
+        public async Task UpdateTrackSendEmailAsync(SendEmail sendEmail) => await PutAsync(sendEmailApiUri, sendEmail);
         public async Task DeleteTrackSendEmailAsync() => await DeleteAsync(sendEmailApiUri);
+
+        public async Task<List<ClaimMap>> GetTrackClaimMappingAsync() => await GetAsync<List<ClaimMap>>(claimMappingApiUri);
+        public async Task SaveTrackClaimMappingAsync(List<ClaimMap> claimMappings) => await PostAsync(claimMappingApiUri, claimMappings);
     }
 }

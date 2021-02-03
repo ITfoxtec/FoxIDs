@@ -167,7 +167,7 @@ namespace FoxIDs
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
-                public const int MapMax = 200;
+                public const int MapMax = 500;
             }
 
             public static class Party
@@ -390,13 +390,45 @@ namespace FoxIDs
             /// Default SAML claims.
             /// </summary>
             public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod, ClaimTypes.AuthenticationInstant };
-
         }
 
         public static class JwtClaimTypes
         {
             public const string SubFormat = "sub_format";
 
+        }
+
+        /// <summary>
+        /// Default mappings between JWT and SAML claim types.
+        /// </summary>
+        public static class DefaultClaimMappings
+        {
+            /// <summary>
+            /// Default locked claim mappings.
+            /// </summary>
+            public readonly static ClaimMap[] LockedMappings = new ClaimMap[] 
+            {
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Subject, SamlClaim = ClaimTypes.NameIdentifier },
+                new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email }
+            };
+
+            /// <summary>
+            /// Default changeable claim mappings.
+            /// </summary>
+            public readonly static ClaimMap[] ChangeableMappings = new ClaimMap[]
+            {
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.GivenName, SamlClaim = ClaimTypes.GivenName },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.FamilyName, SamlClaim = ClaimTypes.Surname },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Role, SamlClaim = ClaimTypes.Role },
+            };
+
+            public class ClaimMap
+            {
+                public string JwtClaim { get; set; }
+                public string SamlClaim { get; set; }
+            }
         }
     }
 }

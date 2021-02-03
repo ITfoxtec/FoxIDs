@@ -157,16 +157,21 @@ namespace FoxIDs.Logic
 
                 foreach (var samlClaim in samlClaims)
                 {
-                    var claimMap = mappings.FirstOrDefault(m => m.SamlClaim.Equals(samlClaim.Type, StringComparison.InvariantCultureIgnoreCase));
-                    if (claimMap != null)
+                    var claimMaps = mappings.Where(m => m.SamlClaim.Equals(samlClaim.Type, StringComparison.InvariantCultureIgnoreCase));
+                    if (claimMaps?.Count() > 0)
                     {
-                        jwtClaims.Add(new Claim(claimMap.JwtClaim, samlClaim.Value, samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer));
+                        foreach(var claimMap in claimMaps)
+                        {
+                            jwtClaims.Add(new Claim(claimMap.JwtClaim, samlClaim.Value, samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer));
+                        }
                     }
                     else
                     {
-                        //TODO validate JWT claim type and value max length
+                        var jwtClaim = new Claim(
+                            samlClaim.Type?.Length > Constants.Models.Claim.JwtTypeLength ? samlClaim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength) : samlClaim.Type,
+                            samlClaim.Value, samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer);
 
-                        jwtClaims.Add(samlClaim);
+                        jwtClaims.Add(jwtClaim);
                     }
                 }
                 return Task.FromResult(TruncateJwtClaimValues(jwtClaims));
@@ -222,33 +227,16 @@ namespace FoxIDs.Logic
 
         private IEnumerable<ClaimMap> GetMappings(RouteBinding RouteBinding)
         {
-            var mappings = GetDefaultMappings();
+            var mappings = Constants.DefaultClaimMappings.LockedMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim });
 
-            if (RouteBinding.ClaimMappings != null && RouteBinding.ClaimMappings.Mappings?.Count() > 0)
+            if (RouteBinding.ClaimMappings != null && RouteBinding.ClaimMappings?.Count() > 0)
             {
-                mappings = mappings.ConcatOnce(RouteBinding.ClaimMappings.Mappings, (f, s) => s.JwtClaim == f.JwtClaim);
+                mappings = mappings.ConcatOnce(RouteBinding.ClaimMappings, (f, s) => s.JwtClaim == f.JwtClaim);
             }
 
-            mappings = mappings.ConcatOnce(GetDefaultChangeableMappings(), (f, s) => s.JwtClaim == f.JwtClaim);
+            mappings = mappings.ConcatOnce(Constants.DefaultClaimMappings.ChangeableMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim }), (f, s) => s.JwtClaim == f.JwtClaim);
 
             return mappings;
-        }
-
-        private IEnumerable<ClaimMap> GetDefaultMappings()
-        {
-            yield return new ClaimMap { JwtClaim = JwtClaimTypes.Subject, SamlClaim = ClaimTypes.NameIdentifier };
-            yield return new ClaimMap { JwtClaim = Constants.JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat };
-            yield return new ClaimMap { JwtClaim = JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex };
-
-            yield return new ClaimMap { JwtClaim = JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email };
-        }
-
-        private IEnumerable<ClaimMap> GetDefaultChangeableMappings()
-        {
-            yield return new ClaimMap { JwtClaim = JwtClaimTypes.GivenName, SamlClaim = ClaimTypes.GivenName };
-            yield return new ClaimMap { JwtClaim = JwtClaimTypes.FamilyName, SamlClaim = ClaimTypes.Surname };
-
-            yield return new ClaimMap { JwtClaim = JwtClaimTypes.Role, SamlClaim = ClaimTypes.Role };
         }
     }
 }

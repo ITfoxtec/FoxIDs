@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 using System;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
     public partial class MainLayout
     {
+        private string trackSettingsHref;
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
         private bool createTenantDone;
@@ -27,10 +27,6 @@ namespace FoxIDs.Client.Shared
         private PageEditForm<CreateTrackViewModel> createTrackForm;
         private bool createTrackDone;
         private List<string> createTrackReceipt = new List<string>();
-        private Modal updateTrackModal;
-        private PageEditForm<UpdateTrackViewModel> updateTrackForm;
-        private string deleteTrackError;
-        private bool deleteTrackAcknowledge = false;
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
         private Modal selectTrackModal;
         private bool selectTrackInitialized = false;
@@ -67,7 +63,9 @@ namespace FoxIDs.Client.Shared
         protected override async Task OnInitializedAsync()
         {
             await RouteBindingLogic.InitRouteBindingAsync();
+            trackSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/tracksettings";
             await base.OnInitializedAsync();
+            TrackSelectedLogic.OnShowSelectTrackAsync += OnShowSelectTrackAsync;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -170,96 +168,15 @@ namespace FoxIDs.Client.Shared
             }
         }
 
-        private async Task ShowUpdateTrackModalAsync()
+        private async Task OnShowSelectTrackAsync()
         {
-            deleteTrackError = null;
-            deleteTrackAcknowledge = false;
-            var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
-            var updateTrackViewModel = track.Map<UpdateTrackViewModel>();
-            var trackSendEmail = await TrackService.GetTrackSendEmailAsync();
-            if(trackSendEmail != null)
-            {
-                updateTrackViewModel.SendMailExist = true;
-                updateTrackViewModel.FromEmail = trackSendEmail.FromEmail;
-                updateTrackViewModel.SendgridApiKey = trackSendEmail.SendgridApiKey;
-            }
-            await updateTrackForm.InitAsync(updateTrackViewModel);
-            updateTrackModal.Show();
+            await ShowSelectTrackModalAsync(true);
+            StateHasChanged();
         }
 
-        private string FormatTrackName(string trackName)
+        private async Task ShowSelectTrackModalAsync(bool forceSelect = false)
         {
-            if ("-".Equals(trackName, StringComparison.Ordinal))
-            {
-                return "Production (-)";
-            }
-
-            return trackName;
-        }
-
-        private void UpdateTrackViewModelAfterInit(UpdateTrackViewModel updateTrackViewModel)
-        {
-            updateTrackViewModel.Name = FormatTrackName(updateTrackViewModel.Name);
-        }
-
-        private async Task OnUpdateTrackValidSubmitAsync(EditContext editContext)
-        {
-            try
-            {
-                await TrackService.UpdateTrackAsync(updateTrackForm.Model.Map<Track>());
-                if(!updateTrackForm.Model.FromEmail.IsNullOrWhiteSpace() && !updateTrackForm.Model.SendgridApiKey.IsNullOrWhiteSpace())
-                {
-                    await TrackService.UpdateTrackSendEmailAsync(new SendEmail
-                    { 
-                        FromEmail = updateTrackForm.Model.FromEmail,
-                        SendgridApiKey = updateTrackForm.Model.SendgridApiKey
-                    });
-                }
-                else if(updateTrackForm.Model.SendMailExist)
-                {
-                    await TrackService.DeleteTrackSendEmailAsync();
-                }
-                updateTrackModal.Hide();
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    updateTrackForm.SetFieldError(nameof(updateTrackForm.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task DeleteTrackAsync()
-        {
-            try
-            {
-                await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name);
-                updateTrackModal.Hide();
-                if (selectTrackFilterForm.Model != null)
-                {
-                    selectTrackFilterForm.Model.FilterName = null;
-                }
-                await LoadSelectTrackAsync();
-                selectTrackModal.Show();
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                deleteTrackError = ex.Message;
-            }
-        }
-
-        private async Task ShowSelectTrackModalAsync()
-        {
-            if (selectTrackModal == null || selectTrackInitialized || TrackSelectedLogic.IsTrackSelected)
+            if (!forceSelect && (selectTrackModal == null || selectTrackInitialized || TrackSelectedLogic.IsTrackSelected))
             {
                 return;
             }

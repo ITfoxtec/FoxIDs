@@ -56,6 +56,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ClaimAndValues, Api.ClaimAndValues>()
                 .ReverseMap();
 
+            CreateMap<ClaimMap, Api.ClaimMap>()
+                .ReverseMap();
+
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 

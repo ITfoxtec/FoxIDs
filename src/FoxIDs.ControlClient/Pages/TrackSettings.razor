@@ -1,0 +1,65 @@
+﻿@page "/{tenantName}/tracksettings"
+@inherits PageBase
+
+<h3>Settings</h3>
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Track settings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <PageEditForm @ref="updateTrackForm" TModel="UpdateTrackViewModel" OnAfterInit="UpdateTrackViewModelAfterInit" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
+        @if (TrackSelectedLogic.IsTrackSelected)
+        {
+            <div class="modal-body">
+                @if (!deleteTrackError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @deleteTrackError
+                    </div>
+                }
+                <FFieldText @bind-Value="updateTrackForm.Model.Name" For="@(() => updateTrackForm.Model.Name)" />
+                <FInputNumber @bind-Value="updateTrackForm.Model.SequenceLifetime" For="@(() => updateTrackForm.Model.SequenceLifetime)" Focus="true" />
+                <FInputNumber @bind-Value="updateTrackForm.Model.MaxFailingLogins" For="@(() => updateTrackForm.Model.MaxFailingLogins)" />
+                <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginCountLifetime" For="@(() => updateTrackForm.Model.FailingLoginCountLifetime)" />
+                <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginObservationPeriod" For="@(() => updateTrackForm.Model.FailingLoginObservationPeriod)" />
+                <FInputNumber @bind-Value="updateTrackForm.Model.PasswordLength" For="@(() => updateTrackForm.Model.PasswordLength)" />
+                <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordComplexity" For="@(() => updateTrackForm.Model.CheckPasswordComplexity)" />
+                <FInputToggleN @bind-Value="updateTrackForm.Model.CheckPasswordRisk" For="@(() => updateTrackForm.Model.CheckPasswordRisk)" />
+                @{var includeAllowIframeOnDomainsLabel = updateTrackForm.Model.AllowIframeOnDomains?.Count > 0;}
+                <div class="form-group active-group active">
+                    <Label For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" class="label-control" />
+                    <FInputTextList @bind-ValueList="updateTrackForm.Model.AllowIframeOnDomains" For="@(() => updateTrackForm.Model.AllowIframeOnDomains)" IncludeActiveFormGroup="false" DynamicFirstRow="true" AddOneMoreName="Domain" />
+                </div>
+                <FInputText @bind-Value="updateTrackForm.Model.FromEmail" For="@(() => updateTrackForm.Model.FromEmail)" />
+                <FInputText @bind-Value="updateTrackForm.Model.SendgridApiKey" For="@(() => updateTrackForm.Model.SendgridApiKey)" />
+
+                @if (deleteTrackAcknowledge)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <div>
+                            You are about to delete track "@updateTrackForm.Model.Name" including the user repository, are you sure?
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteTrackAsync">Yes delete track</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTrackAcknowledge = false)">No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                @if (!Constants.Routes.MasterTrackName.Equals(updateTrackForm.Model.Name, StringComparison.OrdinalIgnoreCase))
+                {
+                    <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete track</button>
+                }
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        }
+    </PageEditForm>
+</div>

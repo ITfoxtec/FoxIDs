@@ -55,8 +55,9 @@ namespace FoxIDs.Models
         [Range(Constants.Models.Track.KeyExternalCacheLifetimeMin, Constants.Models.Track.KeyExternalCacheLifetimeMax)]
         public int KeyExternalCacheLifetime { get; set; } = 28800; // 8 hours
 
+        [Length(Constants.Models.Claim.MapMin, Constants.Models.Claim.MapMax)]
         [JsonProperty(PropertyName = "claim_mappings")]
-        public ClaimMappingsDataElement ClaimMappings { get; set; }
+        public List<ClaimMap> ClaimMappings { get; set; }
 
         [Length(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
         [JsonProperty(PropertyName = "resources")]

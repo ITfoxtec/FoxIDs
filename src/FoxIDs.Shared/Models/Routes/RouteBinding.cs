@@ -25,7 +25,7 @@ namespace FoxIDs.Models
 
         public DownParty DownParty { get; set; }
 
-        public ClaimMappingsDataElement ClaimMappings { get; set; }
+        public List<ClaimMap> ClaimMappings { get; set; }
 
         public List<ResourceItem> Resources { get; set; }
 

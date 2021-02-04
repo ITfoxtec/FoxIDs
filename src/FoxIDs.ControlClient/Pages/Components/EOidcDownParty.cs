@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
-    public partial class OidcDownParties : DownPartiesBase
+    public partial class EOidcDownParty : DownPartyBase
     {
         private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
         {

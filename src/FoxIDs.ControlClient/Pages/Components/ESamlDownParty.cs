@@ -18,7 +18,7 @@ using System.Security.Claims;
 
 namespace FoxIDs.Client.Pages.Components
 {
-    public partial class SamlDownParties : DownPartiesBase
+    public partial class ESamlDownParty : DownPartyBase
     {
         private void SamlDownPartyViewModelAfterInit(GeneralSamlDownPartyViewModel samlDownParty, SamlDownPartyViewModel model)
         {

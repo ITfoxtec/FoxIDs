@@ -11,15 +11,9 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
-using BlazorInputFile;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
-using System.Linq;
 using System.Net.Http;
-using FoxIDs.Client.Models.Config;
-using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Pages
 {
@@ -37,9 +31,6 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public ControlClientSettingLogic ControlClientSettingLogic { get; set; }
-
-        [Inject]
-        public ClientSettings ClientSettings { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -206,6 +197,14 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task OnStateHasChangedAsync(GeneralUpPartyViewModel upParty)
+        {
+            await InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
+        }
+
         private string UpPartyInfoText(GeneralUpPartyViewModel upParty)
         {
             if (upParty.Type == PartyTypes.Login)
@@ -222,187 +221,5 @@ namespace FoxIDs.Client.Pages
             }
             throw new NotSupportedException();
         }
-
-        private void UpPartyCancel(GeneralUpPartyViewModel upParty)
-        {
-            if (upParty.CreateMode)
-            {
-                upParties.Remove(upParty);
-            }
-            else
-            {
-                upParty.Edit = false;
-            }
-        }
-
-        private string GetSamlMetadata(string partyName)
-        {
-            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/saml/spmetadata";
-        }
-
-        #region Login
-        private async Task OnEditLoginUpPartyValidSubmitAsync(GeneralLoginUpPartyViewModel generalLoginUpParty, EditContext editContext)
-        {
-            try
-            {
-                if (generalLoginUpParty.CreateMode)
-                {
-                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap => afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword));
-                }
-                else
-                {
-                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap => afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword));
-                }
-                generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;
-                generalLoginUpParty.Edit = false;
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    generalLoginUpParty.Form.SetFieldError(nameof(generalLoginUpParty.Form.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task DeleteLoginUpPartyAsync(GeneralLoginUpPartyViewModel generalLoginUpParty)
-        {
-            try
-            {
-                await UpPartyService.DeleteLoginUpPartyAsync(generalLoginUpParty.Name);
-                upParties.Remove(generalLoginUpParty);
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                generalLoginUpParty.Form.SetError(ex.Message);
-            }
-        }
-        #endregion
-
-        #region Saml
-        private async Task OnSamlUpPartyCertificateFileSelectedAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, IFileListEntry[] files)
-        {
-            if (generalSamlUpParty.Form.Model.Keys == null)
-            {
-                generalSamlUpParty.Form.Model.Keys = new List<JsonWebKey>();
-            }
-            generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
-            foreach (var file in files)
-            {
-                if (file.Size > GeneralSamlUpPartyViewModel.CertificateMaxFileSize)
-                {
-                    generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Keys), $"That's too big. Max size: {GeneralSamlUpPartyViewModel.CertificateMaxFileSize} bytes.");
-                    return;
-                }
-
-                generalSamlUpParty.CertificateFileStatus = "Loading...";
-
-                using (var memoryStream = new MemoryStream())
-                {
-                    await file.Data.CopyToAsync(memoryStream);
-
-                    try
-                    {
-                        var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var jwk = await certificate.ToFTJsonWebKeyAsync();
-
-                        if (generalSamlUpParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Keys), "Signature validation keys (certificates) has duplicates.");
-                            return;
-                        }
-
-                        generalSamlUpParty.CertificateInfoList.Add(new CertificateInfoViewModel
-                        {
-                            Subject = certificate.Subject,
-                            ValidFrom = certificate.NotBefore,
-                            ValidTo = certificate.NotAfter,
-                            IsValid = certificate.IsValid(),
-                            Thumbprint = certificate.Thumbprint,
-                            Key = jwk
-                        });
-                        generalSamlUpParty.Form.Model.Keys.Add(jwk);
-                    }
-                    catch (Exception ex)
-                    {
-                        generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Keys), ex.Message);
-                    }
-                }
-
-                generalSamlUpParty.CertificateFileStatus = GeneralSamlUpPartyViewModel.DefaultCertificateFileStatus;
-            }
-        }
-
-        private void RemoveSamlUpPartyCertificate(GeneralSamlUpPartyViewModel generalSamlUpParty, CertificateInfoViewModel certificateInfo)
-        {
-            generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
-            if (generalSamlUpParty.Form.Model.Keys.Remove(certificateInfo.Key))
-            {
-                generalSamlUpParty.CertificateInfoList.Remove(certificateInfo);
-            }
-        }
-
-        private async Task OnEditSamlUpPartyValidSubmitAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, EditContext editContext)
-        {
-            try
-            {
-                var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
-                {
-                    afterMap.AuthnBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.AuthnRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.AuthnResponseBinding };
-                    if (!afterMap.LogoutUrl.IsNullOrEmpty())
-                    {
-                        afterMap.LogoutBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.LogoutRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.LogoutResponseBinding };
-                    }
-                });
-
-                if (generalSamlUpParty.CreateMode)
-                {
-                    await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);                   
-                }
-                else
-                {
-                    await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
-                }
-                generalSamlUpParty.Name = generalSamlUpParty.Form.Model.Name;
-                generalSamlUpParty.Edit = false;
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task DeleteSamlUpPartyAsync(GeneralSamlUpPartyViewModel generalSamlUpParty)
-        {
-            try
-            {
-                await UpPartyService.DeleteSamlUpPartyAsync(generalSamlUpParty.Name);
-                upParties.Remove(generalSamlUpParty);
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                generalSamlUpParty.Form.SetError(ex.Message);
-            }
-        } 
-        #endregion
     }
 }

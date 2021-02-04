@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client.Pages.Components
 {
-    public partial class OAuthDownParties : DownPartiesBase
+    public partial class EOAuthDownParty : DownPartyBase
     {
         private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
         {

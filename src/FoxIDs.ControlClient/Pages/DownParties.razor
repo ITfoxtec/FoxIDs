@@ -47,15 +47,15 @@
             {
                 if (downParty.Type == PartyTypes.Oidc)
                 {
-                    <OidcDownParties OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
                 }
                 else if (downParty.Type == PartyTypes.OAuth2)
                 {
-                    <OAuthDownParties OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
                 }
                 else if (downParty.Type == PartyTypes.Saml2)
                 {
-                    <SamlDownParties OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
                 }
             }
             else

@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool EnableClientTab { get; set; } = true;
 
-        public bool EnableResourceTab { get; set; } = false;
+        public bool EnableResourceTab { get; set; }
 
         public bool ShowClientTab { get; set; } = true;
         public bool ShowResourceTab { get; set; }

@@ -12,16 +12,9 @@ using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Linq;
-using BlazorInputFile;
-using Microsoft.AspNetCore.Components.Web;
 using System.Net.Http;
-using FoxIDs.Client.Models.Config;
-using ITfoxtec.Identity.Models;
-using System.Security.Claims;
 
 namespace FoxIDs.Client.Pages
 {
@@ -30,7 +23,6 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<FilterPartyViewModel> downPartyFilterForm;
         private List<GeneralDownPartyViewModel> downParties = new List<GeneralDownPartyViewModel>();
         private string upPartyHref;
-        private List<string> responseTypeItems = new List<string> { "code", "code token", "code token id_token", "token", "token id_token", "id_token" };
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -40,9 +32,6 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public ControlClientSettingLogic ControlClientSettingLogic { get; set; }
-
-        [Inject]
-        public ClientSettings ClientSettings { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -125,7 +114,6 @@ namespace FoxIDs.Client.Pages
             if (type == PartyTypes.Oidc)
             {
                 var oidcDownParty = new GeneralOidcDownPartyViewModel();
-                oidcDownParty.EnableResourceTab = false;
                 oidcDownParty.CreateMode = true;
                 oidcDownParty.Edit = true;
                 downParties.Add(oidcDownParty);
@@ -133,7 +121,6 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.OAuth2)
             {
                 var oauthDownParty = new GeneralOAuthDownPartyViewModel();
-                oauthDownParty.EnableResourceTab = false;
                 oauthDownParty.CreateMode = true;
                 oauthDownParty.Edit = true;
                 downParties.Add(oauthDownParty);
@@ -315,6 +302,14 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private async Task OnStateHasChangedAsync(GeneralDownPartyViewModel downParty)
+        {
+            await InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
+        }
+
         private string DownPartyInfoText(GeneralDownPartyViewModel downParty)
         {
             if (downParty.Type == PartyTypes.Oidc)
@@ -331,427 +326,5 @@ namespace FoxIDs.Client.Pages
             }
             throw new NotSupportedException();
         }
-
-        private void DownPartyCancel(GeneralDownPartyViewModel downParty)
-        {
-            if(downParty.CreateMode)
-            {
-                downParties.Remove(downParty);
-            }
-            else
-            {
-                downParty.Edit = false;
-            }
-        }
-
-        private void AddAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
-        {
-            if (!arg.model.AllowUpPartyNames.Where(p => p.Equals(arg.upPartyName, StringComparison.OrdinalIgnoreCase)).Any())
-            {
-                arg.model.AllowUpPartyNames.Add(arg.upPartyName);
-            }
-        }
-
-        private void RemoveAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
-        {
-            arg.model.AllowUpPartyNames.Remove(arg.upPartyName);
-        }
-
-        private (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
-        {
-            var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/";
-            return (authority, new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString);
-        }
-
-        private string GetSamlMetadata(string partyName)
-        {
-            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/saml/idpmetadata";
-        }
-
-        #region Oidc
-        private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
-        {
-            if (oidcDownParty.CreateMode)
-            {
-                model.Client = oidcDownParty.EnableClientTab ? new OidcDownClientViewModel() : null;
-                model.Resource = oidcDownParty.EnableResourceTab ? new OAuthDownResource() : null;
-
-                model.Client.ResponseTypes.Add("code");
-
-                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "offline_access" });
-                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim> 
-                {
-                    new OidcDownClaim { Claim = "name", InIdToken = true }, new OidcDownClaim { Claim = "given_name", InIdToken = true }, new OidcDownClaim { Claim = "middle_name", InIdToken = true }, new OidcDownClaim { Claim = "family_name", InIdToken = true }, 
-                    new OidcDownClaim { Claim = "nickname", InIdToken = false }, new OidcDownClaim { Claim = "preferred_username", InIdToken = false }, 
-                    new OidcDownClaim { Claim = "birthdate", InIdToken = false }, new OidcDownClaim { Claim = "gender", InIdToken = false }, new OidcDownClaim { Claim = "picture", InIdToken = false }, new OidcDownClaim { Claim = "profile", InIdToken = false }, 
-                    new OidcDownClaim { Claim = "website", InIdToken = false }, new OidcDownClaim { Claim = "locale", InIdToken = true }, new OidcDownClaim { Claim = "zoneinfo", InIdToken = false }, new OidcDownClaim { Claim = "updated_at", InIdToken = false }
-                } });
-                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "email", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "email", InIdToken = true }, new OidcDownClaim { Claim = "email_verified", InIdToken = false } } });
-                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "address", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "address", InIdToken = true } } });
-                model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "phone", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "phone_number", InIdToken = true }, new OidcDownClaim { Claim = "phone_number_verified", InIdToken = false } } });
-            }
-        }
-
-        private void OnOidcDownPartyClientTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Client = enableTab ? new OidcDownClientViewModel() : null;
-
-        private void OnOidcDownPartyResourceTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
-
-        private void AddOidcScope(MouseEventArgs e, List<OidcDownScopeViewModel> scopesViewModel)
-        {
-            scopesViewModel.Add(new OidcDownScopeViewModel { ShowVoluntaryClaims = true });
-        }
-
-        private void RemoveOidcScope(MouseEventArgs e, List<OidcDownScopeViewModel> scopesViewModel, OidcDownScopeViewModel removeScope)
-        {
-            scopesViewModel.Remove(removeScope);
-        }
-
-        private void AddOidcScopeVoluntaryClaim(MouseEventArgs e, OidcDownScope scope)
-        {
-            if(scope.VoluntaryClaims == null)
-            {
-                scope.VoluntaryClaims = new List<OidcDownClaim>();
-            }
-            scope.VoluntaryClaims.Add(new OidcDownClaim());
-        }
-
-        private void RemoveOidcScopeVoluntaryClaim(MouseEventArgs e, List<OidcDownClaim> voluntaryClaims, OidcDownClaim removeVoluntaryClaim)
-        {
-            voluntaryClaims.Remove(removeVoluntaryClaim);
-        }
-
-        private void AddOidcClaim(MouseEventArgs e, List<OidcDownClaim> claims)
-        {
-            claims.Add(new OidcDownClaim());
-        }
-
-        private void RemoveOidcClaim(MouseEventArgs e, List<OidcDownClaim> claims, OidcDownClaim removeClaim)
-        {
-            claims.Remove(removeClaim);
-        }
-
-        private async Task OnEditOidcDownPartyValidSubmitAsync(GeneralOidcDownPartyViewModel generalOidcDownParty, EditContext editContext)
-        {
-            try
-            {
-                var oidcDownParty = generalOidcDownParty.Form.Model.Map<OidcDownParty>(afterMap: afterMap =>
-                {
-                    if (generalOidcDownParty.Form.Model.Client?.DefaultResourceScope == true)
-                    {
-                        afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOidcDownParty.Form.Model.Name, Scopes = generalOidcDownParty.Form.Model.Client.DefaultResourceScopeScopes });
-                    }
-                    if (!(afterMap.Resource?.Scopes?.Count > 0))
-                    {
-                        afterMap.Resource = null;
-                    }
-                    if(generalOidcDownParty.Form.Model.Client?.ScopesViewModel?.Count() > 0)
-                    {
-                        afterMap.Client.Scopes = generalOidcDownParty.Form.Model.Client.ScopesViewModel.Map<List<OidcDownScope>>();
-                    }
-                });            
-
-                if (generalOidcDownParty.CreateMode)
-                {
-                    await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
-                }
-                else
-                {
-                    await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
-                    if (oidcDownParty.Client != null)
-                    {
-                        foreach (var existingSecret in generalOidcDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
-                        {
-                            await DownPartyService.DeleteOidcClientSecretDownPartyAsync(existingSecret.Name);
-                        }
-                    }
-                }
-                if (oidcDownParty.Client != null && generalOidcDownParty.Form.Model.Client.Secrets.Count() > 0)
-                {
-                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOidcDownParty.Form.Model.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets });
-                }
-
-                generalOidcDownParty.Name = generalOidcDownParty.Form.Model.Name;
-                generalOidcDownParty.Edit = false;
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    generalOidcDownParty.Form.SetFieldError(nameof(generalOidcDownParty.Form.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task DeleteOidcDownPartyAsync(GeneralOidcDownPartyViewModel generalOidcDownParty)
-        {
-            try
-            {
-                await DownPartyService.DeleteOidcDownPartyAsync(generalOidcDownParty.Name);
-                downParties.Remove(generalOidcDownParty);
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                generalOidcDownParty.Form.SetError(ex.Message);
-            }
-        }
-        #endregion
-
-        #region OAuth
-        private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
-        {
-            if (oauthDownParty.CreateMode)
-            {
-                model.Client = oauthDownParty.EnableClientTab ? new OAuthDownClientViewModel() : null;
-                model.Resource = oauthDownParty.EnableResourceTab ? new OAuthDownResource() : null;
-
-                model.Client.ResponseTypes.Add("code");
-
-                model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = "offline_access" });
-            }
-        }
-
-        private void OnOAuthDownPartyClientTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Client = enableTab ? new OAuthDownClientViewModel() : null;
-
-        private void OnOAuthDownPartyResourceTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
-
-        private void AddOAuthScope(MouseEventArgs e, List<OAuthDownScopeViewModel> scopesViewModel)
-        {
-            scopesViewModel.Add(new OAuthDownScopeViewModel { ShowVoluntaryClaims = true });
-        }
-
-        private void RemoveOAuthScope(MouseEventArgs e, List<OAuthDownScopeViewModel> scopesViewModel, OAuthDownScopeViewModel removeScope)
-        {
-            scopesViewModel.Remove(removeScope);
-        }
-
-        private void AddOAuthScopeVoluntaryClaim(MouseEventArgs e, OAuthDownScope scope)
-        {
-            if (scope.VoluntaryClaims == null)
-            {
-                scope.VoluntaryClaims = new List<OAuthDownClaim>();
-            }
-            scope.VoluntaryClaims.Add(new OAuthDownClaim());
-        }
-
-        private void RemoveOAuthScopeVoluntaryClaim(MouseEventArgs e, List<OAuthDownClaim> voluntaryClaims, OAuthDownClaim removeVoluntaryClaim)
-        {
-            voluntaryClaims.Remove(removeVoluntaryClaim);
-        }
-
-        private void AddOAuthClaim(MouseEventArgs e, List<OAuthDownClaim> claims)
-        {
-            claims.Add(new OAuthDownClaim());
-        }
-
-        private void RemoveOAuthClaim(MouseEventArgs e, List<OAuthDownClaim> claims, OAuthDownClaim removeClaim)
-        {
-            claims.Remove(removeClaim);
-        }
-
-        private async Task OnEditOAuthDownPartyValidSubmitAsync(GeneralOAuthDownPartyViewModel generalOAuthDownParty, EditContext editContext)
-        {
-            try
-            {
-                var oauthDownParty = generalOAuthDownParty.Form.Model.Map<OAuthDownParty>(afterMap: afterMap =>
-                {
-                    if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true)
-                    {
-                        afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOAuthDownParty.Form.Model.Name, Scopes = generalOAuthDownParty.Form.Model.Client.DefaultResourceScopeScopes });
-                    }
-                    if (!(afterMap.Resource?.Scopes?.Count > 0))
-                    {
-                        afterMap.Resource = null;
-                    }
-                    if (generalOAuthDownParty.Form.Model.Client?.ScopesViewModel?.Count() > 0)
-                    {
-                        afterMap.Client.Scopes = generalOAuthDownParty.Form.Model.Client.ScopesViewModel.Map<List<OAuthDownScope>>();
-                    }
-                });
-
-                if (generalOAuthDownParty.CreateMode)
-                {
-                    await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
-                }
-                else
-                {
-                    await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
-                    if (oauthDownParty.Client != null)
-                    {
-                        foreach (var existingSecret in generalOAuthDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
-                        {
-                            await DownPartyService.DeleteOAuthClientSecretDownPartyAsync(existingSecret.Name);
-                        }
-                    }
-                }
-                if (oauthDownParty.Client != null && generalOAuthDownParty.Form.Model.Client.Secrets.Count() > 0)
-                {
-                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOAuthDownParty.Form.Model.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
-                }
-                generalOAuthDownParty.Name = generalOAuthDownParty.Form.Model.Name;
-                generalOAuthDownParty.Edit = false;
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    generalOAuthDownParty.Form.SetFieldError(nameof(generalOAuthDownParty.Form.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task DeleteOAuthDownPartyAsync(GeneralOAuthDownPartyViewModel generalOAuthDownParty)
-        {
-            try
-            {
-                await DownPartyService.DeleteOAuthDownPartyAsync(generalOAuthDownParty.Name);
-                downParties.Remove(generalOAuthDownParty);
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                generalOAuthDownParty.Form.SetError(ex.Message);
-            }
-        }
-        #endregion
-
-        #region Saml
-        private void SamlDownPartyViewModelAfterInit(GeneralSamlDownPartyViewModel samlDownParty, SamlDownPartyViewModel model)
-        {
-            if (samlDownParty.CreateMode)
-            {
-                model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
-            }
-        }
-
-        private async Task OnSamlDownPartyCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
-        {
-            if (generalSamlDownParty.Form.Model.Keys == null)
-            {
-                generalSamlDownParty.Form.Model.Keys = new List<JsonWebKey>();
-            }
-            generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
-            foreach (var file in files)
-            {
-                if (file.Size > GeneralSamlDownPartyViewModel.CertificateMaxFileSize)
-                {
-                    generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Keys), $"That's too big. Max size: {GeneralSamlDownPartyViewModel.CertificateMaxFileSize} bytes.");
-                    return;
-                }
-
-                generalSamlDownParty.CertificateFileStatus = "Loading...";
-
-                using (var memoryStream = new MemoryStream())
-                {
-                    await file.Data.CopyToAsync(memoryStream);
-
-                    try
-                    {
-                        var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var jwk = await certificate.ToFTJsonWebKeyAsync();
-
-                        if (generalSamlDownParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
-                        {
-                            generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Keys), "Signature validation keys (certificates) has duplicates.");
-                            return;
-                        }
-
-                        generalSamlDownParty.CertificateInfoList.Add(new CertificateInfoViewModel
-                        {
-                            Subject = certificate.Subject,
-                            ValidFrom = certificate.NotBefore,
-                            ValidTo = certificate.NotAfter,
-                            Thumbprint = certificate.Thumbprint,
-                            Key = jwk
-                        });
-                        generalSamlDownParty.Form.Model.Keys.Add(jwk);
-                    }
-                    catch (Exception ex)
-                    {
-                        generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Keys), ex.Message);
-                    }
-                }
-
-                generalSamlDownParty.CertificateFileStatus = GeneralSamlDownPartyViewModel.DefaultCertificateFileStatus;
-            }
-        }
-
-        private void RemoveSamlDownPartyCertificate(GeneralSamlDownPartyViewModel generalSamlDownParty, CertificateInfoViewModel certificateInfo)
-        {
-            generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
-            if (generalSamlDownParty.Form.Model.Keys.Remove(certificateInfo.Key))
-            {
-                generalSamlDownParty.CertificateInfoList.Remove(certificateInfo);
-            }
-        }
-
-        private async Task OnEditSamlDownPartyValidSubmitAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, EditContext editContext)
-        {
-            try
-            {
-                var samlDownParty = generalSamlDownParty.Form.Model.Map<SamlDownParty>(afterMap =>
-                {
-                    afterMap.AuthnBinding = new SamlBinding { RequestBinding = generalSamlDownParty.Form.Model.AuthnRequestBinding, ResponseBinding = generalSamlDownParty.Form.Model.AuthnResponseBinding };
-                    if (!afterMap.LoggedOutUrl.IsNullOrEmpty())
-                    {
-                        afterMap.LogoutBinding = new SamlBinding { RequestBinding = generalSamlDownParty.Form.Model.LogoutRequestBinding, ResponseBinding = generalSamlDownParty.Form.Model.LogoutResponseBinding };
-                    }
-                });
-
-                if (generalSamlDownParty.CreateMode)
-                {
-                    await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
-                }
-                else
-                {
-                    await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
-                }
-                generalSamlDownParty.Name = generalSamlDownParty.Form.Model.Name;
-                generalSamlDownParty.Edit = false;
-            }
-            catch (FoxIDsApiException ex)
-            {
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
-            }
-        }
-
-        private async Task DeleteSamlDownPartyAsync(GeneralSamlDownPartyViewModel generalSamlDownParty)
-        {
-            try
-            {
-                await DownPartyService.DeleteSamlDownPartyAsync(generalSamlDownParty.Name);
-                downParties.Remove(generalSamlDownParty);
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                generalSamlDownParty.Form.SetError(ex.Message);
-            }
-        } 
-        #endregion
     }
 }

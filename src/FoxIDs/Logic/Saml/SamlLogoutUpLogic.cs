@@ -98,6 +98,11 @@ namespace FoxIDs.Logic
             var nameIdFormat = logoutRequest.Claims?.Where(c => c.Type == Saml2ClaimTypes.NameIdFormat).Select(c => c.Value).FirstOrDefault();
             if (!nameID.IsNullOrEmpty())
             {
+                var prePartyName = $"{party.Name}|";
+                if(prePartyName.StartsWith(prePartyName, StringComparison.Ordinal))
+                {
+                    nameID = nameID.Remove(0, prePartyName.Length);
+                }
                 if (nameIdFormat.IsNullOrEmpty())
                 {
                     saml2LogoutRequest.NameId = new Saml2NameIdentifier(nameID);

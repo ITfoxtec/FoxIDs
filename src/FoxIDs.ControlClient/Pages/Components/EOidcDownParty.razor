@@ -1,0 +1,336 @@
+﻿@inherits DownPartyBase
+
+@{
+    var oidcDownParty = DownParty as GeneralOidcDownPartyViewModel;
+}
+
+<PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAfterInit="@(m => OidcDownPartyViewModelAfterInit(oidcDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
+    <div class="modal-header">
+        <div>
+            OpenID Connect
+        </div>
+        <div class="header-input-group">
+            <div class="input-toggle">
+                <FInputToggle @bind-Value="oidcDownParty.EnableClientTab" OnValidChange="@(v => OnOidcDownPartyClientTabChange(oidcDownParty, v))" TextType="Client&nbsp;on,Client&nbsp;off" TextWidth="110px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+            </div>
+            <div class="input-toggle">
+                <FInputToggle @bind-Value="oidcDownParty.EnableResourceTab" OnValidChange="@(v => OnOidcDownPartyResourceTabChange(oidcDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+            </div>
+        </div>
+        @if (oidcDownParty.ShowClientTab)
+        {
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        }
+    </div>
+    <div class="modal-body">
+        @if (oidcDownParty.CreateMode)
+        {
+            <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
+        }
+        else
+        {
+            <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
+        }
+
+        <div class="mb-3 alert alert-info" role="alert">
+            <i>Authority and OIDC Discovery example for a up-party with the name 'login' as the target.</i>
+            @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name); }
+            <div>Authority: @authority</div>
+            <div>OIDC Discovery: <a href="@oidcDiscovery" target="_blank">@oidcDiscovery</a></div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                @if (oidcDownParty.EnableClientTab)
+                {
+                    @if (oidcDownParty.ShowClientTab)
+                    {
+                        <a class="nav-link active">OpenID Connect Client</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcDownParty, Models.OAuthTabTypes.Client))">OpenID Connect Client</button>
+                    }
+                }
+            </li>
+            <li class="nav-item">
+                @if (oidcDownParty.EnableResourceTab)
+                {
+                    @if (oidcDownParty.ShowResourceTab)
+                    {
+                        <a class="nav-link active">OAuth 2.0 Resource</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcDownParty, Models.OAuthTabTypes.Resource))">OAuth 2.0 Resource</button>
+                    }
+                }
+            </li>
+            <li class="nav-item">
+                @if (oidcDownParty.ShowClaimTransformTab)
+                {
+                    <a class="nav-link active">Claim transform</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcDownParty, Models.OAuthTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+            @if (oidcDownParty.ShowClientTab)
+            {
+                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
+                @if (!oidcDownParty.EnableClientTab)
+                {
+                    @if (oidcDownParty.EnableResourceTab)
+                    {
+                        oidcDownParty.ShowClientTab = false;
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        <i>Inactive</i>
+                    }
+                }
+                @if (oidcDownParty.Form.Model.Client != null)
+                {
+                    <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
+                    }
+                    <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
+                    <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
+                    <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="e.d" />
+                    <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
+                    <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
+
+                    <div class="form-group active-group active">
+                        <Label For="@(() => oidcDownParty.Form.Model.Client.ScopesViewModel)" class="label-control" />
+                        @if (oidcDownParty.Form.Model.Client.ScopesViewModel.Count() <= 0)
+                        {
+                            <div class="card">
+                                <div class="card-body px-3 py-2">
+                                </div>
+                            </div>
+                        }
+                        <ul class="list-group">
+                            @foreach (var scopeItem in oidcDownParty.Form.Model.Client.ScopesViewModel)
+                            {
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-11">
+                                            <FInputText @bind-Value="scopeItem.Scope" For="@(() => scopeItem.Scope)" />
+                                        </div>
+                                        <div class="col-1 text-right">
+                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScope(e, oidcDownParty.Form.Model.Client.ScopesViewModel, scopeItem))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        @if (scopeItem.VoluntaryClaims != null)
+                                        {
+                                            @foreach (var voluntaryClaim in scopeItem.VoluntaryClaims)
+                                            {
+                                                var includeLabel = scopeItem.VoluntaryClaims.IndexOf(voluntaryClaim) <= 0;
+                                                <div class="row">
+                                                    <div class="col-7">
+                                                        @if (includeLabel)
+                                                        {
+                                                            <div class="active-group active pb-0 mb-0">
+                                                                @if (scopeItem.ShowVoluntaryClaims)
+                                                                {
+                                                                    <input type="text" @bind="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="card">
+                                                                        <div class="card-body px-3 py-2">
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <Label For="@(() => scopeItem.VoluntaryClaims)" class="label-control" />
+                                                            </div>
+                                                        }
+                                                        else if (scopeItem.ShowVoluntaryClaims)
+                                                        {
+                                                            <input type="text" @bind="@voluntaryClaim.Claim" class="form-control input-control" />
+                                                        }
+                                                        <ValidationMessage For="@(() => voluntaryClaim.Claim)" />
+                                                    </div>
+                                                    <div class="col-3">
+                                                        @if (includeLabel)
+                                                        {
+                                                            <div class="active-group active pb-0 mb-0">
+                                                                @if (scopeItem.ShowVoluntaryClaims)
+                                                                {
+                                                                    <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="card">
+                                                                        <div class="card-body px-3 py-2">
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                                <Label For="@(() => voluntaryClaim.InIdToken)" class="label-control" />
+                                                            </div>
+                                                        }
+                                                        else if (scopeItem.ShowVoluntaryClaims)
+                                                        {
+                                                            <FInputToggleN @bind-Value="voluntaryClaim.InIdToken" For="@(() => voluntaryClaim.InIdToken)" TextType="e.d" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
+                                                        }
+                                                    </div>
+                                                    <div class="col-1 p-0">
+                                                        @if (scopeItem.ShowVoluntaryClaims)
+                                                        {
+                                                            @if (includeLabel)
+                                                            {
+                                                                <div class="active-group active pb-0 mb-0">
+                                                                    <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                                </div>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcScopeVoluntaryClaim(e, scopeItem.VoluntaryClaims, voluntaryClaim))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                            }
+                                                        }
+                                                    </div>
+                                                    <div class="col-1 text-right">
+                                                        @if (includeLabel)
+                                                        {
+                                                            @if (scopeItem.ShowVoluntaryClaims)
+                                                            {
+                                                                <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => scopeItem.ShowVoluntaryClaims = false)"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => scopeItem.ShowVoluntaryClaims = true)"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                                                            }
+                                                        }
+                                                    </div>
+                                                </div>
+                                            }
+                                            <ValidationMessage For="@(() => scopeItem.VoluntaryClaims)" />
+                                        }
+                                        @if (scopeItem.ShowVoluntaryClaims)
+                                        {
+                                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScopeVoluntaryClaim(e, scopeItem))"><span class="oi oi-plus" aria-hidden="true"></span> Add Voluntary Claim</button>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                        <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ScopesViewModel)" />
+                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcScope(e, oidcDownParty.Form.Model.Client.ScopesViewModel))"><span class="oi oi-plus" aria-hidden="true"></span> Add Scope</button>
+                    </div>
+
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <div class="form-group active-group active">
+                            <Label For="@(() => oidcDownParty.Form.Model.Client.Claims)" class="label-control" />
+                            @if (oidcDownParty.Form.Model.Client.Claims.Count() <= 0)
+                            {
+                                <div class="card">
+                                    <div class="card-body px-3 py-2">
+                                    </div>
+                                </div>
+                            }
+                            <ul class="list-group">
+                                @foreach (var claimAndValues in oidcDownParty.Form.Model.Client.Claims)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <div class="row">
+                                                    <div class="col-8">
+                                                        <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <FInputToggleN @bind-Value="claimAndValues.InIdToken" For="@(() => claimAndValues.InIdToken)" TextType="e.d" />
+                                                    </div>
+                                                </div>
+                                                <div class="active-group active @(claimAndValues.Values?.Count() > 0 ? "pb-0 mb-0" : "p-0 m-0")">
+                                                    <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                                    @if (claimAndValues.Values?.Count() > 0)
+                                                    {
+                                                        <Label For="@(() => claimAndValues.Values)" class="label-control" />
+                                                    }
+                                                </div>
+                                            </div>
+                                            <div class="col-1 text-right">
+                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.Claims)" />
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddOidcClaim(e, oidcDownParty.Form.Model.Client.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                        </div>
+                        <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime" For="@(() => oidcDownParty.Form.Model.Client.AuthorizationCodeLifetime)" />
+                        <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.IdTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.IdTokenLifetime)" />
+                        <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.AccessTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.AccessTokenLifetime)" />
+                        <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetime)" />
+                        <FInputNumberN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime)" />
+                        <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
+                        <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
+                        <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint" For="@(() => oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint)" TextType="e.d" />
+                    }
+                }
+            }
+            else if (oidcDownParty.ShowResourceTab)
+            {
+                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Resource)" />
+                @if (!oidcDownParty.EnableResourceTab)
+                {
+                    @if (oidcDownParty.EnableClientTab)
+                    {
+                        oidcDownParty.ShowClientTab = true;
+                        StateHasChanged();
+                    }
+                    else
+                    {
+                        <i>Inactive</i>
+                    }
+                }
+                @if (oidcDownParty.Form.Model.Resource != null)
+                {
+                    <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" />
+                }
+            }
+            else if (oidcDownParty.ShowClaimTransformTab)
+            {
+                <i>Claims transform...</i>
+            }
+        </div>
+    </div>
+    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    {
+        <div class="modal-footer">
+            <div class="alert alert-danger" role="alert">
+                <div>
+                    You are about to delete OpenID Connect Down-party "@DownParty.Name", are you sure?
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteOidcDownPartyAsync(oidcDownParty))">Yes delete</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => DownParty.DeleteAcknowledge = false)">No</button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="modal-footer">
+        @if (oidcDownParty.ShowClientTab)
+        {
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        }
+        @if (!DownParty.CreateMode)
+        {
+            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
+        }
+        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Cancel</button>
+    </div>
+</PageEditForm>

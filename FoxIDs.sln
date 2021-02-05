@@ -65,6 +65,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-parties.png = docs\images\configure-parties.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-client.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-client.png
 		..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-resource.png = ..\..\..\..\..\Users\anders\OneDrive\Billeder\Skærmbilleder\configure-resource-scopes-resource.png
+		docs\images\configure-saml-adfs-up-party.png = docs\images\configure-saml-adfs-up-party.png
 		docs\images\configure-tenant-adminuser.png = docs\images\configure-tenant-adminuser.png
 		docs\images\configure-tenant-text.png = docs\images\configure-tenant-text.png
 		docs\images\configure-tenant.png = docs\images\configure-tenant.png

@@ -38,14 +38,12 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 if (action == SequenceAction.Start)
                 {
-                    await sequenceLogic.StartSequenceAsync();
-                    context.HttpContext.Items[Constants.Sequence.Start] = true;
+                    await sequenceLogic.StartSequenceAsync(true);
                 }
                 else if (!context.HttpContext.Items.ContainsKey(Constants.Sequence.Start) && !context.HttpContext.Items.ContainsKey(Constants.Sequence.Valid))
                 {
                     var sequenceString = context.HttpContext.GetRouteSequenceString();
-                    await sequenceLogic.ValidateSequenceAsync(sequenceString);
-                    context.HttpContext.Items[Constants.Sequence.Valid] = true;
+                    await sequenceLogic.ValidateSequenceAsync(sequenceString, true);
                 }
 
                 await next();

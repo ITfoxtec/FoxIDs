@@ -6,6 +6,8 @@ using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
+using ITfoxtec.Identity.Saml2;
+using ITfoxtec.Identity.Saml2.MvcCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -15,11 +17,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
+        private readonly SequenceLogic sequenceLogic;
 
-        public SamlController(TelemetryScopedLogger logger, IServiceProvider serviceProvider) : base(logger)
+        public SamlController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic) : base(logger)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
+            this.sequenceLogic = sequenceLogic;
         }
 
         public async Task<IActionResult> SpMetadata()
@@ -83,22 +87,24 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Sigle Logout request, Up type '{RouteBinding.UpParty.Type}'");
-                switch (RouteBinding.UpParty.Type)
+                var genericHttpRequest = Request.ToGenericHttpRequest();
+                if (new Saml2PostBinding().IsResponse(genericHttpRequest) || new Saml2RedirectBinding().IsResponse(genericHttpRequest))
                 {
-                    //case PartyType.Saml2:
-                    //    return await serviceProvider.GetService<SamlLogoutUpLogic>().SingleLogoutResponseAsync(RouteBinding.UpParty.Id);
-                    default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                    return await LoggedOutInternal();
+                }
+                else
+                {
+                    await sequenceLogic.StartSequenceAsync(true);
+                    return await SingleLogoutInternal();
                 }
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"SAML Sigle Logout request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"SAML Logged Out response or Single Logout request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        public async Task<IActionResult> LoggedOut()
+        private async Task<IActionResult> LoggedOutInternal()
         {
             try
             {
@@ -114,6 +120,25 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"SAML Logged Out response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> SingleLogoutInternal()
+        {
+            try
+            {
+                logger.ScopeTrace($"SAML Single Logout request, Up type '{RouteBinding.UpParty.Type}'");
+                switch (RouteBinding.UpParty.Type)
+                {
+                    //case PartyType.Saml2:
+                    //    return await serviceProvider.GetService<SamlLogoutUpLogic>().SingleLogoutResponseAsync(RouteBinding.UpParty.Id);
+                    default:
+                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"SAML Single Logout request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 

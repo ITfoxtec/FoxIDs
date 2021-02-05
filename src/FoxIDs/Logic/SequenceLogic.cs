@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             this.localizationLogic = localizationLogic;
         }
 
-        public async Task StartSequenceAsync()
+        public async Task StartSequenceAsync(bool setStart)
         {
             try
             {
@@ -37,6 +37,10 @@ namespace FoxIDs.Logic
 
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
+                if (setStart)
+                {
+                    HttpContext.Items[Constants.Sequence.Start] = true;
+                }
             }
             catch (SequenceException)
             {
@@ -129,7 +133,7 @@ namespace FoxIDs.Logic
             return Task.FromResult<Sequence>(null);
         }
 
-        public async Task ValidateSequenceAsync(string sequenceString)
+        public async Task ValidateSequenceAsync(string sequenceString, bool setValid = false)
         {
             if (sequenceString.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(sequenceString));
 
@@ -139,6 +143,10 @@ namespace FoxIDs.Logic
                 CheckTimeout(sequence);
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
+                if (setValid)
+                {
+                    HttpContext.Items[Constants.Sequence.Valid] = true;
+                }
 
                 logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", sequence.AccountAction == true ? "true" : "false" } });
             }

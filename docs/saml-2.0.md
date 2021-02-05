@@ -16,7 +16,7 @@ How to:
 //TODO
 
 ## Connect AD FS as RP
-An AD FS can be connected to FoxIDs with SAML 2.0 acting as an RP where and FoxIDs is acting as an IdP.
+An AD FS can be connected to FoxIDs with SAML 2.0 acting as an RP where FoxIDs is acting as an IdP.
  
 Configuring AD FS as RP using the following steps.
 
@@ -41,7 +41,7 @@ Alternatively, FoxIDs can be configured manually as an IdP on the AD FS with the
 FoxIDs default issue the user's identity in the NameID claim with format persistent.
 
 ## Connect AD FS as IdP
-An AD FS can be connected to FoxIDs with SAML 2.0 acting as an IdP where and FoxIDs is acting as an RP.
+An AD FS can be connected to FoxIDs with SAML 2.0 acting as an IdP where FoxIDs is acting as an RP.
  
 Configuring AD FS as IdP using the following steps.
 
@@ -52,27 +52,30 @@ First the AD FS SAML 2.0 IdP is configured in a FoxIDs track as an SAML 2.0 up-p
 - Authn request and response binding: Post
 - Logout request and response binding: Post
 
-It is also sometimes recemented to use an authn request redirect binding, but the long query string can give problems I some devices.
+Remark; The authn request redirect binding can result in a long query string which can cause problems I some devices.
+
+![Configure SAML 2.0 AD FS up-party](images/configure-saml-adfs-up-party.png)
 
 ### 2) FoxIDs as a SAML 2.0 RP on AD FS
-After configuring the AD FS SAML 2.0 up-party in a FoxIDs track an SAML 2.0 RP metadata is exposed, which can be used to configure FoxIDs as a RP on AD FS.
+After the AD FS SAML 2.0 up-party has been configured in a FoxIDs track a SAML 2.0 RP metadata is exposed, which can be used to configure FoxIDs as an RP on AD FS.
 
-> FoxIDs SAML 2.0 RP metadata `https://foxids.com/tenant-x/track-y/(adfs-idp-party)/saml/spmetadata`  
-> for 'tenant-x' and 'track-y' with the up-party name 'adfs-idp-party'
+> FoxIDs SAML 2.0 RP metadata `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/spmetadata`  
+> for 'tenant-x' and 'track-y' with the up-party name 'adfs-saml-idp1'
 
-Alternatively, FoxIDs can be configured manually as an RP on the AD FS with the following information's:
+Alternatively, FoxIDs can be configured manually as an RP on the AD FS with the following properties:
 
 - The public FoxIDs track ('tenant-x' and 'track-y') certificate
 - Hash algorithm, default SHA-256
-- The FoxIDs track identifier `https://foxids.com/tenant-x/track-y` or another configured identifier
-- Assertion consumer service endpoint `https://foxids.com/tenant-x/track-y/(adfs-idp-party)/saml/acs`
-- Single logout service endpoint `https://foxids.com/tenant-x/track-y/(adfs-idp-party)/saml/singlelogout`
+- The FoxIDs track identifier `https://foxids.com/tenant-x/track-y/` or another configured identifier
+- Assertion consumer service endpoint `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/acs`
+- Single logout (logout) service endpoint `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/singlelogout/`
 
 ### 3) AD FS issuances claims
-It is recommended to add the NameID (in AD FS called the NameIdentifier `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim) to enable the SessionIndex. Without the NamID AD FS do not add the SessionIndex to the SAML token and it will not be possible to do single logout.
+It is recommended to add the NameID claim `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` (in AD FS called the NameIdentifier) to enable the SessionIndex. Without the NamID claim AD FS do not add the SessionIndex to the SAML token and it will therefore not be possible to do logout or single logout.
 
 FoxIDs require AD FS to issue the users identity in either the NameID or at least one of the following claims:
 
+- NameID `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier`
 - UPN `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/upn`
 - Email `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress`
 - Name `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name`

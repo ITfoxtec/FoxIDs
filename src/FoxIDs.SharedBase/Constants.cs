@@ -345,11 +345,11 @@ namespace FoxIDs
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
 
-            public const string SamlAuthn = "Authn";
-            public const string SamlLogout = "Logout";
-            public const string SamlAcs = "Acs";
-            public const string SamlSingleLogout = "SingleLogout";
-            public const string SamlLoggedOut = "LoggedOut";
+            public const string SamlAuthn = "authn";
+            public const string SamlLogout = "logout";
+            public const string SamlAcs = "acs";
+            public const string SamlSingleLogout = "singlelogout";
+            public const string SamlLoggedOut = "loggedout";
         }
 
         public static class OAuth

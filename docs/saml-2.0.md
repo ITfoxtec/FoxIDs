@@ -7,6 +7,11 @@ How to:
 - Connect [AD FS as RP](#connect-ad-fs-as-rp) to FoxIDs
 - Connect [AD FS as IdP](#connect-ad-fs-as-idp) to FoxIDs
 
+## Claim mappings
+Claim mapping between SAML claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md).
+
+![Configure JWT and SAML mappings](images/configure-jwt-saml-mappings.png)
+
 ## IdP 
 (identity provider)
 //TODO

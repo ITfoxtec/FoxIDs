@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
@@ -57,6 +59,15 @@ namespace FoxIDs.Models.Api
         [Required]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequired;
 
+        /// <summary>
+        /// Claim transforms.
+        /// </summary>
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        /// <summary>
+        /// CSS style.
+        /// </summary>
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         public string CssStyle { get; set; }
     }

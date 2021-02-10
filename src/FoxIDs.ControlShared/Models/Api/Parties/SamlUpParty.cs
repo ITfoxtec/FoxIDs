@@ -22,6 +22,15 @@ namespace FoxIDs.Models.Api
         public string SpIssuer { get; set; }
 
         /// <summary>
+        /// Claim transforms.
+        /// </summary>
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<SamlClaimTransform> ClaimTransforms { get; set; }
+
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        public List<string> Claims { get; set; }
+
+        /// <summary>
         /// Default 20 days.
         /// </summary>
         [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]

@@ -59,6 +59,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ClaimMap, Api.ClaimMap>()
                 .ReverseMap();
 
+            CreateMap<ClaimTransform, Api.ClaimTransform>()
+                .ReverseMap();
+
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 
@@ -103,19 +106,20 @@ namespace FoxIDs.MappingProfiles
         private void DownPartyMapping()
         {
             CreateMap<OAuthDownParty, Api.OAuthDownParty>()
-                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name.ToLower())))
+                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
-                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n })));
+                .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => CheckClaimTransforms(s.ClaimTransforms)))
+                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OAuthDownClaim, Api.OAuthDownClaim>()
                 .ReverseMap();
             CreateMap<OAuthDownClient, Api.OAuthDownClient>()
                 .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)))
-                .ReverseMap();
+                .ReverseMap()
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
             CreateMap<OAuthDownResource, Api.OAuthDownResource>()
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc)))
                 .ReverseMap();
@@ -128,29 +132,40 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<OidcDownParty, Api.OidcDownParty>()
-                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name.ToLower())))
+                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
-                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n })));
+                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OidcDownClaim, Api.OidcDownClaim>()
                 .ReverseMap();
             CreateMap<OidcDownClient, Api.OidcDownClient>()
                 .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
-                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)))
-                .ReverseMap();
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))                
+                .ReverseMap()
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
             CreateMap<OidcDownScope, Api.OidcDownScope>()
                 .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();
 
             CreateMap<SamlDownParty, Api.SamlDownParty>()
-                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name.ToLower())))
+                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
-                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n })));
+                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
+        }
+
+        private List<Api.OAuthClaimTransform> CheckClaimTransforms(List<Api.OAuthClaimTransform> claimTransforms)
+        {
+            var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+            if (duplicatedOrderNumber != null)
+            {
+                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated claim transform order number '{duplicatedOrderNumber}'");
+            }
+
+            return claimTransforms;
         }
 
         private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)

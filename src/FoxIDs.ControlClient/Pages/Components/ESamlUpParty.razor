@@ -4,7 +4,7 @@
     var samlUpParty = UpParty as GeneralSamlUpPartyViewModel;
 }
 
-<PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
+<PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(m => SamlUpPartyViewModelAfterInit(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
     <div class="modal-header">
         SAML 2.0
         <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
@@ -89,6 +89,7 @@
         </div>
         @if (samlUpParty.ShowAdvanced)
         {
+            <FInputTextList @bind-ValueList="samlUpParty.Form.Model.Claims" For="@(() => samlUpParty.Form.Model.Claims)" />
             <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">
                 <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
                 <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>

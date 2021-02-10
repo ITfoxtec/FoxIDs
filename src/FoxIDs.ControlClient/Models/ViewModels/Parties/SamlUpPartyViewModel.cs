@@ -22,6 +22,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional custom SP issuer (default auto generated)")]
         public string SpIssuer { get; set; }
 
+        [ValidateComplexType]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [Display(Name = "Claims (in addition to default claims)")]
+        public List<string> Claims { get; set; }
+
         /// <summary>
         /// Default 20 days.
         /// </summary>

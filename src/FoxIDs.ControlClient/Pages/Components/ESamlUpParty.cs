@@ -14,11 +14,20 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using BlazorInputFile;
 using ITfoxtec.Identity.Models;
+using System.Security.Claims;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class ESamlUpParty : UpPartyBase
     {
+        private void SamlUpPartyViewModelAfterInit(GeneralSamlUpPartyViewModel samlUpParty, SamlUpPartyViewModel model)
+        {
+            if (samlUpParty.CreateMode)
+            {
+                model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
+            }
+        }
+
         private async Task OnSamlUpPartyCertificateFileSelectedAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, IFileListEntry[] files)
         {
             if (generalSamlUpParty.Form.Model.Keys == null)

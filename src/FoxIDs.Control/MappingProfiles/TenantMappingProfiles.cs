@@ -59,7 +59,10 @@ namespace FoxIDs.MappingProfiles
             CreateMap<ClaimMap, Api.ClaimMap>()
                 .ReverseMap();
 
-            CreateMap<ClaimTransform, Api.ClaimTransform>()
+            CreateMap<OAuthClaimTransform, Api.OAuthClaimTransform>()
+                .ReverseMap();
+
+            CreateMap<SamlClaimTransform, Api.SamlClaimTransform>()
                 .ReverseMap();
 
             CreateMap<TrackKey, Api.TrackKey>()
@@ -110,7 +113,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
-                .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => CheckClaimTransforms(s.ClaimTransforms)))
+                .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OAuthDownClaim, Api.OAuthDownClaim>()
                 .ReverseMap();
@@ -157,7 +160,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
         }
 
-        private List<Api.OAuthClaimTransform> CheckClaimTransforms(List<Api.OAuthClaimTransform> claimTransforms)
+        private List<Api.OAuthClaimTransform> OrderClaimTransforms(List<Api.OAuthClaimTransform> claimTransforms)
         {
             var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
             if (duplicatedOrderNumber != null)
@@ -165,7 +168,7 @@ namespace FoxIDs.MappingProfiles
                 throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated claim transform order number '{duplicatedOrderNumber}'");
             }
 
-            return claimTransforms;
+            return claimTransforms.OrderBy(ct => ct.Order).ToList();
         }
 
         private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)

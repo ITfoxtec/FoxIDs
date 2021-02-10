@@ -1,0 +1,71 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => Model.ClaimTransforms)" class="label-control" />
+    <ul class="list-group">
+        @foreach (var claimTransform in Model.ClaimTransforms)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        @switch (claimTransform.Type)
+                        {
+                            case ClaimTransformTypes.Constant:
+                                <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" />
+                                <FInputText @bind-Value="claimTransform.Transformation" For="@(() => claimTransform.Transformation)" LabelText="Constant value" />
+                                break;
+
+                            case ClaimTransformTypes.Match:
+                                break;
+                            case ClaimTransformTypes.RegexMatch:
+                                break;
+                            case ClaimTransformTypes.Map:
+                                break;
+                            case ClaimTransformTypes.RegexMap:
+                                break;
+                            case ClaimTransformTypes.Concatenate:
+                                break;
+                            default:
+                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
+                        }
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveClaimTransform(claimTransform))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model.ClaimTransforms)" />
+    <div class="btn-group" role="group">
+        <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add claim transform
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match))">Match</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch))">Regex match</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Map))">Map</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMap))">Regex map</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IOAuthClaimTransformViewModel Model { get; set; }
+
+    private void AddClaimTransform(ClaimTransformTypes claimTransformType)
+    {
+        var order = Model.ClaimTransforms?.Count() > 0 ? Model.ClaimTransforms.Max(ct => ct.Order) : 1;
+        Model.ClaimTransforms.Add(new OAuthClaimTransform 
+        {
+            Type = claimTransformType,
+            Order = order
+        });
+    }
+
+    private void RemoveClaimTransform(OAuthClaimTransform claimTransform)
+    {
+        Model.ClaimTransforms.Remove(claimTransform);
+    }
+}

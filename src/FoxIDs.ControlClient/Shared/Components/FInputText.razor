@@ -2,11 +2,14 @@
 
 <div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
     <input @ref="inputElement" type="text" @bind="@CurrentValue" class="form-control input-control" />
-    <Label For="@For" class="label-control" />
+    <Label For="@For" LabelText="@LabelText" class="label-control" />
     <ValidationMessage For="@For" />
 </div>
 
 @code {
     [Parameter]
     public bool IncludeActiveFormGroup { get; set; } = true;
+
+    [Parameter]
+    public string LabelText { get; set; }
 }

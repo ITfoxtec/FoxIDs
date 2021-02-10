@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames
+    public class OAuthDownPartyViewModel : IValidatableObject, IDownPartyName, IAllowUpPartyNames, IOAuthClaimTransformViewModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -29,6 +29,12 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [ValidateComplexType]
         public OAuthDownResource Resource { get; set; }
+
+        /// <summary>
+        /// Claim transforms.
+        /// </summary>
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransform> ClaimTransforms { get; set; } = new List<OAuthClaimTransform>();
 
         /// <summary>
         /// Allow CORS origins.

@@ -15,13 +15,17 @@ namespace FoxIDs.Models.Api
         [Range(Constants.Models.Claim.TransformOrderMin, Constants.Models.Claim.TransformOrderMax)]
         public int Order { get; set; }
 
+        [Display(Name = "Claims in")]
         public abstract List<string> ClaimsIn { get; set; }
 
         [Required]
+        [Display(Name = "Claim out")]
         public abstract string ClaimOut { get; set; }
 
+        [Display(Name = "Transformation")]
         public abstract string Transformation { get; set; }
 
+        [Display(Name = "Transformation extension")]
         public abstract string TransformationExtension { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

@@ -73,7 +73,7 @@ namespace FoxIDs.Logic
                 claims.AddRange(user.Claims.ToClaimList());
             }
 
-            claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)

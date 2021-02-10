@@ -167,7 +167,15 @@ namespace FoxIDs
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
-                public const int MapMax = 500;
+                public const int MapMax = 100;
+
+                public const int TransformsMin = 0;
+                public const int TransformsMax = 100;
+                public const int TransformTransformationLength = 300;
+                public const int TransformClaimsInMin = 0;
+                public const int TransformClaimsInMax = 10;
+                public const int TransformOrderMin = 0;
+                public const int TransformOrderMax = 1000;
             }
 
             public static class Party
@@ -178,14 +186,6 @@ namespace FoxIDs
                 public const string IdRegExPattern = @"^[\w:\-]*$";
 
                 public const string NameAndGuidIdRegExPattern = @"^[\w\-]*$";
-
-                public const int ClaimTransformationMin = 0;
-                public const int ClaimTransformationMax = 100;
-                public const int ClaimTransformationLength = 300;
-                public const int ClaimTransformationClaimsMin = 0;
-                public const int ClaimTransformationClaimsMax = 10;
-                public const int ClaimTransformationOrderMin = 0;
-                public const int ClaimTransformationOrderMax = 1000;
             }
 
             public static class DownParty

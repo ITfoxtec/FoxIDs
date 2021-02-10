@@ -44,9 +44,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
 
-        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
-        [JsonProperty(PropertyName = "claim_transformations")]
-        public List<OAuthClaimTransformation> ClaimTransformations { get; set; }
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [JsonProperty(PropertyName = "claim_transforms")]
+        public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css_style")]

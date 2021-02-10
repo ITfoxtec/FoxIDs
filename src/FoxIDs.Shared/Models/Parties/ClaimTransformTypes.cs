@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum ClaimTransformationTypes
+    public enum ClaimTransformTypes
     {
         [EnumMember(Value = "constant")]
         Constant = 10,

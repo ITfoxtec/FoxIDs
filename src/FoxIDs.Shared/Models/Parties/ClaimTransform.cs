@@ -7,13 +7,13 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Models
 {
-    public abstract class ClaimTransformation : IValidatableObject
+    public abstract class ClaimTransform : IValidatableObject
     {
         [Required]
         [JsonProperty(PropertyName = "type")]
-        public ClaimTransformationTypes Type { get; set; }
+        public ClaimTransformTypes Type { get; set; }
 
-        [Range(Constants.Models.Party.ClaimTransformationOrderMin, Constants.Models.Party.ClaimTransformationOrderMax)]
+        [Range(Constants.Models.Claim.TransformOrderMin, Constants.Models.Claim.TransformOrderMax)]
         [JsonProperty(PropertyName = "order")]
         public int Order { get; set; }
 
@@ -36,7 +36,7 @@ namespace FoxIDs.Models
 
             switch (Type)
             {
-                case ClaimTransformationTypes.Constant:
+                case ClaimTransformTypes.Constant:
                     if (ClaimsIn?.Count() > 0)
                     {
                         results.Add(new ValidationResult($"The field {nameof(ClaimsIn)} can not be used with claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
@@ -47,8 +47,8 @@ namespace FoxIDs.Models
                     }
                     break;
 
-                case ClaimTransformationTypes.Match:
-                case ClaimTransformationTypes.RegexMatch:
+                case ClaimTransformTypes.Match:
+                case ClaimTransformTypes.RegexMatch:
                     if (ClaimsIn?.Count() != 1)
                     {
                         results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
@@ -63,14 +63,14 @@ namespace FoxIDs.Models
                     }
                     break;
 
-                case ClaimTransformationTypes.Map:
+                case ClaimTransformTypes.Map:
                     if (ClaimsIn?.Count() != 1)
                     {
                         results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
                     }
                     break;
 
-                case ClaimTransformationTypes.RegexMap:
+                case ClaimTransformTypes.RegexMap:
                     if (ClaimsIn?.Count() != 1)
                     {
                         results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
@@ -81,7 +81,7 @@ namespace FoxIDs.Models
                     }
                     break;
 
-                case ClaimTransformationTypes.Concatenate:
+                case ClaimTransformTypes.Concatenate:
                     if (ClaimsIn?.Count() < 1)
                     {
                         results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));

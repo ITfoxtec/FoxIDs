@@ -17,7 +17,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_out")]
         public override string ClaimOut { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.TransformTransformationLength)]
         [JsonProperty(PropertyName = "transformation")]
         public override string Transformation { get; set; }

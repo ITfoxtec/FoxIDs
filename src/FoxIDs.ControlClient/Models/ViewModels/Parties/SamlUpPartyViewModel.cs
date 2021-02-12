@@ -10,7 +10,7 @@ using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel 
+    public class SamlUpPartyViewModel : ISamlClaimTransformViewModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -21,6 +21,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Optional custom SP issuer (default auto generated)")]
         public string SpIssuer { get; set; }
+
+        /// <summary>
+        /// Claim transforms.
+        /// </summary>
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<SamlClaimTransformViewModel> ClaimTransforms { get; set; } = new List<SamlClaimTransformViewModel>();
 
         [ValidateComplexType]
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]

@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public interface IOAuthClaimTransformViewModel
+    public interface ISamlClaimTransformViewModel
     {
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [Display(Name = "Claim transforms")]
-        List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; }
+        List<SamlClaimTransformViewModel> ClaimTransforms { get; set; }
     }
 }

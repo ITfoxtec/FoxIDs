@@ -34,7 +34,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Claim transforms.
         /// </summary>
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransform> ClaimTransforms { get; set; } = new List<OAuthClaimTransform>();
+        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         /// <summary>
         /// Allow CORS origins.

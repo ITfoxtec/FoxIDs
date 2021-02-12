@@ -13,6 +13,9 @@ namespace FoxIDs.MappingProfiles
 
         private void Mapping()
         {
+            CreateMap<string, string>()
+                .ConvertUsing(str => str == null ? null : str.Trim());
+
             CreateMap<ResourceEnvelope, Api.Resource>()
                 .ReverseMap();
             CreateMap<ResourceName, Api.ResourceName>()

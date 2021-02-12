@@ -148,7 +148,7 @@ namespace FoxIDs.Client.Pages
                     var generalOidcDownParty = downParty as GeneralOidcDownPartyViewModel;
                     var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
                     var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(downParty.Name);
-                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
+                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map((Action<OidcDownPartyViewModel>)(afterMap => 
                     {
                         if (afterMap.Client == null)
                         {
@@ -188,7 +188,12 @@ namespace FoxIDs.Client.Pages
                         {
                             generalOidcDownParty.EnableResourceTab = true;
                         }
-                    }));
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = MapClaimTransforms(afterMap.ClaimTransforms);
+                        }
+                    })));
                 }
                 catch (TokenUnavailableException)
                 {
@@ -246,6 +251,11 @@ namespace FoxIDs.Client.Pages
                         {
                             generalOAuthDownParty.EnableResourceTab = true;
                         }
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = MapClaimTransforms(afterMap.ClaimTransforms);
+                        }
                     }));
                 }
                 catch (TokenUnavailableException)
@@ -289,6 +299,11 @@ namespace FoxIDs.Client.Pages
                                 });
                             }
                         }
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = MapClaimTransforms(afterMap.ClaimTransforms);
+                        }
                     }));
                 }
                 catch (TokenUnavailableException)
@@ -300,6 +315,66 @@ namespace FoxIDs.Client.Pages
                     downParty.Error = ex.Message;
                 }
             }
+        }
+
+        private static List<OAuthClaimTransformViewModel> MapClaimTransforms(List<OAuthClaimTransformViewModel> claimTransforms)
+        {
+            var newClaimTransforms = new List<OAuthClaimTransformViewModel>();
+            foreach (var claimTransform in claimTransforms)
+            {
+                switch (claimTransform.Type)
+                {
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                    case ClaimTransformTypes.Map:
+                    case ClaimTransformTypes.RegexMap:
+                        newClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                        {
+                            Type = claimTransform.Type,
+                            Order = claimTransform.Order,
+                            ClaimIn = claimTransform.ClaimsIn.First(),
+                            ClaimOut = claimTransform.ClaimOut,
+                            Transformation = claimTransform.Transformation,
+                            TransformationExtension = claimTransform.TransformationExtension
+                        });
+                        break;
+                    default:
+                        newClaimTransforms.Add(claimTransform);
+                        break;
+                }
+            }
+
+            return newClaimTransforms;
+        }
+
+        private static List<SamlClaimTransformViewModel> MapClaimTransforms(List<SamlClaimTransformViewModel> claimTransforms)
+        {
+            var newClaimTransforms = new List<SamlClaimTransformViewModel>();
+            foreach (var claimTransform in claimTransforms)
+            {
+                switch (claimTransform.Type)
+                {
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                    case ClaimTransformTypes.Map:
+                    case ClaimTransformTypes.RegexMap:
+                        newClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                        {
+                            Type = claimTransform.Type,
+                            Order = claimTransform.Order,
+                            ClaimIn = claimTransform.ClaimsIn.First(),
+                            ClaimOut = claimTransform.ClaimOut,
+                            Transformation = claimTransform.Transformation,
+                            TransformationExtension = claimTransform.TransformationExtension
+                        });
+                        break;
+                    default:
+                        newClaimTransforms.Add(claimTransform);
+                        break;
+                }
+            }
+
+            return newClaimTransforms;
         }
 
         private async Task OnStateHasChangedAsync(GeneralDownPartyViewModel downParty)

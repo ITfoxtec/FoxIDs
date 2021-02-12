@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components.Forms;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Web;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -72,6 +73,17 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
+                if (generalOAuthDownParty.Form.Model.ClaimTransforms?.Count() > 0)
+                {
+                    foreach (var claimTransform in generalOAuthDownParty.Form.Model.ClaimTransforms)
+                    {
+                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                        {
+                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        }
+                    }
+                }
+
                 var oauthDownParty = generalOAuthDownParty.Form.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
                     if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true)
@@ -85,6 +97,14 @@ namespace FoxIDs.Client.Pages.Components
                     if (generalOAuthDownParty.Form.Model.Client?.ScopesViewModel?.Count() > 0)
                     {
                         afterMap.Client.Scopes = generalOAuthDownParty.Form.Model.Client.ScopesViewModel.Map<List<OAuthDownScope>>();
+                    }
+                    if (afterMap.ClaimTransforms?.Count() > 0)
+                    {
+                        int order = 1;
+                        foreach (var claimTransform in afterMap.ClaimTransforms)
+                        {
+                            claimTransform.Order = order++;
+                        }
                     }
                 });
 

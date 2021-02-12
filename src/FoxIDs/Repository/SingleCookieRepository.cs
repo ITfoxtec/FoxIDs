@@ -29,9 +29,9 @@ namespace FoxIDs.Repository
             return Task.FromResult(0);
         }
 
-        public Task<TMessage> GetAsync(bool delete = false)
+        public Task<TMessage> GetAsync(bool delete = false, bool tryGet = false)
         {
-            return Task.FromResult(Get(delete));
+            return Task.FromResult(Get(delete, tryGet));
         }
 
         public Task SaveAsync(TMessage message, DateTimeOffset? persistentCookieExpires)
@@ -40,17 +40,16 @@ namespace FoxIDs.Repository
             return Task.FromResult(0);
         }
 
-        public Task DeleteAsync()
+        public Task DeleteAsync(bool tryDelete = false)
         {
-            Delete();
+            Delete(tryDelete);
             return Task.FromResult(0);
         }
 
-        private TMessage Get(bool delete)
+        private TMessage Get(bool delete, bool tryGet = false)
         {
-            if (RouteBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TenantName), RouteBinding.GetTypeName());
-            if (RouteBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TrackName), RouteBinding.GetTypeName());
-            if (RouteBinding.UpParty == null) throw new ArgumentNullException(nameof(RouteBinding.UpParty), RouteBinding.GetTypeName());
+            if (tryGet && RouteBindingDoNotExists()) return null;
+            CheckRouteBinding();
 
             logger.ScopeTrace($"Get Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}', Delete '{delete}'.");
 
@@ -88,9 +87,7 @@ namespace FoxIDs.Repository
 
         private void Save(TMessage message, DateTimeOffset? persistentCookieExpires)
         {
-            if (RouteBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TenantName), RouteBinding.GetTypeName());
-            if (RouteBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TrackName), RouteBinding.GetTypeName());
-            if (RouteBinding.UpParty == null) throw new ArgumentNullException(nameof(RouteBinding.UpParty), RouteBinding.GetTypeName());
+            CheckRouteBinding();
             if (message == null) new ArgumentNullException(nameof(message));
 
             logger.ScopeTrace($"Save Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
@@ -117,16 +114,32 @@ namespace FoxIDs.Repository
                 cookieOptions);
         }
 
-        private void Delete()
+        private void Delete(bool tryDelete = false)
+        {
+            if (tryDelete && RouteBindingDoNotExists()) return;
+            CheckRouteBinding();
+
+            logger.ScopeTrace($"Delete Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+
+            DeleteByName(CookieName());
+        }
+
+        private void CheckRouteBinding()
         {
             if (RouteBinding == null) new ArgumentNullException(nameof(RouteBinding));
             if (RouteBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TenantName), RouteBinding.GetTypeName());
             if (RouteBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TrackName), RouteBinding.GetTypeName());
             if (RouteBinding.UpParty == null) throw new ArgumentNullException(nameof(RouteBinding.UpParty), RouteBinding.GetTypeName());
+        }
 
-            logger.ScopeTrace($"Delete Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+        private bool RouteBindingDoNotExists()
+        {
+            if (RouteBinding == null) return true;
+            if (RouteBinding.TenantName.IsNullOrEmpty()) return true;
+            if (RouteBinding.TrackName.IsNullOrEmpty()) return true;
+            if (RouteBinding.UpParty == null) return true;
 
-            DeleteByName(CookieName());
+            return false;
         }
 
         private void DeleteByName(string name)

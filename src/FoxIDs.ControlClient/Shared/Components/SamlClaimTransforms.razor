@@ -3,7 +3,7 @@
     <ul class="list-group">
         @foreach (var claimTransform in Model.ClaimTransforms)
         {
-            var claimTransformClaimIn = claimTransform as OAuthClaimTransformClaimInViewModel;
+            var claimTransformClaimIn = claimTransform as SamlClaimTransformClaimInViewModel;
             <li class="list-group-item">
                 <div class="row">
                     <div class="col-11">
@@ -126,7 +126,7 @@
 
 @code {
     [Parameter]
-    public IOAuthClaimTransformViewModel Model { get; set; }
+    public ISamlClaimTransformViewModel Model { get; set; }
 
     private void AddClaimTransform(ClaimTransformTypes claimTransformType)
     {
@@ -136,14 +136,14 @@
             case ClaimTransformTypes.RegexMatch:
             case ClaimTransformTypes.Map:
             case ClaimTransformTypes.RegexMap:
-                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                Model.ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
                 {
                     ShowDetails = true,
                     Type = claimTransformType
                 });
                 break;
             default:
-                Model.ClaimTransforms.Add(new OAuthClaimTransformViewModel
+                Model.ClaimTransforms.Add(new SamlClaimTransformViewModel
                 {
                     ShowDetails = true,
                     Type = claimTransformType
@@ -152,7 +152,7 @@
         }
     }
 
-    private void RemoveClaimTransform(OAuthClaimTransformViewModel claimTransform)
+    private void RemoveClaimTransform(SamlClaimTransformViewModel claimTransform)
     {
         Model.ClaimTransforms.Remove(claimTransform);
     }

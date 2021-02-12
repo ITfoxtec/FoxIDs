@@ -139,6 +139,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OidcDownClaim, Api.OidcDownClaim>()
                 .ReverseMap();
@@ -157,13 +158,14 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
         }
 
-        private List<Api.OAuthClaimTransform> OrderClaimTransforms(List<Api.OAuthClaimTransform> claimTransforms)
+        private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform
         {
             var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-            if (duplicatedOrderNumber != null)
+            if (duplicatedOrderNumber >= 0)
             {
                 throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated claim transform order number '{duplicatedOrderNumber}'");
             }

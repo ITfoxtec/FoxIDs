@@ -15,7 +15,6 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
         public override string ClaimOut { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.Claim.TransformTransformationLength)]
         public override string Transformation { get; set; }
 

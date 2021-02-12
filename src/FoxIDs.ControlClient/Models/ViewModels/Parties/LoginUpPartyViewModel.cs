@@ -1,10 +1,12 @@
-﻿using FoxIDs.Models.Api;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Api;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpPartyViewModel
+    public class LoginUpPartyViewModel : IOAuthClaimTransformViewModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -63,6 +65,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [Display(Name = "Reset password")]
         public bool EnableResetPassword { get; set; } = true;
+
+        /// <summary>
+        /// Claim transforms.
+        /// </summary>
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         /// <summary>
         /// Default if required.

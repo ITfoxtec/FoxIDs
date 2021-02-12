@@ -94,12 +94,31 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
+                if (generalSamlUpParty.Form.Model.ClaimTransforms?.Count() > 0)
+                {
+                    foreach (var claimTransform in generalSamlUpParty.Form.Model.ClaimTransforms)
+                    {
+                        if (claimTransform is SamlClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                        {
+                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        }
+                    }
+                }
+
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
                 {
                     afterMap.AuthnBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.AuthnRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.AuthnResponseBinding };
                     if (!afterMap.LogoutUrl.IsNullOrEmpty())
                     {
                         afterMap.LogoutBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.LogoutRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.LogoutResponseBinding };
+                    }
+                    if (afterMap.ClaimTransforms?.Count() > 0)
+                    {
+                        int order = 1;
+                        foreach (var claimTransform in afterMap.ClaimTransforms)
+                        {
+                            claimTransform.Order = order++;
+                        }
                     }
                 });
 

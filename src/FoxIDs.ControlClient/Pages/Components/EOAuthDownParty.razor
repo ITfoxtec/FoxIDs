@@ -48,7 +48,7 @@
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthDownParty, Models.OAuthTabTypes.Client))">OAuth 2.0 Client</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthDownParty, OAuthTabTypes.Client))">OAuth 2.0 Client</button>
                     }
                 }
             </li>
@@ -61,7 +61,7 @@
                     }
                     else
                     {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthDownParty, Models.OAuthTabTypes.Resource))">OAuth 2.0 Resource</button>
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthDownParty, OAuthTabTypes.Resource))">OAuth 2.0 Resource</button>
                     }
                 }
             </li>
@@ -177,11 +177,11 @@
                                                         {
                                                             @if (scopeItem.ShowVoluntaryClaims)
                                                             {
-                                                                <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => scopeItem.ShowVoluntaryClaims = false)"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                                                                <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => scopeItem.ShowVoluntaryClaims = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
                                                             }
                                                             else
                                                             {
-                                                                <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => scopeItem.ShowVoluntaryClaims = true)"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                                                                <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => scopeItem.ShowVoluntaryClaims = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
                                                             }
                                                         }
                                                     </div>

@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
-using System.Collections.Generic;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -16,5 +15,8 @@ namespace FoxIDs.Client.Models.ViewModels
         { }
 
         public PageEditForm<LoginUpPartyViewModel> Form { get; set; }
+
+        public bool ShowLoginTab { get; set; } = true;
+        public bool ShowClaimTransformTab { get; set; }
     }
 }

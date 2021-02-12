@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Models.ViewModels;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using FoxIDs.Client.Infrastructure;
 using FoxIDs.Client.Services;
@@ -7,6 +8,8 @@ using Microsoft.AspNetCore.Components.Forms;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Models.Api;
+using System.Collections.Generic;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -16,13 +19,48 @@ namespace FoxIDs.Client.Pages.Components
         {
             try
             {
+                if (generalLoginUpParty.Form.Model.ClaimTransforms?.Count() > 0)
+                {
+                    foreach (var claimTransform in generalLoginUpParty.Form.Model.ClaimTransforms)
+                    {
+                        if (claimTransform is OAuthClaimTransformClaimInViewModel claimTransformClaimIn && !claimTransformClaimIn.ClaimIn.IsNullOrWhiteSpace())
+                        {
+                            claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
+                        }
+                    }
+                }
+
                 if (generalLoginUpParty.CreateMode)
                 {
-                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap => afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword));
+                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
+                    {
+                        afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
+
+                        if (afterMap.ClaimTransforms?.Count() > 0)
+                        {
+                            int order = 1;
+                            foreach (var claimTransform in afterMap.ClaimTransforms)
+                            {
+                                claimTransform.Order = order++;
+                            }
+                        }
+                    }));
                 }
                 else
                 {
-                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap => afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword));
+                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
+                    {
+                        afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
+
+                        if (afterMap.ClaimTransforms?.Count() > 0)
+                        {
+                            int order = 1;
+                            foreach (var claimTransform in afterMap.ClaimTransforms)
+                            {
+                                claimTransform.Order = order++;
+                            }
+                        }
+                    }));
                 }
                 generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;
                 generalLoginUpParty.Edit = false;

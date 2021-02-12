@@ -32,7 +32,7 @@
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlDownParty, Models.SamlTabTypes.Saml))">SAML</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlDownParty, SamlTabTypes.Saml))">SAML</button>
                 }
             </li>
             <li class="nav-item">
@@ -42,7 +42,7 @@
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlDownParty, Models.SamlTabTypes.ClaimsTransform))">Claim transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlDownParty, SamlTabTypes.ClaimsTransform))">Claim transform</button>
                 }
             </li>
         </ul>

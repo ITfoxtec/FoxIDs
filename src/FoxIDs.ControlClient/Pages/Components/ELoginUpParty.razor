@@ -21,22 +21,55 @@
         {
             <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
         }
-        <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
-        <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
-        <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
-        <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
-            <option value="@LoginUpPartyLogoutConsent.IfRequired">If required</option>
-            <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
-            <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
-        </FInputSelect>
-        <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionLifetime" For="@(() => loginUpParty.Form.Model.SessionLifetime)" />
-        @if (loginUpParty.ShowAdvanced)
-        {
-            <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.SessionAbsoluteLifetime)" />
-            <FInputNumber @bind-Value="loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime)" />
-            <FInputToggle @bind-Value="loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited" For="@(() => loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited)" />
-            <FInputTextArea @bind-Value="loginUpParty.Form.Model.CssStyle" For="@(() => loginUpParty.Form.Model.CssStyle)" />
-        }
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                @if (loginUpParty.ShowLoginTab)
+                {
+                    <a class="nav-link active">Login</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Login))">Login</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (loginUpParty.ShowClaimTransformTab)
+                {
+                    <a class="nav-link active">Claim transform</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+            @if (loginUpParty.ShowLoginTab)
+            {
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
+                <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
+                    <option value="@LoginUpPartyLogoutConsent.IfRequired">If required</option>
+                    <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
+                    <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
+                </FInputSelect>
+                <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionLifetime" For="@(() => loginUpParty.Form.Model.SessionLifetime)" />
+                @if (loginUpParty.ShowAdvanced)
+                {
+                    <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.SessionAbsoluteLifetime)" />
+                    <FInputNumber @bind-Value="loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime)" />
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited" For="@(() => loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited)" />
+                    <FInputTextArea @bind-Value="loginUpParty.Form.Model.CssStyle" For="@(() => loginUpParty.Form.Model.CssStyle)" />
+                }
+            }
+            else if (loginUpParty.ShowClaimTransformTab)
+            {
+                <OAuthClaimTransforms Model="loginUpParty.Form.Model" />
+            }
+        </div>
     </div>
     @if (!loginUpParty.CreateMode && loginUpParty.DeleteAcknowledge)
     {

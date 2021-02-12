@@ -6,7 +6,7 @@
             var claimTransformClaimIn = claimTransform as OAuthClaimTransformClaimInViewModel;
             <li class="list-group-item">
                 <div class="row">
-                    <div class="col-11">
+                    <div class="col-10">
                         @switch (claimTransform.Type)
                         {
                             case ClaimTransformTypes.Constant:
@@ -35,10 +35,24 @@
                             default:
                                 throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
                         }
-                        <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" />
+                    </div>
+                    <div class="col-1">
+                        @if (Model.ClaimTransforms.IndexOf(claimTransform) > 0)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Move up" @onclick="@(() => MoveUp(claimTransform))"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                        }
+                        @if (Model.ClaimTransforms.IndexOf(claimTransform) < Model.ClaimTransforms.Count() - 1)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Move down" @onclick="@(() => MoveDown(claimTransform))"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                        }
                     </div>
                     <div class="col-1 text-right">
                         <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveClaimTransform(claimTransform))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" />
                     </div>
                 </div>
                 <div class="row">
@@ -97,11 +111,11 @@
                     <div class="col-1 text-right">
                         @if (claimTransform.ShowDetails)
                         {
-                            <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => claimTransform.ShowDetails = false)"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                            <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => claimTransform.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
                         }
                         else
                         {
-                            <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => claimTransform.ShowDetails = true)"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                            <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => claimTransform.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
                         }
                     </div>
                 </div>
@@ -155,5 +169,21 @@
     private void RemoveClaimTransform(OAuthClaimTransformViewModel claimTransform)
     {
         Model.ClaimTransforms.Remove(claimTransform);
+    }
+
+    private void MoveUp(OAuthClaimTransformViewModel claimTransform)
+    {
+        var index = Model.ClaimTransforms.IndexOf(claimTransform);
+        Model.ClaimTransforms.RemoveAt(index);
+        Model.ClaimTransforms.Insert(--index, claimTransform);
+        StateHasChanged();
+    }
+
+    private void MoveDown(OAuthClaimTransformViewModel claimTransform)
+    {
+        var index = Model.ClaimTransforms.IndexOf(claimTransform);
+        Model.ClaimTransforms.RemoveAt(index);
+        Model.ClaimTransforms.Insert(++index, claimTransform);
+        StateHasChanged();
     }
 }

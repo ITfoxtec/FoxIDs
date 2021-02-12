@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using FoxIDs.Models;
 using System.Linq;
 using FoxIDs.Repository;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
 
@@ -49,8 +47,12 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (ValidationException vex)
             {
-                scopedLogger.Error(vex);
+                scopedLogger.Error(vex, $"Failing route request path '{httpContext.Request.Path.Value}'.");
                 throw;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Failing route request path '{httpContext.Request.Path.Value}'.", ex);
             }
         }
 

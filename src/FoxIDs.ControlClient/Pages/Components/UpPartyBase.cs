@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Components;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
+using FoxIDs.Client.Models;
+using System;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -38,6 +40,40 @@ namespace FoxIDs.Client.Pages.Components
 
         [Parameter]
         public string TenantName { get; set; }
+
+        public void ShowLoginTab(GeneralLoginUpPartyViewModel downParty, LoginTabTypes samlTabTypes)
+        {
+            switch (samlTabTypes)
+            {
+                case LoginTabTypes.Login:
+                    downParty.ShowLoginTab = true;
+                    downParty.ShowClaimTransformTab = false;
+                    break;
+                case LoginTabTypes.ClaimsTransform:
+                    downParty.ShowLoginTab = false;
+                    downParty.ShowClaimTransformTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        public void ShowSamlTab(GeneralSamlUpPartyViewModel downParty, SamlTabTypes samlTabTypes)
+        {
+            switch (samlTabTypes)
+            {
+                case SamlTabTypes.Saml:
+                    downParty.ShowSamlTab = true;
+                    downParty.ShowClaimTransformTab = false;
+                    break;
+                case SamlTabTypes.ClaimsTransform:
+                    downParty.ShowSamlTab = false;
+                    downParty.ShowClaimTransformTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
 
         public string GetSamlMetadata(string partyName)
         {

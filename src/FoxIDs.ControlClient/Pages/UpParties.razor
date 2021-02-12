@@ -11,9 +11,9 @@
                 <span class="oi oi-plus" aria-hidden="true"></span> Create up-party
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
-                @*<button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>*@
-                <button class="dropdown-item btn btn-link" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">Saml 2.0</button>
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
+                @*<button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>*@
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">SAML 2.0</button>
             </div>
         </div>
     </div>

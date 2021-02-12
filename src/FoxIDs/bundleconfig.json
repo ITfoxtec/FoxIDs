@@ -26,6 +26,12 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap.css.map",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/css/bootstrap.css.map"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/lib/jquery/dist/jquery.js",
     "inputFiles": [
       "node_modules/jquery/dist/jquery.js"
@@ -35,6 +41,12 @@
     "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js",
     "inputFiles": [
       "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/js/bootstrap.bundle.js.map",
+    "inputFiles": [
+      "node_modules/bootstrap/dist/js/bootstrap.bundle.js.map"
     ]
   },
   {

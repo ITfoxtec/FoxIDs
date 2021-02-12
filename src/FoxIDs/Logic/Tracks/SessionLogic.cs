@@ -148,10 +148,10 @@ namespace FoxIDs.Logic
         {
             try
             {
-                var session = await sessionCookieRepository.GetAsync();
+                var session = await sessionCookieRepository.GetAsync(tryGet: true);
                 if (session != null)
                 {
-                    await sessionCookieRepository.DeleteAsync();
+                    await sessionCookieRepository.DeleteAsync(tryDelete: true);
                 }
             }
             catch

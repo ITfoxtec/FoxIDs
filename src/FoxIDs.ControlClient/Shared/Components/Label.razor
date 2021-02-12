@@ -9,6 +9,9 @@
     [Parameter]
     public Expression<Func<object>> For { get; set; }
 
+    [Parameter]
+    public string LabelText { get; set; }
+
     [Parameter(CaptureUnmatchedValues = true)]
     public IDictionary<string, object> AdditionalAttributes { get; set; }
 
@@ -16,6 +19,11 @@
 
     private string GetDisplayName()
     {
+        if(!LabelText.IsNullOrEmpty())
+        {
+            return LabelText;
+        }
+
         try
         {
             var expression = For.Body as MemberExpression;

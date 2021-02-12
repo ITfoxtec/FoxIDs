@@ -27,6 +27,12 @@ namespace FoxIDs.Models.Api
         public OAuthDownResource Resource { get; set; }
 
         /// <summary>
+        /// Claim transforms.
+        /// </summary>
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        /// <summary>
         /// Allow CORS origins.
         /// </summary>
         [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]

@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
             };
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
-                claims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+                claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
                 saml2AuthnResponse.SessionIndex = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
 

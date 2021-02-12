@@ -139,7 +139,15 @@ namespace FoxIDs.Client.Pages
                 {
                     var generalLoginUpParty = upParty as GeneralLoginUpPartyViewModel;
                     var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upParty.Name);
-                    await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap => afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword));
+                    await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap =>
+                    {
+                        afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword;
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                        }
+                    }));
                 }
                 catch (TokenUnavailableException)
                 {
@@ -183,6 +191,11 @@ namespace FoxIDs.Client.Pages
                                 Thumbprint = certificate.Thumbprint,
                                 Key = key
                             });
+                        }
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                         }
                     }));
                 }

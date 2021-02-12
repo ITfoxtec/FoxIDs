@@ -160,7 +160,7 @@ namespace FoxIDs.Logic
                     claims.Add(nameIdClaim);
                 }
 
-                var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransformations?.ConvertAll(t => (ClaimTransformation)t), claims);
+                var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims);

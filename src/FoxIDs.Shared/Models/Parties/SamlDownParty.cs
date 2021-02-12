@@ -19,9 +19,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "idp_issuer")]
         public string IdPIssuer { get; set; }
 
-        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax)]
-        [JsonProperty(PropertyName = "claim_transformations")]
-        public List<SamlClaimTransformation> ClaimTransformations { get; set; }
+        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [JsonProperty(PropertyName = "claim_transforms")]
+        public List<SamlClaimTransform> ClaimTransforms { get; set; }
 
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "claims")]

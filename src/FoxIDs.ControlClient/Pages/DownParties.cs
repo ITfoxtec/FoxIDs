@@ -148,7 +148,7 @@ namespace FoxIDs.Client.Pages
                     var generalOidcDownParty = downParty as GeneralOidcDownPartyViewModel;
                     var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
                     var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(downParty.Name);
-                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
+                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map((Action<OidcDownPartyViewModel>)(afterMap => 
                     {
                         if (afterMap.Client == null)
                         {
@@ -188,7 +188,12 @@ namespace FoxIDs.Client.Pages
                         {
                             generalOidcDownParty.EnableResourceTab = true;
                         }
-                    }));
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                        }
+                    })));
                 }
                 catch (TokenUnavailableException)
                 {
@@ -246,6 +251,11 @@ namespace FoxIDs.Client.Pages
                         {
                             generalOAuthDownParty.EnableResourceTab = true;
                         }
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                        }
                     }));
                 }
                 catch (TokenUnavailableException)
@@ -288,6 +298,11 @@ namespace FoxIDs.Client.Pages
                                     Key = key
                                 });
                             }
+                        }
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                         }
                     }));
                 }

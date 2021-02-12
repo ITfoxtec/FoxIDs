@@ -5,23 +5,23 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class SamlClaimTransformation : ClaimTransformation
+    public class OAuthClaimTransform : ClaimTransform
     {
-        [Length(Constants.Models.Party.ClaimTransformationClaimsMin, Constants.Models.Party.ClaimTransformationClaimsMax, Constants.Models.Claim.SamlTypeLength)]
+        [Length(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
         [JsonProperty(PropertyName = "claims_in")]
         public override List<string> ClaimsIn { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.Claim.SamlTypeLength)]
+        [MaxLength(Constants.Models.Claim.JwtTypeLength)]
+        [RegularExpression(Constants.Models.Claim.JwtTypeRegExPattern)]
         [JsonProperty(PropertyName = "claim_out")]
         public override string ClaimOut { get; set; }
 
-        [Required]
-        [MaxLength(Constants.Models.Party.ClaimTransformationLength)]
+        [MaxLength(Constants.Models.Claim.TransformTransformationLength)]
         [JsonProperty(PropertyName = "transformation")]
         public override string Transformation { get; set; }
 
-        [MaxLength(Constants.Models.Party.ClaimTransformationLength)]
+        [MaxLength(Constants.Models.Claim.TransformTransformationLength)]
         [JsonProperty(PropertyName = "transformation_extension")]
         public override string TransformationExtension { get; set; }
     }

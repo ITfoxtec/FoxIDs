@@ -22,9 +22,9 @@ namespace FoxIDs.UnitTests
         public async Task TransformConstant_AddClaim(string claimOut, string transformation, int count)
         {
             var claims = GetTestClaims();
-            var claimTransformations = new List<ClaimTransformation> { new OAuthClaimTransformation
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
             { 
-                Type = ClaimTransformationTypes.Constant, 
+                Type = ClaimTransformTypes.Constant, 
                 ClaimOut = claimOut, 
                 Transformation = transformation 
             } };
@@ -41,9 +41,9 @@ namespace FoxIDs.UnitTests
         public async Task TransformMatch_AddClaim(string[] claimIn, string claimOut, string transformation, string transformationExtension, int count)
         {
             var claims = GetTestClaims();
-            var claimTransformations = new List<ClaimTransformation> { new OAuthClaimTransformation 
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform 
             { 
-                Type = ClaimTransformationTypes.Match, 
+                Type = ClaimTransformTypes.Match, 
                 ClaimsIn = claimIn.ToList(), 
                 ClaimOut = claimOut,
                 Transformation = transformation, 
@@ -61,9 +61,9 @@ namespace FoxIDs.UnitTests
         public async Task TransformRegexMatch_AddClaim(string[] claimIn, string claimOut, string transformation, string transformationExtension, int count)
         {
             var claims = GetTestClaims();
-            var claimTransformations = new List<ClaimTransformation> { new OAuthClaimTransformation
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
             {
-                Type = ClaimTransformationTypes.RegexMatch,
+                Type = ClaimTransformTypes.RegexMatch,
                 ClaimsIn = claimIn.ToList(),
                 ClaimOut = claimOut,
                 Transformation = transformation,
@@ -80,9 +80,9 @@ namespace FoxIDs.UnitTests
         public async Task TransformMap_AddClaim(string[] claimIn, string claimOut, int count, string result)
         {
             var claims = GetTestClaims();
-            var claimTransformations = new List<ClaimTransformation> { new OAuthClaimTransformation
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
             {
-                Type = ClaimTransformationTypes.Map,
+                Type = ClaimTransformTypes.Map,
                 ClaimsIn = claimIn.ToList(),
                 ClaimOut = claimOut
             } };
@@ -97,9 +97,9 @@ namespace FoxIDs.UnitTests
         public async Task TransformRegexMap_AddClaim(string[] claimIn, string claimOut, string transformation, int count, string result)
         {
             var claims = GetTestClaims();
-            var claimTransformations = new List<ClaimTransformation> { new OAuthClaimTransformation
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
             {
-                Type = ClaimTransformationTypes.RegexMap,
+                Type = ClaimTransformTypes.RegexMap,
                 ClaimsIn = claimIn.ToList(),
                 ClaimOut = claimOut,
                 Transformation = transformation
@@ -118,9 +118,9 @@ namespace FoxIDs.UnitTests
         {
             var claims = new List<Claim>(GetTestClaims());
             claims.Add(new Claim(JwtClaimTypes.Subject, "abcd"));
-            var claimTransformations = new List<ClaimTransformation> { new OAuthClaimTransformation
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
             {
-                Type = ClaimTransformationTypes.Concatenate, 
+                Type = ClaimTransformTypes.Concatenate, 
                 ClaimsIn = claimIn.ToList(),
                 ClaimOut = claimOut, 
                 Transformation = transformation

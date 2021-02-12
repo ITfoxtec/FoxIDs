@@ -19,7 +19,7 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public Task<List<Claim>> Transform(IEnumerable<ClaimTransformation> claimTransformations, IEnumerable<Claim> claims)
+        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransformations, IEnumerable<Claim> claims)
         {
             if(claimTransformations == null|| claims == null)
             {
@@ -28,27 +28,27 @@ namespace FoxIDs.Logic
 
             logger.ScopeTrace("Transform claims.");
             var transformedClaims = new List<Claim>(claims);
-            var orderedTransformations = claimTransformations.OrderBy(t => t.Type).ThenBy(t => t.Order);
+            var orderedTransformations = claimTransformations.OrderBy(t => t.Order);
             foreach(var transformation in orderedTransformations)
             {
                 switch (transformation.Type)
                 {
-                    case ClaimTransformationTypes.Constant:
+                    case ClaimTransformTypes.Constant:
                         transformedClaims.Add(ConstantTransformation(transformation));
                         break;
-                    case ClaimTransformationTypes.Match:
+                    case ClaimTransformTypes.Match:
                         transformedClaims.AddRange(MatchTransformation(transformation, transformedClaims));
                         break;
-                    case ClaimTransformationTypes.RegexMatch:
+                    case ClaimTransformTypes.RegexMatch:
                         transformedClaims.AddRange(RegexMatchTransformation(transformation, transformedClaims));
                         break;
-                    case ClaimTransformationTypes.Map:
+                    case ClaimTransformTypes.Map:
                         transformedClaims.AddRange(MapTransformation(transformation, transformedClaims));
                         break;
-                    case ClaimTransformationTypes.RegexMap:
+                    case ClaimTransformTypes.RegexMap:
                         transformedClaims.AddRange(RegexMapTransformation(transformation, transformedClaims));
                         break;
-                    case ClaimTransformationTypes.Concatenate:
+                    case ClaimTransformTypes.Concatenate:
                         transformedClaims.AddRange(ConcatenateTransformation(transformation, transformedClaims));
                         break;
                     default:
@@ -58,12 +58,12 @@ namespace FoxIDs.Logic
             return Task.FromResult(transformedClaims);
         }
 
-        private Claim ConstantTransformation(ClaimTransformation claimTransformation)
+        private Claim ConstantTransformation(ClaimTransform claimTransformation)
         {
             return new Claim(claimTransformation.ClaimOut, claimTransformation.Transformation);
         }
 
-        private IEnumerable<Claim> MatchTransformation(ClaimTransformation claimTransformation, List<Claim> claims)
+        private IEnumerable<Claim> MatchTransformation(ClaimTransform claimTransformation, List<Claim> claims)
         {
             var transformedClaims = new List<Claim>();
             foreach (var claim in claims)
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
             return transformedClaims;
         }
 
-        private IEnumerable<Claim> RegexMatchTransformation(ClaimTransformation claimTransformation, List<Claim> claims)
+        private IEnumerable<Claim> RegexMatchTransformation(ClaimTransform claimTransformation, List<Claim> claims)
         {
             var transformedClaims = new List<Claim>();
             var regex = new Regex(claimTransformation.Transformation, RegexOptions.IgnoreCase);
@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
             return transformedClaims;
         }
 
-        private IEnumerable<Claim> MapTransformation(ClaimTransformation claimTransformation, List<Claim> claims)
+        private IEnumerable<Claim> MapTransformation(ClaimTransform claimTransformation, List<Claim> claims)
         {
             var transformedClaims = new List<Claim>();
             var claimIn = claimTransformation.ClaimsIn.Single();
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
             return transformedClaims;
         }
 
-        private IEnumerable<Claim> RegexMapTransformation(ClaimTransformation claimTransformation, List<Claim> claims)
+        private IEnumerable<Claim> RegexMapTransformation(ClaimTransform claimTransformation, List<Claim> claims)
         {
             var transformedClaims = new List<Claim>();
             var regex = new Regex(claimTransformation.Transformation, RegexOptions.IgnoreCase);
@@ -128,7 +128,7 @@ namespace FoxIDs.Logic
             return transformedClaims;
         }
 
-        private IEnumerable<Claim> ConcatenateTransformation(ClaimTransformation claimTransformation, List<Claim> claims)
+        private IEnumerable<Claim> ConcatenateTransformation(ClaimTransform claimTransformation, List<Claim> claims)
         {
             var transformedClaims = new List<Claim>();
             var addTransformationClaim = false;

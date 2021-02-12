@@ -1,0 +1,189 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => Model.ClaimTransforms)" class="label-control" />
+    <ul class="list-group">
+        @foreach (var claimTransform in Model.ClaimTransforms)
+        {
+            var claimTransformClaimIn = claimTransform as SamlClaimTransformClaimInViewModel;
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-10">
+                        @switch (claimTransform.Type)
+                        {
+                            case ClaimTransformTypes.Constant:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Constant</div>
+                                break;
+
+                            case ClaimTransformTypes.Match:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Match</div>
+                                break;
+
+                            case ClaimTransformTypes.RegexMatch:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Regex match</div>
+                                break;
+
+                            case ClaimTransformTypes.Map:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Map</div>
+                                break;
+
+                            case ClaimTransformTypes.RegexMap:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Regex map</div>
+                                break;
+
+                            case ClaimTransformTypes.Concatenate:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Concatenate</div>
+                                break;
+                            default:
+                                throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
+                        }
+                    </div>
+                    <div class="col-1">
+                        @if (Model.ClaimTransforms.IndexOf(claimTransform) > 0)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Move up" @onclick="@(() => MoveUp(claimTransform))"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                        }
+                        @if (Model.ClaimTransforms.IndexOf(claimTransform) < Model.ClaimTransforms.Count() - 1)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Move down" @onclick="@(() => MoveDown(claimTransform))"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                        }
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveClaimTransform(claimTransform))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="claimTransform.ClaimOut" For="@(() => claimTransform.ClaimOut)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        @if (claimTransform.ShowDetails)
+                        {
+                            @switch (claimTransform.Type)
+                            {
+                                case ClaimTransformTypes.Constant:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Add a constant value.</div>
+                                    <FInputText @bind-Value="claimTransform.Transformation" For="@(() => claimTransform.Transformation)" LabelText="Constant value" />
+                                    break;
+
+                                case ClaimTransformTypes.Match:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value and replace the value with a new value.</div>
+                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
+                                    <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
+                                    break;
+
+                                case ClaimTransformTypes.RegexMatch:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then replace the value with a new value. E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
+                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex match" />
+                                    <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
+                                    break;
+
+                                case ClaimTransformTypes.Map:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value to a new claim.</div>
+                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                    break;
+
+                                case ClaimTransformTypes.RegexMap:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value found with the regex group map to a new claim. E.g. regex to find domain in email: @(@"^\S+@(?<map>\S+)$")</div>
+                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                    <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Map value in regex map group" />
+                                    break;
+
+                                case ClaimTransformTypes.Concatenate:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Concatenate values from claims to a new claim. If e.g. concatenating tree claims the format string require tree format elements e.g. like this: {0}-{1}.{2}</div>
+                                    <FInputTextList @bind-ValueList="claimTransform.ClaimsIn" For="@(() => claimTransform.ClaimsIn)" />
+                                    <FInputText @bind-Value="claimTransform.Transformation" For="@(() => claimTransform.Transformation)" LabelText="Concatenate format string" />
+                                    break;
+                                default:
+                                    throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
+                            }
+                        }
+                        else
+                        {
+                            <div class="card">
+                                <div class="card-body px-3 py-2">
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="col-1 text-right">
+                        @if (claimTransform.ShowDetails)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => claimTransform.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => claimTransform.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
+                        }
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model.ClaimTransforms)" />
+    <div class="btn-group" role="group">
+        <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add claim transform
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match))">Match</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch))">Regex match</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Map))">Map</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMap))">Regex map</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ISamlClaimTransformViewModel Model { get; set; }
+
+    private void AddClaimTransform(ClaimTransformTypes claimTransformType)
+    {
+        switch (claimTransformType)
+        {
+            case ClaimTransformTypes.Match:
+            case ClaimTransformTypes.RegexMatch:
+            case ClaimTransformTypes.Map:
+            case ClaimTransformTypes.RegexMap:
+                Model.ClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                {
+                    ShowDetails = true,
+                    Type = claimTransformType
+                });
+                break;
+            default:
+                Model.ClaimTransforms.Add(new SamlClaimTransformViewModel
+                {
+                    ShowDetails = true,
+                    Type = claimTransformType
+                });
+                break;
+        }
+    }
+
+    private void RemoveClaimTransform(SamlClaimTransformViewModel claimTransform)
+    {
+        Model.ClaimTransforms.Remove(claimTransform);
+    }
+
+    private void MoveUp(SamlClaimTransformViewModel claimTransform)
+    {
+        var index = Model.ClaimTransforms.IndexOf(claimTransform);
+        Model.ClaimTransforms.RemoveAt(index);
+        Model.ClaimTransforms.Insert(--index, claimTransform);
+        StateHasChanged();
+    }
+
+    private void MoveDown(SamlClaimTransformViewModel claimTransform)
+    {
+        var index = Model.ClaimTransforms.IndexOf(claimTransform);
+        Model.ClaimTransforms.RemoveAt(index);
+        Model.ClaimTransforms.Insert(++index, claimTransform);
+        StateHasChanged();
+    }
+}

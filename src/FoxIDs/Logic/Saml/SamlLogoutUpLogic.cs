@@ -87,7 +87,6 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> LogoutAsync<T>(SamlUpParty party, Saml2Binding<T> binding, LogoutRequest logoutRequest)
         {
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningCertificate: true);
-            await formActionLogic.AddFormActionByUrlAsync(samlConfig.SingleLogoutDestination.OriginalString);
 
             binding.RelayState = SequenceString;
 
@@ -126,6 +125,7 @@ namespace FoxIDs.Logic
             }
             if (binding is Saml2Binding<Saml2PostBinding>)
             {
+                await formActionLogic.AddFormActionByUrlAsync(samlConfig.SingleLogoutDestination.OriginalString);
                 return await Task.FromResult((binding as Saml2PostBinding).ToActionResult());
             }
             else

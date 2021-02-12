@@ -25,15 +25,17 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
@@ -95,6 +97,7 @@ namespace FoxIDs.Logic
             }
             if (binding is Saml2Binding<Saml2PostBinding>)
             {
+                await formActionLogic.AddFormActionByUrlAsync(samlConfig.SingleSignOnDestination.OriginalString);
                 return await Task.FromResult((binding as Saml2PostBinding).ToActionResult());
             }
             else

@@ -57,7 +57,7 @@ namespace FoxIDs.Controllers
 
                 (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
                 var validSession = ValidSession(sequenceData, session);
-                if (validSession && sequenceData.LoginAction != LoginAction.RequereLogin)
+                if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
                 {
                     return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
                 }

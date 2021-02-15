@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
                 case LoginAction.ReadSession:
                     saml2AuthnRequest.IsPassive = true;
                     break;
-                case LoginAction.RequereLogin:
+                case LoginAction.RequireLogin:
                     saml2AuthnRequest.ForceAuthn = true;
                     break;
                 default:

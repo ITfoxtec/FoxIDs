@@ -114,16 +114,15 @@ namespace FoxIDs.Logic
             var nameIdClaim = idTokenClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Subject);
             if(nameIdClaim == null)
             {
-                throw new OAuthRequestException($"Requere '{JwtClaimTypes.Subject}' claim in ID Token hint.") { RouteBinding = RouteBinding };
+                throw new OAuthRequestException($"Require '{JwtClaimTypes.Subject}' claim in ID Token hint.") { RouteBinding = RouteBinding };
             }
             samlClaims.AddClaim(Saml2ClaimTypes.NameId, nameIdClaim.Value);
 
             var subFormatClaim = idTokenClaims.FirstOrDefault(c => c.Type == Constants.JwtClaimTypes.SubFormat);
-            if (subFormatClaim == null)
+            if (subFormatClaim != null)
             {
-                throw new OAuthRequestException($"Requere '{Constants.JwtClaimTypes.SubFormat}' claim in ID Token hint.") { RouteBinding = RouteBinding };
+                samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, subFormatClaim.Value);
             }
-            samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, subFormatClaim.Value);
 
             return new LogoutRequest
             {

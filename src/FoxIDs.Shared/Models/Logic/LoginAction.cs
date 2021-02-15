@@ -8,7 +8,7 @@ namespace FoxIDs.Models.Logic
         ReadSession,
         [EnumMember(Value = "read_session_or_login")]
         ReadSessionOrLogin,
-        [EnumMember(Value = "requere_login")]
-        RequereLogin,
+        [EnumMember(Value = "require_login")]
+        RequireLogin,
     }
 }

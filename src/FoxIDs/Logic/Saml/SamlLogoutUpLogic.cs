@@ -114,7 +114,7 @@ namespace FoxIDs.Logic
 
             binding.Bind(saml2LogoutRequest);
             logger.ScopeTrace($"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
-            logger.ScopeTrace($"Logout url '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
+            logger.ScopeTrace($"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, SAML Logout request.", triggerEvent: true);
 
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(logoutRequest.SessionId);

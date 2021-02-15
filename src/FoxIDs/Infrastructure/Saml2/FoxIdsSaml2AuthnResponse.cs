@@ -62,7 +62,7 @@ namespace FoxIDs.Infrastructure.Saml2
             }
             else
             {
-                throw new SamlResponseException("Either NameID or another claim is required. Eg. UPN, Email og Name claim");
+                throw new SamlResponseException("Either NameID or another claim is required. E.g. UPN, Email or Name claim");
             }
             return newClaims;
         }

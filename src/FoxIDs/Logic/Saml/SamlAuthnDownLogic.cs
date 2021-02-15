@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
         {
             if (saml2AuthnRequest.AssertionConsumerServiceUrl != null && !party.AcsUrls.Any(u => u.Equals(saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString, StringComparison.InvariantCultureIgnoreCase)))
             {
-                throw new EndpointException($"Invalid assertion consumer service url '{saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString}'.") { RouteBinding = RouteBinding };
+                throw new EndpointException($"Invalid assertion consumer service URL '{saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString}'.") { RouteBinding = RouteBinding };
             }
 
             var requestIssuer = saml2AuthnRequest.Issuer;
@@ -144,7 +144,7 @@ namespace FoxIDs.Logic
 
             if(saml2AuthnRequest.ForceAuthn.HasValue && saml2AuthnRequest.ForceAuthn.Value)
             {
-                loginRequest.LoginAction = LoginAction.RequereLogin;
+                loginRequest.LoginAction = LoginAction.RequireLogin;
             }
             else if(saml2AuthnRequest.IsPassive.HasValue && saml2AuthnRequest.IsPassive.Value)
             {
@@ -229,7 +229,7 @@ namespace FoxIDs.Logic
 
             binding.Bind(saml2AuthnResponse);
             logger.ScopeTrace($"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.");
-            logger.ScopeTrace($"Acs url '{acsUrl}'.");
+            logger.ScopeTrace($"Acs URL '{acsUrl}'.");
             logger.ScopeTrace("Down, SAML Authn response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();

@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
                 case LoginAction.ReadSession:
                     saml2AuthnRequest.IsPassive = true;
                     break;
-                case LoginAction.RequereLogin:
+                case LoginAction.RequireLogin:
                     saml2AuthnRequest.ForceAuthn = true;
                     break;
                 default:
@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
 
             binding.Bind(saml2AuthnRequest);
             logger.ScopeTrace($"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.");
-            logger.ScopeTrace($"Authn url '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
+            logger.ScopeTrace($"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, Sending SAML Authn request.", triggerEvent: true);
 
             if (binding is Saml2Binding<Saml2RedirectBinding>)

@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
                 case PartyTypes.Saml2:
-                    var claimsLogic = serviceProvider.GetService<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+                    var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
                     var samlClaims = await claimsLogic.FromJwtToSamlClaimsAsync(claims);
                     samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Email.OriginalString);
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, claims: samlClaims);

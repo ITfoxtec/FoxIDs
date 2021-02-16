@@ -5,6 +5,7 @@ using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
+using FoxIDs.Util;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
@@ -40,28 +41,30 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SessionLogic>();
             services.AddTransient<ClaimTransformationsLogic>();         
 
-            services.AddTransient<OidcDiscoveryLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcDiscoveryDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<OidcDiscoveryDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();            
+            services.AddTransient<OidcDiscoveryUtil>();
+            services.AddTransient<OidcDiscoveryReadUpLogic>();
 
-            services.AddTransient<JwtLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<JwtLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OAuthAuthCodeGrantLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<OAuthAuthCodeGrantLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OAuthRefreshTokenGrantLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<OAuthRefreshTokenGrantLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OAuthResourceScopeLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<OAuthResourceScopeLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<JwtDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<JwtDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OAuthAuthCodeGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<OAuthAuthCodeGrantDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<OAuthRefreshTokenGrantDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OAuthResourceScopeDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<OAuthResourceScopeDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<OAuthTokenDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
 
-            services.AddTransient<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcTokenDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();            
             services.AddTransient<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
-            services.AddTransient<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<ClaimsLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<Saml2ConfigurationLogic>();
             services.AddTransient<SamlMetadataLogic>();
             services.AddTransient<SamlAuthnUpLogic>();

@@ -12,7 +12,7 @@ namespace FoxIDs.Models
         [JsonIgnore]
         public string ResourceId { get => Parent.Name; }
 
-        [Length(Constants.Models.OAuthDownParty.Resource.ScopesMin, Constants.Models.OAuthDownParty.Resource.ScopesMax, Constants.Models.OAuthDownParty.ScopesLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
+        [Length(Constants.Models.OAuthDownParty.Resource.ScopesMin, Constants.Models.OAuthDownParty.Resource.ScopesMax, Constants.Models.OAuthDownParty.ScopeLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
         [JsonProperty(PropertyName = "scopes")]
         public List<string> Scopes { get; set; }
     }

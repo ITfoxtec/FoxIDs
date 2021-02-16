@@ -48,6 +48,19 @@ namespace FoxIDs.Models.Config
         /// Confirmation email wait period in seconds.
         /// </summary>
         [Required]
-        public int ConfirmationEmailWaitPeriod { get; set; }        
+        public int ConfirmationEmailWaitPeriod { get; set; }
+
+        /// <summary>
+        /// Up-party update wait period in seconds.
+        /// </summary>
+        [Required]
+        public int UpPartyUpdateWaitPeriod { get; set; }
+
+        /// <summary>
+        /// Up-party max failing update before automatic update is stopped.
+        /// </summary>
+        [Required]
+        public int UpPartyMaxFailingUpdate { get; set; }
+        
     }
 }

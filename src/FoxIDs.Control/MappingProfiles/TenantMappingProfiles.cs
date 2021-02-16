@@ -122,7 +122,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
                 .ReverseMap()
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes, Constants.OAuth.DefaultResponseTypes)));
             CreateMap<OAuthDownResource, Api.OAuthDownResource>()
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc)))
                 .ReverseMap();
@@ -148,7 +148,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))                
                 .ReverseMap()
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes, Constants.Oidc.DefaultResponseTypes)));
             CreateMap<OidcDownScope, Api.OidcDownScope>()
                 .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();
@@ -173,7 +173,7 @@ namespace FoxIDs.MappingProfiles
             return claimTransforms.OrderBy(ct => ct.Order).ToList();
         }
 
-        private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)
+        private IEnumerable<string> OrderResponseTypes(List<string> responseTypes, string[] defaultResponseTypes)
         {
             var responseTypesResult = new List<string>();
             foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()
@@ -181,16 +181,23 @@ namespace FoxIDs.MappingProfiles
             {
                 if(responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
                 {
-                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Invalid ResponseType '{responseType}'");
+                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Invalid response type '{responseType.ToSpaceList()}'");
                 }
-                responseTypesResult.Add(responseType.ToSpaceList());
+
+                var responseTypeString = responseType.ToSpaceList();
+                if (!defaultResponseTypes.Contains(responseTypeString))
+                {
+                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Not supported response type '{responseTypeString}'");
+                }
+                responseTypesResult.Add(responseTypeString);
             }
 
             var duplicatedResponseType = responseTypesResult.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
             if (duplicatedResponseType != null)
             {
-                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated ResponseType '{duplicatedResponseType}'");
+                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated response type '{duplicatedResponseType}'");
             }
+
             return responseTypesResult;
         }
     }

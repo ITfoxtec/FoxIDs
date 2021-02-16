@@ -21,16 +21,10 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            if (!party.SpIssuer.IsNullOrEmpty())
-            {
-                samlConfig.Issuer = party.SpIssuer;
-            }
-            else
-            {
-                samlConfig.Issuer = trackIssuerLogic.GetIssuer();
-            }
+            samlConfig.AllowedIssuer = party.Issuer;
 
-            samlConfig.AllowedAudienceUris.Add(samlConfig.Issuer);
+            var spIssuer = !party.SpIssuer.IsNullOrEmpty() ? party.SpIssuer : trackIssuerLogic.GetIssuer();
+            samlConfig.AllowedAudienceUris.Add(spIssuer);
 
             samlConfig.SingleSignOnDestination = new Uri(party.AuthnUrl);
             if(!party.LogoutUrl.IsNullOrEmpty())

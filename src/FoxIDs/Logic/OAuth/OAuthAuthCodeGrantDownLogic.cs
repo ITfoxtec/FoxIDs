@@ -11,17 +11,17 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OAuthAuthCodeGrantLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly ClaimsLogic<TClient, TScope, TClaim> claimsLogic;
+        private readonly ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic;
 
-        public OAuthAuthCodeGrantLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsLogic<TClient, TScope, TClaim> claimsLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAuthCodeGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.claimsLogic = claimsLogic;
+            this.claimsDownLogic = claimsDownLogic;
         }
 
         public async Task<string> CreateAuthCodeGrantAsync(TClient client, List<Claim> claims, string redirectUri, string scope, string nonce, string codeChallenge, string codeChallengeMethod)
@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             if (!client.AuthorizationCodeLifetime.HasValue)
                 throw new EndpointException("Client AuthorizationCodeLifetime not configured.") { RouteBinding = RouteBinding };
 
-            var grantClaims = await claimsLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
+            var grantClaims = await claimsDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var code = RandomGenerator.Generate(64);
             var grant = new AuthCodeTtlGrant

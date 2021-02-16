@@ -16,13 +16,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
+        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtLogic;
 
-        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtLogic<TClient, TScope, TClaim> jwtLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.jwtLogic = jwtLogic;
+            this.jwtLogic = jwtDownLogic;
         }
 
         public async Task<IActionResult> UserInfoRequestAsync(string partyId)

@@ -12,13 +12,13 @@ using System.Collections.Generic;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OidcDiscoveryDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
         private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public OidcDiscoveryLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;

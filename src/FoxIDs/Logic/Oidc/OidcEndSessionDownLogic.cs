@@ -25,16 +25,16 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly FormActionLogic formActionLogic;
-        private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
+        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
 
-        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtLogic<TClient, TScope, TClaim> jwtLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.formActionLogic = formActionLogic;
-            this.jwtLogic = jwtLogic;
+            this.jwtDownLogic = jwtDownLogic;
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
             var endSessionRequest = HttpContext.Request.Query.ToObject<EndSessionRequest>();
 
             logger.ScopeTrace($"end session request '{endSessionRequest.ToJsonIndented()}'.");
-            logger.SetScopeProperty("clientId", party.Client.ClientId);
+            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
 
             ValidateEndSessionRequest(party.Client, endSessionRequest);
             logger.ScopeTrace("Down, OIDC End session request accepted.", triggerEvent: true);
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
         {
             if (!idToken.IsNullOrEmpty())
             {
-                var claimsPrincipal = await jwtLogic.ValidatePartyClientTokenAsync(client, idToken, validateLifetime: false);
+                var claimsPrincipal = await jwtDownLogic.ValidatePartyClientTokenAsync(client, idToken, validateLifetime: false);
                 if (claimsPrincipal != null)
                 {
                     return (true, claimsPrincipal.FindFirstValue(JwtClaimTypes.SessionId), claimsPrincipal.Claims);

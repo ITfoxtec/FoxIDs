@@ -22,12 +22,32 @@ namespace FoxIDs.Controllers
             this.serviceProvider = serviceProvider;
         }
 
-        public IActionResult AuthorizationResponse()
+        public async Task<IActionResult> AuthorizationResponse()
+        {
+            try
+            {
+                logger.ScopeTrace($"Authorization response, Up type '{RouteBinding.UpParty.Type}'");
+                switch (RouteBinding.UpParty.Type)
+                {
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationResponseAsync(RouteBinding.UpParty.Id);
+                    default:
+                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"SAML Authn response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+
+        public IActionResult EndSessionResponse()
         {
             return new ContentResult
             {
                 ContentType = "text/html",
-                Content = $"OAuthController.AuthorizationResponse [{RouteBinding.TenantName}.{RouteBinding.TrackName}.{RouteBinding.PartyNameAndBinding}]"
+                Content = $"OAuthController.EndSessionResponse [{RouteBinding.TenantName}.{RouteBinding.TrackName}.{RouteBinding.PartyNameAndBinding}]"
             };
         }
 

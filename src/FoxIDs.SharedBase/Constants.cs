@@ -200,7 +200,7 @@ namespace FoxIDs
                 public const int AllowCorsOriginsMax = 40;
                 public const int AllowCorsOriginLength = 200;
 
-                public const int ScopesLength = 50;
+                public const int ScopeLength = 50;
                 public const string ScopeRegExPattern = @"^[\w:\-.]*$";
 
                 public static class Client
@@ -245,6 +245,35 @@ namespace FoxIDs
                 {
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours
+                }
+            }
+
+            public static class OAuthUpParty
+            {
+                public const int AuthorityLength = 300;
+                public const int KeysMin = 1;
+                public const int KeysMax = 10;
+                public const int OidcDiscoveryUpdateRateMin = 86400; // 24 hours
+                public const int OidcDiscoveryUpdateRateMax = 31536000; // 12 month
+
+                public const int ScopeLength = 50;
+                public const string ScopeRegExPattern = @"^[\w:\-.]*$";
+
+                public static class Client
+                {
+                    public const int ClientIdLength = 300;
+                    public const int ScopesMin = 0;
+                    public const int ScopesMax = 100;
+                    public const int ClaimsMin = 0;
+                    public const int ClaimsMax = 100;
+
+                    public const int ResponseModeLength = 30;
+                    public const int ResponseTypeLength = 30;
+
+                    public const int RedirectUrisMin = 1;
+                    public const int RedirectUrisMax = 40;
+                    public const int AuthorizeUrlLength = 500;
+                    public const int TokenUrlLength = 500;
                 }
             }
 
@@ -330,6 +359,8 @@ namespace FoxIDs
             public const string String = "sequence_string";
             public const string Start = "sequence_start";
             public const string Valid = "sequence_valid";
+
+            public const int MaxLength = 2000;
         }
 
         public static class FormAction
@@ -340,7 +371,8 @@ namespace FoxIDs
         public static class Endpoints
         {
             public const string Authorize = "authorize";
-            public const string AuthorizeResponse = "authorizeresponse";
+            public const string AuthorizationResponse = "authorizationresponse";
+            public const string EndSessionnResponse = "EndSessionnResponse";
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
@@ -354,6 +386,13 @@ namespace FoxIDs
 
         public static class OAuth
         {
+            public readonly static string[] DefaultResponseTypes = new string[] 
+            {
+                FoxI.IdentityConstants.ResponseTypes.Code, 
+                $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token}", 
+                FoxI.IdentityConstants.ResponseTypes.Token
+            };
+
             public static class ResponseErrors
             {
                 /// <summary>
@@ -362,6 +401,18 @@ namespace FoxIDs
                 public const string LoginCanceled = "login_canceled";
 
             }
+        }
+
+        public static class Oidc
+        {
+            public readonly static string[] DefaultResponseTypes = new string[]
+            {
+                FoxI.IdentityConstants.ResponseTypes.Code,
+                $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
+                $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
+                $"{FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
+                FoxI.IdentityConstants.ResponseTypes.IdToken
+            };
         }
 
         public static class Saml
@@ -395,7 +446,7 @@ namespace FoxIDs
         public static class JwtClaimTypes
         {
             public const string SubFormat = "sub_format";
-
+            public const string AccessToken = "access_token";
         }
 
         /// <summary>

@@ -1,10 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthDownClient
+    public class OAuthDownClient : IValidatableObject
     {
         [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
@@ -59,5 +60,15 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Refresh token lifetime unlimited")]
         public bool? RefreshTokenLifetimeUnlimited { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (RequirePkce && ResponseTypes?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+            {
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
+            }
+            return results;
+        }
     }
 }

@@ -16,6 +16,8 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOAuthDownParty : DownPartyBase
     {
+        protected List<string> responseTypeItems = new List<string>(Constants.OAuth.DefaultResponseTypes);
+
         private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
         {
             if (oauthDownParty.CreateMode)

@@ -17,6 +17,8 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcDownParty : DownPartyBase
     {
+        protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
+
         private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
         {
             if (oidcDownParty.CreateMode)

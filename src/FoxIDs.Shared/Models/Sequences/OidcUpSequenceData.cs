@@ -20,5 +20,10 @@ namespace FoxIDs.Models.Sequences
         [MaxLength(500)]
         [JsonProperty(PropertyName = "cv")]
         public string CodeVerifier { get; set; }
+
+        [MaxLength(200)]
+        [JsonProperty(PropertyName = "si")]
+        public string SessionId { get; set; }
+
     }
 }

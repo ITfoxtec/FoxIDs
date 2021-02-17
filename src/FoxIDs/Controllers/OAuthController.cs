@@ -37,18 +37,28 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"SAML Authn response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Authorization response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
 
-        public IActionResult EndSessionResponse()
+        public async Task<IActionResult> EndSessionResponse()
         {
-            return new ContentResult
+            try
             {
-                ContentType = "text/html",
-                Content = $"OAuthController.EndSessionResponse [{RouteBinding.TenantName}.{RouteBinding.TrackName}.{RouteBinding.PartyNameAndBinding}]"
-            };
+                logger.ScopeTrace($"End session response, Up type '{RouteBinding.UpParty.Type}'");
+                switch (RouteBinding.UpParty.Type)
+                {
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionResponseAsync(RouteBinding.UpParty.Id);
+                    default:
+                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"End session response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
         }
 
         [Sequence(SequenceAction.Start)]

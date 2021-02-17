@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using FoxIDs.Util;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
@@ -64,12 +65,23 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryUtil.GetOidcDiscoveryAndValidateAsync(party.Authority);
+                try
+                {
+                    (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryUtil.GetOidcDiscoveryAndValidateAsync(party.Authority);
 
-                party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
-                party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
-                party.Keys = jsonWebKeySet.Keys?.ToList();
+                    party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
+                    party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
+                    if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
+                    {
+                        party.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
+                    }
+                    party.Keys = jsonWebKeySet.Keys?.ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw new EndpointException("Failing OIDC discovery.", ex) { RouteBinding = RouteBinding };
+                }
 
                 await tenantRepository.SaveAsync(party);
                 logger.ScopeTrace($"Up party '{party.Id}' updated by OIDC discovery.", triggerEvent: true);

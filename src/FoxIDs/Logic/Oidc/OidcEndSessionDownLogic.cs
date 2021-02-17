@@ -84,31 +84,36 @@ namespace FoxIDs.Logic
             switch (type)
             {
                 case PartyTypes.Login:
-                    var logoutRequest = new LogoutRequest
-                    {
-                        DownParty = party,
-                        SessionId = sessionId,
-                        RequireLogoutConsent = !validIdToken,
-                        PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace(),
-                    };
-                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), logoutRequest);
+                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    throw new NotImplementedException();
+                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
                         throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up-party.") { RouteBinding = RouteBinding };
                     }
-                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlUpLogoutRequest( party, sessionId, idTokenClaims));
+                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlLogoutRequest( party, sessionId, idTokenClaims));
 
                 default:
                     throw new NotSupportedException($"Party type '{type}' not supported.");
             }
         }
 
-        private LogoutRequest GetSamlUpLogoutRequest(Party party, string sessionId, IEnumerable<Claim> idTokenClaims)
+        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, EndSessionRequest endSessionRequest)
+        {
+            return new LogoutRequest
+            {
+                DownParty = party,
+                SessionId = sessionId,
+                RequireLogoutConsent = !validIdToken,
+                PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace(),
+                IdTokenHint = endSessionRequest.IdTokenHint
+            };
+        }
+
+        private LogoutRequest GetSamlLogoutRequest(Party party, string sessionId, IEnumerable<Claim> idTokenClaims)
         {
             var samlClaims = new List<Claim>();
             var nameIdClaim = idTokenClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Subject);

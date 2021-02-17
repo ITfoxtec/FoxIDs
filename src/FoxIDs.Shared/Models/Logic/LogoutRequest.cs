@@ -15,6 +15,8 @@ namespace FoxIDs.Models.Logic
 
         public bool PostLogoutRedirect { get; set; }
 
+        public string IdTokenHint { get; set; }
+
         public List<Claim> Claims { get; set; }
     }
 }

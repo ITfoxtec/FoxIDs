@@ -163,7 +163,7 @@ namespace FoxIDs.Logic
             binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
 
             await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>();
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
 
             try
             {
@@ -181,6 +181,10 @@ namespace FoxIDs.Logic
 
                 return await LogoutResponseDownAsync(sequenceData, saml2LogoutResponse.Status, saml2LogoutResponse.SessionIndex);
             }
+            catch (StopSequenceException)
+            {
+                throw;
+            }
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
@@ -195,25 +199,36 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, string sessionIndex = null)
         {
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
-            switch (sequenceData.DownPartyType)
+            try
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    if(status == Saml2StatusCodes.Success)
-                    {
-                        return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
-                    }
-                    else
-                    {
-                        throw new EndpointException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.") { RouteBinding = RouteBinding };
-                    }
-                case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sessionIndex);
+                logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+                switch (sequenceData.DownPartyType)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        if (status == Saml2StatusCodes.Success)
+                        {
+                            return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
+                        }
+                        else
+                        {
+                            throw new StopSequenceException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.");
+                        }
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sessionIndex);
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            catch (StopSequenceException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new StopSequenceException("Falling logout response down", ex);
             }
         }
     }

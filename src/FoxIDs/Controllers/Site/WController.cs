@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using System;
 using Microsoft.Extensions.Localization;
 using ITfoxtec.Identity;
+using System.Collections.Generic;
 
 namespace FoxIDs.Controllers
 {
@@ -53,11 +54,12 @@ namespace FoxIDs.Controllers
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionHandlerPathFeature?.Error;
 
-            if (exception is SequenceTimeoutException)
+            var sequenceTimeoutException = FindException<SequenceTimeoutException>(exception);
+            if (sequenceTimeoutException != null)
             {
-                var timeout = new TimeSpan(0, 0, (exception as SequenceTimeoutException).SequenceLifetime);
+                var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
                 errorViewModel.ErrorTitle = localizer["Timeout"];
-                if((exception as SequenceTimeoutException).AccountAction == true)
+                if(sequenceTimeoutException.AccountAction == true)
                 {
                     errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
                 }
@@ -68,10 +70,39 @@ namespace FoxIDs.Controllers
             }
             else
             {
-                errorViewModel.TechnicalError = exception.Message;
+                var technicalErrors = new List<string>();
+                errorViewModel.TechnicalErrors = GetTechnicalErrors(exception, technicalErrors);
             }
 
             return View(errorViewModel);
+        }
+
+        private T FindException<T>(Exception exception) where T : Exception
+        {
+            if (exception is T)
+            {
+                return exception as T;
+            }
+            else if (exception.InnerException != null)
+            {
+                return FindException<T>(exception.InnerException);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private List<string> GetTechnicalErrors(Exception exception, List<string> technicalErrors)
+        {
+            technicalErrors.Add(exception.Message);
+            
+            if (exception.InnerException != null)
+            {
+                return GetTechnicalErrors(exception.InnerException, technicalErrors);
+            }
+
+            return technicalErrors;
         }
     }
 }

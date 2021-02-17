@@ -144,13 +144,13 @@ namespace FoxIDs.Logic
         {
             try
             {
-                var responseType = authenticationRequest.ResponseType.ToSpaceList();
-                bool isImplicitFlow = !responseType.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any();
+                var responseTypes = authenticationRequest.ResponseType.ToSpaceList();
+                bool isImplicitFlow = !responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any();
                 authenticationRequest.Validate(isImplicitFlow);
 
                 if (client.RequirePkce)
                 {
-                    if(responseType.Where(rt => !rt.Equals(IdentityConstants.ResponseTypes.Code)).Any())
+                    if(responseTypes.Where(rt => !rt.Equals(IdentityConstants.ResponseTypes.Code)).Any())
                     {
                         throw new OAuthRequestException($"Require '{IdentityConstants.ResponseTypes.Code}' flow with PKCE.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                     }
@@ -177,7 +177,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"Invalid scope '{authenticationRequest.Scope}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidScope };
                 }
 
-                ValidateResponseType(client, authenticationRequest, responseType);
+                ValidateResponseType(client, authenticationRequest, responseTypes);
 
                 if (!authenticationRequest.ResponseMode.IsNullOrEmpty())
                 {
@@ -199,25 +199,25 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void ValidateResponseType(OidcDownClient client, AuthenticationRequest authenticationRequest, string[] responseType)
+        private void ValidateResponseType(OidcDownClient client, AuthenticationRequest authenticationRequest, string[] responseTypes)
         {
-            foreach(var partyResponseType in client.ResponseTypes.Select(rt => rt.ToSpaceList()))
+            foreach(var partyResponseTypes in client.ResponseTypes.Select(rt => rt.ToSpaceList()))
             {
-                if(responseType.Count() == partyResponseType.Count())
+                if(responseTypes.Count() == partyResponseTypes.Count())
                 {
-                    var tempPartyResponseType = new List<string>(partyResponseType);
-                    foreach (var responseTypeItem in responseType)
+                    var tempPartyResponseTypes = new List<string>(partyResponseTypes);
+                    foreach (var responseTypeItem in responseTypes)
                     {
-                        if(tempPartyResponseType.Contains(responseTypeItem))
+                        if(tempPartyResponseTypes.Contains(responseTypeItem))
                         {
-                            tempPartyResponseType.Remove(responseTypeItem);
+                            tempPartyResponseTypes.Remove(responseTypeItem);
                         }
                         else
                         {
                             break;
                         }
                     }
-                    if(tempPartyResponseType.Count() == 0)
+                    if(tempPartyResponseTypes.Count() == 0)
                     {
                         //All Response Types match.
                         return;
@@ -256,17 +256,17 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response type '{sequenceData.ResponseType}'.");
             var responseTypes = sequenceData.ResponseType.ToSpaceList();
 
-            if (responseTypes.Contains(IdentityConstants.ResponseTypes.Code))
+            if (responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
             {
                 authenticationResponse.Code = await oauthAuthCodeGrantDownLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
             }
 
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                
-            if (responseTypes.Contains(IdentityConstants.ResponseTypes.Token))
+            if (responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
             {
                 authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
             }
-            if (responseTypes.Contains(IdentityConstants.ResponseTypes.IdToken))
+            if (responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
             {
                 authenticationResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
             }

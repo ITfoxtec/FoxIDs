@@ -274,6 +274,7 @@ namespace FoxIDs
                     public const int RedirectUrisMax = 40;
                     public const int AuthorizeUrlLength = 500;
                     public const int TokenUrlLength = 500;
+                    public const int EndSessionUrlLength = 500;
                 }
             }
 
@@ -360,7 +361,7 @@ namespace FoxIDs
             public const string Start = "sequence_start";
             public const string Valid = "sequence_valid";
 
-            public const int MaxLength = 2000;
+            public const int MaxLength = FoxI.IdentityConstants.MessageLength.StateMax;
         }
 
         public static class FormAction
@@ -440,13 +441,18 @@ namespace FoxIDs
             /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod, ClaimTypes.AuthenticationInstant };
+            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod };
         }
 
         public static class JwtClaimTypes
         {
             public const string SubFormat = "sub_format";
             public const string AccessToken = "access_token";
+        }
+
+        public static class SamlClaimTypes
+        {
+            public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
         }
 
         /// <summary>
@@ -462,7 +468,8 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Subject, SamlClaim = ClaimTypes.NameIdentifier },
                 new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
-                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email }
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
+                new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken }
             };
 
             /// <summary>

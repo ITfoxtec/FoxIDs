@@ -169,6 +169,10 @@ namespace FoxIDs.Logic
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims);
             }
+            catch (StopSequenceException)
+            {
+                throw;
+            }
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
@@ -243,26 +247,33 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, IEnumerable<Claim> claims = null)
         {
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
-            switch (sequenceData.DownPartyType)
+            try
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    if(status == Saml2StatusCodes.Success)
-                    {
-                        var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaimsAsync(claims));
-                    }
-                    else
-                    {
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
-                    }
-                case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, claims);
+                logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+                switch (sequenceData.DownPartyType)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        if (status == Saml2StatusCodes.Success)
+                        {
+                            var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaimsAsync(claims));
+                        }
+                        else
+                        {
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
+                        }
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, claims);
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new StopSequenceException("Falling authn response down", ex);
             }
         }
 

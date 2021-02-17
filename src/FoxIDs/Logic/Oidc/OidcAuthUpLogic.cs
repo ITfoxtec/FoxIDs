@@ -129,7 +129,7 @@ namespace FoxIDs.Logic
 
             var authenticationRequestUrl = QueryHelpers.AddQueryString(party.Client.AuthorizeUrl, requestDictionary);
             logger.ScopeTrace($"Authentication request URL '{authenticationRequestUrl}'.");
-            logger.ScopeTrace("Up, Sending OIDC authentication request.", triggerEvent: true);
+            logger.ScopeTrace("Up, Sending OIDC Authentication request.", triggerEvent: true);
             return new RedirectResult(authenticationRequestUrl);
         }
 
@@ -178,6 +178,10 @@ namespace FoxIDs.Logic
                 var validClaims = ValidateClaims(party, transformedClaims);
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
+            }
+            catch (StopSequenceException)
+            {
+                throw;
             }
             catch (OAuthRequestException orex)
             {
@@ -289,10 +293,10 @@ namespace FoxIDs.Logic
                     var tokenResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
                     logger.ScopeTrace($"Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.");
                     tokenResponseBadRequest.Validate(true);
-                    throw new Exception($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.");
+                    throw new EndpointException($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.") { RouteBinding = RouteBinding };
 
                 default:
-                    throw new Exception($"Unexpected status code. Status code={response.StatusCode}");
+                    throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}") { RouteBinding = RouteBinding };
             }
         }
 
@@ -353,26 +357,34 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthenticationResponseDownAsync(OidcUpSequenceData sequenceData, List<Claim> claims = null, string error = null, string errorDescription = null)
         {
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
-            switch (sequenceData.DownPartyType)
+            try
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    if (error.IsNullOrEmpty())
-                    {
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
-                    }
-                    else
-                    {
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, error, errorDescription);
-                    }
-                case PartyTypes.Saml2:
-                    var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, ErrorToSamlStatus(error), await claimsLogic.FromJwtToSamlClaimsAsync(claims));
+                logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+                switch (sequenceData.DownPartyType)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        if (error.IsNullOrEmpty())
+                        {
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
+                        }
+                        else
+                        {
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, error, errorDescription);
+                        }
+                    case PartyTypes.Saml2:
+                        var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, ErrorToSamlStatus(error), await claimsLogic.FromJwtToSamlClaimsAsync(claims));
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new StopSequenceException("Falling authentication response down", ex);
             }
         }
 

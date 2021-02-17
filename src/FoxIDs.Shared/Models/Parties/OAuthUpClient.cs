@@ -45,6 +45,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "token_url")]
         public string TokenUrl { get; set; }
 
+        [MaxLength(Constants.Models.OAuthUpParty.Client.EndSessionUrlLength)]
+        [JsonProperty(PropertyName = "end_session_url")]
+        public string EndSessionUrl { get; set; }
+
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }

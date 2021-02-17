@@ -76,10 +76,10 @@ namespace FoxIDs.Logic
 
                 await db.KeyDeleteAsync(FailingUpdateCountKey(party.Id));
             }
-            catch 
+            catch (Exception ex)
             {
                 await db.StringIncrementAsync(FailingUpdateCountKey(party.Id));
-                throw;
+                logger.Warning(ex);
             }
         }
 

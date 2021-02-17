@@ -83,7 +83,8 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
 
-            var endSessionResponse = HttpContext.Request.Query.ToObject<EndSessionResponse>();
+            var queryDictionary = HttpContext.Request.Query.ToDictionary();
+            var endSessionResponse = queryDictionary.ToObject<EndSessionResponse>();
             logger.ScopeTrace($"End session response '{endSessionResponse.ToJsonIndented()}'.");
             if (endSessionResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(endSessionResponse.State), endSessionResponse.GetTypeName());
 

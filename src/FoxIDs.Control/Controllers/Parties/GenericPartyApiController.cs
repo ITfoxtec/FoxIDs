@@ -14,7 +14,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// Abstract party API.
     /// </summary>
-    public abstract class GenericPartyApiController<AParty, MParty> : TenantApiController where AParty : Api.INameValue where MParty : Party
+    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : TenantApiController where AParty : Api.INameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
@@ -54,10 +54,10 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party) || !await validateApiModelAsync(party)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(party) || validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || !await validateApiModelAsync(party)) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
-                if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
+                if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!(await validateModelAsync(party, mParty))) return BadRequest(ModelState);
 
                 await tenantRepository.CreateAsync(mParty);
@@ -79,10 +79,10 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party) || !await validateApiModelAsync(party)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(party) || validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || !await validateApiModelAsync(party)) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
-                if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
+                if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!(await validateModelAsync(party, mParty))) return BadRequest(ModelState);
 
                 if(party is Api.OidcDownParty)

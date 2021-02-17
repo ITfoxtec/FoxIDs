@@ -141,14 +141,21 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
 
-            var authenticationResponse = HttpContext.Request.Query.ToObject<AuthenticationResponse>();
+            var formOrQueryDictionary = party.Client.ResponseMode switch
+            {
+                IdentityConstants.ResponseModes.FormPost => HttpContext.Request.Form.ToDictionary(),
+                IdentityConstants.ResponseModes.Query => HttpContext.Request.Query.ToDictionary(),
+                _ => throw new NotSupportedException($"Not supported response mode '{party.Client.ResponseMode}'")
+            };
+
+            var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
             logger.ScopeTrace($"Authentication response '{authenticationResponse.ToJsonIndented()}'.");
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
             await sequenceLogic.ValidateSequenceAsync(authenticationResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
 
-            var sessionResponse = HttpContext.Request.Query.ToObject<SessionResponse>();
+            var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)
             {
                 logger.ScopeTrace($"Session response '{sessionResponse.ToJsonIndented()}'.");

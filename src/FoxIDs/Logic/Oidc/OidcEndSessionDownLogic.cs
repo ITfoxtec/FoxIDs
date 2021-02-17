@@ -47,7 +47,8 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException($"Party Client not configured.");
             }
 
-            var endSessionRequest = HttpContext.Request.Query.ToObject<EndSessionRequest>();
+            var queryDictionary = HttpContext.Request.Query.ToDictionary();
+            var endSessionRequest = queryDictionary.ToObject<EndSessionRequest>();
 
             logger.ScopeTrace($"end session request '{endSessionRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);

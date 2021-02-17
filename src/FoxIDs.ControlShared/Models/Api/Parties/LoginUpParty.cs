@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class LoginUpParty : INameValue
+    public class LoginUpParty : INameValue, IClaimTransform<OAuthClaimTransform>
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

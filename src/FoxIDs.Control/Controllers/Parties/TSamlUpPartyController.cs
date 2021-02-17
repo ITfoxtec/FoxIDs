@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// SAML 2.0 up-party API.
     /// </summary>
-    public class TSamlUpPartyController : GenericPartyApiController<Api.SamlUpParty, SamlUpParty>
+    public class TSamlUpPartyController : GenericPartyApiController<Api.SamlUpParty, Api.SamlClaimTransform, SamlUpParty>
     {
         private readonly ValidateSamlPartyLogic validateSamlPartyLogic;
 

@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.MappingProfiles
@@ -132,7 +131,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
                 .ReverseMap()
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes, Constants.OAuth.DefaultResponseTypes)));
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
             CreateMap<OAuthDownResource, Api.OAuthDownResource>()
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc)))
                 .ReverseMap();
@@ -158,7 +157,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))                
                 .ReverseMap()
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes, Constants.Oidc.DefaultResponseTypes)));
+                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
             CreateMap<OidcDownScope, Api.OidcDownScope>()
                 .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();
@@ -174,41 +173,15 @@ namespace FoxIDs.MappingProfiles
 
         private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform
         {
-            var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-            if (duplicatedOrderNumber >= 0)
-            {
-                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated claim transform order number '{duplicatedOrderNumber}'");
-            }
-
             return claimTransforms.OrderBy(ct => ct.Order).ToList();
         }
 
-        private IEnumerable<string> OrderResponseTypes(List<string> responseTypes, string[] defaultResponseTypes)
+        private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)
         {
-            var responseTypesResult = new List<string>();
-            foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()
-                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt))))
-            {
-                if(responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
-                {
-                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Invalid response type '{responseType.ToSpaceList()}'");
-                }
+            var orderedResponseTypes = responseTypes.Select(rt => rt.ToSpaceList()
+                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt)));
 
-                var responseTypeString = responseType.ToSpaceList();
-                if (!defaultResponseTypes.Contains(responseTypeString))
-                {
-                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Not supported response type '{responseTypeString}'");
-                }
-                responseTypesResult.Add(responseTypeString);
-            }
-
-            var duplicatedResponseType = responseTypesResult.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-            if (duplicatedResponseType != null)
-            {
-                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated response type '{duplicatedResponseType}'");
-            }
-
-            return responseTypesResult;
+            return orderedResponseTypes.Select(rt => rt.ToSpaceList());
         }
     }
 }

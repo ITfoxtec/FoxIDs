@@ -1,8 +1,11 @@
 ﻿using FoxIDs.Infrastructure;
+using Api = FoxIDs.Models.Api;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -20,12 +23,32 @@ namespace FoxIDs.Logic
             this.tenantService = tenantService;
         }
 
-        public async Task<bool> ValidateAllowUpPartiesAsync(ModelStateDictionary modelState, string propertyName, DownParty downParty)
+        public bool ValidateApiModelClaimTransforms<T>(ModelStateDictionary modelState, List<T> claimTransforms) where T : Api.ClaimTransform
         {
             var isValid = true;
-            if(downParty.AllowUpParties?.Count() > 0)
+            try
             {
-                foreach(var upPartyLink in downParty.AllowUpParties)
+                var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                if (duplicatedOrderNumber >= 0)
+                {
+                    throw new ValidationException($"Duplicated claim transform order number '{duplicatedOrderNumber}'");
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError(nameof(Api.OAuthDownParty.ClaimTransforms).ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
+
+        public async Task<bool> ValidateModelAllowUpPartiesAsync(ModelStateDictionary modelState, string propertyName, DownParty downParty)
+        {
+            var isValid = true;
+            if (downParty.AllowUpParties?.Count() > 0)
+            {
+                foreach (var upPartyLink in downParty.AllowUpParties)
                 {
                     try
                     {

@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// Login up-party API.
     /// </summary>
-    public class TLoginUpPartyController : GenericPartyApiController<Api.LoginUpParty, LoginUpParty>
+    public class TLoginUpPartyController : GenericPartyApiController<Api.LoginUpParty, Api.OAuthClaimTransform, LoginUpParty>
     {
         public TLoginUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger, mapper, tenantRepository, validateGenericPartyLogic)
         { }

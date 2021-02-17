@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using Api = FoxIDs.Models.Api;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -17,7 +18,6 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
-        private readonly List<string> acceptedResponseTypeValues = new List<string> { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken };
 
         public ValidateOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
@@ -25,54 +25,99 @@ namespace FoxIDs.Logic
             this.tenantService = tenantService;
         }
 
+        public bool ValidateApiModel(ModelStateDictionary modelState, Api.OidcUpParty party)
+        {
+
+            return ValidateResponseTypeUp(modelState, party.Client.ResponseType, Constants.Oidc.DefaultResponseTypes) &&
+                ValidateResponseModeUp(modelState, party.Client.ResponseMode);
+        }
+
+        public bool ValidateApiModel(ModelStateDictionary modelState, Api.OAuthDownParty party)
+        {
+            return (party.Client != null ? ValidateResponseTypesDown(modelState, party.Client.ResponseTypes, Constants.OAuth.DefaultResponseTypes) : true);
+        }
+
+        public bool ValidateApiModel(ModelStateDictionary modelState, Api.OidcDownParty party)
+        {
+            return (party.Client != null ? ValidateResponseTypesDown(modelState, party.Client.ResponseTypes, Constants.Oidc.DefaultResponseTypes) : true);
+        }
+
         public async Task<bool> ValidateModelAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {
-            return ValidateResponseType(modelState, oauthDownParty) &&
-                await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
+            return await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
                 ValidateClientScopes(modelState, oauthDownParty) && 
                 ValidateResourceScopes(modelState, oauthDownParty);
         }
 
-        public bool ValidateModel<TClient>(ModelStateDictionary modelState, OAuthUpParty<TClient> oauthDownParty) where TClient : OAuthUpClient
-        {
-            throw new NotImplementedException();
-
-            //return ValidateResponseType(modelState, oauthDownParty) &&
-            //    await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
-            //    ValidateClientScopes(modelState, oauthDownParty) &&
-            //    ValidateResourceScopes(modelState, oauthDownParty);
-        }
-
-        private bool ValidateResponseType<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        private bool ValidateResponseModeUp(ModelStateDictionary modelState, string responseMode)
         {
             var isValid = true;
-            if (oauthDownParty.Client != null)
+            try
             {
-                try
+                var validResponseMode = new string[] { IdentityConstants.ResponseModes.FormPost, IdentityConstants.ResponseModes.Query };
+                if (!validResponseMode.Contains(responseMode))
                 {
-                    var responseTypes = oauthDownParty.Client.ResponseTypes.Select(rt => rt.ToSpaceList());
-                    foreach (var responseType in responseTypes)
+                    throw new ValidationException($"Not supported response mode '{responseMode}'");
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError($"{nameof(Api.OAuthDownParty.Client)}.{nameof(Api.OAuthDownParty.Client.ResponseTypes)}".ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
+
+        private bool ValidateResponseTypeUp(ModelStateDictionary modelState, string responseType, string[] defaultResponseTypes)
+        {
+            var isValid = true;
+            try
+            {
+                if (!defaultResponseTypes.Contains(responseType))
+                {
+                    throw new ValidationException($"Not supported response type '{responseType}'");
+                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError($"{nameof(Api.OAuthDownParty.Client)}.{nameof(Api.OAuthDownParty.Client.ResponseTypes)}".ToCamelCase(), vex.Message);
+            }
+            return isValid;
+        }
+
+        private bool ValidateResponseTypesDown(ModelStateDictionary modelState, List<string> responseTypes, string[] defaultResponseTypes)
+        {
+            var isValid = true;
+            try
+            {
+                foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()))
+                {
+                    if (responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
                     {
-                        var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).FirstOrDefault();
-                        if (duplicatedResponseType != null)
-                        {
-                            throw new ValidationException($"Duplicated response type value '{duplicatedResponseType.Key}'.");
-                        }
-                        foreach (var item in responseType)
-                        {
-                            if (!acceptedResponseTypeValues.Where(v => v.Equals(item, StringComparison.Ordinal)).Any())
-                            {
-                                throw new ValidationException($"Invalid response type '{responseType}'.");
-                            }
-                        }
+                        throw new ValidationException($"Invalid response type '{responseType.ToSpaceList()}'");
+                    }
+
+                    var responseTypeString = responseType.ToSpaceList();
+                    if (!defaultResponseTypes.Contains(responseTypeString))
+                    {
+                        throw new ValidationException($"Not supported response type '{responseTypeString}'");
+                    }
+
+                    var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (duplicatedResponseType != null)
+                    {
+                        throw new ValidationException($"Duplicated response type '{duplicatedResponseType}'.");
                     }
                 }
-                catch (ValidationException vex)
-                {
-                    isValid = false;
-                    logger.Warning(vex);
-                    modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}.{nameof(OAuthDownResourceScope.Scopes)}".ToCamelCase(), vex.Message);
-                }
+            }
+            catch (ValidationException vex)
+            {
+                isValid = false;
+                logger.Warning(vex);
+                modelState.TryAddModelError($"{nameof(Api.OAuthDownParty.Client)}.{nameof(Api.OAuthDownParty.Client.ResponseTypes)}".ToCamelCase(), vex.Message);
             }
             return isValid;
         }
@@ -133,7 +178,7 @@ namespace FoxIDs.Logic
                     {
                         foreach (var scope in appResourceScope.Scopes)
                         {
-                            if (!(oauthDownParty.Resource?.Scopes?.Where(s => s.Equals(scope, System.StringComparison.Ordinal)).Count() > 0))
+                            if (!(oauthDownParty.Resource?.Scopes?.Where(s => s.Equals(scope, StringComparison.Ordinal)).Count() > 0))
                             {
                                 if (oauthDownParty.Resource == null)
                                 {

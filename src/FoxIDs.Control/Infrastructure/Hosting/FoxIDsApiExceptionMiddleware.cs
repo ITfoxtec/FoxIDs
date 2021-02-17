@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using FoxIDs.Models;
 using AutoMapper;
 using System;
+using System.Net;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -23,52 +23,23 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 await next(httpContext);
             }
-            catch (HttpStatusException mhse)
-            {
-                scopedLogger.Error(mhse);
-                await HandleHttpStatusExceptionAsync(httpContext, mhse);
-            }
             catch (AutoMapperMappingException amme)
             {
                 scopedLogger.Error(amme);
-                var httpStatusException = FindInnerHttpStatusException(amme);
-                if (httpStatusException != null)
-                {
-                    await HandleHttpStatusExceptionAsync(httpContext, httpStatusException);
-                }
-                else
-                {
-                    throw;
-                }
+                await HandleHttpStatusExceptionAsync(httpContext, amme.Message, HttpStatusCode.BadRequest);
             }
             catch (Exception ex)
             {
                 scopedLogger.Error(ex);
-                throw;
+                await HandleHttpStatusExceptionAsync(httpContext, ex.Message, HttpStatusCode.BadRequest);
             }
         }
 
-        private HttpStatusException FindInnerHttpStatusException(Exception ex)
-        {
-            if (ex.InnerException == null)
-            {
-                return null;
-            }
-            else if (ex.InnerException is HttpStatusException httpStatusException)
-            {
-                return httpStatusException;
-            }
-            else
-            {
-                return FindInnerHttpStatusException(ex.InnerException);
-            }
-        }
-
-        private static async Task HandleHttpStatusExceptionAsync(HttpContext httpContext, HttpStatusException hse)
+        private static async Task HandleHttpStatusExceptionAsync(HttpContext httpContext, string message, HttpStatusCode statusCode)
         {
             httpContext.Response.ContentType = "application/json";
-            httpContext.Response.StatusCode = (int)hse.StatusCode;
-            await httpContext.Response.WriteAsync(hse.Message);
+            httpContext.Response.StatusCode = (int)statusCode;
+            await httpContext.Response.WriteAsync(message);
         }
     }
 }

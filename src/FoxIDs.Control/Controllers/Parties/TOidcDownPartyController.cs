@@ -13,7 +13,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// OpenID Connect down-party API.
     /// </summary>
-    public class TOidcDownPartyController : GenericPartyApiController<Api.OidcDownParty, OidcDownParty>
+    public class TOidcDownPartyController : GenericPartyApiController<Api.OidcDownParty, Api.OAuthClaimTransform, OidcDownParty>
     {
         private readonly ValidateOAuthOidcPartyLogic validateOAuthOidcPartyLogic;
 
@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC down-party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OidcDownParty>> PostOidcDownParty([FromBody] Api.OidcDownParty party) => await Post(party, ap => new ValueTask<bool>(true), async (ap, mp) => await validateOAuthOidcPartyLogic.ValidateModelAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OidcDownParty>> PostOidcDownParty([FromBody] Api.OidcDownParty party) => await Post(party, ap => new ValueTask<bool>(validateOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await validateOAuthOidcPartyLogic.ValidateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Update OIDC down-party.
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC down-party.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OidcDownParty>> PutOidcDownParty([FromBody] Api.OidcDownParty party) => await Put(party, ap => new ValueTask<bool>(true), async (ap, mp) => await validateOAuthOidcPartyLogic.ValidateModelAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OidcDownParty>> PutOidcDownParty([FromBody] Api.OidcDownParty party) => await Put(party, ap => new ValueTask<bool>(validateOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await validateOAuthOidcPartyLogic.ValidateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Delete OIDC down-party.

@@ -5,7 +5,7 @@ using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcUpParty : IValidatableObject, INameValue
+    public class OidcUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -29,7 +29,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// OIDC down client.
         /// </summary>
-        [ValidateComplexType]
+        [Required]
         public OidcUpClient Client { get; set; }
 
         /// <summary>

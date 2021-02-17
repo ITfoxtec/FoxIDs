@@ -19,14 +19,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
-        private readonly ValidatePartyLogic validatePartyLogic;
+        private readonly ValidateGenericPartyLogic validateGenericPartyLogic;
 
-        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic) : base(logger)
+        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
-            this.validatePartyLogic = validatePartyLogic;
+            this.validateGenericPartyLogic = validateGenericPartyLogic;
         }
 
         protected async Task<ActionResult<AParty>> Get(string name)
@@ -50,15 +50,15 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<AParty>> Post(AParty party, Func<AParty, Task<bool>> validateApiModelAsync, Func<AParty, MParty, Task<bool>> validateModelAsync)
+        protected async Task<ActionResult<AParty>> Post(AParty party, Func<AParty, ValueTask<bool>> validateApiModelAsync, Func<AParty, MParty, ValueTask<bool>> validateModelAsync)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(party) || !await validateApiModelAsync(party)) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
-                if (!await (party is Api.IDownParty downParty ? validatePartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : Task.FromResult(true))) return BadRequest(ModelState);
-                if (!await validateModelAsync(party, mParty)) return BadRequest(ModelState);
+                if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
+                if (!(await validateModelAsync(party, mParty))) return BadRequest(ModelState);
 
                 await tenantRepository.CreateAsync(mParty);
 
@@ -75,15 +75,15 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, Task<bool>> validateApiModelAsync, Func<AParty, MParty, Task<bool>> validateModelAsync)
+        protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> validateApiModelAsync, Func<AParty, MParty, ValueTask<bool>> validateModelAsync)
         {
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(party) || !await validateApiModelAsync(party)) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
-                if (!await (party is Api.IDownParty downParty ? validatePartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : Task.FromResult(true))) return BadRequest(ModelState);
-                if (!await validateModelAsync(party, mParty)) return BadRequest(ModelState);
+                if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
+                if (!(await validateModelAsync(party, mParty))) return BadRequest(ModelState);
 
                 if(party is Api.OidcDownParty)
                 {
@@ -142,11 +142,11 @@ namespace FoxIDs.Controllers
         {
             if(EqualsBaseType(0, typeof(MParty), (typeof(UpParty))))
             {
-                return UpParty.IdFormat(RouteBinding, name);
+                return UpParty.IdFormatAsync(RouteBinding, name);
             }
             else if (EqualsBaseType(0, typeof(MParty), (typeof(DownParty))))
             {
-                return DownParty.IdFormat(RouteBinding, name);
+                return DownParty.IdFormatAsync(RouteBinding, name);
             }
             else
             {

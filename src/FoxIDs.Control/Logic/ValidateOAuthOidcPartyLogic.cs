@@ -13,13 +13,13 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class ValidateOAuthOidcLogic : LogicBase
+    public class ValidateOAuthOidcPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
-        private readonly List<string> acceptedResponseTypeValues = new List<string> { "code", "token", "id_token" };
+        private readonly List<string> acceptedResponseTypeValues = new List<string> { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken };
 
-        public ValidateOAuthOidcLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
@@ -31,6 +31,16 @@ namespace FoxIDs.Logic
                 await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
                 ValidateClientScopes(modelState, oauthDownParty) && 
                 ValidateResourceScopes(modelState, oauthDownParty);
+        }
+
+        public bool ValidateModel<TClient>(ModelStateDictionary modelState, OAuthUpParty<TClient> oauthDownParty) where TClient : OAuthUpClient
+        {
+            throw new NotImplementedException();
+
+            //return ValidateResponseType(modelState, oauthDownParty) &&
+            //    await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
+            //    ValidateClientScopes(modelState, oauthDownParty) &&
+            //    ValidateResourceScopes(modelState, oauthDownParty);
         }
 
         private bool ValidateResponseType<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
@@ -90,7 +100,7 @@ namespace FoxIDs.Logic
                         try
                         {
                             // Test if Down-party exists.
-                            var resourceDownParty = await tenantService.GetAsync<OAuthDownParty>(await DownParty.IdFormat(RouteBinding, resourceScope.Resource));
+                            var resourceDownParty = await tenantService.GetAsync<OAuthDownParty>(await DownParty.IdFormatAsync(RouteBinding, resourceScope.Resource));
                             if (resourceScope.Scopes?.Count > 0)
                             {
                                 foreach (var scope in resourceScope.Scopes)

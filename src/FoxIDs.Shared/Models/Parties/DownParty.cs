@@ -11,7 +11,7 @@ namespace FoxIDs.Models
     /// </summary>
     public class DownParty : Party
     {
-        public static async Task<string> IdFormat(IdKey idKey)
+        public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -19,7 +19,7 @@ namespace FoxIDs.Models
             return $"party:down:{idKey.TenantName}:{idKey.TrackName}:{idKey.PartyName}";
         }
 
-        public static async Task<string> IdFormat(RouteBinding routeBinding, string name)
+        public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)
         {
             if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
             if (name == null) new ArgumentNullException(nameof(name));
@@ -31,7 +31,7 @@ namespace FoxIDs.Models
                 PartyName = name,
             };
 
-            return await IdFormat(idKey);
+            return await IdFormatAsync(idKey);
         }
 
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
@@ -42,7 +42,7 @@ namespace FoxIDs.Models
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            Id = await IdFormat(idKey);
+            Id = await IdFormatAsync(idKey);
         }
 
         public async Task SetIdAsync(RouteBinding routeBinding, string name)
@@ -50,7 +50,7 @@ namespace FoxIDs.Models
             if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
             if (name == null) new ArgumentNullException(nameof(name));
 
-            Id = await IdFormat(routeBinding, name);
+            Id = await IdFormatAsync(routeBinding, name);
         }
     }
 }

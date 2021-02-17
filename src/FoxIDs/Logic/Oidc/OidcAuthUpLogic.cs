@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, OIDC Authentication request.");
-            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();

@@ -17,40 +17,40 @@ namespace FoxIDs.Controllers
     {
         private readonly ValidateSamlPartyLogic validateSamlPartyLogic;
 
-        public TSamlUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic, ValidateSamlPartyLogic validateSamlPartyLogic) : base(logger, mapper, tenantRepository, validatePartyLogic)
+        public TSamlUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateSamlPartyLogic validateSamlPartyLogic) : base(logger, mapper, tenantRepository, validateGenericPartyLogic)
         {
             this.validateSamlPartyLogic = validateSamlPartyLogic;
         }
 
         /// <summary>
-        /// Get Saml up-party.
+        /// Get SAML 2.0 up-party.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Saml up-party.</returns>
+        /// <returns>SAML 2.0 up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.SamlUpParty>> GetSamlUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create Saml up-party.
+        /// Create SAML 2.0 up-party.
         /// </summary>
-        /// <param name="party">Saml up-party.</param>
-        /// <returns>Saml up-party.</returns>
+        /// <param name="party">SAML 2.0 up-party.</param>
+        /// <returns>SAML 2.0 up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => new ValueTask<bool>(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)),  (ap, mp) => new ValueTask<bool>(true));
 
         /// <summary>
-        /// Update Saml up-party.
+        /// Update SAML 2.0 up-party.
         /// </summary>
-        /// <param name="party">Saml up-party.</param>
-        /// <returns>Saml up-party.</returns>
+        /// <param name="party">SAML 2.0 up-party.</param>
+        /// <returns>SAML 2.0 up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)), (ap, mp) => Task.FromResult(true));
-       
+        public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => new ValueTask<bool>(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)), (ap, mp) => new ValueTask<bool>(true));
+
         /// <summary>
-        /// Delete Saml up-party.
+        /// Delete SAML 2.0 up-party.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

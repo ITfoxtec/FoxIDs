@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> EndSessionRequestAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
             logger.ScopeTrace("Up, OIDC End session request.");
-            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await logoutRequest.ValidateObjectAsync();

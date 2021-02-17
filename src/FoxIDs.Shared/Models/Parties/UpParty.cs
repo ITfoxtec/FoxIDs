@@ -5,7 +5,7 @@ namespace FoxIDs.Models
 {
     public class UpParty : Party
     {
-        public static async Task<string> IdFormat(IdKey idKey)
+        public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -13,7 +13,7 @@ namespace FoxIDs.Models
             return $"party:up:{idKey.TenantName}:{idKey.TrackName}:{idKey.PartyName}";
         }
 
-        public static async Task<string> IdFormat(RouteBinding routeBinding, string name)
+        public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)
         {
             if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
             if (name == null) new ArgumentNullException(nameof(name));
@@ -25,14 +25,14 @@ namespace FoxIDs.Models
                 PartyName = name,
             };
 
-            return await IdFormat(idKey);
+            return await IdFormatAsync(idKey);
         }
 
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            Id = await IdFormat(idKey);
+            Id = await IdFormatAsync(idKey);
         }
     }
 }

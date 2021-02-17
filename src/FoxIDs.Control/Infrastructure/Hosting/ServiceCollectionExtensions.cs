@@ -40,8 +40,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
-            services.AddTransient<ValidatePartyLogic>();
-            services.AddTransient<ValidateOAuthOidcLogic>();
+            services.AddTransient<ValidateGenericPartyLogic>();
+            services.AddTransient<ValidateOAuthOidcPartyLogic>();
             services.AddTransient<ValidateSamlPartyLogic>();
 
             return services;

@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, Login redirect.");
-            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();

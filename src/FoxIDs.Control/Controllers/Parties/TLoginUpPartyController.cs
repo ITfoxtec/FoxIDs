@@ -15,7 +15,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TLoginUpPartyController : GenericPartyApiController<Api.LoginUpParty, LoginUpParty>
     {
-        public TLoginUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic) : base(logger, mapper, tenantRepository, validatePartyLogic)
+        public TLoginUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger, mapper, tenantRepository, validateGenericPartyLogic)
         { }
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace FoxIDs.Controllers
         /// <returns>Login up-party.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.LoginUpParty>> PostLoginUpParty([FromBody] Api.LoginUpParty party) => await Post(party, ap => Task.FromResult(true), (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.LoginUpParty>> PostLoginUpParty([FromBody] Api.LoginUpParty party) => await Post(party, ap => new ValueTask<bool>(true), (ap, mp) => new ValueTask<bool>(true));
 
         /// <summary>
         /// Update Login up-party.
@@ -43,7 +43,7 @@ namespace FoxIDs.Controllers
         /// <returns>Login up-party.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LoginUpParty>> PutLoginUpParty([FromBody] Api.LoginUpParty party) => await Put(party, ap => Task.FromResult(true), (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.LoginUpParty>> PutLoginUpParty([FromBody] Api.LoginUpParty party) => await Put(party, ap => new ValueTask<bool>(true), (ap, mp) => new ValueTask<bool>(true));
 
         /// <summary>
         /// Delete Login up-party.

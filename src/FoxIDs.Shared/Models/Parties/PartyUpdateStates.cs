@@ -4,7 +4,7 @@ namespace FoxIDs.Models
 {
     public enum PartyUpdateStates
     {
-        [EnumMember(Value = "Manual")]
+        [EnumMember(Value = "manual")]
         Manual = 10,
         [EnumMember(Value = "automatic")]
         Automatic = 20,

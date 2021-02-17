@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
                 partyName = partyName?.ToLower();
 
-                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, partyName));
+                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthDownParty?.Client?.Secrets?.Count > 0)
                 {
                     return Ok(mapper.Map<List<Api.OAuthClientSecretResponse>>(oauthDownParty.Client.Secrets).Set(s => s.ForEach(es => es.Name = new[] { partyName, es.Name }.ToDotList())));
@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(secretRequest)) return BadRequest(ModelState);
                 secretRequest.PartyName = secretRequest.PartyName?.ToLower();
 
-                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, secretRequest.PartyName));
+                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, secretRequest.PartyName));
 
                 foreach(var s in secretRequest.Secrets)
                 {
@@ -103,7 +103,7 @@ namespace FoxIDs.Controllers
 
                 var partyName = name.GetFirstInDotList();
                 var secretId = name.GetLastInDotList();
-                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormat(RouteBinding, partyName));
+                var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
                 var secret = oauthDownParty.Client.Secrets.Where(s => s.Id == secretId).FirstOrDefault();
                 if (secret == null)
                 {

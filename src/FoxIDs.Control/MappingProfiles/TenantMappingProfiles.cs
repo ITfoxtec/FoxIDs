@@ -98,12 +98,22 @@ namespace FoxIDs.MappingProfiles
             CreateMap<LoginUpParty, Api.LoginUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
-            CreateMap<SamlUpParty, Api.SamlUpParty>()
+            CreateMap<OidcUpParty, Api.OidcUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+            CreateMap<OidcUpClient, Api.OidcUpClient>()
+               .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(s => s)))
+               .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+               .ReverseMap();
+
+            CreateMap<SamlUpParty, Api.SamlUpParty>()
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
         }
 
         private void DownPartyMapping()
@@ -112,7 +122,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OAuthDownClaim, Api.OAuthDownClaim>()
@@ -138,7 +148,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OidcDownClaim, Api.OidcDownClaim>()
@@ -157,7 +167,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
         }

@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> LogoutRedirect(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
             logger.ScopeTrace("Down, Logout redirect.");
-            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await logoutRequest.ValidateObjectAsync();

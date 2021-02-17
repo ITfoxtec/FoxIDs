@@ -9,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class ValidatePartyLogic : LogicBase
+    public class ValidateGenericPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
 
-        public ValidatePartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
                 {
                     try
                     {
-                        var upParty = await tenantService.GetAsync<UpParty>(await UpParty.IdFormat(RouteBinding, upPartyLink.Name));
+                        var upParty = await tenantService.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, upPartyLink.Name));
                         upPartyLink.Type = upParty.Type;
                     }
                     catch (CosmosDataException ex)

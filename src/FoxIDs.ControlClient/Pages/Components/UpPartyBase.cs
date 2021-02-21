@@ -58,6 +58,23 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        public void ShowOAuthTab(IGeneralOAuthUpPartyTabViewModel upParty, OAuthTabTypes oauthTabTypes)
+        {
+            switch (oauthTabTypes)
+            {
+                case OAuthTabTypes.Client:
+                    upParty.ShowClientTab = true;
+                    upParty.ShowClaimTransformTab = false;
+                    break;
+                case OAuthTabTypes.ClaimsTransform:
+                    upParty.ShowClientTab = false;
+                    upParty.ShowClaimTransformTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         public void ShowSamlTab(GeneralSamlUpPartyViewModel downParty, SamlTabTypes samlTabTypes)
         {
             switch (samlTabTypes)
@@ -73,6 +90,12 @@ namespace FoxIDs.Client.Pages.Components
                 default:
                     throw new NotSupportedException();
             }
+        }
+
+        public (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
+        {
+            var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/";
+            return (authority, new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString);
         }
 
         public string GetSamlMetadata(string partyName)

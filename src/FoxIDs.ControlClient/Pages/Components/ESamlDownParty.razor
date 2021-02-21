@@ -6,8 +6,13 @@
 
 <PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAfterInit="@(m => SamlDownPartyViewModelAfterInit(samlDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
     <div class="modal-header">
-        SAML 2.0
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <div>
+            SAML 2.0
+        </div>
+        @if (samlDownParty.ShowSamlTab)
+        {
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        }
     </div>
     <div class="modal-body">
         @if (samlDownParty.CreateMode)

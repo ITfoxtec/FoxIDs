@@ -251,7 +251,7 @@ namespace FoxIDs
             public static class OAuthUpParty
             {
                 public const int AuthorityLength = 300;
-                public const int KeysMin = 1;
+                public const int KeysMin = 0;
                 public const int KeysMax = 10;
                 public const int OidcDiscoveryUpdateRateMin = 86400; // 24 hours
                 public const int OidcDiscoveryUpdateRateMax = 31536000; // 12 month

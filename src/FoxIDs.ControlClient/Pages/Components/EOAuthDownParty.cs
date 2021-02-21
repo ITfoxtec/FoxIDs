@@ -28,7 +28,7 @@ namespace FoxIDs.Client.Pages.Components
                 if(model.Client != null)
                 {
                     model.Client.ResponseTypes.Add("code");
-                    model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = "offline_access" });
+                    model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = IdentityConstants.DefaultOidcScopes.OfflineAccess });
                 }
             }
         }

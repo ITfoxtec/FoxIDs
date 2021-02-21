@@ -2,7 +2,6 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using FoxIDs.Util;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
@@ -18,15 +17,15 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly ITenantRepository tenantRepository;
-        private readonly OidcDiscoveryUtil oidcDiscoveryUtil;
+        private readonly OidcDiscoveryReadLogic oidcDiscoveryReadLogic;
 
-        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, OidcDiscoveryUtil oidcDiscoveryUtil, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, OidcDiscoveryReadLogic oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
             this.tenantRepository = tenantRepository;
-            this.oidcDiscoveryUtil = oidcDiscoveryUtil;
+            this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
         }
 
         public async Task CheckOidcDiscoveryAndUpdatePartyAsync(OidcUpParty party)
@@ -67,7 +66,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryUtil.GetOidcDiscoveryAndValidateAsync(party.Authority);
+                    (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(party.Authority);
 
                     party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;

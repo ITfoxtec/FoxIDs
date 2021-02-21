@@ -12,7 +12,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
-                @*<button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>*@
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">SAML 2.0</button>
             </div>
         </div>
@@ -51,7 +51,7 @@
                 }
                 else if (upParty.Type == PartyTypes.Oidc)
                 {
-                    @*<EOidcUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />*@
+                    <EOidcUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                 }
                 else if (upParty.Type == PartyTypes.Saml2)
                 {

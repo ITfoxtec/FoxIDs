@@ -5,7 +5,6 @@ using FoxIDs.Logic;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using FoxIDs.Util;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
@@ -42,8 +41,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ClaimTransformationsLogic>();         
 
             services.AddTransient<OidcDiscoveryDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<OidcDiscoveryDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();            
-            services.AddTransient<OidcDiscoveryUtil>();
+            services.AddTransient<OidcDiscoveryDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcDiscoveryReadLogic>();
             services.AddTransient<OidcDiscoveryReadUpLogic>();
 
             services.AddTransient<JwtDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();

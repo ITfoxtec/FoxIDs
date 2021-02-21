@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity.Models;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Models.Api
 {
@@ -13,13 +14,12 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [Required]
-        public PartyUpdateStates UpdateState { get; set; }
+        public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
         public string Authority { get; set; }
 
-        [Required]
         [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
@@ -27,7 +27,7 @@ namespace FoxIDs.Models.Api
         public int? OidcDiscoveryUpdateRate { get; set; }
 
         /// <summary>
-        /// OIDC down client.
+        /// OIDC up client.
         /// </summary>
         [Required]
         public OidcUpClient Client { get; set; }
@@ -41,11 +41,35 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (UpdateState != PartyUpdateStates.Manual)
+            if (UpdateState == PartyUpdateStates.Manual)
+            {
+                if(Keys?.Count <= 0)
+                {
+                    results.Add(new ValidationResult($"Require at least one key in '{nameof(Keys)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                        new[] { nameof(Keys) }));
+                }
+
+                if (Client.AuthorizeUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Require '{nameof(Client)}.{nameof(Client.AuthorizeUrl)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                        new[] { $"{nameof(Client)}.{nameof(Client.AuthorizeUrl)}" }));
+                }
+
+                if (Client.ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (Client.TokenUrl.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(Client)}.{nameof(Client.TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                            new[] { $"{nameof(Client)}.{nameof(Client.TokenUrl)}" }));
+                    }
+                }
+            }
+            else
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}' if '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(OidcDiscoveryUpdateRate), nameof(UpdateState) }));
+                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}'. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", 
+                        new[] { nameof(OidcDiscoveryUpdateRate) }));
                 }
             }
             return results;

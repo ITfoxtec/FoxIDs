@@ -5,21 +5,22 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using UrlCombineLib;
 
-namespace FoxIDs.Util
+namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryUtil
+    public class OidcDiscoveryReadLogic
     {
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcDiscoveryUtil(IHttpClientFactory httpClientFactory)
+        public OidcDiscoveryReadLogic(IHttpClientFactory httpClientFactory)
         {
             this.httpClientFactory = httpClientFactory;
         }
 
         public async Task<(OidcDiscovery, JsonWebKeySet)> GetOidcDiscoveryAndValidateAsync(string authority)
         {
-            var oidcDiscoveryUrl = new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString;
+            var oidcDiscoveryUrl = UrlCombine.Combine(authority, IdentityConstants.OidcDiscovery.Path);
             try
             {
                 var oidcDiscovery = await GetOidcDiscoveryAsync(oidcDiscoveryUrl);
@@ -37,7 +38,7 @@ namespace FoxIDs.Util
                 }
 
                 var jsonWebKeySet = await GetOidcDiscoveryKeysAsync(oidcDiscovery.JwksUri);
-                if (jsonWebKeySet.Keys?.Count > 0)
+                if (jsonWebKeySet.Keys?.Count <= 0)
                 {
                     throw new Exception($"At least one key in {nameof(jsonWebKeySet.Keys)} is required.");
                 }

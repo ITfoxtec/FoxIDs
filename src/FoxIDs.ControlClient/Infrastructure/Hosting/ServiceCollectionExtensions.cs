@@ -59,7 +59,6 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddSingleton(settings);
 
             services.AddTenantOpenidConnectPkce();
-
             services.AddTransient<CheckResponseMessageHandler>();
 
             services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);

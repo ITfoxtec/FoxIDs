@@ -28,7 +28,7 @@ namespace FoxIDs.Models
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
-        [JsonProperty(PropertyName = "response_type")]
+        [JsonProperty(PropertyName = "response_mode")]
         public string ResponseMode { get; set; }
 
         [Required]

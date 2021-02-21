@@ -10,6 +10,7 @@ namespace FoxIDs.Client.Services
     {
         private const string filterApiUri = "api/{tenant}/{track}/!filterupparty";
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
+        private const string oidcApiUri = "api/{tenant}/{track}/!oidcupparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
 
         public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
@@ -21,6 +22,11 @@ namespace FoxIDs.Client.Services
         public async Task CreateLoginUpPartyAsync(LoginUpParty party) => await PostAsync(loginApiUri, party);
         public async Task UpdateLoginUpPartyAsync(LoginUpParty party) => await PutAsync(loginApiUri, party);
         public async Task DeleteLoginUpPartyAsync(string name) => await DeleteAsync(loginApiUri, name);
+
+        public async Task<OidcUpParty> GetOidcUpPartyAsync(string name) => await GetAsync<OidcUpParty>(oidcApiUri, name);
+        public async Task CreateOidcUpPartyAsync(OidcUpParty party) => await PostAsync(oidcApiUri, party);
+        public async Task UpdateOidcUpPartyAsync(OidcUpParty party) => await PutAsync(oidcApiUri, party);
+        public async Task DeleteOidcUpPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
 
         public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);
         public async Task CreateSamlUpPartyAsync(SamlUpParty party) => await PostAsync(samlApiUri, party);

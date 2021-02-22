@@ -70,8 +70,7 @@ namespace FoxIDs.Controllers
             }
             else
             {
-                var technicalErrors = new List<string>();
-                errorViewModel.TechnicalErrors = GetTechnicalErrors(exception, technicalErrors);
+                errorViewModel.TechnicalErrors = exception.GetAllMessages();
             }
 
             return View(errorViewModel);
@@ -91,18 +90,6 @@ namespace FoxIDs.Controllers
             {
                 return null;
             }
-        }
-
-        private List<string> GetTechnicalErrors(Exception exception, List<string> technicalErrors)
-        {
-            technicalErrors.Add(exception.Message);
-            
-            if (exception.InnerException != null)
-            {
-                return GetTechnicalErrors(exception.InnerException, technicalErrors);
-            }
-
-            return technicalErrors;
         }
     }
 }

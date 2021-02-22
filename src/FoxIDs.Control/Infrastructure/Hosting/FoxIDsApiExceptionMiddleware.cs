@@ -26,12 +26,12 @@ namespace FoxIDs.Infrastructure.Hosting
             catch (AutoMapperMappingException amme)
             {
                 scopedLogger.Error(amme);
-                await HandleHttpStatusExceptionAsync(httpContext, amme.AllMessagesJoined(), HttpStatusCode.BadRequest);
+                await HandleHttpStatusExceptionAsync(httpContext, amme.GetAllMessagesJoined(), HttpStatusCode.BadRequest);
             }
             catch (Exception ex)
             {
                 scopedLogger.Error(ex);
-                await HandleHttpStatusExceptionAsync(httpContext, ex.AllMessagesJoined(), HttpStatusCode.BadRequest);
+                await HandleHttpStatusExceptionAsync(httpContext, ex.GetAllMessagesJoined(), HttpStatusCode.BadRequest);
             }
         }
 

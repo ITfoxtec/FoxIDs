@@ -40,7 +40,7 @@ namespace FoxIDs.Logic
             {
                 isValid = false;
                 logger.Warning(ex);
-                modelState.TryAddModelError(nameof(mp.Authority).ToCamelCase(), ex.AllMessagesJoined());
+                modelState.TryAddModelError(nameof(mp.Authority).ToCamelCase(), ex.GetAllMessagesJoined());
             }
             return isValid;
         }

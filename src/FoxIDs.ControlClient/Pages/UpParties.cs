@@ -97,6 +97,10 @@ namespace FoxIDs.Client.Pages
                 {
                     upParties.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
+                if (dp.Type == PartyTypes.Oidc)
+                {
+                    upParties.Add(new GeneralOidcUpPartyViewModel(dp));
+                }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
                     upParties.Add(new GeneralSamlUpPartyViewModel(dp));

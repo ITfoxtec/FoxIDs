@@ -68,7 +68,7 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (RequirePkce && !ResponseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
+            if (RequirePkce && !ResponseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
             {
                 results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
             }

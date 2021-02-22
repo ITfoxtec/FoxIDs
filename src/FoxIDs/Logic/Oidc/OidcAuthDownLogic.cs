@@ -145,7 +145,7 @@ namespace FoxIDs.Logic
             try
             {
                 var responseTypes = authenticationRequest.ResponseType.ToSpaceList();
-                bool isImplicitFlow = !responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any();
+                bool isImplicitFlow = !responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any();
                 authenticationRequest.Validate(isImplicitFlow);
 
                 if (client.RequirePkce)
@@ -256,17 +256,17 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Response type '{sequenceData.ResponseType}'.");
             var responseTypes = sequenceData.ResponseType.ToSpaceList();
 
-            if (responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
+            if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
             {
                 authenticationResponse.Code = await oauthAuthCodeGrantDownLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
             }
 
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                
-            if (responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
+            if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
             {
                 authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
             }
-            if (responseTypes.Select(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
+            if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
             {
                 authenticationResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
             }

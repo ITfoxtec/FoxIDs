@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
                 SessionId = logoutRequest.SessionId,
             });
 
-            var postLogoutRedirectUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionnResponse);
+            var postLogoutRedirectUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, $"({party.Name})", Constants.Routes.OAuthController, Constants.Endpoints.EndSessionnResponse);
             var endSessionRequest = new EndSessionRequest
             {
                 IdTokenHint = logoutRequest.IdTokenHint,

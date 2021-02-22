@@ -267,7 +267,7 @@ namespace FoxIDs.Logic
                     ClientSecret = client.ClientSecret,
                 };
                 logger.ScopeTrace($"client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.");
-                requestDictionary = clientCredentials.ToDictionary();
+                requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
             }
 
             if (client.RequirePkce)
@@ -277,7 +277,7 @@ namespace FoxIDs.Logic
                     CodeVerifier = sequenceData.CodeVerifier,
                 };
                 logger.ScopeTrace($"Code verifier secret '{codeVerifierSecret.ToJsonIndented()}'.");
-                requestDictionary = codeVerifierSecret.ToDictionary();
+                requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
             var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
@@ -324,7 +324,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(idToken, party.Authority, party.Keys, sequenceData.ClientId));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(idToken, party.Issuer, party.Keys, sequenceData.ClientId));
 
                 var nonce = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Nonce).Select(c => c.Value).SingleOrDefault();
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
@@ -354,7 +354,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (_, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, party.Authority, party.Keys, sequenceData.ClientId, validateAudience: false));
+                (_, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, party.Issuer, party.Keys, sequenceData.ClientId, validateAudience: false));
             }
             catch (Exception ex)
             {

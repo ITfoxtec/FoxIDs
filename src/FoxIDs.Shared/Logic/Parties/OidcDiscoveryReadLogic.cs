@@ -24,6 +24,10 @@ namespace FoxIDs.Logic
             try
             {
                 var oidcDiscovery = await GetOidcDiscoveryAsync(oidcDiscoveryUrl);
+                if (oidcDiscovery.Issuer.IsNullOrEmpty())
+                {
+                    throw new Exception($"{nameof(oidcDiscovery.Issuer)} is required.");
+                }
                 if (oidcDiscovery.AuthorizationEndpoint.IsNullOrEmpty())
                 {
                     throw new Exception($"{nameof(oidcDiscovery.AuthorizationEndpoint)} is required.");

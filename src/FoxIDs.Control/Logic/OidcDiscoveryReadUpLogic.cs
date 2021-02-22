@@ -28,6 +28,7 @@ namespace FoxIDs.Logic
                 (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(mp.Authority);
 
                 mp.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                mp.Issuer = oidcDiscovery.Issuer;
                 mp.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
                 mp.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
                 if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())

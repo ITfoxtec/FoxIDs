@@ -25,6 +25,12 @@
         }
 
         <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
+        @if (!oidcUpParty.CreateMode)
+        {
+            <FFieldText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
+            <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
+        }
+
         @if (UpParty.ShowAdvanced)
         {
             <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />     

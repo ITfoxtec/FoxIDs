@@ -20,6 +20,9 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
         public string Authority { get; set; }
 
+        [MaxLength(Constants.Models.OAuthUpParty.IssuerLength)]
+        public string Issuer { get; set; }
+
         [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
@@ -43,7 +46,13 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (UpdateState == PartyUpdateStates.Manual)
             {
-                if(Keys?.Count <= 0)
+                if (Issuer.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Require '{nameof(Issuer)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                        new[] { nameof(Issuer) }));
+                }
+
+                if (Keys?.Count <= 0)
                 {
                     results.Add(new ValidationResult($"Require at least one key in '{nameof(Keys)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
                         new[] { nameof(Keys) }));

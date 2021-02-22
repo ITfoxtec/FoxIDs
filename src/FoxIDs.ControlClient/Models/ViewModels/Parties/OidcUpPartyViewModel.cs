@@ -21,6 +21,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authority")]
         public string Authority { get; set; }
 
+        [Display(Name = "Issuer")]
+        public string Issuer { get; set; }
+
         [Display(Name = "Key IDs")]
         public List<string> KeyIds { get; set; } = new List<string>();
 

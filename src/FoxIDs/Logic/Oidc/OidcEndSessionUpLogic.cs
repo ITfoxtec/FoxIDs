@@ -54,7 +54,7 @@ namespace FoxIDs.Logic
             var postLogoutRedirectUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, $"({party.Name})", Constants.Routes.OAuthController, Constants.Endpoints.EndSessionnResponse);
             var endSessionRequest = new EndSessionRequest
             {
-                IdTokenHint = logoutRequest.IdTokenHint,
+                IdTokenHint = GetIdTokenHint(party, logoutRequest),
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = SequenceString
             };
@@ -65,6 +65,19 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"End session request URL '{endSessionRequestUrl}'.");
             logger.ScopeTrace("Up, Sending OIDC End session request.", triggerEvent: true);
             return new RedirectResult(endSessionRequestUrl);
+        }
+
+        private string GetIdTokenHint(OidcUpParty party, LogoutRequest logoutRequest)
+        {
+            var prePartyName = $"{party.Name}|";
+            if (!logoutRequest.IdTokenHint.IsNullOrEmpty() && logoutRequest.IdTokenHint.StartsWith(prePartyName, StringComparison.Ordinal))
+            {
+                return logoutRequest.IdTokenHint.Remove(0, prePartyName.Length);
+            }
+            else
+            {
+                return logoutRequest.IdTokenHint;
+            }
         }
 
         private void ValidatePartyLogoutSupport(OidcUpParty party)

@@ -85,11 +85,11 @@ namespace FoxIDs.Logic
             switch (type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
+                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest, idTokenClaims));
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
+                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest, idTokenClaims));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
@@ -102,16 +102,23 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, EndSessionRequest endSessionRequest)
+        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, EndSessionRequest endSessionRequest, IEnumerable<Claim> idTokenClaims)
         {
-            return new LogoutRequest
+            var logoutRequest = new LogoutRequest
             {
                 DownParty = party,
                 SessionId = sessionId,
                 RequireLogoutConsent = !validIdToken,
-                PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace(),
-                IdTokenHint = endSessionRequest.IdTokenHint
+                PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace()
             };
+
+            var idTokenHint = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.IdToken);
+            if (!idTokenHint.IsNullOrEmpty())
+            {               
+                logoutRequest.IdTokenHint = idTokenHint;
+            }
+
+            return logoutRequest;
         }
 
         private LogoutRequest GetSamlLogoutRequest(Party party, string sessionId, IEnumerable<Claim> idTokenClaims)

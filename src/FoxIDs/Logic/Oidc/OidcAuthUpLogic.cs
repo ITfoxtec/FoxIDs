@@ -226,7 +226,7 @@ namespace FoxIDs.Logic
 
         private List<Claim> ValidateClaims(OidcUpParty party, List<Claim> claims)
         {
-            var acceptedClaims = Constants.DefaultClaims.IdToken.ConcatOnce(party.Client.Claims);
+            var acceptedClaims = Constants.DefaultClaims.JwtTokenUpParty.ConcatOnce(party.Client.Claims).Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Any(ex => ex == c));
             claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type)).ToList();
             foreach (var claim in claims)
             {
@@ -310,6 +310,7 @@ namespace FoxIDs.Logic
         private async Task<List<Claim>> ValidateTokens(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
         {
             var claims = await ValidateIdToken(party, sequenceData, idToken);
+            claims.AddClaim(Constants.JwtClaimTypes.IdToken, $"{party.Name}|{idToken}");
             if (!accessToken.IsNullOrWhiteSpace())
             {
                 await ValidateAccessToken(party, sequenceData, accessToken);

@@ -98,7 +98,7 @@ namespace FoxIDs.Logic
             if (!nameID.IsNullOrEmpty())
             {
                 var prePartyName = $"{party.Name}|";
-                if(prePartyName.StartsWith(prePartyName, StringComparison.Ordinal))
+                if(nameID.StartsWith(prePartyName, StringComparison.Ordinal))
                 {
                     nameID = nameID.Remove(0, prePartyName.Length);
                 }

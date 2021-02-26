@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
                 idTokenClaims.AddRange(clientClaims);
             }
 
-            if(nonce != null)
+            if(!nonce.IsNullOrEmpty())
             {
                 idTokenClaims.AddClaim(JwtClaimTypes.Nonce, nonce);
             }

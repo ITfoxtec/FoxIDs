@@ -374,7 +374,7 @@ namespace FoxIDs
         {
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
-            public const string EndSessionnResponse = "EndSessionnResponse";
+            public const string EndSessionnResponse = "endsessionnresponse";
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
@@ -431,13 +431,23 @@ namespace FoxIDs
             /// Default ID Token claims.
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat } ).ToArray();
+                new string[] { JwtClaimTypes.SubFormat, JwtClaimTypes.IdToken } ).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
                 new string[] { JwtClaimTypes.SubFormat } ).ToArray();
+
+            /// <summary>
+            /// Default JWT Token up-party claims.
+            /// </summary>
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr, JwtClaimTypes.IdToken };
+
+            /// <summary>
+            /// Exclude JWT Token up-party claims.
+            /// </summary>
+            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 
             /// <summary>
             /// Default SAML claims.
@@ -448,6 +458,7 @@ namespace FoxIDs
         public static class JwtClaimTypes
         {
             public const string SubFormat = "sub_format";
+            public const string IdToken = "id_token";
             public const string AccessToken = "access_token";
         }
 

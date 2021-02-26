@@ -59,12 +59,13 @@ namespace FoxIDs.Logic
             (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, endSessionRequest.IdTokenHint);
             if (!validIdToken)
             {
-                if (!endSessionRequest.IdTokenHint.IsNullOrEmpty())
+                if (party.Client.RequireLogoutIdTokenHint)
                 {
-                    throw new OAuthRequestException($"Invalid ID Token hint.") { RouteBinding = RouteBinding };
-                }
-                else if (party.Client.RequireLogoutIdTokenHint)
-                {
+                    if (!endSessionRequest.IdTokenHint.IsNullOrEmpty())
+                    {
+                        throw new OAuthRequestException($"Invalid ID Token hint.") { RouteBinding = RouteBinding };
+                    }
+
                     throw new OAuthRequestException($"ID Token hint is required.") { RouteBinding = RouteBinding };
                 }
             }
@@ -85,11 +86,11 @@ namespace FoxIDs.Logic
             switch (type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest, idTokenClaims));
+                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest, idTokenClaims));
+                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
@@ -102,7 +103,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, EndSessionRequest endSessionRequest, IEnumerable<Claim> idTokenClaims)
+        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, EndSessionRequest endSessionRequest)
         {
             var logoutRequest = new LogoutRequest
             {
@@ -111,12 +112,6 @@ namespace FoxIDs.Logic
                 RequireLogoutConsent = !validIdToken,
                 PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace()
             };
-
-            var idTokenHint = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.IdToken);
-            if (!idTokenHint.IsNullOrEmpty())
-            {               
-                logoutRequest.IdTokenHint = idTokenHint;
-            }
 
             return logoutRequest;
         }

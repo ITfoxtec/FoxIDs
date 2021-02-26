@@ -227,18 +227,29 @@ namespace FoxIDs.Logic
 
         private List<Claim> ValidateClaims(OidcUpParty party, List<Claim> claims)
         {
-            var acceptedClaims = Constants.DefaultClaims.JwtTokenUpParty.ConcatOnce(party.Client.Claims).Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Any(ex => ex == c));
+            var acceptedClaims = Constants.DefaultClaims.JwtTokenUpParty.ConcatOnce(party.Client.Claims).Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Contains(c));
             claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type)).ToList();
             foreach (var claim in claims)
             {
                 if (claim.Type?.Length > Constants.Models.Claim.JwtTypeLength)
                 {
-                    throw new OAuthRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength)}' is too long.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                    throw new OAuthRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.JwtTypeLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
-                //if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
-                //{
-                //    throw new OAuthRequestException($"Claim value '{claim.Value.Substring(0, Constants.Models.Claim.ValueLength)}' is too long.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                //}
+
+                if(Constants.EmbeddedJwtToken.JwtTokenClaims.Contains(claim.Type))
+                {
+                    if (claim.Value?.Length > Constants.EmbeddedJwtToken.ValueLength)
+                    {
+                        throw new OAuthRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.EmbeddedJwtToken.ValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                    }
+                }
+                else
+                {
+                    if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                    {
+                        throw new OAuthRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                    }
+                }
             }
             return claims;
         }
@@ -325,7 +336,6 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            claims.AddClaim(Constants.JwtClaimTypes.IdToken, $"{party.Name}|{idToken}");
             return claims;
         }
 
@@ -402,6 +412,11 @@ namespace FoxIDs.Logic
 
         private Saml2StatusCodes ErrorToSamlStatus(string error)
         {
+            if (error.IsNullOrEmpty())
+            {
+                return Saml2StatusCodes.Success;
+            }
+
             switch (error)
             {
                 case IdentityConstants.ResponseErrors.LoginRequired:

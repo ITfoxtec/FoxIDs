@@ -163,7 +163,7 @@ namespace FoxIDs
                 public const int ValuesOAuthMin = 0;
                 public const int ValuesUserMin = 1;
                 public const int ValuesMax = 100;
-                public const int ValueLength = 100;
+                public const int ValueLength = 100;               
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -374,7 +374,7 @@ namespace FoxIDs
         {
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
-            public const string EndSessionnResponse = "endsessionnresponse";
+            public const string EndSessionResponse = "endsessionresponse";
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
@@ -431,7 +431,7 @@ namespace FoxIDs
             /// Default ID Token claims.
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat, JwtClaimTypes.IdToken } ).ToArray();
+                new string[] { JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
@@ -442,7 +442,7 @@ namespace FoxIDs
             /// <summary>
             /// Default JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr, JwtClaimTypes.IdToken };
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
             /// Exclude JWT Token up-party claims.
@@ -455,10 +455,18 @@ namespace FoxIDs
             public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod };
         }
 
+        /// <summary>
+        /// JWT tokens embed as a claim in a token.
+        /// </summary>
+        public class EmbeddedJwtToken
+        {
+            public readonly static string[] JwtTokenClaims = { JwtClaimTypes.AccessToken };
+            public const int ValueLength = 1000;
+        }
+
         public static class JwtClaimTypes
         {
             public const string SubFormat = "sub_format";
-            public const string IdToken = "id_token";
             public const string AccessToken = "access_token";
         }
 

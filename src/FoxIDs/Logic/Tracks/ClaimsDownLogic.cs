@@ -126,10 +126,16 @@ namespace FoxIDs.Logic
         private void FromJwtAuthTimeToSaml(List<Claim> samlClaims, IEnumerable<Claim> jwtClaims)
         {
             var jwtClaim = jwtClaims.Where(c => c.Type == JwtClaimTypes.AuthTime).FirstOrDefault();
-            if(jwtClaim != null)
+
+            var authTime = jwtClaim == null ? DateTimeOffset.UtcNow : DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(jwtClaim.Value));
+            var authTimeValue = authTime.UtcDateTime.ToString("o");
+            if(jwtClaim == null)
             {
-                var value = DateTimeOffset.FromUnixTimeSeconds(Convert.ToInt64(jwtClaim.Value)).UtcDateTime.ToString("o");
-                samlClaims.Add(new Claim(ClaimTypes.AuthenticationInstant, value, jwtClaim.ValueType, jwtClaim.Issuer, jwtClaim.OriginalIssuer));
+                samlClaims.Add(new Claim(ClaimTypes.AuthenticationInstant, authTimeValue));
+            }
+            else
+            {
+                samlClaims.Add(new Claim(ClaimTypes.AuthenticationInstant, authTimeValue, jwtClaim.ValueType, jwtClaim.Issuer, jwtClaim.OriginalIssuer));
             }
         }
 
@@ -141,6 +147,10 @@ namespace FoxIDs.Logic
             if (jwtClaimValues.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Pwd))
             {
                 samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, AuthnContextClassTypes.PasswordProtectedTransport.OriginalString));
+            }
+            else
+            {
+                samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, AuthnContextClassTypes.Unspecified.OriginalString));
             }
         }
 
@@ -189,13 +199,27 @@ namespace FoxIDs.Logic
             var truncateClaims = new List<Claim>();
             foreach (var claim in jwtClaims)
             {
-                if(claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                if (Constants.EmbeddedJwtToken.JwtTokenClaims.Contains(claim.Type))
                 {
-                    truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ValueLength), claim.ValueType, claim.Issuer);
+                    if (claim.Value?.Length > Constants.EmbeddedJwtToken.ValueLength)
+                    {
+                        truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.EmbeddedJwtToken.ValueLength), claim.ValueType, claim.Issuer);
+                    }
+                    else
+                    {
+                        truncateClaims.Add(claim);
+                    }
                 }
                 else
                 {
-                    truncateClaims.Add(claim);
+                    if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                    {
+                        truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ValueLength), claim.ValueType, claim.Issuer);
+                    }
+                    else
+                    {
+                        truncateClaims.Add(claim);
+                    }
                 }
             }
             return truncateClaims;

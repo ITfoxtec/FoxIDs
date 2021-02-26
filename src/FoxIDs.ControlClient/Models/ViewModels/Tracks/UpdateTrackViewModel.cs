@@ -20,6 +20,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Track name")]
         public string Name { get; set; }
 
+        public string FormattedName { get; set; }
+
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] 
         [Display(Name = "Sequence lifetime")]
         public int SequenceLifetime { get; set; }

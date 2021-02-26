@@ -72,10 +72,9 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-
         private void UpdateTrackViewModelAfterInit(UpdateTrackViewModel updateTrackViewModel)
         {
-            updateTrackViewModel.Name = updateTrackViewModel.Name.FormatTrackName();
+            updateTrackViewModel.FormattedName = updateTrackViewModel.Name.FormatTrackName();
         }
 
         private async Task OnUpdateTrackValidSubmitAsync(EditContext editContext)

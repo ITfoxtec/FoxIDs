@@ -141,10 +141,10 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
 
-            var formOrQueryDictionary = party.Client.ResponseMode switch
+            var formOrQueryDictionary = HttpContext.Request.Method switch
             {
-                IdentityConstants.ResponseModes.FormPost => HttpContext.Request.Form.ToDictionary(),
-                IdentityConstants.ResponseModes.Query => HttpContext.Request.Query.ToDictionary(),
+                "POST" => HttpContext.Request.Form.ToDictionary(),
+                "GET" => HttpContext.Request.Query.ToDictionary(),
                 _ => throw new NotSupportedException($"Not supported response mode '{party.Client.ResponseMode}'")
             };
 
@@ -178,6 +178,7 @@ namespace FoxIDs.Logic
 
                 if (sessionResponse?.SessionState.IsNullOrEmpty() == false)
                 {
+                    claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
                     claims.AddClaim(JwtClaimTypes.SessionId, sessionResponse.SessionState);
                 }
 
@@ -234,10 +235,10 @@ namespace FoxIDs.Logic
                 {
                     throw new OAuthRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength)}' is too long.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
-                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
-                {
-                    throw new OAuthRequestException($"Claim value '{claim.Value.Substring(0, Constants.Models.Claim.ValueLength)}' is too long.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                }
+                //if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                //{
+                //    throw new OAuthRequestException($"Claim value '{claim.Value.Substring(0, Constants.Models.Claim.ValueLength)}' is too long.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                //}
             }
             return claims;
         }
@@ -310,13 +311,21 @@ namespace FoxIDs.Logic
         private async Task<List<Claim>> ValidateTokens(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
         {
             var claims = await ValidateIdToken(party, sequenceData, idToken);
-            claims.AddClaim(Constants.JwtClaimTypes.IdToken, $"{party.Name}|{idToken}");
             if (!accessToken.IsNullOrWhiteSpace())
             {
-                await ValidateAccessToken(party, sequenceData, accessToken);
+                // If access token exists, use access token claims instead of ID token claims.
+                claims = await ValidateAccessToken(party, sequenceData, accessToken);
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
 
+            var subject = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+            if (!subject.IsNullOrEmpty())
+            {
+                claims = claims.Where(c => c.Type != JwtClaimTypes.Subject).ToList();
+                claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
+            }
+
+            claims.AddClaim(Constants.JwtClaimTypes.IdToken, $"{party.Name}|{idToken}");
             return claims;
         }
 
@@ -333,13 +342,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"{party.Name}|Id token nonce do not match.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                var claims = new List<Claim>(claimsPrincipal.Claims.Where(c => c.Type != JwtClaimTypes.Subject));
-                var subject = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
-                if (!subject.IsNullOrEmpty())
-                {
-                    claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
-                }
-                return claims;
+                return claimsPrincipal.Claims.ToList();
             }
             catch (OAuthRequestException)
             {
@@ -351,11 +354,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task ValidateAccessToken(OidcUpParty party, OidcUpSequenceData sequenceData, string accessToken)
+        private async Task<List<Claim>> ValidateAccessToken(OidcUpParty party, OidcUpSequenceData sequenceData, string accessToken)
         {
             try
             {
-                (_, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, party.Issuer, party.Keys, sequenceData.ClientId, validateAudience: false));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, party.Issuer, party.Keys, sequenceData.ClientId, validateAudience: false));
+                return claimsPrincipal.Claims.ToList();
             }
             catch (Exception ex)
             {

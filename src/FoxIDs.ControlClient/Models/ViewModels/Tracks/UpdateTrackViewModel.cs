@@ -50,7 +50,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [Length(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
-        [Display(Name = "Allow Iframe on domains (only domain without https://)")]
+        [Display(Name = "Allow Iframe on domains (domain without https://)")]
         public List<string> AllowIframeOnDomains { get; set; }
 
         [MaxLength(Constants.Models.User.EmailLength)]

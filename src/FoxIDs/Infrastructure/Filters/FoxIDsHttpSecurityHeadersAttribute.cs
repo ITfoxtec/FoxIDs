@@ -83,7 +83,7 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"frame-ancestors {allowIframeOnDomains.Select(d => $"https://{d}").ToSpaceList()};";
+                    return $"frame-ancestors 'self' {allowIframeOnDomains.Select(d => $"https://{d}").ToSpaceList()};";
                 }
             }
         }

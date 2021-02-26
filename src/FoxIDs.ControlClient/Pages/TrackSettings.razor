@@ -23,7 +23,7 @@
                         @deleteTrackError
                     </div>
                 }
-                <FFieldText @bind-Value="updateTrackForm.Model.Name" For="@(() => updateTrackForm.Model.Name)" />
+                <FFieldText @bind-Value="updateTrackForm.Model.FormattedName" For="@(() => updateTrackForm.Model.Name)" />
                 <FInputNumber @bind-Value="updateTrackForm.Model.SequenceLifetime" For="@(() => updateTrackForm.Model.SequenceLifetime)" Focus="true" />
                 <FInputNumber @bind-Value="updateTrackForm.Model.MaxFailingLogins" For="@(() => updateTrackForm.Model.MaxFailingLogins)" />
                 <FInputNumber @bind-Value="updateTrackForm.Model.FailingLoginCountLifetime" For="@(() => updateTrackForm.Model.FailingLoginCountLifetime)" />
@@ -43,7 +43,7 @@
                 {
                     <div class="alert alert-danger" role="alert">
                         <div>
-                            You are about to delete track "@updateTrackForm.Model.Name" including the user repository, are you sure?
+                            You are about to delete track "@updateTrackForm.Model.FormattedName" including the user repository, are you sure?
                         </div>
 
                         <div class="mt-3">

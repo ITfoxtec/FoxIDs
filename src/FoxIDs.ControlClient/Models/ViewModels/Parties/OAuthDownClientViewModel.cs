@@ -40,7 +40,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Secrets")]
         public List<string> Secrets { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public new IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (RequirePkce != true && Secrets.Count() <= 0 && ExistingSecrets.Where(s => !s.Removed).Count() <= 0)

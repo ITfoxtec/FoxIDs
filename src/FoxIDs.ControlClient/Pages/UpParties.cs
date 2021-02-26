@@ -97,6 +97,10 @@ namespace FoxIDs.Client.Pages
                 {
                     upParties.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
+                if (dp.Type == PartyTypes.Oidc)
+                {
+                    upParties.Add(new GeneralOidcUpPartyViewModel(dp));
+                }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
                     upParties.Add(new GeneralSamlUpPartyViewModel(dp));
@@ -115,7 +119,10 @@ namespace FoxIDs.Client.Pages
             }
             else if (type == PartyTypes.Oidc)
             {
-                throw new NotImplementedException();
+                var oidcUpParty = new GeneralOidcUpPartyViewModel();
+                oidcUpParty.CreateMode = true;
+                oidcUpParty.Edit = true;
+                upParties.Add(oidcUpParty);
             }
             else if (type == PartyTypes.Saml2)
             {
@@ -160,7 +167,40 @@ namespace FoxIDs.Client.Pages
             }
             else if (upParty.Type == PartyTypes.Oidc)
             {
-                throw new NotImplementedException();
+                try
+                {
+                    var generalOidcUpParty = upParty as GeneralOidcUpPartyViewModel;
+                    var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(upParty.Name);
+                    await generalOidcUpParty.Form.InitAsync(oidcUpParty.Map((Action<OidcUpPartyViewModel>)(afterMap =>
+                    {
+                        if (oidcUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
+                        {
+                            afterMap.AutomaticStopped = true;
+                        }
+                        else
+                        {
+                            afterMap.AutomaticStopped = false;
+                        }
+
+                        foreach (var key in oidcUpParty.Keys)
+                        {
+                            afterMap.KeyIds.Add(key.Kid);
+                        }
+
+                        if (afterMap.ClaimTransforms?.Count > 0)
+                        {
+                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                        }
+                    })));
+                }
+                catch (TokenUnavailableException)
+                {
+                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+                }
+                catch (HttpRequestException ex)
+                {
+                    upParty.Error = ex.Message;
+                }
             }
             else if (upParty.Type == PartyTypes.Saml2)
             {

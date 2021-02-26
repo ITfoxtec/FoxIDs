@@ -118,6 +118,8 @@ namespace FoxIDs.Logic
         {
             if (!sequenceString.IsNullOrWhiteSpace())
             {
+                sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(ValidateSequenceAsync));
+
                 try
                 {
                     var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
@@ -136,6 +138,7 @@ namespace FoxIDs.Logic
         public async Task ValidateSequenceAsync(string sequenceString, bool setValid = false)
         {
             if (sequenceString.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(sequenceString));
+            sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(ValidateSequenceAsync));
 
             try
             {

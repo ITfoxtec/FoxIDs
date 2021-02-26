@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, Login redirect.");
-            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();
@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
                 case PartyTypes.Saml2:
-                    var claimsLogic = serviceProvider.GetService<ClaimsLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+                    var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
                     var samlClaims = await claimsLogic.FromJwtToSamlClaimsAsync(claims);
                     samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Email.OriginalString);
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, claims: samlClaims);

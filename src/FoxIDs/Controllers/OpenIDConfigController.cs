@@ -28,9 +28,9 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
-                        return Json(await serviceProvider.GetService<OidcDiscoveryLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().OpenidConfiguration(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
+                        return Json(await serviceProvider.GetService<OidcDiscoveryDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().OpenidConfiguration(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
                     case PartyTypes.Oidc:
-                        return Json(await serviceProvider.GetService<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfiguration(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
+                        return Json(await serviceProvider.GetService<OidcDiscoveryDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfiguration(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
 
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
@@ -50,9 +50,9 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
-                        return Json(serviceProvider.GetService<OidcDiscoveryLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().Keys(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
+                        return Json(serviceProvider.GetService<OidcDiscoveryDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>().Keys(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
                     case PartyTypes.Oidc:
-                        return Json(serviceProvider.GetService<OidcDiscoveryLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().Keys(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
+                        return Json(serviceProvider.GetService<OidcDiscoveryDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().Keys(RouteBinding.DownParty.Id), JsonExtensions.SettingsIndented);
 
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");

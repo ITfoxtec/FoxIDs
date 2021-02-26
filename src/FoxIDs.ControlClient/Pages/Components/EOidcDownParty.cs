@@ -17,6 +17,8 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcDownParty : DownPartyBase
     {
+        protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
+
         private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
         {
             if (oidcDownParty.CreateMode)
@@ -28,21 +30,21 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     model.Client.ResponseTypes.Add("code");
 
-                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "offline_access" });
+                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = IdentityConstants.DefaultOidcScopes.OfflineAccess });
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel
                     {
-                        Scope = "profile",
+                        Scope = IdentityConstants.DefaultOidcScopes.Profile,
                         VoluntaryClaims = new List<OidcDownClaim>
                         {
-                            new OidcDownClaim { Claim = "name", InIdToken = true }, new OidcDownClaim { Claim = "given_name", InIdToken = true }, new OidcDownClaim { Claim = "middle_name", InIdToken = true }, new OidcDownClaim { Claim = "family_name", InIdToken = true },
-                            new OidcDownClaim { Claim = "nickname", InIdToken = false }, new OidcDownClaim { Claim = "preferred_username", InIdToken = false },
-                            new OidcDownClaim { Claim = "birthdate", InIdToken = false }, new OidcDownClaim { Claim = "gender", InIdToken = false }, new OidcDownClaim { Claim = "picture", InIdToken = false }, new OidcDownClaim { Claim = "profile", InIdToken = false },
-                            new OidcDownClaim { Claim = "website", InIdToken = false }, new OidcDownClaim { Claim = "locale", InIdToken = true }, new OidcDownClaim { Claim = "zoneinfo", InIdToken = false }, new OidcDownClaim { Claim = "updated_at", InIdToken = false }
+                            new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true },
+                            new OidcDownClaim { Claim = JwtClaimTypes.Nickname, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.PreferredUsername, InIdToken = false },
+                            new OidcDownClaim { Claim = JwtClaimTypes.Birthdate, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Gender, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Picture, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Profile, InIdToken = false },
+                            new OidcDownClaim { Claim = JwtClaimTypes.Website, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Locale, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.Zoneinfo, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.UpdatedAt, InIdToken = false }
                         }
                     });
-                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "email", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "email", InIdToken = true }, new OidcDownClaim { Claim = "email_verified", InIdToken = false } } });
-                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "address", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "address", InIdToken = true } } });
-                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = "phone", VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = "phone_number", InIdToken = true }, new OidcDownClaim { Claim = "phone_number_verified", InIdToken = false } } });
+                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = JwtClaimTypes.Email, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified, InIdToken = false } } });
+                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = JwtClaimTypes.Address, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Address, InIdToken = true } } });
+                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = JwtClaimTypes.PhoneNumber, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } });
                 }
             }
         }

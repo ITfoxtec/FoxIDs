@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OAuthResourceScopeLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthResourceScopeDownLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
 
-        public OAuthResourceScopeLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthResourceScopeDownLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
         }

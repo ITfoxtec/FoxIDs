@@ -2,6 +2,7 @@
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -73,32 +74,15 @@ namespace FoxIDs.Controllers
             }
         }
 
-        //public override BadRequestObjectResult BadRequest(ModelStateDictionary modelState)
-        //{
-        //    try
-        //    {
-        //        var errors = modelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-        //        throw new Exception($"Bad request. {string.Join(", ", errors)}");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        logger.Warning(ex);
-        //        return base.BadRequest(ex.Message);
-        //    }
-        //}
         public BadRequestObjectResult BadRequest(ModelStateDictionary modelState, Exception innerEx = null)
         {
             try
             {
-                var errors = modelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage));
-                throw new Exception($"Bad request. {string.Join(", ", errors)}", innerEx);
+                var errors = modelState.Values.SelectMany(v => v.Errors.Select(e => $"{e.ErrorMessage}{(e.Exception != null ? $", {e.Exception}" : string.Empty)}"));
+                throw new Exception($"Bad request. {string.Join("; ", errors)}", innerEx);
             }
             catch (Exception ex)
             {
-                if(innerEx != null)
-                {
-                    logger.Warning(innerEx, "Related inner exception.");
-                }
                 logger.Warning(ex);
                 return base.BadRequest(ex.Message);
             }

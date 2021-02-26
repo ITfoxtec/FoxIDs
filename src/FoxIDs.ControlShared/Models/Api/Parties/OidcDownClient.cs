@@ -1,10 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcDownClient
+    public class OidcDownClient : IValidatableObject
     {
         [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
@@ -69,5 +70,15 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Require logout id token hint")]
         public bool? RequireLogoutIdTokenHint { get; set; } = true;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (RequirePkce && ResponseTypes?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+            {
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
+            }
+            return results;
+        }
     }
 }

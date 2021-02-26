@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthnRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
             logger.ScopeTrace("Up, SAML Authn request.");
-            var partyId = await UpParty.IdFormat(RouteBinding, partyLink.Name);
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();
@@ -133,6 +133,7 @@ namespace FoxIDs.Logic
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
 
             binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+            if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
 
             await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>();
@@ -140,7 +141,7 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace($"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.");
-                logger.SetScopeProperty("status", saml2AuthnResponse.Status.ToString());
+                logger.SetScopeProperty("upPartyStatus", saml2AuthnResponse.Status.ToString());
                 logger.ScopeTrace("Up, SAML Authn response.", triggerEvent: true);
 
                 if (saml2AuthnResponse.Status != Saml2StatusCodes.Success)
@@ -168,6 +169,10 @@ namespace FoxIDs.Logic
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims);
             }
+            catch (StopSequenceException)
+            {
+                throw;
+            }
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
@@ -186,13 +191,14 @@ namespace FoxIDs.Logic
             claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
             foreach(var claim in claims)
             {
-                if(claim.Type?.Count() > Constants.Models.Claim.SamlTypeLength)
+                if(claim.Type?.Length > Constants.Models.Claim.SamlTypeLength)
                 {
-                    throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.SamlTypeLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
-                if (claim.Value?.Count() > Constants.Models.SamlParty.ClaimValueLength)
+
+                if (claim.Value?.Length > Constants.Models.SamlParty.ClaimValueLength)
                 {
-                    throw new SamlRequestException($"Claim value '{claim.Value.Substring(0, Constants.Models.SamlParty.ClaimValueLength)}' is too long.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.SamlParty.ClaimValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
             }
             return claims;
@@ -227,8 +233,7 @@ namespace FoxIDs.Logic
 
             if (!nameIdValue.IsNullOrEmpty())
             {
-                var partyNameIdValue = $"{partyName}|{nameIdValue}";
-                var claim = new Claim(ClaimTypes.NameIdentifier, partyNameIdValue);
+                var claim = new Claim(ClaimTypes.NameIdentifier, $"{partyName}|{nameIdValue}");
                 if (!nameIdFormat.IsNullOrEmpty())
                 {
                     claim.Properties.Add(Saml2ClaimTypes.NameIdFormat, nameIdFormat);
@@ -241,48 +246,35 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Claim> AddNameIdClaim(IEnumerable<Claim> claims)
-        {
-            var nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Upn);
-            if (nameIdValue.IsNullOrEmpty())
-            {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Email);
-            }
-            else if (nameIdValue.IsNullOrEmpty())
-            {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Name);
-            }
-
-            var newClaims = new List<Claim>();
-            if (!nameIdValue.IsNullOrEmpty())
-            {
-                newClaims.AddClaim(ClaimTypes.NameIdentifier, nameIdValue);
-            }
-            return newClaims;
-        }
-
         private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, IEnumerable<Claim> claims = null)
         {
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
-            switch (sequenceData.DownPartyType)
+            try
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    if(status == Saml2StatusCodes.Success)
-                    {
-                        var claimsLogic = serviceProvider.GetService<ClaimsLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaimsAsync(claims));
-                    }
-                    else
-                    {
-                        return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
-                    }
-                case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, claims);
+                logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
+                switch (sequenceData.DownPartyType)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        if (status == Saml2StatusCodes.Success)
+                        {
+                            var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaimsAsync(claims));
+                        }
+                        else
+                        {
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
+                        }
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, claims);
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new StopSequenceException("Falling authn response down", ex);
             }
         }
 

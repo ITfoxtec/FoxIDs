@@ -1,0 +1,34 @@
+﻿@using System.Linq.Expressions
+
+<div class="active-group active">
+    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
+    {
+        if (item.Index == 0)
+        {
+            <div class="card bg-light">
+                <div class="card-body px-3 py-2">
+                    @item.Effect
+                </div>
+            </div>
+            <Label For="@For" class="label-control" />
+        }
+        else
+        {
+            <div class="card bg-light">
+                <div class="card-body px-3 py-2">
+                    @item.Effect
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public List<string> ValueList { get; set; }
+    [Parameter]
+    public EventCallback<List<string>> ValueListChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<object>> For { get; set; }
+}

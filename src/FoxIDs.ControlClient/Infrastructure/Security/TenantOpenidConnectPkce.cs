@@ -73,11 +73,11 @@ namespace FoxIDs.Client.Infrastructure.Security
         {
             if(routeBindingBase.IsMasterTenant)
             {
-                return $"{DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant} {Constants.ControlApi.ResourceAndScope.Master}";
+                return $"{DefaultOidcScopes.Profile} {DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant} {Constants.ControlApi.ResourceAndScope.Master}";
             }
             else
             {
-                return $"{DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant}";
+                return $"{DefaultOidcScopes.Profile} {DefaultOidcScopes.OfflineAccess} {DefaultOidcScopes.Email} {Constants.ControlApi.ResourceAndScope.Tenant}";
             }
         }
     }

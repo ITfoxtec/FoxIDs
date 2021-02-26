@@ -1,8 +1,6 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Models.Sequences;
+﻿using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,12 +9,10 @@ namespace FoxIDs.Logic
 {
     public class FormActionLogic : LogicBase
     {
-        private readonly TelemetryScopedLogger logger;
         private readonly SequenceLogic sequenceLogic;
 
-        public FormActionLogic(TelemetryScopedLogger logger, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public FormActionLogic(SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.logger = logger;
             this.sequenceLogic = sequenceLogic;
         }
 

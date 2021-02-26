@@ -163,7 +163,7 @@ namespace FoxIDs
                 public const int ValuesOAuthMin = 0;
                 public const int ValuesUserMin = 1;
                 public const int ValuesMax = 100;
-                public const int ValueLength = 100;
+                public const int ValueLength = 100;               
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -200,7 +200,7 @@ namespace FoxIDs
                 public const int AllowCorsOriginsMax = 40;
                 public const int AllowCorsOriginLength = 200;
 
-                public const int ScopesLength = 50;
+                public const int ScopeLength = 50;
                 public const string ScopeRegExPattern = @"^[\w:\-.]*$";
 
                 public static class Client
@@ -245,6 +245,37 @@ namespace FoxIDs
                 {
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours
+                }
+            }
+
+            public static class OAuthUpParty
+            {
+                public const int AuthorityLength = 300;
+                public const int IssuerLength = 300;                
+                public const int KeysMin = 0;
+                public const int KeysMax = 10;
+                public const int OidcDiscoveryUpdateRateMin = 86400; // 24 hours
+                public const int OidcDiscoveryUpdateRateMax = 31536000; // 12 month
+
+                public const int ScopeLength = 50;
+                public const string ScopeRegExPattern = @"^[\w:\-.]*$";
+
+                public static class Client
+                {
+                    public const int ClientIdLength = 300;
+                    public const int ScopesMin = 0;
+                    public const int ScopesMax = 100;
+                    public const int ClaimsMin = 0;
+                    public const int ClaimsMax = 100;
+
+                    public const int ResponseModeLength = 30;
+                    public const int ResponseTypeLength = 30;
+
+                    public const int RedirectUrisMin = 1;
+                    public const int RedirectUrisMax = 40;
+                    public const int AuthorizeUrlLength = 500;
+                    public const int TokenUrlLength = 500;
+                    public const int EndSessionUrlLength = 500;
                 }
             }
 
@@ -330,6 +361,8 @@ namespace FoxIDs
             public const string String = "sequence_string";
             public const string Start = "sequence_start";
             public const string Valid = "sequence_valid";
+
+            public const int MaxLength = FoxI.IdentityConstants.MessageLength.StateMax;
         }
 
         public static class FormAction
@@ -340,7 +373,8 @@ namespace FoxIDs
         public static class Endpoints
         {
             public const string Authorize = "authorize";
-            public const string AuthorizeResponse = "authorizeresponse";
+            public const string AuthorizationResponse = "authorizationresponse";
+            public const string EndSessionResponse = "endsessionresponse";
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
@@ -354,6 +388,13 @@ namespace FoxIDs
 
         public static class OAuth
         {
+            public readonly static string[] DefaultResponseTypes = new string[] 
+            {
+                FoxI.IdentityConstants.ResponseTypes.Code, 
+                $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token}", 
+                FoxI.IdentityConstants.ResponseTypes.Token
+            };
+
             public static class ResponseErrors
             {
                 /// <summary>
@@ -362,6 +403,18 @@ namespace FoxIDs
                 public const string LoginCanceled = "login_canceled";
 
             }
+        }
+
+        public static class Oidc
+        {
+            public readonly static string[] DefaultResponseTypes = new string[]
+            {
+                FoxI.IdentityConstants.ResponseTypes.Code,
+                $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
+                $"{FoxI.IdentityConstants.ResponseTypes.Code} {FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
+                $"{FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
+                FoxI.IdentityConstants.ResponseTypes.IdToken
+            };
         }
 
         public static class Saml
@@ -387,15 +440,39 @@ namespace FoxIDs
                 new string[] { JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
+            /// Default JWT Token up-party claims.
+            /// </summary>
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
+
+            /// <summary>
+            /// Exclude JWT Token up-party claims.
+            /// </summary>
+            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
+
+            /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod, ClaimTypes.AuthenticationInstant };
+            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationMethod };
+        }
+
+        /// <summary>
+        /// JWT tokens embed as a claim in a token.
+        /// </summary>
+        public class EmbeddedJwtToken
+        {
+            public readonly static string[] JwtTokenClaims = { JwtClaimTypes.AccessToken };
+            public const int ValueLength = 1000;
         }
 
         public static class JwtClaimTypes
         {
             public const string SubFormat = "sub_format";
+            public const string AccessToken = "access_token";
+        }
 
+        public static class SamlClaimTypes
+        {
+            public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
         }
 
         /// <summary>
@@ -411,7 +488,8 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Subject, SamlClaim = ClaimTypes.NameIdentifier },
                 new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
-                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email }
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
+                new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken }
             };
 
             /// <summary>

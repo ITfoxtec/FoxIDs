@@ -12,17 +12,17 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OAuthRefreshTokenGrantLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly ClaimsLogic<TClient, TScope, TClaim> claimsLogic;
+        private readonly ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic;
 
-        public OAuthRefreshTokenGrantLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsLogic<TClient, TScope, TClaim> claimsLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.claimsLogic = claimsLogic;
+            this.claimsDownLogic = claimsDownLogic;
         }
 
         public async Task<string> CreateRefreshTokenGrantAsync(TClient client, List<Claim> claims, string scope)
@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
 
             CheckeConfiguration(client);
 
-            var grantClaims = await claimsLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
+            var grantClaims = await claimsDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var refreshToken = CreateRefreshToken(client);
             await CreateGrantInternal(client, grantClaims.ToClaimAndValues(), scope, refreshToken);

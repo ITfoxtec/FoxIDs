@@ -1,5 +1,6 @@
 using ITfoxtec.Identity;
 using System;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models.ViewModels
 {
@@ -12,7 +13,7 @@ namespace FoxIDs.Models.ViewModels
         public string ErrorTitle { get; set; }
         public string Error { get; set; }
 
-        public string TechnicalError { get; set; }
+        public List<string> TechnicalErrors { get; set; }
 
         public bool ShowErrorTitle => !ErrorTitle.IsNullOrWhiteSpace();
         public bool ShowError => !Error.IsNullOrWhiteSpace();

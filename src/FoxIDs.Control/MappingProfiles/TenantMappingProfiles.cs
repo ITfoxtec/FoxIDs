@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using Api = FoxIDs.Models.Api;
 
 namespace FoxIDs.MappingProfiles
@@ -98,12 +97,22 @@ namespace FoxIDs.MappingProfiles
             CreateMap<LoginUpParty, Api.LoginUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
-            CreateMap<SamlUpParty, Api.SamlUpParty>()
+            CreateMap<OidcUpParty, Api.OidcUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+            CreateMap<OidcUpClient, Api.OidcUpClient>()
+               .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(s => s)))
+               .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+               .ReverseMap();
+
+            CreateMap<SamlUpParty, Api.SamlUpParty>()
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
         }
 
         private void DownPartyMapping()
@@ -112,7 +121,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OAuthDownClaim, Api.OAuthDownClaim>()
@@ -138,7 +147,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
             CreateMap<OidcDownClaim, Api.OidcDownClaim>()
@@ -157,41 +166,22 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
                 .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
         }
 
         private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform
         {
-            var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-            if (duplicatedOrderNumber >= 0)
-            {
-                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated claim transform order number '{duplicatedOrderNumber}'");
-            }
-
             return claimTransforms.OrderBy(ct => ct.Order).ToList();
         }
 
         private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)
         {
-            var responseTypesResult = new List<string>();
-            foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()
-                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt))))
-            {
-                if(responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
-                {
-                    throw new HttpStatusException(HttpStatusCode.BadRequest, $"Invalid ResponseType '{responseType}'");
-                }
-                responseTypesResult.Add(responseType.ToSpaceList());
-            }
+            var orderedResponseTypes = responseTypes.Select(rt => rt.ToSpaceList()
+                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt)));
 
-            var duplicatedResponseType = responseTypesResult.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-            if (duplicatedResponseType != null)
-            {
-                throw new HttpStatusException(HttpStatusCode.BadRequest, $"Duplicated ResponseType '{duplicatedResponseType}'");
-            }
-            return responseTypesResult;
+            return orderedResponseTypes.Select(rt => rt.ToSpaceList());
         }
     }
 }

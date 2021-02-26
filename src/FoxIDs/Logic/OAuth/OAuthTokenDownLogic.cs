@@ -17,17 +17,17 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly JwtLogic<TClient, TScope, TClaim> jwtLogic;
+        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
         private readonly SecretHashLogic secretHashLogic;
-        private readonly OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic;
+        private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtLogic<TClient, TScope, TClaim> jwtLogic, SecretHashLogic secretHashLogic, OAuthResourceScopeLogic<TClient, TScope, TClaim> oauthResourceScopeLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.jwtLogic = jwtLogic;
+            this.jwtDownLogic = jwtDownLogic;
             this.secretHashLogic = secretHashLogic;
-            this.oauthResourceScopeLogic = oauthResourceScopeLogic;
+            this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
         }
 
         public virtual async Task<IActionResult> TokenRequestAsync(string partyId)
@@ -39,13 +39,13 @@ namespace FoxIDs.Logic
             {
                 throw new NotSupportedException($"Party Client not configured.");
             }
+            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
 
             var formDictionary = HttpContext.Request.Form.ToDictionary();
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
             var clientCredentials = formDictionary.ToObject<ClientCredentials>();
 
             logger.ScopeTrace($"Token request '{tokenRequest.ToJsonIndented()}'.");
-            logger.SetScopeProperty("clientId", tokenRequest.ClientId);
 
             try
             {
@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
 
             if (!tokenRequest.Scope.IsNullOrEmpty())
             {
-                var resourceScopes = oauthResourceScopeLogic.GetResourceScopes(client as TClient);
+                var resourceScopes = oauthResourceScopeDownLogic.GetResourceScopes(client as TClient);
                 var invalidScope = tokenRequest.Scope.ToSpaceList().Where(s => !(resourceScopes.Select(rs => rs).Contains(s) || (client.Scopes != null && client.Scopes.Select(ps => ps.Scope).Contains(s))));
                 if (invalidScope.Count() > 0)
                 {
@@ -204,7 +204,7 @@ namespace FoxIDs.Logic
 
             var scopes = tokenRequest.Scope.ToSpaceList();
 
-            tokenResponse.AccessToken = await jwtLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
+            tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
 
             logger.ScopeTrace($"Token response '{tokenResponse.ToJsonIndented()}'.");
             logger.ScopeTrace("Down, OAuth Token response.", triggerEvent: true);

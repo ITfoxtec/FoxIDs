@@ -1,0 +1,142 @@
+﻿@inherits UpPartyBase
+
+@{
+    var oidcUpParty = UpParty as GeneralOidcUpPartyViewModel;
+}
+
+<PageEditForm @ref="oidcUpParty.Form" TModel="OidcUpPartyViewModel" OnAfterInit="@(m => OidcUpPartyViewModelAfterInit(oidcUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcUpPartyValidSubmitAsync(oidcUpParty, editContext))">
+    <div class="modal-header">
+        <div>
+            OpenID Connect
+        </div>
+        @if (oidcUpParty.ShowClientTab)
+        {
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        }
+    </div>
+    <div class="modal-body">
+        @if (oidcUpParty.CreateMode)
+        {
+            <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" Focus="true" />
+        }
+        else
+        {
+            <FFieldText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
+        }
+
+        <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
+        @if (!oidcUpParty.CreateMode)
+        {
+            <FFieldText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
+            <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
+        }
+
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />     
+        }
+        @if (oidcUpParty.Form.Model.AutomaticStopped) 
+        {
+            <div class="mb-3 alert alert-warning" role="alert">
+                <i>Automatic configuration update is currently stopped.</i>
+                <div>Restart the automatic configuration update process by clicking the update button.</div>
+            </div>
+        }
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                @if (oidcUpParty.ShowClientTab)
+                {
+                    <a class="nav-link active">OpenID Connect Client</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Client))">OpenID Connect Client</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (oidcUpParty.ShowClaimTransformTab)
+                {
+                    <a class="nav-link active">Claim transform</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, Models.OAuthTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+            @if (oidcUpParty.ShowClientTab)
+            {
+                <ValidationMessage For="@(() => oidcUpParty.Form.Model.Client)" />
+
+                @if (oidcUpParty.Form.Model.Client != null)
+                {
+                    @if (UpParty.ShowAdvanced)
+                    {
+                         <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
+                    }
+                    <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Scopes" For="@(() => oidcUpParty.Form.Model.Client.Scopes)" />
+                    <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
+                        <option value="@IdentityConstants.ResponseTypes.Code">@IdentityConstants.ResponseTypes.Code</option>
+                        <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                        <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                        <option value="@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                        <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
+                    </FInputSelect>
+                    <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.RequirePkce" For="@(() => oidcUpParty.Form.Model.Client.RequirePkce)" TextType="e.d" />
+                    <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
+                    @if (!oidcUpParty.CreateMode)
+                    {
+                        <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
+                    }
+
+                    @if (UpParty.ShowAdvanced)
+                    {
+                        <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" />
+                        <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseMode" For="@(() => oidcUpParty.Form.Model.Client.ResponseMode)">
+                            <option value="@IdentityConstants.ResponseModes.FormPost">form_post</option>
+                            <option value="@IdentityConstants.ResponseModes.Query">query</option>
+                        </FInputSelect>
+                    }
+                }
+            }
+            else if (oidcUpParty.ShowClaimTransformTab)
+            {
+                <OAuthClaimTransforms Model="oidcUpParty.Form.Model" />
+            }
+        </div>
+    </div>
+    @if (!UpParty.CreateMode && UpParty.DeleteAcknowledge)
+    {
+        <div class="modal-footer">
+            <div class="alert alert-danger" role="alert">
+                <div>
+                    You are about to delete OpenID Connect Up-party "@UpParty.Name", are you sure?
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteOidcUpPartyAsync(oidcUpParty))">Yes delete</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => UpParty.DeleteAcknowledge = false)">No</button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="modal-footer">
+        @if (oidcUpParty.ShowClientTab)
+        {
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        }
+        @if (!UpParty.CreateMode)
+        {
+            <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
+        }
+      @*  <button type="button" class="btn btn-link" @onclick="@(async () => await ReadOidcDiscovery(oidcUpParty))">Read OIDC discovery</button>*@
+        <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">Cancel</button>
+    </div>
+</PageEditForm>

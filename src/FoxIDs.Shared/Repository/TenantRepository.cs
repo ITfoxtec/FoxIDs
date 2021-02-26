@@ -70,14 +70,14 @@ namespace FoxIDs.Repository
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadDocumentAsync<UpParty>(await UpParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), required);
+            return await ReadDocumentAsync<UpParty>(await UpParty.IdFormatAsync(idKey), DataDocument.PartitionIdFormat(idKey), required);
         }
 
         public async Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadDocumentAsync<DownParty>(await DownParty.IdFormat(idKey), DataDocument.PartitionIdFormat(idKey), required);
+            return await ReadDocumentAsync<DownParty>(await DownParty.IdFormatAsync(idKey), DataDocument.PartitionIdFormat(idKey), required);
         }
 
         private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : IDataDocument

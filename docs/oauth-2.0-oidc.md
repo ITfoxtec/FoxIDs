@@ -7,8 +7,10 @@ FoxIDs support down-party [Client Credentials Grant](#client-credentials-grant) 
 
 ![FoxIDs OAuth 2.0 and OpenID Connect](images/oauth_oidc.svg)
 
+New support:
+- FoxIDs acting as an up-party OpenID Connect RP (client), authenticating with an external OP. 
+
 Future support:
-- FoxIDs acting as an up-party OpenID Connect RP (client), authenticating with an external OP.
 - *(Maybe support) FoxIDs acting as an up-party OAuth 2.0 client, authorizing with an external resource owner.*
 - *(Maybe support) FoxIDs acting as an down-party OAuth 2.0 resource owner, supporting plain OAuth 2.0 client authorization.*
 

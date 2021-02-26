@@ -6,8 +6,13 @@
 
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
-        Login
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <div>
+            Login
+        </div>
+        @if (loginUpParty.ShowLoginTab)
+        {
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        }
     </div>
     <div class="modal-body">
         @if (loginUpParty.CreateMode)

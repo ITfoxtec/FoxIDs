@@ -15,8 +15,6 @@ namespace FoxIDs.Client.Pages.Components
 {
     public abstract class DownPartyBase : ComponentBase
     {
-        protected List<string> responseTypeItems = new List<string> { "code", "code token", "code token id_token", "token", "token id_token", "id_token" };
-
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 

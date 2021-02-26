@@ -13,44 +13,44 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// SAML 2.0 down-party API.
     /// </summary>
-    public class TSamlDownPartyController : GenericPartyApiController<Api.SamlDownParty, SamlDownParty>
+    public class TSamlDownPartyController : GenericPartyApiController<Api.SamlDownParty, Api.SamlClaimTransform, SamlDownParty>
     {
         private readonly ValidateSamlPartyLogic validateSamlPartyLogic;
 
-        public TSamlDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidatePartyLogic validatePartyLogic, ValidateSamlPartyLogic validateSamlPartyLogic) : base(logger, mapper, tenantRepository, validatePartyLogic)
+        public TSamlDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateSamlPartyLogic validateSamlPartyLogic) : base(logger, mapper, tenantRepository, validateGenericPartyLogic)
         {
             this.validateSamlPartyLogic = validateSamlPartyLogic;
         }
 
         /// <summary>
-        /// Get Saml down-party.
+        /// Get SAML 2.0 down-party.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Saml down-party.</returns>
+        /// <returns>SAML 2.0 down-party.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.SamlDownParty>> GetSamlDownParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create Saml down-party.
+        /// Create SAML 2.0 down-party.
         /// </summary>
-        /// <param name="party">Saml down-party.</param>
-        /// <returns>Saml down-party.</returns>
+        /// <param name="party">SAML 2.0 down-party.</param>
+        /// <returns>SAML 2.0 down-party.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.SamlDownParty>> PostSamlDownParty([FromBody] Api.SamlDownParty party) => await Post(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)),  (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlDownParty>> PostSamlDownParty([FromBody] Api.SamlDownParty party) => await Post(party, ap => new ValueTask<bool>(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)),  (ap, mp) => new ValueTask<bool>(true));
 
         /// <summary>
-        /// Downdate Saml down-party.
+        /// Update SAML 2.0 down-party.
         /// </summary>
-        /// <param name="party">Saml down-party.</param>
-        /// <returns>Saml down-party.</returns>
+        /// <param name="party">SAML 2.0 down-party.</param>
+        /// <returns>SAML 2.0 down-party.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.SamlDownParty>> PutSamlDownParty([FromBody] Api.SamlDownParty party) => await Put(party, ap => Task.FromResult(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)), (ap, mp) => Task.FromResult(true));
+        public async Task<ActionResult<Api.SamlDownParty>> PutSamlDownParty([FromBody] Api.SamlDownParty party) => await Put(party, ap => new ValueTask<bool>(validateSamlPartyLogic.ValidateApiModel(ModelState, ap)), (ap, mp) => new ValueTask<bool>(true));
 
         /// <summary>
-        /// Delete Saml down-party.
+        /// Delete SAML 2.0 down-party.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

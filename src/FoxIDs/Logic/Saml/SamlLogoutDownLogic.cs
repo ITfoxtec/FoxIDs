@@ -92,19 +92,13 @@ namespace FoxIDs.Logic
                 switch (type)
                 {
                     case PartyTypes.Login:
-                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), new LogoutRequest
-                        {
-                            DownParty = party,
-                            SessionId = saml2LogoutRequest.SessionIndex,
-                            RequireLogoutConsent = false,
-                            PostLogoutRedirect = true,
-                        });
+                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
-                        throw new NotImplementedException();
+                        return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlUpLogoutRequest(saml2LogoutRequest, party));
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlLogoutRequest(party, saml2LogoutRequest));
 
                     default:
                         throw new NotSupportedException($"Party type '{type}' not supported.");
@@ -117,7 +111,18 @@ namespace FoxIDs.Logic
             }
         }
 
-        private static LogoutRequest GetSamlUpLogoutRequest(Saml2LogoutRequest saml2LogoutRequest, Party party)
+        private LogoutRequest GetLogoutRequest(Party party, Saml2LogoutRequest saml2LogoutRequest)
+        {
+            return new LogoutRequest
+            {
+                DownParty = party,
+                SessionId = saml2LogoutRequest.SessionIndex,
+                RequireLogoutConsent = false,
+                PostLogoutRedirect = true,
+            };
+        }
+
+        private LogoutRequest GetSamlLogoutRequest(Party party, Saml2LogoutRequest saml2LogoutRequest)
         {
             var samlClaims = new List<Claim>();
             if (saml2LogoutRequest.NameId != null)

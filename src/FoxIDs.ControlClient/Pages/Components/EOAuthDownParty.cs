@@ -16,6 +16,8 @@ namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOAuthDownParty : DownPartyBase
     {
+        protected List<string> responseTypeItems = new List<string>(Constants.OAuth.DefaultResponseTypes);
+
         private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
         {
             if (oauthDownParty.CreateMode)
@@ -26,7 +28,7 @@ namespace FoxIDs.Client.Pages.Components
                 if(model.Client != null)
                 {
                     model.Client.ResponseTypes.Add("code");
-                    model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = "offline_access" });
+                    model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = IdentityConstants.DefaultOidcScopes.OfflineAccess });
                 }
             }
         }

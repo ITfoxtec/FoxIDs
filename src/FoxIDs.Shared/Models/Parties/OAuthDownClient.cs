@@ -1,12 +1,14 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
     public class OAuthDownClient : OAuthDownClient<OAuthDownScope, OAuthDownClaim> { }
-    public class OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthDownClient<TScope, TClaim> : IValidatableObject where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         [JsonIgnore]
         internal PartyDataElement Parent { private get; set; }
@@ -61,6 +63,16 @@ namespace FoxIDs.Models
         public bool? RefreshTokenUseOneTime { get; set; }
 
         [JsonProperty(PropertyName = "refresh_token_lifetime_unlimited")]
-        public bool? RefreshTokenLifetimeUnlimited { get; set; }        
+        public bool? RefreshTokenLifetimeUnlimited { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (RequirePkce && !ResponseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
+            {
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
+            }
+            return results;
+        }
     }
 }

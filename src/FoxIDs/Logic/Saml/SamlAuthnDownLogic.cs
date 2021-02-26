@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
             {
                 ValidateAuthnRequest(party, saml2AuthnRequest);
                 binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnRequest);
-                logger.ScopeTrace("Down, SAML Auth request accepted.", triggerEvent: true);
+                logger.ScopeTrace("Down, SAML Authn request accepted.", triggerEvent: true);
 
                 var responseUrl = GetAcsUrl(party, saml2AuthnRequest);
                 await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First());
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
 

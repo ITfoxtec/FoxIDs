@@ -8,7 +8,7 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlDownParty : IDownParty, INameValue, IValidatableObject
+    public class SamlDownParty : IDownParty, INameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

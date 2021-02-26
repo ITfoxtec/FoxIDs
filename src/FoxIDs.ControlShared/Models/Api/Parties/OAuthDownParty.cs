@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OAuthDownParty : IValidatableObject, IDownParty, INameValue
+    public class OAuthDownParty : IValidatableObject, IDownParty, INameValue, IClaimTransform<OAuthClaimTransform>
     {
         /// <summary>
         /// Party name.

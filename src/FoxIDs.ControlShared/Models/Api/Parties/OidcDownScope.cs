@@ -7,7 +7,7 @@ namespace FoxIDs.Models.Api
     public class OidcDownScope
     {
         [Required]
-        [MaxLength(Constants.Models.OAuthDownParty.ScopesLength)]
+        [MaxLength(Constants.Models.OAuthDownParty.ScopeLength)]
         [RegularExpression(Constants.Models.OAuthDownParty.ScopeRegExPattern)]
         [Display(Name = "Scope")]
         public string Scope { get; set; }

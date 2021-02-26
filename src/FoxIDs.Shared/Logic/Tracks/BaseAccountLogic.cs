@@ -93,13 +93,13 @@ namespace FoxIDs.Logic
 
         private void CheckPasswordComplexity(string email, string password)
         {
-            CheckPasswordComplexityCharRepeate(email, password);
+            CheckPasswordComplexityCharRepeat(email, password);
             CheckPasswordComplexityCharDissimilarity(email, password);
             CheckPasswordComplexityContainsEmail(email, password);
             CheckPasswordComplexityContainsUrl(email, password);
         }
 
-        private void CheckPasswordComplexityCharRepeate(string email, string password)
+        private void CheckPasswordComplexityCharRepeat(string email, string password)
         {
             var maxCharRepeate = password.Length  / 2;
             maxCharRepeate = maxCharRepeate < 3 ? 3 : maxCharRepeate;
@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
             var charCounts = password.GroupBy(c => c).Select(g => g.Count());
             if(charCounts.Any(c => c >= maxCharRepeate))
             {
-                throw new PasswordComplexityException($"Password char repeate does not comply with complexity, user '{email}'.");
+                throw new PasswordComplexityException($"Password char repeat does not comply with complexity, user '{email}'.");
             }
         }
 

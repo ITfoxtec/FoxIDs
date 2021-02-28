@@ -53,6 +53,11 @@ Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access 
 
 Local development domain and port: `https://localhost:44345`
 
+### IdentityServerOidcOpSample
+//TODO
+
+Local development domain and port: `https://localhost:44346`
+
 ## FoxIDs.com test track for samples
 //TODO
 

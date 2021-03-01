@@ -35,8 +35,8 @@
         <div class="mb-3 alert alert-info" role="alert">
             <i>Authority and OIDC Discovery example for a up-party with the name 'login' as the target.</i>
             @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name); }
-            <div>Authority: @authority</div>
-            <div>OIDC Discovery: <a href="@oidcDiscovery" target="_blank">@oidcDiscovery</a></div>
+            <div>Authority: <FTextClipboard Text="@authority" /></div>
+            <div>OIDC Discovery: <FTextLinkClipboard Text="@oidcDiscovery" /></div>
         </div>
 
         <ul class="nav nav-tabs">

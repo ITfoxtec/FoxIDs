@@ -24,6 +24,12 @@
             <FFieldText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
 
+        <div class="mb-3 alert alert-info" role="alert">
+            @{ (var redirect, var postLogoutRedirect) = GetRedirectAndPostLogoutRedirect(oidcUpParty.Form.Model.Name); }
+            <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
+            <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
+        </div>
+
         <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
         @if (!oidcUpParty.CreateMode)
         {

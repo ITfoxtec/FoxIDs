@@ -25,7 +25,7 @@
         }
         <div class="mb-3 alert alert-info" role="alert">
             @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name); }
-            <div>SAML 2.0 Metadata: <a href="@samlMetadata" target="_blank">@samlMetadata</a></div>
+            <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
         </div>
 
         <ul class="nav nav-tabs">

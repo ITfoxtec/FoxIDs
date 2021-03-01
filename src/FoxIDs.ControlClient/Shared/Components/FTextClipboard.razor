@@ -1,0 +1,9 @@
+﻿<span>@Text <button type="button" class="btn btn-link btn-icon-xs" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(Text))"><span class="oi oi-clipboard oi-xs" aria-hidden="true" title="Copy to clipboard"></span></button></span>
+
+@code {
+    [Inject]
+    public ClipboardLogic ClipboardLogic { get; set; }
+
+    [Parameter]
+    public string Text { get; set; }
+}

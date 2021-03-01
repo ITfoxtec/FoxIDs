@@ -26,7 +26,7 @@
         <div class="mb-3 alert alert-info" role="alert">
             <i>SAML 2.0 Metadata example for a up-party with the name 'login' as the target.</i>
             @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name); }
-            <div>SAML 2.0 Metadata: <a href="@samlMetadata" target="_blank">@samlMetadata</a></div>
+            <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
         </div>
 
         <ul class="nav nav-tabs">

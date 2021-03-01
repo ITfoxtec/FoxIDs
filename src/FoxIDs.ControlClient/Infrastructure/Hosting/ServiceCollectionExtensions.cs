@@ -25,6 +25,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<ControlClientSettingLogic>();
             services.AddScoped<NotificationLogic>();
             services.AddScoped<TrackSelectedLogic>();
+            services.AddScoped<ClipboardLogic>();
 
             return services;
         }

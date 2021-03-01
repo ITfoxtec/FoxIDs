@@ -99,7 +99,7 @@ namespace FoxIDs.Client.Pages.Components
         public (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
         {
             var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())}(login)/";
-            return (authority, new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString);
+            return (authority, authority + IdentityConstants.OidcDiscovery.Path);
         }
 
         public string GetSamlMetadata(string partyName)

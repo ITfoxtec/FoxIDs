@@ -92,10 +92,10 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        public (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
+        public (string, string) GetRedirectAndPostLogoutRedirect(string partyName)
         {
-            var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/";
-            return (authority, new Uri(new Uri(authority), IdentityConstants.OidcDiscovery.Path).OriginalString);
+            var oauthUrl = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/{Constants.Routes.OAuthController}/";
+            return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse);
         }
 
         public string GetSamlMetadata(string partyName)

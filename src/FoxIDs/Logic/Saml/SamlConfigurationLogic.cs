@@ -23,8 +23,8 @@ namespace FoxIDs.Logic
             var samlConfig = new Saml2Configuration();
             samlConfig.AllowedIssuer = party.Issuer;
 
-            var spIssuer = !party.SpIssuer.IsNullOrEmpty() ? party.SpIssuer : trackIssuerLogic.GetIssuer();
-            samlConfig.AllowedAudienceUris.Add(spIssuer);
+            samlConfig.Issuer = !party.SpIssuer.IsNullOrEmpty() ? party.SpIssuer : trackIssuerLogic.GetIssuer();
+            samlConfig.AllowedAudienceUris.Add(samlConfig.Issuer);
 
             samlConfig.SingleSignOnDestination = new Uri(party.AuthnUrl);
             if(!party.LogoutUrl.IsNullOrEmpty())
@@ -52,14 +52,7 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlDownConfig(SamlDownParty party, bool includeSigningCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            if (!party.IdPIssuer.IsNullOrEmpty())
-            {
-                samlConfig.Issuer = party.IdPIssuer;
-            }
-            else
-            {
-                samlConfig.Issuer = trackIssuerLogic.GetIssuer();
-            }
+            samlConfig.Issuer = !party.IdPIssuer.IsNullOrEmpty() ? party.IdPIssuer : trackIssuerLogic.GetIssuer();
 
             if (party.Keys?.Count > 0)
             {

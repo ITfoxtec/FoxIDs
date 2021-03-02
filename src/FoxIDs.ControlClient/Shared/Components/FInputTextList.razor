@@ -12,7 +12,19 @@
         {
             <div class="row">
                 <div class="col-11">
-                    <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
+                    @if (EnableClipboard)
+                    {
+                        <div class="input-group">
+                            <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><span class="oi oi-clipboard oi-xs" aria-hidden="true" title="Copy to clipboard"></span></button>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
+                    }
                 </div>
                 <div class="col-1 p-0">
                     <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(async e => await RemoveAsync(e, item.Index))"><span class="oi oi-delete" aria-hidden="true"></span></button>
@@ -25,6 +37,9 @@
 </div>
 
 @code {
+    [Inject]
+    public ClipboardLogic ClipboardLogic { get; set; }
+
     [Parameter]
     public bool IncludeActiveFormGroup { get; set; } = true;
 
@@ -44,6 +59,9 @@
 
     [Parameter]
     public Func<string> AddValue { get; set; }
+
+    [Parameter]
+    public bool EnableClipboard { get; set; }
 
     protected override void OnParametersSet()
     {

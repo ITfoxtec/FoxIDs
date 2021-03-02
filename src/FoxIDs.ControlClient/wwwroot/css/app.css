@@ -74,10 +74,6 @@ h4 {
     font-size: 12px;
 }
 
-.oi.oi-xs {
-    top: 0;
-}
-
 .navbar.navbar-second {
     padding: 0rem 1rem;
 }
@@ -133,11 +129,16 @@ h4 {
     }
 
 .btn.btn-icon-xs {
-    padding: 0;
+    color: #788489 !important;
+    padding: 0 0 0 .1rem;
+    border: 0;
     font-size: .875rem;
-    line-height: .5;
-    border-radius: .2rem;
+    line-height: 1;    
 }
+
+    .btn.btn-icon-xs .oi.oi-xs {
+        top: -1px;
+    }
 
 .btn-outline-primary {
     color: #788489 !important;
@@ -156,6 +157,7 @@ h4 {
 
 .btn-outline-secondary {
     color: #788489 !important;
+    border: 1px solid #ced4da !important;
 }
 
     .btn-outline-secondary:hover, .btn-outline-secondary.focus, .btn-outline-secondary:focus {

@@ -447,7 +447,7 @@ namespace FoxIDs
             /// <summary>
             /// Exclude JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
+            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 
             /// <summary>
             /// Default SAML claims.
@@ -461,7 +461,7 @@ namespace FoxIDs
         public class EmbeddedJwtToken
         {
             public readonly static string[] JwtTokenClaims = { JwtClaimTypes.AccessToken };
-            public const int ValueLength = 1000;
+            public const int ValueLength = 2000;
         }
 
         public static class JwtClaimTypes

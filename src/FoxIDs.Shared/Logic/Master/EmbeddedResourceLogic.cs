@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
         {
             if (!isInitiated)
             {
-                using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(EmbeddedResourceFile)))
+                using (var reader = new StreamReader(Assembly.GetExecutingAssembly().GetManifestResourceStream(EmbeddedResourceName)))
                 {
                     resourceEnvelope = reader.ReadToEnd().ToObject<ResourceEnvelope>();
                 }
@@ -56,6 +56,8 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string EmbeddedResourceFile => $"{typeof(EmbeddedResource).FullName}.json";
+        private string EmbeddedResourceName => $"{typeof(EmbeddedResource).FullName}.json";
+
+        private string EmbeddedResourceFile => EmbeddedResourceName.Replace('.', '\\').Replace(@"\json", ".json").Replace(@"FoxIDs\", @"..\FoxIDs.Shared\");
     }
 }

@@ -235,6 +235,22 @@
     {
       "name": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before.",
       "id": 58
+    },
+    {
+      "name": "An error has occurred. Please try again.",
+      "id": 59
+    },
+    {
+      "name": "Logout",
+      "id": 60
+    },
+    {
+      "name": "Keep me logged in",
+      "id": 61
+    },
+    {
+      "name": "OK",
+      "id": 62
     }
   ],
   "resources": [
@@ -785,6 +801,42 @@
         {
           "culture": "en",
           "value": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before."
+        }
+      ]
+    },
+    {
+      "id": 59,
+      "items": [
+        {
+          "culture": "en",
+          "value": "An error has occurred. Please try again."
+        }
+      ]
+    },
+    {
+      "id": 60,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Logout"
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Keep me logged in"
+        }
+      ]
+    },
+    {
+      "id": 62,
+      "items": [
+        {
+          "culture": "en",
+          "value": "OK"
         }
       ]
     }

@@ -30,9 +30,10 @@ namespace FoxIDs.Infrastructure.Hosting
         public static IServiceCollection AddLogic(this IServiceCollection services)
         {
             services.AddSharedLogic();
-            
+
+            services.AddSingleton<EmbeddedResourceLogic>();
+
             services.AddTransient<SeedLogic>();
-            services.AddTransient<ResourceSeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
 
             services.AddTransient<BaseAccountLogic>();

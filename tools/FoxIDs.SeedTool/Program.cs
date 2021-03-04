@@ -21,7 +21,6 @@ namespace FoxIDs.SeedTool
 
                 Console.WriteLine("Select seed action");
                 Console.WriteLine("M: Create master tenant documents");
-                Console.WriteLine("R: Add text resources");
                 Console.WriteLine("P: Create risk passwords");
 
                 var key = Console.ReadKey();
@@ -32,10 +31,6 @@ namespace FoxIDs.SeedTool
                 {
                     case 'm':                        
                         await serviceProvider.GetService<MasterTenantDocumentsSeedLogic>().SeedAsync();
-                        break;
-
-                    case 'r':
-                        await serviceProvider.GetService<ResourceSeedLogic>().SeedAsync();
                         break;
 
                     case 'p':

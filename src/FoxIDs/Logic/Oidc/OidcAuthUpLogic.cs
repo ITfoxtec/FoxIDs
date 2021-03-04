@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
                 RedirectUri = loginCallBackUrl,
                 Nonce = nonce                
             };
-            if (party.Client.RequirePkce)
+            if (party.Client.EnablePkce)
             {
                 var codeVerifier = RandomGenerator.Generate(64);
                 oidcUpSequenceData.CodeVerifier = codeVerifier;
@@ -115,7 +115,7 @@ namespace FoxIDs.Logic
 
             var requestDictionary = authenticationRequest.ToDictionary();
 
-            if (party.Client.RequirePkce)
+            if (party.Client.EnablePkce)
             {
                 var codeChallengeRequest = new CodeChallengeSecret
                 {
@@ -214,7 +214,7 @@ namespace FoxIDs.Logic
         {
             authenticationResponse.Validate(isImplicitFlow);
 
-            if (party.Client.RequirePkce && isImplicitFlow)
+            if (party.Client.EnablePkce && isImplicitFlow)
             {
                 throw new OAuthRequestException($"Require '{IdentityConstants.ResponseTypes.Code}' flow with PKCE.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
             }
@@ -282,7 +282,7 @@ namespace FoxIDs.Logic
                 requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
             }
 
-            if (client.RequirePkce)
+            if (client.EnablePkce)
             {
                 var codeVerifierSecret = new CodeVerifierSecret
                 {
@@ -324,8 +324,11 @@ namespace FoxIDs.Logic
             var claims = await ValidateIdToken(party, sequenceData, idToken);
             if (!accessToken.IsNullOrWhiteSpace())
             {
-                // If access token exists, use access token claims instead of ID token claims.
-                claims = await ValidateAccessToken(party, sequenceData, accessToken);
+                if (!party.Client.UseIdTokenClaims)
+                {
+                    // If access token exists, use access token claims instead of ID token claims.
+                    claims = await ValidateAccessToken(party, sequenceData, accessToken);
+                }
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
 

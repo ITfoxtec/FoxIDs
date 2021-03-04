@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using FoxIDs.Models;
-using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 
@@ -13,27 +11,16 @@ namespace FoxIDs.Logic
     {
         // The maximum number of culture names to attempt to test.
         private const int maximumCultureNamesToTry = 3;
-        private readonly IMasterRepository masterRepository;
-        private ResourceEnvelope resourceEnvelope;
-        private bool isInitiated = false;
+        private readonly EmbeddedResourceLogic embeddedResourceLogic;
 
-        public LocalizationLogic(IHttpContextAccessor httpContextAccessor, IMasterRepository masterRepository) : base(httpContextAccessor)
+        public LocalizationLogic(IHttpContextAccessor httpContextAccessor, EmbeddedResourceLogic embeddedResourceLogic) : base(httpContextAccessor)
         {
-            this.masterRepository = masterRepository;
+            this.embeddedResourceLogic = embeddedResourceLogic;
         }
 
-        private async Task LoadResourceEnvelopeAsync()
+        public string GetSupportedCulture(IEnumerable<string> cultures, RouteBinding routeBinding = null)
         {
-            if(!isInitiated)
-            {
-                resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));              
-                isInitiated = true;
-            }
-        }
-
-        public async Task<string> GetSupportedCultureAsync(IEnumerable<string> cultures, RouteBinding routeBinding = null)
-        {
-            await LoadResourceEnvelopeAsync();
+            var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
 
             routeBinding = routeBinding ?? RouteBinding;
             var supportedCultures = resourceEnvelope.SupportedCultures;
@@ -53,9 +40,9 @@ namespace FoxIDs.Logic
             return resourceEnvelope.SupportedCultures.First();
         }
 
-        public async Task<string> GetValueAsync(string name, string culture)
+        public string GetValue(string name, string culture)
         {
-            await LoadResourceEnvelopeAsync();
+            var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
 
             var id = resourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
             if(id > 0)
@@ -94,23 +81,9 @@ namespace FoxIDs.Logic
         }
 
 #if DEBUG
-        public void SaveDefaultValue(string name)
+        public void SaveResource(string name)
         {
-            LoadResourceEnvelopeAsync().GetAwaiter().GetResult();
-
-            lock (typeof(LocalizationLogic))
-            {
-                if (!resourceEnvelope.Names.Any(n => n.Name == name))
-                {
-                    var id = resourceEnvelope.Names.Max(n => n.Id) + 1;
-                    resourceEnvelope.Names.Add(new ResourceName { Name = name, Id = id });
-                    resourceEnvelope.Resources.Add(new ResourceItem { Id = id, Items = new List<ResourceCultureItem>(new[] { new ResourceCultureItem { Culture = "en", Value = name } }) });
-
-                    resourceEnvelope.ValidateObjectAsync().GetAwaiter().GetResult();
-
-                    masterRepository.SaveAsync(resourceEnvelope).GetAwaiter().GetResult();
-                }
-            }
+            embeddedResourceLogic.SaveResource(name);
         }
 #endif
     }

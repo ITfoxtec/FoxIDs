@@ -25,11 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Models\Master\SeedResources\EmbeddedResource.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="Models\Master\SeedResources\EmbeddedResource.json" />
+	  <EmbeddedResource Include="Models\Master\Resources\EmbeddedResource.json" />
 	</ItemGroup>
 
 	<ItemGroup>

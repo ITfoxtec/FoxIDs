@@ -45,15 +45,18 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
 
-        [Display(Name = "Require PKCE")]
-        public bool RequirePkce { get; set; } = true;
+        [Display(Name = "Use PKCE")]
+        public bool EnablePkce { get; set; } = true;
+
+        [Display(Name = "Use claims from ID token instead of access token")] 
+        public bool UseIdTokenClaims { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (RequirePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+            if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce) }));
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce) }));
             }
             if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
             {

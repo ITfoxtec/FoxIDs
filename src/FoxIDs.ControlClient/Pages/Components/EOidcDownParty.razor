@@ -103,7 +103,7 @@
                     }
                     <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
                     <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
-                    <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="e.d" />
+                    <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
                     <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
                     <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
 

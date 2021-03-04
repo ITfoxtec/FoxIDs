@@ -29,11 +29,11 @@ namespace FoxIDs.Infrastructure.Localization
         {
             var culture = httpContextAccessor.HttpContext.Features.Get<IRequestCultureFeature>()?.RequestCulture?.UICulture ?? new CultureInfo("en");
 
-            var value = localizationLogic.GetValueAsync(name, culture.Name).GetAwaiter().GetResult();
+            var value = localizationLogic.GetValue(name, culture.Name);
 #if DEBUG
             if(value.IsNullOrEmpty())
             {
-                localizationLogic.SaveDefaultValue(name);
+                localizationLogic.SaveResource(name);
             }
 #endif
             value = value ?? name;

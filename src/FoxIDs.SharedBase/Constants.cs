@@ -76,8 +76,6 @@ namespace FoxIDs
 
             public static class Resource
             {
-                public const int EnvelopeIdLength = 70;
-                public const string EnvelopeIdRegExPattern = @"^[\w@:\-]*$";
                 public const int SupportedCulturesMin = 0;
                 public const int SupportedCulturesMax = 50;
                 public const int SupportedCulturesLength = 5;
@@ -447,7 +445,7 @@ namespace FoxIDs
             /// <summary>
             /// Exclude JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
+            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 
             /// <summary>
             /// Default SAML claims.
@@ -461,7 +459,7 @@ namespace FoxIDs
         public class EmbeddedJwtToken
         {
             public readonly static string[] JwtTokenClaims = { JwtClaimTypes.AccessToken };
-            public const int ValueLength = 1000;
+            public const int ValueLength = 2000;
         }
 
         public static class JwtClaimTypes

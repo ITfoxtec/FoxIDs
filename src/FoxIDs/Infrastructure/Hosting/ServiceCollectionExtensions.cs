@@ -23,6 +23,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedLogic();
 
+            services.AddSingleton<EmbeddedResourceLogic>();
             services.AddSingleton<LocalizationLogic>();
 
             services.AddTransient<SequenceLogic>();

@@ -20,6 +20,7 @@ It is possible to create more user in the master track. A user become an adminis
 
 ![Configure administrator user](images/configure-tenant-adminuser.png)
 
+#### Languages 
 FoxIDs support translating the interfaces elements into the languages that are configured. English is default (FoxIDs Control Client only support English). It is possible to add text translations to all text elements used in the FoxIDs interface.  
 The text translations in the master track is used in all the other tracks. It is furthermore possible to add track specific translations to each track.  
 This is an example of a text element translated into two languages.

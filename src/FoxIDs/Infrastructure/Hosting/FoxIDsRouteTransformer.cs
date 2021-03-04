@@ -115,12 +115,12 @@ namespace FoxIDs.Infrastructure.Hosting
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {
                 scopedLogger.SetScopeProperty("sequence_culture", sequence.Culture);
-                return await localizationLogic.GetSupportedCultureAsync(new[] { sequence.Culture }, routeBinding);
+                return localizationLogic.GetSupportedCulture(new[] { sequence.Culture }, routeBinding);
             }
             else
             {
                 var providerResultCulture = await new AcceptLanguageHeaderRequestCultureProvider().DetermineProviderCultureResult(httpContext);
-                return await localizationLogic.GetSupportedCultureAsync(providerResultCulture.UICultures.Select(c => c.Value), routeBinding);
+                return localizationLogic.GetSupportedCulture(providerResultCulture.UICultures.Select(c => c.Value), routeBinding);
             }
         }
 

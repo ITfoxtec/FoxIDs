@@ -1,13 +1,14 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using ITfoxtec.Identity.Models;
 using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel
     {
+        public bool IsManual { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]

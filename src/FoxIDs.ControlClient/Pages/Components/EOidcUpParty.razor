@@ -15,6 +15,13 @@
         }
     </div>
     <div class="modal-body">
+        @if (oidcUpParty.Form.Model.IsManual)
+        {
+            <div class="mb-3 alert alert-info" role="alert">
+                The OpenID Connect up-party is configured for manual update, which can only be updated through the Control API.
+            </div>
+        }
+
         @if (oidcUpParty.CreateMode)
         {
             <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" Focus="true" />
@@ -39,9 +46,9 @@
 
         @if (UpParty.ShowAdvanced)
         {
-            <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />     
+            <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
         }
-        @if (oidcUpParty.Form.Model.AutomaticStopped) 
+        @if (oidcUpParty.Form.Model.AutomaticStopped)
         {
             <div class="mb-3 alert alert-warning" role="alert">
                 <i>Automatic configuration update is currently stopped.</i>
@@ -141,8 +148,10 @@
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
         }
-      @*  <button type="button" class="btn btn-link" @onclick="@(async () => await ReadOidcDiscovery(oidcUpParty))">Read OIDC discovery</button>*@
-        <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
+        @if (!oidcUpParty.Form.Model.IsManual)
+        {
+            <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
+        }
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">Cancel</button>
     </div>
 </PageEditForm>

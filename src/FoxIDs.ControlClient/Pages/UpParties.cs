@@ -173,6 +173,11 @@ namespace FoxIDs.Client.Pages
                     var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(upParty.Name);
                     await generalOidcUpParty.Form.InitAsync(oidcUpParty.Map((Action<OidcUpPartyViewModel>)(afterMap =>
                     {
+                        if (oidcUpParty.UpdateState == PartyUpdateStates.Manual)
+                        {
+                            afterMap.IsManual = true;
+                        }
+
                         if (oidcUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
                         {
                             afterMap.AutomaticStopped = true;

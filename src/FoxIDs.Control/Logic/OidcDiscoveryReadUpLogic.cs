@@ -25,17 +25,25 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(mp.Authority);
-
-                mp.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                mp.Issuer = oidcDiscovery.Issuer;
-                mp.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
-                mp.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
-                if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
+                if (mp.UpdateState != PartyUpdateStates.Manual)
                 {
-                    mp.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
+                    (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(mp.Authority);
+
+                    mp.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                    mp.Issuer = oidcDiscovery.Issuer;
+                    mp.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
+                    mp.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
+                    if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
+                    {
+                        mp.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
+                    }
+                    mp.Keys = jsonWebKeySet.Keys?.ToList();
+
+                    if(mp.UpdateState == PartyUpdateStates.AutomaticStopped)
+                    {
+                        mp.UpdateState = PartyUpdateStates.Automatic;
+                    }
                 }
-                mp.Keys = jsonWebKeySet.Keys?.ToList();
             }
             catch (Exception ex)
             {

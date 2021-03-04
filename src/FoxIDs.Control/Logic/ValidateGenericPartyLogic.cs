@@ -28,10 +28,13 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                if (duplicatedOrderNumber >= 0)
+                if (claimTransforms?.Count() > 0)
                 {
-                    throw new ValidationException($"Duplicated claim transform order number '{duplicatedOrderNumber}'");
+                    var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (duplicatedOrderNumber >= 0)
+                    {
+                        throw new ValidationException($"Duplicated claim transform order number '{duplicatedOrderNumber}'");
+                    }
                 }
             }
             catch (ValidationException vex)

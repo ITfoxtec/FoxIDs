@@ -27,19 +27,61 @@ namespace FoxIDs.Logic
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.OidcUpParty party)
         {
+            var isValid = true;
 
-            return ValidateResponseTypeUp(modelState, party.Client.ResponseType, Constants.Oidc.DefaultResponseTypes) &&
-                ValidateResponseModeUp(modelState, party.Client.ResponseMode);
+            (var isValidRtResult, string responseType) = ValidateResponseTypeUp(modelState, party.Client.ResponseType, Constants.Oidc.DefaultResponseTypes);
+            if (isValidRtResult)
+            {
+                party.Client.ResponseType = responseType;
+            }
+            else
+            {
+                isValid = isValidRtResult;
+            }
+
+            var isValidRmResult = ValidateResponseModeUp(modelState, party.Client.ResponseMode);
+            if (!isValidRmResult)
+            {
+                isValid = isValidRmResult;
+            }
+
+            return isValid;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.OAuthDownParty party)
         {
-            return (party.Client != null ? ValidateResponseTypesDown(modelState, party.Client.ResponseTypes, Constants.OAuth.DefaultResponseTypes) : true);
+            var isValid = true;
+            if (party.Client != null)
+            {
+                (var isValidRtResult, List<string> responseTypes) = ValidateResponseTypesDown(modelState, party.Client.ResponseTypes, Constants.OAuth.DefaultResponseTypes);
+                if (isValidRtResult)
+                {
+                    party.Client.ResponseTypes = responseTypes;
+                }
+                else 
+                {
+                    isValid = isValidRtResult;
+                }
+            }
+            return isValid;
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.OidcDownParty party)
         {
-            return (party.Client != null ? ValidateResponseTypesDown(modelState, party.Client.ResponseTypes, Constants.Oidc.DefaultResponseTypes) : true);
+            var isValid = true;
+            if (party.Client != null)
+            {
+                (var isValidRtResult, List<string> responseTypes) = ValidateResponseTypesDown(modelState, party.Client.ResponseTypes, Constants.Oidc.DefaultResponseTypes);
+                if (isValidRtResult)
+                {
+                    party.Client.ResponseTypes = responseTypes;
+                }
+                else
+                {
+                    isValid = isValidRtResult;
+                }
+            }
+            return isValid;
         }
 
         public async Task<bool> ValidateModelAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
@@ -69,11 +111,13 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
-        private bool ValidateResponseTypeUp(ModelStateDictionary modelState, string responseType, string[] defaultResponseTypes)
+        private (bool, string) ValidateResponseTypeUp(ModelStateDictionary modelState, string responseType, string[] defaultResponseTypes)
         {
             var isValid = true;
             try
             {
+                responseType = OrderResponseType(responseType);
+
                 if (!defaultResponseTypes.Contains(responseType))
                 {
                     throw new ValidationException($"Not supported response type '{responseType}'");
@@ -85,14 +129,16 @@ namespace FoxIDs.Logic
                 logger.Warning(vex);
                 modelState.TryAddModelError($"{nameof(Api.OAuthDownParty.Client)}.{nameof(Api.OAuthDownParty.Client.ResponseTypes)}".ToCamelCase(), vex.Message);
             }
-            return isValid;
+            return (isValid, responseType);
         }
 
-        private bool ValidateResponseTypesDown(ModelStateDictionary modelState, List<string> responseTypes, string[] defaultResponseTypes)
+        private (bool, List<string>) ValidateResponseTypesDown(ModelStateDictionary modelState, List<string> responseTypes, string[] defaultResponseTypes)
         {
             var isValid = true;
             try
             {
+                responseTypes = OrderResponseTypes(responseTypes);
+
                 foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()))
                 {
                     if (responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
@@ -119,7 +165,20 @@ namespace FoxIDs.Logic
                 logger.Warning(vex);
                 modelState.TryAddModelError($"{nameof(Api.OAuthDownParty.Client)}.{nameof(Api.OAuthDownParty.Client.ResponseTypes)}".ToCamelCase(), vex.Message);
             }
-            return isValid;
+            return (isValid, responseTypes);
+        }
+
+        private List<string> OrderResponseTypes(List<string> responseTypes)
+        {
+            return responseTypes.Select(rt => OrderResponseType(rt)).ToList();
+        }
+
+        private string OrderResponseType(string responseType)
+        {
+            var orderedResponseType = responseType.ToSpaceList()
+                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt));
+
+            return orderedResponseType.ToSpaceList();
         }
 
         private async Task<bool> ValidateClientResourceScopesAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim

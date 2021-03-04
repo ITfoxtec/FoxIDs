@@ -2,7 +2,6 @@
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Api = FoxIDs.Models.Api;
@@ -130,8 +129,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))
-                .ReverseMap()
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
+                .ReverseMap();
             CreateMap<OAuthDownResource, Api.OAuthDownResource>()
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc)))
                 .ReverseMap();
@@ -156,8 +154,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.ResourceScopes, opt => opt.MapFrom(s => s.ResourceScopes.OrderBy(rs => rs.Resource)))
                 .ForMember(d => d.Scopes, opt => opt.MapFrom(s => s.Scopes.OrderBy(sc => sc.Scope)))
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c.Claim)))                
-                .ReverseMap()
-                .ForMember(d => d.ResponseTypes, opt => opt.MapFrom(s => OrderResponseTypes(s.ResponseTypes)));
+                .ReverseMap();
             CreateMap<OidcDownScope, Api.OidcDownScope>()
                 .ForMember(d => d.VoluntaryClaims, opt => opt.MapFrom(s => s.VoluntaryClaims.OrderBy(vc => vc.Claim)))
                 .ReverseMap();
@@ -174,14 +171,6 @@ namespace FoxIDs.MappingProfiles
         private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform
         {
             return claimTransforms.OrderBy(ct => ct.Order).ToList();
-        }
-
-        private IEnumerable<string> OrderResponseTypes(List<string> responseTypes)
-        {
-            var orderedResponseTypes = responseTypes.Select(rt => rt.ToSpaceList()
-                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt)));
-
-            return orderedResponseTypes.Select(rt => rt.ToSpaceList());
         }
     }
 }

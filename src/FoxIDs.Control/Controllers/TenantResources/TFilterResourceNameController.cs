@@ -5,11 +5,11 @@ using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -17,13 +17,13 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
-        private readonly IMasterRepository masterRepository;
+        private readonly EmbeddedResourceLogic embeddedResourceLogic;
 
-        public TFilterResourceNameController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterRepository) : base(logger)
+        public TFilterResourceNameController(TelemetryScopedLogger logger, IMapper mapper, EmbeddedResourceLogic embeddedResourceLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
-            this.masterRepository = masterRepository;
+            this.embeddedResourceLogic = embeddedResourceLogic;
         }
 
         /// <summary>
@@ -33,11 +33,11 @@ namespace FoxIDs.Controllers
         /// <returns>Resource name.</returns>
         [ProducesResponseType(typeof(List<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<List<Api.ResourceName>>> GetFilterResourceName(string filterName)
+        public ActionResult<List<Api.ResourceName>> GetFilterResourceName(string filterName)
         {
             try
             {
-                var resourceEnvelope = await masterRepository.GetAsync<ResourceEnvelope>(ResourceEnvelope.IdFormat(new MasterDocument.IdKey()));
+                var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
                 var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, System.StringComparison.OrdinalIgnoreCase));
                 return Ok(mapper.Map<List<Api.ResourceName>>(filderResourceNames.OrderBy(r => r.Name)));
             }

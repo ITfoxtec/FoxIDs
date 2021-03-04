@@ -15,15 +15,13 @@ namespace FoxIDs.Logic.Seed
         private readonly TelemetryLogger logger;
         private readonly Settings settings;
         private readonly IRepositoryClient repositoryClient;
-        private readonly ResourceSeedLogic resourceSeedLogic;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, Settings settings, IRepositoryClient repositoryClient, ResourceSeedLogic resourceSeedLogic, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, Settings settings, IRepositoryClient repositoryClient, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;
             this.repositoryClient = repositoryClient;
-            this.resourceSeedLogic = resourceSeedLogic;
             this.masterTenantDocumentsSeedLogic = masterTenantDocumentsSeedLogic;
         }
 
@@ -60,7 +58,6 @@ namespace FoxIDs.Logic.Seed
                             logger.Trace("Two Cosmos DB Document Collections created.");
                         }
 
-                        await resourceSeedLogic.SeedAsync();
                         await masterTenantDocumentsSeedLogic.SeedAsync();
                     }
                 }

@@ -76,8 +76,6 @@ namespace FoxIDs
 
             public static class Resource
             {
-                public const int EnvelopeIdLength = 70;
-                public const string EnvelopeIdRegExPattern = @"^[\w@:\-]*$";
                 public const int SupportedCulturesMin = 0;
                 public const int SupportedCulturesMax = 50;
                 public const int SupportedCulturesLength = 5;

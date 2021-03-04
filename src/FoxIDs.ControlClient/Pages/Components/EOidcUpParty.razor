@@ -81,7 +81,7 @@
                 {
                     @if (UpParty.ShowAdvanced)
                     {
-                         <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
+                        <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
                     }
                     <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Scopes" For="@(() => oidcUpParty.Form.Model.Client.Scopes)" />
                     <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
@@ -91,18 +91,18 @@
                         <option value="@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
                         <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
                     </FInputSelect>
-                    <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.RequirePkce" For="@(() => oidcUpParty.Form.Model.Client.RequirePkce)" TextType="e.d" />
+                    <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnablePkce" For="@(() => oidcUpParty.Form.Model.Client.EnablePkce)" TextType="y.n" />
                     <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
-                    @if (!oidcUpParty.CreateMode)
-                    {
-                        <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
-                    }
-
                     @if (UpParty.ShowAdvanced)
                     {
+                        @if (!oidcUpParty.CreateMode)
+                        {
+                            <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
+                        }
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
                         <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" />
                         <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseMode" For="@(() => oidcUpParty.Form.Model.Client.ResponseMode)">
                             <option value="@IdentityConstants.ResponseModes.FormPost">form_post</option>

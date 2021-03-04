@@ -53,15 +53,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }
 
-        [JsonProperty(PropertyName = "require_pkce")]
-        public bool RequirePkce { get; set; }
+        [JsonProperty(PropertyName = "enable_pkce")]
+        public bool EnablePkce { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (RequirePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+            if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseType) }));
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce), nameof(ResponseType) }));
             }
             if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
             {

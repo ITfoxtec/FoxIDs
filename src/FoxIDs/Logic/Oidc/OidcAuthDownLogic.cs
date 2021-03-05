@@ -257,7 +257,6 @@ namespace FoxIDs.Logic
 
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
             {
-                authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
                 authenticationResponse.Code = await oauthAuthCodeGrantDownLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
             }
 

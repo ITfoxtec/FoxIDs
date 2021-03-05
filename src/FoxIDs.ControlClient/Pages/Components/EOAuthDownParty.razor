@@ -23,9 +23,6 @@
         }
     </div>
     <div class="modal-body">
-        <div class="mb-3 alert alert-info" role="alert">
-            OAuth 2.0 client currently only supported client credential grant. Please use OpenID Connect for other client types.
-        </div>
         @if (oauthDownParty.CreateMode)
         {
             <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" Focus="true" />
@@ -97,6 +94,9 @@
                 }
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
+                    <div class="mb-3 alert alert-info" role="alert">
+                        OAuth 2.0 client currently only supported client credential grant. Please use OpenID Connect for other client types.
+                    </div>
                     <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                     @if (DownParty.ShowAdvanced)
                     {

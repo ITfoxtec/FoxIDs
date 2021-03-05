@@ -23,6 +23,9 @@
         }
     </div>
     <div class="modal-body">
+        <div class="mb-3 alert alert-info" role="alert">
+            OAuth 2.0 client currently only supported client credential grant. Please use OpenID Connect for other client types.
+        </div>
         @if (oauthDownParty.CreateMode)
         {
             <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" Focus="true" />
@@ -100,6 +103,10 @@
                         <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.AllowCorsOrigins" For="@(() => oauthDownParty.Form.Model.AllowCorsOrigins)" />
                     }
                     <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" />
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <FInputText @bind-Value="oauthDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oauthDownParty.Form.Model.Client.PostLogoutRedirectUri)" />
+                    }
                     <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                     <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
                     <OAuthSecrets ClientSecret="oauthDownParty.Form.Model.Client" />

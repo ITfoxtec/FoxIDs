@@ -30,6 +30,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
+        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [Display(Name = "Post logout redirect URI")]
+        public string PostLogoutRedirectUri { get; set; }
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>

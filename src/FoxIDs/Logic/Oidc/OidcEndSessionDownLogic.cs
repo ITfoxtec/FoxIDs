@@ -74,12 +74,13 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace("Valid ID token hint.");
             }
 
+            var postLogoutRedirectUri = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() ? endSessionRequest.PostLogoutRedirectUri : party.Client.PostLogoutRedirectUri;
             await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
             {
-                RedirectUri = endSessionRequest.PostLogoutRedirectUri,
+                RedirectUri = postLogoutRedirectUri,
                 State = endSessionRequest.State,
             });
-            await formActionLogic.CreateFormActionByUrlAsync(endSessionRequest.PostLogoutRedirectUri);
+            await formActionLogic.CreateFormActionByUrlAsync(postLogoutRedirectUri);
 
             var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -159,9 +160,16 @@ namespace FoxIDs.Logic
         {
             endSessionRequest.Validate();
 
-            if (!endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && !client.RedirectUris.Any(u => u.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)))
+            if (endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && client.PostLogoutRedirectUri.IsNullOrWhiteSpace())
             {
-                throw new OAuthRequestException($"Invalid post logout redirect uri '{endSessionRequest.PostLogoutRedirectUri}'.");
+                throw new OAuthRequestException($"The post logout redirect Uri need to be configured if not included in the end session request.");
+            }
+
+            if (!endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
+                !client.RedirectUris.Any(u => u.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
+                !endSessionRequest.PostLogoutRedirectUri.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new OAuthRequestException($"Invalid post logout redirect Uri '{endSessionRequest.PostLogoutRedirectUri}'.");
             }
         }
 

@@ -74,23 +74,24 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace("Valid ID token hint.");
             }
 
+            var postLogoutRedirectUri = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() ? endSessionRequest.PostLogoutRedirectUri : party.Client.PostLogoutRedirectUri;
             await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
             {
-                RedirectUri = endSessionRequest.PostLogoutRedirectUri,
+                RedirectUri = postLogoutRedirectUri,
                 State = endSessionRequest.State,
             });
-            await formActionLogic.CreateFormActionByUrlAsync(endSessionRequest.PostLogoutRedirectUri);
+            await formActionLogic.CreateFormActionByUrlAsync(postLogoutRedirectUri);
 
             var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
             switch (type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
+                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, endSessionRequest));
+                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
@@ -103,14 +104,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, EndSessionRequest endSessionRequest)
+        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, string postLogoutRedirectUri)
         {
             var logoutRequest = new LogoutRequest
             {
                 DownParty = party,
                 SessionId = sessionId,
                 RequireLogoutConsent = !validIdToken,
-                PostLogoutRedirect = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace()
+                PostLogoutRedirect = !postLogoutRedirectUri.IsNullOrWhiteSpace()
             };
 
             return logoutRequest;
@@ -159,9 +160,11 @@ namespace FoxIDs.Logic
         {
             endSessionRequest.Validate();
 
-            if (!endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && !client.RedirectUris.Any(u => u.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)))
+            if (!endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
+                !client.RedirectUris.Any(u => u.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
+                !endSessionRequest.PostLogoutRedirectUri.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new OAuthRequestException($"Invalid post logout redirect uri '{endSessionRequest.PostLogoutRedirectUri}'.");
+                throw new OAuthRequestException($"Invalid post logout redirect Uri '{endSessionRequest.PostLogoutRedirectUri}'.");
             }
         }
 

@@ -251,6 +251,14 @@
     {
       "name": "OK",
       "id": 62
+    },
+    {
+      "name": "logged out",
+      "id": 63
+    },
+    {
+      "name": "You are now logged out!",
+      "id": 64
     }
   ],
   "resources": [
@@ -837,6 +845,24 @@
         {
           "culture": "en",
           "value": "OK"
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "items": [
+        {
+          "culture": "en",
+          "value": "logged out"
+        }
+      ]
+    },
+    {
+      "id": 64,
+      "items": [
+        {
+          "culture": "en",
+          "value": "You are now logged out!"
         }
       ]
     }

@@ -38,7 +38,7 @@
         </div>
 
         <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
-        @if (!oidcUpParty.CreateMode)
+        @if (UpParty.ShowAdvanced && !oidcUpParty.CreateMode)
         {
             <FFieldText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
             <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />

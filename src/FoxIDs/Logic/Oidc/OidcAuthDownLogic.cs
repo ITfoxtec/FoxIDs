@@ -244,7 +244,6 @@ namespace FoxIDs.Logic
 
             var authenticationResponse = new AuthenticationResponse
             {
-                TokenType = IdentityConstants.TokenTypes.Bearer,
                 State = sequenceData.State,
                 ExpiresIn = party.Client.AccessTokenLifetime,
             };
@@ -264,6 +263,7 @@ namespace FoxIDs.Logic
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
             {
+                authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
                 authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
             }
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())

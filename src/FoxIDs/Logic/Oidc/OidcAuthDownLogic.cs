@@ -244,7 +244,6 @@ namespace FoxIDs.Logic
 
             var authenticationResponse = new AuthenticationResponse
             {
-                TokenType = IdentityConstants.TokenTypes.Bearer,
                 State = sequenceData.State,
                 ExpiresIn = party.Client.AccessTokenLifetime,
             };
@@ -258,12 +257,14 @@ namespace FoxIDs.Logic
 
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
             {
+                authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
                 authenticationResponse.Code = await oauthAuthCodeGrantDownLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
             }
 
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
             {
+                authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
                 authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
             }
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())

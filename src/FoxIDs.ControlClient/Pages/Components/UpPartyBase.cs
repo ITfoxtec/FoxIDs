@@ -9,6 +9,7 @@ using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models;
 using System;
+using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -92,15 +93,17 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        public (string, string) GetRedirectAndPostLogoutRedirect(string partyName)
+        public (string, string) GetRedirectAndPostLogoutRedirect(string partyName, PartyBindingPatterns partyBindingPattern)
         {
-            var oauthUrl = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/{Constants.Routes.OAuthController}/";
+            var partyBinding = (partyName.IsNullOrEmpty() ? "?" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
+            var oauthUrl = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.OAuthController}/";
             return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse);
         }
 
-        public string GetSamlMetadata(string partyName)
+        public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
-            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/({(partyName.IsNullOrEmpty() ? "?" : partyName.ToLower())})/saml/spmetadata";
+            var partyBinding = (partyName.IsNullOrEmpty() ? "?" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
+            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/saml/spmetadata";
         }
 
         public async Task UpPartyCancelAsync(GeneralUpPartyViewModel upParty)

@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
             await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
 
             var nonce = RandomGenerator.GenerateNonce();
-            var loginCallBackUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, $"({party.Name})", Constants.Routes.OAuthController, Constants.Endpoints.AuthorizationResponse);
+            var loginCallBackUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, party.Name.ToUpPartyBinding(party.PartyBindingPattern), Constants.Routes.OAuthController, Constants.Endpoints.AuthorizationResponse);
 
             var oidcUpSequenceData = new OidcUpSequenceData
             {
@@ -266,7 +266,7 @@ namespace FoxIDs.Logic
             {
                 GrantType = IdentityConstants.GrantTypes.AuthorizationCode,
                 Code = code,
-                ClientId = client.ClientId,
+                ClientId = !client.SpClientId.IsNullOrWhiteSpace() ? client.SpClientId : client.ClientId,
                 RedirectUri = sequenceData.RedirectUri,
             };
             logger.ScopeTrace($"Token request '{tokenRequest.ToJsonIndented()}'.");

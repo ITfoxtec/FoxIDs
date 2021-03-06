@@ -34,5 +34,7 @@ namespace FoxIDs.Models
 
             Id = await IdFormatAsync(idKey);
         }
+
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
     }
 }

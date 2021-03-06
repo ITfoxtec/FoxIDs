@@ -94,5 +94,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [Display(Name = "Logout URL")]
         public string LogoutUrl { get; set; }
+
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        [Display(Name = "URL party binding pattern")]
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
     }
 }

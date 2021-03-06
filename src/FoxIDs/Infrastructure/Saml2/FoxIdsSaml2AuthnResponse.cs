@@ -14,11 +14,11 @@ using FoxIDs.Logic;
 
 namespace FoxIDs.Infrastructure.Saml2
 {
-    public class FoxIdsSaml2AuthnResponse : Saml2AuthnResponse
+    public class FoxIDsSaml2AuthnResponse : Saml2AuthnResponse
     {
         private readonly FoxIDsSettings settings;
 
-        public FoxIdsSaml2AuthnResponse(FoxIDsSettings settings, Saml2Configuration config) : base(config)
+        public FoxIDsSaml2AuthnResponse(FoxIDsSettings settings, Saml2Configuration config) : base(config)
         {
             this.settings = settings;
         }

@@ -41,6 +41,11 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

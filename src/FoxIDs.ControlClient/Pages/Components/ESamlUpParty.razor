@@ -24,9 +24,16 @@
             <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
         }
         <div class="mb-3 alert alert-info" role="alert">
-            @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name); }
+            @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern); }
             <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
         </div>
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputSelect @bind-Value="samlUpParty.Form.Model.PartyBindingPattern" For="@(() => samlUpParty.Form.Model.PartyBindingPattern)">
+                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/... - support Azure AD</option>
+            </FInputSelect>
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">

@@ -3,14 +3,11 @@ using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
-using FoxIDs.Logic;
 using System.Security.Cryptography.X509Certificates;
 using FoxIDs.Models.Config;
 using StackExchange.Redis;
@@ -21,7 +18,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsRouteBindingMiddleware : RouteBindingMiddleware
     {
-        private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\)))$", RegexOptions.Compiled);
+        private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~))$", RegexOptions.Compiled);
         private readonly FoxIDsSettings settings;
         private readonly ITenantRepository tenantRepository;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;

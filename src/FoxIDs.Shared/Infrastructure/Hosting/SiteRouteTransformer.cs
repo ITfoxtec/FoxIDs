@@ -20,7 +20,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new Exception($"Failing url '{httpContext.Request.Scheme}://{httpContext.Request.Host.ToUriComponent()}{httpContext.Request.Path.Value}'", ex);
+                throw new Exception($"Failing URL '{httpContext.Request.Scheme}://{httpContext.Request.Host.ToUriComponent()}{httpContext.Request.Path.Value}'", ex);
             }
         }
 

@@ -201,7 +201,7 @@ namespace FoxIDs.Logic
         {
             binding.RelayState = relayState;
 
-            var saml2AuthnResponse = new FoxIdsSaml2AuthnResponse(settings, samlConfig)
+            var saml2AuthnResponse = new FoxIDsSaml2AuthnResponse(settings, samlConfig)
             {
                 InResponseTo = new Saml2Id(inResponseTo),
                 Status = status,

@@ -256,7 +256,7 @@ namespace FoxIDs
                 public const int OidcDiscoveryUpdateRateMax = 31536000; // 12 month
 
                 public const int ScopeLength = 50;
-                public const string ScopeRegExPattern = @"^[\w:\-.]*$";
+                public const string ScopeRegExPattern = @"^[\w:\-/.]*$";
 
                 public static class Client
                 {

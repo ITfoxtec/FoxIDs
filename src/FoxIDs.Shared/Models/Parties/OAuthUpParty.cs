@@ -30,12 +30,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authority")]
         public string Authority { get; set; }
 
-        [Required]
-        [MaxLength(Constants.Models.OAuthUpParty.IssuerLength)]
-        [JsonProperty(PropertyName = "issuer")]
-        public string Issuer { get; set; }
+        [JsonProperty(PropertyName = "edit_issuers_in_automatic")]
+        public bool? EditIssuersInAutomatic { get; set; }
 
-        [Required]
+        [Length(Constants.Models.OAuthUpParty.IssuersMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [JsonProperty(PropertyName = "issuers")]
+        public List<string> Issuers { get; set; }
+
         [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }

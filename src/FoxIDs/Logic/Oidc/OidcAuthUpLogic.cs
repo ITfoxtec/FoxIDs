@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
 
                 var claims = isImplicitFlow switch
                 {
-                    true => await ValidateTokens(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken),
+                    true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
 
@@ -257,7 +257,7 @@ namespace FoxIDs.Logic
         private async Task<List<Claim>> HandleAuthorizationCodeResponseAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string code)
         {
             var tokenResponse = await TokenRequestAsync(party.Client, code, sequenceData);
-            return await ValidateTokens(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken);
+            return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken);
         }
 
         private async Task<TokenResponse> TokenRequestAsync(OidcUpClient client, string code, OidcUpSequenceData sequenceData)
@@ -319,15 +319,15 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> ValidateTokens(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
+        private async Task<List<Claim>> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
         {
-            var claims = await ValidateIdToken(party, sequenceData, idToken);
+            var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken);
             if (!accessToken.IsNullOrWhiteSpace())
             {
                 if (!party.Client.UseIdTokenClaims)
                 {
                     // If access token exists, use access token claims instead of ID token claims.
-                    claims = await ValidateAccessToken(party, sequenceData, accessToken);
+                    claims = ReadAccessToken(party, accessToken);
                 }
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
@@ -339,20 +339,30 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            return claims;
+            return await Task.FromResult(claims);
         }
 
 
-        private async Task<List<Claim>> ValidateIdToken(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken)
+        private async Task<List<Claim>> ValidateIdTokenAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
         {
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(idToken, party.Issuer, party.Keys, sequenceData.ClientId));
+                (var claimsPrincipal, _) = JwtHandler.ValidateToken(idToken, party.Issuer, party.Keys, sequenceData.ClientId);
 
-                var nonce = claimsPrincipal.Claims.Where(c => c.Type == JwtClaimTypes.Nonce).Select(c => c.Value).SingleOrDefault();
+                var nonce = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
                 {
                     throw new OAuthRequestException($"{party.Name}|Id token nonce do not match.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                }
+
+                if (!accessToken.IsNullOrEmpty())
+                {
+                    var atHash = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.AtHash);
+                    string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                    if (atHash != await accessToken.LeftMostBase64urlEncodedHash(algorithm))
+                    {
+                        throw new OAuthRequestException($"{party.Name}|Access Token hash value in ID token do not the access token.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                    }
                 }
 
                 return claimsPrincipal.Claims.ToList();
@@ -367,12 +377,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> ValidateAccessToken(OidcUpParty party, OidcUpSequenceData sequenceData, string accessToken)
+        private List<Claim> ReadAccessToken(OidcUpParty party, string accessToken)
         {
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, party.Issuer, party.Keys, sequenceData.ClientId, validateAudience: false));
-                return claimsPrincipal.Claims.ToList();
+                var jwtToken = JwtHandler.ReadToken(accessToken);
+                return jwtToken.Claims.ToList();
             }
             catch (Exception ex)
             {

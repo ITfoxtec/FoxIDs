@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
 
                 var claims = isImplicitFlow switch
                 {
-                    true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken),
+                    true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
 
@@ -257,7 +257,7 @@ namespace FoxIDs.Logic
         private async Task<List<Claim>> HandleAuthorizationCodeResponseAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string code)
         {
             var tokenResponse = await TokenRequestAsync(party.Client, code, sequenceData);
-            return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken);
+            return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken, false);
         }
 
         private async Task<TokenResponse> TokenRequestAsync(OidcUpClient client, string code, OidcUpSequenceData sequenceData)
@@ -319,15 +319,15 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
+        private async Task<List<Claim>> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
-            var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken);
+            var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
             if (!accessToken.IsNullOrWhiteSpace())
             {
                 if (!party.Client.UseIdTokenClaims)
                 {
                     // If access token exists, use access token claims instead of ID token claims.
-                    claims = ReadAccessToken(party, accessToken);
+                    claims = ValidateAccessToken(party, sequenceData, accessToken);
                 }
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
@@ -343,7 +343,7 @@ namespace FoxIDs.Logic
         }
 
 
-        private async Task<List<Claim>> ValidateIdTokenAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken)
+        private async Task<List<Claim>> ValidateIdTokenAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             try
             {
@@ -355,7 +355,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"{party.Name}|Id token nonce do not match.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                if (!accessToken.IsNullOrEmpty())
+                if (authorizationEndpoint && !accessToken.IsNullOrEmpty())
                 {
                     var atHash = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.AtHash);
                     string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
@@ -377,12 +377,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private List<Claim> ReadAccessToken(OidcUpParty party, string accessToken)
+        private List<Claim> ValidateAccessToken(OidcUpParty party, OidcUpSequenceData sequenceData, string accessToken)
         {
             try
             {
-                var jwtToken = JwtHandler.ReadToken(accessToken);
-                return jwtToken.Claims.ToList();
+                (var claimsPrincipal, _) = JwtHandler.ValidateToken(accessToken, party.Issuer, party.Keys, sequenceData.ClientId, validateAudience: false);
+                return claimsPrincipal.Claims.ToList();
             }
             catch (Exception ex)
             {

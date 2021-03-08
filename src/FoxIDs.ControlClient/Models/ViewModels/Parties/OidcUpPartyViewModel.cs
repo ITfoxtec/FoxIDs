@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Models.Api;
+using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -23,10 +24,14 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Authority { get; set; }
 
         [Display(Name = "Edit issuer")]
-        public bool? EditIssuerInAutomatic { get; set; }
+        public bool? EditIssuersInAutomatic { get; set; }
+
+        [Length(Constants.Models.OAuthUpParty.IssuersMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [Display(Name = "Issuers")]
+        public List<string> Issuers { get; set; }
 
         [Display(Name = "Issuer")]
-        public string Issuer { get; set; }
+        public string FirstIssuer { get { return Issuers.FirstOrDefault(); } set {} }
 
         [Display(Name = "Key IDs")]
         public List<string> KeyIds { get; set; } = new List<string>();

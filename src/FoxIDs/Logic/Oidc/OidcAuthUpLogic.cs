@@ -347,7 +347,14 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var claimsPrincipal, _) = JwtHandler.ValidateToken(idToken, party.Issuer, party.Keys, sequenceData.ClientId);
+                var jwtToken = JwtHandler.ReadToken(idToken);
+                var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
+                if (string.IsNullOrEmpty(issuer))
+                {
+                    throw new OAuthRequestException($"{party.Name}|Id token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                }
+
+                (var claimsPrincipal, _) = JwtHandler.ValidateToken(idToken, issuer, party.Keys, sequenceData.ClientId);
 
                 var nonce = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
@@ -361,7 +368,7 @@ namespace FoxIDs.Logic
                     string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
                     if (atHash != await accessToken.LeftMostBase64urlEncodedHash(algorithm))
                     {
-                        throw new OAuthRequestException($"{party.Name}|Access Token hash value in ID token do not the access token.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                        throw new OAuthRequestException($"{party.Name}|Access Token hash claim in ID token do not match the access token.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                     }
                 }
 
@@ -381,8 +388,20 @@ namespace FoxIDs.Logic
         {
             try
             {
-                (var claimsPrincipal, _) = JwtHandler.ValidateToken(accessToken, party.Issuer, party.Keys, sequenceData.ClientId, validateAudience: false);
+                var jwtToken = JwtHandler.ReadToken(accessToken);
+                var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
+                if (string.IsNullOrEmpty(issuer))
+                {
+                    throw new OAuthRequestException($"{party.Name}|Access token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                }
+
+
+                (var claimsPrincipal, _) = JwtHandler.ValidateToken(accessToken, issuer, party.Keys, sequenceData.ClientId, validateAudience: false);
                 return claimsPrincipal.Claims.ToList();
+            }
+            catch (OAuthRequestException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

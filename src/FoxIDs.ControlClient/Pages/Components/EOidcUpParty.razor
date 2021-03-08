@@ -48,21 +48,21 @@
 
         @if (UpParty.ShowAdvanced)
         {
-            <FInputToggleN @bind-Value="oidcUpParty.Form.Model.EditIssuerInAutomatic" For="@(() => oidcUpParty.Form.Model.EditIssuerInAutomatic)" TextType="e.d" />
+            <FInputToggleN @bind-Value="oidcUpParty.Form.Model.EditIssuersInAutomatic" For="@(() => oidcUpParty.Form.Model.EditIssuersInAutomatic)" TextType="e.d" />
         }
 
-        @if (oidcUpParty.Form.Model.EditIssuerInAutomatic == true)
+        @if (oidcUpParty.Form.Model.EditIssuersInAutomatic == true)
         {
             @if (UpParty.ShowAdvanced)
             {
-                <FInputText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
+                <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Issuers" For="@(() => oidcUpParty.Form.Model.Issuers)" />
             }
         }
         else
         {
             @if (UpParty.ShowAdvanced && !oidcUpParty.CreateMode)
             {
-                <FFieldText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
+                <FFieldText @bind-Value="oidcUpParty.Form.Model.FirstIssuer" For="@(() => oidcUpParty.Form.Model.FirstIssuer)" />
             }
         }
 

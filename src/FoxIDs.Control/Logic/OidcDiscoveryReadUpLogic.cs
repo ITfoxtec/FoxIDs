@@ -4,6 +4,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -30,9 +31,9 @@ namespace FoxIDs.Logic
                     (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(mp.Authority);
 
                     mp.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                    if (!(mp.EditIssuerInAutomatic == true && !mp.Issuer.IsNullOrWhiteSpace()))
+                    if (mp.EditIssuersInAutomatic != true || string.IsNullOrWhiteSpace(mp.Issuers?.FirstOrDefault()))
                     {
-                        mp.Issuer = oidcDiscovery.Issuer;
+                        mp.Issuers = new List<string> { oidcDiscovery.Issuer };
                     }
                     mp.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
                     mp.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
@@ -47,14 +48,14 @@ namespace FoxIDs.Logic
                         mp.UpdateState = PartyUpdateStates.Automatic;
                     }
 
-                    if(mp.EditIssuerInAutomatic == false)
+                    if(mp.EditIssuersInAutomatic == false)
                     {
-                        mp.EditIssuerInAutomatic = null;
+                        mp.EditIssuersInAutomatic = null;
                     }
                 }
                 else
                 {
-                    mp.EditIssuerInAutomatic = null;
+                    mp.EditIssuersInAutomatic = null;
                 }
             }
             catch (Exception ex)

@@ -6,6 +6,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -69,7 +70,7 @@ namespace FoxIDs.Logic
                     (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(party.Authority);
 
                     party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                    party.Issuer = oidcDiscovery.Issuer;
+                    party.Issuers = new List<string> { oidcDiscovery.Issuer };
                     party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
                     party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
                     if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())

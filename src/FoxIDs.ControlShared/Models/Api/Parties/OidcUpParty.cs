@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -20,12 +21,12 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
         public string Authority { get; set; }
 
-        public bool? EditIssuerInAutomatic { get; set; }
+        public bool? EditIssuersInAutomatic { get; set; }
 
-        [MaxLength(Constants.Models.OAuthUpParty.IssuerLength)]
-        public string Issuer { get; set; }
+        [Length(Constants.Models.OAuthUpParty.IssuersApiMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        public List<string> Issuers { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
+        [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
         [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
@@ -53,10 +54,10 @@ namespace FoxIDs.Models.Api
             var results = new List<ValidationResult>();
             if (UpdateState == PartyUpdateStates.Manual)
             {
-                if (Issuer.IsNullOrEmpty())
+                if (Issuers?.Count(i => !string.IsNullOrWhiteSpace(i)) <= 0)
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(Issuer)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Issuer) }));
+                    results.Add(new ValidationResult($"Require at least one issuer in '{nameof(Issuers)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                        new[] { nameof(Issuers) }));
                 }
 
                 if (Keys?.Count <= 0)

@@ -45,9 +45,29 @@
         }
 
         <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
+
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputToggleN @bind-Value="oidcUpParty.Form.Model.EditIssuerInAutomatic" For="@(() => oidcUpParty.Form.Model.EditIssuerInAutomatic)" TextType="e.d" />
+        }
+
+        @if (oidcUpParty.Form.Model.EditIssuerInAutomatic == true)
+        {
+            @if (UpParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
+            }
+        }
+        else
+        {
+            @if (UpParty.ShowAdvanced && !oidcUpParty.CreateMode)
+            {
+                <FFieldText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
+            }
+        }
+
         @if (UpParty.ShowAdvanced && !oidcUpParty.CreateMode)
         {
-            <FFieldText @bind-Value="oidcUpParty.Form.Model.Issuer" For="@(() => oidcUpParty.Form.Model.Issuer)" />
             <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
         }
 

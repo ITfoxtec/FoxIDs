@@ -22,6 +22,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authority")]
         public string Authority { get; set; }
 
+        [Display(Name = "Edit issuer")]
+        public bool? EditIssuerInAutomatic { get; set; }
+
         [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 

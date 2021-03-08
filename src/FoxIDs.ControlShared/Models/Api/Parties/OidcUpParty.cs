@@ -20,6 +20,8 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
         public string Authority { get; set; }
 
+        public bool? EditIssuerInAutomatic { get; set; }
+
         [MaxLength(Constants.Models.OAuthUpParty.IssuerLength)]
         public string Issuer { get; set; }
 

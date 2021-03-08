@@ -30,6 +30,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authority")]
         public string Authority { get; set; }
 
+        [JsonProperty(PropertyName = "edit_issuer_in_automatic")]
+        public bool? EditIssuerInAutomatic { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]

@@ -1,6 +1,6 @@
 ﻿# Down-party OAuth 2.0 and OpenID Connect
 
-FoxIDs support OpenID Connect as down-party [OpenID Provider (OP)](openid-provider-op) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources]( oauth-20-resource).
+FoxIDs support OpenID Connect as down-party [OpenID Provider (OP)](#openid-provider-op) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](#oauth-20-resource).
 
 ## OpenID Provider (OP)
 An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as a down-party OpenID Provider (OP).

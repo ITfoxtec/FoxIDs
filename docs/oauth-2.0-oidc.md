@@ -2,14 +2,11 @@
 
 FoxIDs support OpenID Connect as both up-party and down-party. OAuth 2.0 is supported as down-party.
 
-FoxIDs [up-party Relying Party (RP / Client)](up-party-oidc) which trust a OpenID Provider (OP) using OpenID Connect.
+FoxIDs up-party [Relying Party (RP / Client)](up-party-oidc) which trust a OpenID Provider (OP) using OpenID Connect.
 
-Connecting: 
+How to connect [Azure AD](up-party-oidc-azure-ad) and [IdentityServer](up-party-oidc-identityserver) to up-party.
 
-- [Azure AD](up-party-oidc-azure-ad)
-- [IdentityServer](up-party-oidc-identityserver)
-
-FoxIDs [down-party OpenID Provider (OP)](down-party-oauth-2.0-oidc) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](down-party-oauth-2.0-oidc#oauth-20-resource).
+FoxIDs down-party [OpenID Provider (OP)](down-party-oauth-2.0-oidc) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](down-party-oauth-2.0-oidc#oauth-20-resource).
 
 FoxIDs support [down-party Client Credentials Grant](down-party-oauth-2.0-oidc#client-credentials-grant) acting as an OAuth 2.0 resource owner
 

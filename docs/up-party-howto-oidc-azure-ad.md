@@ -8,7 +8,7 @@ It is possible to connect both a [single tenant](#configure-single-tenant) and [
 
 ## Configure single tenant
 
-Start by creating an OpenID Connect up-party client in FoxIDs Control
+Start by creating an OpenID Connect up-party client in [FoxIDs Control](control).
 
  1. Add the name
  2. Select show advanced settings
@@ -18,7 +18,7 @@ Start by creating an OpenID Connect up-party client in FoxIDs Control
 
 It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
-Then go to the Azure Portal and create the Azure AD App
+Then go to the Azure Portal and create the Azure AD App.
 
  1. Add the name
  2. Select single tenant
@@ -30,29 +30,30 @@ Then go to the Azure Portal and create the Azure AD App
  8. Go to the Certificates & secrets tab and click New client secret and add the secret
  9. Copy the client secret value.
 
-Go back to the FoxIDs up-party client in FoxIDs Control
+Go back to the FoxIDs up-party client in [FoxIDs Control](control).
 
  1. Add the authority, which is `https://login.microsoftonline.com/{Azure AD tenant ID}/v2.0`
  2. Add the profile and email scopes (possible other or more scopes)
  3. Add the Azure AD client ID as a custom SP client ID
  4. Add the Azure AD client secret value as the client secret
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr
+ 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token 
  7. Click create.
 
 That’s it, you are done. 
 
 > The new up-party can now be selected as a allowed up-party in a down-party.
+> The down-party can read the claims from the up-party. Add the access_token claim to include the Azure AD access token as a claim in the issued access token.
 
 ## Configure multitenant
 
 The multitenant configuration differs slightly form the single tenant configuration.
 
-The Azure AD Portal
+The Azure AD Portal.
 
  1. During the App creation select multitenant
 
-The FoxIDs up-party client in FoxIDs Control
+The FoxIDs up-party client in [FoxIDs Control](control).
 
  1. Add the authority `https://login.microsoftonline.com/common/v2.0`
  2. Select edit issuer
@@ -62,18 +63,14 @@ The FoxIDs up-party client in FoxIDs Control
 
 If you want to read claims from the access token you need to add one more Azure AD App for a resource (API). Where the first Azure AD App is for a client.
 
-In the Azure Portal
+In the Azure Portal.
 
 1. Create the resource Azure AD App 
 2. Expose a scope from the resource app and grant the client app the resource app scope.
 
-Then go to FoxIDs Control
+Then go to [FoxIDs Control](control).
 
 1. Add the resource app scope as a scope in the FoxIDs up-party client. 
 2. Read claims from access token by not selecting to use claims from ID token
 
 By during this the access token is issued by the same OP (IdP) and is thereby accepted.
-
-
-
-

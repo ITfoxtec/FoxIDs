@@ -128,7 +128,10 @@
                 @if (samlUpParty.ShowAdvanced)
                 {
                     <FInputText @bind-Value="samlUpParty.Form.Model.SpIssuer" For="@(() => samlUpParty.Form.Model.SpIssuer)" />
-                    <FInputTextList @bind-ValueList="samlUpParty.Form.Model.Claims" For="@(() => samlUpParty.Form.Model.Claims)" />
+                }
+                <FInputTextList @bind-ValueList="samlUpParty.Form.Model.Claims" For="@(() => samlUpParty.Form.Model.Claims)" />
+                @if (samlUpParty.ShowAdvanced)
+                {
                     <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">
                         <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
                         <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>

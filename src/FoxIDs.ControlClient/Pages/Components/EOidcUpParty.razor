@@ -137,7 +137,10 @@
                             <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
                         }
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
-                        <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" />
+                    }
+                    <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" />
+                    @if (UpParty.ShowAdvanced)
+                    {
                         <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseMode" For="@(() => oidcUpParty.Form.Model.Client.ResponseMode)">
                             <option value="@IdentityConstants.ResponseModes.FormPost">form_post</option>
                             <option value="@IdentityConstants.ResponseModes.Query">query</option>

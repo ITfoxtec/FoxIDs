@@ -77,6 +77,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-track-setting.png = docs\images\configure-track-setting.png
 		docs\images\configure-track.png = docs\images\configure-track.png
 		docs\images\howto-oidc-azuread-readredirect.png = docs\images\howto-oidc-azuread-readredirect.png
+		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\oauth_oidc.svg = docs\images\oauth_oidc.svg
 		docs\images\oauth_oidc.vsdx = docs\images\oauth_oidc.vsdx

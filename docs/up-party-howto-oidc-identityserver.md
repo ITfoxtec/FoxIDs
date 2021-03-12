@@ -1,6 +1,6 @@
-﻿# Up-party connecting IdentityServer with OpenID Connect
+﻿# Up-party - connect IdentityServer with OpenID Connect
 
-FoxIDs can be connecting to a IdentityServer with OpenID Connect and thereby authenticating by trust to a IdentityServer client.
+FoxIDs can be connected to a IdentityServer with OpenID Connect and thereby authenticating by trust to a IdentityServer client.
 
 
 

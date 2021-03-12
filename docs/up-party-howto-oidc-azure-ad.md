@@ -1,6 +1,6 @@
-﻿# Up-party connecting Azure AD with OpenID Connect
+﻿# Up-party - connect Azure AD with OpenID Connect
 
-FoxIDs can be connecting to Azure AD with OpenID Connect and thereby authenticating by trust to an Azure AD App. 
+FoxIDs can be connected to Azure AD with OpenID Connect and thereby authenticating by trust to an Azure AD App. 
 
 It is possible to connect both a single tenant and multitenant Azure AD App as an up-party on FoxIDs using OpenID Connect.
 

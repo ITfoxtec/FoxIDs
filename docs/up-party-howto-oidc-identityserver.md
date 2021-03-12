@@ -8,7 +8,7 @@ It is possible to connect a [IdentityServer client](#configure-identityserver-cl
 
 ## Configure IdentityServer client
 
-Start by creating an OpenID Connect up-party client in [FoxIDs Control](control).
+1) Start by creating an OpenID Connect up-party client in [FoxIDs Control](control)
 
  1. Add the name
 
@@ -16,9 +16,7 @@ Start by creating an OpenID Connect up-party client in [FoxIDs Control](control)
 
 It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
-Then go to the IdentityServer configuration and create the client.
-
-*The following is from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+2) Then go to the IdentityServer configuration and create the client
 
     yield return new Client
     {
@@ -44,7 +42,9 @@ Then go to the IdentityServer configuration and create the client.
         }
     };
 
-Go back to the FoxIDs up-party client in [FoxIDs Control](control).
+*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+
+3) Go back to the FoxIDs up-party client in [FoxIDs Control](control)
 
  1. Add the IdentityServer's authority
  2. Add the profile and email scopes (possible other or more scopes)
@@ -63,9 +63,7 @@ That’s it, you are done.
 
 If you want to read claims from the access token you need to add an API resource and API scope. And let the client use the new scope.
 
-In the IdentityServer configuration.
-
-*The following is from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+1) In the IdentityServer configuration
 
     public IEnumerable<ApiResource> GetApiResources()
     {
@@ -85,7 +83,9 @@ In the IdentityServer configuration.
         yield return new ApiScope("some.api.access", "Some API scope");
     }
 
-Then go to [FoxIDs Control](control).
+*Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
+
+2) Then go to [FoxIDs Control](control)
 
 1. Add the API scope `some.api.access` as a scope in the FoxIDs up-party client. 
 2. Read claims from access token by not selecting to use claims from ID token

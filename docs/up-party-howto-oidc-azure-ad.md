@@ -8,7 +8,7 @@ It is possible to connect both a [single tenant](#configure-single-tenant) and [
 
 ## Configure single tenant
 
-1) Start by creating an OpenID Connect up-party client in [FoxIDs Control](control)
+**1 - Start by creating an OpenID Connect up-party client in [FoxIDs Control](control)**
 
  1. Add the name
  2. Select show advanced settings
@@ -18,7 +18,7 @@ It is possible to connect both a [single tenant](#configure-single-tenant) and [
 
 It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
-2) Then go to the Azure Portal and create the Azure AD App
+**2 - Then go to the Azure Portal and create the Azure AD App**
 
  1. Add the name
  2. Select single tenant
@@ -30,7 +30,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  8. Go to the Certificates & secrets tab and click New client secret and add the secret
  9. Copy the client secret value.
 
-3) Go back to the FoxIDs up-party client in [FoxIDs Control](control)
+**3 - Go back to the FoxIDs up-party client in [FoxIDs Control](control)**
 
  1. Add the authority, which is `https://login.microsoftonline.com/{Azure AD tenant ID}/v2.0`
  2. Add the profile and email scopes (possible other or more scopes)
@@ -49,11 +49,11 @@ That’s it, you are done.
 
 The multitenant configuration differs slightly form the single tenant configuration.
 
-1) The Azure AD Portal
+**1 - The Azure AD Portal**
 
  1. During the App creation select multitenant
 
-2) The FoxIDs up-party client in [FoxIDs Control](control)
+**2 - The FoxIDs up-party client in [FoxIDs Control](control)**
 
  1. Add the authority `https://login.microsoftonline.com/common/v2.0`
  2. Select edit issuer
@@ -63,12 +63,12 @@ The multitenant configuration differs slightly form the single tenant configurat
 
 If you want to read claims from the access token you need to add one more Azure AD App for a resource (API). Where the first Azure AD App is for a client.
 
-1) In the Azure Portal
+**1 - In the Azure Portal**
 
 1. Create the resource Azure AD App 
 2. Expose a scope from the resource app and grant the client app the resource app scope.
 
-2) Then go to [FoxIDs Control](control)
+**2 - Then go to [FoxIDs Control](control)**
 
 1. Add the resource app scope as a scope in the FoxIDs up-party client. 
 2. Read claims from access token by not selecting to use claims from ID token

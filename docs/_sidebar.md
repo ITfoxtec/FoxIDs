@@ -3,7 +3,7 @@
 - [Description](index.md)
 - [Getting Started](getting-started.md)
 - [Login](login.md)
-- [OAuth 2.0 and OIDC](oauth-2.0-oidc.md)
+- [OAuth 2.0 - OpenID&nbsp;Connect](oauth-2.0-oidc.md)
 - [SAML 2.0](saml-2.0.md)
 - [FoxIDs Control](control.md)
 - [Deployment](deployment.md)

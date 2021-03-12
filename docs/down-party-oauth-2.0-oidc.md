@@ -1,11 +1,14 @@
-﻿# Down-party OAuth 2.0 and OpenID Connect
+﻿# Down-party - OAuth 2.0 and OpenID Connect
 
-FoxIDs support OpenID Connect as down-party [OpenID Provider (OP)](#openid-provider-op) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](#oauth-20-resource).
+FoxIDs down-party [OpenID Provider (OP)](#openid-provider-op) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](#oauth-20-resource).
+
+FoxIDs support [down-party Client Credentials Grant](#client-credentials-grant) acting as an OAuth 2.0 resource owner.
+
 
 ## OpenID Provider (OP)
-An application (RP) can be connected to FoxIDs with OpenID Connect where FoxIDs acts as a down-party OpenID Provider (OP).
+A relying party (RP) application can be connected to a FoxIDs down-party OpenID Provider (OP) with OpenID Connect.
 
-FoxIDs support login and front channel logout (end session). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout, if the ID token is included in the logout request.
+FoxIDs support login and front channel logout (end session). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout. FoxIDs can show a logout confirmation dialog depending on rather an ID token is included in the logout request or not.
 
 Default both id token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
 Access tokens can be issued with a list of audiences and thereby be issued to multiple API`s defined in FoxIDs as OAuth 2.0 resources.  

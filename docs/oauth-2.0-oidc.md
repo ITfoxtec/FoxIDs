@@ -8,7 +8,7 @@ FoxIDs support OpenID Connect as both up-party and down-party. OAuth 2.0 is only
 
 ## Up-party
 
-FoxIDs up-party [Relying Party (RP / Client)](up-party-oidc) which trust a external OpenID Provider (OP) using OpenID Connect.
+FoxIDs up-party [Relying Party (RP) / Client](up-party-oidc) which trust an external OpenID Provider (OP) using OpenID Connect.
 
 How to guides:
 
@@ -19,7 +19,7 @@ How to guides:
 
 FoxIDs down-party [OpenID Provider (OP)](down-party-oauth-2.0-oidc) authenticating the client using OpenID Connect. Besides receiving a ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](down-party-oauth-2.0-oidc#oauth-20-resource).
 
-FoxIDs support [down-party Client Credentials Grant](down-party-oauth-2.0-oidc#client-credentials-grant) acting as an OAuth 2.0 resource owner
+FoxIDs support [down-party Client Credentials Grant](down-party-oauth-2.0-oidc#client-credentials-grant) acting as an OAuth 2.0 resource owner.
 
 ## Client secrets
 It is important to store client secrets securely, therefor client secrets are hashed with the same [hash algorithm](login.md#password-hash) as passwords. If the secret is more than 20 character (which it should bee) the first 3 characters is saved as test and is shown for each secret as information in FoxIDs Control. 

@@ -4,7 +4,7 @@ FoxIDs can be connected to a IdentityServer with OpenID Connect and thereby auth
 
 It is possible to connect a [IdentityServer client](#configure-identityserver-client) and read claims from the ID token or select a more complex case where claims is [read form the access token](#read-claims-from-access-token).
 
-> The [sample](samples) `IdentityServerOidcOpSample` is configured in the FoxIDs test-corp track with the up-party name `identityserver_oidc_op_sample`. You can test login (username `alice` and password `alice`) by running the AspNetCoreOidcAuthorizationCodeSample [sample](samples) application and clicking `OIDC IdentityServer Log in`. the `IdentityServerOidcOpSample` sample is configured with Implicit Flow to enable local testing, please use Authorization Code Flow in production.
+> The [sample](samples) `IdentityServerOidcOpSample` is configured in the FoxIDs test-corp track with the up-party name `identityserver_oidc_op_sample`. You can test login (username `alice` and password `alice`) by running the `IdentityServerOidcOpSample` and the `AspNetCoreOidcAuthorizationCodeSample` [samples](samples) and clicking `OIDC IdentityServer Log in` in the `AspNetCoreOidcAuthorizationCodeSample` application. The `IdentityServerOidcOpSample` sample is configured with Implicit Flow to enable local testing, please use Authorization Code Flow in production.
 
 ## Configure IdentityServer client
 
@@ -16,7 +16,7 @@ It is possible to connect a [IdentityServer client](#configure-identityserver-cl
 
 It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
-**1 - Then go to the IdentityServer configuration and create the client**
+**2 - Then go to the IdentityServer configuration and create the client**
 
     yield return new Client
     {
@@ -31,8 +31,8 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
         AlwaysIncludeUserClaimsInIdToken = true,
 
-        RedirectUris = { clientSettings.RedirectUrl },
-        PostLogoutRedirectUris = { clientSettings.PostLogoutRedirectUrl },                
+        RedirectUris = { "https://foxids.com/test-corp/-/(some_identityserver_app)/oauth/authorizationresponse" },
+        PostLogoutRedirectUris = { "https://foxids.com/test-corp/-/(some_identityserver_app)/oauth/endsessionresponse" },                
 
         AllowedScopes = new List<string>
         {
@@ -44,20 +44,20 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
 *Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
 
-**1 - Go back to the FoxIDs up-party client in [FoxIDs Control](control)**
+**3 - Go back to the FoxIDs up-party client in [FoxIDs Control](control)**
 
  1. Add the IdentityServer's authority
  2. Add the profile and email scopes (possible other or more scopes)
- 3. Add the IdentityServer client's client ID as a custom SP client ID
- 4. Add the IdentityServer client's client secret value as the client secret
+ 3. Add the IdentityServer client's client secret value as the client secret
+ 4. Select show advanced settings
  5. Select use claims from ID token
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
- 7. Click create.
+ 7. Click create
 
 That’s it, you are done. 
 
-> The new up-party can now be selected as a allowed up-party in a down-party. 
-> The down-party can read the claims from the up-party. Add the access_token claim to include the IdentityServer access token as a claim in the issued access token.
+> The new up-party can now be selected as an allowed up-party in a down-party. 
+> The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the IdentityServer access token as a claim in the issued access token.
 
 ## Read claims from access token
 
@@ -83,10 +83,12 @@ If you want to read claims from the access token you need to add an API resource
         yield return new ApiScope("some.api.access", "Some API scope");
     }
 
+You can remove the `AlwaysIncludeUserClaimsInIdToken = true` from the client.
+
 *Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
 
-**1 - Then go to [FoxIDs Control](control)**
+**2 - Then go to [FoxIDs Control](control)**
 
-1. Add the API scope `some.api.access` as a scope in the FoxIDs up-party client. 
+1. Add the API scope `some.api.access` as a scope in the FoxIDs up-party client
 2. Read claims from access token by not selecting to use claims from ID token
 

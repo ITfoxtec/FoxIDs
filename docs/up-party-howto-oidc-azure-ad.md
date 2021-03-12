@@ -12,7 +12,7 @@ Start creating an OpenID Connect up-party in FoxIDs
  2. Select show advanced settings
  3. Select tildes URL binding pattern
 
-![Read the redirect URLs](images/howto-oidc-azuread-readredirect.peg)
+![Read the redirect URLs](images/howto-oidc-azuread-readredirect.png)
 
 It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 

@@ -12,8 +12,8 @@ FoxIDs up-party [Relying Party (RP / Client)](up-party-oidc) which trust a exter
 
 How to guides:
 
-- Connect [Azure AD](up-party-oidc-azure-ad) 
-- Connect [IdentityServer](up-party-oidc-identityserver)
+- Connect [Azure AD](up-party-howto-oidc-azure-ad) 
+- Connect [IdentityServer](up-party-howto-oidc-identityserver)
 
 ## Down-party
 

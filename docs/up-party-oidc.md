@@ -4,13 +4,13 @@ FoxIDs up-party [Relying Party (RP) / Client](#relying-party-rp-cient) which tru
 
 How to guides:
 
-- Connect [Azure AD](up-party-howto-oidc-azure-ad) 
-- Connect [IdentityServer](up-party-howto-oidc-identityserver)
+- Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
+- Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 
 ## Relying Party (RP) / Client
 An external OpenID Provider (OP) can be connected to a FoxIDs up-party Relying Party (RP) / Client with OpenID Connect.
 
-The following screen shot show all the FoxIDs up-party configuration available in [FoxIDs Control](control).
+The following screen shot show all the FoxIDs up-party configuration available in [FoxIDs Control](control.md).
 
 ![Configure OpenID Connect](images/configure-oidc-up-party.png)
 

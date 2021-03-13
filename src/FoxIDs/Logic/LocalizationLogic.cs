@@ -47,27 +47,30 @@ namespace FoxIDs.Logic
             var id = resourceEnvelope.Names.Where(n => n.Name == name).Select(n => n.Id).FirstOrDefault();
             if(id > 0)
             {
-                if (RouteBinding?.Resources?.Count > 0)
+                var value = GetValue(resourceEnvelope, id, culture);
+                if (!value.IsNullOrEmpty())
                 {
-                    var value = GetValue(RouteBinding.Resources, id, culture);
-                    if (!value.IsNullOrEmpty())
-                    {
-                        return value;
-                    }
-                }
-                else
-                {
-                    var value = GetValue(resourceEnvelope.Resources, id, culture);
-                    if (!value.IsNullOrEmpty())
-                    {
-                        return value;
-                    }
+                    return value;
                 }
 
-                return GetValue(resourceEnvelope.Resources, id, "en");
+                return GetValue(resourceEnvelope, id, "en");
             }
 
             return null;
+        }
+
+        private string GetValue(ResourceEnvelope resourceEnvelope, int id, string culture)
+        {
+            if (RouteBinding?.Resources?.Count > 0)
+            {
+                var value = GetValue(RouteBinding.Resources, id, culture);
+                if (!value.IsNullOrEmpty())
+                {
+                    return value;
+                }
+            }
+
+            return GetValue(resourceEnvelope.Resources, id, culture);
         }
 
         private string GetValue(List<ResourceItem> resources, int id, string culture)

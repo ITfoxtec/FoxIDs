@@ -10,15 +10,15 @@ How to guides:
 ## Relying Party (RP) / Client
 An external OpenID Provider (OP) can be connected to a FoxIDs up-party Relying Party (RP) / Client with OpenID Connect.
 
-The following screen shot show all the FoxIDs up-party configuration available in [FoxIDs Control](control.md).
+The following screen shot show all the FoxIDs up-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
 ![Configure OpenID Connect](images/configure-oidc-up-party.png)
 
 The external OP is configured as an authority. FoxIDs automatically calls the OpenID Configuration endpoint (`.well-known/openid-configuration`) on save. You can see the added configuration by opening the up-party again.
 
-FoxIDs automatically read future updates. If the endpoint become unavailable for a period of time FoxIDs will stop the automated update process. It can be restarted by updating the up-party in FoxIDs Control Client or API.
+FoxIDs automatically read future updates. If the endpoint become unavailable for a period of time FoxIDs will stop the automated update process. It can be restarted by updating the up-party in [FoxIDs Control Client](control.md#foxids-control-client) or [API](control.md#foxids-control-api).
 
-> FoxIDs Control Client only support creating automatic updated up-parties using the OpenID Configuration endpoint. FoxIDs Control API support both automatic and manually updated up-parties. In manual you can specify all values and the OpenID Configuration endpoint (`.well-known/openid-configuration`) will not be called.
+> FoxIDs Control Client only support creating automatic updated up-parties using the OpenID Configuration endpoint. [FoxIDs Control API](control.md#foxids-control-api) support both automatic and manually updated up-parties. In manual you can specify all values and the OpenID Configuration endpoint (`.well-known/openid-configuration`) will not be called.
 
 Default the up-party is configured for Authorization Code Flow, to use PKCE and read claim from the external access token. These settings can be changed.
 

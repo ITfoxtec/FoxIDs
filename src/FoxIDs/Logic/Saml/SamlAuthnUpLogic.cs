@@ -91,13 +91,14 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, Sending SAML Authn request.", triggerEvent: true);
 
+            formActionLogic.AddFormActionAllowAll();
+
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await Task.FromResult((binding as Saml2RedirectBinding).ToActionResult());
             }
-            if (binding is Saml2Binding<Saml2PostBinding>)
+            else if (binding is Saml2Binding<Saml2PostBinding>)
             {
-                await formActionLogic.AddFormActionByUrlAsync(samlConfig.SingleSignOnDestination.OriginalString);
                 return await Task.FromResult((binding as Saml2PostBinding).ToActionResult());
             }
             else

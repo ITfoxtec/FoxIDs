@@ -119,13 +119,14 @@ namespace FoxIDs.Logic
 
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(logoutRequest.SessionId);
 
+            formActionLogic.AddFormActionAllowAll();
+
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await Task.FromResult((binding as Saml2RedirectBinding).ToActionResult());
             }
-            if (binding is Saml2Binding<Saml2PostBinding>)
+            else if (binding is Saml2Binding<Saml2PostBinding>)
             {
-                await formActionLogic.AddFormActionByUrlAsync(samlConfig.SingleLogoutDestination.OriginalString);
                 return await Task.FromResult((binding as Saml2PostBinding).ToActionResult());
             }
             else

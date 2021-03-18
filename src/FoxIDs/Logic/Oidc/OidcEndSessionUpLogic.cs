@@ -23,13 +23,15 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
 
-        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
@@ -59,11 +61,12 @@ namespace FoxIDs.Logic
             };
             logger.ScopeTrace($"End session request '{endSessionRequest.ToJsonIndented()}'.");
 
-            var requestDictionary = endSessionRequest.ToDictionary();
-            var endSessionRequestUrl = QueryHelpers.AddQueryString(party.Client.EndSessionUrl, requestDictionary);
-            logger.ScopeTrace($"End session request URL '{endSessionRequestUrl}'.");
+            formActionLogic.AddFormActionAllowAll();
+
+            var nameValueCollection = endSessionRequest.ToDictionary();
+            logger.ScopeTrace($"End session request URL '{party.Client.EndSessionUrl}'.");
             logger.ScopeTrace("Up, Sending OIDC End session request.", triggerEvent: true);
-            return new RedirectResult(endSessionRequestUrl);
+            return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl);
         }
 
         private void ValidatePartyLogoutSupport(OidcUpParty party)

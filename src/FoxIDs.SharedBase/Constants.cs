@@ -370,6 +370,7 @@ namespace FoxIDs
         public static class FormAction
         {
             public const string Domains = "form_action_domains";
+            public const string DomainsAllowAll = "form_action_domains_allow_all";            
         }
 
         public static class Endpoints

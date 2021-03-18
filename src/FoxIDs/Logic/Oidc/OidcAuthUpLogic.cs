@@ -29,16 +29,18 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly FormActionLogic formActionLogic;
         private readonly OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.formActionLogic = formActionLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.httpClientFactory = httpClientFactory;
@@ -113,7 +115,7 @@ namespace FoxIDs.Logic
             //TODO add AcrValues
             //authenticationRequest.AcrValues = "urn:federation:authentication:windows";
 
-            var requestDictionary = authenticationRequest.ToDictionary();
+            var nameValueCollection = authenticationRequest.ToDictionary();
 
             if (party.Client.EnablePkce)
             {
@@ -124,13 +126,14 @@ namespace FoxIDs.Logic
                 };
                 logger.ScopeTrace($"CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.");
 
-                requestDictionary = requestDictionary.AddToDictionary(codeChallengeRequest);
+                nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 
-            var authenticationRequestUrl = QueryHelpers.AddQueryString(party.Client.AuthorizeUrl, requestDictionary);
-            logger.ScopeTrace($"Authentication request URL '{authenticationRequestUrl}'.");
+            formActionLogic.AddFormActionAllowAll();
+
+            logger.ScopeTrace($"Authentication request URL '{party.Client.AuthorizeUrl}'.");
             logger.ScopeTrace("Up, Sending OIDC Authentication request.", triggerEvent: true);
-            return new RedirectResult(authenticationRequestUrl);
+            return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl);            
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)

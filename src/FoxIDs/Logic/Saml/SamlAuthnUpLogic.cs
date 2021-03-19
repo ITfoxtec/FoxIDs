@@ -95,11 +95,11 @@ namespace FoxIDs.Logic
 
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
-                return await Task.FromResult((binding as Saml2RedirectBinding).ToActionResult());
+                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
             }
             else if (binding is Saml2Binding<Saml2PostBinding>)
             {
-                return await Task.FromResult((binding as Saml2PostBinding).ToActionResult());
+                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
             }
             else
             {

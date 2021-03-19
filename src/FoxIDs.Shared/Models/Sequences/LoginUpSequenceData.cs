@@ -1,15 +1,9 @@
-﻿using FoxIDs.Models.Logic;
-using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
 
 namespace FoxIDs.Models.Sequences
 {
     public class LoginUpSequenceData : UpSequenceData
     {
-        [Required]
-        [JsonProperty(PropertyName = "up")]
-        public string UpPartyId { get; set; }
-
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
 
@@ -18,15 +12,6 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "lr")]
         public bool PostLogoutRedirect { get; set; }
-
-        [JsonProperty(PropertyName = "la")]
-        public LoginAction LoginAction { get; set; }
-
-        [JsonProperty(PropertyName = "i")]
-        public string UserId { get; set; }
-
-        [JsonProperty(PropertyName = "ma")]
-        public int? MaxAge { get; set; }
 
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }

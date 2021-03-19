@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Logic;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
@@ -12,5 +13,18 @@ namespace FoxIDs.Models.Sequences
         [Required]
         [JsonProperty(PropertyName = "dt")]
         public PartyTypes DownPartyType { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "up")]
+        public string UpPartyId { get; set; }
+
+        [JsonProperty(PropertyName = "la")]
+        public LoginAction LoginAction { get; set; }
+
+        [JsonProperty(PropertyName = "i")]
+        public string UserId { get; set; }
+
+        [JsonProperty(PropertyName = "ma")]
+        public int? MaxAge { get; set; }
     }
 }

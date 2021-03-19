@@ -10,7 +10,6 @@ using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -48,15 +47,37 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
-            logger.ScopeTrace("Up, OIDC Authentication request.");
+            logger.ScopeTrace("Up, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
-            await loginRequest.ValidateObjectAsync();
+            var oidcUpSequenceData = new OidcUpSequenceData
+            {
+                DownPartyId = loginRequest.DownParty.Id,
+                DownPartyType = loginRequest.DownParty.Type,
+                UpPartyId = partyId,
+                LoginAction = loginRequest.LoginAction,
+                UserId = loginRequest.UserId,
+                MaxAge = loginRequest.MaxAge
+            };
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/oauthupjump/authenticationrequest/_{SequenceString}");
+        }
+
+        public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, OIDC Authentication request.");
+            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            logger.SetScopeProperty("upPartyId", oidcUpSequenceData.UpPartyId);
+
+            var party = await tenantRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
 
             await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
@@ -64,14 +85,9 @@ namespace FoxIDs.Logic
             var nonce = RandomGenerator.GenerateNonce();
             var loginCallBackUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, party.Name.ToUpPartyBinding(party.PartyBindingPattern), Constants.Routes.OAuthController, Constants.Endpoints.AuthorizationResponse);
 
-            var oidcUpSequenceData = new OidcUpSequenceData
-            {
-                DownPartyId = loginRequest.DownParty.Id,
-                DownPartyType = loginRequest.DownParty.Type,
-                ClientId = !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId,
-                RedirectUri = loginCallBackUrl,
-                Nonce = nonce                
-            };
+            oidcUpSequenceData.ClientId = !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId;
+            oidcUpSequenceData.RedirectUri = loginCallBackUrl;
+            oidcUpSequenceData.Nonce = nonce;  
             if (party.Client.EnablePkce)
             {
                 var codeVerifier = RandomGenerator.Generate(64);
@@ -90,7 +106,7 @@ namespace FoxIDs.Logic
             };
             logger.ScopeTrace($"Authentication request '{authenticationRequest.ToJsonIndented()}'.");
 
-            switch (loginRequest.LoginAction)
+            switch (oidcUpSequenceData.LoginAction)
             {
                 case LoginAction.ReadSession:
                     authenticationRequest.Prompt = IdentityConstants.AuthorizationServerPrompt.None;
@@ -102,14 +118,14 @@ namespace FoxIDs.Logic
                     break;
             }
 
-            if (loginRequest.MaxAge.HasValue)
+            if (oidcUpSequenceData.MaxAge.HasValue)
             {
-                authenticationRequest.MaxAge = loginRequest.MaxAge;
+                authenticationRequest.MaxAge = oidcUpSequenceData.MaxAge;
             }
 
-            if (!loginRequest.UserId.IsNullOrEmpty())
+            if (!oidcUpSequenceData.UserId.IsNullOrEmpty())
             {
-                authenticationRequest.LoginHint = loginRequest.UserId;
+                authenticationRequest.LoginHint = oidcUpSequenceData.UserId;
             }
 
             authenticationRequest.Scope = new[] { IdentityConstants.DefaultOidcScopes.OpenId}.ConcatOnce(party.Client.Scopes).ToSpaceList();

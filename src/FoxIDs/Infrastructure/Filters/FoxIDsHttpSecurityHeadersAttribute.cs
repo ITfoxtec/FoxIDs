@@ -71,7 +71,7 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"form-action 'self' {allowFormActionOnDomains.Select(d => $"https://{d}").ToSpaceList()};";
+                    return $"form-action 'self' {allowFormActionOnDomains.Select(d => d == "*" ? d : $"https://{d}").ToSpaceList()};";
                 }
             }
 

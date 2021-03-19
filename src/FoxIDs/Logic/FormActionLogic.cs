@@ -56,21 +56,35 @@ namespace FoxIDs.Logic
             }
         }
 
+        public void AddFormActionAllowAll()
+        {
+            HttpContext.Items[Constants.FormAction.DomainsAllowAll] = true;
+        }
+
         public async Task<List<string>> GetFormActionDomainsAsync()
         {
             var formActionSequenceData = await sequenceLogic.GetSequenceDataAsync<FormActionSequenceData>(remove: false, allowNull: true);
             if (formActionSequenceData?.Domains?.Count() > 0)
             {
-                return formActionSequenceData.Domains;
+                return AddAllowAll(formActionSequenceData.Domains);
             }
             else if (HttpContext.Items.ContainsKey(Constants.FormAction.Domains))
             {
-                return HttpContext.Items[Constants.FormAction.Domains] as List<string>;
+                return AddAllowAll(HttpContext.Items[Constants.FormAction.Domains] as List<string>);
             }
             else
             {
                 return null;
             }
+        }
+
+        private List<string> AddAllowAll(List<string> domains)
+        {
+            if (HttpContext.Items.ContainsKey(Constants.FormAction.DomainsAllowAll))
+            {
+                domains.Add("*");
+            }
+            return domains;
         }
 
         public async Task RemoveFormActionSequenceDataAsync()

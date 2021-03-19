@@ -3,7 +3,7 @@ FoxIDs is configured with FoxIDs Control which consists of [FoxIDs Control Clien
 
 FoxIDs Control API contain all the configuration functionality. Therefore, it is possible to automate the configuration by integrating with FoxIDs Control API.
 
-## FoxIDs Control Client 
+## FoxIDs Control Client
 FoxIDs Control Client is a Blazor WebAssembly (WASM) app.
 
 ### Tenant and master track

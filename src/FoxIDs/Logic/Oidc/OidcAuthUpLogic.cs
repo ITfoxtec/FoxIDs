@@ -53,6 +53,8 @@ namespace FoxIDs.Logic
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
+            await loginRequest.ValidateObjectAsync();
+
             var oidcUpSequenceData = new OidcUpSequenceData
             {
                 DownPartyId = loginRequest.DownParty.Id,
@@ -64,7 +66,7 @@ namespace FoxIDs.Logic
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/oauthupjump/authenticationrequest/_{SequenceString}");
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.OAuthUpJumpController}/{Constants.Endpoints.UpJump.AuthenticationRequest}/_{SequenceString}");
         }
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)

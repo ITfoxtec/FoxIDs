@@ -7,11 +7,9 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using UrlCombineLib;
 
@@ -35,25 +33,38 @@ namespace FoxIDs.Logic
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.formActionLogic = formActionLogic;
         }
-
-        public async Task<IActionResult> EndSessionRequestAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
+        public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
-            logger.ScopeTrace("Up, OIDC End session request.");
+            logger.ScopeTrace("Up, OIDC End session request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await logoutRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
-            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
-            ValidatePartyLogoutSupport(party);
-
             await sequenceLogic.SaveSequenceDataAsync(new OidcUpSequenceData
             {
                 DownPartyId = logoutRequest.DownParty.Id,
                 DownPartyType = logoutRequest.DownParty.Type,
-                SessionId = logoutRequest.SessionId,
+                UpPartyId = partyId,
+                SessionId = logoutRequest.SessionId
             });
+
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.OAuthUpJumpController}/{Constants.Endpoints.UpJump.EndSessionRequest}/_{SequenceString}");
+        }
+
+        public async Task<IActionResult> EndSessionRequestAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, OIDC End session request.");
+            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            logger.SetScopeProperty("upPartyId", oidcUpSequenceData.UpPartyId);
+
+            var party = await tenantRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
+            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
+            ValidatePartyLogoutSupport(party);
 
             var postLogoutRedirectUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, party.Name.ToUpPartyBinding(party.PartyBindingPattern), Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse);
             var endSessionRequest = new EndSessionRequest

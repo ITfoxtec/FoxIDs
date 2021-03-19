@@ -23,41 +23,41 @@ namespace FoxIDs.Repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<TMessage> GetAsync(bool delete = false, bool tryGet = false, string upPartyName = null)
+        public Task<TMessage> GetAsync(bool delete = false, bool tryGet = false)
         {
-            return Task.FromResult(Get(delete, tryGet, upPartyName));
+            return Task.FromResult(Get(delete, tryGet));
         }
 
-        public Task SaveAsync(TMessage message, DateTimeOffset? persistentCookieExpires, string upPartyName = null)
+        public Task SaveAsync(TMessage message, DateTimeOffset? persistentCookieExpires)
         {
-            Save(message, persistentCookieExpires, upPartyName);
+            Save(message, persistentCookieExpires);
             return Task.FromResult(0);
         }
 
-        public Task DeleteAsync(bool tryDelete = false, string upParty = null)
+        public Task DeleteAsync(bool tryDelete = false)
         {
-            Delete(tryDelete, upParty);
+            Delete(tryDelete);
             return Task.FromResult(0);
         }
 
-        private TMessage Get(bool delete, bool tryGet, string upPartyName)
+        private TMessage Get(bool delete, bool tryGet = false)
         {
             if (tryGet && RouteBindingDoNotExists()) return null;
-            CheckRouteBinding(upPartyName);
+            CheckRouteBinding();
 
             logger.ScopeTrace($"Get Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}', Delete '{delete}'.");
 
-            var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName(upPartyName)];
+            var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
             {
                 try
                 {
-                    var envelope = CookieEnvelope<TMessage>.FromCookieString(CreateProtector(upPartyName), cookie);
+                    var envelope = CookieEnvelope<TMessage>.FromCookieString(CreateProtector(), cookie);
 
                     if (delete)
                     {
                         logger.ScopeTrace($"Delete Cookie, '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
-                        DeleteByName(CookieName(upPartyName), upPartyName);
+                        DeleteByName(CookieName());
                     }
 
                     return envelope.Message;
@@ -65,7 +65,7 @@ namespace FoxIDs.Repository
                 catch (CryptographicException ex)
                 {
                     logger.Warning(ex, $"Unable to Unprotect Cookie '{typeof(TMessage).Name}', deleting cookie.");
-                    DeleteByName(CookieName(upPartyName), upPartyName);
+                    DeleteByName(CookieName());
                     return null;
                 }
                 catch (Exception ex)
@@ -79,9 +79,9 @@ namespace FoxIDs.Repository
             }
         }
 
-        private void Save(TMessage message, DateTimeOffset? persistentCookieExpires, string upPartyName)
+        private void Save(TMessage message, DateTimeOffset? persistentCookieExpires)
         {
-            CheckRouteBinding(upPartyName);
+            CheckRouteBinding();
             if (message == null) new ArgumentNullException(nameof(message));
 
             logger.ScopeTrace($"Save Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
@@ -92,38 +92,38 @@ namespace FoxIDs.Repository
                 HttpOnly = true,
                 SameSite = SameSiteMode.Lax,
                 IsEssential = true,
-                Path = GetPath(upPartyName),
+                Path = GetPath(),
             };
-            if(persistentCookieExpires != null)
+            if (persistentCookieExpires != null)
             {
                 cookieOptions.Expires = persistentCookieExpires;
             }
 
             httpContextAccessor.HttpContext.Response.Cookies.Append(
-                CookieName(upPartyName),
+                CookieName(),
                 new CookieEnvelope<TMessage>
                 {
                     Message = message,
-                }.ToCookieString(CreateProtector(upPartyName)),
+                }.ToCookieString(CreateProtector()),
                 cookieOptions);
         }
 
-        private void Delete(bool tryDelete, string upPartyName)
+        private void Delete(bool tryDelete = false)
         {
             if (tryDelete && RouteBindingDoNotExists()) return;
-            CheckRouteBinding(upPartyName);
+            CheckRouteBinding();
 
             logger.ScopeTrace($"Delete Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
 
-            DeleteByName(CookieName(upPartyName), upPartyName);
+            DeleteByName(CookieName());
         }
 
-        private void CheckRouteBinding(string upPartyName)
+        private void CheckRouteBinding()
         {
             if (RouteBinding == null) new ArgumentNullException(nameof(RouteBinding));
             if (RouteBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TenantName), RouteBinding.GetTypeName());
             if (RouteBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TrackName), RouteBinding.GetTypeName());
-            if (upPartyName.IsNullOrEmpty() && RouteBinding.UpParty == null) throw new ArgumentNullException(nameof(RouteBinding.UpParty), RouteBinding.GetTypeName());
+            if (RouteBinding.UpParty == null) throw new ArgumentNullException(nameof(RouteBinding.UpParty), RouteBinding.GetTypeName());
         }
 
         private bool RouteBindingDoNotExists()
@@ -136,7 +136,7 @@ namespace FoxIDs.Repository
             return false;
         }
 
-        private void DeleteByName(string name, string upPartyName)
+        private void DeleteByName(string name)
         {
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 name,
@@ -148,23 +148,23 @@ namespace FoxIDs.Repository
                     HttpOnly = true,
                     SameSite = SameSiteMode.Lax,
                     IsEssential = true,
-                    Path = GetPath(upPartyName),
+                    Path = GetPath(),
                 });
         }
 
-        private string GetPath(string upPartyName)
+        private string GetPath()
         {
-            return $"/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({upPartyName ?? RouteBinding.UpParty.Name})";
+            return $"/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({RouteBinding.UpParty.Name})";
         }
 
-        private IDataProtector CreateProtector(string upPartyName)
+        private IDataProtector CreateProtector()
         {
-            return dataProtection.CreateProtector(new[] { RouteBinding.TenantName, RouteBinding.TrackName, upPartyName ?? RouteBinding.UpParty.Name, typeof(TMessage).Name });
+            return dataProtection.CreateProtector(new[] { RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.UpParty.Name, typeof(TMessage).Name });
         }
 
-        private string CookieName(string upPartyName)
+        private string CookieName()
         {
-            return $"{RouteBinding.TenantName}-{RouteBinding.TrackName}-up-{upPartyName ?? RouteBinding.UpParty.Name}-{typeof(TMessage).Name.ToLower()}";
+            return $"{RouteBinding.TenantName}-{RouteBinding.TrackName}-up-{RouteBinding.UpParty.Name}-{typeof(TMessage).Name.ToLower()}";
         }
 
         private RouteBinding RouteBinding => httpContextAccessor.HttpContext.GetRouteBinding();

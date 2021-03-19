@@ -23,9 +23,15 @@ namespace FoxIDs
             public const string OidcDiscoveryAction = "OpenidConfiguration";
             public const string OidcDiscoveryKeyAction = "Keys";
             public const string OidcDiscoveryController = "OpenIDConfig";
+            
+            public const string LoginController = "login";
+            public const string ActionController = "action";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";
+
+            public const string OAuthUpJumpController = "oauthupjump";
+            public const string SamlUpJumpController = "samlupjump";
 
             public const string RouteControllerKey = "controller";
             public const string RouteActionKey = "action";
@@ -381,6 +387,12 @@ namespace FoxIDs
 
         public static class Endpoints
         {
+            public const string Logout = "logout";
+            public const string CancelLogin = "cancellogin";
+            public const string CreateUser = "createuser";
+            public const string ChangePassword = "changepassword";
+            public const string ForgotPassword = "forgotpassword";
+
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
             public const string EndSessionResponse = "endsessionresponse";
@@ -393,6 +405,13 @@ namespace FoxIDs
             public const string SamlAcs = "acs";
             public const string SamlSingleLogout = "singlelogout";
             public const string SamlLoggedOut = "loggedout";
+
+            public static class UpJump
+            {
+                public const string AuthenticationRequest = "authenticationrequest";
+                public const string EndSessionRequest = "endsessionrequest";
+
+            }
         }
 
         public static class OAuth

@@ -91,7 +91,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
+                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {

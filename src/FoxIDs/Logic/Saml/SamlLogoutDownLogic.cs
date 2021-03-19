@@ -98,7 +98,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutAsync(RouteBinding.ToUpParties.First(), GetSamlLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetSamlLogoutRequest(party, saml2LogoutRequest));
 
                     default:
                         throw new NotSupportedException($"Party type '{type}' not supported.");

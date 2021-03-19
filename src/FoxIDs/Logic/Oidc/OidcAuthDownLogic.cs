@@ -97,7 +97,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(RouteBinding.ToUpParties.First(), await GetLoginRequestAsync(party, authenticationRequest));
 
                     default:
                         throw new NotSupportedException($"Party type '{type}' not supported.");

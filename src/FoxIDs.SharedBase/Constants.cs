@@ -411,6 +411,8 @@ namespace FoxIDs
                 public const string AuthenticationRequest = "authenticationrequest";
                 public const string EndSessionRequest = "endsessionrequest";
 
+                public const string AuthnRequest = "authnrequest";
+                public const string LogoutRequest = "logoutrequest";                
             }
         }
 

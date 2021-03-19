@@ -22,15 +22,17 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
+        private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly FormActionLogic formActionLogic;
 
-        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
             this.formActionLogic = formActionLogic;
         }
         public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
@@ -46,7 +48,9 @@ namespace FoxIDs.Logic
                 DownPartyId = logoutRequest.DownParty.Id,
                 DownPartyType = logoutRequest.DownParty.Type,
                 UpPartyId = partyId,
-                SessionId = logoutRequest.SessionId
+                SessionId = logoutRequest.SessionId,
+                RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
+                PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
             });
 
             return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.OAuthUpJumpController}/{Constants.Endpoints.UpJump.EndSessionRequest}/_{SequenceString}");
@@ -76,8 +80,21 @@ namespace FoxIDs.Logic
             if(session != null)
             {
                 endSessionRequest.IdTokenHint = session.IdToken;
+                try
+                {
+                    if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                    {
+                        throw new Exception("Requested session ID do not match up-party session ID.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                }
             }
             logger.ScopeTrace($"End session request '{endSessionRequest.ToJsonIndented()}'.");
+
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             formActionLogic.AddFormActionAllowAll();
 

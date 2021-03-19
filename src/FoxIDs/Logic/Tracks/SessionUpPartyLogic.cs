@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateSessionAsync<T>(T upParty, string userId, List<Claim> claims, List<string> authMethods, string sessionId, string externalSessionId, string idToken) where T : UpParty, ISessionUpParty
+        public async Task CreateOrUpdateSessionAsync<T>(T upParty, string userId, List<Claim> claims, List<string> authMethods, string sessionId, string externalSessionId, string idToken = null) where T : UpParty, ISessionUpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 

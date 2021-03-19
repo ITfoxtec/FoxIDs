@@ -29,17 +29,19 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.formActionLogic = formActionLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
@@ -177,16 +179,29 @@ namespace FoxIDs.Logic
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
 
+
                 logger.ScopeTrace("Up, Successful OIDC Authentication response.", triggerEvent: true);
 
-                if (sessionResponse?.SessionState.IsNullOrEmpty() == false)
+                var externalSessionId = sessionResponse?.SessionState.IsNullOrEmpty() switch
                 {
-                    claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
-                    claims.AddClaim(JwtClaimTypes.SessionId, sessionResponse.SessionState);
-                }
+                    false => sessionResponse.SessionState,
+                    true => claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
+                };
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
+                var sessionId = RandomGenerator.Generate(24);
+                claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+
+                //var authTimeValue = claims.FindFirstValue(c => c.Type == JwtClaimTypes.AuthTime);
+                //var authTime = !authTimeValue.IsNullOrEmpty() ? Convert.ToInt64(authTimeValue) : DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
+
+                if(party.SessionLifetime.HasValue &&
+
+                DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(
+
+                await sessionUpPartyLogic.CreateSessionAsync<OidcUpParty>(party, validClaims, authenticationResponse.ExpiresIn, sessionId, externalSessionId);
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }

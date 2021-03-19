@@ -50,6 +50,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "last_updated")]
         public long LastUpdated { get; set; }
 
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        [JsonProperty(PropertyName = "session_lifetime")]
+        public int? SessionLifetime { get; set; }
+
         private TClient client;
         /// <summary>
         /// OAuth 2.0 up client.

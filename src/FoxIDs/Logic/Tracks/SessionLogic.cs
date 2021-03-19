@@ -60,6 +60,8 @@ namespace FoxIDs.Logic
                 return true;
             }
 
+            await sessionCookieRepository.DeleteAsync();
+            logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
             return false;
         }
 
@@ -118,6 +120,9 @@ namespace FoxIDs.Logic
                     logger.SetScopeProperty("sessionId", session.SessionId);
                     return session;
                 }
+
+                await sessionCookieRepository.DeleteAsync();
+                logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
             }
             else
             {

@@ -72,5 +72,8 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         public string LogoutUrl { get; set; }
+
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        public int? SessionLifetime { get; set; } = 36000;
     }
 }

@@ -173,12 +173,11 @@ namespace FoxIDs.Logic
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
                 ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow);
 
-                var claims = isImplicitFlow switch
+                (var claims, var idToken) = isImplicitFlow switch
                 {
                     true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
-
 
                 logger.ScopeTrace("Up, Successful OIDC Authentication response.", triggerEvent: true);
 
@@ -187,21 +186,18 @@ namespace FoxIDs.Logic
                     false => sessionResponse.SessionState,
                     true => claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
                 };
+                externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionStatedMax, nameof(externalSessionId), "Session state or claim");
+
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
                 var sessionId = RandomGenerator.Generate(24);
                 claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
 
-                //var authTimeValue = claims.FindFirstValue(c => c.Type == JwtClaimTypes.AuthTime);
-                //var authTime = !authTimeValue.IsNullOrEmpty() ? Convert.ToInt64(authTimeValue) : DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
-                if(party.SessionLifetime.HasValue &&
-
-                DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(
-
-                await sessionUpPartyLogic.CreateSessionAsync<OidcUpParty>(party, validClaims, authenticationResponse.ExpiresIn, sessionId, externalSessionId);
+                var userId = validClaims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+                var authMethods = validClaims.FindFirstValue(c => c.Type == JwtClaimTypes.Amr).ToSpaceList();
+                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, userId, validClaims, authMethods?.ToList(), sessionId, externalSessionId, idToken);
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }
@@ -272,7 +268,7 @@ namespace FoxIDs.Logic
             return claims;
         }
 
-        private async Task<List<Claim>> HandleAuthorizationCodeResponseAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string code)
+        private async Task<(List<Claim>, string)> HandleAuthorizationCodeResponseAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string code)
         {
             var tokenResponse = await TokenRequestAsync(party.Client, code, sequenceData);
             return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken, false);
@@ -337,7 +333,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        private async Task<(List<Claim>, string)> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
             if (!accessToken.IsNullOrWhiteSpace())
@@ -357,7 +353,7 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            return await Task.FromResult(claims);
+            return await Task.FromResult((claims, idToken));
         }
 
 

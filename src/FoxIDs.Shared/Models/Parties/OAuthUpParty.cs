@@ -14,7 +14,7 @@ namespace FoxIDs.Models
     /// <summary>
     /// OAuth 2.0 up-party.
     /// </summary>
-    public class OAuthUpParty<TClient> : UpParty, IValidatableObject where TClient : OAuthUpClient
+    public class OAuthUpParty<TClient> : UpParty, ISessionUpParty, IValidatableObject where TClient : OAuthUpClient
     {
         public OAuthUpParty()
         {
@@ -52,7 +52,7 @@ namespace FoxIDs.Models
 
         [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
         [JsonProperty(PropertyName = "session_lifetime")]
-        public int? SessionLifetime { get; set; }
+        public int? SessionLifetime { get; set; } = 36000;
 
         private TClient client;
         /// <summary>

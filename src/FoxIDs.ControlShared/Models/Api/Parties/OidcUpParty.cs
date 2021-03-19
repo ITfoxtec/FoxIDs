@@ -32,6 +32,9 @@ namespace FoxIDs.Models.Api
         [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
         public int? OidcDiscoveryUpdateRate { get; set; }
 
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        public int? SessionLifetime { get; set; } = 36000;
+
         /// <summary>
         /// OIDC up client.
         /// </summary>

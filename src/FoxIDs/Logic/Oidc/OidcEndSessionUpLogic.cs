@@ -23,14 +23,16 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly FormActionLogic formActionLogic;
 
-        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.formActionLogic = formActionLogic;
         }
 
@@ -59,6 +61,11 @@ namespace FoxIDs.Logic
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = SequenceString
             };
+            var session = await sessionUpPartyLogic.GetSessionAsync(party);
+            if(session != null)
+            {
+                endSessionRequest.IdTokenHint = session.IdToken;
+            }
             logger.ScopeTrace($"End session request '{endSessionRequest.ToJsonIndented()}'.");
 
             formActionLogic.AddFormActionAllowAll();
@@ -92,6 +99,8 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.ValidateSequenceAsync(endSessionResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+
+            await sessionUpPartyLogic.DeleteSessionAsync(party);
 
             logger.ScopeTrace("Up, Successful OIDC End session response.", triggerEvent: true);
 

@@ -1,15 +1,10 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Security.Claims;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Cookies
 {
-    public class SessionUpParty
+    public class SessionUpParty : CookieMessage
     {
-        [JsonProperty(PropertyName = "ct")]
-        public long CreateTime { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
         [JsonProperty(PropertyName = "lu")]
         public long LastUpdated { get; set; }
 
@@ -26,6 +21,9 @@ namespace FoxIDs.Models
         public string UserId { get; set; }
 
         [JsonProperty(PropertyName = "c")]
-        public List<Claim> Claims { get; set; }
+        public List<ClaimAndValues> Claims { get; set; }
+
+        [JsonProperty(PropertyName = "it")]
+        public string IdToken { get; set; }
     }
 }

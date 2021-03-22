@@ -7,6 +7,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -25,17 +26,17 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateSessionAsync<T>(T upParty, List<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty
+        public async Task CreateOrUpdateSessionAsync<T>(T upParty, IEnumerable<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 
             var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
-            var authMethods = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Amr).ToSpaceList();
 
             Action<SessionUpPartyCookie> updateAction = (session) =>
             {
+                var authMethods = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Amr).ToSpaceList();
                 session.UserId = userId;
-                session.Claims = claims.ToClaimAndValues();
+                session.Claims = claims.Where(c => c.Type != JwtClaimTypes.Subject && c.Type != JwtClaimTypes.Amr).ToClaimAndValues();
                 session.AuthMethods = authMethods;
                 session.SessionId = sessionId;
                 session.ExternalSessionId = externalSessionId;

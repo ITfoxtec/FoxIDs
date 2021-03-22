@@ -12,27 +12,27 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class SessionUpPartyLogic : LogicBase
+    public class SessionUpPartyLogic : SessionBaseLogic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly SingleCookieRepository<SessionUpParty> sessionCookieRepository;
+        private readonly SingleCookieRepository<SessionUpPartyCookie> sessionCookieRepository;
 
-        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SingleCookieRepository<SessionUpParty> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SingleCookieRepository<SessionUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateSessionAsync<T>(T upParty, List<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty, ISessionUpParty
+        public async Task CreateOrUpdateSessionAsync<T>(T upParty, List<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 
             var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
             var authMethods = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Amr).ToSpaceList();
 
-            Action<SessionUpParty> updateAction = (session) =>
+            Action<SessionUpPartyCookie> updateAction = (session) =>
             {
                 session.UserId = userId;
                 session.Claims = claims.ToClaimAndValues();
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                 }
 
                 logger.ScopeTrace($"Create session up-party for User id '{userId}', Session id '{sessionId}', External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
-                session = new SessionUpParty();
+                session = new SessionUpPartyCookie();
                 updateAction(session);
                 session.LastUpdated = session.CreateTime;
 
@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<SessionUpParty> GetSessionAsync<T>(T upParty) where T : UpParty, ISessionUpParty
+        public async Task<SessionUpPartyCookie> GetSessionAsync<T>(T upParty) where T : UpParty
         {
             logger.ScopeTrace($"Get session up-party, Route '{RouteBinding.Route}'.");
 
@@ -114,7 +114,7 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        public async Task<SessionUpParty> DeleteSessionAsync<T>(T upParty) where T : UpParty, ISessionUpParty
+        public async Task<SessionUpPartyCookie> DeleteSessionAsync()
         {
             logger.ScopeTrace($"Delete session up-party, Route '{RouteBinding.Route}'.");
             var session = await sessionCookieRepository.GetAsync();
@@ -128,26 +128,6 @@ namespace FoxIDs.Logic
             {
                 logger.ScopeTrace("Session up-party do not exists.");
                 return null;
-            }
-        }
-
-        private bool SessionEnabled(ISessionUpParty sessionUpParty)
-        {
-            return sessionUpParty.SessionLifetime > 0;
-        }
-
-        private bool SessionValid(ISessionUpParty sessionUpParty, SessionUpParty session)
-        {
-            var lastUpdated = DateTimeOffset.FromUnixTimeSeconds(session.LastUpdated);
-            var now = DateTimeOffset.UtcNow;
-
-            if (lastUpdated.AddSeconds(sessionUpParty.SessionLifetime.Value) >= now)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
     }

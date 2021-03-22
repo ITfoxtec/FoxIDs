@@ -218,7 +218,7 @@ namespace FoxIDs.Logic
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
                 logger.ScopeTrace("Up, Successful SAML Logout response.", triggerEvent: true);
 
-                await sessionUpPartyLogic.DeleteSessionAsync(party);
+                await sessionUpPartyLogic.DeleteSessionAsync();
 
                 return await LogoutResponseDownAsync(sequenceData, saml2LogoutResponse.Status, saml2LogoutResponse.SessionIndex);
             }

@@ -254,8 +254,12 @@ namespace FoxIDs
 
             public static class UpParty
             {
-                public const int SessionLifetimeMin = 0; // 0 minutes 
-                public const int SessionLifetimeMax = 172800; // 48 hours
+                public const int SessionLifetimeMin = 0; // 0 minutes
+                public const int SessionLifetimeMax = 43200; // 12 hours
+                public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
+                public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
+                public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
+                public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
             }
 
             public static class OAuthUpParty
@@ -295,12 +299,6 @@ namespace FoxIDs
 
             public static class LoginUpParty
             {
-                public const int SessionLifetimeMin = 0; // 0 minutes 
-                public const int SessionLifetimeMax = 43200; // 12 hours
-                public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
-                public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
-                public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
-                public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
                 public const int CssStyleLength = 4000;
             }
 

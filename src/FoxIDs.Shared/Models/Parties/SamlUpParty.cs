@@ -8,7 +8,7 @@ using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Models
 {
-    public class SamlUpParty : UpParty, ISessionUpParty
+    public class SamlUpParty : UpParty
     {
         public SamlUpParty()
         {
@@ -70,9 +70,5 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [JsonProperty(PropertyName = "logout_url")]
         public string LogoutUrl { get; set; }
-
-        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
-        [JsonProperty(PropertyName = "session_lifetime")]
-        public int? SessionLifetime { get; set; } = 36000;
     }
 }

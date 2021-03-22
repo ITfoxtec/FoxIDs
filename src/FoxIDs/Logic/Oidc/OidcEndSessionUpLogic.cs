@@ -128,7 +128,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.ValidateSequenceAsync(endSessionResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
 
-            await sessionUpPartyLogic.DeleteSessionAsync(party);
+            await sessionUpPartyLogic.DeleteSessionAsync();
 
             logger.ScopeTrace("Up, Successful OIDC End session response.", triggerEvent: true);
 

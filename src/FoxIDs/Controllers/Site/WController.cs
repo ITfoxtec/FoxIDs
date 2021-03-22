@@ -21,9 +21,9 @@ namespace FoxIDs.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly IStringLocalizer localizer;
         private readonly FoxIDsSettings settings;
-        private readonly SessionLogic sessionLogic;
+        private readonly SessionLoginUpPartyLogic sessionLogic;
 
-        public WController(IWebHostEnvironment environment, IStringLocalizer localizer, FoxIDsSettings settings, SessionLogic sessionLogic)
+        public WController(IWebHostEnvironment environment, IStringLocalizer localizer, FoxIDsSettings settings, SessionLoginUpPartyLogic sessionLogic)
         {
             this.environment = environment;
             this.localizer = localizer;

@@ -9,7 +9,7 @@ namespace FoxIDs.Models.Cookies
         public long LastUpdated { get; set; }
 
         [JsonProperty(PropertyName = "am")]
-        public List<string> AuthMethods { get; set; }
+        public IEnumerable<string> AuthMethods { get; set; }
 
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Cookies
         public string UserId { get; set; }
 
         [JsonProperty(PropertyName = "c")]
-        public List<ClaimAndValues> Claims { get; set; }
+        public IEnumerable<ClaimAndValues> Claims { get; set; }
 
         [JsonProperty(PropertyName = "it")]
         public string IdToken { get; set; }

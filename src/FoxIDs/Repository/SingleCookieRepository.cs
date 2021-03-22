@@ -164,7 +164,7 @@ namespace FoxIDs.Repository
 
         private string CookieName()
         {
-            return $"{RouteBinding.TenantName}-{RouteBinding.TrackName}-up-{RouteBinding.UpParty.Name}-{typeof(TMessage).Name.ToLower()}";
+            return typeof(TMessage).Name.ToLower();
         }
 
         private RouteBinding RouteBinding => httpContextAccessor.HttpContext.GetRouteBinding();

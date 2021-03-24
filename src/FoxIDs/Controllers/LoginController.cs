@@ -24,7 +24,7 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
-        private readonly SessionLogic sessionLogic;
+        private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
         private readonly LogoutUpLogic logoutUpLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -87,7 +87,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private bool ValidSession(LoginUpSequenceData sequenceData, SessionCookie session)
+        private bool ValidSession(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session)
         {
             if (session == null) return false;
 
@@ -189,7 +189,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user, SessionCookie session = null)
+        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var authMethods = new List<string>();
@@ -466,7 +466,7 @@ namespace FoxIDs.Controllers
         {
             sequenceData.Email = email;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return new RedirectResult($"changepassword/_{SequenceString}");
+            return new RedirectResult($"{Constants.Endpoints.ChangePassword}/_{SequenceString}");
         }
 
         public async Task<IActionResult> ChangePassword()

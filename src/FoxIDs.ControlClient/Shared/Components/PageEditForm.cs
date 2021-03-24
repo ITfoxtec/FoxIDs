@@ -58,7 +58,7 @@ namespace FoxIDs.Client.Shared.Components
 
         public void SetError(string error)
         {
-            Debug.WriteLine(error);
+            Console.WriteLine(error);
             this.error = error;
             StateHasChanged();
         }
@@ -71,7 +71,7 @@ namespace FoxIDs.Client.Shared.Components
 
         public void SetFieldError(string fieldname, string error)
         {
-            Debug.WriteLine(error);
+            Console.WriteLine(error);
             validationMessageStore.Add(EditContext.Field(fieldname), error);
             EditContext.NotifyValidationStateChanged();
         }
@@ -112,7 +112,7 @@ namespace FoxIDs.Client.Shared.Components
                 var validationMessages = EditContext.GetValidationMessages();
                 foreach(var message  in validationMessages)
                 {
-                    Debug.WriteLine(message);
+                    Console.WriteLine(message);
                 }
             }
         }

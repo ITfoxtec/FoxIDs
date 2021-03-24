@@ -12,22 +12,6 @@ namespace FoxIDs.Models
             Type = PartyTypes.Login;
         }
 
-        [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)] 
-        [JsonProperty(PropertyName = "session_lifetime")]
-        public int SessionLifetime { get; set; }
-
-        [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
-        [JsonProperty(PropertyName = "session_absolute_lifetime")]
-        public int SessionAbsoluteLifetime { get; set; }
-
-        [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
-        [JsonProperty(PropertyName = "persistent_session_absolute_lifetime")]
-        public int PersistentSessionAbsoluteLifetime { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "persistent_session_lifetime_unlimited")]
-        public bool? PersistentSessionLifetimeUnlimited { get; set; }
-
         [Required]
         [JsonProperty(PropertyName = "enable_cancel_login")]
         public bool EnableCancelLogin { get; set; }

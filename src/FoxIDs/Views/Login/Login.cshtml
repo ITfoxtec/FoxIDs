@@ -26,18 +26,18 @@
                 <input type="submit" value="@Localizer["Login"]" class="btn btn-primary" />
                 @if (Model.EnableCancelLogin)
                 {
-                    <a href="cancellogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                    <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
                 }
                 @if (Model.EnableResetPassword)
                 {
-                    <a href="../action/forgotpassword/_@Model.SequenceString" class="btn btn-link float-right forgot-password">@Localizer["Forgot your password?"]</a>
+                    <a href="../@Constants.Routes.ActionController/@Constants.Endpoints.ForgotPassword/_@Model.SequenceString" class="btn btn-link float-right forgot-password">@Localizer["Forgot your password?"]</a>
                 }
             </div>
             @if (Model.EnableCreateUser)
             {
                 <div class="form-group create-user-group">
                     @Localizer["Don't have an account?"]
-                    <a href="createuser/_@Model.SequenceString" class="link">@Localizer["Create User"]</a>
+                    <a href="@Constants.Endpoints.CreateUser/_@Model.SequenceString" class="link">@Localizer["Create User"]</a>
                 </div>
             }
         </form>

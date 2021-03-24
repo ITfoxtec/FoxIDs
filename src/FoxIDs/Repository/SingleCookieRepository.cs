@@ -23,12 +23,6 @@ namespace FoxIDs.Repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public Task ValidateAsync()
-        {
-            Get(false);
-            return Task.FromResult(0);
-        }
-
         public Task<TMessage> GetAsync(bool delete = false, bool tryGet = false)
         {
             return Task.FromResult(Get(delete, tryGet));
@@ -100,7 +94,7 @@ namespace FoxIDs.Repository
                 IsEssential = true,
                 Path = GetPath(),
             };
-            if(persistentCookieExpires != null)
+            if (persistentCookieExpires != null)
             {
                 cookieOptions.Expires = persistentCookieExpires;
             }
@@ -170,7 +164,7 @@ namespace FoxIDs.Repository
 
         private string CookieName()
         {
-            return $"{RouteBinding.TenantName}-{RouteBinding.TrackName}-up-{RouteBinding.UpParty.Name}-{typeof(TMessage).Name.ToLower()}";
+            return typeof(TMessage).Name.ToLower();
         }
 
         private RouteBinding RouteBinding => httpContextAccessor.HttpContext.GetRouteBinding();

@@ -17,31 +17,27 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Default 10 hours.
         /// </summary>
-        [Required]
-        [Range(Constants.Models.LoginUpParty.SessionLifetimeMin, Constants.Models.LoginUpParty.SessionLifetimeMax)]
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
         [Display(Name = "Session lifetime in seconds (active session if greater than 0)")]
         public int SessionLifetime { get; set; } = 36000;
 
         /// <summary>
         /// Default 24 hours.
         /// </summary>
-        [Required]
-        [Range(Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMin, Constants.Models.LoginUpParty.SessionAbsoluteLifetimeMax)]
+        [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
         [Display(Name = "Session absolute lifetime in seconds (active if greater than 0)")]
         public int SessionAbsoluteLifetime { get; set; } = 86400;
 
         /// <summary>
         /// Default 0 minutes.
         /// </summary>
-        [Required]
-        [Range(Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.LoginUpParty.PersistentAbsoluteSessionLifetimeMax)]
+        [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
         [Display(Name = "Persistent session absolute lifetime in seconds (active if greater than 0)")]
         public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
 
         /// <summary>
         /// Default false.
         /// </summary>
-        [Required]
         [Display(Name = "Persistent session lifetime unlimited")]
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 

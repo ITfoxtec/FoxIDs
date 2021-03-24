@@ -10,7 +10,6 @@ using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -29,32 +28,58 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.formActionLogic = formActionLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
-            logger.ScopeTrace("Up, OIDC Authentication request.");
+            logger.ScopeTrace("Up, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await loginRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+            var oidcUpSequenceData = new OidcUpSequenceData
+            {
+                DownPartyId = loginRequest.DownParty.Id,
+                DownPartyType = loginRequest.DownParty.Type,
+                UpPartyId = partyId,
+                LoginAction = loginRequest.LoginAction,
+                UserId = loginRequest.UserId,
+                MaxAge = loginRequest.MaxAge
+            };
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
+
+            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.OAuthUpJumpController}/{Constants.Endpoints.UpJump.AuthenticationRequest}/_{SequenceString}");
+        }
+
+        public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, OIDC Authentication request.");
+            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            logger.SetScopeProperty("upPartyId", oidcUpSequenceData.UpPartyId);
+
+            var party = await tenantRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
 
             await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
@@ -62,14 +87,9 @@ namespace FoxIDs.Logic
             var nonce = RandomGenerator.GenerateNonce();
             var loginCallBackUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, party.Name.ToUpPartyBinding(party.PartyBindingPattern), Constants.Routes.OAuthController, Constants.Endpoints.AuthorizationResponse);
 
-            var oidcUpSequenceData = new OidcUpSequenceData
-            {
-                DownPartyId = loginRequest.DownParty.Id,
-                DownPartyType = loginRequest.DownParty.Type,
-                ClientId = !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId,
-                RedirectUri = loginCallBackUrl,
-                Nonce = nonce                
-            };
+            oidcUpSequenceData.ClientId = !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId;
+            oidcUpSequenceData.RedirectUri = loginCallBackUrl;
+            oidcUpSequenceData.Nonce = nonce;  
             if (party.Client.EnablePkce)
             {
                 var codeVerifier = RandomGenerator.Generate(64);
@@ -88,7 +108,7 @@ namespace FoxIDs.Logic
             };
             logger.ScopeTrace($"Authentication request '{authenticationRequest.ToJsonIndented()}'.");
 
-            switch (loginRequest.LoginAction)
+            switch (oidcUpSequenceData.LoginAction)
             {
                 case LoginAction.ReadSession:
                     authenticationRequest.Prompt = IdentityConstants.AuthorizationServerPrompt.None;
@@ -100,14 +120,14 @@ namespace FoxIDs.Logic
                     break;
             }
 
-            if (loginRequest.MaxAge.HasValue)
+            if (oidcUpSequenceData.MaxAge.HasValue)
             {
-                authenticationRequest.MaxAge = loginRequest.MaxAge;
+                authenticationRequest.MaxAge = oidcUpSequenceData.MaxAge;
             }
 
-            if (!loginRequest.UserId.IsNullOrEmpty())
+            if (!oidcUpSequenceData.UserId.IsNullOrEmpty())
             {
-                authenticationRequest.LoginHint = loginRequest.UserId;
+                authenticationRequest.LoginHint = oidcUpSequenceData.UserId;
             }
 
             authenticationRequest.Scope = new[] { IdentityConstants.DefaultOidcScopes.OpenId}.ConcatOnce(party.Client.Scopes).ToSpaceList();
@@ -171,7 +191,7 @@ namespace FoxIDs.Logic
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
                 ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow);
 
-                var claims = isImplicitFlow switch
+                (var claims, var idToken) = isImplicitFlow switch
                 {
                     true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
@@ -179,14 +199,21 @@ namespace FoxIDs.Logic
 
                 logger.ScopeTrace("Up, Successful OIDC Authentication response.", triggerEvent: true);
 
-                if (sessionResponse?.SessionState.IsNullOrEmpty() == false)
+                var externalSessionId = sessionResponse?.SessionState.IsNullOrEmpty() switch
                 {
-                    claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
-                    claims.AddClaim(JwtClaimTypes.SessionId, sessionResponse.SessionState);
-                }
+                    false => sessionResponse.SessionState,
+                    true => claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
+                };
+                externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionStatedMax, nameof(externalSessionId), "Session state or claim");
+
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
+                var sessionId = RandomGenerator.Generate(24);
+                claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
+
+                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, validClaims, sessionId, externalSessionId, idToken);
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }
@@ -257,7 +284,7 @@ namespace FoxIDs.Logic
             return claims;
         }
 
-        private async Task<List<Claim>> HandleAuthorizationCodeResponseAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string code)
+        private async Task<(List<Claim>, string)> HandleAuthorizationCodeResponseAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string code)
         {
             var tokenResponse = await TokenRequestAsync(party.Client, code, sequenceData);
             return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken, false);
@@ -322,7 +349,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<List<Claim>> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        private async Task<(List<Claim>, string)> ValidateTokensAsync(OidcUpParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
             if (!accessToken.IsNullOrWhiteSpace())
@@ -342,7 +369,7 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            return await Task.FromResult(claims);
+            return await Task.FromResult((claims, idToken));
         }
 
 

@@ -39,10 +39,6 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 throw new NotSupportedException($"FoxIDs client route '{string.Join('/', route)}' not supported.");
             }
-        }
-
-        protected override string GetPartyNameAndbinding(string[] route) => null;
-
-        protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null) => new ValueTask<RouteBinding>(routeBinding);
+        }       
     }
 }

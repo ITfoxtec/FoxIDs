@@ -32,10 +32,6 @@ namespace FoxIDs.Infrastructure.Hosting
             this.tokenCredential = tokenCredential;
         }
 
-        protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;
-
-        protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
-
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {
             if (route.Length == 0)
@@ -64,6 +60,23 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
+        protected override bool AcceptUnknownParty(string path, string[] route)
+        {
+            if(route.Length > 2)
+            {
+                if (path.EndsWith(IdentityConstants.OidcDiscovery.Path, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+                else if (path.EndsWith(IdentityConstants.OidcDiscovery.Keys, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         protected override string GetPartyNameAndbinding(string[] route)
         {
             if (route.Length >= 3)
@@ -76,7 +89,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        protected override async ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null)
+        protected override async ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty)
         {
             routeBinding.PartyNameAndBinding = partyNameAndBinding;
             routeBinding.Key = await LoadTrackKeyAsync(requestServices, trackIdKey, track);
@@ -105,9 +118,9 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else if (partyNameBindingMatch.Groups["downparty"].Success)
                 {
-                    routeBinding.DownParty = await GetDownPartyAsync(tenantRepository, trackIdKey, partyNameBindingMatch.Groups["downparty"]);
+                    routeBinding.DownParty = await GetDownPartyAsync(tenantRepository, trackIdKey, partyNameBindingMatch.Groups["downparty"], acceptUnknownParty);
 
-                    if (routeBinding.DownParty.AllowUpParties?.Count() >= 1)
+                    if (routeBinding.DownParty?.AllowUpParties?.Count() >= 1)
                     {
                         if (partyNameBindingMatch.Groups["toupparty"].Success)
                         {
@@ -175,7 +188,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task<DownParty> GetDownPartyAsync(ITenantRepository tenantRepository, Track.IdKey trackIdKey, Group downPartyGroup)
+        private async Task<DownParty> GetDownPartyAsync(ITenantRepository tenantRepository, Track.IdKey trackIdKey, Group downPartyGroup, bool acceptUnknownParty)
         {
             var downPartyIdKey = new Party.IdKey
             {
@@ -186,7 +199,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             try
             {
-                return await tenantRepository.GetDownPartyByNameAsync(downPartyIdKey);
+                return await tenantRepository.GetDownPartyByNameAsync(downPartyIdKey, required: !acceptUnknownParty);
             }
             catch (Exception ex)
             {

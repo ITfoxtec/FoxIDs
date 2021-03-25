@@ -3,6 +3,8 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models.Cookies;
 using Microsoft.AspNetCore.Http;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -18,6 +20,26 @@ namespace FoxIDs.Logic
         protected bool SessionEnabled(UpParty upParty)
         {
             return upParty.SessionLifetime > 0 || upParty.PersistentSessionAbsoluteLifetime > 0 || upParty.PersistentSessionLifetimeUnlimited;
+        }
+
+        protected void AddDownPartyLink(SessionBaseCookie session, DownPartyLink newDownPartyLink)
+        {
+            if (newDownPartyLink == null)
+            {
+                return;
+            }
+
+            if (session.DownPartyLinks == null)
+            {
+                session.DownPartyLinks = new List<DownPartyLink> { newDownPartyLink };
+            }
+            else
+            {
+                if (!session.DownPartyLinks.Where(d => d.Id == newDownPartyLink.Id).Any())
+                {
+                    session.DownPartyLinks.Add(newDownPartyLink);
+                }
+            }
         }
 
         protected DateTimeOffset? GetPersistentCookieExpires(UpParty upParty, long created)

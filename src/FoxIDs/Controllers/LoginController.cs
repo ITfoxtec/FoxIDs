@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 var validSession = ValidSession(sequenceData, session);
                 if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
                 {
@@ -86,6 +86,8 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
+
+        private DownPartyLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType };
 
         private bool ValidSession(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session)
         {
@@ -156,7 +158,7 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponse(loginUpParty, user, session);
+                    return await LoginResponse(loginUpParty, new DownPartyLink { Id  = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, user, session);
                 }
                 catch (ChangePasswordException cpex)
                 {
@@ -189,21 +191,21 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, User user, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var authMethods = new List<string>();
             authMethods.Add(IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
             string sessionId = null;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, session))
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
             {
                 sessionId = session.SessionId;
             }
             else
             {
                 sessionId = RandomGenerator.Generate(24);
-                await sessionLogic.CreateSessionAsync(loginUpParty, user, authTime, authMethods, sessionId);
+                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, user, authTime, authMethods, sessionId);
             }
 
             return await loginUpLogic.LoginResponseAsync(loginUpParty, user, authTime, authMethods, sessionId);
@@ -354,7 +356,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
                     return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
@@ -397,7 +399,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace("Create user post.");
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
                     return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
@@ -418,7 +420,7 @@ namespace FoxIDs.Controllers
                     var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
                     if (user != null)
                     {
-                        return await LoginResponse(loginUpParty, user);
+                        return await LoginResponse(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user);
                     }
                 }
                 catch (UserExistsException uex)
@@ -478,7 +480,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty);
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSession(sequenceData, session);
 
                 logger.ScopeTrace("Show change password dialog.");
@@ -544,7 +546,7 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponse(loginUpParty, user, session);
+                    return await LoginResponse(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, session);
                 }
                 catch (UserObservationPeriodException uoex)
                 {

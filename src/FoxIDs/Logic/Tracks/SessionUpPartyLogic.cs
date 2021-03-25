@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateSessionAsync<T>(T upParty, IEnumerable<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty
+        public async Task CreateOrUpdateSessionAsync<T>(T upParty, DownPartyLink newDownPartyLink, IEnumerable<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 
@@ -37,10 +37,11 @@ namespace FoxIDs.Logic
                 var authMethods = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Amr).ToSpaceList();
                 session.UserId = userId;
                 session.Claims = claims.Where(c => c.Type != JwtClaimTypes.Subject && c.Type != JwtClaimTypes.Amr).ToClaimAndValues();
-                session.AuthMethods = authMethods;
+                session.AuthMethods = authMethods.ToList();
                 session.SessionId = sessionId;
                 session.ExternalSessionId = externalSessionId;
                 session.IdToken = idToken;
+                AddDownPartyLink(session, newDownPartyLink);
             };
 
             var session = await sessionCookieRepository.GetAsync();

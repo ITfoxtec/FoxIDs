@@ -213,7 +213,7 @@ namespace FoxIDs.Logic
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
-                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, validClaims, sessionId, externalSessionId, idToken);
+                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), validClaims, sessionId, externalSessionId, idToken);
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }
@@ -239,6 +239,8 @@ namespace FoxIDs.Logic
                 return await AuthenticationResponseDownAsync(sequenceData, error: IdentityConstants.ResponseErrors.InvalidRequest);
             }
         }
+
+        private DownPartyLink GetDownPartyLink(UpParty upParty, OidcUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType };
 
         private void ValidateAuthenticationResponse(OidcUpParty party, AuthenticationResponse authenticationResponse, SessionResponse sessionResponse, bool isImplicitFlow)
         {

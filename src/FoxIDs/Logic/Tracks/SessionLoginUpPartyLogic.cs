@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateSessionAsync(LoginUpParty loginUpParty, User user, long authTime, List<string> authMethods, string sessionId)
+        public async Task CreateSessionAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, User user, long authTime, List<string> authMethods, string sessionId)
         {
             if(SessionEnabled(loginUpParty))
             {
@@ -37,6 +37,7 @@ namespace FoxIDs.Logic
                     UserId = user.UserId,
                     SessionId = sessionId
                 };
+                AddDownPartyLink(session, newDownPartyLink);
                 session.CreateTime = authTime;
                 session.LastUpdated = authTime;
                 session.AuthMethods = authMethods;
@@ -45,7 +46,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, SessionLoginUpPartyCookie session)
+        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, SessionLoginUpPartyCookie session)
         {
             logger.ScopeTrace($"Update session, Route '{RouteBinding.Route}'.");
 
@@ -54,6 +55,7 @@ namespace FoxIDs.Logic
 
             if (sessionEnabled && sessionValid)
             {
+                AddDownPartyLink(session, newDownPartyLink);
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                 await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
                 logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });
@@ -65,7 +67,7 @@ namespace FoxIDs.Logic
             return false;
         }
 
-        public async Task<(SessionLoginUpPartyCookie, User)> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty)
+        public async Task<(SessionLoginUpPartyCookie, User)> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink)
         {
             logger.ScopeTrace($"Get and update session and check user, Route '{RouteBinding.Route}'.");
 
@@ -85,6 +87,7 @@ namespace FoxIDs.Logic
                     {
                         logger.ScopeTrace($"User '{user.Email}' found, User id '{user.UserId}'.");
 
+                        AddDownPartyLink(session, newDownPartyLink);
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
                         logger.ScopeTrace($"Session updated, Session id '{session.SessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId } });

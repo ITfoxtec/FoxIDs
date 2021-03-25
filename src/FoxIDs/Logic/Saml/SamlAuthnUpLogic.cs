@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
                 var validClaims = ValidateClaims(party, transformedClaims);
 
                 var jwtValidClaims = await claimsDownLogic.FromSamlToJwtClaimsAsync(validClaims);
-                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, jwtValidClaims, sessionId, externalSessionId);
+                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), jwtValidClaims, sessionId, externalSessionId);
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims, jwtValidClaims);
             }
@@ -216,6 +216,7 @@ namespace FoxIDs.Logic
             }
         }
 
+        private DownPartyLink GetDownPartyLink(UpParty upParty, SamlUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType };
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)
         {
             IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);

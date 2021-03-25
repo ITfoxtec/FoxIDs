@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LoginUpPartyViewModel : IOAuthClaimTransformViewModel
+    public class LoginUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -18,27 +18,23 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Default 10 hours.
         /// </summary>
         [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
-        [Display(Name = "Session lifetime in seconds (active session if greater than 0)")]
         public int SessionLifetime { get; set; } = 36000;
 
         /// <summary>
         /// Default 24 hours.
         /// </summary>
         [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
-        [Display(Name = "Session absolute lifetime in seconds (active if greater than 0)")]
         public int SessionAbsoluteLifetime { get; set; } = 86400;
 
         /// <summary>
         /// Default 0 minutes.
         /// </summary>
         [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
-        [Display(Name = "Persistent session absolute lifetime in seconds (active if greater than 0)")]
         public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
 
         /// <summary>
         /// Default false.
         /// </summary>
-        [Display(Name = "Persistent session lifetime unlimited")]
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         /// <summary>

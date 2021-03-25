@@ -75,6 +75,9 @@
         {
             <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
         }
+
+        <UpPartySessionLifetime Model="oidcUpParty.Form.Model" ShowAdvanced="oidcUpParty.ShowAdvanced" AllAdvanced="true" />
+
         @if (oidcUpParty.Form.Model.AutomaticStopped)
         {
             <div class="mb-3 alert alert-warning" role="alert">

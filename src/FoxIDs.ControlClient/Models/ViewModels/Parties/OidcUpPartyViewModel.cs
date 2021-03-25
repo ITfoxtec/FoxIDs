@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel
+    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime
     {
         public bool IsManual { get; set; }
 
@@ -39,6 +39,29 @@ namespace FoxIDs.Client.Models.ViewModels
         [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
         [Display(Name = "Automatic update rate")]
         public int OidcDiscoveryUpdateRate { get; set; } = 2592000; // 30 days
+
+        /// <summary>
+        /// Default 10 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        public int SessionLifetime { get; set; } = 36000;
+
+        /// <summary>
+        /// Default 24 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
+        public int SessionAbsoluteLifetime { get; set; } = 86400;
+
+        /// <summary>
+        /// Default 0 minutes.
+        /// </summary>
+        [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
+        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
+
+        /// <summary>
+        /// Default false.
+        /// </summary>
+        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         /// <summary>
         /// OIDC up client.

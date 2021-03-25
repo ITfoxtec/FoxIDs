@@ -61,12 +61,10 @@
                     <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
                     <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
                 </FInputSelect>
-                <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionLifetime" For="@(() => loginUpParty.Form.Model.SessionLifetime)" />
+
+                <UpPartySessionLifetime Model="loginUpParty.Form.Model" ShowAdvanced="loginUpParty.ShowAdvanced" />
                 @if (loginUpParty.ShowAdvanced)
                 {
-                    <FInputNumber @bind-Value="loginUpParty.Form.Model.SessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.SessionAbsoluteLifetime)" />
-                    <FInputNumber @bind-Value="loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime" For="@(() => loginUpParty.Form.Model.PersistentSessionAbsoluteLifetime)" />
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited" For="@(() => loginUpParty.Form.Model.PersistentSessionLifetimeUnlimited)" />
                     <FInputTextArea @bind-Value="loginUpParty.Form.Model.CssStyle" For="@(() => loginUpParty.Form.Model.CssStyle)" />
                 }
             }

@@ -62,7 +62,7 @@ namespace FoxIDs.Logic
                 MaxAge = loginRequest.MaxAge
             });
 
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.SamlUpJumpController}/{Constants.Endpoints.UpJump.AuthnRequest}/_{SequenceString}");
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)

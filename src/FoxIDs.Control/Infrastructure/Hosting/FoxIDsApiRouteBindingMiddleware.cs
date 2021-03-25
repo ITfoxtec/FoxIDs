@@ -11,10 +11,6 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsApiRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        protected override ValueTask SeedAsync(IServiceProvider requestServices) => default;
-
-        protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
-
         protected override Track.IdKey GetTrackIdKey(string[] route)
         {
             var trackIdKey = new Track.IdKey();
@@ -40,9 +36,5 @@ namespace FoxIDs.Infrastructure.Hosting
 
             return trackIdKey;
         }
-
-        protected override string GetPartyNameAndbinding(string[] route) => null;
-
-        protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null) => new ValueTask<RouteBinding>(routeBinding);
     }
 }

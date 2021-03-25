@@ -41,7 +41,8 @@ namespace FoxIDs.Logic
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect
             });
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.LoginController}/{Constants.Endpoints.Logout}/_{HttpContext.GetSequenceString()}");
+
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, Constants.Endpoints.Logout, includeSequence: true).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutResponseAsync(string sessionId)

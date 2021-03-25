@@ -10,72 +10,55 @@ namespace FoxIDs
     /// </summary>
     public static class HtmActionExtensions
     {
+        private const string title = "FoxIDs";
+
         /// <summary>
-        /// Converts a Dictionary&lt;string, string&gt; to a HTML Post Content Result.
+        /// Converts a Dictionary&lt;string, string&gt; to a HTML Post ContentResult.
         /// </summary>
         public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url)
         {
             return Task.FromResult(new ContentResult
             {
                 ContentType = "text/html",
-                Content = items.ToHtmlPostPage(url),
+                Content = items.ToHtmlPostPage(url, title: title),
             });
         }
 
         /// <summary>
-        /// Converts a url to a Redirect Result.
+        /// Converts a URL to a redirect ContentResult.
         /// </summary>
-        public static Task<ContentResult> ToRedirectResultAsync(this string url)
+        public static ContentResult ToRedirectResult(this string url)
         {
-            return Task.FromResult(new ContentResult
+            return new ContentResult
             {
                 ContentType = "text/html",
-                Content = HtmRedirectActionPageList(url),
-            });
+                Content = url.HtmRedirectActionPage(title: title),
+            };
         }
 
 
         /// <summary>
-        /// Converts a Dictionary&lt;string, string&gt; to a Redirect Result.
+        /// Converts a Dictionary&lt;string, string&gt; to a redirect ContentResult.
         /// </summary>
         public static Task<ContentResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url)
         {
             return Task.FromResult(new ContentResult
             {
                 ContentType = "text/html",
-                Content = items.ToHtmlGetPage(url),
+                Content = items.ToHtmlGetPage(url, title: title),
             });
         }
 
         /// <summary>
-        /// Converts a Dictionary&lt;string, string&gt; to a Fragment Result.
+        /// Converts a Dictionary&lt;string, string&gt; to a fragment ContentResult.
         /// </summary>
         public static Task<ContentResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url)
         {
             return Task.FromResult(new ContentResult
             {
                 ContentType = "text/html",
-                Content = items.ToHtmlFragmentPage(url),
+                Content = items.ToHtmlFragmentPage(url, title: title),
             });
-        }
-
-        private static string HtmRedirectActionPageList(string url)
-        {
-            return
-$@"<!DOCTYPE html>
-<html lang=""en"">
-    <head>
-        <meta charset=""utf-8"" />
-        <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"" />
-        <meta http-equiv=""refresh"" content=""0;URL='{url}'"" />
-        <title>OAuth 2.0</title>
-    </head>
-    <body>
-        <p>
-            Please press <a href=""{url}"">here</a> to continue the proceed.
-        </p>
-    </body>
-</html>";
         }
     }
 }

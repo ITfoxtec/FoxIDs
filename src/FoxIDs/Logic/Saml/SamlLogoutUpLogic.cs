@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
                 Claims = logoutRequest.Claims.ToClaimAndValues()
             });
 
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.SamlUpJumpController}/{Constants.Endpoints.UpJump.LogoutRequest}/_{SequenceString}");
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)

@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
         public async Task<OidcDiscovery> OpenidConfiguration(string partyId)
         {
             logger.SetScopeProperty("downPartyId", partyId);
-            var party = await tenantRepository.GetAsync<TParty>(partyId);
+            var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<TParty>(partyId) : null;
 
             var oidcDiscovery = new OidcDiscovery
             {
@@ -40,7 +40,7 @@ namespace FoxIDs.Logic
                 JwksUri = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, IdentityConstants.OidcDiscovery.Path, IdentityConstants.OidcDiscovery.Keys),
             };
 
-            if (party.Client != null)
+            if (party?.Client != null)
             {
                 oidcDiscovery.ResponseModesSupported = new[] { IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost };
                 oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Pairwise };
@@ -50,10 +50,20 @@ namespace FoxIDs.Logic
                 oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken)
                     .ConcatOnce(party.Client.Claims?.Select(c => c.Claim).ToList()).ConcatOnce(party.Client.Scopes?.Where(s => s.VoluntaryClaims != null).SelectMany(s => s.VoluntaryClaims?.Select(c => c.Claim)).ToList());
 
-                if(party.Client.RequirePkce)
+                if(party?.Client.RequirePkce == true)
                 {
                     oidcDiscovery.CodeChallengeMethodsSupported = new[] { IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256 };
                 }
+            }
+            else
+            {
+                oidcDiscovery.ResponseModesSupported = new[] { IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost };
+                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Pairwise };
+                oidcDiscovery.IdTokenSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 };
+                oidcDiscovery.ResponseTypesSupported = new[] { IdentityConstants.ResponseTypes.Code };
+                oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported;
+                oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken);
+                oidcDiscovery.CodeChallengeMethodsSupported = new[] { IdentityConstants.CodeChallengeMethods.Plain, IdentityConstants.CodeChallengeMethods.S256 };
             }
 
             return oidcDiscovery;

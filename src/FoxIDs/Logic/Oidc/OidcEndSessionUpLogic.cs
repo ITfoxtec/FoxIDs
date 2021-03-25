@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
             });
 
-            return new RedirectResult($"~/{RouteBinding.TenantName}/{RouteBinding.TrackName}/({partyLink.Name})/{Constants.Routes.OAuthUpJumpController}/{Constants.Endpoints.UpJump.EndSessionRequest}/_{SequenceString}");
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true).ToRedirectResult();
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
             ValidatePartyLogoutSupport(party);
 
-            var postLogoutRedirectUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, party.Name.ToUpPartyBinding(party.PartyBindingPattern), Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse);
+            var postLogoutRedirectUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse, partyBindingPattern: party.PartyBindingPattern);
             var endSessionRequest = new EndSessionRequest
             {
                 PostLogoutRedirectUri = postLogoutRedirectUrl,

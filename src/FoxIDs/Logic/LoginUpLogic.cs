@@ -21,14 +21,12 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
-        private readonly ClaimTransformationsLogic claimTransformationsLogic;
 
         public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
-            this.claimTransformationsLogic = claimTransformationsLogic;
         }
 
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
@@ -54,27 +52,12 @@ namespace FoxIDs.Logic
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LoginResponseAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
+        public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
         {
             logger.ScopeTrace("Up, Login response.");
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
-
-            var claims = new List<Claim>();
-            claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
-            claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
-            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
-            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
-            claims.AddClaim(JwtClaimTypes.Email, user.Email);
-            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
-            if (user.Claims?.Count() > 0)
-            {
-                claims.AddRange(user.Claims.ToClaimList());
-            }
-
-            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
             switch (sequenceData.DownPartyType)
@@ -114,7 +97,6 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException($"Party type '{sequenceData.DownPartyType}' not supported.");
             }
-
         }
 
         private string ErrorToOAuth2OidcString(LoginSequenceError error)

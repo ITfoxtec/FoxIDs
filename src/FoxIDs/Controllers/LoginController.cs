@@ -15,6 +15,7 @@ using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Infrastructure.Filters;
 using Microsoft.Extensions.Localization;
+using System.Linq;
 
 namespace FoxIDs.Controllers
 {
@@ -28,11 +29,13 @@ namespace FoxIDs.Controllers
         private readonly SequenceLogic sequenceLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly LoginUpLogic loginUpLogic;
         private readonly LogoutUpLogic logoutUpLogic;
+        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformationsLogic claimTransformationsLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -41,8 +44,10 @@ namespace FoxIDs.Controllers
             this.sequenceLogic = sequenceLogic;
             this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
             this.loginUpLogic = loginUpLogic;
             this.logoutUpLogic = logoutUpLogic;
+            this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
@@ -55,11 +60,11 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 var validSession = ValidSession(sequenceData, session);
                 if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
                 {
-                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -158,7 +163,7 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponse(loginUpParty, new DownPartyLink { Id  = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, user, session);
+                    return await LoginResponseAsync(loginUpParty, new DownPartyLink { Id  = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, user, session);
                 }
                 catch (ChangePasswordException cpex)
                 {
@@ -191,24 +196,44 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponse(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var authMethods = new List<string>();
             authMethods.Add(IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
-            string sessionId = null;
+            List<Claim> claims = null;
             if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
             {
-                sessionId = session.SessionId;
+                claims = session.Claims.ToClaimList();
             }
             else
             {
-                sessionId = RandomGenerator.Generate(24);
-                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, user, authTime, authMethods, sessionId);
+                var sessionId = RandomGenerator.Generate(24);
+                claims = await GetClaimsAsync(loginUpParty, user, authTime, authMethods, sessionId);
+                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, claims);
             }
 
-            return await loginUpLogic.LoginResponseAsync(loginUpParty, user, authTime, authMethods, sessionId);
+            return await loginUpLogic.LoginResponseAsync(claims);
+        }
+
+        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
+        {
+            var claims = new List<Claim>();
+            claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
+            claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
+            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
+            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+            claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
+            claims.AddClaim(JwtClaimTypes.Email, user.Email);
+            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
+            if (user.Claims?.Count() > 0)
+            {
+                claims.AddRange(user.Claims.ToClaimList());
+            }
+
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            return claims;
         }
 
         public async Task<IActionResult> CancelLogin()
@@ -239,7 +264,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
                 {
-                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
+                    return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
                 if (!sequenceData.SessionId.IsNullOrEmpty() && sequenceData.SessionId == session.SessionId)
@@ -255,8 +280,8 @@ namespace FoxIDs.Controllers
                 else
                 {
                     logger.ScopeTrace($"User '{session.Email}', delete session and logout.", triggerEvent: true);
-                    await sessionLogic.DeleteSessionAsync(RouteBinding);
-                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, LogoutChoice.Logout);
+                    _ = await sessionLogic.DeleteSessionAsync();
+                    return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
             catch (Exception ex)
@@ -290,14 +315,14 @@ namespace FoxIDs.Controllers
 
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
-                    var session = await sessionLogic.DeleteSessionAsync(RouteBinding);
+                    var session = await sessionLogic.DeleteSessionAsync();
                     logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and logout.", triggerEvent: true);
-                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
+                    return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
                 {
                     logger.ScopeTrace("Logout response without logging out.");
-                    return await LogoutResponse(loginUpParty, sequenceData.SessionId, sequenceData.PostLogoutRedirect, logout.LogoutChoice);
+                    return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice);
                 }
                 else
                 {
@@ -313,33 +338,57 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LogoutResponse(LoginUpParty loginUpParty, string sessionId, bool postLogoutRedirect, LogoutChoice logoutChoice)
+        private async Task<IActionResult> LogoutResponse(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, LogoutChoice logoutChoice, SessionLoginUpPartyCookie session = null)
         {
             if (logoutChoice == LogoutChoice.Logout)
             {
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sessionId);
-            }
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(sequenceData.SessionId);
 
-            if (postLogoutRedirect)
-            {
-                return await logoutUpLogic.LogoutResponseAsync(sessionId);
-            }
-            else
-            {
-                if (logoutChoice == LogoutChoice.Logout)
+                if (loginUpParty.DisableSingleLogout)
                 {
-                    logger.ScopeTrace("Show logged out dialog.");
-                    return View("loggedOut", new LoggedOutViewModel { CssStyle = loginUpParty.CssStyle });
+                    return await LogoutDoneAsync(loginUpParty, sequenceData);
                 }
-                else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
+                else
+                {
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(sequenceData.SessionId, new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session.DownPartyLinks);
+                }
+            }
+            else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                if (sequenceData.PostLogoutRedirect)
+                {
+                    return await logoutUpLogic.LogoutResponseAsync(sequenceData);
+                }
+                else
                 {
                     logger.ScopeTrace("Show logged in dialog.");
                     return View("LoggedIn", new LoggedInViewModel { CssStyle = loginUpParty.CssStyle });
                 }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        public async Task<IActionResult> SingleLogoutDone()
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
+            return await LogoutDoneAsync(null, sequenceData);
+        }
+
+        private async Task<IActionResult> LogoutDoneAsync(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData)
+        {
+            if (sequenceData.PostLogoutRedirect)
+            {
+                return await logoutUpLogic.LogoutResponseAsync(sequenceData);
+            }
+            else
+            {
+                loginUpParty = loginUpParty ?? await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                logger.ScopeTrace("Show logged out dialog.");
+                return View("loggedOut", new LoggedOutViewModel { CssStyle = loginUpParty.CssStyle });
             }
         }
 
@@ -356,10 +405,10 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
                 }
 
                 logger.ScopeTrace("Show create user dialog.");
@@ -399,10 +448,10 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace("Create user post.");
 
-                (var session, var sessionUser) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(loginUpParty, sessionUser, session.CreateTime, session.AuthMethods, session.SessionId);
+                    return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
                 }
 
                 try
@@ -420,7 +469,7 @@ namespace FoxIDs.Controllers
                     var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
                     if (user != null)
                     {
-                        return await LoginResponse(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user);
+                        return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user);
                     }
                 }
                 catch (UserExistsException uex)
@@ -480,7 +529,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSession(sequenceData, session);
 
                 logger.ScopeTrace("Show change password dialog.");
@@ -546,7 +595,7 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponse(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, session);
+                    return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, session);
                 }
                 catch (UserObservationPeriodException uoex)
                 {

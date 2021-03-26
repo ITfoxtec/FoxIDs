@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FoxIDs.Models.Cookies
 {
@@ -8,16 +10,22 @@ namespace FoxIDs.Models.Cookies
         [JsonProperty(PropertyName = "lu")]
         public long LastUpdated { get; set; }
 
-        [JsonProperty(PropertyName = "am")]
-        public List<string> AuthMethods { get; set; }
+        [JsonIgnore]
+        public IEnumerable<string> AuthMethods => Claims?.Where(c => c.Claim == JwtClaimTypes.Amr)?.SelectMany(c => c.Values);
 
-        [JsonProperty(PropertyName = "si")]
-        public string SessionId { get; set; }
+        [JsonIgnore]
+        public string SessionId => Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.SessionId);
 
-        [JsonProperty(PropertyName = "ui")]
-        public string UserId { get; set; }
+        [JsonIgnore]
+        public string UserId => Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.Subject);
 
-        [JsonProperty(PropertyName = "dp")]
+        [JsonIgnore]
+        public string Email => Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.Email);
+
+        [JsonProperty(PropertyName = "c")]
+        public IEnumerable<ClaimAndValues> Claims { get; set; }
+
+        [JsonProperty(PropertyName = "dl")]
         public List<DownPartyLink> DownPartyLinks { get; set; }
     }
 }

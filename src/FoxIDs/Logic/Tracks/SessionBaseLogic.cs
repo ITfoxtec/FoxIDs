@@ -82,5 +82,15 @@ namespace FoxIDs.Logic
                 return false;
             }
         }
+
+        protected IDictionary<string, string> GetSessionScopeProperties(SessionBaseCookie session)
+        {
+            return new Dictionary<string, string>
+            {
+                { "sessionId", session.SessionId },
+                { "userId", session.UserId },
+                { "email", session.Email }
+            };
+        }
     }
 }

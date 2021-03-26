@@ -207,13 +207,12 @@ namespace FoxIDs.Logic
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionStatedMax, nameof(externalSessionId), "Session state or claim");
 
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
-                var sessionId = RandomGenerator.Generate(24);
-                claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                claims.AddClaim(JwtClaimTypes.SessionId, RandomGenerator.Generate(24));
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
-                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), validClaims, sessionId, externalSessionId, idToken);
+                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), validClaims, externalSessionId, idToken);
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }

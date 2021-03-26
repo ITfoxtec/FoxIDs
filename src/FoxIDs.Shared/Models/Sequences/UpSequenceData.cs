@@ -7,7 +7,7 @@ namespace FoxIDs.Models.Sequences
     public class UpSequenceData : ISequenceData
     {
         [Required]
-        [JsonProperty(PropertyName = "dp")]
+        [JsonProperty(PropertyName = "di")]
         public string DownPartyId { get; set; }
 
         [Required]
@@ -15,7 +15,7 @@ namespace FoxIDs.Models.Sequences
         public PartyTypes DownPartyType { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "up")]
+        [JsonProperty(PropertyName = "ui")]
         public string UpPartyId { get; set; }
 
         [JsonProperty(PropertyName = "la")]

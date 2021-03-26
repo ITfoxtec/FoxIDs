@@ -386,6 +386,7 @@ namespace FoxIDs
         public static class Endpoints
         {
             public const string Logout = "logout";
+            public const string SingleLogoutDone = "singlelogoutdone";            
             public const string CancelLogin = "cancellogin";
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";

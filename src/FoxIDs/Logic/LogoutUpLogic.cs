@@ -45,11 +45,9 @@ namespace FoxIDs.Logic
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, Constants.Endpoints.Logout, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LogoutResponseAsync(string sessionId)
+        public async Task<IActionResult> LogoutResponseAsync(LoginUpSequenceData sequenceData)
         {
             logger.ScopeTrace("Down, Logout response.");
-
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
             logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
@@ -60,7 +58,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, sessionIndex: sessionId);
+                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, sessionIndex: sequenceData.SessionId);
 
                 default:
                     throw new NotSupportedException();

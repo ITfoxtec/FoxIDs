@@ -26,19 +26,13 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateSessionAsync<T>(T upParty, DownPartyLink newDownPartyLink, IEnumerable<Claim> claims, string sessionId, string externalSessionId, string idToken = null) where T : UpParty
+        public async Task CreateOrUpdateSessionAsync<T>(T upParty, DownPartyLink newDownPartyLink, IEnumerable<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 
-            var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
-
             Action<SessionUpPartyCookie> updateAction = (session) =>
             {
-                var authMethods = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Amr).ToSpaceList();
-                session.UserId = userId;
-                session.Claims = claims.Where(c => c.Type != JwtClaimTypes.Subject && c.Type != JwtClaimTypes.Amr).ToClaimAndValues();
-                session.AuthMethods = authMethods.ToList();
-                session.SessionId = sessionId;
+                session.Claims = claims.ToClaimAndValues();
                 session.ExternalSessionId = externalSessionId;
                 session.IdToken = idToken;
                 AddDownPartyLink(session, newDownPartyLink);
@@ -53,6 +47,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace($"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
+                    var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
                     {
                         logger.ScopeTrace("Authenticated user and requested user do not match.");
@@ -62,7 +57,7 @@ namespace FoxIDs.Logic
                     updateAction(session);
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(session, null);
-                    logger.ScopeTrace($"Session updated up-party, Session id '{session.SessionId}', External Session id '{session.ExternalSessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId }, { "externalSessionId", session.ExternalSessionId } });
+                    logger.ScopeTrace($"Session updated up-party, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
                 }
                 else
                 {
@@ -77,13 +72,13 @@ namespace FoxIDs.Logic
                     return;
                 }
 
-                logger.ScopeTrace($"Create session up-party for User id '{userId}', Session id '{sessionId}', External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace($"Create session up-party, External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
                 session = new SessionUpPartyCookie();
                 updateAction(session);
                 session.LastUpdated = session.CreateTime;
 
                 await sessionCookieRepository.SaveAsync(session, null);
-                logger.ScopeTrace($"Session up-party created, Session id '{sessionId}', External Session id '{externalSessionId}'.", new Dictionary<string, string> { { "sessionId", session.SessionId }, { "externalSessionId", externalSessionId } });
+                logger.ScopeTrace($"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
             }
         }
 
@@ -101,6 +96,8 @@ namespace FoxIDs.Logic
                 if (sessionEnabled && sessionValid)
                 {
                     logger.SetScopeProperty("sessionId", session.SessionId);
+                    logger.SetScopeProperty("userId", session.UserId);
+                    logger.SetScopeProperty("email", session.Email);
                     logger.SetScopeProperty("externalSessionId", session.ExternalSessionId);
                     return session;
                 }
@@ -131,6 +128,13 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace("Session up-party do not exists.");
                 return null;
             }
+        }
+
+        protected IDictionary<string, string> GetSessionScopeProperties(SessionUpPartyCookie session)
+        {
+            var scopeProperties = GetSessionScopeProperties(session as SessionBaseCookie);
+            scopeProperties.Add("externalSessionId", session.ExternalSessionId);
+            return scopeProperties;
         }
     }
 }

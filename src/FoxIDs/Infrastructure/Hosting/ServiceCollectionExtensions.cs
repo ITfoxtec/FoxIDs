@@ -33,6 +33,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<LoginUpLogic>();
             services.AddTransient<LogoutUpLogic>();
+            services.AddTransient<SingleLogoutDownLogic>();            
             services.AddTransient<SecretHashLogic>();
             services.AddTransient<FailingLoginLogic>();            
             services.AddTransient<AccountLogic>();

@@ -4,7 +4,6 @@ using FoxIDs.Models.Sequences;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +25,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> StartSingleLogoutAsync(string sessionId, UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, SessionBaseCookie session)
+        public async Task<IActionResult> StartSingleLogoutAsync(UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, SessionBaseCookie session)
         {
             logger.ScopeTrace("Start single logout.");
 
@@ -79,6 +78,7 @@ namespace FoxIDs.Logic
             }
 
             await sequenceLogic.RemoveSequenceDataAsync<SingleLogoutSequenceData>();
+            logger.ScopeTrace("Successful Single Logout.", triggerEvent: true);
             return ResponseUpParty(sequenceData.UpPartyName, sequenceData.UpPartyType);
         }
 
@@ -90,7 +90,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.Login:
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
                 case PartyTypes.Oidc:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
                 case PartyTypes.Saml2:
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
 

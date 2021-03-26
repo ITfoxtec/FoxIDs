@@ -287,7 +287,7 @@ namespace FoxIDs.Logic
             binding.Bind(saml2LogoutRequest);
             logger.ScopeTrace($"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
             logger.ScopeTrace($"Single logged out URL '{party.SingleLogoutUrl}'.");
-            logger.ScopeTrace("Down, SAML Single Logout response.", triggerEvent: true);
+            logger.ScopeTrace("Down, SAML Single Logout request.", triggerEvent: true);
 
             await formActionLogic.RemoveFormActionSequenceDataAsync();
             if (binding is Saml2Binding<Saml2RedirectBinding>)

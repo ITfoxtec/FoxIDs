@@ -27,9 +27,10 @@ namespace FoxIDs.Logic
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
+        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -38,6 +39,7 @@ namespace FoxIDs.Logic
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.formActionLogic = formActionLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
+            this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
@@ -127,7 +129,7 @@ namespace FoxIDs.Logic
                     logger.Warning(ex);
                 }
 
-                saml2LogoutRequest.SessionIndex = samlUpSequenceData.SessionId;
+                saml2LogoutRequest.SessionIndex = session.ExternalSessionId;
             }
 
             var claims = samlUpSequenceData.Claims.ToClaimList();
@@ -202,7 +204,7 @@ namespace FoxIDs.Logic
             binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
 
             await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: party.DisableSingleLogout);
 
             try
             {
@@ -216,11 +218,19 @@ namespace FoxIDs.Logic
                 }
 
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+
+                var session = await sessionUpPartyLogic.DeleteSessionAsync();
                 logger.ScopeTrace("Up, Successful SAML Logout response.", triggerEvent: true);
 
-                await sessionUpPartyLogic.DeleteSessionAsync();
+                if (party.DisableSingleLogout)
+                {
+                    return await LogoutResponseDownAsync(sequenceData, sessionIndex: sequenceData.SessionId);
+                }
+                else
+                {
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
+                }
 
-                return await LogoutResponseDownAsync(sequenceData, saml2LogoutResponse.Status, saml2LogoutResponse.SessionIndex);
             }
             catch (StopSequenceException)
             {
@@ -229,16 +239,22 @@ namespace FoxIDs.Logic
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
-                return await LogoutResponseDownAsync(sequenceData, ex.Status);
+                return await LogoutResponseDownAsync(sequenceData, status: ex.Status);
             }
             catch (Exception ex)
             {
                 logger.Error(ex);
-                return await LogoutResponseDownAsync(sequenceData, Saml2StatusCodes.Responder);
+                return await LogoutResponseDownAsync(sequenceData, status: Saml2StatusCodes.Responder);
             }
         }
 
-        private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, string sessionIndex = null)
+        public async Task<IActionResult> SingleLogoutDone()
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+            return await LogoutResponseDownAsync(sequenceData, sessionIndex: sequenceData.SessionId);
+        }
+
+        private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
             try
             {

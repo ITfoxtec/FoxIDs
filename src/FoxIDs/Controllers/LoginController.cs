@@ -16,6 +16,7 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Infrastructure.Filters;
 using Microsoft.Extensions.Localization;
 using System.Linq;
+using System.IO;
 
 namespace FoxIDs.Controllers
 {
@@ -269,7 +270,7 @@ namespace FoxIDs.Controllers
 
                 if (!sequenceData.SessionId.IsNullOrEmpty() && sequenceData.SessionId == session.SessionId)
                 {
-                    // TODO return error, not possible to logout
+                    throw new Exception("Requested session ID do not match Login up-party session ID.");
                 }
 
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
@@ -279,8 +280,8 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    logger.ScopeTrace($"User '{session.Email}', delete session and logout.", triggerEvent: true);
                     _ = await sessionLogic.DeleteSessionAsync();
+                    logger.ScopeTrace($"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
@@ -316,7 +317,7 @@ namespace FoxIDs.Controllers
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync();
-                    logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and logout.", triggerEvent: true);
+                    logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
@@ -346,11 +347,12 @@ namespace FoxIDs.Controllers
 
                 if (loginUpParty.DisableSingleLogout)
                 {
+                    await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
                     return await LogoutDoneAsync(loginUpParty, sequenceData);
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(sequenceData.SessionId, new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
                 }
             }
             else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)

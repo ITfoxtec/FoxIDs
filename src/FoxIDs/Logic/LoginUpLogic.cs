@@ -3,14 +3,12 @@ using FoxIDs.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
-using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 

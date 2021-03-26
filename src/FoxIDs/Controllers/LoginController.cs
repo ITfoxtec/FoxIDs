@@ -350,7 +350,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(sequenceData.SessionId, new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session.DownPartyLinks);
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(sequenceData.SessionId, new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
                 }
             }
             else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)

@@ -28,8 +28,12 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
+        private readonly SamlClaimsDownLogic samlClaimsDownLogic;
+        private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
+        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformationsLogic claimTransformationsLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -37,6 +41,10 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.formActionLogic = formActionLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
+            this.samlClaimsDownLogic = samlClaimsDownLogic;
+            this.claimsDownLogic = claimsDownLogic;
+            this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
@@ -53,7 +61,7 @@ namespace FoxIDs.Logic
                 case SamlBindingTypes.Post:
                     return await LogoutRequestAsync(party, new Saml2PostBinding());
                 default:
-                    throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
             }
         }
 
@@ -155,26 +163,6 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LoginRequest GetLoginRequestAsync(Saml2AuthnRequest saml2AuthnRequest)
-        {
-            var loginRequest = new LoginRequest();
-
-            if(saml2AuthnRequest.ForceAuthn.HasValue && saml2AuthnRequest.ForceAuthn.Value)
-            {
-                loginRequest.LoginAction = LoginAction.RequireLogin;
-            }
-            else if(saml2AuthnRequest.IsPassive.HasValue && saml2AuthnRequest.IsPassive.Value)
-            {
-                loginRequest.LoginAction = LoginAction.ReadSession;
-            }
-            else
-            {
-                loginRequest.LoginAction = LoginAction.ReadSessionOrLogin;
-            }
-
-            return loginRequest;
-        }
-
         public async Task<IActionResult> LogoutResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
             logger.ScopeTrace($"Down, SAML Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
@@ -246,6 +234,118 @@ namespace FoxIDs.Logic
             else
             {
                 throw new NotSupportedException();
+            }
+        }
+
+        public async Task<IActionResult> SingleLogoutRequestAsync(string partyId, SingleLogoutSequenceData sequenceData)
+        {
+            logger.ScopeTrace("Down, SAML Single Logout request.");
+            logger.SetScopeProperty("downPartyId", partyId);
+            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            if (!ValidatePartySingleLogoutSupport(party))
+            {
+                return await singleLogoutDownLogic.HandleSingleLogoutAsync(sequenceData);
+            }
+            
+            var claims = await claimsDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
+
+            switch (party.LogoutBinding.RequestBinding)
+            {
+                case SamlBindingTypes.Redirect:
+                    return await SingleLogoutRequestAsync(party, new Saml2RedirectBinding(), claims);
+                case SamlBindingTypes.Post:
+                    return await SingleLogoutRequestAsync(party, new Saml2PostBinding(), claims);
+                default:
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
+            }
+        }
+
+        private bool ValidatePartySingleLogoutSupport(SamlDownParty party)
+        {
+            if (party.LogoutBinding == null || party.SingleLogoutUrl.IsNullOrEmpty() || party.Keys?.Count <= 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding, IEnumerable<Claim> claims)
+        {
+            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
+
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+
+            var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig)
+            {
+                NameId = samlClaimsDownLogic.GetNameId(claims),
+                Destination = new Uri(party.SingleLogoutUrl),
+                SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims)
+            };
+            await formActionLogic.CreateFormActionByUrlAsync(party.SingleLogoutUrl);
+
+            binding.RelayState = SequenceString;
+            binding.Bind(saml2LogoutRequest);
+            logger.ScopeTrace($"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace($"Single logged out URL '{party.SingleLogoutUrl}'.");
+            logger.ScopeTrace("Down, SAML Single Logout response.", triggerEvent: true);
+
+            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            {
+                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+            }
+            if (binding is Saml2Binding<Saml2PostBinding>)
+            {
+                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        public async Task<IActionResult> SingleLogoutResponseAsync(string partyId)
+        {
+            logger.ScopeTrace("Down, SAML Single Logout response.");
+            logger.SetScopeProperty("downPartyId", partyId);
+            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+
+            switch (party.LogoutBinding.ResponseBinding)
+            {
+                case SamlBindingTypes.Redirect:
+                    return await SingleLogoutResponseAsync(party, new Saml2RedirectBinding());
+                case SamlBindingTypes.Post:
+                    return await SingleLogoutResponseAsync(party, new Saml2PostBinding());
+                default:
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
+            }
+        }
+
+        private async Task<IActionResult> SingleLogoutResponseAsync<T>(SamlDownParty party, Saml2Binding<T> binding)
+        {
+            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party);
+
+            var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
+            binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+            logger.ScopeTrace($"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+            
+            ValidateLogoutResponse(party, saml2LogoutResponse);
+            await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
+
+            binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+            logger.ScopeTrace("Down, SAML Single Logout response accepted.", triggerEvent: true);
+
+            return await singleLogoutDownLogic.HandleSingleLogoutAsync();
+        }
+
+        private void ValidateLogoutResponse(SamlDownParty party, Saml2LogoutResponse saml2LogoutResponse)
+        {
+            var requestIssuer = saml2LogoutResponse.Issuer;
+            logger.SetScopeProperty("Issuer", requestIssuer);
+
+            if (!party.Issuer.Equals(requestIssuer))
+            {
+                throw new SamlRequestException($"Invalid issuer '{requestIssuer}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
             }
         }
     }

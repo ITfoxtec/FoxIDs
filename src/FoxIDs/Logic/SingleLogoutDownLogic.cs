@@ -7,6 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using FoxIDs.Models.Cookies;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -23,20 +26,33 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> StartSingleLogoutAsync(string sessionId, UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, List<DownPartyLink> downPartyLinks)
+        public async Task<IActionResult> StartSingleLogoutAsync(string sessionId, UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, SessionBaseCookie session)
         {
             logger.ScopeTrace("Start single logout.");
 
-            downPartyLinks = new List<DownPartyLink>(downPartyLinks.Where(p => p.Id != initiatingDownParty.Id));
+            var downPartyLinks = session?.DownPartyLinks?.Where(p => p.Id != initiatingDownParty.Id);
+            if (!(downPartyLinks?.Count() > 0) || !(session?.Claims?.Count() > 0))
+            {
+                return ResponseUpParty(upPartyLink.Name, upPartyLink.Type);
+            }
+
             var sequenceData = new SingleLogoutSequenceData
             {
-                SessionId = sessionId,
                 UpPartyName = upPartyLink.Name,
                 UpPartyType = upPartyLink.Type,
                 DownPartyId = initiatingDownParty.Id,
                 DownPartyType = initiatingDownParty.Type,
-                DownPartyLinks = downPartyLinks
+                DownPartyLinks = session.DownPartyLinks.Where(p => p.Id != initiatingDownParty.Id)
             };
+
+            if (downPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Any())
+            {
+                sequenceData.Claims = session.Claims;
+            }
+            else
+            {
+                sequenceData.Claims = session.Claims.Where(c => c.Claim == JwtClaimTypes.SessionId);
+            }
 
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
             return await HandleSingleLogoutAsync(sequenceData);
@@ -46,29 +62,41 @@ namespace FoxIDs.Logic
         {
             sequenceData = sequenceData ?? await sequenceLogic.GetSequenceDataAsync<SingleLogoutSequenceData>(remove: false);
 
-            var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc);
-            if(oidcDownPartyIds.Count() > 0)
+            var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc).Select(p => p.Id);
+            if (oidcDownPartyIds.Count() > 0)
             {
-
+                sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Type != PartyTypes.Oidc);
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().SingleLogoutRequestAsync(oidcDownPartyIds, sequenceData);
             }
 
+            var samlDownPartyId = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Select(p => p.Id).FirstOrDefault();
+            if (samlDownPartyId != null)
+            {
+                sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Id != samlDownPartyId);
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await serviceProvider.GetService<SamlLogoutDownLogic>().SingleLogoutRequestAsync(samlDownPartyId, sequenceData);
+            }
 
-            
+            await sequenceLogic.RemoveSequenceDataAsync<SingleLogoutSequenceData>();
+            return ResponseUpParty(sequenceData.UpPartyName, sequenceData.UpPartyType);
+        }
 
-            logger.ScopeTrace($"Response, Up type {sequenceData.UpPartyType}.");
-            switch (sequenceData.DownPartyType)
+        private IActionResult ResponseUpParty(string upPartyName, PartyTypes upPartyType)
+        {
+            logger.ScopeTrace($"Response, Up type {upPartyType}.");
+            switch (upPartyType)
             {
                 case PartyTypes.Login:
-                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
                 case PartyTypes.Oidc:
-                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
                 case PartyTypes.Saml2:
-                    return HttpContext.GetUpPartyUrl(sequenceData.UpPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
 
                 default:
                     throw new NotSupportedException();
             }
         }
-
     }
 }

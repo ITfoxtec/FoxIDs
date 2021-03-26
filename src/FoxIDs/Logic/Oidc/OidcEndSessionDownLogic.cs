@@ -190,5 +190,11 @@ namespace FoxIDs.Logic
             await formActionLogic.RemoveFormActionSequenceDataAsync();
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
+
+        public async Task<IActionResult> SingleLogoutRequestAsync(IEnumerable<string> oidcDownPartyIds, SingleLogoutSequenceData sequenceData)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

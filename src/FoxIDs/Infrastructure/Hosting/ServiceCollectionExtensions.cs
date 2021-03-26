@@ -68,6 +68,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<SamlClaimsDownLogic>();
             services.AddTransient<Saml2ConfigurationLogic>();
             services.AddTransient<SamlMetadataLogic>();
             services.AddTransient<SamlAuthnUpLogic>();

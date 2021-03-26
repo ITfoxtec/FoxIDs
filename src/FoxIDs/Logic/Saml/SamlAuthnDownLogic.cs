@@ -31,10 +31,11 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
+        private readonly SamlClaimsDownLogic samlClaimsDownLogic;
         private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -43,6 +44,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.formActionLogic = formActionLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
+            this.samlClaimsDownLogic = samlClaimsDownLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
@@ -215,12 +217,12 @@ namespace FoxIDs.Logic
             {
                 claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
-                saml2AuthnResponse.SessionIndex = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
+                saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);
 
-                saml2AuthnResponse.NameId = GetNameId(claims);
+                saml2AuthnResponse.NameId = samlClaimsDownLogic.GetNameId(claims);
 
                 var tokenIssueTime = DateTimeOffset.UtcNow;
-                var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
+                var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(samlClaimsDownLogic.GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
 
                 var authnContext = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationMethod);
                 var authenticationInstant = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationInstant);
@@ -250,59 +252,6 @@ namespace FoxIDs.Logic
             {
                 throw new NotSupportedException();
             }
-        }
-
-        private Saml2NameIdentifier GetNameId(IEnumerable<Claim> claims)
-        {
-            var nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.NameIdentifier);
-            if (nameIdValue.IsNullOrEmpty())
-            {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Upn);
-            }
-            else if (nameIdValue.IsNullOrEmpty())
-            {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Email);
-            }
-            else if (nameIdValue.IsNullOrEmpty())
-            {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Name);
-            }
-
-            if (nameIdValue.IsNullOrEmpty())
-            {
-                return null;
-            }
-            else
-            {
-                var nameIdFormat = GetNameIdFormat(claims);
-                if(nameIdFormat != null)
-                {
-                    return new Saml2NameIdentifier(nameIdValue, nameIdFormat);
-                }
-                else
-                {
-                    return new Saml2NameIdentifier(nameIdValue);
-                }
-            }
-        }
-
-        private Uri GetNameIdFormat(IEnumerable<Claim> claims)
-        {
-            var nameIdFormat = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.NameIdFormat);
-            if (!nameIdFormat.IsNullOrEmpty())
-            {
-                return new Uri(nameIdFormat);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        private IEnumerable<Claim> GetSubjectClaims(SamlDownParty party, IEnumerable<Claim> claims)
-        {
-            IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);
-            return claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
         }
     }
 }

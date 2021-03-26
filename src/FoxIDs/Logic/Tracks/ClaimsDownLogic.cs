@@ -145,7 +145,7 @@ namespace FoxIDs.Logic
             var jwtClaimValues = jwtClaims.Where(c => c.Type == JwtClaimTypes.Amr).FirstOrDefault()?.Value.ToSpaceList();
 
             // TODO, implement mapping
-            if (jwtClaimValues.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Pwd))
+            if (jwtClaimValues?.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Pwd) == true)
             {
                 samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, AuthnContextClassTypes.PasswordProtectedTransport.OriginalString));
             }

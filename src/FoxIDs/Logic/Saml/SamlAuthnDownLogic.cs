@@ -31,9 +31,10 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
+        private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -42,6 +43,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.formActionLogic = formActionLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
+            this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -158,7 +160,7 @@ namespace FoxIDs.Logic
             return loginRequest;
         }
 
-        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> claims = null)
+        public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null)
         {
             logger.ScopeTrace($"Down, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
             logger.SetScopeProperty("downPartyId", partyId);
@@ -167,6 +169,8 @@ namespace FoxIDs.Logic
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
+
+            var claims = await claimsDownLogic.FromJwtToSamlClaimsAsync(jwtClaims);
 
             logger.ScopeTrace($"Binding '{party.AuthnBinding.ResponseBinding}'");
             switch (party.AuthnBinding.ResponseBinding)

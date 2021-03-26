@@ -198,7 +198,7 @@ namespace FoxIDs.Logic
                 var jwtValidClaims = await claimsDownLogic.FromSamlToJwtClaimsAsync(validClaims);
                 await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), jwtValidClaims, sessionId, externalSessionId);
 
-                return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims, jwtValidClaims);
+                return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, jwtValidClaims);
             }
             catch (StopSequenceException)
             {
@@ -278,7 +278,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, IEnumerable<Claim> samlClaims = null, List<Claim> jwtClaims = null)
+        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, List<Claim> jwtClaims = null)
         {
             try
             {
@@ -297,7 +297,7 @@ namespace FoxIDs.Logic
                             return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
                         }
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, samlClaims);
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, jwtClaims);
 
                     default:
                         throw new NotSupportedException();

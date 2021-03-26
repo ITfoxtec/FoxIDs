@@ -27,6 +27,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace("Start single logout.");
 
+            downPartyLinks = new List<DownPartyLink>(downPartyLinks.Where(p => p.Id != initiatingDownParty.Id));
             var sequenceData = new SingleLogoutSequenceData
             {
                 SessionId = sessionId,
@@ -45,6 +46,11 @@ namespace FoxIDs.Logic
         {
             sequenceData = sequenceData ?? await sequenceLogic.GetSequenceDataAsync<SingleLogoutSequenceData>(remove: false);
 
+            var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc);
+            if(oidcDownPartyIds.Count() > 0)
+            {
+
+            }
 
 
             

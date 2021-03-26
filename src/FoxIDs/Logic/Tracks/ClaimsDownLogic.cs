@@ -115,6 +115,10 @@ namespace FoxIDs.Logic
                         samlClaims.Add(jwtClaim);
                     }
                 }
+                if (!samlClaims.Where(c => c.Type == Saml2ClaimTypes.NameIdFormat).Any())
+                {
+                    samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Persistent.OriginalString);
+                }
                 return Task.FromResult(samlClaims);
             }
             catch (Exception ex)

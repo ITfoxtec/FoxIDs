@@ -14,14 +14,6 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "ut")]
         public PartyTypes UpPartyType { get; set; }
 
-        [Required]
-        [JsonProperty(PropertyName = "di")]
-        public string DownPartyId { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "dt")]
-        public PartyTypes DownPartyType { get; set; }
-
         [JsonProperty(PropertyName = "c")]
         public IEnumerable<ClaimAndValues> Claims { get; set; }
 

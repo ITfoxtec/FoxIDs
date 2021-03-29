@@ -139,7 +139,10 @@ namespace FoxIDs.Logic
             }
             else
             {
-                return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
+                return await singleLogoutDownLogic.StartSingleLogoutAsync(
+                    new UpPartyLink { Name = party.Name, Type = party.Type },
+                    sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, 
+                    session);
             }
         }
 

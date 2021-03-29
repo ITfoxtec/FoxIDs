@@ -90,10 +90,8 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
                 {
                     Id = saml2LogoutRequest.Id.Value,
-                    RelayState = binding.RelayState,
-                    ResponseUrl = party.LoggedOutUrl,
+                    RelayState = binding.RelayState
                 });
-                await formActionLogic.CreateFormActionByUrlAsync(party.LoggedOutUrl);
 
                 var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -115,7 +113,7 @@ namespace FoxIDs.Logic
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
-                return await LogoutResponseAsync(party.Id, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, party.LoggedOutUrl, party.AuthnBinding.ResponseBinding, ex.Status);
+                return await LogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, ex.Status);
             }
         }
 
@@ -165,46 +163,34 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
-            logger.ScopeTrace($"Down, SAML Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
             logger.SetScopeProperty("downPartyId", partyId);
 
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
-
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
-
-            logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
-            switch (party.LogoutBinding.ResponseBinding)
-            {
-                case SamlBindingTypes.Redirect:
-                    return await LogoutResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2RedirectBinding(), status, sessionIndex);
-                case SamlBindingTypes.Post:
-                    return await LogoutResponseAsync(samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.ResponseUrl, new Saml2PostBinding(), status, sessionIndex);
-                default:
-                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.ResponseBinding}' not supported.");
-            }            
+            return await LogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 
-        private Task<IActionResult> LogoutResponseAsync(string partyId, Saml2Configuration samlConfig, string inResponseTo, string relayState, string loggedOutUrl, SamlBindingTypes binding, Saml2StatusCodes status) 
+        private Task<IActionResult> LogoutResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status, string sessionIndex = null) 
         {
-            logger.ScopeTrace($"Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.ScopeTrace($"Down, SAML Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 
+            var binding = party.LogoutBinding.ResponseBinding;
             logger.ScopeTrace($"Binding '{binding}'");
             switch (binding)
             {
                 case SamlBindingTypes.Redirect:
-                    return LogoutResponseAsync(samlConfig, inResponseTo, relayState, loggedOutUrl, new Saml2RedirectBinding(), status);
+                    return LogoutResponseAsync(samlConfig, inResponseTo, relayState, party.LoggedOutUrl, new Saml2RedirectBinding(), status, sessionIndex);
                 case SamlBindingTypes.Post:
-                    return LogoutResponseAsync(samlConfig, inResponseTo, relayState, loggedOutUrl, new Saml2PostBinding(), status);
+                    return LogoutResponseAsync(samlConfig, inResponseTo, relayState, party.LoggedOutUrl, new Saml2PostBinding(), status, sessionIndex);
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");
             }
         }
 
-        private async Task<IActionResult> LogoutResponseAsync<T>(Saml2Configuration samlConfig, string inResponseTo, string relayState, string loggedOutUrl, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex = null)
+        private async Task<IActionResult> LogoutResponseAsync<T>(Saml2Configuration samlConfig, string inResponseTo, string relayState, string loggedOutUrl, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex)
         {
             binding.RelayState = relayState;
 
@@ -222,7 +208,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            await formActionLogic.RemoveFormActionSequenceDataAsync(loggedOutUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
@@ -281,7 +267,6 @@ namespace FoxIDs.Logic
                 Destination = new Uri(party.SingleLogoutUrl),
                 SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims)
             };
-            await formActionLogic.CreateFormActionByUrlAsync(party.SingleLogoutUrl);
 
             binding.RelayState = SequenceString;
             binding.Bind(saml2LogoutRequest);
@@ -289,7 +274,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Single logged out URL '{party.SingleLogoutUrl}'.");
             logger.ScopeTrace("Down, SAML Single Logout request.", triggerEvent: true);
 
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            await formActionLogic.RemoveFormActionSequenceDataAsync(party.SingleLogoutUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

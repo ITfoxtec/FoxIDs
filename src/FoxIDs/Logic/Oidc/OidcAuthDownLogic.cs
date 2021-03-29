@@ -84,7 +84,6 @@ namespace FoxIDs.Logic
                     CodeChallenge = codeChallengeSecret?.CodeChallenge,
                     CodeChallengeMethod = codeChallengeSecret?.CodeChallengeMethod,
                 });
-                await formActionLogic.CreateFormActionByUrlAsync(authenticationRequest.RedirectUri);
 
                 var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -284,7 +283,7 @@ namespace FoxIDs.Logic
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            await formActionLogic.RemoveFormActionSequenceDataAsync(sequenceData.RedirectUri);
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
@@ -346,6 +345,7 @@ namespace FoxIDs.Logic
             var nameValueCollection = authenticationResponse.ToDictionary();
 
             logger.ScopeTrace($"Redirect Uri '{redirectUri}'.");
+            await formActionLogic.RemoveFormActionSequenceDataAsync(redirectUri);
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }
 

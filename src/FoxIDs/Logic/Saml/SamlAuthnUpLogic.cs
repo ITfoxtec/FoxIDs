@@ -216,7 +216,9 @@ namespace FoxIDs.Logic
             }
         }
 
-        private DownPartyLink GetDownPartyLink(UpParty upParty, SamlUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType };
+        private DownPartyLink GetDownPartyLink(UpParty upParty, SamlUpSequenceData sequenceData) => upParty.DisableSingleLogout || sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? 
+            null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value };
+
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)
         {
             IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);

@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace("Start single logout.");
 
-            var downPartyLinks = session?.DownPartyLinks?.Where(p => p.Id != initiatingDownParty.Id);
+            var downPartyLinks = session?.DownPartyLinks?.Where(p => initiatingDownParty == null || p.Id != initiatingDownParty.Id);
             if (!(downPartyLinks?.Count() > 0) || !(session?.Claims?.Count() > 0))
             {
                 return ResponseUpParty(upPartyLink.Name, upPartyLink.Type);
@@ -39,9 +39,7 @@ namespace FoxIDs.Logic
             {
                 UpPartyName = upPartyLink.Name,
                 UpPartyType = upPartyLink.Type,
-                DownPartyId = initiatingDownParty.Id,
-                DownPartyType = initiatingDownParty.Type,
-                DownPartyLinks = session.DownPartyLinks.Where(p => p.Id != initiatingDownParty.Id)
+                DownPartyLinks = downPartyLinks
             };
 
             if (downPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Any())

@@ -80,7 +80,6 @@ namespace FoxIDs.Logic
                 RedirectUri = postLogoutRedirectUri,
                 State = endSessionRequest.State,
             });
-            await formActionLogic.CreateFormActionByUrlAsync(postLogoutRedirectUri);
 
             var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -187,7 +186,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            await formActionLogic.RemoveFormActionSequenceDataAsync(sequenceData.RedirectUri);
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
 

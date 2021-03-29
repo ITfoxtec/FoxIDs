@@ -130,8 +130,8 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace($"SAML Single Logout request, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
-                    //case PartyTypes.Saml2:
-                    //    return await serviceProvider.GetService<SamlLogoutUpLogic>().SingleLogoutResponseAsync(RouteBinding.UpParty.Id);
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().SingleLogoutRequestAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
                 }

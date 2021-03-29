@@ -319,6 +319,7 @@ namespace FoxIDs
                     public const int KeysMin = 1;
                     public const int AuthnUrlLength = 500;
                     public const int LogoutUrlLength = 500;
+                    public const int SingleLogoutResponseLength = 500;                    
                 }
 
                 public static class Down

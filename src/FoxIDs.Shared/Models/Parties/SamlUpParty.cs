@@ -70,5 +70,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [JsonProperty(PropertyName = "logout_url")]
         public string LogoutUrl { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.Up.SingleLogoutResponseLength)]
+        [JsonProperty(PropertyName = "single_logout_response_url")]
+        public string SingleLogoutResponseUrl { get; set; }        
     }
 }

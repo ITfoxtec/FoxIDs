@@ -16,18 +16,20 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task CreateFormActionByUrlAsync(string url)
-        {
-            var domains = new List<string>();
-            if (!url.IsNullOrEmpty())
-            {
-                AddUrlToDomains(url, domains);
-            }
-            await sequenceLogic.SaveSequenceDataAsync(new FormActionSequenceData
-            {
-                Domains = domains
-            });
-        }
+        // TODO consider removing the FormActionSequenceData...
+
+        //public async Task CreateFormActionByUrlAsync(string url)
+        //{
+        //    var domains = new List<string>();
+        //    if (!url.IsNullOrEmpty())
+        //    {
+        //        AddUrlToDomains(url, domains);
+        //    }
+        //    await sequenceLogic.SaveSequenceDataAsync(new FormActionSequenceData
+        //    {
+        //        Domains = domains
+        //    });
+        //}
 
         private bool AddUrlToDomains(string url, List<string> domains)
         {
@@ -44,17 +46,17 @@ namespace FoxIDs.Logic
             return false;
         }
 
-        public async Task AddFormActionByUrlAsync(string url)
-        {
-            if (!url.IsNullOrEmpty())
-            {
-                var formActionSequenceData = await sequenceLogic.GetSequenceDataAsync<FormActionSequenceData>(remove: false);
-                if (AddUrlToDomains(url, formActionSequenceData.Domains))
-                {
-                    await sequenceLogic.SaveSequenceDataAsync(formActionSequenceData);
-                }
-            }
-        }
+        //public async Task AddFormActionByUrlAsync(string url)
+        //{
+        //    if (!url.IsNullOrEmpty())
+        //    {
+        //        var formActionSequenceData = await sequenceLogic.GetSequenceDataAsync<FormActionSequenceData>(remove: false);
+        //        if (AddUrlToDomains(url, formActionSequenceData.Domains))
+        //        {
+        //            await sequenceLogic.SaveSequenceDataAsync(formActionSequenceData);
+        //        }
+        //    }
+        //}
 
         public void AddFormActionAllowAll()
         {
@@ -87,12 +89,18 @@ namespace FoxIDs.Logic
             return domains;
         }
 
-        public async Task RemoveFormActionSequenceDataAsync()
+        public async Task RemoveFormActionSequenceDataAsync(string addUrl = null)
         {
             var formActionSequenceData = await sequenceLogic.GetSequenceDataAsync<FormActionSequenceData>(remove: true, allowNull: true);
-            if (formActionSequenceData?.Domains?.Count() > 0)
+            if (formActionSequenceData?.Domains?.Count() > 0 || !addUrl.IsNullOrEmpty())
             {
-                HttpContext.Items[Constants.FormAction.Domains] = formActionSequenceData.Domains;
+                var domains = new List<string>(formActionSequenceData?.Domains);
+                if (!addUrl.IsNullOrEmpty())
+                {
+                    domains.Add(addUrl);
+                }
+
+                HttpContext.Items[Constants.FormAction.Domains] = domains;
             }
         }
     }

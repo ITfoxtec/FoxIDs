@@ -239,7 +239,8 @@ namespace FoxIDs.Logic
             }
         }
 
-        private DownPartyLink GetDownPartyLink(UpParty upParty, OidcUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType };
+        private DownPartyLink GetDownPartyLink(UpParty upParty, OidcUpSequenceData sequenceData) => upParty.DisableSingleLogout || sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? 
+            null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value };
 
         private void ValidateAuthenticationResponse(OidcUpParty party, AuthenticationResponse authenticationResponse, SessionResponse sessionResponse, bool isImplicitFlow)
         {

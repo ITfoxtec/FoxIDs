@@ -93,7 +93,8 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private DownPartyLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType };
+        private DownPartyLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout || sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ?
+            null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value };
 
         private bool ValidSession(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session)
         {
@@ -164,7 +165,7 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponseAsync(loginUpParty, new DownPartyLink { Id  = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, user, session);
+                    return await LoginResponseAsync(loginUpParty, sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id  = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, user, session);
                 }
                 catch (ChangePasswordException cpex)
                 {
@@ -352,7 +353,10 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(
+                        new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, 
+                        sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, 
+                        session);
                 }
             }
             else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)

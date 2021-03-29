@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
                 case SamlBindingTypes.Post:
                     return await LogoutRequestAsync(party, new Saml2PostBinding(), samlUpSequenceData);
                 default:
-                    throw new NotSupportedException($"Binding '{party.LogoutBinding.RequestBinding}' not supported.");
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
             }
         }
 
@@ -228,9 +228,11 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType }, session);
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(
+                        new UpPartyLink { Name = party.Name, Type = party.Type }, 
+                        sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value },
+                        session);
                 }
-
             }
             catch (StopSequenceException)
             {
@@ -289,7 +291,138 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task<IActionResult> SingleLogoutRequestAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, SAML Single Logout request.");
+            logger.SetScopeProperty("upPartyId", partyId);
 
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            ValidatePartySingleLogoutSupport(party);
 
+            switch (party.LogoutBinding.RequestBinding)
+            {
+                case SamlBindingTypes.Redirect:
+                    return await SingleLogoutRequestAsync(party, new Saml2RedirectBinding());
+                case SamlBindingTypes.Post:
+                    return await SingleLogoutRequestAsync(party, new Saml2PostBinding());
+                default:
+                    throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
+            }
+        }
+
+        private void ValidatePartySingleLogoutSupport(SamlUpParty party)
+        {
+            if (party.LogoutBinding == null || (party.LogoutUrl.IsNullOrEmpty() && party.SingleLogoutResponseUrl.IsNullOrEmpty()))
+            {
+                throw new EndpointException("Single Logout not configured.") { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
+        {
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+                        
+            var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
+
+            binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+
+            try
+            {
+                logger.ScopeTrace($"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+                logger.ScopeTrace("Up, SAML Single Logout request.", triggerEvent: true);
+
+                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+
+                var session = await sessionUpPartyLogic.DeleteSessionAsync();
+                logger.ScopeTrace("Up, Successful SAML Single Logout request.", triggerEvent: true);
+
+                await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
+                {
+                    Id = saml2LogoutRequest.IdAsString,
+                    UpPartyId = party.Id,
+                    RelayState = binding.RelayState,
+                    SessionId = saml2LogoutRequest.SessionIndex
+                });
+
+                if (party.DisableSingleLogout)
+                {
+                    return await SingleLogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState);
+                }
+                else
+                {
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session);
+                }
+
+            }
+            catch (SamlRequestException ex)
+            {
+                logger.Error(ex);
+                return await SingleLogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, ex.Status);
+            }
+        }
+
+        private string GetSingleLogoutResponseUrl(SamlUpParty party) => party.SingleLogoutResponseUrl.IsNullOrEmpty() ? party.LogoutUrl : party.SingleLogoutResponseUrl;
+
+        public async Task<IActionResult> SingleLogoutResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
+        {
+            logger.SetScopeProperty("upPartyId", partyId);
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            ValidatePartySingleLogoutSupport(party);
+
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(false);
+            return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
+        }
+
+        private async Task<IActionResult> SingleLogoutResponseAsync(SamlUpParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
+        {
+            logger.ScopeTrace($"Down, SAML Single Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
+
+            var binding = party.LogoutBinding.ResponseBinding;
+            logger.ScopeTrace($"Binding '{binding}'");
+            switch (binding)
+            {
+                case SamlBindingTypes.Redirect:
+                    return await LogoutResponseAsync(samlConfig, inResponseTo, relayState, GetSingleLogoutResponseUrl(party), new Saml2RedirectBinding(), status, sessionIndex);
+                case SamlBindingTypes.Post:
+                    return await LogoutResponseAsync(samlConfig, inResponseTo, relayState, GetSingleLogoutResponseUrl(party), new Saml2PostBinding(), status, sessionIndex);
+                default:
+                    throw new NotSupportedException($"SAML binding '{binding}' not supported.");
+            }
+        }
+
+        private async Task<IActionResult> LogoutResponseAsync<T>(Saml2Configuration samlConfig, string inResponseTo, string relayState, string singleLogoutResponseUrl, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex)
+        {
+            binding.RelayState = relayState;
+
+            var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig)
+            {
+                InResponseTo = new Saml2Id(inResponseTo),
+                Status = status,
+                Destination = new Uri(singleLogoutResponseUrl),
+                SessionIndex = sessionIndex
+            };
+
+            binding.Bind(saml2LogoutResponse);
+            logger.ScopeTrace($"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace($"Single logged out response URL '{singleLogoutResponseUrl}'.");
+            logger.ScopeTrace("Down, SAML Single Logout response.", triggerEvent: true);
+
+            await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
+            await formActionLogic.RemoveFormActionSequenceDataAsync(singleLogoutResponseUrl);
+            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            {
+                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+            }
+            if (binding is Saml2Binding<Saml2PostBinding>)
+            {
+                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+            }
+            else
+            {
+                throw new NotSupportedException();
+            }
+        }
     }
 }

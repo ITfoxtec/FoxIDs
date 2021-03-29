@@ -205,9 +205,7 @@ namespace FoxIDs.Logic
                     true => claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
                 };
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionStatedMax, nameof(externalSessionId), "Session state or claim");
-
-                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();
-                claims.AddClaim(JwtClaimTypes.SessionId, RandomGenerator.Generate(24));
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();                
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
@@ -461,7 +459,7 @@ namespace FoxIDs.Logic
                         }
                     case PartyTypes.Saml2:
                         var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, ErrorToSamlStatus(error), await claimsLogic.FromJwtToSamlClaimsAsync(claims));
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, ErrorToSamlStatus(error), claims != null ? await claimsLogic.FromJwtToSamlClaimsAsync(claims) : null);
 
                     default:
                         throw new NotSupportedException();

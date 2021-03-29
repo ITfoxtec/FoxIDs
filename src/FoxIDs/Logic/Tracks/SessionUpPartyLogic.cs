@@ -4,6 +4,7 @@ using FoxIDs.Models.Config;
 using FoxIDs.Models.Cookies;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -26,13 +27,13 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateOrUpdateSessionAsync<T>(T upParty, DownPartyLink newDownPartyLink, IEnumerable<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
+        public async Task CreateOrUpdateSessionAsync<T>(T upParty, DownPartyLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
         {
-            logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");        
 
             Action<SessionUpPartyCookie> updateAction = (session) =>
             {
-                session.Claims = claims.ToClaimAndValues();
+                session.Claims = claims.ToClaimAndValues(); 
                 session.ExternalSessionId = externalSessionId;
                 session.IdToken = idToken;
                 AddDownPartyLink(session, newDownPartyLink);
@@ -54,6 +55,16 @@ namespace FoxIDs.Logic
                         // TODO invalid user login
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
+
+                    if (session.ExternalSessionId != externalSessionId)
+                    {
+                        claims.RemoveAll(c => c.Type == JwtClaimTypes.SessionId);
+                        claims.AddClaim(JwtClaimTypes.SessionId, NewSessionId());
+                    }
+                    else
+                    {
+                        claims.AddClaim(JwtClaimTypes.SessionId, session.SessionId);
+                    }
                     updateAction(session);
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(session, null);
@@ -73,6 +84,7 @@ namespace FoxIDs.Logic
                 }
 
                 logger.ScopeTrace($"Create session up-party, External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
+                claims.AddClaim(JwtClaimTypes.SessionId, NewSessionId());
                 session = new SessionUpPartyCookie();
                 updateAction(session);
                 session.LastUpdated = session.CreateTime;
@@ -81,6 +93,8 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace($"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
             }
         }
+
+        private string NewSessionId() => RandomGenerator.Generate(24);
 
         public async Task<SessionUpPartyCookie> GetSessionAsync<T>(T upParty) where T : UpParty
         {

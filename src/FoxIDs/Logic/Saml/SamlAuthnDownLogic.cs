@@ -169,7 +169,7 @@ namespace FoxIDs.Logic
 
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
-            var claims = await claimsDownLogic.FromJwtToSamlClaimsAsync(jwtClaims);
+            var claims = jwtClaims != null ? await claimsDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
             return await AuthnResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
         }
 

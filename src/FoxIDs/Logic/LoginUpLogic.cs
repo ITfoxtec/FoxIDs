@@ -73,11 +73,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> LoginResponseErrorAsync(LoginSequenceError error, string errorDescription = null)
+        public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError error, string errorDescription = null)
         {
             logger.ScopeTrace("Login error response.");
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
+            await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
             logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyType}'.");

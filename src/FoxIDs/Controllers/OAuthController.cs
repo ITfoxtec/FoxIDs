@@ -61,6 +61,26 @@ namespace FoxIDs.Controllers
             }
         }
 
+        [Sequence]
+        public async Task<IActionResult> SingleLogoutDone()
+        {
+            try
+            {
+                logger.ScopeTrace($"Single Logout done, Up type '{RouteBinding.UpParty.Type}'");
+                switch (RouteBinding.UpParty.Type)
+                {
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDone(RouteBinding.UpParty.Id);
+                    default:
+                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Single Logout done failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
         [Sequence(SequenceAction.Start)]
         public async Task<IActionResult> Authorize()
         {

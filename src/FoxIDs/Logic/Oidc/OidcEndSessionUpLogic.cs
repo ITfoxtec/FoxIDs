@@ -139,16 +139,30 @@ namespace FoxIDs.Logic
             }
             else
             {
-                return await singleLogoutDownLogic.StartSingleLogoutAsync(
+                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(
                     new UpPartyLink { Name = party.Name, Type = party.Type },
                     sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, 
                     session);
+
+                if (doSingleLogout)
+                {
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                }
+                else
+                {
+                    await sequenceLogic.RemoveSequenceDataAsync<OidcUpSequenceData>();
+                    return await LogoutResponseDownAsync(sequenceData);
+                }
             }
         }
 
-        public async Task<IActionResult> SingleLogoutDone()
+        public async Task<IActionResult> SingleLogoutDone(string partyId)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
             return await LogoutResponseDownAsync(sequenceData);
         }
 

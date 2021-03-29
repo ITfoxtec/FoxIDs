@@ -59,6 +59,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace("Start login.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
@@ -70,7 +71,7 @@ namespace FoxIDs.Controllers
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
                 {
-                    return await loginUpLogic.LoginResponseErrorAsync(LoginSequenceError.LoginRequired);
+                    return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired);
                 }
                 else
                 {
@@ -90,6 +91,20 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private void CheckUpParty(UpSequenceData sequenceData)
+        {
+            if (!sequenceData.UpPartyId.Equals(RouteBinding.UpParty.Id, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
+
+            if (RouteBinding.UpParty.Type != PartyTypes.Login)
+            {
+                throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
             }
         }
 
@@ -122,6 +137,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
                 Func<IActionResult> viewError = () =>
@@ -243,8 +259,9 @@ namespace FoxIDs.Controllers
             try
             {
                 logger.ScopeTrace("Cancel login.");
-
-                return await loginUpLogic.LoginResponseErrorAsync(LoginSequenceError.LoginCanceled, "Login canceled by user.");
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
+                return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
 
             }
             catch (Exception ex)
@@ -261,6 +278,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace("Start logout.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
@@ -269,7 +287,7 @@ namespace FoxIDs.Controllers
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout);
                 }
 
-                if (!sequenceData.SessionId.IsNullOrEmpty() && sequenceData.SessionId == session.SessionId)
+                if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
                 {
                     throw new Exception("Requested session ID do not match Login up-party session ID.");
                 }
@@ -299,6 +317,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
                 Func<IActionResult> viewError = () =>
@@ -353,10 +372,20 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(
                         new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, 
                         sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, 
                         session);
+
+                    if (doSingleLogout)
+                    {
+                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                    }
+                    else
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+                        return await LogoutDoneAsync(loginUpParty, sequenceData);
+                    }
                 }
             }
             else if (logoutChoice == LogoutChoice.KeepMeLoggedIn)
@@ -381,6 +410,7 @@ namespace FoxIDs.Controllers
         public async Task<IActionResult> SingleLogoutDone()
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
+            CheckUpParty(sequenceData);
             return await LogoutDoneAsync(null, sequenceData);
         }
 
@@ -405,6 +435,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace("Start create user.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 if (!loginUpParty.EnableCreateUser)
                 {
@@ -434,6 +465,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 if (!loginUpParty.EnableCreateUser)
                 {
@@ -533,6 +565,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace("Start change password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
@@ -560,6 +593,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
 
                 Func<IActionResult> viewError = () =>

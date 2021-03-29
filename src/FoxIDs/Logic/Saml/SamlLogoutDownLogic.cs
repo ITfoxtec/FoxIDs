@@ -311,7 +311,7 @@ namespace FoxIDs.Logic
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party);
 
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
-            binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+            binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
             logger.ScopeTrace($"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
             
             ValidateLogoutResponse(party, saml2LogoutResponse);

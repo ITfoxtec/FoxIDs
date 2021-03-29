@@ -24,7 +24,7 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "la")]
         public LoginAction LoginAction { get; set; }
 
-        [JsonProperty(PropertyName = "ui")]
+        [JsonProperty(PropertyName = "u")]
         public string UserId { get; set; }
 
         [JsonProperty(PropertyName = "ma")]

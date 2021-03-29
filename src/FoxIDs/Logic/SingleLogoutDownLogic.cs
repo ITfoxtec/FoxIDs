@@ -25,14 +25,14 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<IActionResult> StartSingleLogoutAsync(UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, SessionBaseCookie session)
+        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, SessionBaseCookie session)
         {
-            logger.ScopeTrace("Start single logout.");
+            logger.ScopeTrace("Initialize single logout.");
 
             var downPartyLinks = session?.DownPartyLinks?.Where(p => initiatingDownParty == null || p.Id != initiatingDownParty.Id);
             if (!(downPartyLinks?.Count() > 0) || !(session?.Claims?.Count() > 0))
             {
-                return ResponseUpParty(upPartyLink.Name, upPartyLink.Type);
+                return (false, null);
             }
 
             var sequenceData = new SingleLogoutSequenceData
@@ -52,9 +52,15 @@ namespace FoxIDs.Logic
             }
 
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return await HandleSingleLogoutAsync(sequenceData);
+            return (true, sequenceData);
         }
 
+        public async Task<IActionResult> StartSingleLogoutAsync(SingleLogoutSequenceData sequenceData)
+        {
+            logger.ScopeTrace("Start single logout.");
+            return await HandleSingleLogoutAsync(sequenceData);
+        }
+      
         public async Task<IActionResult> HandleSingleLogoutAsync(SingleLogoutSequenceData sequenceData = null)
         {
             sequenceData = sequenceData ?? await sequenceLogic.GetSequenceDataAsync<SingleLogoutSequenceData>(remove: false);

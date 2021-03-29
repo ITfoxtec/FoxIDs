@@ -224,14 +224,24 @@ namespace FoxIDs.Logic
 
                 if (party.DisableSingleLogout)
                 {
-                    return await LogoutResponseDownAsync(sequenceData, sessionIndex: sequenceData.SessionId);
+                    return await LogoutResponseDownAsync(sequenceData);
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(
                         new UpPartyLink { Name = party.Name, Type = party.Type }, 
                         sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value },
                         session);
+
+                    if (doSingleLogout)
+                    {
+                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                    }
+                    else
+                    {
+                        await sequenceLogic.RemoveSequenceDataAsync<SamlUpSequenceData>();
+                        return await LogoutResponseDownAsync(sequenceData);
+                    }
                 }
             }
             catch (StopSequenceException)
@@ -250,13 +260,24 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IActionResult> SingleLogoutDone()
+        public async Task<IActionResult> SingleLogoutDoneAsync(string partyId)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
-            return await LogoutResponseDownAsync(sequenceData, sessionIndex: sequenceData.SessionId);
+            if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            if (!sequenceData.ExternalInitiatedSingleLogout)
+            {
+                return await LogoutResponseDownAsync(sequenceData);
+            }
+            else
+            {
+                return await SingleLogoutResponseAsync(sequenceData);
+            }
         }
 
-        private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
+        private async Task<IActionResult> LogoutResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status = Saml2StatusCodes.Success)
         {
             try
             {
@@ -275,7 +296,7 @@ namespace FoxIDs.Logic
                             throw new StopSequenceException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.");
                         }
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sessionIndex);
+                        return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, status, sequenceData.SessionId);
 
                     default:
                         throw new NotSupportedException();
@@ -338,6 +359,7 @@ namespace FoxIDs.Logic
 
                 await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
                 {
+                    ExternalInitiatedSingleLogout = true,
                     Id = saml2LogoutRequest.IdAsString,
                     UpPartyId = party.Id,
                     RelayState = binding.RelayState,
@@ -350,7 +372,16 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    return await singleLogoutDownLogic.StartSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session);
+
+                    if (doSingleLogout)
+                    {
+                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                    }
+                    else
+                    {
+                        return await SingleLogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState);
+                    }
                 }
 
             }
@@ -363,15 +394,14 @@ namespace FoxIDs.Logic
 
         private string GetSingleLogoutResponseUrl(SamlUpParty party) => party.SingleLogoutResponseUrl.IsNullOrEmpty() ? party.LogoutUrl : party.SingleLogoutResponseUrl;
 
-        public async Task<IActionResult> SingleLogoutResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
+        private async Task<IActionResult> SingleLogoutResponseAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status = Saml2StatusCodes.Success, string sessionIndex = null)
         {
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            var party = await tenantRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
             ValidatePartySingleLogoutSupport(party);
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(false);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);            
             return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 

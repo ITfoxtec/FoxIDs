@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             if (splitValue.Count() > 2)
             {
                 var domain = splitValue[2].ToLower();
-                if(!domains.Contains(domain))
+                if (!domains.Contains(domain))
                 {
                     domains.Add(domain);
                     return true;
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                return null;
+                return AddAllowAll(null);
             }
         }
 
@@ -84,6 +84,7 @@ namespace FoxIDs.Logic
         {
             if (HttpContext.Items.ContainsKey(Constants.FormAction.DomainsAllowAll))
             {
+                domains = domains ?? new List<string>();
                 domains.Add("*");
             }
             return domains;
@@ -94,10 +95,10 @@ namespace FoxIDs.Logic
             var formActionSequenceData = await sequenceLogic.GetSequenceDataAsync<FormActionSequenceData>(remove: true, allowNull: true);
             if (formActionSequenceData?.Domains?.Count() > 0 || !addUrl.IsNullOrEmpty())
             {
-                var domains = new List<string>(formActionSequenceData?.Domains);
+                var domains = formActionSequenceData?.Domains?.Count() > 0 ? new List<string>(formActionSequenceData?.Domains) : new List<string>();
                 if (!addUrl.IsNullOrEmpty())
                 {
-                    domains.Add(addUrl);
+                    AddUrlToDomains(addUrl, domains);
                 }
 
                 HttpContext.Items[Constants.FormAction.Domains] = domains;

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace FoxIDs.Models.Cookies
+namespace FoxIDs.Models.Session
 {
     public abstract class CookieMessage
     {

@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using FoxIDs.Models.Cookies;
+using FoxIDs.Models.Session;
 using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
@@ -25,11 +25,11 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartyLink initiatingDownParty, SessionBaseCookie session)
+        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, SessionBaseCookie session)
         {
             logger.ScopeTrace("Initialize single logout.");
 
-            var downPartyLinks = session?.DownPartyLinks?.Where(p => initiatingDownParty == null || p.Id != initiatingDownParty.Id);
+            var downPartyLinks = session?.DownPartyLinks?.Where(p => p.SupportSingleLogout && (initiatingDownParty == null || p.Id != initiatingDownParty.Id));
             if (!(downPartyLinks?.Count() > 0) || !(session?.Claims?.Count() > 0))
             {
                 return (false, null);

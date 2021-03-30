@@ -1,7 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
-using FoxIDs.Models.Cookies;
+using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task<List<Claim>> CreateOrUpdateSessionAsync<T>(T upParty, DownPartyLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
+        public async Task<List<Claim>> CreateOrUpdateSessionAsync<T>(T upParty, DownPartySessionLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 

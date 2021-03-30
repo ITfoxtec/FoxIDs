@@ -7,7 +7,7 @@ using ITfoxtec.Identity.Util;
 using FoxIDs.Infrastructure;
 using FoxIDs.Logic;
 using FoxIDs.Models;
-using FoxIDs.Models.Cookies;
+using FoxIDs.Models.Session;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -108,8 +108,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private DownPartyLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout || sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ?
-            null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value };
+        private DownPartySessionLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
         private bool ValidSession(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session)
         {
@@ -181,7 +180,7 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponseAsync(loginUpParty, sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id  = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, user, session);
+                    return await LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, session);
                 }
                 catch (ChangePasswordException cpex)
                 {
@@ -214,7 +213,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
+        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
         {
             var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             var authMethods = new List<string>();
@@ -372,11 +371,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(
-                        new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, 
-                        sequenceData.DownPartyId == null || sequenceData.DownPartyType == null ? null : new DownPartyLink { Id = sequenceData.DownPartyId, Type = sequenceData.DownPartyType.Value }, 
-                        session);
-
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = loginUpParty.Name, Type = loginUpParty.Type }, sequenceData.DownPartyLink, session);
                     if (doSingleLogout)
                     {
                         return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Models.Session;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,6 +19,6 @@ namespace FoxIDs.Models.Sequences
         public IEnumerable<ClaimAndValues> Claims { get; set; }
 
         [JsonProperty(PropertyName = "dl")]
-        public IEnumerable<DownPartyLink> DownPartyLinks { get; set; }
+        public IEnumerable<DownPartySessionLink> DownPartyLinks { get; set; }
     }
 }

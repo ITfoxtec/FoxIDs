@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace FoxIDs.Models.Cookies
+namespace FoxIDs.Models.Session
 {
     public abstract class SessionBaseCookie : CookieMessage
     {
@@ -26,6 +26,6 @@ namespace FoxIDs.Models.Cookies
         public IEnumerable<ClaimAndValues> Claims { get; set; }
 
         [JsonProperty(PropertyName = "dl")]
-        public List<DownPartyLink> DownPartyLinks { get; set; }
+        public List<DownPartySessionLink> DownPartyLinks { get; set; }
     }
 }

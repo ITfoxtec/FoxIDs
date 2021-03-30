@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models.Logic;
+using FoxIDs.Models.Session;
 using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -11,11 +12,8 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "es")]
         public bool ExternalInitiatedSingleLogout { get; set; } = false;
 
-        [JsonProperty(PropertyName = "di")]
-        public string DownPartyId { get; set; }
-
-        [JsonProperty(PropertyName = "dt")]
-        public PartyTypes? DownPartyType { get; set; }
+        [JsonProperty(PropertyName = "dp")]
+        public DownPartySessionLink DownPartyLink { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "ui")]
@@ -36,13 +34,9 @@ namespace FoxIDs.Models.Sequences
 
             if (!ExternalInitiatedSingleLogout)
             {
-                if (DownPartyId.IsNullOrEmpty())
+                if (DownPartyLink == null)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(DownPartyId)} is required if not external initiated single logout.", new[] { nameof(DownPartyId) }));
-                }
-                if (!DownPartyType.HasValue)
-                {
-                    results.Add(new ValidationResult($"The field {nameof(DownPartyType)} is required if not external initiated single logout.", new[] { nameof(DownPartyType) }));
+                    results.Add(new ValidationResult($"The field {nameof(DownPartyLink)} is required if not external initiated single logout.", new[] { nameof(DownPartyLink) }));
                 }
             }
 

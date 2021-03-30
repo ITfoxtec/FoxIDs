@@ -1,7 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
-using FoxIDs.Models.Cookies;
+using FoxIDs.Models.Session;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateSessionAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, long authTime, List<Claim> claims)
+        public async Task CreateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, List<Claim> claims)
         {
             if(SessionEnabled(loginUpParty))
             {
@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
         {
             logger.ScopeTrace($"Update session, Route '{RouteBinding.Route}'.");
 
@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
             return false;
         }
 
-        public async Task<SessionLoginUpPartyCookie> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty, DownPartyLink newDownPartyLink)
+        public async Task<SessionLoginUpPartyCookie> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink)
         {
             logger.ScopeTrace($"Get and update session and check user, Route '{RouteBinding.Route}'.");
 

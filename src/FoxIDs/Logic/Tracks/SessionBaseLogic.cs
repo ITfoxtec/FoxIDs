@@ -1,6 +1,6 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Models.Config;
-using FoxIDs.Models.Cookies;
+using FoxIDs.Models.Session;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -22,16 +22,16 @@ namespace FoxIDs.Logic
             return upParty.SessionLifetime > 0 || upParty.PersistentSessionAbsoluteLifetime > 0 || upParty.PersistentSessionLifetimeUnlimited;
         }
 
-        protected void AddDownPartyLink(SessionBaseCookie session, DownPartyLink newDownPartyLink)
+        protected void AddDownPartyLink(SessionBaseCookie session, DownPartySessionLink newDownPartyLink)
         {
-            if (newDownPartyLink == null)
+            if (newDownPartyLink == null || !newDownPartyLink.SupportSingleLogout)
             {
                 return;
             }
 
             if (session.DownPartyLinks == null)
             {
-                session.DownPartyLinks = new List<DownPartyLink> { newDownPartyLink };
+                session.DownPartyLinks = new List<DownPartySessionLink> { newDownPartyLink };
             }
             else
             {

@@ -15,6 +15,7 @@ using System.Security.Claims;
 using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.Session;
 
 namespace FoxIDs.Logic
 {
@@ -103,11 +104,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, string postLogoutRedirectUri)
+        private LogoutRequest GetLogoutRequest(TParty party, string sessionId, bool validIdToken, string postLogoutRedirectUri)
         {
             var logoutRequest = new LogoutRequest
             {
-                DownParty = party,
+                DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type },
                 SessionId = sessionId,
                 RequireLogoutConsent = !validIdToken,
                 PostLogoutRedirect = !postLogoutRedirectUri.IsNullOrWhiteSpace()
@@ -116,7 +117,7 @@ namespace FoxIDs.Logic
             return logoutRequest;
         }
 
-        private LogoutRequest GetSamlLogoutRequest(Party party, string sessionId, IEnumerable<Claim> idTokenClaims)
+        private LogoutRequest GetSamlLogoutRequest(TParty party, string sessionId, IEnumerable<Claim> idTokenClaims)
         {
             var samlClaims = new List<Claim>();
             var nameIdClaim = idTokenClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Subject);
@@ -134,7 +135,7 @@ namespace FoxIDs.Logic
 
             return new LogoutRequest
             {
-                DownParty = party,
+                DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type },
                 SessionId = sessionId,
                 RequireLogoutConsent = false,
                 PostLogoutRedirect = true,

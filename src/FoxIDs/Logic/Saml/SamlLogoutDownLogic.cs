@@ -17,6 +17,7 @@ using System.Linq;
 using FoxIDs.Models.Logic;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.Session;
 
 namespace FoxIDs.Logic
 {
@@ -117,18 +118,18 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LogoutRequest GetLogoutRequest(Party party, Saml2LogoutRequest saml2LogoutRequest)
+        private LogoutRequest GetLogoutRequest(SamlDownParty party, Saml2LogoutRequest saml2LogoutRequest)
         {
             return new LogoutRequest
             {
-                DownParty = party,
+                DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.SingleLogoutUrl), Id = party.Id, Type = party.Type },
                 SessionId = saml2LogoutRequest.SessionIndex,
                 RequireLogoutConsent = false,
                 PostLogoutRedirect = true,
             };
         }
 
-        private LogoutRequest GetSamlLogoutRequest(Party party, Saml2LogoutRequest saml2LogoutRequest)
+        private LogoutRequest GetSamlLogoutRequest(SamlDownParty party, Saml2LogoutRequest saml2LogoutRequest)
         {
             var samlClaims = new List<Claim>();
             if (saml2LogoutRequest.NameId != null)
@@ -142,7 +143,7 @@ namespace FoxIDs.Logic
             }
             return new LogoutRequest
             {
-                DownParty = party,
+                DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.SingleLogoutUrl), Id = party.Id, Type = party.Type },
                 SessionId = saml2LogoutRequest.SessionIndex,
                 RequireLogoutConsent = false,
                 PostLogoutRedirect = true,

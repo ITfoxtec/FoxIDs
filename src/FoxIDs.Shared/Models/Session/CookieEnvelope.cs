@@ -3,7 +3,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.DataProtection;
 using Newtonsoft.Json;
 
-namespace FoxIDs.Models.Cookies
+namespace FoxIDs.Models.Session
 {
     public class CookieEnvelope
     {

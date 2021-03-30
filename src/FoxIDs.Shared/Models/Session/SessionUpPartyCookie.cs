@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace FoxIDs.Models.Cookies
+namespace FoxIDs.Models.Session
 {
     public class SessionUpPartyCookie : SessionBaseCookie
     {

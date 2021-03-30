@@ -90,7 +90,12 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                if(!samlUpParty.LogoutUrl.IsNullOrWhiteSpace())
+                if (!samlUpParty.SingleLogoutResponseUrl.IsNullOrWhiteSpace() && samlUpParty.LogoutUrl.IsNullOrWhiteSpace())
+                {
+                    throw new Exception("Logout URL is required if single logout response URL is configured.");
+                }
+
+                if (!samlUpParty.LogoutUrl.IsNullOrWhiteSpace())
                 {
                     if(samlUpParty.LogoutBinding == null)
                     {

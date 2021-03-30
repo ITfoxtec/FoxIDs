@@ -109,6 +109,10 @@
                     </div>
                 </div>
                 <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
+                @if (samlUpParty.ShowAdvanced)
+                {
+                    <FInputText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
+                }
                 <div class="row active-group-outline">
                     <div class="col">
                         <div class="form-group active-group">

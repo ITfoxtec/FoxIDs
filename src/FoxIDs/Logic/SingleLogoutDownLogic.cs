@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
             {
                 sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Type != PartyTypes.Oidc);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().SingleLogoutRequestAsync(oidcDownPartyIds, sequenceData);
+                return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().SingleLogoutRequestAsync(oidcDownPartyIds, sequenceData);
             }
 
             var samlDownPartyId = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Select(p => p.Id).FirstOrDefault();

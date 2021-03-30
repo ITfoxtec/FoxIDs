@@ -21,6 +21,7 @@ namespace FoxIDs.Infrastructure.Filters
         private class FoxIDsHttpSecurityHeadersActionAttribute : HttpSecurityHeadersActionAttribute
         {
             private List<string> allowFormActionOnDomains;
+            private List<string> allowFrameSrcDomains;
             private List<string> allowIframeOnDomains;
             private readonly IServiceProvider serviceProvider;
 
@@ -32,14 +33,12 @@ namespace FoxIDs.Infrastructure.Filters
             protected override async Task ActionExecutionInitAsync(ActionExecutedContext resultContext)
             {
                 await base.ActionExecutionInitAsync(resultContext);
-                allowFormActionOnDomains = await GetFormActionOnDomainsAsync();
-                allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller);
-            }
 
-            private async Task<List<string>> GetFormActionOnDomainsAsync()
-            {
-                var formActionLogic = serviceProvider.GetService<FormActionLogic>();
-                return await formActionLogic.GetFormActionDomainsAsync();
+                var securityHeaderLogic = serviceProvider.GetService<SecurityHeaderLogic>();
+                allowFormActionOnDomains = await securityHeaderLogic.GetFormActionDomainsAsync();
+                allowFrameSrcDomains = securityHeaderLogic.GetFrameSrcDomains();
+
+                allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller);
             }
 
             private List<string> GetAllowIframeOnDomains(object controller)
@@ -72,6 +71,18 @@ namespace FoxIDs.Infrastructure.Filters
                 else
                 {
                     return $"form-action 'self' {allowFormActionOnDomains.Select(d => d == "*" ? d : $"https://{d}").ToSpaceList()};";
+                }
+            }
+
+            protected override string CspFrameSrc()
+            {
+                if (allowFrameSrcDomains == null || allowFrameSrcDomains.Count() < 1)
+                {
+                    return base.CspFrameSrc();
+                }
+                else
+                {
+                    return $"frame-src {allowFrameSrcDomains.Select(d => d == "*" ? d : $"https://{d}").ToSpaceList()};";
                 }
             }
 

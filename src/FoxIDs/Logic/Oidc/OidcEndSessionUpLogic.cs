@@ -24,9 +24,9 @@ namespace FoxIDs.Logic
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
         }
         public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
@@ -97,7 +97,7 @@ namespace FoxIDs.Logic
 
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
-            formActionLogic.AddFormActionAllowAll();
+            securityHeaderLogic.AddFormActionAllowAll();
 
             var nameValueCollection = endSessionRequest.ToDictionary();
             logger.ScopeTrace($"End session request URL '{party.Client.EndSessionUrl}'.");

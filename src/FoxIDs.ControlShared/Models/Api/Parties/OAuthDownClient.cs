@@ -38,6 +38,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Front channel logout URI")]
         public string FrontChannelLogoutUri { get; set; }
 
+        [Display(Name = "Front channel logout session required")]
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>

@@ -27,7 +27,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<LocalizationLogic>();
 
             services.AddTransient<SequenceLogic>();
-            services.AddTransient<FormActionLogic>();
+            services.AddTransient<SecurityHeaderLogic>();
             services.AddTransient<TrackKeyLogic>();
             services.AddTransient<TrackIssuerLogic>();
 
@@ -65,6 +65,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();

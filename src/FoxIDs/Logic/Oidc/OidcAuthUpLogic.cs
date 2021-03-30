@@ -29,19 +29,19 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.httpClientFactory = httpClientFactory;
@@ -148,7 +148,7 @@ namespace FoxIDs.Logic
                 nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 
-            formActionLogic.AddFormActionAllowAll();
+            securityHeaderLogic.AddFormActionAllowAll();
 
             logger.ScopeTrace($"Authentication request URL '{party.Client.AuthorizeUrl}'.");
             logger.ScopeTrace("Up, Sending OIDC Authentication request.", triggerEvent: true);

@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException($"Party Client not configured.");
+                throw new NotSupportedException("Party Client not configured.");
             }
             logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
 

@@ -8,7 +8,6 @@ using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -25,16 +24,16 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
 
-        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.jwtDownLogic = jwtDownLogic;
         }
 
@@ -45,7 +44,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException($"Party Client not configured.");
+                throw new NotSupportedException("Party Client not configured.");
             }
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
@@ -187,14 +186,8 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync(sequenceData.RedirectUri);
+            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(sequenceData.RedirectUri);
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
-
-        public async Task<IActionResult> SingleLogoutRequestAsync(IEnumerable<string> oidcDownPartyIds, SingleLogoutSequenceData sequenceData)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }

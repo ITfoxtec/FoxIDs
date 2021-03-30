@@ -377,10 +377,12 @@ namespace FoxIDs
             public const int MaxLength = FoxI.IdentityConstants.MessageLength.StateMax;
         }
 
-        public static class FormAction
+        public static class SecurityHeader
         {
-            public const string Domains = "form_action_domains";
-            public const string DomainsAllowAll = "form_action_domains_allow_all";            
+            public const string FormActionDomains = "form_action_domains";
+            public const string FormActionsDomainsAllowAll = "form_action_domains_allow_all";
+
+            public const string FrameSrcDomains = "frame_src_domains";
         }
 
         public static class Endpoints

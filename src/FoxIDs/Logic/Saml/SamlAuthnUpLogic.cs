@@ -27,19 +27,19 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
@@ -111,7 +111,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, Sending SAML Authn request.", triggerEvent: true);
 
-            formActionLogic.AddFormActionAllowAll();
+            securityHeaderLogic.AddFormActionAllowAll();
 
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {

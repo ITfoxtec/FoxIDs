@@ -27,20 +27,20 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
         private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformationsLogic claimTransformationsLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformationsLogic claimTransformationsLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync(loggedOutUrl);
+            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(loggedOutUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
@@ -275,7 +275,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Single logged out URL '{party.SingleLogoutUrl}'.");
             logger.ScopeTrace("Down, SAML Single Logout request.", triggerEvent: true);
 
-            await formActionLogic.RemoveFormActionSequenceDataAsync(party.SingleLogoutUrl);
+            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(party.SingleLogoutUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

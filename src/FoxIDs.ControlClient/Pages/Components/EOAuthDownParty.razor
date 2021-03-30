@@ -106,6 +106,7 @@
                     @if (DownParty.ShowAdvanced)
                     {
                         <FInputText @bind-Value="oauthDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oauthDownParty.Form.Model.Client.PostLogoutRedirectUri)" />
+                        <FInputText @bind-Value="oauthDownParty.Form.Model.Client.FrontChannelLogoutUri" For="@(() => oauthDownParty.Form.Model.Client.FrontChannelLogoutUri)" />
                     }
                     <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                     <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />

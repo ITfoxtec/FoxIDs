@@ -73,7 +73,7 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         public string LogoutUrl { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.Up.SingleLogoutResponseLength)]
+        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         public string SingleLogoutResponseUrl { get; set; }
 
         /// <summary>

@@ -95,7 +95,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout URL")]
         public string LogoutUrl { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.Up.SingleLogoutResponseLength)]
+        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [Display(Name = "Single logout response URL (optional default logout URL is used)")]
         public string SingleLogoutResponseUrl { get; set; }
 

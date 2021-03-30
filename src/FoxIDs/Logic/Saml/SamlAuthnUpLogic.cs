@@ -194,7 +194,7 @@ namespace FoxIDs.Logic
                 var validClaims = ValidateClaims(party, transformedClaims);
 
                 var jwtValidClaims = await claimsDownLogic.FromSamlToJwtClaimsAsync(validClaims);
-                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), jwtValidClaims, externalSessionId);
+                jwtValidClaims = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, GetDownPartyLink(party, sequenceData), jwtValidClaims, externalSessionId);
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, jwtValidClaims);
             }

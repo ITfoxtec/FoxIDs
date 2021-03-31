@@ -47,8 +47,14 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Party Client not configured.");
             }
 
-            var queryDictionary = HttpContext.Request.Query.ToDictionary();
-            var endSessionRequest = queryDictionary.ToObject<EndSessionRequest>();
+            var formOrQueryDictionary = HttpContext.Request.Method switch
+            {
+                "POST" => party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost ? HttpContext.Request.Form.ToDictionary() : throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'."),
+                "GET" => party.Client.ResponseMode == IdentityConstants.ResponseModes.Query ? HttpContext.Request.Query.ToDictionary() : throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'."),
+                _ => throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'")
+            };
+           
+            var endSessionRequest = formOrQueryDictionary.ToObject<EndSessionRequest>();
 
             logger.ScopeTrace($"end session request '{endSessionRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);

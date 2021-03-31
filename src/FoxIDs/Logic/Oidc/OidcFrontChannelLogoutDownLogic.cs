@@ -81,7 +81,9 @@ namespace FoxIDs.Logic
 
             securityHeaderLogic.AddFrameSrc(partyLogoutUrls);
             await securityHeaderLogic.RemoveFormActionSequenceDataAsync();
-            return string.Concat(HtmIframePageList(partyLogoutUrls, "FoxIDs")).ToContentResult();
+            //TODO return after success...
+            var redirectUrl = "";
+            return string.Concat(HtmIframePageList(partyLogoutUrls, redirectUrl, "FoxIDs")).ToContentResult();
         }
 
         public static IEnumerable<string> HtmIframePageList(List<string> urls, string redirectUrl, string title = "OAuth 2.0")
@@ -92,6 +94,7 @@ $@"<!DOCTYPE html>
     <head>
         <meta charset=""utf-8"" />
         <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"" />
+        <meta http-equiv=""refresh"" content=""0;URL='{redirectUrl}'"" />
         <title>{title}</title>
     </head>
     <body onload=""alert('page loaded')"">

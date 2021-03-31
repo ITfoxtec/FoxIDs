@@ -82,6 +82,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Require logout id token hint")]
         public bool? RequireLogoutIdTokenHint { get; set; } = true;
 
+        [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
+        [Display(Name = "Response mode (RP-Initiated Logout response)")]
+        public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.Query;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

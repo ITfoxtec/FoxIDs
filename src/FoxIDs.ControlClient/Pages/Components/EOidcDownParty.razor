@@ -283,6 +283,10 @@
                         <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
                         <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oidcDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
                         <FInputToggleN @bind-Value="oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint" For="@(() => oidcDownParty.Form.Model.Client.RequireLogoutIdTokenHint)" TextType="e.d" />
+                        <FInputSelect @bind-Value="oidcDownParty.Form.Model.Client.ResponseMode" For="@(() => oidcDownParty.Form.Model.Client.ResponseMode)">
+                            <option value="@IdentityConstants.ResponseModes.FormPost">form_post</option>
+                            <option value="@IdentityConstants.ResponseModes.Query">query</option>
+                        </FInputSelect>
                     }
                 }
             }

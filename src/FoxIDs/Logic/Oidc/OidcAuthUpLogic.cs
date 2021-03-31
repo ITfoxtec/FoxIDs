@@ -18,7 +18,6 @@ using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using UrlCombineLib;
 
 namespace FoxIDs.Logic
 {
@@ -165,9 +164,9 @@ namespace FoxIDs.Logic
 
             var formOrQueryDictionary = HttpContext.Request.Method switch
             {
-                "POST" => HttpContext.Request.Form.ToDictionary(),
-                "GET" => HttpContext.Request.Query.ToDictionary(),
-                _ => throw new NotSupportedException($"Not supported response mode '{party.Client.ResponseMode}'")
+                "POST" => party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost ? HttpContext.Request.Form.ToDictionary() : throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'."),
+                "GET" => party.Client.ResponseMode == IdentityConstants.ResponseModes.Query ? HttpContext.Request.Query.ToDictionary() : throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'."),
+                _ => throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'")
             };
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();

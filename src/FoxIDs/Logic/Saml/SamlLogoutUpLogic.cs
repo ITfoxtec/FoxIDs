@@ -284,7 +284,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.Oidc:
                         if (status == Saml2StatusCodes.Success)
                         {
-                            return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
+                            return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
                         }
                         else
                         {

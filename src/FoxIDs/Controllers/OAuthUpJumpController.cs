@@ -49,7 +49,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.UpParty.Id);
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
                 }

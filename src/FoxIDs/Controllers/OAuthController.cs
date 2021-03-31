@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
         }
 
 
-        public async Task<IActionResult> EndSessionResponse()
+        public async Task<IActionResult> RpInitiatedLogoutResponse()
         {
             try
             {
@@ -50,7 +50,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionResponseAsync(RouteBinding.UpParty.Id);
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionResponseAsync(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
                 }
@@ -70,7 +70,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDone(RouteBinding.UpParty.Id);
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDone(RouteBinding.UpParty.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
                 }
@@ -172,7 +172,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionRequestAsync(RouteBinding.DownParty.Id);
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionRequestAsync(RouteBinding.DownParty.Id);
 
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");

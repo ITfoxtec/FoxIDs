@@ -400,6 +400,7 @@ namespace FoxIDs
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
+            public const string FrontChannelLogoutDone = "frontchannellogoutdone";
 
             public const string SamlAuthn = "authn";
             public const string SamlLogout = "logout";

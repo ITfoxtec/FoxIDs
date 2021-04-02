@@ -185,5 +185,28 @@ namespace FoxIDs.Controllers
             }
         }
 
+        [Sequence]
+        public async Task<IActionResult> FrontChannelLogoutDone()
+        {
+            try
+            {
+                logger.ScopeTrace($"Front Channel Logout Done, Down type '{RouteBinding.DownParty.Type}'");
+                switch (RouteBinding.DownParty.Type)
+                {
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutDoneAsync();
+
+                    default:
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Front Channel Logout Done failed for client id '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+        
+
     }
 }

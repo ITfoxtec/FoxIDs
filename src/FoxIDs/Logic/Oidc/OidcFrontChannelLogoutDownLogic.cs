@@ -21,17 +21,19 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
+        private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackIssuerLogic = trackIssuerLogic;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
+            this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
 
-        public async Task<IActionResult> SingleLogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData)
+        public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData)
         {
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
@@ -40,6 +42,7 @@ namespace FoxIDs.Logic
             };
             var nameValueCollection = frontChannelLogoutRequest.ToDictionary();
 
+            TParty firstParty = null;
             var partyLogoutUrls = new List<string>();
             foreach (var partyId in partyIds)
             {
@@ -55,6 +58,7 @@ namespace FoxIDs.Logic
                         throw new Exception("Front channel logout URI not configured.");
                     }
 
+                    firstParty = party;
                     if (party.Client.FrontChannelLogoutSessionRequired)
                     {
                         partyLogoutUrls.Add(QueryHelpers.AddQueryString(party.Client.FrontChannelLogoutUri, nameValueCollection));
@@ -70,23 +74,18 @@ namespace FoxIDs.Logic
                 }
             }
 
-            if (partyLogoutUrls.Count() > 0)
+            if (partyLogoutUrls.Count() <= 0 || firstParty == null)
             {
-
-            }
-            else
-            {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Unable to complete front channel logout. Please close the browser to logout.");
             }
 
             securityHeaderLogic.AddFrameSrc(partyLogoutUrls);
             await securityHeaderLogic.RemoveFormActionSequenceDataAsync();
-            //TODO return after success...
-            var redirectUrl = "";
+            var redirectUrl = HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true);
             return string.Concat(HtmIframePageList(partyLogoutUrls, redirectUrl, "FoxIDs")).ToContentResult();
         }
 
-        public static IEnumerable<string> HtmIframePageList(List<string> urls, string redirectUrl, string title = "OAuth 2.0")
+        private static IEnumerable<string> HtmIframePageList(List<string> urls, string redirectUrl, string title = "OAuth 2.0")
         {
             yield return
 $@"<!DOCTYPE html>
@@ -114,6 +113,11 @@ $@"            <iframe width=""0"" height=""0"" frameborder=""0"" src=""{url}"">
 $@"        </div>
     </body>
 </html>";
+        }
+
+        public Task<IActionResult> LogoutDoneAsync()
+        {
+            return singleLogoutDownLogic.HandleSingleLogoutAsync();
         }
     }
 }

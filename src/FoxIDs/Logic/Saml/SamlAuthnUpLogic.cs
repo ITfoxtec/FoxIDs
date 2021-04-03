@@ -16,6 +16,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2.Claims;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
@@ -25,24 +26,27 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly FormActionLogic formActionLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
+        private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.formActionLogic = formActionLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
+            this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
-
-        public async Task<IActionResult> AuthnRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
-            logger.ScopeTrace("Up, SAML Authn request.");
+            logger.ScopeTrace("Up, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
@@ -52,29 +56,46 @@ namespace FoxIDs.Logic
             {
                 DownPartyId = loginRequest.DownParty.Id,
                 DownPartyType = loginRequest.DownParty.Type,
+                UpPartyId = partyId,
+                LoginAction = loginRequest.LoginAction,
+                UserId = loginRequest.UserId,
+                MaxAge = loginRequest.MaxAge
             });
 
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true).ToRedirectResult();
+        }
+
+        public async Task<IActionResult> AuthnRequestAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, SAML Authn request.");
+            var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
+            if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            logger.SetScopeProperty("upPartyId", samlUpSequenceData.UpPartyId);
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
 
             switch (party.AuthnBinding.RequestBinding)
             {
                 case SamlBindingTypes.Redirect:
-                    return await AuthnRequestAsync(party, new Saml2RedirectBinding(), loginRequest);
+                    return await AuthnRequestAsync(party, new Saml2RedirectBinding(), samlUpSequenceData);
                 case SamlBindingTypes.Post:
-                    return await AuthnRequestAsync(party, new Saml2PostBinding(), loginRequest);
+                    return await AuthnRequestAsync(party, new Saml2PostBinding(), samlUpSequenceData);
                 default:
                     throw new NotSupportedException($"Binding '{party.AuthnBinding.RequestBinding}' not supported.");
             }
         }
 
-        private async Task<IActionResult> AuthnRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, LoginRequest loginRequest)
+        private async Task<IActionResult> AuthnRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
         {
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
 
             binding.RelayState = SequenceString;
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
 
-            switch (loginRequest.LoginAction)
+            switch (samlUpSequenceData.LoginAction)
             {
                 case LoginAction.ReadSession:
                     saml2AuthnRequest.IsPassive = true;
@@ -165,10 +186,19 @@ namespace FoxIDs.Logic
                     claims.Add(nameIdClaim);
                 }
 
+                var externalSessionId = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
+                externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionStatedMax, nameof(externalSessionId), "Session index claim");
+                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex).ToList();
+                var sessionId = RandomGenerator.Generate(24);
+                claims.AddClaim(Saml2ClaimTypes.SessionIndex, sessionId);
+
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
-                return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims);
+                var jwtValidClaims = await claimsDownLogic.FromSamlToJwtClaimsAsync(validClaims);
+                await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, jwtValidClaims, sessionId, externalSessionId);
+
+                return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, validClaims, jwtValidClaims);
             }
             catch (StopSequenceException)
             {
@@ -247,7 +277,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, IEnumerable<Claim> claims = null)
+        private async Task<IActionResult> AuthnResponseDownAsync(SamlUpSequenceData sequenceData, Saml2StatusCodes status, IEnumerable<Claim> samlClaims = null, List<Claim> jwtClaims = null)
         {
             try
             {
@@ -259,15 +289,14 @@ namespace FoxIDs.Logic
                     case PartyTypes.Oidc:
                         if (status == Saml2StatusCodes.Success)
                         {
-                            var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
-                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, await claimsLogic.FromSamlToJwtClaimsAsync(claims));
+                            return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, jwtClaims);
                         }
                         else
                         {
                             return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, StatusToOAuth2OidcError(status));
                         }
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, claims);
+                        return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status, samlClaims);
 
                     default:
                         throw new NotSupportedException();

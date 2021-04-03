@@ -7,11 +7,9 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using UrlCombineLib;
 
@@ -23,43 +21,80 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SessionUpPartyLogic sessionUpPartyLogic;
+        private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
         private readonly FormActionLogic formActionLogic;
 
-        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcEndSessionUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, FormActionLogic formActionLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.sessionUpPartyLogic = sessionUpPartyLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
             this.formActionLogic = formActionLogic;
         }
-
-        public async Task<IActionResult> EndSessionRequestAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
+        public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
-            logger.ScopeTrace("Up, OIDC End session request.");
+            logger.ScopeTrace("Up, OIDC End session request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
             await logoutRequest.ValidateObjectAsync();
 
-            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
-            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
-            ValidatePartyLogoutSupport(party);
-
             await sequenceLogic.SaveSequenceDataAsync(new OidcUpSequenceData
             {
                 DownPartyId = logoutRequest.DownParty.Id,
                 DownPartyType = logoutRequest.DownParty.Type,
+                UpPartyId = partyId,
                 SessionId = logoutRequest.SessionId,
+                RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
+                PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
             });
 
-            var postLogoutRedirectUrl = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, party.Name.ToUpPartyBinding(party.PartyBindingPattern), Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse);
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true).ToRedirectResult();
+        }
+
+        public async Task<IActionResult> EndSessionRequestAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, OIDC End session request.");
+            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
+            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+            logger.SetScopeProperty("upPartyId", oidcUpSequenceData.UpPartyId);
+
+            var party = await tenantRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
+            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
+            ValidatePartyLogoutSupport(party);
+
+            var postLogoutRedirectUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.EndSessionResponse, partyBindingPattern: party.PartyBindingPattern);
             var endSessionRequest = new EndSessionRequest
             {
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = SequenceString
             };
+            var session = await sessionUpPartyLogic.GetSessionAsync(party);
+            if(session != null)
+            {
+                endSessionRequest.IdTokenHint = session.IdToken;
+                try
+                {
+                    if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                    {
+                        throw new Exception("Requested session ID do not match up-party session ID.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                }
+            }
             logger.ScopeTrace($"End session request '{endSessionRequest.ToJsonIndented()}'.");
+
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             formActionLogic.AddFormActionAllowAll();
 
@@ -92,6 +127,8 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.ValidateSequenceAsync(endSessionResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+
+            await sessionUpPartyLogic.DeleteSessionAsync();
 
             logger.ScopeTrace("Up, Successful OIDC End session response.", triggerEvent: true);
 

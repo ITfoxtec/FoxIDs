@@ -36,7 +36,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     var trackIdKey = GetTrackIdKey(route);
                     if (trackIdKey != null)
                     {
-                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route));
+                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
 
                         scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
@@ -56,17 +56,19 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        protected abstract ValueTask SeedAsync(IServiceProvider requestServices);
+        protected virtual ValueTask SeedAsync(IServiceProvider requestServices) => default;
 
-        protected abstract ValueTask<bool> PreAsync(HttpContext httpContext, string[] route);
+        protected virtual ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
 
         protected abstract Track.IdKey GetTrackIdKey(string[] route);
 
-        protected abstract string GetPartyNameAndbinding(string[] route);
+        protected virtual bool AcceptUnknownParty(string path, string[] route) => false;
 
-        protected abstract ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding = null);
+        protected virtual string GetPartyNameAndbinding(string[] route) => null;
 
-        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, string partyNameAndBinding = null)
+        protected virtual ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty) => new ValueTask<RouteBinding>(routeBinding);
+
+        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, string partyNameAndBinding, bool acceptUnknownParty)
         {
             var track = await GetTrackAsync(tenantRepository, trackIdKey);
             var routeBinding = new RouteBinding
@@ -77,7 +79,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 Resources = track.Resources,
             };
 
-            return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding);
+            return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);
         }
 
         private async Task<Track> GetTrackAsync(ITenantRepository tenantRepository, Track.IdKey idKey)

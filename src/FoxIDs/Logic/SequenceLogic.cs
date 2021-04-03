@@ -220,7 +220,7 @@ namespace FoxIDs.Logic
         private string DataKey(Type type, Sequence sequence)
         {
             var routeBinding = HttpContext.GetRouteBinding();
-            return $"{routeBinding.TenantName}.{routeBinding.TrackName}.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
+            return $"{routeBinding.TenantName}.{routeBinding.TrackName}.seq.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
         }
 
         private IDataProtector CreateProtector()

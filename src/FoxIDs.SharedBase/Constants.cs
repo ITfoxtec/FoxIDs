@@ -23,9 +23,15 @@ namespace FoxIDs
             public const string OidcDiscoveryAction = "OpenidConfiguration";
             public const string OidcDiscoveryKeyAction = "Keys";
             public const string OidcDiscoveryController = "OpenIDConfig";
+            
+            public const string LoginController = "login";
+            public const string ActionController = "action";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";
+
+            public const string OAuthUpJumpController = "oauthupjump";
+            public const string SamlUpJumpController = "samlupjump";
 
             public const string RouteControllerKey = "controller";
             public const string RouteActionKey = "action";
@@ -246,6 +252,16 @@ namespace FoxIDs
                 }
             }
 
+            public static class UpParty
+            {
+                public const int SessionLifetimeMin = 0; // 0 minutes
+                public const int SessionLifetimeMax = 43200; // 12 hours
+                public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
+                public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
+                public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
+                public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
+            }
+
             public static class OAuthUpParty
             {
                 public const int AuthorityLength = 300;
@@ -283,12 +299,6 @@ namespace FoxIDs
 
             public static class LoginUpParty
             {
-                public const int SessionLifetimeMin = 0; // 0 minutes 
-                public const int SessionLifetimeMax = 43200; // 12 hours
-                public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
-                public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
-                public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
-                public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
                 public const int CssStyleLength = 4000;
             }
 
@@ -375,6 +385,12 @@ namespace FoxIDs
 
         public static class Endpoints
         {
+            public const string Logout = "logout";
+            public const string CancelLogin = "cancellogin";
+            public const string CreateUser = "createuser";
+            public const string ChangePassword = "changepassword";
+            public const string ForgotPassword = "forgotpassword";
+
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
             public const string EndSessionResponse = "endsessionresponse";
@@ -387,6 +403,15 @@ namespace FoxIDs
             public const string SamlAcs = "acs";
             public const string SamlSingleLogout = "singlelogout";
             public const string SamlLoggedOut = "loggedout";
+
+            public static class UpJump
+            {
+                public const string AuthenticationRequest = "authenticationrequest";
+                public const string EndSessionRequest = "endsessionrequest";
+
+                public const string AuthnRequest = "authnrequest";
+                public const string LogoutRequest = "logoutrequest";                
+            }
         }
 
         public static class OAuth
@@ -445,12 +470,12 @@ namespace FoxIDs
             /// <summary>
             /// Default JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
             /// Exclude JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
+            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 
             /// <summary>
             /// Default SAML claims.

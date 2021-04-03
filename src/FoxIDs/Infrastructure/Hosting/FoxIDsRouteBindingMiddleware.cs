@@ -282,18 +282,15 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                trackKeyExternal.Keys = new List<TrackKeyExternalItem>(2);
                 var topTwoExternalKeys = externalKeys.OrderByDescending(e => e.NotBefore).Take(2);
                 var firstExternalKey = topTwoExternalKeys.First();
                 if (firstExternalKey.NotBefore <= now.AddDays(-track.KeyExternalPrimaryAfterDays))
                 {
-                    trackKeyExternal.Keys[0] = new TrackKeyExternalItem { ExternalId = firstExternalKey.Id };
-                    trackKeyExternal.Keys[1] = new TrackKeyExternalItem { ExternalId = topTwoExternalKeys.Last().Id };
+                    trackKeyExternal.Keys = new List<TrackKeyExternalItem> { new TrackKeyExternalItem { ExternalId = firstExternalKey.Id }, new TrackKeyExternalItem { ExternalId = topTwoExternalKeys.Last().Id } };
                 }
                 else
                 {
-                    trackKeyExternal.Keys[0] = new TrackKeyExternalItem { ExternalId = topTwoExternalKeys.Last().Id };
-                    trackKeyExternal.Keys[1] = new TrackKeyExternalItem { ExternalId = firstExternalKey.Id };
+                    trackKeyExternal.Keys = new List<TrackKeyExternalItem> { new TrackKeyExternalItem { ExternalId = topTwoExternalKeys.Last().Id }, new TrackKeyExternalItem { ExternalId = firstExternalKey.Id } };
                 }
             }
 

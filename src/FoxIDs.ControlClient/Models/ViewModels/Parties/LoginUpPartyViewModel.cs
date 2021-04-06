@@ -37,6 +37,9 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
+        [Display(Name = "Single logout")]
+        public bool EnableSingleLogout { get; set; } = true;
+
         /// <summary>
         /// Default false.
         /// </summary>

@@ -36,6 +36,10 @@
         }
 
         <UpPartySessionLifetime Model="samlUpParty.Form.Model" ShowAdvanced="samlUpParty.ShowAdvanced" AllAdvanced="true" />
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableSingleLogout" For="@(() => samlUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">

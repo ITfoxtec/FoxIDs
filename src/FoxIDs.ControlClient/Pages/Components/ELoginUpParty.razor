@@ -65,6 +65,7 @@
                 <UpPartySessionLifetime Model="loginUpParty.Form.Model" ShowAdvanced="loginUpParty.ShowAdvanced" />
                 @if (loginUpParty.ShowAdvanced)
                 {
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableSingleLogout" For="@(() => loginUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
                     <FInputTextArea @bind-Value="loginUpParty.Form.Model.CssStyle" For="@(() => loginUpParty.Form.Model.CssStyle)" />
                 }
             }

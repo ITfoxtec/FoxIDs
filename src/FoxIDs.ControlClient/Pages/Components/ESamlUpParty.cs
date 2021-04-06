@@ -107,6 +107,8 @@ namespace FoxIDs.Client.Pages.Components
 
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
                 {
+                    afterMap.DisableSingleLogout = !generalSamlUpParty.Form.Model.EnableSingleLogout;
+
                     afterMap.AuthnBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.AuthnRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.AuthnResponseBinding };
                     if (!afterMap.LogoutUrl.IsNullOrEmpty())
                     {

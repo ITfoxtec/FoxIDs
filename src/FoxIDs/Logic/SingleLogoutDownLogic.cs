@@ -25,7 +25,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, SessionBaseCookie session)
+        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, SessionBaseCookie session, bool redirectAfterLogout = true)
         {
             logger.ScopeTrace("Initialize single logout.");
 
@@ -39,7 +39,8 @@ namespace FoxIDs.Logic
             {
                 UpPartyName = upPartyLink.Name,
                 UpPartyType = upPartyLink.Type,
-                DownPartyLinks = downPartyLinks
+                DownPartyLinks = downPartyLinks,
+                RedirectAfterLogout = redirectAfterLogout
             };
 
             if (downPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Any())
@@ -65,7 +66,7 @@ namespace FoxIDs.Logic
         {
             sequenceData = sequenceData ?? await sequenceLogic.GetSequenceDataAsync<SingleLogoutSequenceData>(remove: false);
 
-            var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc).Select(p => p.Id).Take(10);
+            var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc).Select(p => p.Id);
             if (oidcDownPartyIds.Count() > 0)
             {
                 sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Type != PartyTypes.Oidc);
@@ -83,7 +84,15 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.RemoveSequenceDataAsync<SingleLogoutSequenceData>();
             logger.ScopeTrace("Successful Single Logout.", triggerEvent: true);
-            return ResponseUpParty(sequenceData.UpPartyName, sequenceData.UpPartyType);
+
+            if (sequenceData.RedirectAfterLogout)
+            {
+                return ResponseUpParty(sequenceData.UpPartyName, sequenceData.UpPartyType);
+            }
+            else
+            {
+                return new OkResult();
+            }
         }
 
         private IActionResult ResponseUpParty(string upPartyName, PartyTypes upPartyType)

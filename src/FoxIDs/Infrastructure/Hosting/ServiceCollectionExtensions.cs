@@ -65,6 +65,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>();
             services.AddTransient<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcFrontChannelLogoutUpLogic<OidcUpParty, OidcUpClient>>();            
             services.AddTransient<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();

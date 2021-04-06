@@ -20,5 +20,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "dl")]
         public IEnumerable<DownPartySessionLink> DownPartyLinks { get; set; }
+
+        [JsonProperty(PropertyName = "r")]
+        public bool RedirectAfterLogout { get; set; }
     }
 }

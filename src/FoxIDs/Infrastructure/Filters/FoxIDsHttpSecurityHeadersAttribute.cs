@@ -38,16 +38,35 @@ namespace FoxIDs.Infrastructure.Filters
                 allowFormActionOnDomains = await securityHeaderLogic.GetFormActionDomainsAsync();
                 allowFrameSrcDomains = securityHeaderLogic.GetFrameSrcDomains();
 
-                allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller);
+                allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller as IRouteBinding, securityHeaderLogic);
             }
 
-            private List<string> GetAllowIframeOnDomains(object controller)
+            private List<string> GetAllowIframeOnDomains(IRouteBinding controller, SecurityHeaderLogic securityHeaderLogic)
             {
-                if (controller is IRouteBinding)
+                List<string> domains = null;
+                if (controller != null)
                 {
-                    return (controller as IRouteBinding)?.RouteBinding?.AllowIframeOnDomains;
+                    var controllerDomains = controller?.RouteBinding?.AllowIframeOnDomains;
+                    if (controllerDomains != null)
+                    {
+                        domains = controllerDomains;
+                    }
                 }
-                return null;
+
+                var logicDomains = securityHeaderLogic.GetAllowIframeOnDomains();
+                if (logicDomains != null)
+                {
+                    if (domains == null)
+                    {
+                        domains = logicDomains;
+                    }
+                    else
+                    {
+                        domains.ConcatOnce(logicDomains);
+                    }
+                }
+
+                return domains;
             }
 
             protected override void HeaderXFrameOptions(HttpResponse response)

@@ -63,12 +63,15 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
+        [Display(Name = "Single logout")]
+        public bool EnableSingleLogout { get; set; } = true;
+
         /// <summary>
         /// OIDC up client.
         /// </summary>
         [Required]
         [ValidateComplexType]
-        public OidcUpClient Client { get; set; }
+        public OidcUpClientViewModel Client { get; set; }
 
         /// <summary>
         /// Claim transforms.

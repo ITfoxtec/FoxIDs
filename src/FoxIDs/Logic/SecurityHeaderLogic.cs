@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
 
         public void AddFormActionAllowAll()
         {
-            HttpContext.Items[Constants.SecurityHeader.FormActionsDomainsAllowAll] = true;
+            HttpContext.Items[Constants.SecurityHeader.FormActionDomainsAllowAll] = true;
         }
 
         public async Task<List<string>> GetFormActionDomainsAsync()
@@ -68,21 +68,21 @@ namespace FoxIDs.Logic
             var formActionSequenceData = await sequenceLogic.GetSequenceDataAsync<FormActionSequenceData>(remove: false, allowNull: true);
             if (formActionSequenceData?.Domains?.Count() > 0)
             {
-                return AddAllowAll(formActionSequenceData.Domains);
+                return AddAllowAllFormActionDomains(formActionSequenceData.Domains);
             }
             else if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FormActionDomains))
             {
-                return AddAllowAll(HttpContext.Items[Constants.SecurityHeader.FormActionDomains] as List<string>);
+                return AddAllowAllFormActionDomains(HttpContext.Items[Constants.SecurityHeader.FormActionDomains] as List<string>);
             }
             else
             {
-                return AddAllowAll(null);
+                return AddAllowAllFormActionDomains(null);
             }
         }
 
-        private List<string> AddAllowAll(List<string> domains)
+        private List<string> AddAllowAllFormActionDomains(List<string> domains)
         {
-            if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FormActionsDomainsAllowAll))
+            if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FormActionDomainsAllowAll))
             {
                 domains = domains ?? new List<string>();
                 domains.Add("*");
@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
         {
             if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameSrcDomains))
             {
-                return AddAllowAll(HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] as List<string>);
+                return HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] as List<string>;
             }
             else
             {
@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public void AddFrameSrc(List<string> urls)
+        public void AddFrameSrc(IEnumerable<string> urls)
         {
             if (urls?.Count() > 0)
             {
@@ -128,6 +128,28 @@ namespace FoxIDs.Logic
                 }
                 HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] = domains;
             }
+        }
+
+        public List<string> GetAllowIframeOnDomains()
+        {
+            if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameAllowIframeOnDomains))
+            {
+                return HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] as List<string>;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void AddAllowIframeOnUrls(IEnumerable<string> urls)
+        {
+            var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameAllowIframeOnDomains) ? HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] as List<string> : new List<string>();
+            foreach (var url in urls)
+            {
+                AddUrlToDomains(url, domains);
+            }
+            HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] = domains;
         }
     }
 }

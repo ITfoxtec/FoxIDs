@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
         }
 
 
-        public async Task<IActionResult> RpInitiatedLogoutResponse()
+        public async Task<IActionResult> EndSessionResponse()
         {
             try
             {
@@ -58,6 +58,26 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"End session response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        [Sequence(SequenceAction.Start)]
+        public async Task<IActionResult> FrontChannelLogout()
+        {
+            try
+            {
+                logger.ScopeTrace($"Front channel logout, Up type '{RouteBinding.UpParty.Type}'");
+                switch (RouteBinding.UpParty.Type)
+                {
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcFrontChannelLogoutUpLogic<OidcUpParty, OidcUpClient>>().FrontChannelLogoutAsync(RouteBinding.UpParty.Id);
+                    default:
+                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Front channel logout failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 

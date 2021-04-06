@@ -96,7 +96,7 @@ $@"<!DOCTYPE html>
         <meta http-equiv=""refresh"" content=""0;URL='{redirectUrl}'"" />
         <title>{title}</title>
     </head>
-    <body onload=""alert('page loaded')"">
+    <body>
         <div>
 ";
             if (urls?.Count > 0)

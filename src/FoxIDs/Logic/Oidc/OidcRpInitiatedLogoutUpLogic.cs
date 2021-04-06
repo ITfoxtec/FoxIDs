@@ -93,14 +93,14 @@ namespace FoxIDs.Logic
                     logger.Warning(ex);
                 }
             }
-            logger.ScopeTrace($"End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace($"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
 
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
 
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
-            logger.ScopeTrace($"End session request URL '{party.Client.EndSessionUrl}'.");
+            logger.ScopeTrace($"Up, End session request URL '{party.Client.EndSessionUrl}'.");
             logger.ScopeTrace("Up, Sending OIDC End session request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl);
         }
@@ -123,7 +123,8 @@ namespace FoxIDs.Logic
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var rpInitiatedLogoutResponse = queryDictionary.ToObject<RpInitiatedLogoutResponse>();
-            logger.ScopeTrace($"End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
+            logger.ScopeTrace($"Up, End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
+            rpInitiatedLogoutResponse.Validate();
             if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 
             await sequenceLogic.ValidateSequenceAsync(rpInitiatedLogoutResponse.State);

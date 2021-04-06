@@ -380,9 +380,9 @@ namespace FoxIDs
         public static class SecurityHeader
         {
             public const string FormActionDomains = "form_action_domains";
-            public const string FormActionsDomainsAllowAll = "form_action_domains_allow_all";
-
+            public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
             public const string FrameSrcDomains = "frame_src_domains";
+            public const string FrameAllowIframeOnDomains = "frame_allow_iframe_on_domains";            
         }
 
         public static class Endpoints

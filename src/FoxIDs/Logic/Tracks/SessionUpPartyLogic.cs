@@ -16,13 +16,11 @@ namespace FoxIDs.Logic
 {
     public class SessionUpPartyLogic : SessionBaseLogic
     {
-        private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly SingleCookieRepository<SessionUpPartyCookie> sessionCookieRepository;
 
         public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SingleCookieRepository<SessionUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
         {
-            this.settings = settings;
             this.logger = logger;
             this.sessionCookieRepository = sessionCookieRepository;
         }
@@ -62,6 +60,14 @@ namespace FoxIDs.Logic
 
                     if (session.ExternalSessionId != externalSessionId)
                     {
+                        try
+                        {
+                            throw new Exception("External session ID has changed, causing an session update including new session ID.");
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Warning(ex);
+                        }
                         updateAction(session);
                     }
                     else

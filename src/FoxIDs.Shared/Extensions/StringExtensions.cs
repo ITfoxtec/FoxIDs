@@ -1,6 +1,7 @@
 ﻿using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FoxIDs
 {
@@ -29,6 +30,38 @@ namespace FoxIDs
             }
 
             return string.Join('.', resultText);
+        }
+
+        public static string UrlToDomain(this string url)
+        {
+            if (string.IsNullOrEmpty(url))
+            {
+                return null;
+            }
+
+            var splitValue = url.Split('/');
+            if (splitValue.Count() > 2)
+            {
+                var domain = splitValue[2].ToLower();
+                return domain;
+            }
+            return null;
+        }
+
+        public static string DomainToOrigin(this string domain)
+        {
+            if (string.IsNullOrEmpty(domain))
+            {
+                return null;
+            }
+
+            return $"https://{domain}";
+        }
+
+        public static string UrlToOrigin(this string url)
+        {
+            var domain = url.UrlToDomain();
+            return domain.DomainToOrigin();
         }
     }
 }

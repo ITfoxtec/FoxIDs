@@ -6,27 +6,8 @@ namespace FoxIDs.Logic
 {
     public class SecurityHeaderLogic : LogicBase
     {
-        private readonly SequenceLogic sequenceLogic;
-
-        public SecurityHeaderLogic(SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-        {
-            this.sequenceLogic = sequenceLogic;
-        }
-
-        private bool AddUrlToDomains(string url, List<string> domains)
-        {
-            var splitValue = url.Split('/');
-            if (splitValue.Count() > 2)
-            {
-                var domain = splitValue[2].ToLower();
-                if (!domains.Contains(domain))
-                {
-                    domains.Add(domain);
-                    return true;
-                }
-            }
-            return false;
-        }
+        public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        { }
 
         public void AddFormActionAllowAll()
         {
@@ -58,7 +39,7 @@ namespace FoxIDs.Logic
         public void AddFormAction(string url = null)
         {
             var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.FormActionDomains) ? HttpContext.Items[Constants.SecurityHeader.FormActionDomains] as List<string> : new List<string>();
-            AddUrlToDomains(url, domains);
+            domains = AddUrlToDomains(domains, url);
             HttpContext.Items[Constants.SecurityHeader.FormActionDomains] = domains;
         }
 
@@ -81,7 +62,7 @@ namespace FoxIDs.Logic
                 var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameSrcDomains) ? HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] as List<string> : new List<string>();
                 foreach (var url in urls)
                 {
-                    AddUrlToDomains(url, domains);
+                    domains = AddUrlToDomains(domains, url);
                 }
                 HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] = domains;
             }
@@ -104,9 +85,19 @@ namespace FoxIDs.Logic
             var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameAllowIframeOnDomains) ? HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] as List<string> : new List<string>();
             foreach (var url in urls)
             {
-                AddUrlToDomains(url, domains);
+                domains = AddUrlToDomains(domains, url);
             }
             HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] = domains;
+        }
+
+        private List<string> AddUrlToDomains(List<string> domains, string url)
+        {
+            var domain = url.UrlToDomain();
+            if (!string.IsNullOrEmpty(domain))
+            {
+                domains = domains.ConcatOnce(domain);
+            }
+            return domains;
         }
     }
 }

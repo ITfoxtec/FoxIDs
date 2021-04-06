@@ -80,7 +80,6 @@ namespace FoxIDs.Logic
             }
 
             securityHeaderLogic.AddFrameSrc(partyLogoutUrls);
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync();
             var redirectUrl = HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true);
             return string.Concat(HtmIframePageList(partyLogoutUrls, redirectUrl, "FoxIDs")).ToContentResult();
         }

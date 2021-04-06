@@ -435,7 +435,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Single Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(singleLogoutResponseUrl);
+            securityHeaderLogic.AddFormAction(singleLogoutResponseUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

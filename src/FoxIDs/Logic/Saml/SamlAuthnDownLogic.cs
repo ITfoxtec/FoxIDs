@@ -227,7 +227,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Authn response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(acsUrl);
+            securityHeaderLogic.AddFormAction(acsUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

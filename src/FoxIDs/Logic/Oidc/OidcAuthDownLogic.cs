@@ -284,7 +284,7 @@ namespace FoxIDs.Logic
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(sequenceData.RedirectUri);
+            securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
@@ -320,7 +320,6 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("downPartyId", partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync();
 
             return await AuthenticationResponseErrorAsync(sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }
@@ -346,7 +345,7 @@ namespace FoxIDs.Logic
             var nameValueCollection = authenticationResponse.ToDictionary();
 
             logger.ScopeTrace($"Redirect Uri '{redirectUri}'.");
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(redirectUri);
+            securityHeaderLogic.AddFormAction(redirectUri);
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }
 

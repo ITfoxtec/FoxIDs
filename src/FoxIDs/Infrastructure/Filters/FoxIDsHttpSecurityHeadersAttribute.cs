@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Filters
 {
@@ -30,12 +29,12 @@ namespace FoxIDs.Infrastructure.Filters
                 this.serviceProvider = serviceProvider;
             }
 
-            protected override async Task ActionExecutionInitAsync(ActionExecutedContext resultContext)
+            protected override void ActionExecutionInit(ActionExecutedContext resultContext)
             {
-                await base.ActionExecutionInitAsync(resultContext);
+                base.ActionExecutionInit(resultContext);
 
                 var securityHeaderLogic = serviceProvider.GetService<SecurityHeaderLogic>();
-                allowFormActionOnDomains = await securityHeaderLogic.GetFormActionDomainsAsync();
+                allowFormActionOnDomains = securityHeaderLogic.GetFormActionDomains();
                 allowFrameSrcDomains = securityHeaderLogic.GetFrameSrcDomains();
 
                 allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller as IRouteBinding, securityHeaderLogic);

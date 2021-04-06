@@ -192,7 +192,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(sequenceData.RedirectUri);
+            securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
     }

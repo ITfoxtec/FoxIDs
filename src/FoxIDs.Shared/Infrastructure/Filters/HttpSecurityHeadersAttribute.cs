@@ -34,14 +34,13 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 var resultContext = await next();
 
-                await ActionExecutionInitAsync(resultContext);
+                ActionExecutionInit(resultContext);
                 SetHeaders(resultContext.HttpContext.Response);
             }
 
-            protected virtual Task ActionExecutionInitAsync(ActionExecutedContext resultContext)
+            protected virtual void ActionExecutionInit(ActionExecutedContext resultContext)
             {
                 isHtmlContent = IsHtmlContent(resultContext.Result);
-                return Task.CompletedTask;
             }
 
             protected virtual void SetHeaders(HttpResponse response)

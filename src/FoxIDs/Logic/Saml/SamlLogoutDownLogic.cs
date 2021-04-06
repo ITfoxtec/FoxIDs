@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(loggedOutUrl);
+            securityHeaderLogic.AddFormAction(loggedOutUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
@@ -275,7 +275,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Single logged out URL '{party.SingleLogoutUrl}'.");
             logger.ScopeTrace("Down, SAML Single Logout request.", triggerEvent: true);
 
-            await securityHeaderLogic.RemoveFormActionSequenceDataAsync(party.SingleLogoutUrl);
+            securityHeaderLogic.AddFormAction(party.SingleLogoutUrl);
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

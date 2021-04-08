@@ -48,6 +48,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "persistent_session_lifetime_unlimited")]
         public bool PersistentSessionLifetimeUnlimited { get; set; }
 
+        [JsonProperty(PropertyName = "disable_single_logout")]
+        public bool DisableSingleLogout { get; set; }
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

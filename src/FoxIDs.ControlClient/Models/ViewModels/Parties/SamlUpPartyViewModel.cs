@@ -10,7 +10,7 @@ using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel : ISamlClaimTransformViewModel
+    public class SamlUpPartyViewModel : ISamlClaimTransformViewModel, IUpPartySessionLifetime
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -95,10 +95,40 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout URL")]
         public string LogoutUrl { get; set; }
 
+        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
+        [Display(Name = "Single logout response URL (optional default logout URL is used)")]
+        public string SingleLogoutResponseUrl { get; set; }
+
         /// <summary>
         /// URL party binding pattern.
         /// </summary>
         [Display(Name = "URL party binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        /// <summary>
+        /// Default 10 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        public int SessionLifetime { get; set; } = 36000;
+
+        /// <summary>
+        /// Default 24 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
+        public int SessionAbsoluteLifetime { get; set; } = 86400;
+
+        /// <summary>
+        /// Default 0 minutes.
+        /// </summary>
+        [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
+        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
+
+        /// <summary>
+        /// Default false.
+        /// </summary>
+        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+
+        [Display(Name = "Single logout")]
+        public bool EnableSingleLogout { get; set; } = true;
     }
 }

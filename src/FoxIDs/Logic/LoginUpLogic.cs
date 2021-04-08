@@ -3,14 +3,12 @@ using FoxIDs.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
-using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 
@@ -21,14 +19,12 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
-        private readonly ClaimTransformationsLogic claimTransformationsLogic;
 
         public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ClaimTransformationsLogic claimTransformationsLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
-            this.claimTransformationsLogic = claimTransformationsLogic;
         }
 
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
@@ -42,8 +38,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
-                DownPartyId = loginRequest.DownParty.Id,
-                DownPartyType = loginRequest.DownParty.Type,
+                DownPartyLink = loginRequest.DownPartyLink,
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
@@ -54,67 +49,49 @@ namespace FoxIDs.Logic
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LoginResponseAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
+        public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
         {
             logger.ScopeTrace("Up, Login response.");
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            var claims = new List<Claim>();
-            claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
-            claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
-            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
-            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
-            claims.AddClaim(JwtClaimTypes.Email, user.Email);
-            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
-            if (user.Claims?.Count() > 0)
-            {
-                claims.AddRange(user.Claims.ToClaimList());
-            }
-
-            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
-            switch (sequenceData.DownPartyType)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyLink.Type}.");
+            switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyId, claims);
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
                 case PartyTypes.Saml2:
-                    var claimsLogic = serviceProvider.GetService<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-                    var samlClaims = await claimsLogic.FromJwtToSamlClaimsAsync(claims);
-                    samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Email.OriginalString);
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, claims: samlClaims);
+                    claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Email.OriginalString);
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
 
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        public async Task<IActionResult> LoginResponseErrorAsync(LoginSequenceError error, string errorDescription = null)
+        public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError error, string errorDescription = null)
         {
             logger.ScopeTrace("Login error response.");
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
+            await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyType}'.");
-            switch (sequenceData.DownPartyType)
+            logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyLink.Type}'.");
+            switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyId, ErrorToOAuth2OidcString(error), errorDescription);
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.DownPartyLink.Id, ErrorToOAuth2OidcString(error), errorDescription);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyId, status: ErrorToSamlStatus(error));
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, status: ErrorToSamlStatus(error));
 
                 default:
-                    throw new NotSupportedException($"Party type '{sequenceData.DownPartyType}' not supported.");
+                    throw new NotSupportedException($"Party type '{sequenceData.DownPartyLink.Type}' not supported.");
             }
-
         }
 
         private string ErrorToOAuth2OidcString(LoginSequenceError error)

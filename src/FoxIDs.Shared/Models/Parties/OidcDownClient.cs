@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
@@ -12,5 +13,9 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "require_logout_id_token_hint")]
         public bool RequireLogoutIdTokenHint { get; set; }
+
+        [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
+        [JsonProperty(PropertyName = "response_mode")]
+        public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.Query;
     }
 }

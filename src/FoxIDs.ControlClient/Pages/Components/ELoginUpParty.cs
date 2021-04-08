@@ -34,6 +34,7 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
+                        afterMap.DisableSingleLogout = !generalLoginUpParty.Form.Model.EnableSingleLogout;
                         afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
 
                         if (afterMap.ClaimTransforms?.Count() > 0)
@@ -50,6 +51,7 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
+                        afterMap.DisableSingleLogout = !generalLoginUpParty.Form.Model.EnableSingleLogout;
                         afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
 
                         if (afterMap.ClaimTransforms?.Count() > 0)

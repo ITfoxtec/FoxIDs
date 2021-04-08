@@ -17,11 +17,7 @@ namespace FoxIDs
         /// </summary>
         public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url)
         {
-            return Task.FromResult(new ContentResult
-            {
-                ContentType = "text/html",
-                Content = items.ToHtmlPostPage(url, title: title),
-            });
+            return items.ToHtmlPostPage(url, title: title).ToContentResultAsync();
         }
 
         /// <summary>
@@ -29,24 +25,15 @@ namespace FoxIDs
         /// </summary>
         public static ContentResult ToRedirectResult(this string url)
         {
-            return new ContentResult
-            {
-                ContentType = "text/html",
-                Content = url.HtmRedirectActionPage(title: title),
-            };
+            return url.HtmRedirectActionPage(title: title).ToContentResult();
         }
-
 
         /// <summary>
         /// Converts a Dictionary&lt;string, string&gt; to a redirect ContentResult.
         /// </summary>
         public static Task<ContentResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url)
         {
-            return Task.FromResult(new ContentResult
-            {
-                ContentType = "text/html",
-                Content = items.ToHtmlGetPage(url, title: title),
-            });
+            return items.ToHtmlGetPage(url, title: title).ToContentResultAsync();
         }
 
         /// <summary>
@@ -54,11 +41,27 @@ namespace FoxIDs
         /// </summary>
         public static Task<ContentResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url)
         {
-            return Task.FromResult(new ContentResult
+            return items.ToHtmlFragmentPage(url, title: title).ToContentResultAsync();
+        }
+
+        /// <summary>
+        /// HTML to ContentResult.
+        /// </summary>
+        public static ContentResult ToContentResult(this string html)
+        {
+            return new ContentResult
             {
                 ContentType = "text/html",
-                Content = items.ToHtmlFragmentPage(url, title: title),
-            });
+                Content = html,
+            };
+        }
+
+        /// <summary>
+        /// HTML to ContentResult.
+        /// </summary>
+        public static Task<ContentResult> ToContentResultAsync(this string html)
+        {
+            return Task.FromResult(html.ToContentResult());
         }
     }
 }

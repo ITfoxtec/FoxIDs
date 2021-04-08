@@ -40,6 +40,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "post_logout_redirect_uri")]
         public string PostLogoutRedirectUri { get; set; }
 
+        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [JsonProperty(PropertyName = "frontchannel_logout_uri")]
+        public string FrontChannelLogoutUri { get; set; }
+
+        [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
+
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }

@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Filters
 {
@@ -21,6 +20,7 @@ namespace FoxIDs.Infrastructure.Filters
         private class FoxIDsHttpSecurityHeadersActionAttribute : HttpSecurityHeadersActionAttribute
         {
             private List<string> allowFormActionOnDomains;
+            private List<string> allowFrameSrcDomains;
             private List<string> allowIframeOnDomains;
             private readonly IServiceProvider serviceProvider;
 
@@ -29,26 +29,43 @@ namespace FoxIDs.Infrastructure.Filters
                 this.serviceProvider = serviceProvider;
             }
 
-            protected override async Task ActionExecutionInitAsync(ActionExecutedContext resultContext)
+            protected override void ActionExecutionInit(ActionExecutedContext resultContext)
             {
-                await base.ActionExecutionInitAsync(resultContext);
-                allowFormActionOnDomains = await GetFormActionOnDomainsAsync();
-                allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller);
+                base.ActionExecutionInit(resultContext);
+
+                var securityHeaderLogic = serviceProvider.GetService<SecurityHeaderLogic>();
+                allowFormActionOnDomains = securityHeaderLogic.GetFormActionDomains();
+                allowFrameSrcDomains = securityHeaderLogic.GetFrameSrcDomains();
+
+                allowIframeOnDomains = GetAllowIframeOnDomains(resultContext.Controller as IRouteBinding, securityHeaderLogic);
             }
 
-            private async Task<List<string>> GetFormActionOnDomainsAsync()
+            private List<string> GetAllowIframeOnDomains(IRouteBinding controller, SecurityHeaderLogic securityHeaderLogic)
             {
-                var formActionLogic = serviceProvider.GetService<FormActionLogic>();
-                return await formActionLogic.GetFormActionDomainsAsync();
-            }
-
-            private List<string> GetAllowIframeOnDomains(object controller)
-            {
-                if (controller is IRouteBinding)
+                List<string> domains = null;
+                if (controller != null)
                 {
-                    return (controller as IRouteBinding)?.RouteBinding?.AllowIframeOnDomains;
+                    var controllerDomains = controller?.RouteBinding?.AllowIframeOnDomains;
+                    if (controllerDomains != null)
+                    {
+                        domains = controllerDomains;
+                    }
                 }
-                return null;
+
+                var logicDomains = securityHeaderLogic.GetAllowIframeOnDomains();
+                if (logicDomains != null)
+                {
+                    if (domains == null)
+                    {
+                        domains = logicDomains;
+                    }
+                    else
+                    {
+                        domains.ConcatOnce(logicDomains);
+                    }
+                }
+
+                return domains;
             }
 
             protected override void HeaderXFrameOptions(HttpResponse response)
@@ -71,7 +88,19 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"form-action 'self' {allowFormActionOnDomains.Select(d => d == "*" ? d : $"https://{d}").ToSpaceList()};";
+                    return $"form-action 'self' {allowFormActionOnDomains.Select(d => d == "*" ? d : d.DomainToOrigin()).ToSpaceList()};";
+                }
+            }
+
+            protected override string CspFrameSrc()
+            {
+                if (allowFrameSrcDomains == null || allowFrameSrcDomains.Count() < 1)
+                {
+                    return base.CspFrameSrc();
+                }
+                else
+                {
+                    return $"frame-src {allowFrameSrcDomains.Select(d => d == "*" ? d : d.DomainToOrigin()).ToSpaceList()};";
                 }
             }
 
@@ -83,7 +112,7 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"frame-ancestors 'self' {allowIframeOnDomains.Select(d => $"https://{d}").ToSpaceList()};";
+                    return $"frame-ancestors 'self' {allowIframeOnDomains.Select(d => d.DomainToOrigin()).ToSpaceList()};";
                 }
             }
         }

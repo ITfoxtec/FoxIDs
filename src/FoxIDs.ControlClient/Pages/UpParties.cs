@@ -148,6 +148,7 @@ namespace FoxIDs.Client.Pages
                     var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upParty.Name);
                     await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap =>
                     {
+                        afterMap.EnableSingleLogout = !loginUpParty.DisableSingleLogout;
                         afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword;
 
                         if (afterMap.ClaimTransforms?.Count > 0)
@@ -187,6 +188,12 @@ namespace FoxIDs.Client.Pages
                             afterMap.AutomaticStopped = false;
                         }
 
+                        afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
+                        if (oidcUpParty.Client != null)
+                        {
+                            afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
+                        }
+
                         foreach (var key in oidcUpParty.Keys)
                         {
                             afterMap.KeyIds.Add(key.Kid);
@@ -215,6 +222,8 @@ namespace FoxIDs.Client.Pages
                     var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(upParty.Name);
                     await generalSamlUpParty.Form.InitAsync(samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
                     {
+                        afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
+
                         afterMap.AuthnRequestBinding = samlUpParty.AuthnBinding.RequestBinding;
                         afterMap.AuthnResponseBinding = samlUpParty.AuthnBinding.ResponseBinding;
                         if (!samlUpParty.LogoutUrl.IsNullOrEmpty())

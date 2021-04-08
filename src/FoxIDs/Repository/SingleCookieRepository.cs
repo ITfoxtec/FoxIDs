@@ -1,7 +1,7 @@
 ﻿using ITfoxtec.Identity;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models;
-using FoxIDs.Models.Cookies;
+using FoxIDs.Models.Session;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using System;

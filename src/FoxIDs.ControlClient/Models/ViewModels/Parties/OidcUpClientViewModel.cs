@@ -1,88 +1,79 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthUpClient : IValidatableObject
+    public class OidcUpClientViewModel : IValidatableObject
     {
-        [JsonIgnore]
-        internal PartyDataElement Parent { private get; set; }
-
-        [JsonIgnore]
-        public string ClientId { get => Parent.Name; }
-
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
-        [JsonProperty(PropertyName = "sp_client_id")]
+        [Display(Name = "Optional custom SP client ID (default the party name)")]
         public string SpClientId { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.Client.ScopesMin, Constants.Models.OAuthUpParty.Client.ScopesMax, Constants.Models.OAuthUpParty.ScopeLength, Constants.Models.OAuthUpParty.ScopeRegExPattern)]
-        [JsonProperty(PropertyName = "scopes")]
+        [Display(Name = "Scopes")]
         public List<string> Scopes { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
-        [JsonProperty(PropertyName = "claims")]
+        [Display(Name = "Claims")]
         public List<string> Claims { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
-        [JsonProperty(PropertyName = "response_mode")]
-        public string ResponseMode { get; set; }
+        [Display(Name = "Response mode")]
+        public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.FormPost;
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseTypeLength)]
-        [JsonProperty(PropertyName = "response_type")]
-        public string ResponseType { get; set; }
+        [Display(Name = "Response type")]
+        public string ResponseType { get; set; } = IdentityConstants.ResponseTypes.Code;
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.AuthorizeUrlLength)]
-        [JsonProperty(PropertyName = "authorize_url")]
+        [Display(Name = "Authorize URL")]
         public string AuthorizeUrl { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.TokenUrlLength)]
-        [JsonProperty(PropertyName = "token_url")]
+        [Display(Name = "Token URL")]
         public string TokenUrl { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.EndSessionUrlLength)]
-        [JsonProperty(PropertyName = "end_session_url")]
+        [Display(Name = "End session URL")]
         public string EndSessionUrl { get; set; }
 
-        [JsonProperty(PropertyName = "disable_frontchannel_logout")]
-        public bool DisableFrontChannelLogout { get; set; }
+        [Display(Name = "Front channel logout")]
+        public bool EnableFrontChannelLogout { get; set; } = true;
 
-        [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
+        [Display(Name = "Front channel logout session required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
-        [JsonProperty(PropertyName = "client_secret")]
+        [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
 
-        [JsonProperty(PropertyName = "enable_pkce")]
-        public bool EnablePkce { get; set; }
+        [Display(Name = "Use PKCE")]
+        public bool EnablePkce { get; set; } = true;
+
+        [Display(Name = "Use claims from ID token instead of access token")]
+        public bool UseIdTokenClaims { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce), nameof(ResponseType) }));
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce) }));
             }
             if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
             {
-                if (TokenUrl.IsNullOrEmpty())
-                {
-                    results.Add(new ValidationResult($"Require '{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(TokenUrl), nameof(ResponseType) }));
-                }
                 if (ClientSecret.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret), nameof(ResponseType) }));
+                    results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret) }));
                 }
             }
             if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
             {
-                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { nameof(ResponseMode) }));
+                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
             }
             return results;
         }

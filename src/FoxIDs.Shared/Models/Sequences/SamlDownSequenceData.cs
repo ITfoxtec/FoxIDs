@@ -15,6 +15,6 @@ namespace FoxIDs.Models.Sequences
 
         [MaxLength(2000)]
         [JsonProperty(PropertyName = "a")]
-        public string ResponseUrl { get; set; }
+        public string AcsResponseUrl { get; set; }
     }
 }

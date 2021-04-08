@@ -55,6 +55,8 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
+        public bool DisableSingleLogout { get; set; }
+
         /// <summary>
         /// OIDC up client.
         /// </summary>

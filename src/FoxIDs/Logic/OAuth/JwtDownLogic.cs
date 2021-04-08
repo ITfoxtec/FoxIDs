@@ -54,11 +54,11 @@ namespace FoxIDs.Logic
             {
                 if (responseTypes.Contains(IdentityConstants.ResponseTypes.Token))
                 {
-                    idTokenClaims.AddClaim(JwtClaimTypes.AtHash, await accessToken.LeftMostBase64urlEncodedHash(algorithm));
+                    idTokenClaims.AddClaim(JwtClaimTypes.AtHash, await accessToken.LeftMostBase64urlEncodedHashAsync(algorithm));
                 }
                 if (responseTypes.Contains(IdentityConstants.ResponseTypes.Code))
                 {
-                    idTokenClaims.AddClaim(JwtClaimTypes.CHash, await code.LeftMostBase64urlEncodedHash(algorithm));
+                    idTokenClaims.AddClaim(JwtClaimTypes.CHash, await code.LeftMostBase64urlEncodedHashAsync(algorithm));
                 }
             }
 

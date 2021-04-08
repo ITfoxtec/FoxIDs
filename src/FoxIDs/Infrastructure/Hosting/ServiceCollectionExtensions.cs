@@ -27,12 +27,13 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<LocalizationLogic>();
 
             services.AddTransient<SequenceLogic>();
-            services.AddTransient<FormActionLogic>();
+            services.AddTransient<SecurityHeaderLogic>();
             services.AddTransient<TrackKeyLogic>();
             services.AddTransient<TrackIssuerLogic>();
 
             services.AddTransient<LoginUpLogic>();
             services.AddTransient<LogoutUpLogic>();
+            services.AddTransient<SingleLogoutDownLogic>();            
             services.AddTransient<SecretHashLogic>();
             services.AddTransient<FailingLoginLogic>();            
             services.AddTransient<AccountLogic>();
@@ -62,11 +63,14 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcTokenDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>();
-            services.AddTransient<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcFrontChannelLogoutUpLogic<OidcUpParty, OidcUpClient>>();            
+            services.AddTransient<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
             services.AddTransient<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<SamlClaimsDownLogic>();
             services.AddTransient<Saml2ConfigurationLogic>();
             services.AddTransient<SamlMetadataLogic>();
             services.AddTransient<SamlAuthnUpLogic>();

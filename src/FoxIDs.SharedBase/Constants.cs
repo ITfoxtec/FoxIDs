@@ -377,15 +377,18 @@ namespace FoxIDs
             public const int MaxLength = FoxI.IdentityConstants.MessageLength.StateMax;
         }
 
-        public static class FormAction
+        public static class SecurityHeader
         {
-            public const string Domains = "form_action_domains";
-            public const string DomainsAllowAll = "form_action_domains_allow_all";            
+            public const string FormActionDomains = "form_action_domains";
+            public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
+            public const string FrameSrcDomains = "frame_src_domains";
+            public const string FrameAllowIframeOnDomains = "frame_allow_iframe_on_domains";            
         }
 
         public static class Endpoints
         {
             public const string Logout = "logout";
+            public const string SingleLogoutDone = "singlelogoutdone";            
             public const string CancelLogin = "cancellogin";
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
@@ -397,6 +400,7 @@ namespace FoxIDs
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
+            public const string FrontChannelLogoutDone = "frontchannellogoutdone";
 
             public const string SamlAuthn = "authn";
             public const string SamlLogout = "logout";

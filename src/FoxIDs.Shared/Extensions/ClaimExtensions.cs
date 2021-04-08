@@ -56,7 +56,7 @@ namespace FoxIDs
         /// <summary>
         /// Converts a ClaimAndValues list to a Claims list.
         /// </summary>
-        public static List<Claim> ToClaimList(this List<ClaimAndValues> list)
+        public static List<Claim> ToClaimList(this IEnumerable<ClaimAndValues> list)
         {
             return list.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
         }

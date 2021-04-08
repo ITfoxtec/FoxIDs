@@ -34,14 +34,13 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 var resultContext = await next();
 
-                await ActionExecutionInitAsync(resultContext);
+                ActionExecutionInit(resultContext);
                 SetHeaders(resultContext.HttpContext.Response);
             }
 
-            protected virtual Task ActionExecutionInitAsync(ActionExecutedContext resultContext)
+            protected virtual void ActionExecutionInit(ActionExecutedContext resultContext)
             {
                 isHtmlContent = IsHtmlContent(resultContext.Result);
-                return Task.CompletedTask;
             }
 
             protected virtual void SetHeaders(HttpResponse response)
@@ -103,7 +102,17 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "style-src 'self' 'unsafe-inline';";
 
                     yield return "base-uri 'self';";
-                    yield return CspFormAction();
+
+                    var cspFormAction = CspFormAction();
+                    if (!cspFormAction.IsNullOrEmpty())
+                    {
+                        yield return cspFormAction;
+                    }
+                    var cspFrameSrc = CspFrameSrc();
+                    if (!cspFrameSrc.IsNullOrEmpty())
+                    {
+                        yield return cspFrameSrc;
+                    }
 
                     yield return "sandbox allow-forms allow-popups allow-same-origin allow-scripts;";
 
@@ -118,8 +127,13 @@ namespace FoxIDs.Infrastructure.Filters
 
             protected virtual string CspFormAction()
             {
-                return "form-action 'self';";
+                return string.Empty;
             }
+
+            protected virtual string CspFrameSrc()
+            {
+                return string.Empty;
+            }            
 
             protected virtual string CspFrameAncestors()
             {

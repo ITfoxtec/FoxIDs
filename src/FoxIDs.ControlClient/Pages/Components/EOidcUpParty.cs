@@ -21,7 +21,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oidcUpParty.CreateMode)
             {
-                model.Client = new OidcUpClient();
+                model.Client = new OidcUpClientViewModel();
             }
         }
 
@@ -43,6 +43,8 @@ namespace FoxIDs.Client.Pages.Components
                 var oidcUpParty = generalOidcUpParty.Form.Model.Map<OidcUpParty>(afterMap: afterMap =>
                 {
                     afterMap.UpdateState = PartyUpdateStates.Automatic;
+                    afterMap.DisableSingleLogout = !generalOidcUpParty.Form.Model.EnableSingleLogout;
+                    afterMap.Client.DisableFrontChannelLogout = !generalOidcUpParty.Form.Model.Client.EnableFrontChannelLogout;
 
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {

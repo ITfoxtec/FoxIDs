@@ -73,6 +73,9 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         public string LogoutUrl { get; set; }
 
+        [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
+        public string SingleLogoutResponseUrl { get; set; }
+
         /// <summary>
         /// Default 10 hours.
         /// </summary>
@@ -95,5 +98,7 @@ namespace FoxIDs.Models.Api
         /// Default false.
         /// </summary>
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+
+        public bool DisableSingleLogout { get; set; }
     }
 }

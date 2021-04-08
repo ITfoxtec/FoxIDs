@@ -8,32 +8,32 @@ using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Security.Claims;
 using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.Session;
 
 namespace FoxIDs.Logic
 {
-    public class OidcEndSessionDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
+    public class OidcRpInitiatedLogoutDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
 
-        public OidcEndSessionDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.jwtDownLogic = jwtDownLogic;
         }
 
@@ -44,24 +44,30 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException($"Party Client not configured.");
+                throw new NotSupportedException("Party Client not configured.");
             }
 
-            var queryDictionary = HttpContext.Request.Query.ToDictionary();
-            var endSessionRequest = queryDictionary.ToObject<EndSessionRequest>();
+            var formOrQueryDictionary = HttpContext.Request.Method switch
+            {
+                "POST" => party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost ? HttpContext.Request.Form.ToDictionary() : throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'."),
+                "GET" => party.Client.ResponseMode == IdentityConstants.ResponseModes.Query ? HttpContext.Request.Query.ToDictionary() : throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'."),
+                _ => throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'")
+            };
+           
+            var rpInitiatedLogoutRequest = formOrQueryDictionary.ToObject<RpInitiatedLogoutRequest>();
 
-            logger.ScopeTrace($"end session request '{endSessionRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace($"end session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
             logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
 
-            ValidateEndSessionRequest(party.Client, endSessionRequest);
+            ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
             logger.ScopeTrace("Down, OIDC End session request accepted.", triggerEvent: true);
 
-            (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, endSessionRequest.IdTokenHint);
+            (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, rpInitiatedLogoutRequest.IdTokenHint);
             if (!validIdToken)
             {
                 if (party.Client.RequireLogoutIdTokenHint)
                 {
-                    if (!endSessionRequest.IdTokenHint.IsNullOrEmpty())
+                    if (!rpInitiatedLogoutRequest.IdTokenHint.IsNullOrEmpty())
                     {
                         throw new OAuthRequestException($"Invalid ID Token hint.") { RouteBinding = RouteBinding };
                     }
@@ -74,13 +80,12 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace("Valid ID token hint.");
             }
 
-            var postLogoutRedirectUri = !endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() ? endSessionRequest.PostLogoutRedirectUri : party.Client.PostLogoutRedirectUri;
+            var postLogoutRedirectUri = !rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() ? rpInitiatedLogoutRequest.PostLogoutRedirectUri : party.Client.PostLogoutRedirectUri;
             await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
             {
                 RedirectUri = postLogoutRedirectUri,
-                State = endSessionRequest.State,
+                State = rpInitiatedLogoutRequest.State,
             });
-            await formActionLogic.CreateFormActionByUrlAsync(postLogoutRedirectUri);
 
             var type = RouteBinding.ToUpParties.First().Type;
             logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -91,7 +96,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcEndSessionUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
+                    return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
@@ -104,11 +109,11 @@ namespace FoxIDs.Logic
             }
         }
 
-        private LogoutRequest GetLogoutRequest(Party party, string sessionId, bool validIdToken, string postLogoutRedirectUri)
+        private LogoutRequest GetLogoutRequest(TParty party, string sessionId, bool validIdToken, string postLogoutRedirectUri)
         {
             var logoutRequest = new LogoutRequest
             {
-                DownParty = party,
+                DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type },
                 SessionId = sessionId,
                 RequireLogoutConsent = !validIdToken,
                 PostLogoutRedirect = !postLogoutRedirectUri.IsNullOrWhiteSpace()
@@ -117,7 +122,7 @@ namespace FoxIDs.Logic
             return logoutRequest;
         }
 
-        private LogoutRequest GetSamlLogoutRequest(Party party, string sessionId, IEnumerable<Claim> idTokenClaims)
+        private LogoutRequest GetSamlLogoutRequest(TParty party, string sessionId, IEnumerable<Claim> idTokenClaims)
         {
             var samlClaims = new List<Claim>();
             var nameIdClaim = idTokenClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Subject);
@@ -135,7 +140,7 @@ namespace FoxIDs.Logic
 
             return new LogoutRequest
             {
-                DownParty = party,
+                DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type },
                 SessionId = sessionId,
                 RequireLogoutConsent = false,
                 PostLogoutRedirect = true,
@@ -156,15 +161,15 @@ namespace FoxIDs.Logic
             return (false, null, null);
         }
 
-        private void ValidateEndSessionRequest(TClient client, EndSessionRequest endSessionRequest)
+        private void ValidateEndSessionRequest(TClient client, RpInitiatedLogoutRequest rpInitiatedLogoutRequest)
         {
-            endSessionRequest.Validate();
+            rpInitiatedLogoutRequest.Validate();
 
-            if (!endSessionRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
-                !client.RedirectUris.Any(u => u.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
-                !endSessionRequest.PostLogoutRedirectUri.Equals(endSessionRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
+            if (!rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
+                !client.RedirectUris.Any(u => u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
+                !rpInitiatedLogoutRequest.PostLogoutRedirectUri.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new OAuthRequestException($"Invalid post logout redirect Uri '{endSessionRequest.PostLogoutRedirectUri}'.");
+                throw new OAuthRequestException($"Invalid post logout redirect Uri '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
             }
         }
 
@@ -175,19 +180,19 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
-            var endSessionResponse = new EndSessionResponse
+            var rpInitiatedLogoutResponse = new RpInitiatedLogoutResponse
             {
                 State = sequenceData.State,
             };
 
-            logger.ScopeTrace($"End session response '{endSessionResponse.ToJsonIndented()}'.");
-            var nameValueCollection = endSessionResponse.ToDictionary();
+            logger.ScopeTrace($"End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
+            var nameValueCollection = rpInitiatedLogoutResponse.ToDictionary();
 
             logger.ScopeTrace($"Redirect Uri '{sequenceData.RedirectUri}'.");
             logger.ScopeTrace("Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
     }

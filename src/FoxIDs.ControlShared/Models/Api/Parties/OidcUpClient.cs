@@ -41,6 +41,12 @@ namespace FoxIDs.Models.Api
         [Display(Name = "End session URL")]
         public string EndSessionUrl { get; set; }
 
+        [Display(Name = "Disable front channel logout")]
+        public bool DisableFrontChannelLogout { get; set; }
+
+        [Display(Name = "Front channel logout session required")]
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
+
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }

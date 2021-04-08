@@ -35,6 +35,12 @@
             </FInputSelect>
         }
 
+        <UpPartySessionLifetime Model="samlUpParty.Form.Model" ShowAdvanced="samlUpParty.ShowAdvanced" AllAdvanced="true" />
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableSingleLogout" For="@(() => samlUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+        }
+
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 @if (samlUpParty.ShowSamlTab)
@@ -107,6 +113,10 @@
                     </div>
                 </div>
                 <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
+                @if (samlUpParty.ShowAdvanced)
+                {
+                    <FInputText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
+                }
                 <div class="row active-group-outline">
                     <div class="col">
                         <div class="form-group active-group">

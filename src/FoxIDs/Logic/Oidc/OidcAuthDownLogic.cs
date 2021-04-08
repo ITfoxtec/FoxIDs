@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.Session;
 
 namespace FoxIDs.Logic
 {
@@ -22,19 +23,19 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
-        private readonly FormActionLogic formActionLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, FormActionLogic formActionLogic, ClaimTransformationsLogic claimTransformationsLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformationsLogic claimTransformationsLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
-            this.formActionLogic = formActionLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.jwtDownLogic = jwtDownLogic;
             this.oauthAuthCodeGrantDownLogic = oauthAuthCodeGrantDownLogic;
@@ -48,7 +49,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if(party.Client == null)
             {
-                throw new NotSupportedException($"Party Client not configured.");
+                throw new NotSupportedException("Party Client not configured.");
             }
             logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
 
@@ -84,7 +85,6 @@ namespace FoxIDs.Logic
                     CodeChallenge = codeChallengeSecret?.CodeChallenge,
                     CodeChallengeMethod = codeChallengeSecret?.CodeChallengeMethod,
                 });
-                await formActionLogic.CreateFormActionByUrlAsync(authenticationRequest.RedirectUri);
 
                 var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace($"Request, Up type '{type}'.");
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
 
         private async Task<LoginRequest> GetLoginRequestAsync(TParty party, AuthenticationRequest authenticationRequest)
         {
-            var loginRequest = new LoginRequest { DownParty = party };
+            var loginRequest = new LoginRequest { DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type } };
 
             loginRequest.LoginAction = !authenticationRequest.Prompt.IsNullOrWhiteSpace() && authenticationRequest.Prompt.Contains(IdentityConstants.AuthorizationServerPrompt.None) ? LoginAction.ReadSession : LoginAction.ReadSessionOrLogin;
 
@@ -235,7 +235,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException($"Party Client not configured.");
+                throw new NotSupportedException("Party Client not configured.");
             }
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
@@ -249,7 +249,7 @@ namespace FoxIDs.Logic
             };
             var sessionResponse = new SessionResponse
             {
-                SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
+                SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId).GetSessionStateValue(party.Client.ClientId, sequenceData.RedirectUri)
             };
 
             logger.ScopeTrace($"Response type '{sequenceData.ResponseType}'.");
@@ -284,7 +284,7 @@ namespace FoxIDs.Logic
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
+            securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
@@ -320,7 +320,6 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("downPartyId", partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
-            await formActionLogic.RemoveFormActionSequenceDataAsync();
 
             return await AuthenticationResponseErrorAsync(sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }
@@ -346,6 +345,7 @@ namespace FoxIDs.Logic
             var nameValueCollection = authenticationResponse.ToDictionary();
 
             logger.ScopeTrace($"Redirect Uri '{redirectUri}'.");
+            securityHeaderLogic.AddFormAction(redirectUri);
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }
 

@@ -29,7 +29,7 @@ namespace FoxIDs
             return UrlCombine.Combine(httpContext.GetHost(), elements.ToArray());
         }
 
-        public static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
+        private static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
         {
             return partyBindingPattern switch
             {
@@ -39,5 +39,19 @@ namespace FoxIDs
             };
         }
 
+        public static string GetDownPartyUrl(this HttpContext httpContext, string downPartyName, string upPartyName, string controller, string action = null, bool includeSequence = false)
+        {
+            var routeBinding = httpContext.GetRouteBinding();
+            var elements = new List<string> { routeBinding.TenantName, routeBinding.TrackName, $"{downPartyName}({upPartyName})", controller };
+            if (!action.IsNullOrEmpty())
+            {
+                elements.Add(action);
+            }
+            if (includeSequence)
+            {
+                elements.Add($"_{httpContext.GetSequenceString()}");
+            }
+            return UrlCombine.Combine(httpContext.GetHost(), elements.ToArray());
+        }
     }
 }

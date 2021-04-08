@@ -9,6 +9,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoxIDs.Logic
 {
@@ -114,6 +115,10 @@ namespace FoxIDs.Logic
                         samlClaims.Add(jwtClaim);
                     }
                 }
+                if (!samlClaims.Where(c => c.Type == Saml2ClaimTypes.NameIdFormat).Any())
+                {
+                    samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, NameIdentifierFormats.Persistent.OriginalString);
+                }
                 return Task.FromResult(samlClaims);
             }
             catch (Exception ex)
@@ -144,7 +149,7 @@ namespace FoxIDs.Logic
             var jwtClaimValues = jwtClaims.Where(c => c.Type == JwtClaimTypes.Amr).FirstOrDefault()?.Value.ToSpaceList();
 
             // TODO, implement mapping
-            if (jwtClaimValues.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Pwd))
+            if (jwtClaimValues?.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Pwd) == true)
             {
                 samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, AuthnContextClassTypes.PasswordProtectedTransport.OriginalString));
             }
@@ -175,7 +180,7 @@ namespace FoxIDs.Logic
                             jwtClaims.Add(new Claim(claimMap.JwtClaim, samlClaim.Value, samlClaim.ValueType, samlClaim.Issuer, samlClaim.OriginalIssuer));
                         }
                     }
-                    else
+                    else if(!MappedClaimType(samlClaim.Type))
                     {
                         var jwtClaim = new Claim(
                             samlClaim.Type?.Length > Constants.Models.Claim.JwtTypeLength ? samlClaim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength) : samlClaim.Type,
@@ -192,6 +197,17 @@ namespace FoxIDs.Logic
                 logger.Error(ex, "Failed to map SAML claims to JWT claims.");
                 throw;
             }
+        }
+
+        private bool MappedClaimType(string type)
+        {
+            return type switch
+            {
+                ClaimTypes.AuthenticationInstant => true,
+                ClaimTypes.AuthenticationMethod => true,
+                _ => false
+            };
+
         }
 
         private List<Claim> TruncateJwtClaimValues(IEnumerable<Claim> jwtClaims)

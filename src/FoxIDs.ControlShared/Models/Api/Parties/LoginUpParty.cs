@@ -69,5 +69,7 @@ namespace FoxIDs.Models.Api
         /// Default false.
         /// </summary>
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+
+        public bool DisableSingleLogout { get; set; }
     }
 }

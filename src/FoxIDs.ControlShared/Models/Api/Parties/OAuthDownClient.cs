@@ -34,6 +34,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Post logout redirect URI")]
         public string PostLogoutRedirectUri { get; set; }
 
+        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [Display(Name = "Front channel logout URI")]
+        public string FrontChannelLogoutUri { get; set; }
+
+        [Display(Name = "Front channel logout session required")]
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>

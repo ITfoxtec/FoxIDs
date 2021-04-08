@@ -51,6 +51,21 @@ namespace FoxIDs
         }
 
         /// <summary>
+        /// Concatenates value to sequence and only include each string value once.
+        /// </summary>
+        /// <param name="first">The sequence to concatenate.</param>
+        /// <param name="value">The value to add to the sequence.</param>
+        public static List<string> ConcatOnce(this IEnumerable<string> first, string value)
+        {
+            var list = first != null ? new List<string>(first) : new List<string>();
+            if (!string.IsNullOrEmpty(value) && !list.Contains(value))
+            {
+                list.Add(value);
+            }
+            return list;
+        }
+
+        /// <summary>
         /// Concatenates two sequences and only include each string value once.
         /// </summary>
         /// <param name="first">The first sequence to concatenate.</param>

@@ -34,8 +34,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SetUiUpPartyIdAsync(partyId);
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
-                DownPartyId = logoutRequest.DownParty.Id,
-                DownPartyType = logoutRequest.DownParty.Type,
+                DownPartyLink = logoutRequest.DownPartyLink,
                 UpPartyId = partyId,
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
@@ -45,22 +44,20 @@ namespace FoxIDs.Logic
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, Constants.Endpoints.Logout, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LogoutResponseAsync(string sessionId)
+        public async Task<IActionResult> LogoutResponseAsync(LoginUpSequenceData sequenceData)
         {
             logger.ScopeTrace("Down, Logout response.");
-
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyType}.");
-            switch (sequenceData.DownPartyType)
+            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyLink.Type}.");
+            switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcEndSessionDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyId);
+                    return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyId, sessionIndex: sessionId);
+                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id, sessionIndex: sequenceData.SessionId);
 
                 default:
                     throw new NotSupportedException();

@@ -1,11 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FoxIDs.Models.Session;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Logic
 {
     public class LoginRequest
     {
         [Required]
-        public Party DownParty { get; set; }
+        public DownPartySessionLink DownPartyLink { get; set; }
 
         public LoginAction LoginAction { get; set; }
 

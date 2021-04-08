@@ -52,8 +52,7 @@ namespace FoxIDs.Logic
                 if (frontChannelLogoutRequest.SessionId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(frontChannelLogoutRequest.SessionId), frontChannelLogoutRequest.GetTypeName());
             }
 
-            var session = await sessionUpPartyLogic.DeleteSessionAsync();
-            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
+            var session = await sessionUpPartyLogic.GetSessionAsync(party);
             logger.ScopeTrace("Up, Successful OIDC Front channel logout request.", triggerEvent: true);
             if (session != null)
             {
@@ -68,6 +67,9 @@ namespace FoxIDs.Logic
                         throw new Exception("Incorrect session id.");
                     }
                 }
+
+                var _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
 
                 if (!party.DisableSingleLogout)
                 {

@@ -27,6 +27,8 @@ The relaying party (RP) client (application) is configured in a FoxIDs track as 
 > if the client is located in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`  
 > An up-party name e.g. `login` can possible be added to the discovery URL `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
 
+> A down-party client can possibly support login through multiple up-parties by adding the up-party name to the URL. During OIDC RP Initiated Logout the up-party name can be omitted in the URL if the ID Token is provided in the request.
+
 ### Configure Authorization Code Flow for a confidant client
 A confidant client could be a web application where the security is handled by the webserver which also stores the client secret.
 

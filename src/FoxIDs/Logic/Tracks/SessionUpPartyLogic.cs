@@ -73,6 +73,7 @@ namespace FoxIDs.Logic
                     else
                     {
                         claims.AddClaim(JwtClaimTypes.SessionId, session.SessionId);
+                        AddDownPartyLink(session, newDownPartyLink);
                     }
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(session, null);

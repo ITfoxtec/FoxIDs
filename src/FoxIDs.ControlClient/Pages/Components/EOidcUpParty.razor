@@ -138,7 +138,6 @@
                     {
                         @if (!oidcUpParty.CreateMode)
                         {
-                            <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
                             <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
                             <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
                             <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />

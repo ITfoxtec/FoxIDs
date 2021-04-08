@@ -139,7 +139,7 @@ namespace FoxIDs.Logic
             {
                 var codeChallengeRequest = new CodeChallengeSecret
                 {
-                    CodeChallenge = await oidcUpSequenceData.CodeVerifier.Sha256HashBase64urlEncoded(),
+                    CodeChallenge = await oidcUpSequenceData.CodeVerifier.Sha256HashBase64urlEncodedAsync(),
                     CodeChallengeMethod = IdentityConstants.CodeChallengeMethods.S256,
                 };
                 logger.ScopeTrace($"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.");
@@ -194,16 +194,10 @@ namespace FoxIDs.Logic
                     true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
-
                 logger.ScopeTrace("Up, Successful OIDC Authentication response.", triggerEvent: true);
 
-                //var externalSessionId = sessionResponse?.SessionState.IsNullOrEmpty() switch
-                //{
-                //    false => sessionResponse.SessionState,
-                //    true => claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
-                //};
                 var externalSessionId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId);
-                externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionStatedMax, nameof(externalSessionId), "Session state or claim");
+                externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();                
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
@@ -392,7 +386,7 @@ namespace FoxIDs.Logic
                 {
                     var atHash = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.AtHash);
                     string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
-                    if (atHash != await accessToken.LeftMostBase64urlEncodedHash(algorithm))
+                    if (atHash != await accessToken.LeftMostBase64urlEncodedHashAsync(algorithm))
                     {
                         throw new OAuthRequestException($"{party.Name}|Access Token hash claim in ID token do not match the access token.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                     }

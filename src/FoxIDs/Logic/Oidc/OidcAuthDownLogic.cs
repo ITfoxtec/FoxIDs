@@ -249,7 +249,7 @@ namespace FoxIDs.Logic
             };
             var sessionResponse = new SessionResponse
             {
-                SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId)
+                SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId).GetSessionStateValue(party.Client.ClientId, sequenceData.RedirectUri)
             };
 
             logger.ScopeTrace($"Response type '{sequenceData.ResponseType}'.");

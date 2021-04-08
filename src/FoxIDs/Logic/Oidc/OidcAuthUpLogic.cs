@@ -198,8 +198,9 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
-                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && c.Type != Constants.JwtClaimTypes.UpPary).ToList();
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && c.Type != Constants.JwtClaimTypes.UpPary && c.Type != Constants.JwtClaimTypes.UpParyType).ToList();
                 claims.AddClaim(Constants.JwtClaimTypes.UpPary, party.Name);
+                claims.AddClaim(Constants.JwtClaimTypes.UpParyType, party.Type.ToString().ToLower());
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);

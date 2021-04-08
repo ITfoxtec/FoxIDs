@@ -463,18 +463,17 @@ namespace FoxIDs
             /// Default ID Token claims.
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.UpPary, JwtClaimTypes.SubFormat } ).ToArray();
+                new string[] { JwtClaimTypes.UpPary, JwtClaimTypes.UpParyType, JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
-            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
-                new string[] { JwtClaimTypes.UpPary, JwtClaimTypes.SubFormat } ).ToArray();
+            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken;
 
             /// <summary>
             /// Default JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpPary, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpPary, JwtClaimTypes.UpParyType, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
             /// Exclude JWT Token up-party claims.
@@ -499,6 +498,7 @@ namespace FoxIDs
         public static class JwtClaimTypes
         {
             public const string UpPary = "up_party";
+            public const string UpParyType = "up_party_type";
             public const string SubFormat = "sub_format";
             public const string AccessToken = "access_token";
         }
@@ -506,6 +506,7 @@ namespace FoxIDs
         public static class SamlClaimTypes
         {
             public const string UpPary = "http://schemas.foxids.com/identity/claims/uppary";
+            public const string UpParyType = "http://schemas.foxids.com/identity/claims/upparytype";
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
         }
 
@@ -524,6 +525,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpPary, SamlClaim = SamlClaimTypes.UpPary },
+                new ClaimMap { JwtClaim = JwtClaimTypes.UpParyType, SamlClaim = SamlClaimTypes.UpParyType },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken }
             };
 

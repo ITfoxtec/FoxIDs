@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Session;
 using ITfoxtec.Identity;
+using System.Collections.Generic;
 
 namespace FoxIDs.Logic
 {
@@ -25,12 +26,12 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
         }
 
-        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, SessionBaseCookie session, bool redirectAfterLogout = true)
+        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, IEnumerable<DownPartySessionLink> downPartyLinks, IEnumerable<ClaimAndValues> claims, bool redirectAfterLogout = true)
         {
             logger.ScopeTrace("Initialize single logout.");
 
-            var downPartyLinks = session?.DownPartyLinks?.Where(p => p.SupportSingleLogout && (initiatingDownParty == null || p.Id != initiatingDownParty.Id));
-            if (!(downPartyLinks?.Count() > 0) || !(session?.Claims?.Count() > 0))
+            downPartyLinks = downPartyLinks?.Where(p => p.SupportSingleLogout && (initiatingDownParty == null || p.Id != initiatingDownParty.Id));
+            if (!(downPartyLinks?.Count() > 0) || !(claims?.Count() > 0))
             {
                 return (false, null);
             }
@@ -45,11 +46,11 @@ namespace FoxIDs.Logic
 
             if (downPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Any())
             {
-                sequenceData.Claims = session.Claims;
+                sequenceData.Claims = claims;
             }
             else
             {
-                sequenceData.Claims = session.Claims.Where(c => c.Claim == JwtClaimTypes.SessionId);
+                sequenceData.Claims = claims.Where(c => c.Claim == JwtClaimTypes.SessionId);
             }
 
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);

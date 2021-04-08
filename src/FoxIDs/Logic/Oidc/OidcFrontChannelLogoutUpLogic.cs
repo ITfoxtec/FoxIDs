@@ -18,14 +18,16 @@ namespace FoxIDs.Logic
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
+        private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
+            this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
@@ -51,6 +53,7 @@ namespace FoxIDs.Logic
             }
 
             var session = await sessionUpPartyLogic.DeleteSessionAsync();
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
             logger.ScopeTrace("Up, Successful OIDC Front channel logout request.", triggerEvent: true);
             if (session != null)
             {
@@ -68,7 +71,7 @@ namespace FoxIDs.Logic
 
                 if (!party.DisableSingleLogout)
                 {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session, redirectAfterLogout: false);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims, redirectAfterLogout: false);
                     if (doSingleLogout)
                     {
                         securityHeaderLogic.AddAllowIframeOnUrls(new [] { party.Client.AuthorizeUrl, party.Client.EndSessionUrl });

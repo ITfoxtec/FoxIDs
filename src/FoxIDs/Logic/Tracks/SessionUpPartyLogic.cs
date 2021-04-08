@@ -129,7 +129,7 @@ namespace FoxIDs.Logic
                 }
 
                 await sessionCookieRepository.DeleteAsync();
-                logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
+                logger.ScopeTrace($"Session deleted up-party, Session id '{session.SessionId}'.");
             }
             else
             {
@@ -139,10 +139,10 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        public async Task<SessionUpPartyCookie> DeleteSessionAsync()
+        public async Task<SessionUpPartyCookie> DeleteSessionAsync(SessionUpPartyCookie session = null)
         {
             logger.ScopeTrace($"Delete session up-party, Route '{RouteBinding.Route}'.");
-            var session = await sessionCookieRepository.GetAsync();
+            session = session ?? await sessionCookieRepository.GetAsync();
             if (session != null)
             {
                 await sessionCookieRepository.DeleteAsync();

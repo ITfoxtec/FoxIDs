@@ -129,6 +129,10 @@ namespace FoxIDs.Logic
                 }
 
                 saml2LogoutRequest.SessionIndex = session.ExternalSessionId;
+
+                samlUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
+                samlUpSequenceData.SessionClaims = session.Claims;
+                await sequenceLogic.SaveSequenceDataAsync(samlUpSequenceData);
             }
 
             var claims = samlUpSequenceData.Claims.ToClaimList();
@@ -156,6 +160,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, SAML Logout request.", triggerEvent: true);
 
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(samlUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
@@ -217,8 +222,6 @@ namespace FoxIDs.Logic
                 }
 
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
-
-                var session = await sessionUpPartyLogic.DeleteSessionAsync();
                 logger.ScopeTrace("Up, Successful SAML Logout response.", triggerEvent: true);
 
                 if (party.DisableSingleLogout)
@@ -227,7 +230,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, session);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, sequenceData.SessionDownPartyLinks, sequenceData.SessionClaims);
                     if (doSingleLogout)
                     {
                         return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
@@ -348,9 +351,10 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace("Up, SAML Single Logout request.", triggerEvent: true);
 
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+                logger.ScopeTrace("Up, Successful SAML Single Logout request.", triggerEvent: true);
 
                 var session = await sessionUpPartyLogic.DeleteSessionAsync();
-                logger.ScopeTrace("Up, Successful SAML Single Logout request.", triggerEvent: true);
+                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
 
                 await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
                 {
@@ -367,7 +371,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session);
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims);
 
                     if (doSingleLogout)
                     {

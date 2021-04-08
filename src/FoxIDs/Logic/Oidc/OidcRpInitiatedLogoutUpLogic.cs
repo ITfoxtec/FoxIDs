@@ -77,10 +77,10 @@ namespace FoxIDs.Logic
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
                 State = SequenceString
             };
+
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if(session != null)
             {
-                rpInitiatedLogoutRequest.IdTokenHint = session.IdToken;
                 try
                 {
                     if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
@@ -92,9 +92,16 @@ namespace FoxIDs.Logic
                 {
                     logger.Warning(ex);
                 }
+
+                rpInitiatedLogoutRequest.IdTokenHint = session.IdToken;
+
+                oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
+                oidcUpSequenceData.SessionClaims = session.Claims;
+                await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
             }
             logger.ScopeTrace($"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
 
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
@@ -129,8 +136,6 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.ValidateSequenceAsync(rpInitiatedLogoutResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
-
-            var session = await sessionUpPartyLogic.DeleteSessionAsync();
             logger.ScopeTrace("Up, Successful OIDC End session response.", triggerEvent: true);
 
             if (party.DisableSingleLogout)
@@ -139,7 +144,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, session);
+                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, sequenceData.SessionDownPartyLinks, sequenceData.SessionClaims);
                 if (doSingleLogout)
                 {
                     return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);

@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Models.Logic;
 using FoxIDs.Models.Session;
-using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -14,6 +13,12 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "dp")]
         public DownPartySessionLink DownPartyLink { get; set; }
+
+        [JsonProperty(PropertyName = "sc")]
+        public IEnumerable<ClaimAndValues> SessionClaims { get; set; }
+
+        [JsonProperty(PropertyName = "sdl")]
+        public List<DownPartySessionLink> SessionDownPartyLinks { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "ui")]

@@ -463,18 +463,18 @@ namespace FoxIDs
             /// Default ID Token claims.
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat } ).ToArray();
+                new string[] { JwtClaimTypes.UpPary, JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(
-                new string[] { JwtClaimTypes.SubFormat } ).ToArray();
+                new string[] { JwtClaimTypes.UpPary, JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpPary, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
             /// Exclude JWT Token up-party claims.
@@ -484,7 +484,7 @@ namespace FoxIDs
             /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod };
+            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, SamlClaimTypes.UpPary };
         }
 
         /// <summary>
@@ -498,12 +498,14 @@ namespace FoxIDs
 
         public static class JwtClaimTypes
         {
+            public const string UpPary = "up_party";
             public const string SubFormat = "sub_format";
             public const string AccessToken = "access_token";
         }
 
         public static class SamlClaimTypes
         {
+            public const string UpPary = "http://schemas.foxids.com/identity/claims/uppary";
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
         }
 
@@ -521,6 +523,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
+                new ClaimMap { JwtClaim = JwtClaimTypes.UpPary, SamlClaim = SamlClaimTypes.UpPary },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken }
             };
 

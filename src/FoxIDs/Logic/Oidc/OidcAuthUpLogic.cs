@@ -198,12 +198,17 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
-                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId).ToList();                
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && c.Type != Constants.JwtClaimTypes.UpPary).ToList();
+                claims.AddClaim(Constants.JwtClaimTypes.UpPary, party.Name);
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
-                validClaims = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
+                var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, validClaims, externalSessionId, idToken);
+                if (!sessionId.IsNullOrEmpty())
+                {
+                    validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                }
 
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }

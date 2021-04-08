@@ -187,13 +187,18 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
-                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex).ToList();
+                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Constants.SamlClaimTypes.UpPary).ToList();
+                claims.AddClaim(Constants.SamlClaimTypes.UpPary, party.Name);
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
 
                 var jwtValidClaims = await claimsDownLogic.FromSamlToJwtClaimsAsync(validClaims);
-                jwtValidClaims = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
+                var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
+                if (!sessionId.IsNullOrEmpty())
+                {
+                    jwtValidClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                }
 
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, jwtValidClaims);
             }

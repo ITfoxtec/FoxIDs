@@ -25,32 +25,32 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task<List<Claim>> CreateOrUpdateSessionAsync<T>(T upParty, DownPartySessionLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
+        public async Task<string> CreateOrUpdateSessionAsync<T>(T upParty, DownPartySessionLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
         {
             logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
 
-            claims = FilterClaims(claims);
+            var sessionClaims = FilterClaims(claims);
 
             Action<SessionUpPartyCookie> updateAction = (session) =>
             {
-                claims.AddClaim(JwtClaimTypes.SessionId, NewSessionId());
-                session.Claims = claims.ToClaimAndValues(); 
+                sessionClaims.AddClaim(JwtClaimTypes.SessionId, NewSessionId());
+                session.Claims = sessionClaims.ToClaimAndValues(); 
 
                 session.ExternalSessionId = externalSessionId;
                 session.IdToken = idToken;
                 AddDownPartyLink(session, newDownPartyLink);
             };
 
+            var sessionEnabled = SessionEnabled(upParty);
             var session = await sessionCookieRepository.GetAsync();
             if (session != null)
             {
-                var sessionEnabled = SessionEnabled(upParty);
                 var sessionValid = SessionValid(upParty, session);
 
                 logger.ScopeTrace($"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+                    var userId = sessionClaims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
                     {
                         logger.ScopeTrace("Authenticated user and requested user do not match.");
@@ -72,34 +72,36 @@ namespace FoxIDs.Logic
                     }
                     else
                     {
-                        claims.AddClaim(JwtClaimTypes.SessionId, session.SessionId);
                         AddDownPartyLink(session, newDownPartyLink);
                     }
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(session, null);
                     logger.ScopeTrace($"Session updated up-party, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+
+                    return session.SessionId;
                 }
-                else
+
+                if (!sessionEnabled)
                 {
                     await sessionCookieRepository.DeleteAsync();
                     logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
                 }
             }
-            else
-            {
-                if (SessionEnabled(upParty))
-                {
-                    logger.ScopeTrace($"Create session up-party, External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
-                    session = new SessionUpPartyCookie();
-                    updateAction(session);
-                    session.LastUpdated = session.CreateTime;
 
-                    await sessionCookieRepository.SaveAsync(session, null);
-                    logger.ScopeTrace($"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
-                }
+            if (sessionEnabled)
+            {
+                logger.ScopeTrace($"Create session up-party, External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
+                session = new SessionUpPartyCookie();
+                updateAction(session);
+                session.LastUpdated = session.CreateTime;
+
+                await sessionCookieRepository.SaveAsync(session, null);
+                logger.ScopeTrace($"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
+
+                return session.SessionId;
             }
 
-            return claims;
+            return null;
         }
 
         private List<Claim> FilterClaims(List<Claim> claims)

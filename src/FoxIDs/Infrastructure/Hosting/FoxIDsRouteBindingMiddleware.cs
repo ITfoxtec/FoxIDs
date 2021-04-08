@@ -129,6 +129,7 @@ namespace FoxIDs.Infrastructure.Hosting
                         else
                         {
                             routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties.Take(1).ToList();
+                            routeBinding.DefaultToUpParties = true;
                         }
                     }
                 }

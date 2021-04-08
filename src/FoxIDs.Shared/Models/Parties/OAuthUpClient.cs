@@ -53,7 +53,7 @@ namespace FoxIDs.Models
         public bool DisableFrontChannelLogout { get; set; }
 
         [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
-        public bool FrontChannelLogoutSessionRequired { get; set; }
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "client_secret")]

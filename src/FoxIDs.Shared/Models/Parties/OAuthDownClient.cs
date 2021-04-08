@@ -45,7 +45,7 @@ namespace FoxIDs.Models
         public string FrontChannelLogoutUri { get; set; }
 
         [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
-        public bool FrontChannelLogoutSessionRequired { get; set; }
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]

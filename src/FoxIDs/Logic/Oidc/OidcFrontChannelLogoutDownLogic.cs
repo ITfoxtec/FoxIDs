@@ -19,16 +19,14 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ITenantRepository tenantRepository;
-        private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackIssuerLogic = trackIssuerLogic;
             this.tenantRepository = tenantRepository;
-            this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
@@ -81,37 +79,7 @@ namespace FoxIDs.Logic
 
             securityHeaderLogic.AddFrameSrc(partyLogoutUrls);
             var redirectUrl = HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true);
-            return string.Concat(HtmIframePageList(partyLogoutUrls, redirectUrl, "FoxIDs")).ToContentResult();
-        }
-
-        private static IEnumerable<string> HtmIframePageList(List<string> urls, string redirectUrl, string title = "OAuth 2.0")
-        {
-            yield return
-$@"<!DOCTYPE html>
-<html lang=""en"">
-    <head>
-        <meta charset=""utf-8"" />
-        <meta http-equiv=""X-UA-Compatible"" content=""IE=edge"" />
-        <meta http-equiv=""refresh"" content=""0;URL='{redirectUrl}'"" />
-        <title>{title}</title>
-    </head>
-    <body>
-        <div>
-";
-            if (urls?.Count > 0)
-            {
-                foreach (var url in urls)
-                {
-                    yield return
-$@"            <iframe width=""0"" height=""0"" frameborder=""0"" src=""{url}""></iframe>
-";
-                }
-            }
-
-            yield return
-$@"        </div>
-    </body>
-</html>";
+            return partyLogoutUrls.ToHtmIframePage(redirectUrl, "FoxIDs").ToContentResult();
         }
 
         public Task<IActionResult> LogoutDoneAsync()

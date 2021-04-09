@@ -1,5 +1,6 @@
 ﻿using ITfoxtec.Identity.Models;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -11,5 +12,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool IsValid { get; set; }
         public string Thumbprint { get; set; }
         public JsonWebKey Key { get; set; }
+
+        [Display(Name = "Optional certificate password")]
+        public string Password { get; set; }        
     }
 }

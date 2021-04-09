@@ -50,10 +50,10 @@ namespace FoxIDs.Logic
                 {
                     samlConfig.SigningCertificate
                 },
-                //EncryptionCertificates = new X509Certificate2[]
-                //{
-                //    config.DecryptionCertificate
-                //},
+                EncryptionCertificates = new X509Certificate2[]
+                {
+                    samlConfig.DecryptionCertificate
+                },
                 AssertionConsumerServices = new AssertionConsumerService[]
                 {
                     new AssertionConsumerService { Binding = ToSamleBindingUri(party.AuthnBinding.ResponseBinding), Location = acsDestination, },

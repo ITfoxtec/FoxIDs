@@ -18,7 +18,7 @@ namespace FoxIDs.Logic
             this.trackIssuerLogic = trackIssuerLogic;
         }
 
-        public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningCertificate = false)
+        public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningAndDecryptionCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
             samlConfig.AllowedIssuer = party.Issuer;
@@ -37,9 +37,9 @@ namespace FoxIDs.Logic
                 samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
             }
 
-            if (includeSigningCertificate)
+            if (includeSigningAndDecryptionCertificate)
             {
-                samlConfig.SigningCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
+                samlConfig.SigningCertificate = samlConfig.DecryptionCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
             }
             samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
 

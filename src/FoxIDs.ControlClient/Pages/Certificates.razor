@@ -48,15 +48,16 @@
                 {
                     <PageEditForm @ref="certificate.Form" TModel="TrackCertificateInfoViewModel" OnAfterInit="@(m => CertificateViewModelAfterInit(certificate, m))" OnValidSubmit="@(async (editContext) => await OnEditCertificateValidSubmitAsync(certificate, editContext))">
                         <div class="modal-header">
-                            Certificate
+                            Configure certificate
                         </div>
                         <div class="modal-body">
+                            <FInputPassword @bind-Value="certificate.Form.Model.Password" For="@(() => certificate.Form.Model.Password)" />
                             <div class="form-group active-group active">
                                 <div class="drag-drop-zone input-control">
                                     <BlazorInputFile.InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
                                     @certificate.CertificateFileStatus
                                 </div>
-                                <label class="label-control">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</label>
+                                <label class="label-control">Certificate</label>
                                 <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
                                 <ul class="list-group">
                                     <li class="list-group-item p-0">

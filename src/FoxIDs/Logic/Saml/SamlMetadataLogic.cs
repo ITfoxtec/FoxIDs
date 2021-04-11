@@ -37,8 +37,8 @@ namespace FoxIDs.Logic
 
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);
 
-            var acsDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
-            var singleLogoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout));
+            var acsDestination = new Uri(HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs, partyBindingPattern: party.PartyBindingPattern));
+            var singleLogoutDestination = new Uri(HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout, partyBindingPattern: party.PartyBindingPattern));
 
             var entityDescriptor = new EntityDescriptor(samlConfig);
             entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;

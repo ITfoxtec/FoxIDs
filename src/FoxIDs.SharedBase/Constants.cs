@@ -167,7 +167,11 @@ namespace FoxIDs
                 public const int ValuesOAuthMin = 0;
                 public const int ValuesUserMin = 1;
                 public const int ValuesMax = 100;
-                public const int ValueLength = 100;               
+
+                /// <summary>
+                /// JWT and SAML claim value max length.
+                /// </summary>
+                public const int ValueLength = 300;               
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -312,7 +316,6 @@ namespace FoxIDs
 
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
-                public const int ClaimValueLength = 500;
 
                 public static class Up
                 {

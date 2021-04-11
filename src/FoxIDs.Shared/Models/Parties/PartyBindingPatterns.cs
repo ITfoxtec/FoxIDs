@@ -8,5 +8,7 @@ namespace FoxIDs.Models
         Brackets = 10,
         [EnumMember(Value = "tildes")]
         Tildes = 20,
+        [EnumMember(Value = "underscore")]
+        Dot = 30,
     }
 }

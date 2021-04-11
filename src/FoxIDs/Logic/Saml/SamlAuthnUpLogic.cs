@@ -89,7 +89,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
 
             binding.RelayState = SequenceString;
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
@@ -149,7 +149,7 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> AuthnResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
         {
             var request = HttpContext.Request;
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
 
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
 
@@ -230,9 +230,9 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.SamlTypeLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
 
-                if (claim.Value?.Length > Constants.Models.SamlParty.ClaimValueLength)
+                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
                 {
-                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.SamlParty.ClaimValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
             }
             return claims;

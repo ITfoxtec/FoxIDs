@@ -35,6 +35,7 @@ namespace FoxIDs
             {
                 PartyBindingPatterns.Brackets => $"({upPartyName})",
                 PartyBindingPatterns.Tildes => $"~{upPartyName}~",
+                PartyBindingPatterns.Dot => $".{upPartyName}.",
                 _ => throw new NotImplementedException($"Party binding pattern '{partyBindingPattern}' not implemented.")
             };
         }

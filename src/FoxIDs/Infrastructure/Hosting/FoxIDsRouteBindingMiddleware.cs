@@ -18,7 +18,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsRouteBindingMiddleware : RouteBindingMiddleware
     {
-        private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~))$", RegexOptions.Compiled);
+        private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~)|(?:.(?<upparty>[\w-_]+).))$", RegexOptions.Compiled);
         private readonly FoxIDsSettings settings;
         private readonly ITenantRepository tenantRepository;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;

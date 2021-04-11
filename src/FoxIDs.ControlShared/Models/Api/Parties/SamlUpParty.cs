@@ -100,5 +100,10 @@ namespace FoxIDs.Models.Api
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         public bool DisableSingleLogout { get; set; }
+
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
     }
 }

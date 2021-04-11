@@ -400,7 +400,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
             ValidatePartySingleLogoutSupport(party);
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);            
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);            
             return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 

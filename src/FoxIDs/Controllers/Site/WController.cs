@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using System;
 using Microsoft.Extensions.Localization;
 using ITfoxtec.Identity;
-using System.Collections.Generic;
 
 namespace FoxIDs.Controllers
 {
@@ -41,10 +40,8 @@ namespace FoxIDs.Controllers
             return View();
         }
         
-        public async Task<IActionResult> Error()
+        public IActionResult Error()
         {
-            await sessionLogic.TryDeleteSessionAsync();
-
             var errorViewModel = new ErrorViewModel
             {
                 CreateTime = DateTimeOffset.Now,

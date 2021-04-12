@@ -45,6 +45,8 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+
             await sequenceLogic.SaveSequenceDataAsync(new OidcUpSequenceData
             {
                 DownPartyLink = logoutRequest.DownPartyLink,
@@ -54,7 +56,7 @@ namespace FoxIDs.Logic
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -103,7 +105,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
             logger.ScopeTrace($"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
 
-            _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();

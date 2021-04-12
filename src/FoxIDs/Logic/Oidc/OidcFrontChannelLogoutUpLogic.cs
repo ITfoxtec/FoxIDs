@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                var _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+                var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
 
                 if (!party.DisableSingleLogout)

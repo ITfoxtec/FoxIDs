@@ -52,6 +52,8 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
@@ -61,7 +63,7 @@ namespace FoxIDs.Logic
                 MaxAge = loginRequest.MaxAge
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)

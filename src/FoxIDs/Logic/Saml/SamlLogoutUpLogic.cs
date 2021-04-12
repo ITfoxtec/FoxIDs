@@ -15,6 +15,7 @@ using ITfoxtec.Identity.Saml2.Claims;
 using System.Linq;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace FoxIDs.Logic
 {
@@ -51,6 +52,8 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyLink = logoutRequest.DownPartyLink,
@@ -61,7 +64,7 @@ namespace FoxIDs.Logic
                 Claims = logoutRequest.Claims.ToClaimAndValues()
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
@@ -116,7 +119,7 @@ namespace FoxIDs.Logic
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
             {
-                return await LogoutResponseAsync(party);
+                return await LogoutResponseDownAsync(samlUpSequenceData);
             }
 
             try
@@ -162,7 +165,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, SAML Logout request.", triggerEvent: true);
 
-            _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(samlUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
@@ -189,11 +192,6 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
-            return await LogoutResponseAsync(party);
-        }
-
-        private async Task<IActionResult> LogoutResponseAsync(SamlUpParty party)
-        {
             logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
             switch (party.LogoutBinding.ResponseBinding)
             {
@@ -352,7 +350,7 @@ namespace FoxIDs.Logic
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
                 logger.ScopeTrace("Up, Successful SAML Single Logout request.", triggerEvent: true);
 
-                var session = await sessionUpPartyLogic.DeleteSessionAsync();
+                var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
 
                 await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData

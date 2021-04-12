@@ -29,7 +29,7 @@ namespace FoxIDs
             return UrlCombine.Combine(httpContext.GetHost(), elements.ToArray());
         }
 
-        private static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
+        public static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
         {
             return partyBindingPattern switch
             {

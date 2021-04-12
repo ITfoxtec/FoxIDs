@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
 
         private List<Claim> FilterClaims(List<Claim> claims)
         {
-            return claims.Where(c => c.Type == JwtClaimTypes.Subject || c.Type == JwtClaimTypes.Email || c.Type == JwtClaimTypes.Amr).ToList();
+            return claims.Where(c => c.Type == JwtClaimTypes.Subject || c.Type == Constants.JwtClaimTypes.SubFormat || c.Type == JwtClaimTypes.Email || c.Type == JwtClaimTypes.Amr).ToList();
         }
 
         private string NewSessionId() => RandomGenerator.Generate(24);

@@ -114,30 +114,32 @@ namespace FoxIDs.Logic
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
-            if (session != null)
+            if (session == null)
             {
-                try
-                {
-                    if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
-                    {
-                        throw new Exception("Requested session ID do not match up-party session ID.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Warning(ex);
-                }
-
-                saml2LogoutRequest.SessionIndex = session.ExternalSessionId;
-
-                samlUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
-                samlUpSequenceData.SessionClaims = session.Claims;
-                await sequenceLogic.SaveSequenceDataAsync(samlUpSequenceData);
+                return await LogoutResponseAsync(party);
             }
 
-            var claims = samlUpSequenceData.Claims.ToClaimList();
-            var nameID = claims?.Where(c => c.Type == Saml2ClaimTypes.NameId).Select(c => c.Value).FirstOrDefault();
-            var nameIdFormat = claims?.Where(c => c.Type == Saml2ClaimTypes.NameIdFormat).Select(c => c.Value).FirstOrDefault();
+            try
+            {
+                if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                {
+                    throw new Exception("Requested session ID do not match up-party session ID.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+            }
+
+            saml2LogoutRequest.SessionIndex = session.ExternalSessionId;
+
+            samlUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
+            samlUpSequenceData.SessionClaims = session.Claims;
+            await sequenceLogic.SaveSequenceDataAsync(samlUpSequenceData);
+
+            var jwtClaims = samlUpSequenceData.SessionClaims.ToClaimList();
+            var nameID = jwtClaims?.Where(c => c.Type == JwtClaimTypes.Subject).Select(c => c.Value).FirstOrDefault();
+            var nameIdFormat = jwtClaims?.Where(c => c.Type == Constants.JwtClaimTypes.SubFormat).Select(c => c.Value).FirstOrDefault();
             if (!nameID.IsNullOrEmpty())
             {
                 var prePartyName = $"{party.Name}|";
@@ -187,6 +189,11 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
+            return await LogoutResponseAsync(party);
+        }
+
+        private async Task<IActionResult> LogoutResponseAsync(SamlUpParty party)
+        {
             logger.ScopeTrace($"Binding '{party.LogoutBinding.ResponseBinding}'");
             switch (party.LogoutBinding.ResponseBinding)
             {
@@ -316,7 +323,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("upPartyId", partyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
-            ValidatePartySingleLogoutSupport(party);
+            ValidatePartyLogoutSupport(party);
 
             switch (party.LogoutBinding.RequestBinding)
             {
@@ -326,14 +333,6 @@ namespace FoxIDs.Logic
                     return await SingleLogoutRequestAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
-            }
-        }
-
-        private void ValidatePartySingleLogoutSupport(SamlUpParty party)
-        {
-            if (party.LogoutBinding == null || (party.LogoutUrl.IsNullOrEmpty() && party.SingleLogoutResponseUrl.IsNullOrEmpty()))
-            {
-                throw new EndpointException("Single Logout not configured.") { RouteBinding = RouteBinding };
             }
         }
 
@@ -398,7 +397,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
-            ValidatePartySingleLogoutSupport(party);
+            ValidatePartyLogoutSupport(party);
 
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);            
             return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);

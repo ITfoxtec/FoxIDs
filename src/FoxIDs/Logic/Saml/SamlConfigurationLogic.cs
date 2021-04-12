@@ -42,7 +42,7 @@ namespace FoxIDs.Logic
                 samlConfig.SigningCertificate = samlConfig.DecryptionCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
             }
             samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
-            samlConfig.SignAuthnRequest = true;
+            samlConfig.SignAuthnRequest = party.SignAuthnRequest;
 
             samlConfig.CertificateValidationMode = party.CertificateValidationMode;
             samlConfig.RevocationMode = party.RevocationMode;

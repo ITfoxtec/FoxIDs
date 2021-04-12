@@ -113,6 +113,10 @@
                         </div>
                     </div>
                 </div>
+                @if (samlUpParty.ShowAdvanced)
+                {
+                    <FInputToggle @bind-Value="samlUpParty.Form.Model.SignAuthnRequest" For="@(() => samlUpParty.Form.Model.SignAuthnRequest)" TextType="y.n" />
+                }
                 <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
                 @if (samlUpParty.ShowAdvanced)
                 {

@@ -80,6 +80,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authn URL")]
         public string AuthnUrl { get; set; }
 
+        public bool SignAuthnRequest { get; set; }
+
         [ValidateComplexType]
         [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "One or more signature validation certificates")]

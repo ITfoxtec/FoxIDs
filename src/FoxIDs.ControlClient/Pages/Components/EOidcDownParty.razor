@@ -102,9 +102,9 @@
                         <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
                     }
                     <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
+                    <FInputText @bind-Value="oidcDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oidcDownParty.Form.Model.Client.PostLogoutRedirectUri)" />
                     @if (DownParty.ShowAdvanced)
                     {
-                        <FInputText @bind-Value="oidcDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oidcDownParty.Form.Model.Client.PostLogoutRedirectUri)" />
                         <FInputText @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutUri" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutUri)" />
                         <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
                     }

@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AutoMapper;
 using System;
 using System.Net;
+using Microsoft.AspNetCore.Routing;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -26,13 +27,30 @@ namespace FoxIDs.Infrastructure.Hosting
             catch (AutoMapperMappingException amme)
             {
                 scopedLogger.Error(amme);
-                await HandleHttpStatusExceptionAsync(httpContext, amme.GetAllMessagesJoined(), HttpStatusCode.BadRequest);
+                await HandleHttpStatusExceptionAsync(httpContext, amme.Message, HttpStatusCode.BadRequest);
+            }
+            catch (RouteCreationException rce)
+            {
+                await HandleRouteCreationException(httpContext, scopedLogger, rce);
             }
             catch (Exception ex)
             {
-                scopedLogger.Error(ex);
-                await HandleHttpStatusExceptionAsync(httpContext, ex.GetAllMessagesJoined(), HttpStatusCode.BadRequest);
+                if (ex.InnerException is RouteCreationException rce)
+                {
+                    await HandleRouteCreationException(httpContext, scopedLogger, rce);
+                }
+                else
+                {
+                    scopedLogger.Error(ex);
+                    await HandleHttpStatusExceptionAsync(httpContext, ex.GetAllMessagesJoined(), HttpStatusCode.BadRequest);
+                }
             }
+        }
+
+        private async Task HandleRouteCreationException(HttpContext httpContext, TelemetryScopedLogger scopedLogger, RouteCreationException rce)
+        {
+            scopedLogger.Error(rce);
+            await HandleHttpStatusExceptionAsync(httpContext, rce.Message, HttpStatusCode.BadRequest);
         }
 
         private static async Task HandleHttpStatusExceptionAsync(HttpContext httpContext, string message, HttpStatusCode statusCode)

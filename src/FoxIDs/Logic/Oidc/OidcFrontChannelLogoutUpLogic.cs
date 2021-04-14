@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
             {
                 if (party.Client.FrontChannelLogoutSessionRequired)
                 {
-                    if (!session.Claims.Where(c => c.Claim == JwtClaimTypes.Issuer && c.Values.Where(v => v == frontChannelLogoutRequest.Issuer).Any()).Any())
+                    if (!party.Issuers.Where(i => i == frontChannelLogoutRequest.Issuer).Any())
                     {
                         throw new Exception("Incorrect issuer.");
                     }
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                var _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+                var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
                 await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
 
                 if (!party.DisableSingleLogout)

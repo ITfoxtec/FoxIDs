@@ -45,6 +45,8 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+
             await sequenceLogic.SaveSequenceDataAsync(new OidcUpSequenceData
             {
                 DownPartyLink = logoutRequest.DownPartyLink,
@@ -54,7 +56,7 @@ namespace FoxIDs.Logic
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -79,29 +81,31 @@ namespace FoxIDs.Logic
             };
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
-            if(session != null)
+            if (session == null)
             {
-                try
-                {
-                    if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
-                    {
-                        throw new Exception("Requested session ID do not match up-party session ID.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Warning(ex);
-                }
-
-                rpInitiatedLogoutRequest.IdTokenHint = session.IdToken;
-
-                oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
-                oidcUpSequenceData.SessionClaims = session.Claims;
-                await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
+                return await EndSessionResponseAsync(party);
             }
+
+            try
+            {
+                if (!oidcUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                {
+                    throw new Exception("Requested session ID do not match up-party session ID.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+            }
+
+            rpInitiatedLogoutRequest.IdTokenHint = session.IdToken;
+
+            oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
+            oidcUpSequenceData.SessionClaims = session.Claims;
+            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
             logger.ScopeTrace($"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
 
-            _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
@@ -128,6 +132,11 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
             logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
 
+            return await EndSessionResponseAsync(party);
+        }
+
+        private async Task<IActionResult> EndSessionResponseAsync(OidcUpParty party)
+        {
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var rpInitiatedLogoutResponse = queryDictionary.ToObject<RpInitiatedLogoutResponse>();
             logger.ScopeTrace($"Up, End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");

@@ -29,12 +29,13 @@ namespace FoxIDs
             return UrlCombine.Combine(httpContext.GetHost(), elements.ToArray());
         }
 
-        private static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
+        public static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
         {
             return partyBindingPattern switch
             {
                 PartyBindingPatterns.Brackets => $"({upPartyName})",
                 PartyBindingPatterns.Tildes => $"~{upPartyName}~",
+                PartyBindingPatterns.Dot => $".{upPartyName}.",
                 _ => throw new NotImplementedException($"Party binding pattern '{partyBindingPattern}' not implemented.")
             };
         }

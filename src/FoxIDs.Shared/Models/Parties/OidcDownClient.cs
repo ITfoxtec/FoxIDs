@@ -17,5 +17,16 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
         [JsonProperty(PropertyName = "response_mode")]
         public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.Query;
+
+        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [JsonProperty(PropertyName = "post_logout_redirect_uri")]
+        public string PostLogoutRedirectUri { get; set; }
+
+        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [JsonProperty(PropertyName = "frontchannel_logout_uri")]
+        public string FrontChannelLogoutUri { get; set; }
+
+        [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
+        public bool FrontChannelLogoutSessionRequired { get; set; } = true;
     }
 }

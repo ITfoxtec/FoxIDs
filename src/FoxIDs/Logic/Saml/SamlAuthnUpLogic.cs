@@ -52,6 +52,8 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
@@ -61,18 +63,18 @@ namespace FoxIDs.Logic
                 MaxAge = loginRequest.MaxAge
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
         {
             logger.ScopeTrace("Up, SAML Authn request.");
+            logger.SetScopeProperty("upPartyId", partyId);
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid up-party id.");
             }
-            logger.SetScopeProperty("upPartyId", samlUpSequenceData.UpPartyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
 
@@ -89,7 +91,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
 
             binding.RelayState = SequenceString;
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
@@ -149,7 +151,7 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> AuthnResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
         {
             var request = HttpContext.Request;
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
 
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
 
@@ -230,9 +232,9 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.SamlTypeLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
 
-                if (claim.Value?.Length > Constants.Models.SamlParty.ClaimValueLength)
+                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
                 {
-                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.SamlParty.ClaimValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
             }
             return claims;

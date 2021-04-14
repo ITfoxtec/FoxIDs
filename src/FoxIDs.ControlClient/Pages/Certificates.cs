@@ -32,6 +32,9 @@ namespace FoxIDs.Client.Pages
         [Inject]
         public TrackService TrackService { get; set; }
 
+        [Inject]
+        public UtilService UtilService { get; set; }
+
         [Parameter]
         public string TenantName { get; set; }
 
@@ -183,31 +186,43 @@ namespace FoxIDs.Client.Pages
 
                 generalCertificate.CertificateFileStatus = "Loading...";
 
-                using (var memoryStream = new MemoryStream())
+                try
                 {
-                    await file.Data.CopyToAsync(memoryStream);
-
-                    try
+                    byte[] certificateBytes;
+                    using (var memoryStream = new MemoryStream())
                     {
-                        var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var jwk = await certificate.ToFTJsonWebKeyAsync(true);
-                        if (!jwk.HasPrivateKey())
-                        {
-                            generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required.");
-                            return;
-                        }                        
+                        await file.Data.CopyToAsync(memoryStream);
+                        certificateBytes = memoryStream.ToArray();
+                    }
 
-                        generalCertificate.Form.Model.Subject = certificate.Subject;
-                        generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;
-                        generalCertificate.Form.Model.ValidTo = certificate.NotAfter;
-                        generalCertificate.Form.Model.IsValid = certificate.IsValid();
-                        generalCertificate.Form.Model.Thumbprint = certificate.Thumbprint;
-                        generalCertificate.Form.Model.Key = jwk;
-                    }
-                    catch (Exception ex)
+                    var certificateResponse = await UtilService.ConvertCertificateAsync(new ConvertCertificateRequest
                     {
-                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
-                    }
+                        Bytes = Convert.ToBase64String(certificateBytes),
+                        Password = generalCertificate.Form.Model.Password
+                    });
+
+                    var certificate = new X509Certificate2(Convert.FromBase64String(certificateResponse.Bytes));
+                    var jwk = await certificate.ToFTJsonWebKeyAsync(true);
+                    if (!jwk.HasPrivateKey())
+                    {
+                        generalCertificate.Form.Model.Subject = null;
+                        generalCertificate.Form.Model.Key = null;
+                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required.");
+                        return;
+                    }                        
+
+                    generalCertificate.Form.Model.Subject = certificate.Subject;
+                    generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;
+                    generalCertificate.Form.Model.ValidTo = certificate.NotAfter;
+                    generalCertificate.Form.Model.IsValid = certificate.IsValid();
+                    generalCertificate.Form.Model.Thumbprint = certificate.Thumbprint;
+                    generalCertificate.Form.Model.Key = jwk;
+                }
+                catch (Exception ex)
+                {
+                    generalCertificate.Form.Model.Subject = null;
+                    generalCertificate.Form.Model.Key = null;
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
                 }
 
                 generalCertificate.CertificateFileStatus = GeneralSamlUpPartyViewModel.DefaultCertificateFileStatus;

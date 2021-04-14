@@ -15,6 +15,7 @@ using ITfoxtec.Identity.Saml2.Claims;
 using System.Linq;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace FoxIDs.Logic
 {
@@ -51,6 +52,8 @@ namespace FoxIDs.Logic
 
             await logoutRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyLink = logoutRequest.DownPartyLink,
@@ -61,18 +64,18 @@ namespace FoxIDs.Logic
                 Claims = logoutRequest.Claims.ToClaimAndValues()
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
             logger.ScopeTrace("Up, SAML Logout request.");
+            logger.SetScopeProperty("upPartyId", partyId);
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid up-party id.");
             }
-            logger.SetScopeProperty("upPartyId", samlUpSequenceData.UpPartyId);
 
             if (samlUpSequenceData.RequireLogoutConsent)
             {
@@ -107,37 +110,39 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> LogoutRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningCertificate: true);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
 
             binding.RelayState = SequenceString;
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
-            if (session != null)
+            if (session == null)
             {
-                try
-                {
-                    if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
-                    {
-                        throw new Exception("Requested session ID do not match up-party session ID.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    logger.Warning(ex);
-                }
-
-                saml2LogoutRequest.SessionIndex = session.ExternalSessionId;
-
-                samlUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
-                samlUpSequenceData.SessionClaims = session.Claims;
-                await sequenceLogic.SaveSequenceDataAsync(samlUpSequenceData);
+                return await LogoutResponseDownAsync(samlUpSequenceData);
             }
 
-            var claims = samlUpSequenceData.Claims.ToClaimList();
-            var nameID = claims?.Where(c => c.Type == Saml2ClaimTypes.NameId).Select(c => c.Value).FirstOrDefault();
-            var nameIdFormat = claims?.Where(c => c.Type == Saml2ClaimTypes.NameIdFormat).Select(c => c.Value).FirstOrDefault();
+            try
+            {
+                if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
+                {
+                    throw new Exception("Requested session ID do not match up-party session ID.");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
+            }
+
+            saml2LogoutRequest.SessionIndex = session.ExternalSessionId;
+
+            samlUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
+            samlUpSequenceData.SessionClaims = session.Claims;
+            await sequenceLogic.SaveSequenceDataAsync(samlUpSequenceData);
+
+            var jwtClaims = samlUpSequenceData.SessionClaims.ToClaimList();
+            var nameID = jwtClaims?.Where(c => c.Type == JwtClaimTypes.Subject).Select(c => c.Value).FirstOrDefault();
+            var nameIdFormat = jwtClaims?.Where(c => c.Type == Constants.JwtClaimTypes.SubFormat).Select(c => c.Value).FirstOrDefault();
             if (!nameID.IsNullOrEmpty())
             {
                 var prePartyName = $"{party.Name}|";
@@ -160,7 +165,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace($"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace("Up, SAML Logout request.", triggerEvent: true);
 
-            _ = await sessionUpPartyLogic.DeleteSessionAsync(session);
+            _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(samlUpSequenceData.SessionId);
 
             securityHeaderLogic.AddFormActionAllowAll();
@@ -316,7 +321,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("upPartyId", partyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
-            ValidatePartySingleLogoutSupport(party);
+            ValidatePartyLogoutSupport(party);
 
             switch (party.LogoutBinding.RequestBinding)
             {
@@ -326,14 +331,6 @@ namespace FoxIDs.Logic
                     return await SingleLogoutRequestAsync(party, new Saml2PostBinding());
                 default:
                     throw new NotSupportedException($"SAML binding '{party.LogoutBinding.RequestBinding}' not supported.");
-            }
-        }
-
-        private void ValidatePartySingleLogoutSupport(SamlUpParty party)
-        {
-            if (party.LogoutBinding == null || (party.LogoutUrl.IsNullOrEmpty() && party.SingleLogoutResponseUrl.IsNullOrEmpty()))
-            {
-                throw new EndpointException("Single Logout not configured.") { RouteBinding = RouteBinding };
             }
         }
 
@@ -353,10 +350,7 @@ namespace FoxIDs.Logic
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
                 logger.ScopeTrace("Up, Successful SAML Single Logout request.", triggerEvent: true);
 
-                var session = await sessionUpPartyLogic.DeleteSessionAsync();
-                await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
-
-                await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
+                var sequenceData = await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
                 {
                     ExternalInitiatedSingleLogout = true,
                     Id = saml2LogoutRequest.IdAsString,
@@ -365,30 +359,60 @@ namespace FoxIDs.Logic
                     SessionId = saml2LogoutRequest.SessionIndex
                 });
 
-                if (party.DisableSingleLogout)
+                if (binding is Saml2Binding<Saml2PostBinding>)
                 {
-                    return await SingleLogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState);
+                    return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.UpJump.SingleLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
                 }
                 else
                 {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims);
-
-                    if (doSingleLogout)
-                    {
-                        return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
-                    }
-                    else
-                    {
-                        return await SingleLogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState);
-                    }
+                    return await SingleLogoutRequestAsync(party, sequenceData);
                 }
-
             }
             catch (SamlRequestException ex)
             {
                 logger.Error(ex);
                 return await SingleLogoutResponseAsync(party, samlConfig, saml2LogoutRequest.Id.Value, binding.RelayState, ex.Status);
             }
+        }
+
+        private async Task<IActionResult> SingleLogoutRequestAsync(SamlUpParty party, SamlUpSequenceData sequenceData)
+        {
+            var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
+
+            if (party.DisableSingleLogout)
+            {
+                var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+                return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState);
+            }
+            else
+            {
+                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims);
+
+                if (doSingleLogout)
+                {
+                    return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
+                }
+                else
+                {
+                    var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+                    return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState);
+                }
+            }
+        }
+
+        public async Task<IActionResult> SingleLogoutRequestJumpAsync(string partyId)
+        {
+            logger.ScopeTrace("Up, SAML Single Logout request jump.");
+            logger.SetScopeProperty("upPartyId", partyId);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
+            if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
+            {
+                throw new Exception("Invalid up-party id.");
+            }
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            return await SingleLogoutRequestAsync(party, sequenceData);
         }
 
         private string GetSingleLogoutResponseUrl(SamlUpParty party) => party.SingleLogoutResponseUrl.IsNullOrEmpty() ? party.LogoutUrl : party.SingleLogoutResponseUrl;
@@ -398,9 +422,9 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
-            ValidatePartySingleLogoutSupport(party);
+            ValidatePartyLogoutSupport(party);
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);            
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);            
             return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 
@@ -439,7 +463,8 @@ namespace FoxIDs.Logic
             logger.ScopeTrace("Down, SAML Single Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            securityHeaderLogic.AddFormAction(singleLogoutResponseUrl);
+            securityHeaderLogic.AddFormActionAllowAll();
+
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

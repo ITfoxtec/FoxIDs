@@ -31,7 +31,8 @@
         {
             <FInputSelect @bind-Value="samlUpParty.Form.Model.PartyBindingPattern" For="@(() => samlUpParty.Form.Model.PartyBindingPattern)">
                 <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
-                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/... - support Azure AD</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
             </FInputSelect>
         }
 
@@ -112,6 +113,10 @@
                         </div>
                     </div>
                 </div>
+                @if (samlUpParty.ShowAdvanced)
+                {
+                    <FInputToggle @bind-Value="samlUpParty.Form.Model.SignAuthnRequest" For="@(() => samlUpParty.Form.Model.SignAuthnRequest)" TextType="y.n" />
+                }
                 <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
                 @if (samlUpParty.ShowAdvanced)
                 {

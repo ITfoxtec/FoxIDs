@@ -163,7 +163,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task SaveSequenceDataAsync<T>(T data, Sequence sequence = null) where T : ISequenceData
+        public async Task<T> SaveSequenceDataAsync<T>(T data, Sequence sequence = null) where T : ISequenceData
         {
             await data.ValidateObjectAsync();
 
@@ -174,6 +174,8 @@ namespace FoxIDs.Logic
                 AbsoluteExpiration = absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence), data.ToJson(), options);
+
+            return data;
         }
 
         public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false) where T : ISequenceData

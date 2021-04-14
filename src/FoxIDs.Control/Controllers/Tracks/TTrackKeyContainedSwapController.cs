@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
         /// </summary>
         /// <param name="trackKeySwap">Track to swap.</param>
         /// <returns>Track keys.</returns>
-        [ProducesResponseType(typeof(Api.Track), StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(Api.TrackKeyItemsContained), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackKeyItemsContained>> PostTrackKeyContainedSwap([FromBody] Api.TrackKeyItemContainedSwap trackKeySwap)
         {

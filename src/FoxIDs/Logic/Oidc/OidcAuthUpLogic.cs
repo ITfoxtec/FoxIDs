@@ -54,6 +54,8 @@ namespace FoxIDs.Logic
 
             await loginRequest.ValidateObjectAsync();
 
+            var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
+
             var oidcUpSequenceData = new OidcUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
@@ -64,7 +66,7 @@ namespace FoxIDs.Logic
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
@@ -352,8 +354,12 @@ namespace FoxIDs.Logic
             {
                 if (!party.Client.UseIdTokenClaims)
                 {
-                    // If access token exists, use access token claims instead of ID token claims.
+                    var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
                     claims = ValidateAccessToken(party, sequenceData, accessToken);
+                    if (sessionIdClaim != null && !claims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
+                    {
+                        claims.Add(sessionIdClaim);
+                    }
                 }
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }

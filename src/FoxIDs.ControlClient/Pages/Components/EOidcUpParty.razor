@@ -32,15 +32,17 @@
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            @{ (var redirect, var postLogoutRedirect) = GetRedirectAndPostLogoutRedirect(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern); }
+            @{ (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern); }
             <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
             <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
+            <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
         </div>
         @if (UpParty.ShowAdvanced)
         {
             <FInputSelect @bind-Value="oidcUpParty.Form.Model.PartyBindingPattern" For="@(() => oidcUpParty.Form.Model.PartyBindingPattern)">
                 <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
-                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/... - support Azure AD</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
             </FInputSelect>
         }
 

@@ -11,7 +11,7 @@ The sample Visual Studio solution contain the following sample applications.
 
 ### AspNetCoreOidcAuthorizationCodeSample
 
-Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.\
+Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
@@ -40,6 +40,11 @@ Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcore
 
 Local development domain and port: `https://localhost:44343`
 
+### NetCoreClientGrantConsoleSample
+
+Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant.  
+Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+
 ### AspNetCoreApi1Sample
 
 Sample API showing how to secure an API with an access token and how to restrict access by a scope.
@@ -48,7 +53,7 @@ Local development domain and port: `https://localhost:44344`
 
 ### BlazorOidcPkceSample
 
-Blazor sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.\
+Blazor sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.  
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Local development domain and port: `https://localhost:44345`

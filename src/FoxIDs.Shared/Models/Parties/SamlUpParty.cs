@@ -58,6 +58,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_url")]
         public string AuthnUrl { get; set; }
 
+        [JsonProperty(PropertyName = "sign_authn_request")]
+        public bool SignAuthnRequest { get; set; }
+
         [Required]
         [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
@@ -73,6 +76,9 @@ namespace FoxIDs.Models
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         [JsonProperty(PropertyName = "single_logout_response_url")]
-        public string SingleLogoutResponseUrl { get; set; }        
+        public string SingleLogoutResponseUrl { get; set; }
+
+
+
     }
 }

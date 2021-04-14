@@ -93,11 +93,11 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        public (string, string) GetRedirectAndPostLogoutRedirect(string partyName, PartyBindingPatterns partyBindingPattern)
+        public (string, string, string) GetRedirectAndLogoutUrls(string partyName, PartyBindingPatterns partyBindingPattern)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "?" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
             var oauthUrl = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.OAuthController}/";
-            return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse);
+            return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse, oauthUrl + Constants.Endpoints.FrontChannelLogout);
         }
 
         public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)

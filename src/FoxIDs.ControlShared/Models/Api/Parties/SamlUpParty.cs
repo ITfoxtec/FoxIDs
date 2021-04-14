@@ -63,6 +63,8 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
         public string AuthnUrl { get; set; }
 
+        public bool SignAuthnRequest { get; set; }
+
         [Required]
         [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
@@ -100,5 +102,10 @@ namespace FoxIDs.Models.Api
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         public bool DisableSingleLogout { get; set; }
+
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
     }
 }

@@ -300,7 +300,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    _ = await sessionLogic.DeleteSessionAsync();
+                    _ = await sessionLogic.DeleteSessionAsync(loginUpParty);
                     logger.ScopeTrace($"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
@@ -337,7 +337,7 @@ namespace FoxIDs.Controllers
 
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
-                    var session = await sessionLogic.DeleteSessionAsync();
+                    var session = await sessionLogic.DeleteSessionAsync(loginUpParty);
                     logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }

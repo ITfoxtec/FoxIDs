@@ -59,29 +59,45 @@ namespace FoxIDs.Controllers
             var sequenceTimeoutException = FindException<SequenceTimeoutException>(exception);
             if (sequenceTimeoutException != null)
             {
-                var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
-                errorViewModel.ErrorTitle = localizer["Timeout"];
-                if(sequenceTimeoutException.AccountAction == true)
-                {
-                    errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
-                }
-                else
-                {
-                    errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
-                }
+                return HandleSequenceTimeoutException(errorViewModel, sequenceTimeoutException);
+            }
+
+            var routeCreationException = FindException<RouteCreationException>(exception);
+            if (routeCreationException != null)
+            {
+                return HandleRouteCreationException(errorViewModel, routeCreationException);
+            }
+
+            if (environment.IsDevelopment())
+            {
+                errorViewModel.TechnicalErrors = new List<string> { exception.ToString() };
             }
             else
             {
-                if (environment.IsDevelopment())
-                {
-                    errorViewModel.TechnicalErrors = new List<string> { exception.ToString() };
-                }
-                else
-                {
-                    errorViewModel.TechnicalErrors = exception.GetAllMessages();
-                }
+                errorViewModel.TechnicalErrors = exception.GetAllMessages();
+            }
+            return View(errorViewModel);
+        }
+
+        private IActionResult HandleSequenceTimeoutException(ErrorViewModel errorViewModel, SequenceTimeoutException sequenceTimeoutException)
+        {
+            var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
+            errorViewModel.ErrorTitle = localizer["Timeout"];
+            if (sequenceTimeoutException.AccountAction == true)
+            {
+                errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
+            }
+            else
+            {
+                errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
             }
 
+            return View(errorViewModel);
+        }
+
+        private IActionResult HandleRouteCreationException(ErrorViewModel errorViewModel, RouteCreationException routeCreationException)
+        {
+            errorViewModel.TechnicalErrors = new List<string> { routeCreationException.Message };
             return View(errorViewModel);
         }
 

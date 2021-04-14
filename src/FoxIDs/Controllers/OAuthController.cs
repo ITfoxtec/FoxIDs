@@ -132,7 +132,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-        [OAuthException]
         public async Task<IActionResult> Token()
         {
             try

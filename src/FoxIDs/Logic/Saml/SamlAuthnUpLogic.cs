@@ -69,12 +69,12 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
         {
             logger.ScopeTrace("Up, SAML Authn request.");
+            logger.SetScopeProperty("upPartyId", partyId);
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid up-party id.");
             }
-            logger.SetScopeProperty("upPartyId", samlUpSequenceData.UpPartyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
 

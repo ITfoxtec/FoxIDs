@@ -58,6 +58,7 @@ namespace FoxIDs
 
             app.Map("/api", app =>
             {
+                app.UseApiExceptionMiddleware();
                 app.UseApiRouteBindingMiddleware();
 
                 app.UseCors(builder =>
@@ -69,7 +70,6 @@ namespace FoxIDs
                 });
 
                 app.UseRouting();
-                app.UseApiExceptionMiddleware();
                 #pragma warning disable ASP0001 // Authorization middleware is incorrectly configured.
                 app.UseAuthorization();
                 #pragma warning restore ASP0001 // Authorization middleware is incorrectly configured.

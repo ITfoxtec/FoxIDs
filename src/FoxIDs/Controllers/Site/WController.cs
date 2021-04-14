@@ -1,15 +1,17 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using FoxIDs.Models.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models.Config;
 using FoxIDs.Logic;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Diagnostics;
 using System;
 using Microsoft.Extensions.Localization;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Messages;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Hosting;
+using System.Collections.Generic;
 
 namespace FoxIDs.Controllers
 {
@@ -20,14 +22,12 @@ namespace FoxIDs.Controllers
         private readonly IWebHostEnvironment environment;
         private readonly IStringLocalizer localizer;
         private readonly FoxIDsSettings settings;
-        private readonly SessionLoginUpPartyLogic sessionLogic;
 
-        public WController(IWebHostEnvironment environment, IStringLocalizer localizer, FoxIDsSettings settings, SessionLoginUpPartyLogic sessionLogic)
+        public WController(IWebHostEnvironment environment, IStringLocalizer localizer, FoxIDsSettings settings)
         {
             this.environment = environment;
             this.localizer = localizer;
             this.settings = settings;
-            this.sessionLogic = sessionLogic;
         }
 
         public IActionResult Index()
@@ -51,6 +51,11 @@ namespace FoxIDs.Controllers
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionHandlerPathFeature?.Error;
 
+            if (exceptionHandlerPathFeature != null && exceptionHandlerPathFeature.Path.EndsWith($"/{Constants.Routes.OAuthController}/{Constants.Endpoints.Token}", StringComparison.OrdinalIgnoreCase))
+            {
+                return HandleOAuthTokenException(exception);
+            } 
+
             var sequenceTimeoutException = FindException<SequenceTimeoutException>(exception);
             if (sequenceTimeoutException != null)
             {
@@ -67,10 +72,48 @@ namespace FoxIDs.Controllers
             }
             else
             {
-                errorViewModel.TechnicalErrors = exception.GetAllMessages();
+                if (environment.IsDevelopment())
+                {
+                    errorViewModel.TechnicalErrors = new List<string> { exception.ToString() };
+                }
+                else
+                {
+                    errorViewModel.TechnicalErrors = exception.GetAllMessages();
+                }
             }
 
             return View(errorViewModel);
+        }
+
+        private IActionResult HandleOAuthTokenException(Exception exception)
+        {
+            if (exception != null)
+            {
+                var oauthRequestException = FindException<OAuthRequestException>(exception);
+                if (oauthRequestException != null)
+                {
+                    return TokenResponseResult(error: oauthRequestException.Error, errorDescription: oauthRequestException.ErrorDescription);
+                }
+
+                var routeCreationException = FindException<RouteCreationException>(exception);
+                if (routeCreationException != null)
+                {
+                    return TokenResponseResult(errorDescription: routeCreationException.Message);
+                }                
+
+                return TokenResponseResult(errorDescription: exception.GetAllMessagesJoined());
+            }
+            
+            return TokenResponseResult();
+        }
+
+        private IActionResult TokenResponseResult(string error = IdentityConstants.ResponseErrors.InvalidRequest, string errorDescription = null)
+        {
+            return new JsonResult(new TokenResponse
+            {
+                Error = error,
+                ErrorDescription = errorDescription,
+            });
         }
 
         private T FindException<T>(Exception exception) where T : Exception

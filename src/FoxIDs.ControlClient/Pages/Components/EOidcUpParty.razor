@@ -32,9 +32,10 @@
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            @{ (var redirect, var postLogoutRedirect) = GetRedirectAndPostLogoutRedirect(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern); }
+            @{ (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern); }
             <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
             <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
+            <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
         </div>
         @if (UpParty.ShowAdvanced)
         {

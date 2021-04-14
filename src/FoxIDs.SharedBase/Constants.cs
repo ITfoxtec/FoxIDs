@@ -399,10 +399,11 @@ namespace FoxIDs
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
-            public const string EndSessionResponse = "endsessionresponse";
             public const string Token = "token";
             public const string UserInfo = "userinfo";
             public const string EndSession = "endsession";
+            public const string EndSessionResponse = "endsessionresponse";
+            public const string FrontChannelLogout = "frontchannellogout";
             public const string FrontChannelLogoutDone = "frontchannellogoutdone";
 
             public const string SamlAuthn = "authn";

@@ -10,6 +10,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Models.Session;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
+using FoxIDs.Repository;
 
 namespace FoxIDs.Logic
 {
@@ -17,12 +18,14 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
+        private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
 
-        public SingleLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SingleLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
+            this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
         }
 
@@ -88,7 +91,7 @@ namespace FoxIDs.Logic
 
             if (sequenceData.RedirectAfterLogout)
             {
-                return ResponseUpParty(sequenceData.UpPartyName, sequenceData.UpPartyType);
+                return await ResponseUpPartyAsync(sequenceData.UpPartyName, sequenceData.UpPartyType);
             }
             else
             {
@@ -96,17 +99,22 @@ namespace FoxIDs.Logic
             }
         }
 
-        private IActionResult ResponseUpParty(string upPartyName, PartyTypes upPartyType)
+        private async Task<IActionResult> ResponseUpPartyAsync(string upPartyName, PartyTypes upPartyType)
         {
-            logger.ScopeTrace($"Response, Up type {upPartyType}.");
+            logger.ScopeTrace($"Single Logout response, Up type {upPartyType}.");
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, upPartyName);
+            logger.SetScopeProperty("upPartyId", partyId);
+
             switch (upPartyType)
             {
                 case PartyTypes.Login:
                     return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
                 case PartyTypes.Oidc:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    var oidcUpParty = await tenantRepository.GetAsync<UpParty>(partyId);
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: oidcUpParty.PartyBindingPattern).ToRedirectResult();
                 case PartyTypes.Saml2:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    var samlUpParty = await tenantRepository.GetAsync<UpParty>(partyId);
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: samlUpParty.PartyBindingPattern).ToRedirectResult();
 
                 default:
                     throw new NotSupportedException();

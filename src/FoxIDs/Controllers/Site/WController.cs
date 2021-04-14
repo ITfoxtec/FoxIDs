@@ -70,7 +70,7 @@ namespace FoxIDs.Controllers
 
             if (environment.IsDevelopment())
             {
-                errorViewModel.TechnicalErrors = new List<string> { exception.ToString() };
+                errorViewModel.TechnicalErrors = new List<string>(exception.ToString().Split('\n'));
             }
             else
             {

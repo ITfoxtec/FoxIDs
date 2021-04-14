@@ -354,8 +354,12 @@ namespace FoxIDs.Logic
             {
                 if (!party.Client.UseIdTokenClaims)
                 {
-                    // If access token exists, use access token claims instead of ID token claims.
+                    var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
                     claims = ValidateAccessToken(party, sequenceData, accessToken);
+                    if (sessionIdClaim != null && !claims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
+                    {
+                        claims.Add(sessionIdClaim);
+                    }
                 }
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }

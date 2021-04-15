@@ -79,7 +79,7 @@ It is possible to run the sample applications after they are configured in a Fox
 
 ## Support
 
-Please ask your question on [Stack Overflow](https://stackoverflow.com) and email a link to <a href="mailto:support@itfoxtec.com?subject=FoxIDs">support@itfoxtec.com</a> for me to answer.
+If you have questions please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with 'foxids' and I will answer as soon as possible.
 
 ## Development
 

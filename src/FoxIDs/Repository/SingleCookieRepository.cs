@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
-    public class SingleCookieRepository<TMessage> where TMessage : CookieMessage
+    public class SingleCookieRepository<TMessage> where TMessage : CookieMessage, new()
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtection;
@@ -90,7 +90,7 @@ namespace FoxIDs.Repository
             {
                 Secure = true,
                 HttpOnly = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = message.SameSite,
                 IsEssential = true,
                 Path = GetPath(party),
             };
@@ -146,7 +146,7 @@ namespace FoxIDs.Repository
                     Expires = DateTimeOffset.UtcNow.AddMonths(-1),
                     Secure = true,
                     HttpOnly = true,
-                    SameSite = SameSiteMode.Lax,
+                    SameSite = new TMessage().SameSite,
                     IsEssential = true,
                     Path = GetPath(party),
                 });

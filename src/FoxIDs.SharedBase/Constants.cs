@@ -468,7 +468,7 @@ namespace FoxIDs
             /// Default ID Token claims.
             /// </summary>
             public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.UpPary, JwtClaimTypes.UpParyType, JwtClaimTypes.SubFormat } ).ToArray();
+                new string[] { JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.SubFormat } ).ToArray();
 
             /// <summary>
             /// Default Access Token claims.
@@ -478,7 +478,7 @@ namespace FoxIDs
             /// <summary>
             /// Default JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpPary, JwtClaimTypes.UpParyType, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
+            public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
             /// Exclude JWT Token up-party claims.
@@ -488,7 +488,7 @@ namespace FoxIDs
             /// <summary>
             /// Default SAML claims.
             /// </summary>
-            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, SamlClaimTypes.UpPary };
+            public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType };
         }
 
         /// <summary>
@@ -502,16 +502,16 @@ namespace FoxIDs
 
         public static class JwtClaimTypes
         {
-            public const string UpPary = "up_party";
-            public const string UpParyType = "up_party_type";
+            public const string UpParty = "up_party";
+            public const string UpPartyType = "up_party_type";
             public const string SubFormat = "sub_format";
             public const string AccessToken = "access_token";
         }
 
         public static class SamlClaimTypes
         {
-            public const string UpPary = "http://schemas.foxids.com/identity/claims/uppary";
-            public const string UpParyType = "http://schemas.foxids.com/identity/claims/upparytype";
+            public const string UpParty = "http://schemas.foxids.com/identity/claims/upparty";
+            public const string UpPartyType = "http://schemas.foxids.com/identity/claims/uppartytype";
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
         }
 
@@ -529,8 +529,8 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
-                new ClaimMap { JwtClaim = JwtClaimTypes.UpPary, SamlClaim = SamlClaimTypes.UpPary },
-                new ClaimMap { JwtClaim = JwtClaimTypes.UpParyType, SamlClaim = SamlClaimTypes.UpParyType },
+                new ClaimMap { JwtClaim = JwtClaimTypes.UpParty, SamlClaim = SamlClaimTypes.UpParty },
+                new ClaimMap { JwtClaim = JwtClaimTypes.UpPartyType, SamlClaim = SamlClaimTypes.UpPartyType },
                 new ClaimMap { JwtClaim = JwtClaimTypes.AccessToken, SamlClaim = SamlClaimTypes.AccessToken }
             };
 

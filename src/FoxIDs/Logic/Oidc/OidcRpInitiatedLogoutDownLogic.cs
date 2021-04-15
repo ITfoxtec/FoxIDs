@@ -113,8 +113,8 @@ namespace FoxIDs.Logic
         {
             if (RouteBinding.DefaultToUpParties)
             {
-                var upPartyName = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpPary);
-                var upPartyTypeValue = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpParyType);
+                var upPartyName = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
+                var upPartyTypeValue = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
                 if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
                 {
                     return new UpPartyLink { Name = upPartyName, Type = upPartyType };

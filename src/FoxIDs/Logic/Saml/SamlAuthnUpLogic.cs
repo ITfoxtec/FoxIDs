@@ -189,9 +189,9 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
-                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Constants.SamlClaimTypes.UpPary && c.Type != Constants.SamlClaimTypes.UpParyType).ToList();
-                claims.AddClaim(Constants.SamlClaimTypes.UpPary, party.Name);
-                claims.AddClaim(Constants.SamlClaimTypes.UpParyType, party.Type.ToString().ToLower());
+                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+                claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
+                claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);

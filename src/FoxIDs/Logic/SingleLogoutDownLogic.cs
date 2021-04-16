@@ -20,16 +20,18 @@ namespace FoxIDs.Logic
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public SingleLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SingleLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
         }
 
-        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, IEnumerable<DownPartySessionLink> downPartyLinks, IEnumerable<ClaimAndValues> claims, bool redirectAfterLogout = true)
+        public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, IEnumerable<DownPartySessionLink> downPartyLinks, IEnumerable<ClaimAndValues> claims, IEnumerable<string> allowIframeOnDomains = null, bool hostedInIframe = false)
         {
             logger.ScopeTrace("Initialize single logout.");
 
@@ -44,7 +46,8 @@ namespace FoxIDs.Logic
                 UpPartyName = upPartyLink.Name,
                 UpPartyType = upPartyLink.Type,
                 DownPartyLinks = downPartyLinks,
-                RedirectAfterLogout = redirectAfterLogout
+                HostedInIframe = hostedInIframe,
+                AllowIframeOnDomains = allowIframeOnDomains
             };
 
             if (downPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Any())
@@ -69,16 +72,22 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> HandleSingleLogoutAsync(SingleLogoutSequenceData sequenceData = null)
         {
             sequenceData = sequenceData ?? await sequenceLogic.GetSequenceDataAsync<SingleLogoutSequenceData>(remove: false);
+            if (sequenceData.HostedInIframe && sequenceData.AllowIframeOnDomains?.Count() > 0)
+            {
+                securityHeaderLogic.AddAllowIframeOnDomains(sequenceData.AllowIframeOnDomains);
+            }
+
+            var samlDownPartyId = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Select(p => p.Id).FirstOrDefault();
 
             var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc).Select(p => p.Id);
             if (oidcDownPartyIds.Count() > 0)
             {
                 sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Type != PartyTypes.Oidc);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutRequestAsync(oidcDownPartyIds, sequenceData);
+                var doSamlLogoutInIframe = sequenceData.HostedInIframe && samlDownPartyId != null;
+                return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutRequestAsync(oidcDownPartyIds, sequenceData, sequenceData.HostedInIframe, doSamlLogoutInIframe);
             }
 
-            var samlDownPartyId = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Select(p => p.Id).FirstOrDefault();
             if (samlDownPartyId != null)
             {
                 sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Id != samlDownPartyId);
@@ -89,13 +98,13 @@ namespace FoxIDs.Logic
             await sequenceLogic.RemoveSequenceDataAsync<SingleLogoutSequenceData>();
             logger.ScopeTrace("Successful Single Logout.", triggerEvent: true);
 
-            if (sequenceData.RedirectAfterLogout)
+            if (sequenceData.HostedInIframe)
             {
-                return await ResponseUpPartyAsync(sequenceData.UpPartyName, sequenceData.UpPartyType);
+                return new OkResult();
             }
             else
             {
-                return new OkResult();
+                return await ResponseUpPartyAsync(sequenceData.UpPartyName, sequenceData.UpPartyType);
             }
         }
 

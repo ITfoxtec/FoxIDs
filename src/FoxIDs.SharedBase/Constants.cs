@@ -385,6 +385,7 @@ namespace FoxIDs
             public const string FormActionDomains = "form_action_domains";
             public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
             public const string FrameSrcDomains = "frame_src_domains";
+            public const string FrameSrcDomainsAllowAll = "frame_src_domains_allow_all";            
             public const string FrameAllowIframeOnDomains = "frame_allow_iframe_on_domains";            
         }
 

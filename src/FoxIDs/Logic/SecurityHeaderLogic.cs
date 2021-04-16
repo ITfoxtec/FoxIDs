@@ -7,12 +7,11 @@ namespace FoxIDs.Logic
 {
     public class SecurityHeaderLogic : LogicBase
     {
-        public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-        { }
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public void AddFormActionAllowAll()
+        public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            HttpContext.Items[Constants.SecurityHeader.FormActionDomainsAllowAll] = true;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         public List<string> GetFormActionDomains()
@@ -31,8 +30,7 @@ namespace FoxIDs.Logic
         {
             if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FormActionDomainsAllowAll))
             {
-                domains = domains ?? new List<string>();
-                domains.Add("*");
+                return new List<string> { "*" };
             }
             return domains;
         }
@@ -44,19 +42,33 @@ namespace FoxIDs.Logic
             HttpContext.Items[Constants.SecurityHeader.FormActionDomains] = domains;
         }
 
+        public void AddFormActionAllowAll()
+        {
+            HttpContext.Items[Constants.SecurityHeader.FormActionDomainsAllowAll] = true;
+        }
+
         public List<string> GetFrameSrcDomains()
         {
             if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameSrcDomains))
             {
-                return HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] as List<string>;
+                return AddAllowAllFrameSrcDomains(HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] as List<string>);
             }
             else
             {
-                return null;
+                return AddAllowAllFrameSrcDomains(null);
             }
         }
 
-        public void AddFrameSrc(IEnumerable<string> urls)
+        private List<string> AddAllowAllFrameSrcDomains(List<string> domains)
+        {
+            if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameSrcDomainsAllowAll))
+            {
+                return new List<string> { "*" };
+            }
+            return domains;
+        }
+
+        public void AddFrameSrcUrls(IEnumerable<string> urls)
         {
             if (urls?.Count() > 0)
             {
@@ -68,6 +80,12 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.SecurityHeader.FrameSrcDomains] = domains;
             }
         }
+
+        public void AddFrameSrcAllowAll()
+        {
+            HttpContext.Items[Constants.SecurityHeader.FrameSrcDomainsAllowAll] = true;
+        }
+
 
         public List<string> GetAllowIframeOnDomains()
         {
@@ -81,12 +99,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        public void AddAllowIframeOnUrls(IEnumerable<string> urls)
+        public void AddAllowIframeOnDomains(IEnumerable<string> domains)
         {
-            var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameAllowIframeOnDomains) ? HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] as List<string> : new List<string>();
-            foreach (var url in urls)
+            var currentDomains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.FrameAllowIframeOnDomains) ? HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] as List<string> : new List<string>();
+            foreach (var domain in domains)
             {
-                domains = AddUrlToDomains(domains, url);
+                currentDomains = currentDomains.ConcatOnce(domain);
             }
             HttpContext.Items[Constants.SecurityHeader.FrameAllowIframeOnDomains] = domains;
         }
@@ -94,10 +112,7 @@ namespace FoxIDs.Logic
         private List<string> AddUrlToDomains(List<string> domains, string url)
         {
             var domain = url.UrlToDomain();
-            if (!string.IsNullOrEmpty(domain))
-            {
-                domains = domains.ConcatOnce(domain);
-            }
+            domains = domains.ConcatOnce(domain);
             return domains;
         }
     }

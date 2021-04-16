@@ -6,7 +6,7 @@ namespace FoxIDs.Models.Session
     public class SessionUpPartyCookie : SessionBaseCookie
     {
         [JsonIgnore]
-        public override SameSiteMode SameSite { get; set; } = SameSiteMode.None;
+        public override SameSiteMode SameSite => SameSiteMode.None;
 
         [JsonProperty(PropertyName = "ei")]
         public string ExternalSessionId { get; set; }

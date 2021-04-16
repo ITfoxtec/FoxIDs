@@ -10,6 +10,6 @@ namespace FoxIDs.Models.Session
         public long CreateTime { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         [JsonIgnore]
-        public abstract SameSiteMode SameSite { get; set; }
+        public abstract SameSiteMode SameSite { get; }
     }
 }

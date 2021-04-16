@@ -6,6 +6,6 @@ namespace FoxIDs.Models.Session
     public class SessionLoginUpPartyCookie : SessionBaseCookie
     {
         [JsonIgnore]
-        public override SameSiteMode SameSite { get; set; } = SameSiteMode.Lax;
+        public override SameSiteMode SameSite => SameSiteMode.Lax;
     }
 }

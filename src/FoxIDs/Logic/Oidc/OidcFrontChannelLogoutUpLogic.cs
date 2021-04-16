@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
             
             if (party.Client.DisableFrontChannelLogout)
             {
-                return new BadRequestResult();
+                return new BadRequestResult(); 
             }
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();

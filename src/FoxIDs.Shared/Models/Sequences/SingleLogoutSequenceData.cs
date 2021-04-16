@@ -21,7 +21,10 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "dl")]
         public IEnumerable<DownPartySessionLink> DownPartyLinks { get; set; }
 
-        [JsonProperty(PropertyName = "r")]
-        public bool RedirectAfterLogout { get; set; }
+        [JsonProperty(PropertyName = "hi")]
+        public bool HostedInIframe { get; set; }
+
+        [JsonProperty(PropertyName = "ai")]
+        public IEnumerable<string> AllowIframeOnDomains { get; set; }
     }
 }

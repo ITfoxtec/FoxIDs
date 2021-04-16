@@ -57,7 +57,7 @@ namespace FoxIDs
         /// <param name="value">The value to add to the sequence.</param>
         public static List<string> ConcatOnce(this IEnumerable<string> first, string value)
         {
-            var list = first != null ? new List<string>(first) : new List<string>();
+            var list = first == null ? new List<string>() : (first is List<string> firstAsList ? firstAsList : new List<string>(first));
             if (!string.IsNullOrEmpty(value) && !list.Contains(value))
             {
                 list.Add(value);
@@ -72,8 +72,8 @@ namespace FoxIDs
         /// <param name="second">The sequence to concatenate to the first sequence.</param>
         public static List<string> ConcatOnce(this IEnumerable<string> first, IEnumerable<string> second)
         {
-            var list = first != null ? new List<string>(first) : new List<string>();
-            if(second?.Count() > 0)
+            var list = first == null ? new List<string>() : (first is List<string> firstAsList ? firstAsList : new List<string>(first));
+            if (second?.Count() > 0)
             {
                 list.AddRange(second.Where(vc => !list.Contains(vc)));
             }
@@ -124,7 +124,7 @@ namespace FoxIDs
         /// <param name="compare">Compare the first and second sequence and add not equal items.</param>
         public static IEnumerable<T> ConcatOnce<T>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, T, bool> compare)
         {
-            var list = first == null ? new List<T>() : new List<T>(first);
+            var list = first == null ? new List<T>() : (first is List<T> firstAsList ? firstAsList : new List<T>(first));
             if (second != null)
             {
                 list.AddRange(second.Where(vc => !list.Any(m => compare(m, vc))));

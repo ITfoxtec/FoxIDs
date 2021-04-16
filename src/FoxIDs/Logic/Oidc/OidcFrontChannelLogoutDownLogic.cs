@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
 
-        public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData)
+        public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
         {
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
@@ -77,9 +77,23 @@ namespace FoxIDs.Logic
                 throw new InvalidOperationException("Unable to complete front channel logout. Please close the browser to logout.");
             }
 
-            securityHeaderLogic.AddFrameSrc(partyLogoutUrls);
-            var redirectUrl = HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true);
+            if (doSamlLogoutInIframe)
+            {
+                securityHeaderLogic.AddFrameSrcAllowAll();
+                // Start SAML logout
+                partyLogoutUrls.Add(GetFrontChannelLogoutDoneUrl(sequenceData, firstParty));
+            }
+            else
+            {
+                securityHeaderLogic.AddFrameSrcUrls(partyLogoutUrls);
+            }
+            string redirectUrl = hostedInIframe ? null : GetFrontChannelLogoutDoneUrl(sequenceData, firstParty);
             return partyLogoutUrls.ToHtmIframePage(redirectUrl, "FoxIDs").ToContentResult();
+        }
+
+        private string GetFrontChannelLogoutDoneUrl(SingleLogoutSequenceData sequenceData, TParty firstParty)
+        {
+            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true);
         }
 
         public Task<IActionResult> LogoutDoneAsync()

@@ -6,6 +6,7 @@ using ITfoxtec.Identity.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,16 +17,14 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
-        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
-            this.securityHeaderLogic = securityHeaderLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
@@ -73,10 +72,10 @@ namespace FoxIDs.Logic
 
                 if (!party.DisableSingleLogout)
                 {
-                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims, redirectAfterLogout: false);
+                    var allowIframeOnDomains = new List<string>().ConcatOnce(party.Client.AuthorizeUrl?.UrlToDomain()).ConcatOnce(party.Client.EndSessionUrl?.UrlToDomain()).ConcatOnce(party.Client.TokenUrl?.UrlToDomain());
+                    (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims, allowIframeOnDomains, hostedInIframe: true);
                     if (doSingleLogout)
                     {
-                        securityHeaderLogic.AddAllowIframeOnUrls(new [] { party.Client.AuthorizeUrl, party.Client.EndSessionUrl });
                         return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
                     }
                 }

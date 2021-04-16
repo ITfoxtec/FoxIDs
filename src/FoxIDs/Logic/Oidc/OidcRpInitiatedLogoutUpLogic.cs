@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             if (session == null)
             {
-                return await EndSessionResponseAsync(party);
+                return await SingleLogoutDone(party.Id);
             }
 
             try

@@ -26,7 +26,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"Authentication request, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Authentication request, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"End session request, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"End session request, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:

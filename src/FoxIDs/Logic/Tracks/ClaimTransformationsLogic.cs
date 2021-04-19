@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
                 return Task.FromResult(new List<Claim>(claims));
             }
 
-            logger.ScopeTrace("Transform claims.");
+            logger.ScopeTrace(() => "Transform claims.");
             var transformedClaims = new List<Claim>(claims);
             var orderedTransformations = claimTransformations.OrderBy(t => t.Order);
             foreach(var transformation in orderedTransformations)

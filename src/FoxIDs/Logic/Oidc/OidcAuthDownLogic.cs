@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Down, OIDC Authentication request.");
+            logger.ScopeTrace(() => "Down, OIDC Authentication request.");
             logger.SetScopeProperty("downPartyId", partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if(party.Client == null)
@@ -56,18 +56,18 @@ namespace FoxIDs.Logic
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();
 
-            logger.ScopeTrace($"Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             var codeChallengeSecret = party.Client.RequirePkce ? queryDictionary.ToObject<CodeChallengeSecret>() : null;
             if (codeChallengeSecret != null)
             {
-                logger.ScopeTrace($"CodeChallengeSecret '{codeChallengeSecret.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"CodeChallengeSecret '{codeChallengeSecret.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             try
             {
                 ValidateAuthenticationRequest(party.Client, authenticationRequest, codeChallengeSecret);
-                logger.ScopeTrace("Down, OIDC Authentication request accepted.", triggerEvent: true);
+                logger.ScopeTrace(() => "Down, OIDC Authentication request accepted.", triggerEvent: true);
 
                 if(!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
                 {
@@ -87,7 +87,7 @@ namespace FoxIDs.Logic
                 });
 
                 var type = RouteBinding.ToUpParties.First().Type;
-                logger.ScopeTrace($"Request, Up type '{type}'.");
+                logger.ScopeTrace(() => $"Request, Up type '{type}'.");
                 switch (type)
                 {
                     case PartyTypes.Login:
@@ -230,7 +230,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims)
         {
-            logger.ScopeTrace("Down, OIDC Authentication response.");
+            logger.ScopeTrace(() => "Down, OIDC Authentication response.");
             logger.SetScopeProperty("downPartyId", partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
@@ -252,7 +252,7 @@ namespace FoxIDs.Logic
                 SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId).GetSessionStateValue(party.Client.ClientId, sequenceData.RedirectUri)
             };
 
-            logger.ScopeTrace($"Response type '{sequenceData.ResponseType}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Response type '{sequenceData.ResponseType}'.", traceType: TraceTypes.Message);
             var responseTypes = sequenceData.ResponseType.ToSpaceList();
 
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
@@ -271,16 +271,16 @@ namespace FoxIDs.Logic
                 authenticationResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
             }
 
-            logger.ScopeTrace($"Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationResponse.ToDictionary();
             if(!sessionResponse.SessionState.IsNullOrWhiteSpace())
             {
-                logger.ScopeTrace($"Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 nameValueCollection = nameValueCollection.AddToDictionary(sessionResponse);
             }
 
-            logger.ScopeTrace($"Redirect Uri '{sequenceData.RedirectUri}'.", traceType: TraceTypes.Message);
-            logger.ScopeTrace("Down, OIDC Authentication response.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
@@ -303,20 +303,20 @@ namespace FoxIDs.Logic
         {
             if (!responseMode.IsNullOrEmpty())
             {
-                logger.ScopeTrace($"Response mode '{responseMode}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Response mode '{responseMode}'.", traceType: TraceTypes.Message);
                 return responseMode;
             }
             else
             {
                 var defaultResponseMode = responseType.ToSpaceList().Contains(IdentityConstants.ResponseTypes.Code) ? IdentityConstants.ResponseModes.Query : IdentityConstants.ResponseModes.Fragment;
-                logger.ScopeTrace($"Default response mode '{defaultResponseMode}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Default response mode '{defaultResponseMode}'.", traceType: TraceTypes.Message);
                 return defaultResponseMode;
             }
         }
 
         public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null)
         {
-            logger.ScopeTrace("Down, OIDC Authentication error response.");
+            logger.ScopeTrace(() => "Down, OIDC Authentication error response.");
             logger.SetScopeProperty("downPartyId", partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
@@ -326,7 +326,7 @@ namespace FoxIDs.Logic
 
         private Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, AuthenticationRequest authenticationRequest, OAuthRequestException ex)
         {
-            logger.ScopeTrace("OIDC Authentication error response.");
+            logger.ScopeTrace(() => "OIDC Authentication error response.");
             logger.SetScopeProperty("downPartyId", partyId);
 
             return AuthenticationResponseErrorAsync(authenticationRequest.RedirectUri, authenticationRequest.State, ex.Error, ex.ErrorDescription);
@@ -341,10 +341,10 @@ namespace FoxIDs.Logic
                 ErrorDescription = errorDescription,
             };
 
-            logger.ScopeTrace($"Authentication error response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Authentication error response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationResponse.ToDictionary();
 
-            logger.ScopeTrace($"Redirect Uri '{redirectUri}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Redirect Uri '{redirectUri}'.", traceType: TraceTypes.Message);
             securityHeaderLogic.AddFormAction(redirectUri);
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }

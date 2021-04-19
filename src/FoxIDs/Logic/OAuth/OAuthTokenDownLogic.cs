@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
 
         public virtual async Task<IActionResult> TokenRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Down, OAuth Token request.");
+            logger.ScopeTrace(() => "Down, OAuth Token request.");
             logger.SetScopeProperty("downPartyId", partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
             var clientCredentials = formDictionary.ToObject<ClientCredentials>();
 
-            logger.ScopeTrace($"Token request '{tokenRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Token request '{tokenRequest.ToJsonIndented()}'.");
 
             try
             {
@@ -140,7 +140,7 @@ namespace FoxIDs.Logic
                 {
                     if (await secretHashLogic.ValidateSecretAsync(secret, clientCredentials.ClientSecret))
                     {
-                        logger.ScopeTrace($"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
                         return;
                     }
                 }
@@ -186,7 +186,7 @@ namespace FoxIDs.Logic
 
         protected virtual async Task<IActionResult> ClientCredentialsGrant(TClient client, TokenRequest tokenRequest)
         {
-            logger.ScopeTrace("Down, OAuth Client Credentials grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "Down, OAuth Client Credentials grant accepted.", triggerEvent: true);
 
             var tokenResponse = new TokenResponse
             {
@@ -206,8 +206,8 @@ namespace FoxIDs.Logic
 
             tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
 
-            logger.ScopeTrace($"Token response '{tokenResponse.ToJsonIndented()}'.");
-            logger.ScopeTrace("Down, OAuth Token response.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
             return new JsonResult(tokenResponse);
         }
     }

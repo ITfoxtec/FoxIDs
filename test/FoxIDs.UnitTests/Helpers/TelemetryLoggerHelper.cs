@@ -20,7 +20,7 @@ namespace FoxIDs.UnitTests.Helpers
             var telemetryLogger = new TelemetryLogger(settings, telemetryClient);
             var tenantTrackLogger = new TenantTrackLogger(httpContextAccessor);
             var telemetryScopedProperties = new TelemetryScopedProperties();
-            var telemetryScopedLogger = new TelemetryScopedLogger(telemetryLogger, telemetryScopedProperties, tenantTrackLogger);
+            var telemetryScopedLogger = new TelemetryScopedLogger(telemetryLogger, telemetryScopedProperties, tenantTrackLogger, httpContextAccessor);
             return telemetryScopedLogger;
         }
     }

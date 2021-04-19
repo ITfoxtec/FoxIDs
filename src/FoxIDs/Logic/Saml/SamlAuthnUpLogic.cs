@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
         }
         public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
-            logger.ScopeTrace("Up, SAML Authn request redirect.");
+            logger.ScopeTrace(() => "Up, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Up, SAML Authn request.");
+            logger.ScopeTrace(() => "Up, SAML Authn request.");
             logger.SetScopeProperty("upPartyId", partyId);
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
@@ -109,9 +109,9 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2AuthnRequest);
-            logger.ScopeTrace($"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.");
-            logger.ScopeTrace($"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
-            logger.ScopeTrace("Up, Sending SAML Authn request.", triggerEvent: true);
+            logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
+            logger.ScopeTrace(() => "Up, Sending SAML Authn request.", triggerEvent: true);
 
             securityHeaderLogic.AddFormActionAllowAll();
 
@@ -131,12 +131,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnResponseAsync(string partyId)
         {
-            logger.ScopeTrace($"Up, SAML Authn response.");
+            logger.ScopeTrace(() => $"Up, SAML Authn response.");
             logger.SetScopeProperty("upPartyId", partyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
 
-            logger.ScopeTrace($"Binding '{party.AuthnBinding.ResponseBinding}'");
+            logger.ScopeTrace(() => $"Binding '{party.AuthnBinding.ResponseBinding}'");
             switch (party.AuthnBinding.ResponseBinding)
             {
                 case SamlBindingTypes.Redirect:
@@ -163,9 +163,9 @@ namespace FoxIDs.Logic
             
             try
             {
-                logger.ScopeTrace($"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.");
+                logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.");
                 logger.SetScopeProperty("upPartyStatus", saml2AuthnResponse.Status.ToString());
-                logger.ScopeTrace("Up, SAML Authn response.", triggerEvent: true);
+                logger.ScopeTrace(() => "Up, SAML Authn response.", triggerEvent: true);
 
                 if (saml2AuthnResponse.Status != Saml2StatusCodes.Success)
                 {
@@ -173,7 +173,7 @@ namespace FoxIDs.Logic
                 }
 
                 binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
-                logger.ScopeTrace("Up, Successful SAML Authn response.", triggerEvent: true);
+                logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
 
                 if (saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() <= 0)
                 {
@@ -286,7 +286,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:

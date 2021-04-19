@@ -45,7 +45,7 @@ namespace FoxIDs.Repository
             if (tryGet && RouteBindingDoNotExists()) return null;
             CheckRouteBinding();
 
-            logger.ScopeTrace($"Get Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}', Delete '{delete}'.");
+            logger.ScopeTrace(() => $"Get Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}', Delete '{delete}'.");
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
@@ -56,7 +56,7 @@ namespace FoxIDs.Repository
 
                     if (delete)
                     {
-                        logger.ScopeTrace($"Delete Cookie, '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+                        logger.ScopeTrace(() => $"Delete Cookie, '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
                         DeleteByName(party, CookieName());
                     }
 
@@ -84,7 +84,7 @@ namespace FoxIDs.Repository
             CheckRouteBinding();
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace($"Save Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Save Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
 
             var cookieOptions = new CookieOptions
             {
@@ -113,7 +113,7 @@ namespace FoxIDs.Repository
             if (tryDelete && RouteBindingDoNotExists()) return;
             CheckRouteBinding();
 
-            logger.ScopeTrace($"Delete Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
 
             DeleteByName(party, CookieName());
         }

@@ -41,14 +41,14 @@ namespace FoxIDs.Logic
 
         public async Task SendConfirmationEmailAsync(User user)
         {
-            logger.ScopeTrace($"Send confirmation email to '{user.Email}' for user id '{user.UserId}'.");
+            logger.ScopeTrace(() => $"Send confirmation email to '{user.Email}' for user id '{user.UserId}'.");
             if (user == null || user.DisableAccount)
             {
                 throw new ConfirmationException($"User with email '{user.Email}' do not exists or is disabled.");
             }
             if (user.EmailVerified)
             {
-                logger.ScopeTrace($"User is confirmed, email '{user.Email}' and id '{user.UserId}'.");
+                logger.ScopeTrace(() => $"User is confirmed, email '{user.Email}' and id '{user.UserId}'.");
                 return;
             }
 
@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
             var key = ConfirmationEmailWaitPeriodRadisKey(user.Email);
             if (await db.KeyExistsAsync(key))
             {
-                logger.ScopeTrace($"User confirmation wait period, email '{user.Email}' and id '{user.UserId}'.");
+                logger.ScopeTrace(() => $"User confirmation wait period, email '{user.Email}' and id '{user.UserId}'.");
                 return;
             }
             else
@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
                 localizer["Please confirm your email address"], 
                 localizer["<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>", confirmationUrl]);
 
-            logger.ScopeTrace($"Confirmation send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Confirmation send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
         }
 
         public async Task<bool> VerifyConfirmationAsync()
@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     var sequenceData = await sequenceLogic.GetSequenceDataAsync<ConfirmationSequenceData>(remove: true);
-                    logger.ScopeTrace($"Verify confirmation email '{sequenceData.Email}'.");
+                    logger.ScopeTrace(() => $"Verify confirmation email '{sequenceData.Email}'.");
 
                     var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
                     var user = await tenantRepository.GetAsync<User>(id, required: false);
@@ -101,11 +101,11 @@ namespace FoxIDs.Logic
                     {
                         user.EmailVerified = true;
                         await tenantRepository.SaveAsync(user);
-                        logger.ScopeTrace($"User confirmation with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"User confirmation with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
                     }
                     else
                     {
-                        logger.ScopeTrace($"User re-confirmation with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"User re-confirmation with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
                     }
                     return true;
                 }
@@ -123,7 +123,7 @@ namespace FoxIDs.Logic
 
         public async Task SendResetPasswordEmailAsync(string email)
         {
-            logger.ScopeTrace($"Send reset password email to '{email}'.");
+            logger.ScopeTrace(() => $"Send reset password email to '{email}'.");
 
             try
             {
@@ -146,7 +146,7 @@ namespace FoxIDs.Logic
                     localizer["Your password reset request"],
                     localizer["<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Your password reset request</h2><p style='margin-bottom:30px'>Click on this <a href='{0}'>link</a> to reset your password.</p>", confirmationUrl]);
 
-                logger.ScopeTrace($"Reset password send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
+                logger.ScopeTrace(() => $"Reset password send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
             }
             catch (ResetPasswordException ex)
             {
@@ -161,7 +161,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     var sequenceData = await sequenceLogic.GetSequenceDataAsync<ResetPasswordSequenceData>(remove: false);
-                    logger.ScopeTrace($"Verify reset password email '{sequenceData.Email}'.");
+                    logger.ScopeTrace(() => $"Verify reset password email '{sequenceData.Email}'.");
 
                     var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
                     var user = await tenantRepository.GetAsync<User>(id, required: false);
@@ -174,12 +174,12 @@ namespace FoxIDs.Logic
                     {
                         throw new ResetPasswordException($"The request is invalid because the user with email '{sequenceData.Email}' has changed password.");
                     }
-                    logger.ScopeTrace($"User is approved for reset password with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User is approved for reset password with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
                     if (!user.EmailVerified)
                     {
                         user.EmailVerified = true;
                         await tenantRepository.SaveAsync(user);
-                        logger.ScopeTrace($"User confirmation in verify reset password with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"User confirmation in verify reset password with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
                     }
                     return (verified: true, user: user);
                 }

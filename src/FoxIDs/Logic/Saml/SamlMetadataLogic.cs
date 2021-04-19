@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SpMetadataAsync(string partyId)
         {
-            logger.ScopeTrace("Up, SP Metadata request.");
+            logger.ScopeTrace(() => "Up, SP Metadata request.");
             logger.SetScopeProperty("upPartyId", partyId);
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
 
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> IdPMetadataAsync(string partyId)
         {
-            logger.ScopeTrace("Down, IdP Metadata request.");
+            logger.ScopeTrace(() => "Down, IdP Metadata request.");
             logger.SetScopeProperty("downPartyId", partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 

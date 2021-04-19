@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
         }
         public async Task<IActionResult> EndSessionRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
-            logger.ScopeTrace("Up, OIDC End session request redirect.");
+            logger.ScopeTrace(() => "Up, OIDC End session request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty("upPartyId", partyId);
 
@@ -61,7 +61,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Up, OIDC End session request.");
+            logger.ScopeTrace(() => "Up, OIDC End session request.");
             var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
             oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
             oidcUpSequenceData.SessionClaims = session.Claims;
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
-            logger.ScopeTrace($"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
 
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
@@ -111,8 +111,8 @@ namespace FoxIDs.Logic
             securityHeaderLogic.AddFormActionAllowAll();
 
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
-            logger.ScopeTrace($"Up, End session request URL '{party.Client.EndSessionUrl}'.");
-            logger.ScopeTrace("Up, Sending OIDC End session request.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Up, End session request URL '{party.Client.EndSessionUrl}'.");
+            logger.ScopeTrace(() => "Up, Sending OIDC End session request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl);
         }
 
@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> EndSessionResponseAsync(string partyId)
         {
-            logger.ScopeTrace($"Up, OIDC End session response.");
+            logger.ScopeTrace(() => $"Up, OIDC End session response.");
             logger.SetScopeProperty("upPartyId", partyId);
 
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
@@ -139,13 +139,13 @@ namespace FoxIDs.Logic
         {
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var rpInitiatedLogoutResponse = queryDictionary.ToObject<RpInitiatedLogoutResponse>();
-            logger.ScopeTrace($"Up, End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Up, End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
             rpInitiatedLogoutResponse.Validate();
             if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 
             await sequenceLogic.ValidateSequenceAsync(rpInitiatedLogoutResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
-            logger.ScopeTrace("Up, Successful OIDC End session response.", triggerEvent: true);
+            logger.ScopeTrace(() => "Up, Successful OIDC End session response.", triggerEvent: true);
 
             if (party.DisableSingleLogout)
             {
@@ -180,7 +180,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:

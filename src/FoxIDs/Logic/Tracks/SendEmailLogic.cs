@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
 
             if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
             {
-                logger.ScopeTrace($"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
+                logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
                 await SendEmailWithSendgridAsync(emailSettings, toEmail, subject, body);
             }
             else
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
             if (response.StatusCode == HttpStatusCode.Accepted)
             {
                 logger.Event($"Email send to '{toEmail.Address}'.");
-                logger.ScopeTrace($"Email with subject '{subject}' send to '{toEmail.Address}'.");
+                logger.ScopeTrace(() => $"Email with subject '{subject}' send to '{toEmail.Address}'.");
             }
             else
             {

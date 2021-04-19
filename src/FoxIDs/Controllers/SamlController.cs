@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML SP Metadata request, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"SAML SP Metadata request, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -49,7 +49,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML IdP Metadata request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"SAML IdP Metadata request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -68,7 +68,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Authn response, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Authn response, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -108,7 +108,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Logged Out response, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Logged Out response, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -127,7 +127,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Single Logout request, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Single Logout request, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -147,7 +147,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Single Logout request jump, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Single Logout request jump, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -167,7 +167,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Single Logout done, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Single Logout done, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -196,7 +196,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Currently only exactly 1 to up-party is supported.");
                 }
 
-                logger.ScopeTrace($"SAML Authn request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Authn request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -245,7 +245,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Logout request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Logout request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Saml2:
@@ -264,7 +264,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"SAML Single Logout response, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"SAML Single Logout response, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Saml2:

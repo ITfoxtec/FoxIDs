@@ -56,7 +56,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start login.");
+                logger.ScopeTrace(() => "Start login.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
@@ -75,7 +75,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    logger.ScopeTrace("Show login dialog.");
+                    logger.ScopeTrace(() => "Show login dialog.");
                     return View(nameof(Login), new LoginViewModel
                     {
                         SequenceString = SequenceString,
@@ -116,13 +116,13 @@ namespace FoxIDs.Controllers
 
             if (sequenceData.MaxAge.HasValue && DateTimeOffset.UtcNow.ToUnixTimeSeconds() - session.CreateTime > sequenceData.MaxAge.Value)
             {
-                logger.ScopeTrace($"Session max age not accepted, Max age '{sequenceData.MaxAge}', Session created '{session.CreateTime}'.");
+                logger.ScopeTrace(() => $"Session max age not accepted, Max age '{sequenceData.MaxAge}', Session created '{session.CreateTime}'.");
                 return false;
             }
 
             if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserId.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
             {
-                logger.ScopeTrace("Session user and requested user do not match.");
+                logger.ScopeTrace(() => "Session user and requested user do not match.");
                 return false;
             }
 
@@ -154,7 +154,7 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                logger.ScopeTrace("Login post.");
+                logger.ScopeTrace(() => "Login post.");
                 
                 try
                 {
@@ -168,14 +168,14 @@ namespace FoxIDs.Controllers
                     var session = await sessionLogic.GetSessionAsync(loginUpParty);
                     if (session != null && user.UserId != session.UserId)
                     {
-                        logger.ScopeTrace("Authenticated user and session user do not match.");
+                        logger.ScopeTrace(() => "Authenticated user and session user do not match.");
                         // TODO invalid user login
                         throw new NotImplementedException("Authenticated user and session user do not match.");
                     }
 
                     if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
                     {
-                        logger.ScopeTrace("Authenticated user and requested user do not match.");
+                        logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
                         // TODO invalid user login
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
@@ -184,19 +184,19 @@ namespace FoxIDs.Controllers
                 }
                 catch (ChangePasswordException cpex)
                 {
-                    logger.ScopeTrace(cpex.Message, triggerEvent: true);
+                    logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
                     return await StartChangePassword(login.Email, sequenceData);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(uoex.Message, triggerEvent: true);
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
                 }
                 catch (AccountException aex)
                 {
                     if (aex is InvalidPasswordException || aex is UserNotExistsException)
                     {
-                        logger.ScopeTrace(aex.Message, triggerEvent: true);
+                        logger.ScopeTrace(() => aex.Message, triggerEvent: true);
                         ModelState.AddModelError(string.Empty, localizer["Wrong email or password"]);
                     }
                     else
@@ -259,7 +259,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Cancel login.");
+                logger.ScopeTrace(() => "Cancel login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
@@ -276,7 +276,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start logout.");
+                logger.ScopeTrace(() => "Start logout.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
@@ -295,13 +295,13 @@ namespace FoxIDs.Controllers
 
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
                 {
-                    logger.ScopeTrace("Show logout consent dialog.");
+                    logger.ScopeTrace(() => "Show logout consent dialog.");
                     return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
                 }
                 else
                 {
                     _ = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace($"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User '{session.Email}', session deleted and logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, LogoutChoice.Logout, session);
                 }
             }
@@ -333,17 +333,17 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                logger.ScopeTrace("Logout post.");
+                logger.ScopeTrace(() => "Logout post.");
 
                 if (logout.LogoutChoice == LogoutChoice.Logout)
                 {
                     var session = await sessionLogic.DeleteSessionAsync(loginUpParty);
-                    logger.ScopeTrace($"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
+                    logger.ScopeTrace(() => $"User {(session != null ? $"'{session.Email}'" : string.Empty)} chose to delete session and is logged out.", triggerEvent: true);
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice, session);
                 }
                 else if (logout.LogoutChoice == LogoutChoice.KeepMeLoggedIn)
                 {
-                    logger.ScopeTrace("Logout response without logging out.");
+                    logger.ScopeTrace(() => "Logout response without logging out.");
                     return await LogoutResponse(loginUpParty, sequenceData, logout.LogoutChoice);
                 }
                 else
@@ -394,7 +394,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    logger.ScopeTrace("Show logged in dialog.");
+                    logger.ScopeTrace(() => "Show logged in dialog.");
                     return View("LoggedIn", new LoggedInViewModel { CssStyle = loginUpParty.CssStyle });
                 }
             }
@@ -420,7 +420,7 @@ namespace FoxIDs.Controllers
             else
             {
                 loginUpParty = loginUpParty ?? await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
-                logger.ScopeTrace("Show logged out dialog.");
+                logger.ScopeTrace(() => "Show logged out dialog.");
                 return View("loggedOut", new LoggedOutViewModel { CssStyle = loginUpParty.CssStyle });
             }
         }
@@ -429,7 +429,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start create user.");
+                logger.ScopeTrace(() => "Start create user.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
@@ -445,7 +445,7 @@ namespace FoxIDs.Controllers
                     return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
                 }
 
-                logger.ScopeTrace("Show create user dialog.");
+                logger.ScopeTrace(() => "Show create user dialog.");
                 return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
 
             }
@@ -481,7 +481,7 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                logger.ScopeTrace("Create user post.");
+                logger.ScopeTrace(() => "Create user post.");
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
@@ -509,34 +509,34 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserExistsException uex)
                 {
-                    logger.ScopeTrace(uex.Message, triggerEvent: true);
+                    logger.ScopeTrace(() => uex.Message, triggerEvent: true);
                     ModelState.AddModelError(nameof(createUser.Email), localizer["A user with the email already exists."]);
                 }
                 catch (PasswordLengthException plex)
                 {
-                    logger.ScopeTrace(plex.Message);
+                    logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError(nameof(createUser.Password), RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
-                    logger.ScopeTrace(pcex.Message);
+                    logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(createUser.Password), localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
-                    logger.ScopeTrace(pecex.Message);
+                    logger.ScopeTrace(() => pecex.Message);
                     ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use the email or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
-                    logger.ScopeTrace(pucex.Message);
+                    logger.ScopeTrace(() => pucex.Message);
                     ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
-                    logger.ScopeTrace(prex.Message);
+                    logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError(nameof(createUser.Password), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
@@ -559,7 +559,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start change password.");
+                logger.ScopeTrace(() => "Start change password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
@@ -568,7 +568,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSession(sequenceData, session);
 
-                logger.ScopeTrace("Show change password dialog.");
+                logger.ScopeTrace(() => "Show change password dialog.");
                 return View(nameof(ChangePassword), new ChangePasswordViewModel
                 {
                     SequenceString = SequenceString,
@@ -606,7 +606,7 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                logger.ScopeTrace("Change password post.");
+                logger.ScopeTrace(() => "Change password post.");
 
                 try
                 {
@@ -620,14 +620,14 @@ namespace FoxIDs.Controllers
                     var session = await sessionLogic.GetSessionAsync(loginUpParty);
                     if (session != null && user.UserId != session.UserId)
                     {
-                        logger.ScopeTrace("Authenticated user and session user do not match.");
+                        logger.ScopeTrace(() => "Authenticated user and session user do not match.");
                         // TODO invalid user login
                         throw new NotImplementedException("Authenticated user and session user do not match.");
                     }
 
                     if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
                     {
-                        logger.ScopeTrace("Authenticated user and requested user do not match.");
+                        logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
                         // TODO invalid user login
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
@@ -636,44 +636,44 @@ namespace FoxIDs.Controllers
                 }
                 catch (UserObservationPeriodException uoex)
                 {
-                    logger.ScopeTrace(uoex.Message, triggerEvent: true);
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
                     ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
                 }
                 catch (InvalidPasswordException ipex)
                 {
-                    logger.ScopeTrace(ipex.Message, triggerEvent: true);
+                    logger.ScopeTrace(() => ipex.Message, triggerEvent: true);
                     ModelState.AddModelError(nameof(changePassword.CurrentPassword), localizer["Wrong password"]);
                 }                    
                 catch (NewPasswordEqualsCurrentException npeex)
                 {
-                    logger.ScopeTrace(npeex.Message);
+                    logger.ScopeTrace(() => npeex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a new password."]);
                 }
                 catch (PasswordLengthException plex)
                 {
-                    logger.ScopeTrace(plex.Message);
+                    logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
-                    logger.ScopeTrace(pcex.Message);
+                    logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
-                    logger.ScopeTrace(pecex.Message);
+                    logger.ScopeTrace(() => pecex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use the email or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
-                    logger.ScopeTrace(pucex.Message);
+                    logger.ScopeTrace(() => pucex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
-                    logger.ScopeTrace(prex.Message);
+                    logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError(nameof(changePassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 

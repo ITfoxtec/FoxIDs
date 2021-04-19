@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
 
         public async Task<string> CreateRefreshTokenGrantAsync(TClient client, List<Claim> claims, string scope)
         {
-            logger.ScopeTrace($"Create Refresh Token grant, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Create Refresh Token grant, Route '{RouteBinding.Route}'.");
 
             CheckeConfiguration(client);
 
@@ -36,13 +36,13 @@ namespace FoxIDs.Logic
             var refreshToken = CreateRefreshToken(client);
             await CreateGrantInternal(client, grantClaims.ToClaimAndValues(), scope, refreshToken);
 
-            logger.ScopeTrace($"Refresh token grant created, Refresh Token '{refreshToken}'.");
+            logger.ScopeTrace(() => $"Refresh token grant created, Refresh Token '{refreshToken}'.");
             return refreshToken;
         }
 
         public async Task<(RefreshTokenGrant, string)> ValidateAndUpdateRefreshTokenGrantAsync(TClient client, string refreshToken)
         {
-            logger.ScopeTrace($"Get, validate and update Refresh Token grant, Route '{RouteBinding.Route}', Refresh Token '{refreshToken}'.");
+            logger.ScopeTrace(() => $"Get, validate and update Refresh Token grant, Route '{RouteBinding.Route}', Refresh Token '{refreshToken}'.");
 
             CheckeConfiguration(client);
 
@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             {
                 throw new OAuthRequestException("Refresh Token grant has surpassed absolute lifetime.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
-            logger.ScopeTrace($"Refresh Token grant valid, Refresh Token '{refreshToken}'.");
+            logger.ScopeTrace(() => $"Refresh Token grant valid, Refresh Token '{refreshToken}'.");
 
             string newRefreshToken = null;
             if (client.RefreshTokenUseOneTime == true)
@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
             }
             grant = await CreateGrantInternal(client, grant.Claims, grant.Scope, refreshToken, grant.CreateTime, utcNow);
 
-            logger.ScopeTrace($"Refresh Token grant updated, Refresh Token '{refreshToken}'.");
+            logger.ScopeTrace(() => $"Refresh Token grant updated, Refresh Token '{refreshToken}'.");
             return (grant, newRefreshToken);
         }
 
@@ -74,18 +74,18 @@ namespace FoxIDs.Logic
         {
             if (sessionId.IsNullOrWhiteSpace()) return;
 
-            logger.ScopeTrace($"Delete Refresh Token grants, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
+            logger.ScopeTrace(() => $"Delete Refresh Token grants, Route '{RouteBinding.Route}', Session ID '{sessionId}'.");
 
             var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
             var ttlGrantCount = await tenantRepository.DeleteListAsync<RefreshTokenTtlGrant>(idKey, d => d.SessionId == sessionId);
             if (ttlGrantCount > 0)
             {
-                logger.ScopeTrace($"TTL Refresh Token grants deleted, Session ID '{sessionId}'.");
+                logger.ScopeTrace(() => $"TTL Refresh Token grants deleted, Session ID '{sessionId}'.");
             }
             var grantCount = await tenantRepository.DeleteListAsync<RefreshTokenGrant>(idKey, d => d.SessionId == sessionId);
             if (grantCount > 0)
             {
-                logger.ScopeTrace($"Refresh Token grants deleted, Session ID '{sessionId}'.");
+                logger.ScopeTrace(() => $"Refresh Token grants deleted, Session ID '{sessionId}'.");
             }
         }
 

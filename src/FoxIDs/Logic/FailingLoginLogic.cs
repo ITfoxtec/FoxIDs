@@ -41,7 +41,7 @@ namespace FoxIDs.Logic
 
             if (await db.KeyExistsAsync(FailingLoginLockedRadisKey(email)))
             {
-                logger.ScopeTrace($"User '{email}' locked by observation period.", triggerEvent: true);
+                logger.ScopeTrace(() => $"User '{email}' locked by observation period.", triggerEvent: true);
                 throw new UserObservationPeriodException($"User '{email}' locked by observation period.");
             }
 
@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
                 await db.StringSetAsync(FailingLoginLockedRadisKey(email), true, TimeSpan.FromSeconds(RouteBinding.FailingLoginObservationPeriod));
                 await db.KeyDeleteAsync(key);
 
-                logger.ScopeTrace($"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount.Value), triggerEvent: true);
+                logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount.Value), triggerEvent: true);
                 throw new UserObservationPeriodException($"Observation period started for user '{email}'.");
             }
             return failingLoginCount.HasValue ? failingLoginCount.Value : 0;

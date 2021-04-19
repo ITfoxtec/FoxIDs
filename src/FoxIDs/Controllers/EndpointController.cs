@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         {
             if (RouteBinding == null) throw new InvalidOperationException("Controller can not be called directly.");
 
-            logger.ScopeTrace($"Url '{context.HttpContext.Request.Scheme}://{context.HttpContext.Request.Host}{context.HttpContext.Request.Path}'");
+            logger.ScopeTrace(() => $"Url '{context.HttpContext.Request.Scheme}://{context.HttpContext.Request.Host}{context.HttpContext.Request.Path}'");
             base.OnActionExecuting(context);
         }
     }

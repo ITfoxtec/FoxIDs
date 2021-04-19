@@ -64,7 +64,7 @@ namespace FoxIDs.Infrastructure.Filters
                     response.SetHeader("X-Content-Security-Policy", csp);
                 }
 
-                logger.ScopeTrace(message => = $"Http security headers added.");
+                logger.ScopeTrace(() => $"Http security headers added.");
             }
 
             private bool IsHtmlContent(IActionResult result)

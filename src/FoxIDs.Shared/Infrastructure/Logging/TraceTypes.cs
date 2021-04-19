@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace FoxIDs.Infrastructure.Logging
+﻿namespace FoxIDs.Infrastructure
 {
     public enum TraceTypes
     {

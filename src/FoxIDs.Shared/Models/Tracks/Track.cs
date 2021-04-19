@@ -99,6 +99,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "send_email")]
         public SendEmail SendEmail { get; set; }
 
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "logging")]
+        public Logging Logging { get; set; } 
+
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]

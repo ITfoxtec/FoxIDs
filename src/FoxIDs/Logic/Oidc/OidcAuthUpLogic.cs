@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
                 Nonce = nonce,
                 State = SequenceString
             };
-            logger.ScopeTrace($"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace($"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             switch (oidcUpSequenceData.LoginAction)
             {
@@ -144,14 +144,14 @@ namespace FoxIDs.Logic
                     CodeChallenge = await oidcUpSequenceData.CodeVerifier.Sha256HashBase64urlEncodedAsync(),
                     CodeChallengeMethod = IdentityConstants.CodeChallengeMethods.S256,
                 };
-                logger.ScopeTrace($"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.");
+                logger.ScopeTrace($"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
                 nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            logger.ScopeTrace($"Up, Authentication request URL '{party.Client.AuthorizeUrl}'.");
+            logger.ScopeTrace($"Up, Authentication request URL '{party.Client.AuthorizeUrl}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace("Up, Sending OIDC Authentication request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl);            
         }
@@ -172,7 +172,7 @@ namespace FoxIDs.Logic
             };
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
-            logger.ScopeTrace($"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.");
+            logger.ScopeTrace($"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
             await sequenceLogic.ValidateSequenceAsync(authenticationResponse.State);
@@ -181,7 +181,7 @@ namespace FoxIDs.Logic
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)
             {
-                logger.ScopeTrace($"Up, Session response '{sessionResponse.ToJsonIndented()}'.");
+                logger.ScopeTrace($"Up, Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             try
@@ -297,7 +297,7 @@ namespace FoxIDs.Logic
                 ClientId = !client.SpClientId.IsNullOrWhiteSpace() ? client.SpClientId : client.ClientId,
                 RedirectUri = sequenceData.RedirectUri,
             };
-            logger.ScopeTrace($"Up, Token request '{tokenRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace($"Up, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var requestDictionary = tokenRequest.ToDictionary();
 
             if (!client.ClientSecret.IsNullOrEmpty())
@@ -306,7 +306,7 @@ namespace FoxIDs.Logic
                 {
                     ClientSecret = client.ClientSecret,
                 };
-                logger.ScopeTrace($"Up, client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.");
+                logger.ScopeTrace($"Up, client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
             }
 
@@ -316,7 +316,7 @@ namespace FoxIDs.Logic
                 {
                     CodeVerifier = sequenceData.CodeVerifier,
                 };
-                logger.ScopeTrace($"Up, Code verifier secret '{codeVerifierSecret.ToJsonIndented()}'.");
+                logger.ScopeTrace($"Up, Code verifier secret '{codeVerifierSecret.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
@@ -329,7 +329,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var tokenResponse = result.ToObject<TokenResponse>();
-                    logger.ScopeTrace($"Up, Token response '{tokenResponse.ToJsonIndented()}'.");
+                    logger.ScopeTrace($"Up, Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     tokenResponse.Validate(true);
                     if (tokenResponse.AccessToken.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenResponse.AccessToken), tokenResponse.GetTypeName());
                     if (tokenResponse.ExpiresIn <= 0) throw new ArgumentNullException(nameof(tokenResponse.ExpiresIn), tokenResponse.GetTypeName());
@@ -338,7 +338,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.BadRequest:
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var tokenResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
-                    logger.ScopeTrace($"Up, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.");
+                    logger.ScopeTrace($"Up, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     tokenResponseBadRequest.Validate(true);
                     throw new EndpointException($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.") { RouteBinding = RouteBinding };
 

@@ -27,12 +27,7 @@ namespace FoxIDs.Infrastructure
         public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogWarning == true;
-            if (saveScoped)
-            {
-                telemetryLogger.Warning(exception, properties, metrics);
-            }
+            telemetryLogger.Warning(exception, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -45,12 +40,7 @@ namespace FoxIDs.Infrastructure
         public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogWarning == true;
-            if (saveScoped)
-            {
-                telemetryLogger.Warning(exception, message, properties, metrics);
-            }
+            telemetryLogger.Warning(exception, message, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -64,12 +54,7 @@ namespace FoxIDs.Infrastructure
         public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogError == true;
-            if (saveScoped)
-            {
-                telemetryLogger.Error(exception, properties, metrics);
-            }
+            telemetryLogger.Error(exception, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -82,12 +67,7 @@ namespace FoxIDs.Infrastructure
         public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogError == true;
-            if (saveScoped)
-            {
-                telemetryLogger.Error(exception, message, properties, metrics);
-            }
+            telemetryLogger.Error(exception, message, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -101,12 +81,7 @@ namespace FoxIDs.Infrastructure
         public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogCriticalError == true;
-            if (saveScoped)
-            {
-                telemetryLogger.CriticalError(exception, properties, metrics);
-            }
+            telemetryLogger.CriticalError(exception, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -119,12 +94,7 @@ namespace FoxIDs.Infrastructure
         public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogCriticalError == true;
-            if (saveScoped)
-            {
-                telemetryLogger.CriticalError(exception, message, properties, metrics);
-            }
+            telemetryLogger.CriticalError(exception, message, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -138,12 +108,7 @@ namespace FoxIDs.Infrastructure
         public void Event(string eventName, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-
-            var saveScoped = RouteBinding == null || RouteBinding?.Logging?.ScopedLogger?.LogEvent == true;
-            if (saveScoped)
-            {
-                telemetryLogger.Event(eventName, properties, metrics);
-            }
+            telemetryLogger.Event(eventName, properties, metrics);
 
             if (RouteBinding?.Logging?.TrackLoggers?.Count > 0)
             {
@@ -178,7 +143,7 @@ namespace FoxIDs.Infrastructure
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
 
-            var saveScoped = /*RouteBinding == null ||*/ RouteBinding?.Logging?.ScopedLogger?.LogMetric == true;
+            var saveScoped = RouteBinding?.Logging?.ScopedLogger?.LogMetric == true;
             var saveTrack = RouteBinding?.Logging?.TrackLoggers?.Where(l => l.LogMetric).Any() == true;
 
             if (saveScoped || saveTrack) 

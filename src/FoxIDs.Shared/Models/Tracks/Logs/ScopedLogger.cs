@@ -4,18 +4,6 @@ namespace FoxIDs.Models
 {
     public class ScopedLogger
     {
-        [JsonProperty(PropertyName = "log_warning")]
-        public bool LogWarning { get; set; }
-
-        [JsonProperty(PropertyName = "log_error")]
-        public bool LogError { get; set; }
-
-        [JsonProperty(PropertyName = "log_critical_error")]
-        public bool LogCriticalError { get; set; }
-
-        [JsonProperty(PropertyName = "log_event")]
-        public bool LogEvent { get; set; }
-
         [JsonProperty(PropertyName = "log_info_trace")]
         public bool LogInfoTrace { get; set; }
 

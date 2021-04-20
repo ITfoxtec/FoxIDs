@@ -1,8 +1,6 @@
 ﻿@page "/{tenantName}/texts"
 @inherits PageBase
 
-<h3>Text</h3>
-
 <PageEditForm @ref="resourceFilterForm" TModel="FilterResourceViewModel" OnValidSubmit="OnResourceFilterValidSubmitAsync">
     <FInputTextFilter @bind-Value="resourceFilterForm.Model.FilterName" For="@(() => resourceFilterForm.Model.FilterName)" />
 </PageEditForm>

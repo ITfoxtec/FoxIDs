@@ -1,12 +1,6 @@
 ﻿@page "/{tenantName}/tenants"
 @inherits PageBase
 
-<div class="d-flex">
-    <div class="mr-auto p-2">
-        <h3>Tenants</h3>
-    </div>
-</div>
-
 <PageEditForm @ref="searchTenantForm" TModel="FilterTenantViewModel" OnValidSubmit="OnValidSubmitAsync">
     <FInputTextFilter @bind-Value="searchTenantForm.Model.FilterName" For="@(() => searchTenantForm.Model.FilterName)" />
 </PageEditForm>

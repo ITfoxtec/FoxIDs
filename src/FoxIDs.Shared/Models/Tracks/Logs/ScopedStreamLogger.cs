@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public class TrackLogger : ScopedLogger
+    public class ScopedStreamLogger : ScopedLogger
     {
         [JsonProperty(PropertyName = "log_warning")]
         public bool LogWarning { get; set; }

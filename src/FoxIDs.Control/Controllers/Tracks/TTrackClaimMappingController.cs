@@ -51,8 +51,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get Track.ClaimMappings by track name '{RouteBinding.TrackName}'.");
-                    return NotFound("Track.ClaimMappings", RouteBinding.TrackName);
+                    logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.ClaimMappings)} by track name '{RouteBinding.TrackName}'.");
+                    return NotFound($"{nameof(Track)}.{nameof(Track.ClaimMappings)}", RouteBinding.TrackName);
                 }
                 throw;
             }
@@ -83,14 +83,14 @@ namespace FoxIDs.Controllers
                 mTrack.ClaimMappings = mapper.Map<List<ClaimMap>>(claimMappings);
                 await tenantRepository.UpdateAsync(mTrack);
 
-                return Ok(mapper.Map<List<Api.ClaimMap>>(mTrack.SendEmail));
+                return Ok(mapper.Map<List<Api.ClaimMap>>(mTrack.ClaimMappings));
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Save Track.ClaimMappings by track name '{RouteBinding.TrackName}'.");
-                    return NotFound("Track.ClaimMappings", RouteBinding.TrackName);
+                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.ClaimMappings)} by track name '{RouteBinding.TrackName}'.");
+                    return NotFound($"{nameof(Track)}.{nameof(Track.ClaimMappings)}", RouteBinding.TrackName);
                 }
                 throw;
             }

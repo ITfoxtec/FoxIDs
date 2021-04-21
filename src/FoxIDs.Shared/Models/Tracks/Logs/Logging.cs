@@ -8,7 +8,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "scoped_logger")]
         public ScopedLogger ScopedLogger { get; set; }
 
-        [JsonProperty(PropertyName = "track_logger")]
-        public List<TrackLogger> TrackLoggers { get; set; }
+        [JsonProperty(PropertyName = "scoped_stream_loggers")]
+        public List<ScopedStreamLogger> ScopedStreamLoggers { get; set; }
     }
 }

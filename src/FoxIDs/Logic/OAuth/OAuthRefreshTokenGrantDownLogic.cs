@@ -47,9 +47,13 @@ namespace FoxIDs.Logic
             CheckeConfiguration(client);
 
             var grant = await GetRefreshTokenGrantAsync(client, refreshToken);
-            if (grant == null || !grant.ClientId.Equals(client.ClientId, StringComparison.InvariantCultureIgnoreCase))
+            if (grant == null)
             {
                 throw new OAuthRequestException($"Refresh Token grant not found for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
+            }
+            if (!grant.ClientId.Equals(client.ClientId, StringComparison.InvariantCultureIgnoreCase))
+            {
+                throw new OAuthRequestException($"Refresh Token grant not found for client id '{client.ClientId}', invalid client id.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
 
             var utcNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();

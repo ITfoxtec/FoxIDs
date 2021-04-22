@@ -48,6 +48,12 @@ namespace FoxIDs
             public const string ApiControllerPreTenantTrackKey = "t";
         }
 
+        public static class Logs
+        {
+            public const string TenantName = "tenantName";
+            public const string TrackName = "trackName";
+        }
+
         public static class Models
         {
             public const int MasterPartitionIdLength = 30;

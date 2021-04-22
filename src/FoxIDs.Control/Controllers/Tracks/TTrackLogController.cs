@@ -12,6 +12,7 @@ using Azure.Core;
 using System.Threading;
 using System.Net.Http.Headers;
 using FoxIDs.Models.Config;
+using Microsoft.Azure.ApplicationInsights.Query.Models;
 
 namespace FoxIDs.Controllers
 {
@@ -39,7 +40,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(Api.LogSettings), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LogSettings>> GetTrackLog()
+        public async Task<ActionResult<Api.LogResponse>> GetTrackLog(Api.LogRequest logRequest)
         {
             var httpClient = httpClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetAccessToken());
@@ -48,9 +49,11 @@ namespace FoxIDs.Controllers
             var applicationInsightsQuery = new ApplicationInsightsQuery { Query = "requests | limit 5" };
 
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, applicationInsightsQuery);
-            var responseText = await response.Content.ReadAsStringAsync();
+            var queryResults = await response.ToObjectAsync<QueryResults>();
 
-            return Ok(new Api.LogSettings());
+            queryResults.Results.
+
+            return Ok(new Api.LogResponse());
 
             //try
             //{

@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                logger.SetScopeProperty("GrantType", tokenRequest.GrantType);
+                logger.SetScopeProperty("grantType", tokenRequest.GrantType);
                 switch (tokenRequest.GrantType)
                 {
                     case IdentityConstants.GrantTypes.AuthorizationCode:

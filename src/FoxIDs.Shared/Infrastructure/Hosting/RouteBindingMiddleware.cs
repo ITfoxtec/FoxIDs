@@ -39,7 +39,8 @@ namespace FoxIDs.Infrastructure.Hosting
                         var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
 
-                        scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
+                        scopedLogger.SetScopeProperty(Constants.Logs.TenantName, routeBinding.TenantName);
+                        scopedLogger.SetScopeProperty(Constants.Logs.TrackName, routeBinding.TrackName);
                     }
 
                     await next(httpContext);

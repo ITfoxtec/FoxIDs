@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, applicationInsightsQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
-            queryResults.Results.
+            //queryResults.Results.
 
             return Ok(new Api.LogResponse());
 

@@ -40,7 +40,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "Down, End session request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             var rpInitiatedLogoutRequest = formOrQueryDictionary.ToObject<RpInitiatedLogoutRequest>();
 
             logger.ScopeTrace(() => $"end session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
-            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
             logger.ScopeTrace(() => "Down, OIDC End session request accepted.", triggerEvent: true);
@@ -191,7 +191,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> EndSessionResponseAsync(string partyId)
         {
             logger.ScopeTrace(() => "Down, End session response.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 

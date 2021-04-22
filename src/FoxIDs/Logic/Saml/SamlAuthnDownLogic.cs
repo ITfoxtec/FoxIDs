@@ -53,7 +53,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "Down, SAML Authn request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 
             switch (party.AuthnBinding.RequestBinding)
@@ -133,7 +133,7 @@ namespace FoxIDs.Logic
             }
 
             var requestIssuer = saml2AuthnRequest.Issuer;
-            logger.SetScopeProperty("Issuer", requestIssuer);
+            logger.SetScopeProperty(Constants.Logs.Issuer, requestIssuer);
 
             if (!party.Issuer.Equals(requestIssuer))
             {
@@ -164,7 +164,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null)
         {
             logger.ScopeTrace(() => $"Down, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 

@@ -52,6 +52,22 @@ namespace FoxIDs
         {
             public const string TenantName = "tenantName";
             public const string TrackName = "trackName";
+            public const string GrantType = "grantType";
+            public const string Domain = "domain";
+            public const string UserAgent = "userAgent";
+            public const string UpPartyId = "upPartyId";
+            public const string UpPartyClientId = "upPartyClientId";
+            public const string UpPartyStatus = "upPartyStatus";
+            public const string DownPartyId = "downPartyId";
+            public const string DownPartyClientId = "downPartyClientId";
+            public const string SequenceId = "sequenceId";
+            public const string SequenceCulture = "sequenceCulture";
+            public const string Issuer = "issuer";
+            public const string Status = "status";
+            public const string SessionId = "sessionId";
+            public const string ExternalSessionId = "externalSessionId";
+            public const string UserId = "userId";
+            public const string Email = "email";
         }
 
         public static class Models

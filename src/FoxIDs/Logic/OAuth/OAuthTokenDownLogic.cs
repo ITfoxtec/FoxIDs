@@ -33,13 +33,13 @@ namespace FoxIDs.Logic
         public virtual async Task<IActionResult> TokenRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "Down, OAuth Token request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
                 throw new NotSupportedException("Party Client not configured.");
             }
-            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             var formDictionary = HttpContext.Request.Form.ToDictionary();
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                logger.SetScopeProperty("grantType", tokenRequest.GrantType);
+                logger.SetScopeProperty(Constants.Logs.GrantType, tokenRequest.GrantType);
                 switch (tokenRequest.GrantType)
                 {
                     case IdentityConstants.GrantTypes.AuthorizationCode:

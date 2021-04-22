@@ -32,10 +32,10 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
         {
             logger.ScopeTrace(() => "Up, OIDC Front channel logout.");
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
-            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
             
             if (party.Client.DisableFrontChannelLogout)
             {

@@ -113,9 +113,9 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    logger.SetScopeProperty("sessionId", session.SessionId);
-                    logger.SetScopeProperty("userId", session.UserId);
-                    logger.SetScopeProperty("email", session.Email);
+                    logger.SetScopeProperty(Constants.Logs.SessionId, session.SessionId);
+                    logger.SetScopeProperty(Constants.Logs.UserId, session.UserId);
+                    logger.SetScopeProperty(Constants.Logs.Email, session.Email);
                     return session;
                 }
 

@@ -125,7 +125,7 @@ namespace FoxIDs.Logic
                     var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
                     if (sequence != null)
                     {
-                        logger.SetScopeProperty("sequenceId", sequence.Id);
+                        logger.SetScopeProperty(Constants.Logs.SequenceId, sequence.Id);
                     }
                     return Task.FromResult(sequence);
                 }

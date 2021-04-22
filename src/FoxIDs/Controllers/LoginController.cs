@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
             {
                 throw new Exception("Invalid up-party id.");
             }
-            logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
             if (RouteBinding.UpParty.Type != PartyTypes.Login)
             {

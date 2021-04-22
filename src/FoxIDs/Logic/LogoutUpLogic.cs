@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "Down, Logout redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             await logoutRequest.ValidateObjectAsync();
 
@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> LogoutResponseAsync(LoginUpSequenceData sequenceData)
         {
             logger.ScopeTrace(() => "Down, Logout response.");
-            logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
             logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
             switch (sequenceData.DownPartyLink.Type)

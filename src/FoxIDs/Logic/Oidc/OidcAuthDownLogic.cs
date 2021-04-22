@@ -45,13 +45,13 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
             logger.ScopeTrace(() => "Down, OIDC Authentication request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if(party.Client == null)
             {
                 throw new NotSupportedException("Party Client not configured.");
             }
-            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();
@@ -231,7 +231,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims)
         {
             logger.ScopeTrace(() => "Down, OIDC Authentication response.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
@@ -317,7 +317,7 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null)
         {
             logger.ScopeTrace(() => "Down, OIDC Authentication error response.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
 
@@ -327,7 +327,7 @@ namespace FoxIDs.Logic
         private Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, AuthenticationRequest authenticationRequest, OAuthRequestException ex)
         {
             logger.ScopeTrace(() => "OIDC Authentication error response.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             return AuthenticationResponseErrorAsync(authenticationRequest.RedirectUri, authenticationRequest.State, ex.Error, ex.ErrorDescription);
         }

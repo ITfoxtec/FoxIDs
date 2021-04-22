@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "Up, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             await loginRequest.ValidateObjectAsync();
 
@@ -77,10 +77,10 @@ namespace FoxIDs.Logic
             {
                 throw new Exception("Invalid up-party id.");
             }
-            logger.SetScopeProperty("upPartyId", oidcUpSequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
 
             var party = await tenantRepository.GetAsync<OidcUpParty>(oidcUpSequenceData.UpPartyId);
-            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
             await oidcDiscoveryReadUpLogic.CheckOidcDiscoveryAndUpdatePartyAsync(party);
 
@@ -159,10 +159,10 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)
         {
             logger.ScopeTrace(() => $"Up, OIDC Authentication response.");
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
-            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
             var formOrQueryDictionary = HttpContext.Request.Method switch
             {
@@ -221,13 +221,13 @@ namespace FoxIDs.Logic
             }
             catch (OAuthRequestException orex)
             {
-                logger.SetScopeProperty("upPartyStatus", orex.Error);
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, orex.Error);
                 logger.Error(orex);
                 return await AuthenticationResponseDownAsync(sequenceData, error: orex.Error, errorDescription: orex.ErrorDescription);
             }
             catch (ResponseErrorException rex)
             {
-                logger.SetScopeProperty("upPartyStatus", rex.Error);
+                logger.SetScopeProperty(Constants.Logs.UpPartyStatus, rex.Error);
                 logger.Error(rex);
                 return await AuthenticationResponseDownAsync(sequenceData, error: rex.Error, errorDescription: $"{party.Name}|{rex.Message}");
             }

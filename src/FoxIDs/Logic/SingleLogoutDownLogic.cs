@@ -112,7 +112,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"Single Logout response, Up type {upPartyType}.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, upPartyName);
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             switch (upPartyType)
             {

@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Services
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
         private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
-        private const string logSettingsApiUri = "api/{tenant}/{track}/!tracklogsettings";
+        private const string logSettingApiUri = "api/{tenant}/{track}/!tracklogsetting";
 
         public TrackService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -53,7 +53,7 @@ namespace FoxIDs.Client.Services
         public async Task<List<ClaimMap>> GetTrackClaimMappingAsync() => await GetAsync<List<ClaimMap>>(claimMappingApiUri);
         public async Task SaveTrackClaimMappingAsync(List<ClaimMap> claimMappings) => await PostAsync(claimMappingApiUri, claimMappings);
 
-        public async Task<LogSettings> GetTrackLogSettingsAsync() => await GetAsync<LogSettings>(logSettingsApiUri);
-        public async Task SaveTrackLogSettingsAsync(LogSettings logSettings) => await PostAsync(logSettingsApiUri, logSettings);
+        public async Task<LogSettings> GetTrackLogSettingAsync() => await GetAsync<LogSettings>(logSettingApiUri);
+        public async Task SaveTrackLogSettingAsync(LogSettings logSettings) => await PostAsync(logSettingApiUri, logSettings);
     }
 }

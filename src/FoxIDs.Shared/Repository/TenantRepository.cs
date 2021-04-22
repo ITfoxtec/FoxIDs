@@ -211,7 +211,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var response = await client.UpsertDocumentAsync(GetCollectionLink<T>(), item, new RequestOptions { PartitionKey = new PartitionKey(item.PartitionId) });
+                var response = await client.UpsertDocumentAsync(GetCollectionLink<T>(), item, new RequestOptions { IndexingDirective = IndexingDirective.Exclude, PartitionKey = new PartitionKey(item.PartitionId) });
                 totalRU += response.RequestCharge;
             }
             catch (Exception ex)

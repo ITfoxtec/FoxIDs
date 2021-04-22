@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Client.Infrastructure
 {

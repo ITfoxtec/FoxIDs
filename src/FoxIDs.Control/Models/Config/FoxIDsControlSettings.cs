@@ -12,6 +12,9 @@ namespace FoxIDs.Models.Config
         [Required]
         public string DownParty { get; set; }
 
+        [Required]
+        public ApplicationInsightsSettings ApplicationInsights { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

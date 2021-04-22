@@ -2,12 +2,12 @@
 
 namespace FoxIDs.Models.Config
 {
-    public class KeyVaultSettings
+    public class ApplicationInsightsSettings
     {
         /// <summary>
-        /// Key vault endpoint.
+        /// ApplicationInsights app ID.
         /// </summary>
         [Required]
-        public string EndpointUri { get; set; }
+        public string AppId { get; set; }
     }
 }

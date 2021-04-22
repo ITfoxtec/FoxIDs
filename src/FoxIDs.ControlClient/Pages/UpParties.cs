@@ -1,4 +1,4 @@
-﻿using FoxIDs.Client.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;

@@ -74,7 +74,7 @@ namespace FoxIDs.Client.Pages
 
             try
             {
-                var logSettings = await TrackService.GetTrackLogSettingsAsync();
+                var logSettings = await TrackService.GetTrackLogSettingAsync();
                 await generalLogSettings.Form.InitAsync(logSettings);
             }
             catch (TokenUnavailableException)
@@ -91,7 +91,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.SaveTrackLogSettingsAsync(generalLogSettings.Form.Model);
+                await TrackService.SaveTrackLogSettingAsync(generalLogSettings.Form.Model);
                 generalLogSettings.Edit = false;
             }
             catch (Exception ex)

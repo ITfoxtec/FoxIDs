@@ -2,7 +2,7 @@
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Client
+namespace FoxIDs
 {
     public static class HttpClientExtensions
     {

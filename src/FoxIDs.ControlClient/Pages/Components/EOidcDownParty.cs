@@ -1,10 +1,9 @@
 ﻿using FoxIDs.Client.Models.ViewModels;
-using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using FoxIDs.Client.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Services;
 using Microsoft.AspNetCore.Components.Forms;

@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace FoxIDs.Client
+namespace FoxIDs
 {
     public static class JsonSerializerExtensions
     {

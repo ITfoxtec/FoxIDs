@@ -10,13 +10,13 @@ using System.Net;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogSettingsController : TenantApiController
+    public class TTrackLogSettingController : TenantApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
 
-        public TTrackLogSettingsController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackLogSettingController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(Api.LogSettings), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LogSettings>> GetTrackLogSettings()
+        public async Task<ActionResult<Api.LogSettings>> GetTrackLogSetting()
         {
             try
             {
@@ -62,7 +62,7 @@ namespace FoxIDs.Controllers
         /// <returns>Log settings.</returns>
         [ProducesResponseType(typeof(Api.LogSettings), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LogSettings>> PostTrackLogSettings([FromBody] Api.LogSettings logSettings)
+        public async Task<ActionResult<Api.LogSettings>> PostTrackLogSetting([FromBody] Api.LogSettings logSettings)
         {
             try
             {

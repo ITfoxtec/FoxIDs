@@ -1,4 +1,4 @@
-﻿using FoxIDs.Client.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;

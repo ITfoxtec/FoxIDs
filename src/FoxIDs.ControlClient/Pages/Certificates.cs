@@ -1,5 +1,5 @@
 ﻿using BlazorInputFile;
-using FoxIDs.Client.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;

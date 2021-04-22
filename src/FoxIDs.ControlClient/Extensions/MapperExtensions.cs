@@ -1,4 +1,5 @@
 ﻿using System;
+using FoxIDs;
 
 namespace FoxIDs.Client
 {

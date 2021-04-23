@@ -10,10 +10,48 @@
     </li>
 </ul>
 
-<div class="tab-content">
-    <div>
-        <p>FoxIDs use Application Insights as log store. Therefor, the logs can be seen after a few minutes.</p>
+<div class="tab-content pt-4">
+    <div class="alert alert-warning" role="alert">
+        The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
     </div>
 
+    <PageEditForm @ref="logRequestForm" TModel="LogRequestViewModel" OnValidSubmit="OnLogRequestValidSubmitAsync">
+        <FInputText @bind-Value="logRequestForm.Model.StartingTime" For="@(() => logRequestForm.Model.StartingTime)" />
+        <FInputTextFilter @bind-Value="logRequestForm.Model.Filter" For="@(() => logRequestForm.Model.Filter)" />
+    </PageEditForm>
 
+    <ul class="list-group">
+        @*@foreach (var downParty in downParties)
+        {
+            <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
+                @if (!downParty.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @downParty.Error
+                    </div>
+                }
+                @if (downParty.Edit)
+                {
+                    if (downParty.Type == PartyTypes.Oidc)
+                    {
+                        <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    }
+                    else if (downParty.Type == PartyTypes.OAuth2)
+                    {
+                        <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    }
+                    else if (downParty.Type == PartyTypes.Saml2)
+                    {
+                        <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    }
+                }
+                else
+                {
+                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateDownPartyAsync(downParty))">
+                        @DownPartyInfoText(downParty)
+                    </button>
+                }
+            </li>
+        }*@
+    </ul>
 </div>

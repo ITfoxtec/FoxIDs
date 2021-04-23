@@ -1,22 +1,17 @@
-﻿using AutoMapper;
-using FoxIDs.Infrastructure;
-using FoxIDs.Repository;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Net;
 using System.Net.Http;
 using Azure.Core;
-using System.Threading;
 using System.Net.Http.Headers;
 using FoxIDs.Models.Config;
 using Microsoft.Azure.ApplicationInsights.Query.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -24,15 +19,13 @@ namespace FoxIDs.Controllers
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IMapper mapper;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly TokenCredential tokenCredential;
 
-        public TTrackLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, IHttpClientFactory httpClientFactory, TokenCredential tokenCredential) : base(logger)
+        public TTrackLogController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IHttpClientFactory httpClientFactory, TokenCredential tokenCredential) : base(logger)
         {
             this.settings = settings;
             this.logger = logger;
-            this.mapper = mapper;
             this.httpClientFactory = httpClientFactory;
             this.tokenCredential = tokenCredential;
         }

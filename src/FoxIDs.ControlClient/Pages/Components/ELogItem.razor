@@ -1,0 +1,46 @@
+﻿@inherits ComponentBase
+
+<div>
+
+    @if (Item.Type == LogItemTypes.CriticalError || Item.Type == LogItemTypes.Error || Item.Type == LogItemTypes.Warning)
+    {
+        <div><b>@(Item.Type == LogItemTypes.CriticalError ? "Critical error" : Item.Type.ToString())</b> @Item.Timestamp.TimeToString()</div>
+
+        @foreach (var value in Item.Values)
+        {
+            <div>@value.Key - @value.Value</div>
+        }
+    }
+    else if (Item.Type == LogItemTypes.Trace)
+    {
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
+
+        @foreach (var value in Item.Values)
+        {
+            <div>@value.Key - @value.Value</div>
+        }
+    }
+    else if (Item.Type == LogItemTypes.Event)
+    {
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString(), @Item.Values.GetValue(Constants.Logs.Results.Name)</div>
+    }
+    else if (Item.Type == LogItemTypes.Metrics)
+    {
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
+
+        @if (Item.Values.TryGetValue(Constants.Logs.Results.Name, out var metricsName))
+        {
+            <div>@metricsName</div>
+        }
+        @if (Item.Values.TryGetValue(Constants.Logs.Results.Value, out var metricsValue))
+        {
+            <div>Value: @metricsValue</div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public LogItem Item { get; set; }
+}
+

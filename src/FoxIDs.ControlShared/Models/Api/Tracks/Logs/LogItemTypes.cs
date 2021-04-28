@@ -7,7 +7,8 @@
         Warning,
         Error,
         CriticalError,
+        Trace,
         Event,
-        Trace
+        Metrics
     }
 }

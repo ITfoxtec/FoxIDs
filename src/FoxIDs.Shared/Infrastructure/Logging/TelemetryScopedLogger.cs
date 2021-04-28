@@ -27,7 +27,7 @@ namespace FoxIDs.Infrastructure
         public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Warning(exception, properties, metrics);
+            telemetryLogger.Warning(exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
@@ -40,7 +40,7 @@ namespace FoxIDs.Infrastructure
         public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Warning(exception, message, properties, metrics);
+            telemetryLogger.Warning(exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
@@ -54,7 +54,7 @@ namespace FoxIDs.Infrastructure
         public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Error(exception, properties, metrics);
+            telemetryLogger.Error(exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
@@ -67,7 +67,7 @@ namespace FoxIDs.Infrastructure
         public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Error(exception, message, properties, metrics);
+            telemetryLogger.Error(exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
@@ -81,7 +81,7 @@ namespace FoxIDs.Infrastructure
         public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.CriticalError(exception, properties, metrics);
+            telemetryLogger.CriticalError(exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
@@ -94,7 +94,7 @@ namespace FoxIDs.Infrastructure
         public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.CriticalError(exception, message, properties, metrics);
+            telemetryLogger.CriticalError(exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {

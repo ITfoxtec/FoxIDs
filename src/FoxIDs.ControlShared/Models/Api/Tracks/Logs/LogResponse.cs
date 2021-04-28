@@ -8,5 +8,7 @@ namespace FoxIDs.Models.Api
     public class LogResponse 
     {
         public List<LogItem> Items { get; set; }
+
+        public bool ResponseTruncated { get; set; }
     }
 }

@@ -5,16 +5,21 @@ using AutoMapper;
 using System;
 using System.Net;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using System.Diagnostics;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsApiExceptionMiddleware 
     {
         private readonly RequestDelegate next;
+        private readonly IWebHostEnvironment environment;
 
-        public FoxIDsApiExceptionMiddleware(RequestDelegate next)
+        public FoxIDsApiExceptionMiddleware(RequestDelegate next, IWebHostEnvironment environment)
         {
             this.next = next;
+            this.environment = environment;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -26,7 +31,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (AutoMapperMappingException amme)
             {
-                scopedLogger.Error(amme);
+                LogError(scopedLogger, amme);
                 await HandleHttpStatusExceptionAsync(httpContext, amme.Message, HttpStatusCode.BadRequest);
             }
             catch (RouteCreationException rce)
@@ -41,7 +46,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    scopedLogger.Error(ex);
+                    LogError(scopedLogger, ex);
                     await HandleHttpStatusExceptionAsync(httpContext, ex.GetAllMessagesJoined(), HttpStatusCode.BadRequest);
                 }
             }
@@ -49,7 +54,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private async Task HandleRouteCreationException(HttpContext httpContext, TelemetryScopedLogger scopedLogger, RouteCreationException rce)
         {
-            scopedLogger.Error(rce);
+            LogError(scopedLogger, rce);
             await HandleHttpStatusExceptionAsync(httpContext, rce.Message, HttpStatusCode.BadRequest);
         }
 
@@ -58,6 +63,15 @@ namespace FoxIDs.Infrastructure.Hosting
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = (int)statusCode;
             await httpContext.Response.WriteAsync(message);
+        }
+
+        private void LogError(TelemetryScopedLogger scopedLogger, Exception ex)
+        {
+            scopedLogger.Error(ex);
+            if (environment.IsDevelopment())
+            {
+                Debug.WriteLine(ex.ToString());
+            }
         }
     }
 }

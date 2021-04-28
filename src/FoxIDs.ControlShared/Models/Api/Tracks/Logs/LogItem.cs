@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace FoxIDs.Models.Api
 {
     public class LogItem
     {
-        public LogItemTypes LogItemType { get; set; }
+        public LogItemTypes Type { get; set; }
 
         /// <summary>
         /// Log timestamp Unix time seconds. E.g. DateTimeOffset.UtcNow.ToUnixTimeSeconds()
         /// </summary>
-        public long? Timestamp { get; set; }
+        public long Timestamp { get; set; }
 
         public string SequenceId { get; set; }
 

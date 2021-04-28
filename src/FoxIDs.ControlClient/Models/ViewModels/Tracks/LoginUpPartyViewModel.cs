@@ -72,7 +72,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [Display(Name = "Logout consent")]
-        public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequired;
+        public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [Display(Name = "CSS style")]

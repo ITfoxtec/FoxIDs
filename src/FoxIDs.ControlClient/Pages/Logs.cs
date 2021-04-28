@@ -17,6 +17,9 @@ namespace FoxIDs.Client.Pages
 {
     public partial class Logs
     {
+        private List<string> queryTypeItems = new List<string> { LogQueryTypes.Exceptions, LogQueryTypes.Events, LogQueryTypes.Traces, LogQueryTypes.Metrics };
+
+        private string logLoadError;
         private PageEditForm<LogRequestViewModel> logRequestForm;
         private LogResponse logResponse;
         private string logSettingsHref;
@@ -49,6 +52,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
+            logLoadError = null;
             try
             {
                 await LoadLogAsync();
@@ -59,44 +63,49 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                logRequestForm.SetError(ex.Message);
+                logLoadError = ex.Message;
             }
         }
 
         private async Task LoadLogAsync()
         {
-            DateTimeOffset? startingTime = null;
-            if (!string.IsNullOrWhiteSpace(logRequestForm?.Model?.StartingTime))
+            var fromTime = DateTimeOffset.UtcNow;
+            if (!string.IsNullOrWhiteSpace(logRequestForm?.Model?.FromTime))
             {
                 try
                 {
-                    startingTime = DateTimeOffset.Parse(logRequestForm.Model.StartingTime);
+                    fromTime = DateTimeOffset.Parse(logRequestForm.Model.FromTime);
                 }
                 catch (Exception tex)
                 {
-                    logRequestForm.SetFieldError(nameof(logRequestForm.Model.StartingTime), tex.Message);
+                    logRequestForm.SetFieldError(nameof(logRequestForm.Model.FromTime), tex.Message);
                     return;
                 }
             }
 
             var logRequest = new LogRequest();
-            //var logRequest = logRequestForm == null ? new LogRequest() : logRequestForm.Map<LogRequest>(afterMap: afterMap =>
-            //{
-            //    if (startingTime.HasValue)
-            //    {
-            //        afterMap.StartingTime = startingTime.Value.ToUnixTimeSeconds();
-            //    }
-            //    else
-            //    {
-            //        afterMap.StartingTime = null;
-            //    }
-            //});
+            logRequest.FromTime = fromTime.ToUnixTimeSeconds();
+            logRequest.ToTime = fromTime.AddSeconds((int)(logRequestForm?.Model != null ? logRequestForm.Model.TimeInterval : LogTimeIntervals.FifteenMinutes)).ToUnixTimeSeconds();
+            if (logRequestForm?.Model != null)
+            {
+                logRequest.Filter = logRequestForm.Model.Filter;
+                logRequest.QueryExceptions = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Exceptions);
+                logRequest.QueryTraces = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Traces);
+                logRequest.QueryEvents = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Events);
+                logRequest.QueryMetrics = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Metrics);
+            }
 
             logResponse = await TrackService.GetTrackLogAsync(logRequest);
         }
 
         private async Task OnLogRequestValidSubmitAsync(EditContext editContext)
         {
+            if (logRequestForm.Model.QueryTypes.Count() <= 0)
+            {
+                logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Exceptions);
+                logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Events);
+            }
+
             await LoadLogAsync();
         }
     }

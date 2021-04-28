@@ -11,47 +11,114 @@
 </ul>
 
 <div class="tab-content pt-4">
-    <div class="alert alert-warning" role="alert">
+    <div class="alert alert-info" role="alert">
         The logs are available after a few minutes because the logs are processed in Application Insights before making them available.
     </div>
 
+    @if (!logLoadError.IsNullOrWhiteSpace())
+    {
+        <div class="alert alert-danger" role="alert">
+            @logLoadError
+        </div>
+    }
+
     <PageEditForm @ref="logRequestForm" TModel="LogRequestViewModel" OnValidSubmit="OnLogRequestValidSubmitAsync">
-        <FInputText @bind-Value="logRequestForm.Model.StartingTime" For="@(() => logRequestForm.Model.StartingTime)" />
+        <FInputText @bind-Value="logRequestForm.Model.FromTime" For="@(() => logRequestForm.Model.FromTime)" />
+        <FInputSelect @bind-Value="logRequestForm.Model.TimeInterval" For="@(() => logRequestForm.Model.TimeInterval)">
+            <option value="@LogTimeIntervals.ThirtySeconds">30 seconds</option>
+            <option value="@LogTimeIntervals.OneMinute">1 minute</option>
+            <option value="@LogTimeIntervals.FiveMinutes">5 minutes</option>
+            <option value="@LogTimeIntervals.FifteenMinutes">15 minutes</option>
+            <option value="@LogTimeIntervals.ThirtyMinutes">30 minutes</option>
+            <option value="@LogTimeIntervals.OneHour">1 hour</option>
+            <option value="@LogTimeIntervals.SixHours">6 hours</option>
+            <option value="@LogTimeIntervals.TwelveHours">12 hours</option>
+            <option value="@LogTimeIntervals.TwentyfourHours">24 hours</option>
+        </FInputSelect>
+        <FInputCheckboxSelect Items="queryTypeItems" SelectedItems="logRequestForm.Model.QueryTypes" For="@(() => logRequestForm.Model.QueryTypes)" />
         <FInputTextFilter @bind-Value="logRequestForm.Model.Filter" For="@(() => logRequestForm.Model.Filter)" />
     </PageEditForm>
 
+    @if (logResponse != null && logResponse.ResponseTruncated)
+    {
+        <div class="alert alert-warning" role="alert">
+            The result set is to big and not all logs are shown.
+        </div>
+    }
+
     <ul class="list-group">
-        @*@foreach (var downParty in downParties)
+        @if (logResponse != null)
         {
-            <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
-                @if (!downParty.Error.IsNullOrWhiteSpace())
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @downParty.Error
-                    </div>
-                }
-                @if (downParty.Edit)
-                {
-                    if (downParty.Type == PartyTypes.Oidc)
+            if(logResponse.Items.Count() <= 0)
+            {
+                <li class="list-group-item"><i>No logs found.</i></li>
+            }
+
+            @foreach (var item in logResponse.Items)
+            {
+                <li class="list-group-item">
+                    @if (item.Type == LogItemTypes.Sequence)
                     {
-                        <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                        <div>
+                            <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
+
+                            <ul class="list-group">
+                                @foreach (var sSubItem in item.SubItems)
+                                {
+                                    <li class="list-group-item">
+                                        @if (sSubItem.Type == LogItemTypes.Operation)
+                                        {
+                                            <div>
+                                                <div><b>@sSubItem.Type.ToString()</b> @sSubItem.Timestamp.TimeToString()</div>
+                                                @if (sSubItem.Values.TryGetValue(Constants.Logs.Results.OperationName, out var operationName))
+                                                {
+                                                    <div>@operationName</div>
+                                                }
+
+                                                <ul class="list-group">
+                                                    @foreach (var oSubItem in sSubItem.SubItems)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <ELogItem Item="oSubItem" />
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <ELogItem Item="sSubItem" />
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     }
-                    else if (downParty.Type == PartyTypes.OAuth2)
+                    else if (item.Type == LogItemTypes.Operation)
                     {
-                        <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                        <div>
+                            <div><b>@item.Type.ToString()</b> @item.Timestamp.TimeToString()</div>
+                            @if (item.Values.TryGetValue(Constants.Logs.Results.OperationName, out var operationName))
+                            {
+                                <div>@operationName</div>
+                            }
+
+                            <ul class="list-group">
+                                @foreach (var oSubItem in item.SubItems)
+                                {
+                                    <li class="list-group-item">
+                                        <ELogItem Item="oSubItem" />
+                                    </li>
+                                }
+                            </ul>
+                        </div>
                     }
-                    else if (downParty.Type == PartyTypes.Saml2)
+                    else
                     {
-                        <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                        <ELogItem Item="item" />
                     }
-                }
-                else
-                {
-                    <button class="btn btn-link" @onclick="@(async () => await ShowUpdateDownPartyAsync(downParty))">
-                        @DownPartyInfoText(downParty)
-                    </button>
-                }
-            </li>
-        }*@
+                </li>
+            }
+        }
     </ul>
 </div>

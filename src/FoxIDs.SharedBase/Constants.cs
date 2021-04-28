@@ -68,6 +68,23 @@ namespace FoxIDs
             public const string ExternalSessionId = "externalSessionId";
             public const string UserId = "userId";
             public const string Email = "email";
+
+            public static class Results
+            {
+                public const string Name = "name";
+                public const string Value = "value";
+                public const string Message = "message";
+                public const string Details = "details";
+                public const string CustomDimensions = "customDimensions";
+                public const string OperationName = "operation_Name";
+                public const string SeverityLevel = "severityLevel";
+                public const string Timestamp = "timestamp";
+                public const string SequenceId = "sequenceId";
+                public const string Operation_Id = "operation_Id";
+                public const string ClientType = "client_Type";
+                public const string ClientIp = "client_Ip";
+                public const string CloudRoleInstance = "cloud_RoleInstance";
+            }
         }
 
         public static class Models

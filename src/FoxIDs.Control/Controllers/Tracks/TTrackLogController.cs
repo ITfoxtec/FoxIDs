@@ -12,11 +12,15 @@ using Microsoft.Azure.ApplicationInsights.Query.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using System.Globalization;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
     public class TTrackLogController : TenantApiController
     {
+        private const int maxQueryLogItems = 200;
+        private const int maxResponseLogItems = 300;
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IHttpClientFactory httpClientFactory;
@@ -39,33 +43,70 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogResponse>> GetTrackLog(Api.LogRequest logRequest)
         {
+            if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
+
+            if (!logRequest.QueryExceptions && !logRequest.QueryTraces && !logRequest.QueryEvents && ! logRequest.QueryMetrics)
+            {
+                logRequest.QueryExceptions = true;
+                logRequest.QueryEvents = true;
+            }
+
             var httpClient = httpClientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await GetAccessToken());
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, await GetAccessToken());
 
-            var loadLogResponse = new Api.LogResponse { Items = new List<Api.LogItem>() };
-            await LoadExceptionsAsync(httpClient, loadLogResponse.Items);
-            if (logRequest.TraceInsteadOfEvents == true)
+            var from = DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime);
+            var to = DateTimeOffset.FromUnixTimeSeconds(logRequest.ToTime);
+
+            var responseTruncated = false;
+            var items = new List<Api.LogItem>();
+            if (logRequest.QueryExceptions)
             {
-                await LoadTracesAsync(httpClient, loadLogResponse.Items);
+                if (await LoadExceptionsAsync(httpClient, items, from, to))
+                {
+                    responseTruncated = true;
+                }
             }
-            else
+            if (logRequest.QueryTraces)
             {
-                await LoadEventsAsync(httpClient, loadLogResponse.Items);
+                if (await LoadTracesAsync(httpClient, items, from, to))
+                {
+                    responseTruncated = true;
+                }
+            }
+            if (logRequest.QueryEvents)
+            {
+                if (await LoadEventsAsync(httpClient, items, from, to))
+                {
+                    responseTruncated = true;
+                }
+            }
+            if (logRequest.QueryMetrics)
+            {
+                if (await LoadMetricsAsync(httpClient, items, from, to))
+                {
+                    responseTruncated = true;
+                }
             }
 
-            var orderedItems = loadLogResponse.Items.OrderByDescending(i => i.Timestamp);
+            if (items.Count() >= maxResponseLogItems)
+            {
+                responseTruncated = true;
+            }
 
-            var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>() };
+            var orderedItems = items.OrderByDescending(i => i.Timestamp).Take(maxResponseLogItems);
+
+            var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>(), ResponseTruncated = responseTruncated };
             foreach (var item in orderedItems)
             {
                 if (!string.IsNullOrEmpty(item.SequenceId))
                 {
-                    var sequenceItem = logResponse.Items.Where(i => i.LogItemType == Api.LogItemTypes.Sequence && i.SequenceId == item.SequenceId).FirstOrDefault();
+                    var sequenceItem = logResponse.Items.Where(i => i.Type == Api.LogItemTypes.Sequence && i.SequenceId == item.SequenceId).FirstOrDefault();
                     if (sequenceItem == null)
                     {
                         sequenceItem = new Api.LogItem
                         {
-                            LogItemType = Api.LogItemTypes.Sequence,
+                            Timestamp = item.Timestamp,
+                            Type = Api.LogItemTypes.Sequence,
                             SequenceId = item.SequenceId,
                             SubItems = new List<Api.LogItem>()
                         };
@@ -73,52 +114,88 @@ namespace FoxIDs.Controllers
                     }
                     if (!string.IsNullOrEmpty(item.OperationId))
                     {
-                        var operationItem = sequenceItem.SubItems.Where(i => i.LogItemType == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
+                        var operationItem = sequenceItem.SubItems.Where(i => i.Type == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
                         if (operationItem == null)
                         {
                             operationItem = new Api.LogItem
                             {
-                                LogItemType = Api.LogItemTypes.Operation,
+                                Timestamp = item.Timestamp,
+                                Type = Api.LogItemTypes.Operation,
                                 OperationId = item.OperationId,
-                                SubItems = new List<Api.LogItem>()
+                                SubItems = new List<Api.LogItem>(),
+                                Values = new Dictionary<string, string>()
                             };
                             sequenceItem.SubItems.Add(operationItem);
                         }
+                        HandleOperationName(item, operationItem);
+                        HandleOperationTimestamp(item, operationItem);
                         operationItem.SubItems.Add(item);
                     }
                     else
                     {
+                        HandleSequenceTimestamp(item, sequenceItem);
                         sequenceItem.SubItems.Add(item);
                     }
                 }
                 else if (!string.IsNullOrEmpty(item.OperationId))
                 {
-                    var operationItem = logResponse.Items.Where(i => i.LogItemType == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
+                    var operationItem = logResponse.Items.Where(i => i.Type == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
                     if (operationItem == null)
                     {
                         operationItem = new Api.LogItem
                         {
-                            LogItemType = Api.LogItemTypes.Operation,
+                            Timestamp = item.Timestamp,
+                            Type = Api.LogItemTypes.Operation,
                             OperationId = item.OperationId,
-                            SubItems = new List<Api.LogItem>()
+                            SubItems = new List<Api.LogItem>(),
+                            Values = new Dictionary<string, string>()
                         };
                         logResponse.Items.Add(operationItem);
                     }
+                    HandleOperationName(item, operationItem);
+                    HandleOperationTimestamp(item, operationItem);
                     operationItem.SubItems.Add(item);
                 }
                 else
                 {
                     logResponse.Items.Add(item);
                 }
-
             }
 
             return Ok(logResponse);
         }
 
-        private async Task LoadExceptionsAsync(HttpClient httpClient, List<Api.LogItem> items)
+        private static void HandleSequenceTimestamp(Api.LogItem item, Api.LogItem sequenceItem)
         {
-            var exceptionsQuery = GetQuery("exceptions");
+            if (sequenceItem.Timestamp > item.Timestamp)
+            {
+                sequenceItem.Timestamp = item.Timestamp;
+            }
+        }
+
+        private static void HandleOperationTimestamp(Api.LogItem item, Api.LogItem operationItem)
+        {
+            if (operationItem.Timestamp > item.Timestamp)
+            {
+                operationItem.Timestamp = item.Timestamp;
+            }
+        }
+
+        private static void HandleOperationName(Api.LogItem item, Api.LogItem operationItem)
+        {
+            if (item.Values.TryGetValue(Constants.Logs.Results.OperationName, out var itemOperationName))
+            {
+                if (!operationItem.Values.ContainsKey(Constants.Logs.Results.OperationName))
+                {
+                    operationItem.Values.Add(Constants.Logs.Results.OperationName, itemOperationName);
+                }
+                item.Values.Remove(Constants.Logs.Results.OperationName);
+            }
+        }
+
+        private async Task<bool> LoadExceptionsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        {
+            var exceptionsQuery = GetQuery("exceptions", from, to);
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, exceptionsQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
@@ -126,7 +203,7 @@ namespace FoxIDs.Controllers
             {
                 var item = new Api.LogItem
                 {
-                    LogItemType = Convert.ToInt32(result["severityLevel"]?.ToString()) switch
+                    Type = Convert.ToInt32(result[Constants.Logs.Results.SeverityLevel]?.ToString()) switch
                     {
                         4 => Api.LogItemTypes.CriticalError,
                         3 => Api.LogItemTypes.Error,
@@ -135,34 +212,18 @@ namespace FoxIDs.Controllers
                     Timestamp = GetTimestamp(result),
                     SequenceId = GetSequenceId(result),
                     OperationId = GetOperationId(result),
-                    Values = new Dictionary<string, string>(result.Where(r => r.Key == "method" || r.Key == "details" || r.Key == "customDimensions" || r.Key == "operation_Name" || r.Key == "application_Version" || r.Key == "client_Type" || r.Key == "client_Ip" || r.Key == "cloud_RoleInstance").Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
+                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.Message || r.Key == Constants.Logs.Results.Details || r.Key == Constants.Logs.Results.CustomDimensions || r.Key == Constants.Logs.Results.OperationName
+                        || r.Key == Constants.Logs.Results.ClientType || r.Key == Constants.Logs.Results.ClientIp || r.Key == Constants.Logs.Results.CloudRoleInstance).Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
                 };
                 items.Add(item);
             }
+
+            return queryResults.Results.Count() >= maxQueryLogItems;
         }
 
-        private async Task LoadEventsAsync(HttpClient httpClient, List<Api.LogItem> items)
+        private async Task<bool> LoadTracesAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
         {
-            var eventsQuery = GetQuery("customEvents");
-            using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, eventsQuery);
-            var queryResults = await response.ToObjectAsync<QueryResults>();
-
-            foreach (var result in queryResults.Results)
-            {
-                var item = new Api.LogItem
-                {
-                    LogItemType = Api.LogItemTypes.Event,
-                    Timestamp = GetTimestamp(result),
-                    SequenceId = GetSequenceId(result),
-                    OperationId = GetOperationId(result),
-                    Values = new Dictionary<string, string>(result.Where(r => r.Key == "name" || r.Key == "operation_Name" || r.Key == "application_Version").Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
-                };
-                items.Add(item);
-            }
-        } 
-        private async Task LoadTracesAsync(HttpClient httpClient, List<Api.LogItem> items)
-        {
-            var tracesQuery = GetQuery("traces");
+            var tracesQuery = GetQuery("traces", from, to);
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, tracesQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
@@ -170,16 +231,64 @@ namespace FoxIDs.Controllers
             {
                 var item = new Api.LogItem
                 {
-                    LogItemType = Api.LogItemTypes.Trace,
+                    Type = Api.LogItemTypes.Trace,
                     Timestamp = GetTimestamp(result),
                     SequenceId = GetSequenceId(result),
                     OperationId = GetOperationId(result),
-                    Values = new Dictionary<string, string>(result.Where(r => r.Key == "message" || r.Key == "customDimensions" || r.Key == "operation_Name" || r.Key == "application_Version" || r.Key == "client_Type" || r.Key == "client_Ip" || r.Key == "cloud_RoleInstance").Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
+                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.Message || r.Key == Constants.Logs.Results.CustomDimensions || r.Key == Constants.Logs.Results.OperationName 
+                        || r.Key == Constants.Logs.Results.ClientType || r.Key == Constants.Logs.Results.ClientIp || r.Key == Constants.Logs.Results.CloudRoleInstance).Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
                 };
                 items.Add(item);
             }
+
+            return queryResults.Results.Count() >= maxQueryLogItems;
         }
-        private ApplicationInsightsQuery GetQuery(string fromType)
+
+        private async Task<bool> LoadEventsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        {
+            var eventsQuery = GetQuery("customEvents", from, to);
+            using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, eventsQuery);
+            var queryResults = await response.ToObjectAsync<QueryResults>();
+
+            foreach (var result in queryResults.Results)
+            {
+                var item = new Api.LogItem
+                {
+                    Type = Api.LogItemTypes.Event,
+                    Timestamp = GetTimestamp(result),
+                    SequenceId = GetSequenceId(result),
+                    OperationId = GetOperationId(result),
+                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.Name || r.Key == Constants.Logs.Results.OperationName).Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
+                };
+                items.Add(item);
+            }
+
+            return queryResults.Results.Count() >= maxQueryLogItems;
+        }
+
+        private async Task<bool> LoadMetricsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        {
+            var eventsQuery = GetQuery("customMetrics", from, to);
+            using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, eventsQuery);
+            var queryResults = await response.ToObjectAsync<QueryResults>();
+
+            foreach (var result in queryResults.Results)
+            {
+                var item = new Api.LogItem
+                {
+                    Type = Api.LogItemTypes.Metrics,
+                    Timestamp = GetTimestamp(result),
+                    SequenceId = GetSequenceId(result),
+                    OperationId = GetOperationId(result),
+                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.Name || r.Key == Constants.Logs.Results.Value || r.Key == Constants.Logs.Results.OperationName).Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
+                };
+                items.Add(item);
+            }
+
+            return queryResults.Results.Count() >= maxQueryLogItems;
+        }
+
+        private ApplicationInsightsQuery GetQuery(string fromType, DateTimeOffset from, DateTimeOffset to)
         {
             return new ApplicationInsightsQuery
             {
@@ -189,25 +298,31 @@ namespace FoxIDs.Controllers
 | extend trackName = customDimensions.trackName
 | extend sequenceId = customDimensions.sequenceId
 | where tenantName == '{RouteBinding.TenantName}' and trackName == '{RouteBinding.TrackName}'
-| limit 200
+| where timestamp between(datetime('{ToUtcString(from)}') .. datetime('{ToUtcString(to)}'))
+| limit {maxQueryLogItems}
 | order by timestamp desc"
             };
         }
 
+        private string ToUtcString(DateTimeOffset time)
+        {
+            return time.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture);
+        }
+
         private long GetTimestamp(IDictionary<string, object> result)
         {
-            var timestamp = result["timestamp"]?.ToString();
+            var timestamp = result[Constants.Logs.Results.Timestamp]?.ToString();
             return DateTimeOffset.Parse(timestamp).ToUnixTimeSeconds();
         }
 
         private string GetSequenceId(IDictionary<string, object> result)
         {
-            return result["sequenceId"]?.ToString();
+            return result[Constants.Logs.Results.SequenceId]?.ToString();
         }
 
         private string GetOperationId(IDictionary<string, object> result)
         {
-            return result["operation_Id"]?.ToString();
+            return result[Constants.Logs.Results.Operation_Id]?.ToString();
         }
 
         private async Task<string> GetAccessToken()

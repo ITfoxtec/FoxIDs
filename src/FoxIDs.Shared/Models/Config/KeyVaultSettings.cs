@@ -9,19 +9,5 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public string EndpointUri { get; set; }
-        /// <summary>
-        /// Key tenant id.
-        /// </summary>
-        public string TenantId { get; set; }
-        /// <summary>
-        /// Only used in development!
-        /// Key vault client id
-        /// </summary>
-        public string ClientId { get; set; }
-        /// <summary>
-        /// Only used in development!
-        /// Key vault client secret
-        /// </summary>
-        public string ClientSecret { get; set; }
     }
 }

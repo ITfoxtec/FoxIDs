@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
 
                 var sequenceString = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace($"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", accountAction == true ? "true" : "false" } });
+                logger.ScopeTrace(() => $"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", accountAction == true ? "true" : "false" } });
                 return (sequenceString: sequenceString, sequence: sequence);
             }
             catch (Exception ex)
@@ -98,7 +98,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace($"Sequence culture added, id '{sequence.Id}', culture '{culture}'.");
+                logger.ScopeTrace(() => $"Sequence culture added, id '{sequence.Id}', culture '{culture}'.");
             }
         }
         public async Task SetUiUpPartyIdAsync(string uiUpPartyId)
@@ -110,7 +110,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace($"Sequence culture added, id '{sequence.Id}', UiUpPartyId '{uiUpPartyId}'.");
+                logger.ScopeTrace(() => $"Sequence culture added, id '{sequence.Id}', UiUpPartyId '{uiUpPartyId}'.");
             }
         }
 
@@ -125,7 +125,7 @@ namespace FoxIDs.Logic
                     var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
                     if (sequence != null)
                     {
-                        logger.SetScopeProperty("sequenceId", sequence.Id);
+                        logger.SetScopeProperty(Constants.Logs.SequenceId, sequence.Id);
                     }
                     return Task.FromResult(sequence);
                 }
@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
                     HttpContext.Items[Constants.Sequence.Valid] = true;
                 }
 
-                logger.ScopeTrace($"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", sequence.AccountAction == true ? "true" : "false" } });
+                logger.ScopeTrace(() => $"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", sequence.AccountAction == true ? "true" : "false" } });
             }
             catch (SequenceException)
             {

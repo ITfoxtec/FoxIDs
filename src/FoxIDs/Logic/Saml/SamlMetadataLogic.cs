@@ -31,8 +31,8 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SpMetadataAsync(string partyId)
         {
-            logger.ScopeTrace("Up, SP Metadata request.");
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.ScopeTrace(() => "Up, SP Metadata request.");
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
 
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);
@@ -72,8 +72,8 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> IdPMetadataAsync(string partyId)
         {
-            logger.ScopeTrace("Down, IdP Metadata request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.ScopeTrace(() => "Down, IdP Metadata request.");
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);

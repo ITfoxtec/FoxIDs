@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
             var key = UpdateWaitPeriodKey(party.Id);
             if (await db.KeyExistsAsync(key))
             {
-                logger.ScopeTrace($"Up party '{party.Id}' not updated because another update is in progress.");
+                logger.ScopeTrace(() => $"Up party '{party.Id}' not updated because another update is in progress.");
                 return;
             }
             else
@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
                 }
 
                 await tenantRepository.SaveAsync(party);
-                logger.ScopeTrace($"Up party '{party.Id}' updated by OIDC discovery.", triggerEvent: true);
+                logger.ScopeTrace(() => $"Up party '{party.Id}' updated by OIDC discovery.", triggerEvent: true);
 
                 await db.KeyDeleteAsync(FailingUpdateCountKey(party.Id));
             }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Filters
@@ -45,7 +46,7 @@ namespace FoxIDs.Infrastructure.Filters
 
             protected virtual void SetHeaders(HttpResponse response)
             {
-                logger.ScopeTrace($"Adding http security headers. Is {(isHtmlContent ? string.Empty : "not")} view.");
+                logger.ScopeTrace(() => $"Adding http security headers. Is {(isHtmlContent ? string.Empty : "not")} view.");
 
                 response.SetHeader("X-Content-Type-Options", "nosniff");
                 response.SetHeader("Referrer-Policy", "no-referrer");
@@ -63,7 +64,7 @@ namespace FoxIDs.Infrastructure.Filters
                     response.SetHeader("X-Content-Security-Policy", csp);
                 }
 
-                logger.ScopeTrace($"Http security headers added.");
+                logger.ScopeTrace(() => $"Http security headers added.");
             }
 
             private bool IsHtmlContent(IActionResult result)

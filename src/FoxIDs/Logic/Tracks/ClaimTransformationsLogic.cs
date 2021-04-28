@@ -26,33 +26,40 @@ namespace FoxIDs.Logic
                 return Task.FromResult(new List<Claim>(claims));
             }
 
-            logger.ScopeTrace("Transform claims.");
+            logger.ScopeTrace(() => "Transform claims.");
             var transformedClaims = new List<Claim>(claims);
             var orderedTransformations = claimTransformations.OrderBy(t => t.Order);
             foreach(var transformation in orderedTransformations)
             {
-                switch (transformation.Type)
+                try
                 {
-                    case ClaimTransformTypes.Constant:
-                        transformedClaims.Add(ConstantTransformation(transformation));
-                        break;
-                    case ClaimTransformTypes.Match:
-                        transformedClaims.AddRange(MatchTransformation(transformation, transformedClaims));
-                        break;
-                    case ClaimTransformTypes.RegexMatch:
-                        transformedClaims.AddRange(RegexMatchTransformation(transformation, transformedClaims));
-                        break;
-                    case ClaimTransformTypes.Map:
-                        transformedClaims.AddRange(MapTransformation(transformation, transformedClaims));
-                        break;
-                    case ClaimTransformTypes.RegexMap:
-                        transformedClaims.AddRange(RegexMapTransformation(transformation, transformedClaims));
-                        break;
-                    case ClaimTransformTypes.Concatenate:
-                        transformedClaims.AddRange(ConcatenateTransformation(transformation, transformedClaims));
-                        break;
-                    default:
-                        throw new NotSupportedException($"Claim transformation type '{transformation.Type}' not supported.");
+                    switch (transformation.Type)
+                    {
+                        case ClaimTransformTypes.Constant:
+                            transformedClaims.Add(ConstantTransformation(transformation));
+                            break;
+                        case ClaimTransformTypes.Match:
+                            transformedClaims.AddRange(MatchTransformation(transformation, transformedClaims));
+                            break;
+                        case ClaimTransformTypes.RegexMatch:
+                            transformedClaims.AddRange(RegexMatchTransformation(transformation, transformedClaims));
+                            break;
+                        case ClaimTransformTypes.Map:
+                            transformedClaims.AddRange(MapTransformation(transformation, transformedClaims));
+                            break;
+                        case ClaimTransformTypes.RegexMap:
+                            transformedClaims.AddRange(RegexMapTransformation(transformation, transformedClaims));
+                            break;
+                        case ClaimTransformTypes.Concatenate:
+                            transformedClaims.AddRange(ConcatenateTransformation(transformation, transformedClaims));
+                            break;
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{transformation.Type}' not supported.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception($"Claim transform type '{transformation.Type}' with output claim '{transformation.ClaimOut}' failed.", ex);
                 }
             }
             return Task.FromResult(transformedClaims);

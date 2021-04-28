@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
-using System;
 
 namespace FoxIDs
 {
@@ -15,7 +14,10 @@ namespace FoxIDs
         {
             try
             {
-                return httpContext.GetRouteBinding();
+                if (httpContext.Items.ContainsKey(Constants.Routes.RouteBindingKey))
+                {
+                    return httpContext.GetRouteBinding();
+                }
             }
             catch { }
 

@@ -27,8 +27,9 @@ namespace FoxIDs.Models.Config
         public bool MasterSeedEnabled { get; set; }
 
         /// <summary>
-        /// Log global trace if true.
+        /// Only used in development!
+        /// The servers client credentials. 
         /// </summary>
-        public bool LogGlobalTrace { get; set; }
+        public ClientCredentialSettings ServerClientCredential { get; set; }
     }
 }

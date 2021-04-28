@@ -57,9 +57,6 @@
                         <button class="nav-link btn btn-link" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</button>
                     </li>
                 }
-                <li class="nav-item">
-                    <a class="nav-link" href="@trackSettingsHref"><span class="oi oi-cog" aria-hidden="true" title="Track settings"></span></a>
-                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="meNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <span class="oi oi-person" aria-hidden="true"></span>
@@ -98,8 +95,11 @@
                     <TenantLiNavLink href="certificates">
                         Certificates
                     </TenantLiNavLink>
+                    <TenantLiNavLink href="logs">
+                        Logs
+                    </TenantLiNavLink>
                     <TenantLiNavLink href="texts">
-                        Texts
+                        Text
                     </TenantLiNavLink>
                     @if (RouteBindingLogic.IsMasterTenant)
                     {
@@ -107,6 +107,9 @@
                             Risk Passwords
                         </TenantLiNavLink>
                     }
+                    <TenantLiNavLink href="tracksettings">
+                        Settings
+                    </TenantLiNavLink>
                 </ul>
             </div>
         </nav>

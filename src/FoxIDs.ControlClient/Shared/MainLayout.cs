@@ -1,4 +1,4 @@
-﻿using FoxIDs.Client.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Client.Logic;
 using FoxIDs.Models.Api;
 using FoxIDs.Client.Models.ViewModels;
@@ -18,7 +18,6 @@ namespace FoxIDs.Client.Shared
 {
     public partial class MainLayout
     {
-        private string trackSettingsHref;
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
         private bool createTenantDone;
@@ -63,7 +62,6 @@ namespace FoxIDs.Client.Shared
         protected override async Task OnInitializedAsync()
         {
             await RouteBindingLogic.InitRouteBindingAsync();
-            trackSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/tracksettings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnShowSelectTrackAsync += OnShowSelectTrackAsync;
         }

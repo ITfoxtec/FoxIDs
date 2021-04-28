@@ -31,11 +31,11 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
         {
-            logger.ScopeTrace("Up, OIDC Front channel logout.");
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.ScopeTrace(() => "Up, OIDC Front channel logout.");
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<OidcUpParty>(partyId);
-            logger.SetScopeProperty("upPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
             
             if (party.Client.DisableFrontChannelLogout)
             {
@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var frontChannelLogoutRequest = queryDictionary.ToObject<FrontChannelLogoutRequest>();
-            logger.ScopeTrace($"Up, Front channel logout request '{frontChannelLogoutRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Up, Front channel logout request '{frontChannelLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             frontChannelLogoutRequest.Validate();
             if (party.Client.FrontChannelLogoutSessionRequired)
             {
@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
             }
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
-            logger.ScopeTrace("Up, Successful OIDC Front channel logout request.", triggerEvent: true);
+            logger.ScopeTrace(() => "Up, Successful OIDC Front channel logout request.", triggerEvent: true);
             if (session != null)
             {
                 if (party.Client.FrontChannelLogoutSessionRequired)

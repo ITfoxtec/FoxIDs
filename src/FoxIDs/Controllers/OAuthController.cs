@@ -26,7 +26,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"Authorization response, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Authorization response, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"End session response, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"End session response, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -66,7 +66,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"Front channel logout, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Front channel logout, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -86,7 +86,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"Single Logout done, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Single Logout done, Up type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -115,7 +115,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Currently only exactly 1 to up-party is supported.");
                 }
 
-                logger.ScopeTrace($"Authorize request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"Authorize request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -136,7 +136,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"Token request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"Token request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -158,7 +158,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"UserInfo request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"UserInfo request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -187,7 +187,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Currently only exactly 1 to up-party is supported.");
                 }
 
-                logger.ScopeTrace($"End session, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"End session, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Oidc:
@@ -209,7 +209,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace($"Front Channel Logout Done, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"Front Channel Logout Done, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Oidc:

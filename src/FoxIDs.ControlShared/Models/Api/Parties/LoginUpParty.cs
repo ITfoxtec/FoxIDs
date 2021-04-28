@@ -33,7 +33,7 @@ namespace FoxIDs.Models.Api
         /// Default if required.
         /// </summary>
         [Required]
-        public LoginUpPartyLogoutConsent LogoutConsent { get; set; } = LoginUpPartyLogoutConsent.IfRequired;
+        public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
         /// <summary>
         /// Claim transforms.

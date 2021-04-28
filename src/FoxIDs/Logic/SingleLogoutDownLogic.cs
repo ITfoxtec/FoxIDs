@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
 
         public async Task<(bool, SingleLogoutSequenceData)> InitializeSingleLogoutAsync(UpPartyLink upPartyLink, DownPartySessionLink initiatingDownParty, IEnumerable<DownPartySessionLink> downPartyLinks, IEnumerable<ClaimAndValues> claims, IEnumerable<string> allowIframeOnDomains = null, bool hostedInIframe = false)
         {
-            logger.ScopeTrace("Initialize single logout.");
+            logger.ScopeTrace(() => "Initialize single logout.");
 
             downPartyLinks = downPartyLinks?.Where(p => p.SupportSingleLogout && (initiatingDownParty == null || p.Id != initiatingDownParty.Id));
             if (!(downPartyLinks?.Count() > 0) || !(claims?.Count() > 0))
@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> StartSingleLogoutAsync(SingleLogoutSequenceData sequenceData)
         {
-            logger.ScopeTrace("Start single logout.");
+            logger.ScopeTrace(() => "Start single logout.");
             return await HandleSingleLogoutAsync(sequenceData);
         }
       
@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
             }
 
             await sequenceLogic.RemoveSequenceDataAsync<SingleLogoutSequenceData>();
-            logger.ScopeTrace("Successful Single Logout.", triggerEvent: true);
+            logger.ScopeTrace(() => "Successful Single Logout.", triggerEvent: true);
 
             if (sequenceData.HostedInIframe)
             {
@@ -110,9 +110,9 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> ResponseUpPartyAsync(string upPartyName, PartyTypes upPartyType)
         {
-            logger.ScopeTrace($"Single Logout response, Up type {upPartyType}.");
+            logger.ScopeTrace(() => $"Single Logout response, Up type {upPartyType}.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, upPartyName);
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             switch (upPartyType)
             {

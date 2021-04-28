@@ -1,0 +1,93 @@
+﻿@inherits ComponentBase
+
+<div>
+
+    @if (Item.Type == LogItemTypes.CriticalError || Item.Type == LogItemTypes.Error || Item.Type == LogItemTypes.Warning)
+    {
+        <div><b>@(Item.Type == LogItemTypes.CriticalError ? "Critical error" : Item.Type.ToString())</b> @Item.Timestamp.TimeToString()</div>
+
+        @if (Item.Details != null)
+        {
+            <ul class="list-group">
+                @foreach (var detailItem in Item.Details)
+                {
+                    <li class="list-group-item" style="overflow:auto">
+                        <div class="row">
+                            <div class="col-11">
+                                <div>@detailItem.Name</div>
+                                @if (detailItem.ShowDetails)
+                                {
+                                    @foreach (var detail in detailItem.Details)
+                                    {
+                                        <div>@detail</div>
+                                    }
+                                }
+                            </div>
+                            <div class="col-1 text-right">
+                                @if (detailItem.ShowDetails)
+                                {
+                                    <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => detailItem.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => detailItem.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
+                                }
+                            </div>
+                        </div>
+
+
+                    </li>
+                }
+            </ul>
+        }
+
+        @foreach (var value in Item.Values)
+        {
+            <div>@value.Key: @value.Value</div>
+        }
+    }
+    else if (Item.Type == LogItemTypes.Trace)
+    {
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
+
+        @if (Item.Details != null)
+        {
+            <ul class="list-group">
+                @foreach (var detailItem in Item.Details)
+                {
+                    <li class="list-group-item" style="overflow:auto">
+                        <div>@detailItem.Name</div>
+                    </li>
+                }
+            </ul>
+        }
+
+        @foreach (var value in Item.Values)
+        {
+            <div>@value.Key: @value.Value</div>
+        }
+    }
+    else if (Item.Type == LogItemTypes.Event)
+    {
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString(), @Item.Values.GetValue(Constants.Logs.Results.Name)</div>
+    }
+    else if (Item.Type == LogItemTypes.Metrics)
+    {
+        <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
+
+        @if (Item.Values.TryGetValue(Constants.Logs.Results.Name, out var metricsName))
+        {
+            <div>@metricsName</div>
+        }
+        @if (Item.Values.TryGetValue(Constants.Logs.Results.Value, out var metricsValue))
+        {
+            <div>Value: @metricsValue</div>
+        }
+    }
+</div>
+
+@code {
+    [Parameter]
+    public LogItemViewModel Item { get; set; }
+}
+

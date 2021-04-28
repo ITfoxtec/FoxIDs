@@ -80,8 +80,8 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
 
-            scopedLogger.SetScopeProperty("domain", httpContext.Request.Host.ToUriComponent());
-            scopedLogger.SetScopeProperty("userAgent", httpContext.Request.Headers["User-Agent"].ToString());
+            scopedLogger.SetScopeProperty(Constants.Logs.Domain, httpContext.Request.Host.ToUriComponent());
+            scopedLogger.SetScopeProperty(Constants.Logs.UserAgent, httpContext.Request.Headers["User-Agent"].ToString());
 
             var routeAction = route[route.Length - 1];
             if (routeAction.StartsWith('_'))
@@ -114,7 +114,7 @@ namespace FoxIDs.Infrastructure.Hosting
             var sequence = await SetSequanceAsync(httpContext, routeAction);
             if (sequence != null && !sequence.Culture.IsNullOrEmpty())
             {
-                scopedLogger.SetScopeProperty("sequence_culture", sequence.Culture);
+                scopedLogger.SetScopeProperty(Constants.Logs.SequenceCulture, sequence.Culture);
                 return localizationLogic.GetSupportedCulture(new[] { sequence.Culture }, routeBinding);
             }
             else

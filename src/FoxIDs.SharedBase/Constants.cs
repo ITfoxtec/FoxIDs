@@ -48,6 +48,48 @@ namespace FoxIDs
             public const string ApiControllerPreTenantTrackKey = "t";
         }
 
+        public static class Logs
+        {
+            public const string TenantName = "f_TenantName";
+            public const string TrackName = "f_TrackName";
+            public const string GrantType = "f_GrantType";
+            public const string Domain = "f_Domain";
+            public const string UserAgent = "f_UserAgent";
+            public const string UpPartyId = "f_UpPartyId";
+            public const string UpPartyClientId = "f_UpPartyClientId";
+            public const string UpPartyStatus = "f_UpPartyStatus";
+            public const string DownPartyId = "f_DownPartyId";
+            public const string DownPartyClientId = "f_DownPartyClientId";
+            public const string SequenceId = "f_SequenceId";
+            public const string SequenceCulture = "f_SequenceCulture";
+            public const string Issuer = "f_Issuer";
+            public const string Status = "f_Status";
+            public const string SessionId = "f_SessionId";
+            public const string ExternalSessionId = "f_ExternalSessionId";
+            public const string UserId = "f_UserId";
+            public const string Email = "f_Email";
+
+            public static class Results
+            {
+                public const int CustomDimensionsValueMaxLength = 100;
+
+                public const string Name = "name";
+                public const string Value = "value";
+                public const string Message = "message";
+                public const string Details = "details";
+                public const string CustomDimensions = "customDimensions";
+                public const string OperationName = "operation_Name";
+                public const string SeverityLevel = "severityLevel";
+                public const string Timestamp = "timestamp";
+                public const string Operation_Id = "operation_Id";
+                public const string RequestId = "RequestId";
+                public const string RequestPath = "RequestPath";                
+                public const string ClientType = "client_Type";
+                public const string ClientIp = "client_Ip";
+                public const string CloudRoleInstance = "cloud_RoleInstance";
+            }
+        }
+
         public static class Models
         {
             public const int MasterPartitionIdLength = 30;

@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum LoginUpPartyLogoutConsent
+    public enum LoginUpPartyLogoutConsents
     {
         Always,
         IfRequired,

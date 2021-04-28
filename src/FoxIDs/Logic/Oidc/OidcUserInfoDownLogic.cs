@@ -27,8 +27,8 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> UserInfoRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Down, OIDC UserInfo request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.ScopeTrace(() => "Down, OIDC UserInfo request.");
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
 
             try
@@ -78,7 +78,7 @@ namespace FoxIDs.Logic
             try
             {
                 var accessToken = HttpContext.Request.Headers.GetAuthorizationHeaderBearer();
-                logger.ScopeTrace($"Access token '{accessToken}'.");
+                logger.ScopeTrace(() => $"Access token '{accessToken}'.");
 
                 var claimsPrincipal = await jwtLogic.ValidateTokenAsync(accessToken);
                 return claimsPrincipal.Claims;

@@ -112,7 +112,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 services.AddSingleton<TokenCredential>(serviceProvider =>
                 {
-                    return new ClientSecretCredential(settings.KeyVault.TenantId, settings.KeyVault.ClientId, settings.KeyVault.ClientSecret);
+                    return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
                 });
             }
 

@@ -393,7 +393,8 @@
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "MasterSeedEnabled": false,
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]"
+        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
+        "Settings:ApplicationInsights:AppId": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).AppId]"
       }
     },
     {
@@ -436,7 +437,8 @@
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
-        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]"
+        "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
+        "Settings:ApplicationInsights:AppId": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).AppId]"
       }
     },
     {
@@ -537,6 +539,20 @@
       "properties": {
         "value": "[parameters('sendgridApiKey')]"
       }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2017-05-01",
+      "name": "[guid(uniqueString(variables('appInsightsName'), 'read', variables('foxidsControlSiteName')))]",
+      "scope": "[format('Microsoft.Insights/components/{0}', variables('appInsightsName'))]",
+      "properties": {
+        "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
+        "principalId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]"
+      },
+      "dependsOn": [
+        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
+        "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]"
+      ]
     }
   ]
 }

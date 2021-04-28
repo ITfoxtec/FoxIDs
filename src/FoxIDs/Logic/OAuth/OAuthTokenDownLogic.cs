@@ -19,37 +19,40 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
         private readonly SecretHashLogic secretHashLogic;
+        private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, ClaimTransformationsLogic claimTransformationsLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.jwtDownLogic = jwtDownLogic;
             this.secretHashLogic = secretHashLogic;
+            this.claimTransformationsLogic = claimTransformationsLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
         }
 
         public virtual async Task<IActionResult> TokenRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Down, OAuth Token request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.ScopeTrace(() => "Down, OAuth Token request.");
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
                 throw new NotSupportedException("Party Client not configured.");
             }
-            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             var formDictionary = HttpContext.Request.Form.ToDictionary();
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
-            var clientCredentials = formDictionary.ToObject<ClientCredentials>();
+            logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
-            logger.ScopeTrace($"Token request '{tokenRequest.ToJsonIndented()}'.");
+            var clientCredentials = formDictionary.ToObject<ClientCredentials>();
+            logger.ScopeTrace(() => $"Down, Client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             try
             {
-                logger.SetScopeProperty("GrantType", tokenRequest.GrantType);
+                logger.SetScopeProperty(Constants.Logs.GrantType, tokenRequest.GrantType);
                 switch (tokenRequest.GrantType)
                 {
                     case IdentityConstants.GrantTypes.AuthorizationCode:
@@ -59,7 +62,7 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
                         await ValidateSecret(party.Client, tokenRequest, clientCredentials);
-                        return await ClientCredentialsGrant(party.Client, tokenRequest);
+                        return await ClientCredentialsGrant(party, tokenRequest);
                     case IdentityConstants.GrantTypes.Delegation:
                         throw new NotImplementedException();
 
@@ -140,7 +143,7 @@ namespace FoxIDs.Logic
                 {
                     if (await secretHashLogic.ValidateSecretAsync(secret, clientCredentials.ClientSecret))
                     {
-                        logger.ScopeTrace($"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"Down, OAuth Client id '{tokenRequest.ClientId}. Client secret valid.", triggerEvent: true);
                         return;
                     }
                 }
@@ -184,30 +187,38 @@ namespace FoxIDs.Logic
             throw new NotImplementedException();
         }
 
-        protected virtual async Task<IActionResult> ClientCredentialsGrant(TClient client, TokenRequest tokenRequest)
+        protected virtual async Task<IActionResult> ClientCredentialsGrant(TParty party, TokenRequest tokenRequest)
         {
-            logger.ScopeTrace("Down, OAuth Client Credentials grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "Down, OAuth Client Credentials grant accepted.", triggerEvent: true);
+            if (party.Client == null)
+            {
+                throw new NotSupportedException("Party Client not configured.");
+            }
 
             var tokenResponse = new TokenResponse
             {
                 TokenType = IdentityConstants.TokenTypes.Bearer,
-                ExpiresIn = client.AccessTokenLifetime,
+                ExpiresIn = party.Client.AccessTokenLifetime,
             };
 
             string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
 
             var claims = new List<Claim>();
-            claims.AddClaim(JwtClaimTypes.Subject, $"c_{client.ClientId}");
+            claims.AddClaim(JwtClaimTypes.Subject, $"c_{party.Client.ClientId}");
             claims.AddClaim(JwtClaimTypes.AuthTime, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
             //TODO should the amr claim be included???
             //claims.AddClaim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
+            logger.ScopeTrace(() => $"Down, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
             var scopes = tokenRequest.Scope.ToSpaceList();
 
-            tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
+            tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
 
-            logger.ScopeTrace($"Token response '{tokenResponse.ToJsonIndented()}'.");
-            logger.ScopeTrace("Down, OAuth Token response.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
             return new JsonResult(tokenResponse);
         }
     }

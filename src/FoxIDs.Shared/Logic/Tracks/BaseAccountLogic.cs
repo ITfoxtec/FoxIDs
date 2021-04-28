@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool disableAccount = false)
         {
-            logger.ScopeTrace($"Creating user '{email}', Route '{RouteBinding?.Route}'.");
+            logger.ScopeTrace(() => $"Creating user '{email}', Route '{RouteBinding?.Route}'.");
 
             email = email?.ToLower();
             ValidateEmail(email);
@@ -55,7 +55,7 @@ namespace FoxIDs.Logic
             user.ChangePassword = changePassword;
             await tenantRepository.CreateAsync(user);
 
-            logger.ScopeTrace($"User '{email}' created, with user id '{user.UserId}'.");
+            logger.ScopeTrace(() => $"User '{email}' created, with user id '{user.UserId}'.");
 
             return user;
         }

@@ -34,7 +34,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start confirmation verification.");
+                logger.ScopeTrace(() => "Start confirmation verification.");
 
                 var verified = await accountActionLogic.VerifyConfirmationAsync();
 
@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start forgot password.");
+                logger.ScopeTrace(() => "Start forgot password.");
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 if (uiLoginUpParty.DisableResetPassword)
@@ -82,7 +82,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Forgot password receipt.");
+                logger.ScopeTrace(() => "Forgot password receipt.");
 
                 await accountActionLogic.SendResetPasswordEmailAsync(forgotPassword.Email);
 
@@ -108,7 +108,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Start reset password.");
+                logger.ScopeTrace(() => "Start reset password.");
 
                 (var verified, _) = await accountActionLogic.VerifyResetPasswordAsync();
 
@@ -137,7 +137,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace("Resetting password.");
+                logger.ScopeTrace(() => "Resetting password.");
 
                 (var verified, var user) = await accountActionLogic.VerifyResetPasswordAsync();
 
@@ -169,29 +169,29 @@ namespace FoxIDs.Controllers
                 }
                 catch (PasswordLengthException plex)
                 {
-                    logger.ScopeTrace(plex.Message);
+                    logger.ScopeTrace(() => plex.Message);
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
-                    logger.ScopeTrace(pcex.Message);
+                    logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
-                    logger.ScopeTrace(pecex.Message);
+                    logger.ScopeTrace(() => pecex.Message);
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use the email or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
-                    logger.ScopeTrace(pucex.Message);
+                    logger.ScopeTrace(() => pucex.Message);
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
-                    logger.ScopeTrace(prex.Message);
+                    logger.ScopeTrace(() => prex.Message);
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 

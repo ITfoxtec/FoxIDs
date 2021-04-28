@@ -89,6 +89,12 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Api.SendEmail, SendEmail>()
                 .ReverseMap();
+
+            CreateMap<Api.LogSettings, ScopedLogger>()
+                .ReverseMap();
+
+            CreateMap<Api.LogStreamSettings, ScopedStreamLogger>()
+                .ReverseMap();
         }
 
         private void UpPartyMapping()

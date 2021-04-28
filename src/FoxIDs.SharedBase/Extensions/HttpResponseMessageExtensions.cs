@@ -1,11 +1,12 @@
-﻿using FoxIDs.Client.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using ITfoxtec.Identity;
 using System;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace FoxIDs.Client
+namespace FoxIDs
 {
     public static class HttpResponseMessageExtensions
     {
@@ -17,6 +18,11 @@ namespace FoxIDs.Client
         /// <returns></returns>
         public static async Task<T> ToObjectAsync<T>(this HttpResponseMessage response)
         {
+            if(response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception($"Error, Bad request. StatusCode={response.StatusCode}");
+            }
+
             var responseText = await response.Content.ReadAsStringAsync();
             if(responseText.IsNullOrWhiteSpace())
             {

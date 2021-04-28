@@ -38,8 +38,6 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
-
-                        scopedLogger.SetScopeProperty(Constants.Routes.RouteBindingKey, new { routeBinding.TenantName, routeBinding.TrackName }.ToJson());
                     }
 
                     await next(httpContext);
@@ -71,6 +69,8 @@ namespace FoxIDs.Infrastructure.Hosting
         private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, string partyNameAndBinding, bool acceptUnknownParty)
         {
             var track = await GetTrackAsync(tenantRepository, trackIdKey);
+            scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
+            scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
             {
                 RouteUrl = $"{trackIdKey.TenantName}/{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",

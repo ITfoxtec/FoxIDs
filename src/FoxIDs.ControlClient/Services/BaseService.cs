@@ -1,4 +1,6 @@
 ﻿using FoxIDs.Client.Logic;
+using ITfoxtec.Identity;
+using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -45,7 +47,7 @@ namespace FoxIDs.Client.Services
 
         protected async Task<T> GetAsync<T>(string url)
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}");
+            using var response = await httpClient.GetAsync(await GetTenantApiUrlAsync(url));
             return await response.ToObjectAsync<T>();
         }
 
@@ -53,6 +55,14 @@ namespace FoxIDs.Client.Services
         {
             using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
             return await response.ToObjectAsync<T>();
+        }
+
+        protected async Task<TResponse> GetAsync<TRequest, TResponse>(string url, TRequest request)
+        {
+            var requestItems = request.ToDictionary();
+            var requestUrl = QueryHelpers.AddQueryString(await GetTenantApiUrlAsync(url), requestItems);
+            using var response = await httpClient.GetAsync(requestUrl);
+            return await response.ToObjectAsync<TResponse>();
         }
 
         protected async Task<T> GetAsync<T>(string url, string value1, string value2, string parmName1, string parmName2)
@@ -85,7 +95,7 @@ namespace FoxIDs.Client.Services
 
         protected async Task DeleteAsync(string url)
         {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}");
+            await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
         }
 
         protected async Task DeleteAsync(string url, string value, string parmName = "name")

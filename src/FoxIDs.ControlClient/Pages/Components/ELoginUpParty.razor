@@ -57,9 +57,9 @@
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
                 <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
-                    <option value="@LoginUpPartyLogoutConsent.IfRequired">If required</option>
-                    <option value="@LoginUpPartyLogoutConsent.Always">Always</option>
-                    <option value="@LoginUpPartyLogoutConsent.Never">Never</option>
+                    <option value="@LoginUpPartyLogoutConsents.IfRequired">If required</option>
+                    <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
+                    <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
                 </FInputSelect>
 
                 <UpPartySessionLifetime Model="loginUpParty.Form.Model" ShowAdvanced="loginUpParty.ShowAdvanced" />

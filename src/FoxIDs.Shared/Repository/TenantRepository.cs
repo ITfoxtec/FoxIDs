@@ -1,6 +1,5 @@
 ﻿using ITfoxtec.Identity;
 using FoxIDs.Models;
-using Model = FoxIDs.Models;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents.Linq;
@@ -117,8 +116,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -143,8 +142,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -169,8 +168,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - create type '{typeof(T)}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - create type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -195,8 +194,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - update type '{typeof(T)}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - update type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -212,7 +211,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var response = await client.UpsertDocumentAsync(GetCollectionLink<T>(), item, new RequestOptions { PartitionKey = new PartitionKey(item.PartitionId) });
+                var response = await client.UpsertDocumentAsync(GetCollectionLink<T>(), item, new RequestOptions { IndexingDirective = IndexingDirective.Exclude, PartitionKey = new PartitionKey(item.PartitionId) });
                 totalRU += response.RequestCharge;
             }
             catch (Exception ex)
@@ -221,8 +220,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - save type '{typeof(T)}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -249,8 +248,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -284,8 +283,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - delete type '{typeof(T)}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -320,8 +319,8 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                scopedLogger.ScopeMetric($"CosmosDB RU, tenant - delete list type '{typeof(T)}'.", totalRU);
+                var scopedLogger = GetScopedLogger();
+                scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete list type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
@@ -374,6 +373,24 @@ namespace FoxIDs.Repository
             else
             {
                 return collectionUri;
+            }
+        }
+
+        private TelemetryScopedLogger GetScopedLogger()
+        {
+            return httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+        }
+
+        private IDictionary<string, string> GetProperties()
+        {
+            var routeBinding = httpContextAccessor.HttpContext.TryGetRouteBinding();
+            if (routeBinding != null)
+            {
+                return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };
+            }
+            else
+            {
+                return null;
             }
         }
     }

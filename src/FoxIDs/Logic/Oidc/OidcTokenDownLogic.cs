@@ -19,7 +19,7 @@ namespace FoxIDs.Logic
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic;
 
-        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, SecretHashLogic secretHashLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, jwtDownLogic, secretHashLogic, oauthResourceScopeDownLogic, httpContextAccessor)
+        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, SecretHashLogic secretHashLogic, ClaimTransformationsLogic claimTransformationsLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, jwtDownLogic, secretHashLogic, claimTransformationsLogic, oauthResourceScopeDownLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
@@ -30,27 +30,31 @@ namespace FoxIDs.Logic
 
         public override async Task<IActionResult> TokenRequestAsync(string partyId)
         {
-            logger.ScopeTrace("Down, OIDC Token request.");
-            logger.SetScopeProperty("downPartyId", partyId);
+            logger.ScopeTrace(() => "Down, OIDC Token request.");
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
                 throw new NotSupportedException("Party Client not configured.");
             }
-            logger.SetScopeProperty("downPartyClientId", party.Client.ClientId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             var formDictionary = HttpContext.Request.Form.ToDictionary();
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
-
-            logger.ScopeTrace($"Token request '{tokenRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             var clientCredentials = formDictionary.ToObject<ClientCredentials>();
+            logger.ScopeTrace(() => $"Down, Client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             var codeVerifierSecret = party.Client.RequirePkce ? formDictionary.ToObject<CodeVerifierSecret>() : null;
+            if (codeVerifierSecret != null)
+            {
+                logger.ScopeTrace(() => $"Down, Code verifier secret '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            }
 
             try
             {
-                logger.SetScopeProperty("GrantType", tokenRequest.GrantType);
+                logger.SetScopeProperty(Constants.Logs.GrantType, tokenRequest.GrantType);
                 switch (tokenRequest.GrantType)
                 {
                     case IdentityConstants.GrantTypes.AuthorizationCode:
@@ -65,7 +69,7 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
                         await ValidateSecret(party.Client, tokenRequest, clientCredentials);
-                        return await ClientCredentialsGrant(party.Client, tokenRequest);
+                        return await ClientCredentialsGrant(party, tokenRequest);
                     case IdentityConstants.GrantTypes.Delegation:
                         throw new NotImplementedException();
 
@@ -87,7 +91,7 @@ namespace FoxIDs.Logic
             {
                 await ValidatePkce(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);
             }
-            logger.ScopeTrace("Down, OIDC Authorization code grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "Down, OIDC Authorization code grant accepted.", triggerEvent: true);
 
             var tokenResponse = new TokenResponse
             {
@@ -108,15 +112,15 @@ namespace FoxIDs.Logic
                 tokenResponse.RefreshToken = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
             }
 
-            logger.ScopeTrace($"Token response '{tokenResponse.ToJsonIndented()}'.");
-            logger.ScopeTrace("Down, OIDC Token response.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
             return new JsonResult(tokenResponse);
         }
 
         protected override async Task<IActionResult> RefreshTokenGrant(TClient client, TokenRequest tokenRequest)
         {
             (var refreshTokenGrant, var newRefreshToken) = await oauthRefreshTokenGrantDownLogic.ValidateAndUpdateRefreshTokenGrantAsync(client, tokenRequest.RefreshToken);
-            logger.ScopeTrace("Down, OIDC Refresh Token grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "Down, OIDC Refresh Token grant accepted.", triggerEvent: true);
 
             var scopes = refreshTokenGrant.Scope.ToSpaceList();
             if (!tokenRequest.Scope.IsNullOrEmpty())
@@ -149,8 +153,8 @@ namespace FoxIDs.Logic
                 tokenResponse.RefreshToken = newRefreshToken;
             }
 
-            logger.ScopeTrace($"Token response '{tokenResponse.ToJsonIndented()}'.");
-            logger.ScopeTrace("Down, OIDC Token response.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
             return new JsonResult(tokenResponse);
         }
     }

@@ -29,9 +29,9 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
         {
-            logger.ScopeTrace("Up, Login redirect.");
+            logger.ScopeTrace(() => "Up, Login redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
-            logger.SetScopeProperty("upPartyId", partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             await loginRequest.ValidateObjectAsync();
 
@@ -51,12 +51,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
         {
-            logger.ScopeTrace("Up, Login response.");
+            logger.ScopeTrace(() => "Up, Login response.");
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
-            logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            logger.ScopeTrace($"Response, Down type {sequenceData.DownPartyLink.Type}.");
+            logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:
@@ -74,12 +74,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseErrorAsync(LoginUpSequenceData sequenceData, LoginSequenceError error, string errorDescription = null)
         {
-            logger.ScopeTrace("Login error response.");
+            logger.ScopeTrace(() => "Login error response.");
 
             await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-            logger.SetScopeProperty("upPartyId", sequenceData.UpPartyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            logger.ScopeTrace($"Response, Down type '{sequenceData.DownPartyLink.Type}'.");
+            logger.ScopeTrace(() => $"Response, Down type '{sequenceData.DownPartyLink.Type}'.");
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

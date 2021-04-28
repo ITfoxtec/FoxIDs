@@ -51,10 +51,7 @@ namespace FoxIDs.Infrastructure
         }
         public void Trace(string message, IDictionary<string, string> properties = null)
         {
-            if(settings.LogGlobalTrace)
-            {
-                telemetryClient.TrackTrace(message, SeverityLevel.Verbose, properties);
-            }
+            telemetryClient.TrackTrace(message, SeverityLevel.Verbose, properties);
         }
 
         public void Metric(string message, double value, IDictionary<string, string> properties = null)

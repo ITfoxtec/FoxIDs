@@ -47,5 +47,7 @@ namespace FoxIDs.Models
         public List<string> AllowIframeOnDomains { get; set; }
 
         public SendEmail SendEmail { get; set; }
+
+        public Logging Logging { get; set; }
     }
 }

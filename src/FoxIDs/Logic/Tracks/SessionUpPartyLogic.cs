@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
 
         public async Task<string> CreateOrUpdateSessionAsync<T>(T upParty, DownPartySessionLink newDownPartyLink, List<Claim> claims, string externalSessionId, string idToken = null) where T : UpParty
         {
-            logger.ScopeTrace($"Create or update session up-party, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Create or update session up-party, Route '{RouteBinding.Route}'.");
 
             var sessionClaims = FilterClaims(claims);
 
@@ -47,13 +47,13 @@ namespace FoxIDs.Logic
             {
                 var sessionValid = SessionValid(upParty, session);
 
-                logger.ScopeTrace($"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
                     var userId = sessionClaims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
                     {
-                        logger.ScopeTrace("Authenticated user and requested user do not match.");
+                        logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
                         // TODO invalid user login
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                     }
                     session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                     await sessionCookieRepository.SaveAsync(upParty, session, null);
-                    logger.ScopeTrace($"Session updated up-party, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
+                    logger.ScopeTrace(() => $"Session updated up-party, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
 
                     return session.SessionId;
                 }
@@ -84,19 +84,19 @@ namespace FoxIDs.Logic
                 if (!sessionEnabled)
                 {
                     await sessionCookieRepository.DeleteAsync(upParty);
-                    logger.ScopeTrace($"Session deleted, Session id '{session.SessionId}'.");
+                    logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
                 }
             }
 
             if (sessionEnabled)
             {
-                logger.ScopeTrace($"Create session up-party, External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"Create session up-party, External Session id '{externalSessionId}', Route '{RouteBinding.Route}'.");
                 session = new SessionUpPartyCookie();
                 updateAction(session);
                 session.LastUpdated = session.CreateTime;
 
                 await sessionCookieRepository.SaveAsync(upParty, session, null);
-                logger.ScopeTrace($"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
+                logger.ScopeTrace(() => $"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
 
                 return session.SessionId;
             }
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
 
         public async Task<SessionUpPartyCookie> GetSessionAsync<T>(T upParty) where T : UpParty
         {
-            logger.ScopeTrace($"Get session up-party, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Get session up-party, Route '{RouteBinding.Route}'.");
 
             var session = await sessionCookieRepository.GetAsync(upParty);
             if (session != null)
@@ -121,22 +121,22 @@ namespace FoxIDs.Logic
                 var sessionEnabled = SessionEnabled(upParty);
                 var sessionValid = SessionValid(upParty, session);
 
-                logger.ScopeTrace($"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
+                logger.ScopeTrace(() => $"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    logger.SetScopeProperty("sessionId", session.SessionId);
-                    logger.SetScopeProperty("userId", session.UserId);
-                    logger.SetScopeProperty("email", session.Email);
-                    logger.SetScopeProperty("externalSessionId", session.ExternalSessionId);
+                    logger.SetScopeProperty(Constants.Logs.SessionId, session.SessionId);
+                    logger.SetScopeProperty(Constants.Logs.UserId, session.UserId);
+                    logger.SetScopeProperty(Constants.Logs.Email, session.Email);
+                    logger.SetScopeProperty(Constants.Logs.ExternalSessionId, session.ExternalSessionId);
                     return session;
                 }
 
                 await sessionCookieRepository.DeleteAsync(upParty);
-                logger.ScopeTrace($"Session deleted up-party, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted up-party, Session id '{session.SessionId}'.");
             }
             else
             {
-                logger.ScopeTrace("Session up-party do not exists.");
+                logger.ScopeTrace(() => "Session up-party do not exists.");
             }
 
             return null;
@@ -144,17 +144,17 @@ namespace FoxIDs.Logic
 
         public async Task<SessionUpPartyCookie> DeleteSessionAsync<T>(T upParty, SessionUpPartyCookie session = null) where T : UpParty
         {
-            logger.ScopeTrace($"Delete session up-party, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete session up-party, Route '{RouteBinding.Route}'.");
             session = session ?? await sessionCookieRepository.GetAsync(upParty);
             if (session != null)
             {
                 await sessionCookieRepository.DeleteAsync(upParty);
-                logger.ScopeTrace($"Session deleted up-party, Session id '{session.SessionId}'.");
+                logger.ScopeTrace(() => $"Session deleted up-party, Session id '{session.SessionId}'.");
                 return session;
             }
             else
             {
-                logger.ScopeTrace("Session up-party do not exists.");
+                logger.ScopeTrace(() => "Session up-party do not exists.");
                 return null;
             }
         }

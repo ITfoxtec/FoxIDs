@@ -34,7 +34,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     var party = await tenantRepository.GetAsync<OAuthDownParty>(routeBinding.DownParty.Id);
                     if (party?.AllowCorsOrigins != null && party.AllowCorsOrigins.Count() > 0)
                     {
-                        logger.ScopeTrace($"Get CORS policy for origin '{origin}'.");
+                        logger.ScopeTrace(() => $"Get CORS policy for origin '{origin}'.");
                         var corsPolicyBuilder = new CorsPolicyBuilder();
 
                         corsPolicyBuilder.WithOrigins(party.AllowCorsOrigins.ToArray())
@@ -43,7 +43,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
                         corsPolicyBuilder.SetPreflightMaxAge(new TimeSpan(0, 0, settings.CorsPreflightMaxAge));
 
-                        logger.ScopeTrace("CORS policy added.");
+                        logger.ScopeTrace(() => "CORS policy added.");
                         return corsPolicyBuilder.Build();
                     }
                 }

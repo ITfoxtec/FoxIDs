@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using FoxIDs.Client.Infrastructure;
+using FoxIDs.Infrastructure;
 using FoxIDs.Client.Services;
 using Microsoft.AspNetCore.Components.Forms;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;

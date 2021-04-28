@@ -50,27 +50,29 @@ namespace FoxIDs
 
         public static class Logs
         {
-            public const string TenantName = "tenantName";
-            public const string TrackName = "trackName";
-            public const string GrantType = "grantType";
-            public const string Domain = "domain";
-            public const string UserAgent = "userAgent";
-            public const string UpPartyId = "upPartyId";
-            public const string UpPartyClientId = "upPartyClientId";
-            public const string UpPartyStatus = "upPartyStatus";
-            public const string DownPartyId = "downPartyId";
-            public const string DownPartyClientId = "downPartyClientId";
-            public const string SequenceId = "sequenceId";
-            public const string SequenceCulture = "sequenceCulture";
-            public const string Issuer = "issuer";
-            public const string Status = "status";
-            public const string SessionId = "sessionId";
-            public const string ExternalSessionId = "externalSessionId";
-            public const string UserId = "userId";
-            public const string Email = "email";
+            public const string TenantName = "f_TenantName";
+            public const string TrackName = "f_TrackName";
+            public const string GrantType = "f_GrantType";
+            public const string Domain = "f_Domain";
+            public const string UserAgent = "f_UserAgent";
+            public const string UpPartyId = "f_UpPartyId";
+            public const string UpPartyClientId = "f_UpPartyClientId";
+            public const string UpPartyStatus = "f_UpPartyStatus";
+            public const string DownPartyId = "f_DownPartyId";
+            public const string DownPartyClientId = "f_DownPartyClientId";
+            public const string SequenceId = "f_SequenceId";
+            public const string SequenceCulture = "f_SequenceCulture";
+            public const string Issuer = "f_Issuer";
+            public const string Status = "f_Status";
+            public const string SessionId = "f_SessionId";
+            public const string ExternalSessionId = "f_ExternalSessionId";
+            public const string UserId = "f_UserId";
+            public const string Email = "f_Email";
 
             public static class Results
             {
+                public const int CustomDimensionsValueMaxLength = 100;
+
                 public const string Name = "name";
                 public const string Value = "value";
                 public const string Message = "message";
@@ -81,6 +83,8 @@ namespace FoxIDs
                 public const string Timestamp = "timestamp";
                 public const string SequenceId = "sequenceId";
                 public const string Operation_Id = "operation_Id";
+                public const string RequestId = "RequestId";
+                public const string RequestPath = "RequestPath";                
                 public const string ClientType = "client_Type";
                 public const string ClientIp = "client_Ip";
                 public const string CloudRoleInstance = "cloud_RoleInstance";

@@ -212,9 +212,11 @@ namespace FoxIDs.Controllers
                     Timestamp = GetTimestamp(result),
                     SequenceId = GetSequenceId(result),
                     OperationId = GetOperationId(result),
-                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.Message || r.Key == Constants.Logs.Results.Details || r.Key == Constants.Logs.Results.CustomDimensions || r.Key == Constants.Logs.Results.OperationName
-                        || r.Key == Constants.Logs.Results.ClientType || r.Key == Constants.Logs.Results.ClientIp || r.Key == Constants.Logs.Results.CloudRoleInstance).Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
+                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.OperationName || r.Key == Constants.Logs.Results.ClientType || r.Key == Constants.Logs.Results.ClientIp || r.Key == Constants.Logs.Results.CloudRoleInstance)
+                        .Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
                 };
+                AddExceptionDetails(result, item);
+                AddCustomDimensions(result, item.Values);
                 items.Add(item);
             }
 
@@ -235,9 +237,11 @@ namespace FoxIDs.Controllers
                     Timestamp = GetTimestamp(result),
                     SequenceId = GetSequenceId(result),
                     OperationId = GetOperationId(result),
-                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.Message || r.Key == Constants.Logs.Results.CustomDimensions || r.Key == Constants.Logs.Results.OperationName 
-                        || r.Key == Constants.Logs.Results.ClientType || r.Key == Constants.Logs.Results.ClientIp || r.Key == Constants.Logs.Results.CloudRoleInstance).Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
+                    Values = new Dictionary<string, string>(result.Where(r => r.Key == Constants.Logs.Results.OperationName || r.Key == Constants.Logs.Results.ClientType || r.Key == Constants.Logs.Results.ClientIp || r.Key == Constants.Logs.Results.CloudRoleInstance)
+                        .Select(r => new KeyValuePair<string, string>(r.Key, r.Value?.ToString())))
                 };
+                AddAddTraceMessage(result, item);
+                AddCustomDimensions(result, item.Values);
                 items.Add(item);
             }
 
@@ -323,6 +327,57 @@ namespace FoxIDs.Controllers
         private string GetOperationId(IDictionary<string, object> result)
         {
             return result[Constants.Logs.Results.Operation_Id]?.ToString();
+        }
+
+        private void AddExceptionDetails(IDictionary<string, object> result, Api.LogItem item)
+        {
+            if (result.TryGetValue(Constants.Logs.Results.Details, out var details))
+            {
+                item.Details = new List<Api.LogItemDetail>();
+
+                var logExceptionDetails = details.ToString().ToObject<List<LogExceptionDetail>>();
+                foreach (var logExceptionDetail in logExceptionDetails)
+                {
+                    var logItemDetail = new Api.LogItemDetail
+                    {
+                        Name = logExceptionDetail.Message
+                    };
+                    logItemDetail.Details = logExceptionDetail.ParsedStack.Select(s => s.ToString()).ToList();
+                    item.Details.Add(logItemDetail);
+                }
+            }
+        }
+
+        private void AddAddTraceMessage(IDictionary<string, object> result, Api.LogItem item)
+        {
+            if (result.TryGetValue(Constants.Logs.Results.Message, out var message))
+            {
+                item.Details = new List<Api.LogItemDetail>();
+
+                var logTraceMessage = message.ToString().ToObject<List<LogTraceMessage>>();
+                foreach (var messageItem in logTraceMessage)
+                {
+                    var logItemDetail = new Api.LogItemDetail
+                    {
+                        Name = messageItem.Message
+                    };
+                    item.Details.Add(logItemDetail);
+                }
+            }
+        }
+
+        private void AddCustomDimensions(IDictionary<string, object> result, IDictionary<string, string> values)
+        {
+            if (result.TryGetValue(Constants.Logs.Results.CustomDimensions, out var customDimensions))
+            {
+                var cdResult = customDimensions.ToString().ToObject<Dictionary<string, string>>();
+                var cdValues = cdResult.Where(r => r.Key.StartsWith("f_", StringComparison.Ordinal) || r.Key == Constants.Logs.Results.RequestId || r.Key == Constants.Logs.Results.RequestPath);
+                foreach (var cdValue in cdValues)
+                {
+                    var value = cdValue.Value?.Length > Constants.Logs.Results.CustomDimensionsValueMaxLength ? $"{cdValue.Value.Substring(0, Constants.Logs.Results.CustomDimensionsValueMaxLength)}..." : cdValue.Value;
+                    values.Add(cdValue.Key, value);
+                }
+            }
         }
 
         private async Task<string> GetAccessToken()

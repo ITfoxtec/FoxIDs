@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using FoxIDs.Models.Api;
+using System.Collections.Generic;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class LogItem
+    public class LogItemViewModel
     {
         public LogItemTypes Type { get; set; }
 
@@ -17,8 +18,8 @@ namespace FoxIDs.Models.Api
 
         public Dictionary<string, string> Values { get; set; }
 
-        public List<LogItemDetail> Details { get; set; }
+        public List<LogItemDetailViewModel> Details { get; set; }
 
-        public List<LogItem> SubItems { get; set; }
+        public List<LogItemViewModel> SubItems { get; set; }
     }
 }

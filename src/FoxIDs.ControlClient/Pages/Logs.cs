@@ -3,7 +3,6 @@ using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
-using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
@@ -21,7 +20,7 @@ namespace FoxIDs.Client.Pages
 
         private string logLoadError;
         private PageEditForm<LogRequestViewModel> logRequestForm;
-        private LogResponse logResponse;
+        private LogResponseViewModel logResponse;
         private string logSettingsHref;
 
         [Inject]
@@ -95,7 +94,7 @@ namespace FoxIDs.Client.Pages
                 logRequest.QueryMetrics = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Metrics);
             }
 
-            logResponse = await TrackService.GetTrackLogAsync(logRequest);
+            logResponse = (await TrackService.GetTrackLogAsync(logRequest)).Map<LogResponseViewModel>();
         }
 
         private async Task OnLogRequestValidSubmitAsync(EditContext editContext)

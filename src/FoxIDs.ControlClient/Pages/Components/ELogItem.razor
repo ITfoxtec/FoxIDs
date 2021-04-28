@@ -6,18 +6,65 @@
     {
         <div><b>@(Item.Type == LogItemTypes.CriticalError ? "Critical error" : Item.Type.ToString())</b> @Item.Timestamp.TimeToString()</div>
 
+        @if (Item.Details != null)
+        {
+            <ul class="list-group">
+                @foreach (var detailItem in Item.Details)
+                {
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-11">
+                                <div>@detailItem.Name</div>
+                                @if (detailItem.ShowDetails)
+                                {
+                                    @foreach (var detail in detailItem.Details)
+                                    {
+                                        <div>@detail</div>
+                                    }
+                                }
+                            </div>
+                            <div class="col-1 text-right">
+                                @if (detailItem.ShowDetails)
+                                {
+                                    <button type="button" class="btn btn-link p-0" title="Hide" @onclick="@(e => detailItem.ShowDetails = false)"><span class="oi oi-collapse-up" aria-hidden="true"></span></button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-link p-0" title="Show" @onclick="@(e => detailItem.ShowDetails = true)"><span class="oi oi-collapse-down" aria-hidden="true"></span></button>
+                                }
+                            </div>
+                        </div>
+
+
+                    </li>
+                }
+            </ul>
+        }
+
         @foreach (var value in Item.Values)
         {
-            <div>@value.Key - @value.Value</div>
+            <div>@value.Key: @value.Value</div>
         }
     }
     else if (Item.Type == LogItemTypes.Trace)
     {
         <div><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
 
+        @if (Item.Details != null)
+        {
+            <ul class="list-group">
+                @foreach (var detailItem in Item.Details)
+                {
+                    <li class="list-group-item" style="overflow:auto">
+                        <div>@detailItem.Name</div>
+                    </li>
+                }
+            </ul>
+        }
+
         @foreach (var value in Item.Values)
         {
-            <div>@value.Key - @value.Value</div>
+            <div>@value.Key: @value.Value</div>
         }
     }
     else if (Item.Type == LogItemTypes.Event)
@@ -41,6 +88,6 @@
 
 @code {
     [Parameter]
-    public LogItem Item { get; set; }
+    public LogItemViewModel Item { get; set; }
 }
 

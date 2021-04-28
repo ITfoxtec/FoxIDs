@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
             oidcUpSequenceData.SessionDownPartyLinks = session.DownPartyLinks;
             oidcUpSequenceData.SessionClaims = session.Claims;
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
-            logger.ScopeTrace(() => $"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Up, End session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
             await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(oidcUpSequenceData.SessionId);
@@ -139,7 +139,7 @@ namespace FoxIDs.Logic
         {
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var rpInitiatedLogoutResponse = queryDictionary.ToObject<RpInitiatedLogoutResponse>();
-            logger.ScopeTrace(() => $"Up, End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"Up, End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             rpInitiatedLogoutResponse.Validate();
             if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 

@@ -80,7 +80,7 @@ namespace FoxIDs.Logic
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
             binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
-            logger.ScopeTrace(() => $"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
 
             try
             {
@@ -204,7 +204,7 @@ namespace FoxIDs.Logic
             };
 
             binding.Bind(saml2LogoutResponse);
-            logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Logged out URL '{loggedOutUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Logout response.", triggerEvent: true);
 
@@ -271,7 +271,7 @@ namespace FoxIDs.Logic
 
             binding.RelayState = SequenceString;
             binding.Bind(saml2LogoutRequest);
-            logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Single logged out URL '{party.SingleLogoutUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Single Logout request.", triggerEvent: true);
 
@@ -313,7 +313,7 @@ namespace FoxIDs.Logic
 
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
             binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
-            logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             
             ValidateLogoutResponse(party, saml2LogoutResponse);
             await sequenceLogic.ValidateSequenceAsync(binding.RelayState);

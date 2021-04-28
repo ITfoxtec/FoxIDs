@@ -250,9 +250,11 @@ namespace FoxIDs.Controllers
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
+            logger.ScopeTrace(() => $"Up, OIDC created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            return claims;
+            var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return transformedClaims;
         }
 
         public async Task<IActionResult> CancelLogin()

@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
            
             var rpInitiatedLogoutRequest = formOrQueryDictionary.ToObject<RpInitiatedLogoutRequest>();
 
-            logger.ScopeTrace(() => $"end session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"end session request '{rpInitiatedLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
@@ -200,7 +200,7 @@ namespace FoxIDs.Logic
                 State = sequenceData.State,
             };
 
-            logger.ScopeTrace(() => $"End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.");
+            logger.ScopeTrace(() => $"End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutResponse.ToDictionary();
 
             logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.");

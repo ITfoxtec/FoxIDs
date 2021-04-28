@@ -81,7 +81,6 @@ namespace FoxIDs
                 public const string OperationName = "operation_Name";
                 public const string SeverityLevel = "severityLevel";
                 public const string Timestamp = "timestamp";
-                public const string SequenceId = "sequenceId";
                 public const string Operation_Id = "operation_Id";
                 public const string RequestId = "RequestId";
                 public const string RequestPath = "RequestPath";                

@@ -62,6 +62,7 @@ namespace FoxIDs.Logic
                 }
             }
 
+            logger.ScopeTrace(() => $"Down, JWT ID token claims '{idTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), trackIssuerLogic.GetIssuer(), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
             return await token.ToJwtString();
         }
@@ -90,6 +91,7 @@ namespace FoxIDs.Logic
                 accessTokenClaims.AddRange(clientClaims);
             }
 
+            logger.ScopeTrace(() => $"Down, JWT access token claims '{accessTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var token = JwtHandler.CreateToken(trackKeyLogic.GetPrimarySecurityKey(RouteBinding.Key), trackIssuerLogic.GetIssuer(), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }

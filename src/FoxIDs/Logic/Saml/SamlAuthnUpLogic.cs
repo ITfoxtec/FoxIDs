@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2AuthnRequest);
-            logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
             logger.ScopeTrace(() => "Up, Sending SAML Authn request.", triggerEvent: true);
 
@@ -163,7 +163,7 @@ namespace FoxIDs.Logic
             
             try
             {
-                logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.");
+                logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
                 logger.SetScopeProperty(Constants.Logs.UpPartyStatus, saml2AuthnResponse.Status.ToString());
                 logger.ScopeTrace(() => "Up, SAML Authn response.", triggerEvent: true);
 
@@ -186,6 +186,7 @@ namespace FoxIDs.Logic
                 {
                     claims.Add(nameIdClaim);
                 }
+                logger.ScopeTrace(() => $"Up, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var externalSessionId = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
@@ -195,6 +196,7 @@ namespace FoxIDs.Logic
 
                 var transformedClaims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
+                logger.ScopeTrace(() => $"Up, SAML Authn output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var jwtValidClaims = await claimsDownLogic.FromSamlToJwtClaimsAsync(validClaims);
                 var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
@@ -203,6 +205,7 @@ namespace FoxIDs.Logic
                     jwtValidClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
                 }
 
+                logger.ScopeTrace(() => $"Up, SAML Authn output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, jwtValidClaims);
             }
             catch (StopSequenceException)

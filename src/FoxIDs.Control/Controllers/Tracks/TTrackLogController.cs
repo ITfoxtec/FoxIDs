@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
                 responseTruncated = true;
             }
 
-            var orderedItems = items.OrderByDescending(i => i.Timestamp).Take(maxResponseLogItems);
+            var orderedItems = items.OrderBy(i => i.Timestamp).Take(maxResponseLogItems);
 
             var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>(), ResponseTruncated = responseTruncated };
             foreach (var item in orderedItems)
@@ -298,13 +298,13 @@ namespace FoxIDs.Controllers
             {
                 Query =
 @$"{fromType}
-| extend tenantName = customDimensions.tenantName
-| extend trackName = customDimensions.trackName
-| extend sequenceId = customDimensions.sequenceId
-| where tenantName == '{RouteBinding.TenantName}' and trackName == '{RouteBinding.TrackName}'
+| extend f_TenantName = customDimensions.f_TenantName
+| extend f_TrackName = customDimensions.f_TrackName
+| extend f_SequenceId = customDimensions.f_SequenceId
+| where f_TenantName == '{RouteBinding.TenantName}' and f_TrackName == '{RouteBinding.TrackName}'
 | where timestamp between(datetime('{ToUtcString(from)}') .. datetime('{ToUtcString(to)}'))
 | limit {maxQueryLogItems}
-| order by timestamp desc"
+| order by timestamp"
             };
         }
 
@@ -321,7 +321,7 @@ namespace FoxIDs.Controllers
 
         private string GetSequenceId(IDictionary<string, object> result)
         {
-            return result[Constants.Logs.Results.SequenceId]?.ToString();
+            return result[Constants.Logs.SequenceId]?.ToString();
         }
 
         private string GetOperationId(IDictionary<string, object> result)

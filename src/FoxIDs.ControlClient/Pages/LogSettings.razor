@@ -26,19 +26,21 @@
                 @if (generalLogSettings.Edit)
                 {
                     <PageEditForm @ref="generalLogSettings.Form" TModel="Api.LogSettings" OnValidSubmit="OnUpdateLogSettingsValidSubmitAsync">
-                        <div class="modal-header">
-                            Log settings
-                        </div>
-                        <div class="modal-body">
-                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogInfoTrace" For="@(() => generalLogSettings.Form.Model.LogInfoTrace)" TextType="e.d" />
-                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogClaimTrace" For="@(() => generalLogSettings.Form.Model.LogClaimTrace)" TextType="e.d" />
-                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMessageTrace" For="@(() => generalLogSettings.Form.Model.LogMessageTrace)" TextType="e.d" />
-                            <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMetric" For="@(() => generalLogSettings.Form.Model.LogMetric)" TextType="e.d" />
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Update</button>
-                            <button type="button" class="btn btn-secondary" @onclick="@(() => generalLogSettings.Edit = false)">Cancel</button>
-                        </div>
+                        @if (generalLogSettings.Form?.Model != null) {
+                            <div class="modal-header">
+                                Log settings
+                            </div>
+                            <div class="modal-body">
+                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogInfoTrace" For="@(() => generalLogSettings.Form.Model.LogInfoTrace)" TextType="e.d" />
+                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogClaimTrace" For="@(() => generalLogSettings.Form.Model.LogClaimTrace)" TextType="e.d" />
+                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMessageTrace" For="@(() => generalLogSettings.Form.Model.LogMessageTrace)" TextType="e.d" />
+                                <FInputToggle @bind-Value="generalLogSettings.Form.Model.LogMetric" For="@(() => generalLogSettings.Form.Model.LogMetric)" TextType="e.d" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => generalLogSettings.Edit = false)">Cancel</button>
+                            </div>
+                        }
                     </PageEditForm>
                 }
                 else

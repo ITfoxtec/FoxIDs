@@ -240,7 +240,9 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
+            logger.ScopeTrace(() => $"Down, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            logger.ScopeTrace(() => $"Down, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var authenticationResponse = new AuthenticationResponse
             {
@@ -252,7 +254,7 @@ namespace FoxIDs.Logic
                 SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId).GetSessionStateValue(party.Client.ClientId, sequenceData.RedirectUri)
             };
 
-            logger.ScopeTrace(() => $"Response type '{sequenceData.ResponseType}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Response type '{sequenceData.ResponseType}'.");
             var responseTypes = sequenceData.ResponseType.ToSpaceList();
 
             if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
@@ -279,7 +281,7 @@ namespace FoxIDs.Logic
                 nameValueCollection = nameValueCollection.AddToDictionary(sessionResponse);
             }
 
-            logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.");
             logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
@@ -303,13 +305,13 @@ namespace FoxIDs.Logic
         {
             if (!responseMode.IsNullOrEmpty())
             {
-                logger.ScopeTrace(() => $"Response mode '{responseMode}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Response mode '{responseMode}'.");
                 return responseMode;
             }
             else
             {
                 var defaultResponseMode = responseType.ToSpaceList().Contains(IdentityConstants.ResponseTypes.Code) ? IdentityConstants.ResponseModes.Query : IdentityConstants.ResponseModes.Fragment;
-                logger.ScopeTrace(() => $"Default response mode '{defaultResponseMode}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Default response mode '{defaultResponseMode}'.");
                 return defaultResponseMode;
             }
         }
@@ -344,7 +346,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Authentication error response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationResponse.ToDictionary();
 
-            logger.ScopeTrace(() => $"Redirect Uri '{redirectUri}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"Redirect Uri '{redirectUri}'.");
             securityHeaderLogic.AddFormAction(redirectUri);
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }

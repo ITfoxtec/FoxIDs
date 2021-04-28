@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
 
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
             binding.ReadSamlRequest(request.ToGenericHttpRequest(), saml2AuthnRequest);
-            logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
 
             try
             {
@@ -203,7 +203,9 @@ namespace FoxIDs.Logic
             };
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
+                logger.ScopeTrace(() => $"Down, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                logger.ScopeTrace(() => $"Down, SAML Authn output SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);
 
@@ -222,8 +224,8 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2AuthnResponse);
-            logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.");
-            logger.ScopeTrace(() => $"Acs URL '{acsUrl}'.");
+            logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"ACS URL '{acsUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Authn response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();

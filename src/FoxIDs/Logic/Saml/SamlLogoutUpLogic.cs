@@ -161,7 +161,7 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2LogoutRequest);
-            logger.ScopeTrace(() => $"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Logout URL '{samlConfig.SingleLogoutDestination?.OriginalString}'.");
             logger.ScopeTrace(() => "Up, SAML Logout request.", triggerEvent: true);
 
@@ -217,7 +217,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+                logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
                 logger.SetScopeProperty(Constants.Logs.Status, saml2LogoutResponse.Status.ToString());
                 logger.ScopeTrace(() => "Up, SAML Logout response.", triggerEvent: true);
 
@@ -344,7 +344,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.");
+                logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Up, SAML Single Logout request.", triggerEvent: true);
 
                 binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
@@ -458,7 +458,7 @@ namespace FoxIDs.Logic
             };
 
             binding.Bind(saml2LogoutResponse);
-            logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.");
+            logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Single logged out response URL '{singleLogoutResponseUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Single Logout response.", triggerEvent: true);
 

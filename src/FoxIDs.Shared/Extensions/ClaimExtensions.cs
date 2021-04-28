@@ -86,5 +86,14 @@ namespace FoxIDs
             }
             return claimAndValues;
         }
+
+        public static string ToFormattedString(this IEnumerable<Claim> list)
+        {
+            if (list != null)
+            {
+                return string.Join(", ", list.Select(c => $"{c.Type}: {c.Value}"));
+            }
+            return string.Empty;
+        }
     }
 }

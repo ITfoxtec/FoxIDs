@@ -9,6 +9,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "rt")]
         public string ResponseType { get; set; }
 
+        [JsonProperty(PropertyName = "fa")]
+        public bool RestrictFormAction { get; set; }        
+
         [MaxLength(2000)]
         [JsonProperty(PropertyName = "ru")]
         public string RedirectUri { get; set; }

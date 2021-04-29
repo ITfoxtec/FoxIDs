@@ -77,6 +77,7 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
                 {
                     ResponseType = authenticationRequest.ResponseType,
+                    RestrictFormAction = party.RestrictFormAction,
                     RedirectUri = authenticationRequest.RedirectUri,
                     Scope = authenticationRequest.Scope,
                     State = authenticationRequest.State,
@@ -107,7 +108,7 @@ namespace FoxIDs.Logic
             catch (OAuthRequestException ex)
             {
                 logger.Error(ex);
-                return await AuthenticationResponseErrorAsync(partyId, authenticationRequest, ex);
+                return await AuthenticationResponseErrorAsync(party, authenticationRequest, ex);
             }
         }
 
@@ -286,7 +287,15 @@ namespace FoxIDs.Logic
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
+
+            if (party.RestrictFormAction)
+            {
+                securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
+            }
+            else
+            {
+                securityHeaderLogic.AddFormActionAllowAll();
+            }
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
@@ -323,18 +332,18 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
 
-            return await AuthenticationResponseErrorAsync(sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
+            return await AuthenticationResponseErrorAsync(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }
 
-        private Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, AuthenticationRequest authenticationRequest, OAuthRequestException ex)
+        private Task<IActionResult> AuthenticationResponseErrorAsync(TParty party, AuthenticationRequest authenticationRequest, OAuthRequestException ex)
         {
             logger.ScopeTrace(() => "OIDC Authentication error response.");
-            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.SetScopeProperty(Constants.Logs.DownPartyId, party.Id);
 
-            return AuthenticationResponseErrorAsync(authenticationRequest.RedirectUri, authenticationRequest.State, ex.Error, ex.ErrorDescription);
+            return AuthenticationResponseErrorAsync(party.RestrictFormAction, authenticationRequest.RedirectUri, authenticationRequest.State, ex.Error, ex.ErrorDescription);
         }
 
-        private async Task<IActionResult> AuthenticationResponseErrorAsync(string redirectUri, string state, string error, string errorDescription)
+        private async Task<IActionResult> AuthenticationResponseErrorAsync(bool restrictFormAction, string redirectUri, string state, string error, string errorDescription)
         {
             var authenticationResponse = new AuthenticationResponse
             {
@@ -347,7 +356,15 @@ namespace FoxIDs.Logic
             var nameValueCollection = authenticationResponse.ToDictionary();
 
             logger.ScopeTrace(() => $"Redirect Uri '{redirectUri}'.");
-            securityHeaderLogic.AddFormAction(redirectUri);
+
+            if (restrictFormAction)
+            {
+                securityHeaderLogic.AddFormAction(redirectUri);
+            }
+            else
+            {
+                securityHeaderLogic.AddFormActionAllowAll();
+            }
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }
 

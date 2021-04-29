@@ -25,9 +25,9 @@ namespace FoxIDs.Infrastructure
                 if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
                 {
                     var supportProperties = item as ISupportProperties;
-                    if (supportProperties.Properties.Any(i => i.Key == "type" && i.Value == nameof(TelemetryScopedLogger.ScopeTrace)))
+                    if (supportProperties.Properties.Any(i => i.Key == Constants.Logs.Type && i.Value == nameof(TelemetryScopedLogger.ScopeTrace)))
                     {
-                        supportProperties.Properties.Remove("type");
+                        supportProperties.Properties.Remove(Constants.Logs.Type);
                     }
                     else
                     {

@@ -183,15 +183,15 @@ namespace FoxIDs.Logic
             switch (binding)
             {
                 case SamlBindingTypes.Redirect:
-                    return LogoutResponseAsync(samlConfig, inResponseTo, relayState, party.LoggedOutUrl, new Saml2RedirectBinding(), status, sessionIndex);
+                    return LogoutResponseAsync(party, samlConfig, inResponseTo, relayState, new Saml2RedirectBinding(), status, sessionIndex);
                 case SamlBindingTypes.Post:
-                    return LogoutResponseAsync(samlConfig, inResponseTo, relayState, party.LoggedOutUrl, new Saml2PostBinding(), status, sessionIndex);
+                    return LogoutResponseAsync(party, samlConfig, inResponseTo, relayState, new Saml2PostBinding(), status, sessionIndex);
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");
             }
         }
 
-        private async Task<IActionResult> LogoutResponseAsync<T>(Saml2Configuration samlConfig, string inResponseTo, string relayState, string loggedOutUrl, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex)
+        private async Task<IActionResult> LogoutResponseAsync<T>(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex)
         {
             binding.RelayState = relayState;
 
@@ -199,17 +199,24 @@ namespace FoxIDs.Logic
             {
                 InResponseTo = new Saml2Id(inResponseTo),
                 Status = status,
-                Destination = new Uri(loggedOutUrl),
+                Destination = new Uri(party.LoggedOutUrl),
                 SessionIndex = sessionIndex
             };
 
             binding.Bind(saml2LogoutResponse);
             logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
-            logger.ScopeTrace(() => $"Logged out URL '{loggedOutUrl}'.");
+            logger.ScopeTrace(() => $"Logged out URL '{party.LoggedOutUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
-            securityHeaderLogic.AddFormAction(loggedOutUrl);
+            if (party.RestrictFormAction)
+            {
+                securityHeaderLogic.AddFormAction(party.LoggedOutUrl);
+            }
+            else
+            {
+                securityHeaderLogic.AddFormActionAllowAll();
+            }
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
@@ -275,7 +282,14 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Single logged out URL '{party.SingleLogoutUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Single Logout request.", triggerEvent: true);
 
-            securityHeaderLogic.AddFormAction(party.SingleLogoutUrl);
+            if (party.RestrictFormAction)
+            {
+                securityHeaderLogic.AddFormAction(party.SingleLogoutUrl);
+            }
+            else
+            {
+                securityHeaderLogic.AddFormActionAllowAll();
+            }
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

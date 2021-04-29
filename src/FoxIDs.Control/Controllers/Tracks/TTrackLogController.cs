@@ -61,28 +61,28 @@ namespace FoxIDs.Controllers
             var items = new List<Api.LogItem>();
             if (logRequest.QueryExceptions)
             {
-                if (await LoadExceptionsAsync(httpClient, items, from, to))
+                if (await LoadExceptionsAsync(httpClient, items, from, to, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
             }
             if (logRequest.QueryTraces)
             {
-                if (await LoadTracesAsync(httpClient, items, from, to))
+                if (await LoadTracesAsync(httpClient, items, from, to, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
             }
             if (logRequest.QueryEvents)
             {
-                if (await LoadEventsAsync(httpClient, items, from, to))
+                if (await LoadEventsAsync(httpClient, items, from, to, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
             }
             if (logRequest.QueryMetrics)
             {
-                if (await LoadMetricsAsync(httpClient, items, from, to))
+                if (await LoadMetricsAsync(httpClient, items, from, to, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
@@ -193,9 +193,12 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<bool> LoadExceptionsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        private async Task<bool> LoadExceptionsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to, string filter)
         {
-            var exceptionsQuery = GetQuery("exceptions", from, to);
+            var extend = filter.IsNullOrEmpty() ? null : $"| extend requestId = customDimensions.RequestId | extend requestPath = customDimensions.RequestPath {GetGeneralQueryExtend()}";
+            var where = filter.IsNullOrEmpty() ? null : $"| where details contains '{filter}' or requestId contains '{filter}' or requestPath contains '{filter}' or {GetGeneralQueryWhere(filter)}";
+            var exceptionsQuery = GetQuery("exceptions", from, to, extend, where);
+
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, exceptionsQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
@@ -223,9 +226,11 @@ namespace FoxIDs.Controllers
             return queryResults.Results.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadTracesAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        private async Task<bool> LoadTracesAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to, string filter)
         {
-            var tracesQuery = GetQuery("traces", from, to);
+            var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
+            var where = filter.IsNullOrEmpty() ? null : $"| where message contains '{filter}' or {GetGeneralQueryWhere(filter)}";
+            var tracesQuery = GetQuery("traces", from, to, extend, where);
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, tracesQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
@@ -248,9 +253,11 @@ namespace FoxIDs.Controllers
             return queryResults.Results.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadEventsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        private async Task<bool> LoadEventsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to, string filter)
         {
-            var eventsQuery = GetQuery("customEvents", from, to);
+            var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
+            var where = filter.IsNullOrEmpty() ? null : $"| where name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
+            var eventsQuery = GetQuery("customEvents", from, to, extend, where);
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, eventsQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
@@ -270,9 +277,11 @@ namespace FoxIDs.Controllers
             return queryResults.Results.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadMetricsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to)
+        private async Task<bool> LoadMetricsAsync(HttpClient httpClient, List<Api.LogItem> items, DateTimeOffset from, DateTimeOffset to, string filter)
         {
-            var eventsQuery = GetQuery("customMetrics", from, to);
+            var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
+            var where = filter.IsNullOrEmpty() ? null : $"| where name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
+            var eventsQuery = GetQuery("customMetrics", from, to, extend, where);
             using var response = await httpClient.PostAsFormatJsonAsync(ApplicationInsightsUrl, eventsQuery);
             var queryResults = await response.ToObjectAsync<QueryResults>();
 
@@ -292,7 +301,24 @@ namespace FoxIDs.Controllers
             return queryResults.Results.Count() >= maxQueryLogItems;
         }
 
-        private ApplicationInsightsQuery GetQuery(string fromType, DateTimeOffset from, DateTimeOffset to)
+        private string GetGeneralQueryExtend() =>
+@"| extend f_DownPartyId = customDimensions.f_DownPartyId 
+| extend f_SessionId = customDimensions.f_SessionId 
+| extend f_ExternalSessionId = customDimensions.f_ExternalSessionId 
+| extend f_UserId = customDimensions.f_UserId 
+| extend f_Email = customDimensions.f_Email 
+| extend f_UserAgent = customDimensions.f_UserAgent";
+
+        private string GetGeneralQueryWhere(string filter) =>
+@$"client_IP contains '{filter}' or 
+f_DownPartyId contains '{filter}' or 
+f_SessionId contains '{filter}' or 
+f_ExternalSessionId contains '{filter}' or 
+f_UserId contains '{filter}' or 
+f_Email contains '{filter}' or 
+f_UserAgent contains '{filter}'";
+
+        private ApplicationInsightsQuery GetQuery(string fromType, DateTimeOffset from, DateTimeOffset to, string extend, string where)
         {
             return new ApplicationInsightsQuery
             {
@@ -300,9 +326,9 @@ namespace FoxIDs.Controllers
 @$"{fromType}
 | extend f_TenantName = customDimensions.f_TenantName
 | extend f_TrackName = customDimensions.f_TrackName
-| extend f_SequenceId = customDimensions.f_SequenceId
+| extend f_SequenceId = customDimensions.f_SequenceId {(extend.IsNullOrEmpty() ? string.Empty : extend)}
 | where f_TenantName == '{RouteBinding.TenantName}' and f_TrackName == '{RouteBinding.TrackName}'
-| where timestamp between(datetime('{ToUtcString(from)}') .. datetime('{ToUtcString(to)}'))
+| where timestamp between(datetime('{ToUtcString(from)}') .. datetime('{ToUtcString(to)}')) {(where.IsNullOrEmpty() ? string.Empty : where)}
 | limit {maxQueryLogItems}
 | order by timestamp"
             };

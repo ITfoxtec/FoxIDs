@@ -88,7 +88,7 @@ namespace FoxIDs
                 public const string RequestId = "RequestId";
                 public const string RequestPath = "RequestPath";                
                 public const string ClientType = "client_Type";
-                public const string ClientIp = "client_Ip";
+                public const string ClientIp = "client_IP";
                 public const string CloudRoleInstance = "cloud_RoleInstance";
             }
         }

@@ -188,7 +188,7 @@ namespace FoxIDs.Infrastructure
                             (m.TraceType == TraceTypes.Info && scopedLogger.LogInfoTrace) ||
                             (m.TraceType == TraceTypes.Claim && scopedLogger.LogClaimTrace) ||
                             (m.TraceType == TraceTypes.Message && scopedLogger.LogMessageTrace));
-                        telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties.ConcatOnce(new Dictionary<string, string> { { "type", nameof(TelemetryScopedLogger.ScopeTrace) } }));
+                        telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties.ConcatOnce(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
                     }
 
                     if (RouteBinding?.Logging.ScopedStreamLoggers?.Count() > 0)

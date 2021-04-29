@@ -79,7 +79,7 @@ namespace FoxIDs.Logic
 
                 var sequenceString = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace(() => $"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", accountAction == true ? "true" : "false" } });
+                logger.ScopeTrace(() => $"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.AccountAction, accountAction == true ? "true" : "false" } });
                 return (sequenceString: sequenceString, sequence: sequence);
             }
             catch (Exception ex)
@@ -151,7 +151,7 @@ namespace FoxIDs.Logic
                     HttpContext.Items[Constants.Sequence.Valid] = true;
                 }
 
-                logger.ScopeTrace(() => $"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { "sequenceId", sequence.Id }, { "accountAction", sequence.AccountAction == true ? "true" : "false" } });
+                logger.ScopeTrace(() => $"Sequence is validated, id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.AccountAction, sequence.AccountAction == true ? "true" : "false" } });
             }
             catch (SequenceException)
             {

@@ -61,6 +61,7 @@ namespace FoxIDs
             public const string DownPartyId = "f_DownPartyId";
             public const string DownPartyClientId = "f_DownPartyClientId";
             public const string SequenceId = "f_SequenceId";
+            public const string AccountAction = "f_AccountAction";            
             public const string SequenceCulture = "f_SequenceCulture";
             public const string Issuer = "f_Issuer";
             public const string Status = "f_Status";
@@ -68,6 +69,8 @@ namespace FoxIDs
             public const string ExternalSessionId = "f_ExternalSessionId";
             public const string UserId = "f_UserId";
             public const string Email = "f_Email";
+            public const string Type = "f_Type";
+            public const string FailingLoginCount = "f_FailingLoginCount";
 
             public static class Results
             {

@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
         }
 
         public Dictionary<string, string> FailingLoginCountDictonary(long failingLoginCount) =>
-            failingLoginCount > 0 ? new Dictionary<string, string> { { "failingLoginCount", Convert.ToString(failingLoginCount) } } : null;
+            failingLoginCount > 0 ? new Dictionary<string, string> { { Constants.Logs.FailingLoginCount, Convert.ToString(failingLoginCount) } } : null;
 
 
         private string FailingLoginCountRadisKey(string email)

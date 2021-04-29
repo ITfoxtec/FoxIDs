@@ -83,6 +83,7 @@ namespace FoxIDs.Logic
             var postLogoutRedirectUri = !rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() ? rpInitiatedLogoutRequest.PostLogoutRedirectUri : party.Client.PostLogoutRedirectUri;
             await sequenceLogic.SaveSequenceDataAsync(new OidcDownSequenceData
             {
+                RestrictFormAction = party.RestrictFormAction,
                 RedirectUri = postLogoutRedirectUri,
                 State = rpInitiatedLogoutRequest.State,
             });
@@ -207,7 +208,14 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
-            securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
+            if (sequenceData.RestrictFormAction)
+            {
+                securityHeaderLogic.AddFormAction(sequenceData.RedirectUri);
+            }
+            else
+            {
+                securityHeaderLogic.AddFormActionAllowAll();
+            }
             return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
         }
     }

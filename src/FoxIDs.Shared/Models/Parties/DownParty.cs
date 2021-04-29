@@ -38,6 +38,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "allow_up_parties")]
         public List<UpPartyLink> AllowUpParties { get; set; }
 
+        [JsonProperty(PropertyName = "restrict_form_action")]
+        public bool RestrictFormAction { get; set; }        
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

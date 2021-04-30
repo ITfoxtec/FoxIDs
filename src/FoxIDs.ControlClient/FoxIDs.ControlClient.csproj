@@ -8,11 +8,10 @@
 
   <ItemGroup>
     <PackageReference Include="BlazorInputFile" Version="0.2.0" />
-    <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.4.7" />
+    <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.4.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="3.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Build" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.12" />    
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="3.2.1" PrivateAssets="all" />   
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.8.0" />
     <PackageReference Include="Tewr.Blazor.FileReader" Version="3.0.0.20340" />
   </ItemGroup>

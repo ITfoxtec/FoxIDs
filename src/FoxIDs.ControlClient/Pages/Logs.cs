@@ -51,7 +51,6 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
-            logLoadError = null;
             try
             {
                 await LoadLogAsync();
@@ -68,6 +67,7 @@ namespace FoxIDs.Client.Pages
 
         private async Task LoadLogAsync()
         {
+            logLoadError = null;
             var fromTime = DateTimeOffset.UtcNow;
             if (!string.IsNullOrWhiteSpace(logRequestForm?.Model?.FromTime))
             {

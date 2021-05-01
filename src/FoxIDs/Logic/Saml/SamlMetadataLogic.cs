@@ -32,16 +32,19 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> SpMetadataAsync(string partyId)
         {
             logger.ScopeTrace(() => "Up, SP Metadata request.");
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);            
+            var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
 
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);
-
-            var acsDestination = new Uri(HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs, partyBindingPattern: party.PartyBindingPattern));
-            var singleLogoutDestination = new Uri(HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout, partyBindingPattern: party.PartyBindingPattern));
+           
+            var acsDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
+            var singleLogoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout));
 
             var entityDescriptor = new EntityDescriptor(samlConfig);
-            entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+            if (party != null)
+            {
+                entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+            }
             entityDescriptor.SPSsoDescriptor = new SPSsoDescriptor
             {
                 //AuthnRequestsSigned = true,
@@ -56,16 +59,13 @@ namespace FoxIDs.Logic
                 },
                 AssertionConsumerServices = new AssertionConsumerService[]
                 {
-                    new AssertionConsumerService { Binding = ToSamleBindingUri(party.AuthnBinding.ResponseBinding), Location = acsDestination, },
+                    new AssertionConsumerService { Binding = ToSamleBindingUri(party?.AuthnBinding?.ResponseBinding), Location = acsDestination, },
                 },
             };
-            if (party.LogoutBinding != null)
+            entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
-                {
-                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.ResponseBinding), Location = singleLogoutDestination },
-                };
-            }
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination },
+            };
 
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "Down, IdP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
-            var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlDownParty>(partyId) : null;
 
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
 
@@ -82,7 +82,10 @@ namespace FoxIDs.Logic
             var logoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlLogout));
 
             var entityDescriptor = new EntityDescriptor(samlConfig);
-            entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+            if (party != null)
+            {
+                entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+            }
             entityDescriptor.IdPSsoDescriptor = new IdPSsoDescriptor
             {
                 SigningCertificates = new X509Certificate2[]
@@ -95,27 +98,25 @@ namespace FoxIDs.Logic
                 //},
                 SingleSignOnServices = new SingleSignOnService[]
                 {
-                    new SingleSignOnService { Binding = ToSamleBindingUri(party.AuthnBinding.RequestBinding), Location = authnDestination, },
+                    new SingleSignOnService { Binding = ToSamleBindingUri(party?.AuthnBinding?.RequestBinding), Location = authnDestination, },
                 },
             };
-            if (party.LogoutBinding != null)
+            entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
-                {
-                    new SingleLogoutService { Binding = ToSamleBindingUri(party.LogoutBinding.RequestBinding), Location = logoutDestination },
-                };
-            }
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
+            };
 
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
-        private Uri ToSamleBindingUri(SamlBindingTypes binding)
+        private Uri ToSamleBindingUri(SamlBindingTypes? binding)
         {
             switch (binding)
             {
                 case SamlBindingTypes.Redirect:
                     return ProtocolBindings.HttpRedirect;
                 case SamlBindingTypes.Post:
+                case null:
                     return ProtocolBindings.HttpPost;
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");

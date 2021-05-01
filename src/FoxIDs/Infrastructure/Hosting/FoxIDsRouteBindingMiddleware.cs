@@ -72,6 +72,14 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     return true;
                 }
+                else if (path.EndsWith($"{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
+                else if (path.EndsWith($"{Constants.Routes.SamlController}/{Constants.Endpoints.SamlSPMetadata}", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return true;
+                }
             }
 
             return false;
@@ -115,7 +123,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 if (partyNameBindingMatch.Groups["upparty"].Success)
                 {
-                    routeBinding.UpParty = await GetUpPartyAsync(tenantRepository, trackIdKey, partyNameBindingMatch.Groups["upparty"]);
+                    routeBinding.UpParty = await GetUpPartyAsync(tenantRepository, trackIdKey, partyNameBindingMatch.Groups["upparty"], acceptUnknownParty);
                 }
                 else if (partyNameBindingMatch.Groups["downparty"].Success)
                 {
@@ -171,7 +179,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task<UpParty> GetUpPartyAsync(ITenantRepository tenantRepository, Track.IdKey trackIdKey, Group upPartyGroup)
+        private async Task<UpParty> GetUpPartyAsync(ITenantRepository tenantRepository, Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
         {
             var upPartyIdKey = new Party.IdKey
             {
@@ -182,7 +190,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             try
             {
-                return await tenantRepository.GetUpPartyByNameAsync(upPartyIdKey);
+                return await tenantRepository.GetUpPartyByNameAsync(upPartyIdKey, required: !acceptUnknownParty);
             }
             catch (Exception ex)
             {

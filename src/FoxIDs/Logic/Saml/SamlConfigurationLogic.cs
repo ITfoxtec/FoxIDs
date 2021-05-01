@@ -21,31 +21,40 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningAndDecryptionCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            samlConfig.AllowedIssuer = party.Issuer;
-
-            samlConfig.Issuer = !party.SpIssuer.IsNullOrEmpty() ? party.SpIssuer : trackIssuerLogic.GetIssuer();
-            samlConfig.AllowedAudienceUris.Add(samlConfig.Issuer);
-
-            samlConfig.SingleSignOnDestination = new Uri(party.AuthnUrl);
-            if(!party.LogoutUrl.IsNullOrEmpty())
+            if (party != null)
             {
-                samlConfig.SingleLogoutDestination = new Uri(party.LogoutUrl);
+                samlConfig.AllowedIssuer = party.Issuer;
             }
 
-            foreach (var key in party.Keys)
+            samlConfig.Issuer = !string.IsNullOrEmpty(party?.SpIssuer) ? party.SpIssuer : trackIssuerLogic.GetIssuer();
+            samlConfig.AllowedAudienceUris.Add(samlConfig.Issuer);
+
+            if (party != null)
             {
-                samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
+                samlConfig.SingleSignOnDestination = new Uri(party.AuthnUrl);
+                if(!string.IsNullOrEmpty(party?.LogoutUrl))
+                {
+                    samlConfig.SingleLogoutDestination = new Uri(party.LogoutUrl);
+                }
+
+                foreach (var key in party.Keys)
+                {
+                    samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
+                }
             }
 
             if (includeSigningAndDecryptionCertificate)
             {
                 samlConfig.SigningCertificate = samlConfig.DecryptionCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
             }
-            samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
-            samlConfig.SignAuthnRequest = party.SignAuthnRequest;
+            if (party != null)
+            {
+                samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
+                samlConfig.SignAuthnRequest = party.SignAuthnRequest;
 
-            samlConfig.CertificateValidationMode = party.CertificateValidationMode;
-            samlConfig.RevocationMode = party.RevocationMode;
+                samlConfig.CertificateValidationMode = party.CertificateValidationMode;
+                samlConfig.RevocationMode = party.RevocationMode;
+            }
 
             return samlConfig;
         }
@@ -53,13 +62,16 @@ namespace FoxIDs.Logic
         public Saml2Configuration GetSamlDownConfig(SamlDownParty party, bool includeSigningCertificate = false)
         {
             var samlConfig = new Saml2Configuration();
-            samlConfig.Issuer = !party.IdPIssuer.IsNullOrEmpty() ? party.IdPIssuer : trackIssuerLogic.GetIssuer();
+            samlConfig.Issuer = !string.IsNullOrEmpty(party?.IdPIssuer) ? party.IdPIssuer : trackIssuerLogic.GetIssuer();
 
-            if (party.Keys?.Count > 0)
+            if (party != null)
             {
-                foreach (var key in party.Keys)
+                if (party.Keys?.Count > 0)
                 {
-                    samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
+                    foreach (var key in party.Keys)
+                    {
+                        samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
+                    }
                 }
             }
 
@@ -67,10 +79,13 @@ namespace FoxIDs.Logic
             {
                 samlConfig.SigningCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
             }
-            samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
+            if (party != null)
+            {
+                samlConfig.SignatureAlgorithm = party.SignatureAlgorithm;
 
-            samlConfig.CertificateValidationMode = party.CertificateValidationMode;
-            samlConfig.RevocationMode = party.RevocationMode;
+                samlConfig.CertificateValidationMode = party.CertificateValidationMode;
+                samlConfig.RevocationMode = party.RevocationMode;
+            }
 
             return samlConfig;
         }

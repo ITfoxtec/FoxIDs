@@ -457,6 +457,8 @@ namespace FoxIDs
             public const string SamlAcs = "acs";
             public const string SamlSingleLogout = "singlelogout";
             public const string SamlLoggedOut = "loggedout";
+            public const string SamlIdPMetadata = "idpmetadata";
+            public const string SamlSPMetadata = "spmetadata";
 
             public static class UpJump
             {

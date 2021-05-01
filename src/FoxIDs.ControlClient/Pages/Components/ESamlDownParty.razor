@@ -96,34 +96,34 @@
                         </div>
                     </div>
                 </div>
+                <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" />
+                <div class="form-group active-group active">
+                    <div class="drag-drop-zone input-control">
+                        <BlazorInputFile.InputFile multiple OnChange="@(async (files) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, files))" />
+                        @samlDownParty.CertificateFileStatus
+                    </div>
+                    <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
+                    <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
+                    <ul class="list-group">
+                        @foreach (var certificateInfo in samlDownParty.CertificateInfoList)
+                        {
+                            <li class="list-group-item">
+                                <div class="d-flex">
+                                    <div class="mr-auto p-2">
+                                        <strong>@certificateInfo.Subject</strong><br />
+                                        Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
+                                        Thumbprint: @certificateInfo.Thumbprint
+                                    </div>
+                                    <div class="p-2">
+                                        <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                    </div>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
                 @if (DownParty.ShowAdvanced)
                 {
-                    <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" />
-                    <div class="form-group active-group active">
-                        <div class="drag-drop-zone input-control">
-                            <BlazorInputFile.InputFile multiple OnChange="@(async (files) => await OnSamlDownPartyCertificateFileSelectedAsync(samlDownParty, files))" />
-                            @samlDownParty.CertificateFileStatus
-                        </div>
-                        <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
-                        <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
-                        <ul class="list-group">
-                            @foreach (var certificateInfo in samlDownParty.CertificateInfoList)
-                            {
-                                <li class="list-group-item">
-                                    <div class="d-flex">
-                                        <div class="mr-auto p-2">
-                                            <strong>@certificateInfo.Subject</strong><br />
-                                            Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
-                                            Thumbprint: @certificateInfo.Thumbprint
-                                        </div>
-                                        <div class="p-2">
-                                            <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
-                                        </div>
-                                    </div>
-                                </li>
-                            }
-                        </ul>
-                    </div>
                     <FInputSelect @bind-Value="samlDownParty.Form.Model.SignatureAlgorithm" For="@(() => samlDownParty.Form.Model.SignatureAlgorithm)">
                         <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
                         <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>

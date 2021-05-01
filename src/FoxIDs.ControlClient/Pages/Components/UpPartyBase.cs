@@ -103,7 +103,7 @@ namespace FoxIDs.Client.Pages.Components
         public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "?" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
-            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/saml/spmetadata";
+            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlSPMetadata}";
         }
 
         public async Task UpPartyCancelAsync(GeneralUpPartyViewModel upParty)

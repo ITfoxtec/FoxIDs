@@ -30,18 +30,19 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"SAML SP Metadata request, Up type '{RouteBinding.UpParty.Type}'");
-                switch (RouteBinding.UpParty.Type)
+                logger.ScopeTrace(() => $"SAML SP Metadata request, Up type '{RouteBinding.UpParty?.Type}'");
+                switch (RouteBinding.UpParty?.Type)
                 {
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlMetadataLogic>().SpMetadataAsync(RouteBinding.UpParty.Id);
+                    case null:
+                        return await serviceProvider.GetService<SamlMetadataLogic>().SpMetadataAsync(RouteBinding.UpParty?.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty?.Type}' not supported.");
                 }
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"SAML SP Metadata request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"SAML SP Metadata request failed, Name '{RouteBinding.UpParty?.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -49,18 +50,19 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"SAML IdP Metadata request, Down type '{RouteBinding.DownParty.Type}'");
-                switch (RouteBinding.DownParty.Type)
+                logger.ScopeTrace(() => $"SAML IdP Metadata request, Down type '{RouteBinding.DownParty?.Type}'");
+                switch (RouteBinding.DownParty?.Type)
                 {
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlMetadataLogic>().IdPMetadataAsync(RouteBinding.DownParty.Id);
+                    case null:
+                        return await serviceProvider.GetService<SamlMetadataLogic>().IdPMetadataAsync(RouteBinding.DownParty?.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty?.Type}' not supported.");
                 }
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"SAML IdP Metadata request failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"SAML IdP Metadata request failed, Name '{RouteBinding.DownParty?.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 

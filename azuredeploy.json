@@ -150,6 +150,8 @@
         "Flow_Type": "Redfield",
         "Request_Source": "IbizaAIExtension",
         "DisableIpMasking": true,
+        "SamplingPercentage": 100,
+        "RetentionInDays": 180,
         "applicationId": "[variables('appInsightsName')]"
       }
     },
@@ -178,6 +180,10 @@
       "apiVersion": "2016-10-01",
       "name": "[variables('keyVaultName')]",
       "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/sites', variables('foxidsSiteName'))]",
+        "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]"
+      ],
       "properties": {
         "sku": {
           "family": "A",
@@ -364,7 +370,7 @@
       "name": "[concat(variables('foxidsSiteName'), '/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsSiteName'))]",
-        "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]",
+        "[resourceId('microsoft.insights/components', variables('appInsightsName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosDbName'))]",
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
@@ -382,7 +388,7 @@
       "name": "[concat(variables('foxidsControlSiteName'), '/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
-        "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]",
+        "[resourceId('microsoft.insights/components', variables('appInsightsName'))]",
         "[concat('Microsoft.DocumentDB/databaseAccounts/', variables('cosmosDbName'))]",
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
@@ -550,8 +556,8 @@
         "principalId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]"
       },
       "dependsOn": [
-        "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
-        "[resourceId('microsoft.insights/components/', variables('appInsightsName'))]"
+        "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]",
+        "[resourceId('microsoft.insights/components', variables('appInsightsName'))]"
       ]
     }
   ]

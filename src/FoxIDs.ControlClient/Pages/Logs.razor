@@ -47,7 +47,11 @@
     }
 
     <ul class="list-group">
-        @if (logResponse != null)
+        @if (logResponse == null)
+        {
+            <li class="list-group-item"><i>Loading...</i></li>
+        }
+        else 
         {
             if(logResponse.Items.Count() <= 0)
             {

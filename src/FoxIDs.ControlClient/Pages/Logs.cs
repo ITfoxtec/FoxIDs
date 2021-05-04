@@ -105,6 +105,7 @@ namespace FoxIDs.Client.Pages
                 logRequestForm.Model.QueryTypes.Add(LogQueryTypes.Events);
             }
 
+            logResponse = null;
             await LoadLogAsync();
         }
     }

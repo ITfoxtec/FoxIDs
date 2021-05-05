@@ -36,7 +36,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddCors();
 
             services.AddSingleton<TelemetryLogger>();
-            services.AddSingleton<TenantTrackLogger>();
+            services.AddSingleton<TelemetryScopedStreamLogger>();
             services.AddScoped<TelemetryScopedLogger>();
             services.AddScoped<TelemetryScopedProperties>();
 

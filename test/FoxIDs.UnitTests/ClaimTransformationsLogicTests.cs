@@ -140,11 +140,10 @@ namespace FoxIDs.UnitTests
 
         private ClaimTransformationsLogic ClaimTransformationsLogicInstance()
         {
-            var settings = new Settings();
             var routeBinding = new RouteBinding();
             var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
-            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(settings, mockHttpContextAccessor);
+            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
             return new ClaimTransformationsLogic(telemetryScopedLogger, mockHttpContextAccessor);
         }

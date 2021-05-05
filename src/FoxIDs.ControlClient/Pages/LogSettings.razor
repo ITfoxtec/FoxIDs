@@ -58,10 +58,101 @@
         </div>
     </div>
 
-    <h4 class="pt-4">Log streams</h4>
-    <div class="card">
-        <div class="card-body">
-           
+    <div class="d-flex">
+        <div class="mr-auto">
+            <h4 class="pt-5 pb-3">Log streams</h4>
+        </div>
+        <div class="pt-5 pb-3">
+            <div class="btn-group" role="group">
+                <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Create log stream
+                </button>
+                <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="ShowCreateLogStreamApplicationInsights">Application Insights</button>
+                </div>
+            </div>
         </div>
     </div>
+
+    <ul class="list-group">
+        @if (!logSreamSettingsListError.IsNullOrWhiteSpace())
+        {
+            <li class="list-group-item">
+                <div class="alert alert-danger" role="alert">
+                    @logSreamSettingsListError
+                </div>
+            </li>
+        }
+        @if (logSreamSettingsList?.Count > 0)
+        {
+            @foreach (var logSreamSettings in logSreamSettingsList)
+            {
+                <li class="list-group-item @(logSreamSettings.Edit ? "active" : string.Empty)">
+                    @if (!logSreamSettings.Error.IsNullOrWhiteSpace())
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @logSreamSettings.Error
+                        </div>
+                    }
+                    @if (logSreamSettings.Edit)
+                    {
+                        if (logSreamSettings.LogStreamSettings.Type == LogStreamTypes.ApplicationInsights) 
+                        {
+                            <PageEditForm @ref="logSreamSettings.Form" TModel="LogStreamSettings" OnAfterInitialized="@(async (f) => await LogStreamSettingsViewModelAfterInitializedAsync(f, logSreamSettings))" OnAfterInit="@(m => LogStreamSettingsViewModelAfterInit(logSreamSettings, m))" OnValidSubmit="@(async (editContext) => await OnEditLogStreamSettingsValidSubmitAsync(logSreamSettings, editContext))">
+                                <div class="modal-header">
+                                    Application Insights log stream
+                                </div>
+                                <div class="modal-body">
+                                    <FInputText @bind-Value="logSreamSettings.Form.Model.ApplicationInsightsSettings.InstrumentationKey" For="@(() => logSreamSettings.Form.Model.ApplicationInsightsSettings.InstrumentationKey)" Focus="true" />                            
+
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogWarning" For="@(() => logSreamSettings.Form.Model.LogWarning)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogError" For="@(() => logSreamSettings.Form.Model.LogError)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogCriticalError" For="@(() => logSreamSettings.Form.Model.LogCriticalError)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogEvent" For="@(() => logSreamSettings.Form.Model.LogEvent)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogInfoTrace" For="@(() => logSreamSettings.Form.Model.LogInfoTrace)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogClaimTrace" For="@(() => logSreamSettings.Form.Model.LogClaimTrace)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogMessageTrace" For="@(() => logSreamSettings.Form.Model.LogMessageTrace)" TextType="e.d" />
+                                    <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogMetric" For="@(() => logSreamSettings.Form.Model.LogMetric)" TextType="e.d" />
+                                </div>
+                                @if (!logSreamSettings.CreateMode && logSreamSettings.DeleteAcknowledge)
+                                {
+                                    <div class="modal-footer">
+                                        <div class="alert alert-danger" role="alert">
+                                            <div>
+                                                You are about to delete @LogStreamSettingsInfoText(logSreamSettings), are you sure?
+                                            </div>
+
+                                            <div class="mt-3">
+                                                <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteLogStreamSettingsAsync(logSreamSettings))">Yes delete log stream</button>
+                                                <button type="button" class="btn btn-secondary" @onclick="@(() => logSreamSettings.DeleteAcknowledge = false)">No</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="modal-footer">
+                                    @if (!logSreamSettings.CreateMode)
+                                    {
+                                        <button type="button" class="btn btn-link" @onclick="@(() => logSreamSettings.DeleteAcknowledge = true)">Delete</button>
+                                    }
+                                    <button type="submit" class="btn btn-primary">@(logSreamSettings.CreateMode ? "Create" : "Update")</button>
+                                    <button type="button" class="btn btn-secondary" @onclick="@(() => LogStreamSettingsCancel(logSreamSettings))">Cancel</button>
+                                </div>
+                            </PageEditForm>
+                        }
+                    }
+                    else
+                    {
+                        <button class="btn btn-link" @onclick="@(async () => await ShowUpdateLogStreamSettingsAsync(logSreamSettings))">
+                            @LogStreamSettingsInfoText(logSreamSettings)
+                        </button>
+                    }
+                </li>
+            }
+        }
+        else
+        {
+            <li class="list-group-item">
+            </li>
+        }
+    </ul>
 </div>

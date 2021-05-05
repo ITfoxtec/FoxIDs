@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models.Config;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;
 using System;
@@ -9,12 +8,10 @@ namespace FoxIDs.Infrastructure
 {
     public class TelemetryLogger
     {
-        private readonly Settings settings;
         private readonly TelemetryClient telemetryClient;
 
-        public TelemetryLogger(Settings settings, TelemetryClient telemetryClient)
+        public TelemetryLogger(TelemetryClient telemetryClient)
         {
-            this.settings = settings;
             this.telemetryClient = telemetryClient;
         }
 

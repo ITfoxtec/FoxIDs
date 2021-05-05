@@ -43,6 +43,41 @@ namespace FoxIDs.Infrastructure
                 }
             }
 
+            if (item is ExceptionTelemetry exceptionTelemetry)
+            {
+                if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
+                {
+                    var routeBinding = httpContextAccessor.HttpContext.GetRouteBinding();
+                    if(routeBinding?.Logging?.ScopedStreamLoggers?.Count() > 0)
+                    {
+                        var telemetryScopedStreamLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedStreamLogger>();
+                        var telemetryScopedProperties = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedProperties>();
+
+                        if (exceptionTelemetry.SeverityLevel == SeverityLevel.Warning)
+                        {
+                            foreach (var scopedStreamLogger in routeBinding.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
+                            {
+                                telemetryScopedStreamLogger.Warning(scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
+                            }
+                        }
+                        if (exceptionTelemetry.SeverityLevel == SeverityLevel.Error)
+                        {
+                            foreach (var scopedStreamLogger in routeBinding.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
+                            {
+                                telemetryScopedStreamLogger.Error(scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
+                            }
+                        }
+                        if (exceptionTelemetry.SeverityLevel == SeverityLevel.Critical)
+                        {
+                            foreach (var scopedStreamLogger in routeBinding.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
+                            {
+                                telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
+                            }
+                        }
+                    }
+                }
+            }
+
             next.Process(item);
         }
     }

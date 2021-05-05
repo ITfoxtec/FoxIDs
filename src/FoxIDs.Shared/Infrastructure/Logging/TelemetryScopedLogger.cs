@@ -12,15 +12,15 @@ namespace FoxIDs.Infrastructure
     {
         private readonly TelemetryLogger telemetryLogger;
         private readonly TelemetryScopedProperties telemetryScopedProperties;
-        private readonly TenantTrackLogger tenantTrackLogger;
+        private readonly TelemetryScopedStreamLogger telemetryScopedStreamLogger;
         private readonly IHttpContextAccessor httpContextAccessor;
         private readonly List<TraceMessage> traceMessages = new List<TraceMessage>();
 
-        public TelemetryScopedLogger(TelemetryLogger telemetryLogger, TelemetryScopedProperties telemetryScopedProperties, TenantTrackLogger tenantTrackLogger, IHttpContextAccessor httpContextAccessor)
+        public TelemetryScopedLogger(TelemetryLogger telemetryLogger, TelemetryScopedProperties telemetryScopedProperties, TelemetryScopedStreamLogger telemetryScopedStreamLogger, IHttpContextAccessor httpContextAccessor)
         {
             this.telemetryLogger = telemetryLogger;
             this.telemetryScopedProperties = telemetryScopedProperties;
-            this.tenantTrackLogger = tenantTrackLogger;
+            this.telemetryScopedStreamLogger = telemetryScopedStreamLogger;
             this.httpContextAccessor = httpContextAccessor;
         }
 
@@ -31,9 +31,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    tenantTrackLogger.Warning(trackLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }
         }
@@ -44,9 +44,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    tenantTrackLogger.Warning(trackLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }
         }
@@ -58,9 +58,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogError))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    tenantTrackLogger.Error(trackLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }
         }
@@ -71,9 +71,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogError))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    tenantTrackLogger.Error(trackLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }
         }
@@ -85,9 +85,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    tenantTrackLogger.CriticalError(trackLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }
         }
@@ -98,9 +98,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    tenantTrackLogger.CriticalError(trackLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }
         }
@@ -112,9 +112,9 @@ namespace FoxIDs.Infrastructure
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
-                foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogEvent))
+                foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogEvent))
                 {
-                    tenantTrackLogger.Event(trackLogger, eventName, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Event(scopedStreamLogger, eventName, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
                 }
             }                        
         }
@@ -158,9 +158,9 @@ namespace FoxIDs.Infrastructure
 
                 if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
                 {
-                    foreach (var trackLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogMetric))
+                    foreach (var scopedStreamLogger in RouteBinding.Logging.ScopedStreamLoggers.Where(l => l.LogMetric))
                     {
-                        tenantTrackLogger.Metric(trackLogger, messageData.Message, messageData.Value, telemetryScopedProperties.Properties.ConcatOnce(properties));
+                        telemetryScopedStreamLogger.Metric(scopedStreamLogger, messageData.Message, messageData.Value, telemetryScopedProperties.Properties.ConcatOnce(properties));
                     }
                 }
             }
@@ -181,25 +181,31 @@ namespace FoxIDs.Infrastructure
                 isDisposed = true;
                 if (RouteBinding?.Logging != null && traceMessages.Count > 0)
                 {
-                    if (RouteBinding?.Logging.ScopedLogger != null)
+                    if (RouteBinding.Logging.ScopedLogger != null)
                     {
-                        var scopedLogger = RouteBinding?.Logging.ScopedLogger;
+                        var scopedLogger = RouteBinding.Logging.ScopedLogger;
                         var telemetryLoggertraceMessages = traceMessages.Where(m =>
                             (m.TraceType == TraceTypes.Info && scopedLogger.LogInfoTrace) ||
                             (m.TraceType == TraceTypes.Claim && scopedLogger.LogClaimTrace) ||
                             (m.TraceType == TraceTypes.Message && scopedLogger.LogMessageTrace));
-                        telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties.ConcatOnce(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
+                        if (telemetryLoggertraceMessages.Count() > 0)
+                        {
+                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties.ConcatOnce(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
+                        }
                     }
 
-                    if (RouteBinding?.Logging.ScopedStreamLoggers?.Count() > 0)
+                    if (RouteBinding.Logging.ScopedStreamLoggers?.Count() > 0)
                     {
-                        foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers)
+                        foreach (var scopedStreamLogger in RouteBinding.Logging.ScopedStreamLoggers)
                         {
-                            var trackLoggertraceMessages = traceMessages.Where(m =>
+                            var scopedStreamLoggertraceMessages = traceMessages.Where(m =>
                                 (m.TraceType == TraceTypes.Info && scopedStreamLogger.LogInfoTrace) ||
                                 (m.TraceType == TraceTypes.Claim && scopedStreamLogger.LogClaimTrace) ||
                                 (m.TraceType == TraceTypes.Message && scopedStreamLogger.LogMessageTrace));
-                            tenantTrackLogger.Trace(scopedStreamLogger, traceMessages.ToJson(), telemetryScopedProperties.Properties);
+                            if (scopedStreamLoggertraceMessages.Count() > 0)
+                            {
+                                telemetryScopedStreamLogger.Trace(scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
+                            }
                         }
                     }
                 }

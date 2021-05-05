@@ -95,6 +95,8 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Api.LogStreamSettings, ScopedStreamLogger>()
                 .ReverseMap();
+            CreateMap<Api.LogStreamApplicationInsightsSettings, ScopedStreamApplicationInsightsSettings>()
+                .ReverseMap();
         }
 
         private void UpPartyMapping()

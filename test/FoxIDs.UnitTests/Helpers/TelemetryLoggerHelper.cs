@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Infrastructure;
-using FoxIDs.Models.Config;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
@@ -8,19 +7,19 @@ namespace FoxIDs.UnitTests.Helpers
 {
     public static class TelemetryLoggerHelper
     {
-        public static TenantTrackLogger TraceLoggerObject(IHttpContextAccessor httpContextAccessor)
+        public static TelemetryScopedStreamLogger ScopedStreamLoggerObject(IHttpContextAccessor httpContextAccessor)
         {
-            var tenantTrackLogger = new TenantTrackLogger(httpContextAccessor);
-            return tenantTrackLogger;
+            var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger(httpContextAccessor);
+            return telemetryScopedStreamLogger;
         }
 
-        public static TelemetryScopedLogger ScopedLoggerObject(Settings settings, IHttpContextAccessor httpContextAccessor)
+        public static TelemetryScopedLogger ScopedLoggerObject(IHttpContextAccessor httpContextAccessor)
         {
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration("xxx"));
-            var telemetryLogger = new TelemetryLogger(settings, telemetryClient);
-            var tenantTrackLogger = new TenantTrackLogger(httpContextAccessor);
+            var telemetryLogger = new TelemetryLogger(telemetryClient);
+            var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger(httpContextAccessor);
             var telemetryScopedProperties = new TelemetryScopedProperties();
-            var telemetryScopedLogger = new TelemetryScopedLogger(telemetryLogger, telemetryScopedProperties, tenantTrackLogger, httpContextAccessor);
+            var telemetryScopedLogger = new TelemetryScopedLogger(telemetryLogger, telemetryScopedProperties, telemetryScopedStreamLogger, httpContextAccessor);
             return telemetryScopedLogger;
         }
     }

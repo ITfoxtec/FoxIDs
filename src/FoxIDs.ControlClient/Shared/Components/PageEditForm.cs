@@ -4,7 +4,6 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -25,6 +24,9 @@ namespace FoxIDs.Client.Shared.Components
         public RenderFragment ChildContent { get; set; }
 
         [Parameter]
+        public EventCallback<PageEditForm<TModel>> OnAfterInitialized { get; set; }
+
+        [Parameter]
         public EventCallback<TModel> OnAfterInit { get; set; }
 
         [Parameter]
@@ -33,6 +35,7 @@ namespace FoxIDs.Client.Shared.Components
         protected override async Task OnInitializedAsync()
         {
             await InitAsync();
+            await OnAfterInitialized.InvokeAsync(this);
             await base.OnInitializedAsync();
         }
 

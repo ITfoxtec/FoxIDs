@@ -2,13 +2,13 @@
 using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
+using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -18,6 +18,8 @@ namespace FoxIDs.Client.Pages
     {
         private string logsHref;
         private GeneralLogSettingsViewModel generalLogSettings = new GeneralLogSettingsViewModel();
+        private string logSreamSettingsListError;
+        private List<GeneralLogStreamSettingsViewModel> logSreamSettingsList = new List<GeneralLogStreamSettingsViewModel>();
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -47,24 +49,27 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
-        //    certificateLoadError = null;
-        //    try
-        //    {
-        //        trackKey = await TrackService.GetTrackLogSettingsAsync();
-
-        //        if (trackKey.Type == TrackKeyType.Contained)
-        //        {
-        //            SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
-        //        }
-        //    }
-        //    catch (TokenUnavailableException)
-        //    {
-        //        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        certificateLoadError = ex.Message;
-        //    }
+            logSreamSettingsListError = null;
+            try
+            {
+                var logStreams = await TrackService.GetTrackLogStreamSettingsAsync();
+                logSreamSettingsList.Clear();
+                if (logStreams?.LogStreamSettings?.Count > 0)
+                {
+                    foreach (var ls in logStreams?.LogStreamSettings)
+                    {
+                        logSreamSettingsList.Add(new GeneralLogStreamSettingsViewModel(ls));
+                    }
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                logSreamSettingsListError = ex.Message;
+            }
         }
 
         private async Task ShowUpdateLogSettingsAsync()
@@ -100,5 +105,131 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        private string LogStreamSettingsInfoText(GeneralLogStreamSettingsViewModel generalLogStreamSettings)
+        {
+            if (generalLogStreamSettings.LogStreamSettings.Type == LogStreamTypes.ApplicationInsights)
+            {
+                return $"Application Insights {generalLogStreamSettings.LogStreamSettings.ApplicationInsightsSettings.InstrumentationKey}";
+            }
+            else
+            {
+                throw new NotSupportedException("Log stream settings type not supported.");
+            }
+        }
+
+        private void ShowCreateLogStreamApplicationInsights()
+        {
+            var logStreamSettings = new GeneralLogStreamSettingsViewModel();
+            logStreamSettings.CreateMode = true;
+            logStreamSettings.Edit = true;
+            logSreamSettingsList.Add(logStreamSettings);
+        }
+
+        private async Task ShowUpdateLogStreamSettingsAsync(GeneralLogStreamSettingsViewModel generalLogStreamSettings)
+        {
+            generalLogStreamSettings.CreateMode = false;
+            generalLogStreamSettings.DeleteAcknowledge = false;
+            logSreamSettingsListError = null;
+            generalLogStreamSettings.Error = null;
+            generalLogStreamSettings.Edit = true;
+        }
+
+        private async Task LogStreamSettingsViewModelAfterInitializedAsync(PageEditForm<LogStreamSettings> form, GeneralLogStreamSettingsViewModel generalLogStreamSettings)
+        {
+            try
+            {
+                await form.InitAsync(generalLogStreamSettings.LogStreamSettings);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalLogStreamSettings.Error = ex.Message;
+            }
+        }
+
+        private void LogStreamSettingsViewModelAfterInit(GeneralLogStreamSettingsViewModel generalLogStreamSettings, LogStreamSettings LogStreamSettings)
+        {
+            if (LogStreamSettings.Type == LogStreamTypes.ApplicationInsights)
+            {
+                if (LogStreamSettings.ApplicationInsightsSettings == null)
+                {
+                    LogStreamSettings.ApplicationInsightsSettings = new LogStreamApplicationInsightsSettings();
+                }
+            }
+            else
+            {
+                throw new NotSupportedException("Log stream settings type not supported.");
+            }
+
+            if (generalLogStreamSettings.CreateMode)
+            {
+                LogStreamSettings.LogWarning = true;
+                LogStreamSettings.LogError = true;
+                LogStreamSettings.LogCriticalError = true;
+                LogStreamSettings.LogEvent = true;
+            }
+        }
+
+        private void LogStreamSettingsCancel(GeneralLogStreamSettingsViewModel generalLogStreamSettings)
+        {
+            if (generalLogStreamSettings.CreateMode)
+            {
+                logSreamSettingsList.Remove(generalLogStreamSettings);
+            }
+            else
+            {
+                generalLogStreamSettings.Edit = false;
+            }
+        }
+
+        private async Task OnEditLogStreamSettingsValidSubmitAsync(GeneralLogStreamSettingsViewModel generalLogStreamSettings, EditContext editContext)
+        {
+            var logStreams = new LogStreams { LogStreamSettings = new List<LogStreamSettings>() };
+            GeneralLogStreamSettingsViewModel updatedgeneralLogStreamSettings = null;
+            foreach (var ls in logSreamSettingsList)
+            {
+                if (ls == generalLogStreamSettings)
+                {
+                    logStreams.LogStreamSettings.Add(generalLogStreamSettings.Form.Model);
+                    updatedgeneralLogStreamSettings = ls;
+                }
+                else
+                {
+                    logStreams.LogStreamSettings.Add(ls.LogStreamSettings);
+                }
+            }
+            await TrackService.SaveTrackLogStreamSettingsAsync(logStreams);
+            updatedgeneralLogStreamSettings.LogStreamSettings = generalLogStreamSettings.Form.Model;
+            generalLogStreamSettings.Edit = false;
+        }
+
+        private async Task DeleteLogStreamSettingsAsync(GeneralLogStreamSettingsViewModel generalLogStreamSettings)
+        {
+            try
+            {
+                var logStreams = new LogStreams { LogStreamSettings = new List<LogStreamSettings>() };
+                var logStreamSettingsSavelist = new List<LogStreamSettings>();
+                foreach (var ls in logSreamSettingsList)
+                {
+                    if (ls != generalLogStreamSettings)
+                    {
+                        logStreams.LogStreamSettings.Add(ls.LogStreamSettings);
+                    }
+                }
+                await TrackService.SaveTrackLogStreamSettingsAsync(logStreams);
+                logSreamSettingsList.Remove(generalLogStreamSettings);
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                generalLogStreamSettings.Form.SetError(ex.Message);
+            }
+        }
     }
 }

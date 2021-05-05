@@ -85,7 +85,6 @@ namespace FoxIDs.UnitTests
 
         private BaseAccountLogic AccountLogicInstance(int passwordLength = 8, bool checkPasswordComplexity = true, bool checkPasswordRisk = true)
         {
-            var settings = new Settings();
             var routeBinding = new RouteBinding
             {
                 PasswordLength = passwordLength,
@@ -94,7 +93,7 @@ namespace FoxIDs.UnitTests
             };
             var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
-            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(settings, mockHttpContextAccessor);
+            var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
             var fakeTenantRepository = new FakeTenantRepository();
             var fakeMasterRepository = new FakeMasterRepository();

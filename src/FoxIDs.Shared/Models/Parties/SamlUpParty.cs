@@ -27,10 +27,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
-        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)] 
-        [JsonProperty(PropertyName = "metadata_lifetime")]
-        public int MetadataLifetime { get; set; }
-
         [Required]
         [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
         [JsonProperty(PropertyName = "signature_algorithm")]

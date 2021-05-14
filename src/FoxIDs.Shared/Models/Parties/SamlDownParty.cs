@@ -27,10 +27,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
-        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        [JsonProperty(PropertyName = "metadata_lifetime")]
-        public int MetadataLifetime { get; set; }
-
         [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]
         [JsonProperty(PropertyName = "subject_confirmation_lifetime")]
         public int SubjectConfirmationLifetime { get; set; }

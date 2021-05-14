@@ -360,8 +360,6 @@ namespace FoxIDs
             public static class SamlParty
             {
                 public const int IssuerLength = 300;
-                public const int MetadataLifetimeMin = 86400; // 24 hours 
-                public const int MetadataLifetimeMax = 31536000; // 12 month
                 public const int SignatureAlgorithmLength = 100;
                 public const int KeysMax = 10;
 

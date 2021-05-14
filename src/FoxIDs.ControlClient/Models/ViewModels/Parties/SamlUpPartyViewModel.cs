@@ -18,6 +18,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Up-party name")]
         public string Name { get; set; }
 
+        public SamlPartyModes Mode { get; set; } = SamlPartyModes.MetadataOnline;
+
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Optional custom SP issuer (default auto generated)")]
         public string SpIssuer { get; set; }
@@ -32,13 +34,6 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Claims (in addition to default claims)")]
         public List<string> Claims { get; set; }
-
-        /// <summary>
-        /// Default 20 days.
-        /// </summary>
-        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        [Display(Name = "Metadata lifetime in seconds")]
-        public int MetadataLifetime { get; set; } = 1728000;
 
         /// <summary>
         /// Default SHA256.

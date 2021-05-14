@@ -11,18 +11,21 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using UrlCombineLib;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Logic
 {
     public class SamlMetadataLogic : LogicBase
     {
+        private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlMetadataLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
@@ -43,7 +46,7 @@ namespace FoxIDs.Logic
             var entityDescriptor = new EntityDescriptor(samlConfig);
             if (party != null)
             {
-                entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+                entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
             }
             entityDescriptor.SPSsoDescriptor = new SPSsoDescriptor
             {
@@ -84,7 +87,7 @@ namespace FoxIDs.Logic
             var entityDescriptor = new EntityDescriptor(samlConfig);
             if (party != null)
             {
-                entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+                entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
             }
             entityDescriptor.IdPSsoDescriptor = new IdPSsoDescriptor
             {

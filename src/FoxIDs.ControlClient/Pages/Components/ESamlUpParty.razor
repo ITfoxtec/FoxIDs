@@ -6,12 +6,26 @@
 
 <PageEditForm @ref="samlUpParty.Form" TModel="SamlUpPartyViewModel" OnAfterInit="@(m => SamlUpPartyViewModelAfterInit(samlUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlUpPartyValidSubmitAsync(samlUpParty, editContext))">
     <div class="modal-header">
-        <div>
+        <div class="d-flex">
             SAML 2.0
         </div>
         @if (samlUpParty.ShowSamlTab)
         {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+            <div class="d-flex">
+                <div class="btn-group" role="group">
+                    <button id="btnGroupCreateUpParty" type="button" class="btn btn-link  btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Metadata or manual
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
+                        <button class="dropdown-item btn btn-link btn-xs" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.MetadataOnline))">Metadata online</button>
+                        <button class="dropdown-item btn btn-link btn-xs" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.MetadataFile))">Metadata file</button>
+                        <button class="dropdown-item btn btn-link btn-xs" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.Manual))">Manual setup</button>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+            </div>
         }
     </div>
     <div class="modal-body">
@@ -164,7 +178,6 @@
                         <option value="@X509RevocationMode.Offline">Offline</option>
                         <option value="@X509RevocationMode.Online">Online</option>
                     </FInputSelect>
-                    <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataLifetime" For="@(() => samlUpParty.Form.Model.MetadataLifetime)" />
                 }
             }
             else if (samlUpParty.ShowClaimTransformTab)

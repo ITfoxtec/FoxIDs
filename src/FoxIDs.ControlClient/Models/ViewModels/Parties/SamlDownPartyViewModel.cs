@@ -39,13 +39,6 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<string> Claims { get; set; }
 
         /// <summary>
-        /// Default 20 days.
-        /// </summary>
-        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        [Display(Name = "Metadata lifetime in seconds")]
-        public int MetadataLifetime { get; set; } = 1728000;
-
-        /// <summary>
         /// Default 5 minutes.
         /// </summary>
         [Range(Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMin, Constants.Models.SamlParty.Down.SubjectConfirmationLifetimeMax)]

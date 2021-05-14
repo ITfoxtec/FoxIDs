@@ -28,6 +28,11 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void SetMode(SamlUpPartyViewModel samlUpParty, SamlPartyModes mode)
+        {
+            samlUpParty.Mode = mode;
+        }
+
         private async Task OnSamlUpPartyCertificateFileSelectedAsync(GeneralSamlUpPartyViewModel generalSamlUpParty, IFileListEntry[] files)
         {
             if (generalSamlUpParty.Form.Model.Keys == null)

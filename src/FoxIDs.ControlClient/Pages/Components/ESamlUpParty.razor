@@ -17,9 +17,12 @@
                         Metadata or manual
                     </button>
                     <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
-                        <button class="dropdown-item btn btn-link btn-xs" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.MetadataOnline))">Metadata online</button>
-                        <button class="dropdown-item btn btn-link btn-xs" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.MetadataFile))">Metadata file</button>
-                        <button class="dropdown-item btn btn-link btn-xs" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.Manual))">Manual setup</button>
+                        <button class="dropdown-item btn btn-link btn-sm" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.MetadataOnline))">Metadata online</button>
+                        <label class="dropdown-item btn btn-link btn-sm" style="margin-bottom: 0">
+                            Read metadata file
+                            <input hidden type="file" @ref=readMetadataFileElement @onchange="@(async () => await OnReadMetadataFileAsync(samlUpParty))" />
+                        </label>
+                        <button class="dropdown-item btn btn-link btn-sm" type="button" @onclick="@(() => SetMode(samlUpParty.Form.Model, SamlPartyModes.Manual))">Manual setup</button>
                     </div>
                 </div>
             </div>

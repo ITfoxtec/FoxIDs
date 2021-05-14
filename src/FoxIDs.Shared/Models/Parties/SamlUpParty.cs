@@ -15,6 +15,23 @@ namespace FoxIDs.Models
             Type = PartyTypes.Saml2;
         }
 
+        [Required]
+        [JsonProperty(PropertyName = "update_state")]
+        public PartyUpdateStates UpdateState { get; set; }
+
+        [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
+        [JsonProperty(PropertyName = "metadata_update_rate")]
+        public int? MetadataUpdateRate { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        [JsonProperty(PropertyName = "metadata_url")]
+        public string MetadataUrl { get; set; }
+
+        // Property can not be updated through API
+        [Required]
+        [JsonProperty(PropertyName = "last_updated")]
+        public long LastUpdated { get; set; }
+
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "sp_issuer")]
         public string SpIssuer { get; set; }

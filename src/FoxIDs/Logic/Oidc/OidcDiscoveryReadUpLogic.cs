@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
             var key = UpdateWaitPeriodKey(party.Id);
             if (await db.KeyExistsAsync(key))
             {
-                logger.ScopeTrace(() => $"Up party '{party.Id}' not updated because another update is in progress.");
+                logger.ScopeTrace(() => $"Up party '{party.Id}' not updated with OIDC discovery because another update is in progress.");
                 return;
             }
             else
@@ -81,7 +81,7 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    throw new EndpointException("Failing OIDC discovery.", ex) { RouteBinding = RouteBinding };
+                    throw new EndpointException("Failed to read OIDC discovery.", ex) { RouteBinding = RouteBinding };
                 }
 
                 await tenantRepository.SaveAsync(party);

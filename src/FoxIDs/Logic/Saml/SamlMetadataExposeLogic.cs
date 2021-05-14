@@ -15,7 +15,7 @@ using FoxIDs.Models.Config;
 
 namespace FoxIDs.Logic
 {
-    public class SamlMetadataLogic : LogicBase
+    public class SamlMetadataExposeLogic : LogicBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
@@ -23,7 +23,7 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlMetadataLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataExposeLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

@@ -1,4 +1,4 @@
-﻿namespace FoxIDs.Models.Api
+﻿namespace FoxIDs.Client.Models.ViewModels
 {
     public enum SamlPartyModes
     {

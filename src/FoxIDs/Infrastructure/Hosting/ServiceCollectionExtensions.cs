@@ -43,8 +43,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SessionUpPartyLogic>();            
             services.AddTransient<ClaimTransformationsLogic>();         
 
-            services.AddTransient<OidcDiscoveryDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<OidcDiscoveryDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcDiscoveryReadLogic>();
             services.AddTransient<OidcDiscoveryReadUpLogic>();
 
@@ -72,7 +72,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<SamlClaimsDownLogic>();
             services.AddTransient<Saml2ConfigurationLogic>();
-            services.AddTransient<SamlMetadataLogic>();
+            services.AddTransient<SamlMetadataExposeLogic>();
+            services.AddTransient<SamlMetadataReadUpLogic>();
             services.AddTransient<SamlAuthnUpLogic>();
             services.AddTransient<SamlAuthnDownLogic>();
             services.AddTransient<SamlLogoutUpLogic>();

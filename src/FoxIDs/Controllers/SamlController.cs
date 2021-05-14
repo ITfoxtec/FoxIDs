@@ -35,7 +35,7 @@ namespace FoxIDs.Controllers
                 {
                     case PartyTypes.Saml2:
                     case null:
-                        return await serviceProvider.GetService<SamlMetadataLogic>().SpMetadataAsync(RouteBinding.UpParty?.Id);
+                        return await serviceProvider.GetService<SamlMetadataExposeLogic>().SpMetadataAsync(RouteBinding.UpParty?.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty?.Type}' not supported.");
                 }
@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
                 {
                     case PartyTypes.Saml2:
                     case null:
-                        return await serviceProvider.GetService<SamlMetadataLogic>().IdPMetadataAsync(RouteBinding.DownParty?.Id);
+                        return await serviceProvider.GetService<SamlMetadataExposeLogic>().IdPMetadataAsync(RouteBinding.DownParty?.Id);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty?.Type}' not supported.");
                 }

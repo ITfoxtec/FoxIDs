@@ -15,6 +15,15 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
+        [Required]
+        public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
+
+        [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
+        public int? MetadataUpdateRate { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        public string MetadataUrl { get; set; }
+
         /// <summary>
         /// Optional custom SP issuer (default auto generated).
         /// </summary>

@@ -218,15 +218,21 @@ namespace FoxIDs.Client.Pages
                     var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(upParty.Name);
                     await generalSamlUpParty.Form.InitAsync(samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
                     {
-                        afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
-
-                        afterMap.AuthnRequestBinding = samlUpParty.AuthnBinding.RequestBinding;
-                        afterMap.AuthnResponseBinding = samlUpParty.AuthnBinding.ResponseBinding;
-                        if (!samlUpParty.LogoutUrl.IsNullOrEmpty())
+                        if (samlUpParty.UpdateState == PartyUpdateStates.Manual)
                         {
-                            afterMap.LogoutRequestBinding = samlUpParty.LogoutBinding.RequestBinding;
-                            afterMap.LogoutResponseBinding = samlUpParty.LogoutBinding.ResponseBinding;
+                            afterMap.IsManual = true;
                         }
+
+                        if (samlUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
+                        {
+                            afterMap.AutomaticStopped = true;
+                        }
+                        else
+                        {
+                            afterMap.AutomaticStopped = false;
+                        }
+
+                        afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
 
                         generalSamlUpParty.CertificateInfoList.Clear();
                         foreach (var key in afterMap.Keys)

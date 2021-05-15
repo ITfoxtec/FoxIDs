@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.ServiceModel.Security;
 
 namespace FoxIDs.Models.Api
 {
-    public class SamlUpParty : INameValue, IClaimTransform<SamlClaimTransform>
+    public class SamlUpParty : INameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -55,25 +56,25 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [Required]
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         public string Issuer { get; set; }
 
-        [Required]
-        public SamlBinding AuthnBinding { get; set; }
+        public SamlBindingTypes? AuthnRequestBinding { get; set; }
 
         [Required]
+        public SamlBindingTypes? AuthnResponseBinding { get; set; }
+
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
         public string AuthnUrl { get; set; }
 
         public bool SignAuthnRequest { get; set; }
 
-        [Required]
-        [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(0, Constants.Models.SamlParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
-        [ValidateComplexType]
-        public SamlBinding LogoutBinding { get; set; }
+        public SamlBindingTypes? LogoutRequestBinding { get; set; }
+
+        public SamlBindingTypes? LogoutResponseBinding { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
         public string LogoutUrl { get; set; }
@@ -110,5 +111,58 @@ namespace FoxIDs.Models.Api
         /// URL party binding pattern.
         /// </summary>
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (AuthnResponseBinding == null)
+            {
+                results.Add(new ValidationResult($"The {nameof(AuthnResponseBinding)} field is required.", new[] { nameof(AuthnResponseBinding) }));
+            }
+
+            if (UpdateState == PartyUpdateStates.Manual)
+            {
+                if (Issuer.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required.", new[] { nameof(Issuer) }));
+                }
+                if (AuthnUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required.", new[] { nameof(AuthnUrl) }));
+                }
+                if (AuthnRequestBinding == null)
+                {
+                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required.", new[] { nameof(AuthnRequestBinding) }));
+                }
+                if (!LogoutUrl.IsNullOrWhiteSpace())
+                {
+                    if (LogoutRequestBinding == null)
+                    {
+                        results.Add(new ValidationResult($"The {nameof(LogoutRequestBinding)} field is required.", new[] { nameof(LogoutRequestBinding) }));
+                    }
+                    if (LogoutResponseBinding == null)
+                    {
+                        results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", new[] { nameof(LogoutResponseBinding) }));
+                    }
+                }
+                if (Keys?.Count < Constants.Models.SamlParty.Up.KeysMin)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}.", new[] { nameof(Keys) }));
+                }
+            }
+            else
+            {
+                if (!MetadataUpdateRate.HasValue)
+                {
+                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required.", new[] { nameof(MetadataUpdateRate) }));
+                }
+                if (MetadataUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required.", new[] { nameof(MetadataUrl) }));
+                } 
+            }
+            return results;
+        }
     }
 }

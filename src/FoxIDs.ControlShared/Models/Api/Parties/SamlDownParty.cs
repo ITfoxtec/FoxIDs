@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System.Collections.Generic;
@@ -69,13 +70,17 @@ namespace FoxIDs.Models.Api
         public string Issuer { get; set; }
 
         [Required]
-        public SamlBinding AuthnBinding { get; set; }
+        public SamlBindingTypes? AuthnRequestBinding { get; set; }
+
+        [Required]
+        public SamlBindingTypes? AuthnResponseBinding { get; set; }
 
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         public List<string> AcsUrls { get; set; }
 
-        [ValidateComplexType]
-        public SamlBinding LogoutBinding { get; set; }
+        public SamlBindingTypes? LogoutRequestBinding { get; set; } 
+
+        public SamlBindingTypes? LogoutResponseBinding { get; set; } 
 
         [MaxLength(Constants.Models.SamlParty.Down.SingleLogoutUrlLength)]
         public string SingleLogoutUrl { get; set; }
@@ -92,6 +97,18 @@ namespace FoxIDs.Models.Api
             if (AllowUpPartyNames?.Count <= 0)
             {
                 results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required.", new[] { nameof(AllowUpPartyNames) }));
+            }
+
+            if (!LoggedOutUrl.IsNullOrWhiteSpace())
+            {
+                if (LogoutRequestBinding == null)
+                {
+                    results.Add(new ValidationResult($"The {nameof(LogoutRequestBinding)} field is required.", new[] { nameof(LogoutRequestBinding) }));
+                }
+                if (LogoutResponseBinding == null)
+                {
+                    results.Add(new ValidationResult($"The {nameof(LogoutResponseBinding)} field is required.", new[] { nameof(LogoutResponseBinding) }));
+                }
             }
             return results;
         }

@@ -2,7 +2,7 @@
 {
     public enum SamlBindingTypes
     {
-        Redirect,
-        Post
+        Redirect = 10,
+        Post = 20
     }
 }

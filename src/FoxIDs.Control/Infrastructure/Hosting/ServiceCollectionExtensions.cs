@@ -1,26 +1,21 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using Azure.Identity;
-using FoxIDs.Infrastructure.KeyVault;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
 using FoxIDs.Logic.Seed;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models.Config;
 using ITfoxtec.Identity.Discovery;
-using ITfoxtec.Identity.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO;
-using System.Net.Http;
 using System.Reflection;
 
 namespace FoxIDs.Infrastructure.Hosting
@@ -41,14 +36,17 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
-            services.AddTransient<OidcDiscoveryReadLogic>();
-            services.AddTransient<OidcDiscoveryReadUpLogic>();
 
             services.AddTransient<ValidateGenericPartyLogic>();
             services.AddTransient<ValidateOAuthOidcPartyLogic>();
+            services.AddTransient<OidcDiscoveryReadLogic>();
+            services.AddTransient<OidcDiscoveryReadUpLogic>();
             services.AddTransient<ValidateSamlPartyLogic>();
+            services.AddTransient<SamlMetadataReadLogic>();
+            services.AddTransient<SamlMetadataReadUpLogic>();
 
-            
+
+
             return services;
         }
 

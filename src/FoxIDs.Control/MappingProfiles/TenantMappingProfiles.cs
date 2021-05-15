@@ -81,9 +81,6 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => s.Name.ToLower().GetFirstInDotList()));
 
-            CreateMap<SamlBinding, Api.SamlBinding>()
-                .ReverseMap();
-
             CreateMap<Api.TrackResourceItem, ResourceItem>()
                 .ReverseMap();
 
@@ -117,9 +114,23 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<SamlUpParty, Api.SamlUpParty>()
                 .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)))
+                .ForMember(d => d.AuthnRequestBinding, opt => opt.MapFrom(s => s.AuthnBinding.RequestBinding))
+                .ForMember(d => d.AuthnResponseBinding, opt => opt.MapFrom(s => s.AuthnBinding.ResponseBinding))
+                .ForMember(d => d.LogoutRequestBinding, opt => opt.MapFrom(s => s.LogoutBinding != null ? (Api.SamlBindingTypes?)s.LogoutBinding.RequestBinding : null))
+                .ForMember(d => d.LogoutResponseBinding, opt => opt.MapFrom(s => s.LogoutBinding != null ? (Api.SamlBindingTypes?)s.LogoutBinding.ResponseBinding : null))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.AuthnBinding, opt => opt.MapFrom(s => new SamlBinding
+                {
+                    RequestBinding = s.AuthnRequestBinding.HasValue ? (SamlBindingTypes)s.AuthnRequestBinding.Value : SamlBindingTypes.Post,
+                    ResponseBinding = s.AuthnResponseBinding.HasValue ? (SamlBindingTypes)s.AuthnResponseBinding.Value : SamlBindingTypes.Post,
+                }))
+                .ForMember(d => d.LogoutBinding, opt => opt.MapFrom(s => new SamlBinding
+                {
+                    RequestBinding = s.LogoutRequestBinding.HasValue ? (SamlBindingTypes)s.LogoutRequestBinding.Value : SamlBindingTypes.Post,
+                    ResponseBinding = s.LogoutResponseBinding.HasValue ? (SamlBindingTypes)s.LogoutResponseBinding.Value : SamlBindingTypes.Post,
+                }));
         }
 
         private void DownPartyMapping()
@@ -169,11 +180,25 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<SamlDownParty, Api.SamlDownParty>()
                 .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
+                .ForMember(d => d.AuthnRequestBinding, opt => opt.MapFrom(s => s.AuthnBinding.RequestBinding))
+                .ForMember(d => d.AuthnResponseBinding, opt => opt.MapFrom(s => s.AuthnBinding.ResponseBinding))
+                .ForMember(d => d.LogoutRequestBinding, opt => opt.MapFrom(s => s.LogoutBinding != null ? (Api.SamlBindingTypes?)s.LogoutBinding.RequestBinding : null))
+                .ForMember(d => d.LogoutResponseBinding, opt => opt.MapFrom(s => s.LogoutBinding != null ? (Api.SamlBindingTypes?)s.LogoutBinding.ResponseBinding : null))
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
                 .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
-                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));
+                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })))
+                .ForMember(d => d.AuthnBinding, opt => opt.MapFrom(s => new SamlBinding 
+                    { 
+                        RequestBinding = s.AuthnRequestBinding.HasValue ? (SamlBindingTypes)s.AuthnRequestBinding.Value : SamlBindingTypes.Post,
+                        ResponseBinding = s.AuthnResponseBinding.HasValue ? (SamlBindingTypes)s.AuthnResponseBinding.Value : SamlBindingTypes.Post,
+                    }))
+                .ForMember(d => d.LogoutBinding, opt => opt.MapFrom(s => new SamlBinding
+                {
+                    RequestBinding = s.LogoutRequestBinding.HasValue ? (SamlBindingTypes)s.LogoutRequestBinding.Value : SamlBindingTypes.Post,
+                    ResponseBinding = s.LogoutResponseBinding.HasValue ? (SamlBindingTypes)s.LogoutResponseBinding.Value : SamlBindingTypes.Post,
+                }));
         }
 
         private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform

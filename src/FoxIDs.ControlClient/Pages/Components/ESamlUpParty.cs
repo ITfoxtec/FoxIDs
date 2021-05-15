@@ -38,9 +38,18 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private void SetMode(SamlUpPartyViewModel samlUpParty, SamlPartyModes mode)
+        private void SetUpdateState(SamlUpPartyViewModel samlUpParty, PartyUpdateStates updateState)
         {
-            samlUpParty.Mode = mode;
+            if (updateState == PartyUpdateStates.Automatic)
+            {
+                samlUpParty.IsManual = false;
+            }
+            else
+            {
+                samlUpParty.IsManual = true;
+            }
+
+            samlUpParty.AutomaticStopped = false;
         }
 
         private async Task OnReadMetadataFileAsync(GeneralSamlUpPartyViewModel generalSamlUpParty)
@@ -239,11 +248,19 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.DisableSingleLogout = !generalSamlUpParty.Form.Model.EnableSingleLogout;
 
-                    afterMap.AuthnBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.AuthnRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.AuthnResponseBinding };
-                    if (!afterMap.LogoutUrl.IsNullOrEmpty())
+                    if (generalSamlUpParty.Form.Model.IsManual)
                     {
-                        afterMap.LogoutBinding = new SamlBinding { RequestBinding = generalSamlUpParty.Form.Model.LogoutRequestBinding, ResponseBinding = generalSamlUpParty.Form.Model.LogoutResponseBinding };
+                        afterMap.UpdateState = PartyUpdateStates.Manual;
+
                     }
+                    else
+                    {
+                        afterMap.UpdateState = PartyUpdateStates.Automatic;
+
+
+
+                    }
+
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
                         int order = 1;

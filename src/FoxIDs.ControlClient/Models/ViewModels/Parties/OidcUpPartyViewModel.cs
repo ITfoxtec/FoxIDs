@@ -8,15 +8,19 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime
     {
-        public bool IsManual { get; set; }
-
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Up-party name (client ID)")]
         public string Name { get; set; }
 
+        public bool IsManual { get; set; }
+
         public bool AutomaticStopped { get; set; }
+
+        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
+        [Display(Name = "Automatic update rate")]
+        public int OidcDiscoveryUpdateRate { get; set; } = 2592000; // 30 days
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
@@ -35,10 +39,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Key IDs")]
         public List<string> KeyIds { get; set; } = new List<string>();
-
-        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        [Display(Name = "Automatic update rate")]
-        public int OidcDiscoveryUpdateRate { get; set; } = 2592000; // 30 days
 
         /// <summary>
         /// Default 10 hours.

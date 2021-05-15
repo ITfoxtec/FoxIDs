@@ -20,13 +20,15 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly ITenantRepository tenantRepository;
+        private readonly SamlMetadataReadLogic samlMetadataReadLogic;
 
-        public SamlMetadataReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, SamlMetadataReadLogic samlMetadataReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
             this.tenantRepository = tenantRepository;
+            this.samlMetadataReadLogic = samlMetadataReadLogic;
         }
 
         public async Task CheckMetadataAndUpdateUpPartyAsync(SamlUpParty party)
@@ -67,54 +69,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    var entityDescriptor = new EntityDescriptor();
-                    entityDescriptor.ReadIdPSsoDescriptorFromUrl(new Uri(party.MetadataUrl));
-                    if (entityDescriptor.IdPSsoDescriptor != null)
-                    {
-                        party.Issuer = entityDescriptor.EntityId;
-                        var singleSignOnServices = entityDescriptor.IdPSsoDescriptor.SingleSignOnServices.FirstOrDefault();
-                        if (singleSignOnServices == null)
-                        {
-                            throw new Exception("IdPSsoDescriptor SingleSignOnServices is empty.");
-                        }
-
-                        party.AuthnUrl = singleSignOnServices.Location?.OriginalString;
-                        party.AuthnBinding.RequestBinding = GetSamlBindingTypes(singleSignOnServices.Binding?.OriginalString);
-
-                        var singleLogoutDestination = GetSingleLogoutServices(entityDescriptor.IdPSsoDescriptor.SingleLogoutServices);
-                        if (singleLogoutDestination != null)
-                        {
-                            party.LogoutUrl = singleLogoutDestination.Location?.OriginalString;
-                            var singleLogoutResponseLocation = singleLogoutDestination.ResponseLocation?.OriginalString;
-                            if (!string.IsNullOrEmpty(singleLogoutResponseLocation))
-                            {
-                                party.SingleLogoutResponseUrl = singleLogoutResponseLocation;
-                            }
-                            if (party.LogoutBinding == null)
-                            {
-                                party.LogoutBinding = new SamlBinding { ResponseBinding = SamlBindingTypes.Post };
-                            }
-                            party.LogoutBinding.RequestBinding = GetSamlBindingTypes(singleLogoutDestination.Binding?.OriginalString);
-                        }
-
-                        if (entityDescriptor.IdPSsoDescriptor.SigningCertificates?.Count() > 0)
-                        {
-                            party.Keys = await Task.FromResult(entityDescriptor.IdPSsoDescriptor.SigningCertificates.Select(c => c.ToFTJsonWebKey()).ToList());
-                        }
-                        else
-                        {
-                            party.Keys = null;
-                        }
-
-                        if (entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.HasValue)
-                        {
-                            party.SignAuthnRequest = entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.Value;
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("IdPSsoDescriptor not loaded from metadata.");
-                    }
+                    await samlMetadataReadLogic.PopulateModelAsync(party);
                 }
                 catch (Exception ex)
                 {
@@ -130,35 +85,6 @@ namespace FoxIDs.Logic
             {
                 await db.StringIncrementAsync(FailingUpdateUpPartyCountKey(party.Id));
                 logger.Warning(ex);
-            }
-        }
-
-        private SingleLogoutService GetSingleLogoutServices(IEnumerable<SingleLogoutService> singleLogoutServices)
-        {
-            var singleLogoutService = singleLogoutServices.Where(s => s.Binding.OriginalString == ProtocolBindings.HttpPost.OriginalString).FirstOrDefault();
-            if (singleLogoutService != null)
-            {
-                return singleLogoutService;
-            }
-            else
-            {
-                return singleLogoutServices.FirstOrDefault();
-            }
-        }
-
-        private SamlBindingTypes GetSamlBindingTypes(string binding)
-        {
-            if(binding == ProtocolBindings.HttpPost.OriginalString)
-            {
-                return SamlBindingTypes.Post;
-            }
-            else if (binding == ProtocolBindings.HttpRedirect.OriginalString)
-            {
-                return SamlBindingTypes.Redirect;
-            }
-            else
-            {
-                throw new Exception($"Binding '{binding}' not supported.");
             }
         }
 

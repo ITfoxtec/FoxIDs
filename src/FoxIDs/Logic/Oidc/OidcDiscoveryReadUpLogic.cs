@@ -67,17 +67,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(party.Authority);
-
-                    party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                    party.Issuers = new List<string> { oidcDiscovery.Issuer };
-                    party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
-                    party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
-                    if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
-                    {
-                        party.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
-                    }
-                    party.Keys = jsonWebKeySet.Keys?.ToList();
+                    await oidcDiscoveryReadLogic.PopulateModelAsync(party);
                 }
                 catch (Exception ex)
                 {

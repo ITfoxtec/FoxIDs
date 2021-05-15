@@ -1,11 +1,8 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -28,20 +25,7 @@ namespace FoxIDs.Logic
             {
                 if (mp.UpdateState != PartyUpdateStates.Manual)
                 {
-                    (var oidcDiscovery, var jsonWebKeySet) = await oidcDiscoveryReadLogic.GetOidcDiscoveryAndValidateAsync(mp.Authority);
-
-                    mp.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                    if (mp.EditIssuersInAutomatic != true || string.IsNullOrWhiteSpace(mp.Issuers?.FirstOrDefault()))
-                    {
-                        mp.Issuers = new List<string> { oidcDiscovery.Issuer };
-                    }
-                    mp.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
-                    mp.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
-                    if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
-                    {
-                        mp.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
-                    }
-                    mp.Keys = jsonWebKeySet.Keys?.ToList();
+                    await oidcDiscoveryReadLogic.PopulateModelAsync(mp);
 
                     if(mp.UpdateState == PartyUpdateStates.AutomaticStopped)
                     {

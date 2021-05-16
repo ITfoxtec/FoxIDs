@@ -12,21 +12,6 @@
         @if (samlUpParty.ShowSamlTab)
         {
             <div class="d-flex">
-                <div class="btn-group" role="group">
-                    <button id="btnGroupCreateUpParty" type="button" class="btn btn-link  btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Metadata or manual
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
-                        <button class="dropdown-item btn btn-link btn-sm" type="button" @onclick="@(() => SetUpdateState(samlUpParty.Form.Model, PartyUpdateStates.Automatic))">Metadata online</button>
-                        <label class="dropdown-item btn btn-link btn-sm" style="margin-bottom: 0">
-                            Read metadata file
-                            <input hidden type="file" @ref=readMetadataFileElement @onchange="@(async () => await OnReadMetadataFileAsync(samlUpParty))" />
-                        </label>
-                        <button class="dropdown-item btn btn-link btn-sm" type="button" @onclick="@(() => SetUpdateState(samlUpParty.Form.Model, PartyUpdateStates.Manual))">Manual setup</button>
-                    </div>
-                </div>
-            </div>
-            <div class="d-flex">
                 <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
             </div>
         }
@@ -98,10 +83,19 @@
         <div class="tab-content pt-3">
             @if (samlUpParty.ShowSamlTab)
             {
-                @if (!samlUpParty.Form.Model.IsManual)
+                @if (samlUpParty.Form.Model.IsManual)
+                {
+                    <label class="btn btn-link pl-0">
+                        Read metadata from file
+                        <input hidden type="file" @ref=readMetadataFileElement @onchange="@(async () => await OnReadMetadataFileAsync(samlUpParty))" />
+                    </label>
+                }
+                else
                 {
                     <FInputText @bind-Value="samlUpParty.Form.Model.MetadataUrl" For="@(() => samlUpParty.Form.Model.MetadataUrl)" />
                 }
+
+                <FInputToggle @bind-Value="samlUpParty.Form.Model.AutomaticUpdate" For="@(() => samlUpParty.Form.Model.AutomaticUpdate)" TextType="e.d" />
 
                 @if (samlUpParty.Form.Model.IsManual)
                 {
@@ -127,7 +121,7 @@
                         <ul class="list-group">
                             @foreach (var certificateInfo in samlUpParty.CertificateInfoList)
                             {
-                                <li class="list-group-item p-0">
+                                <li class="list-group-item p-0 @(samlUpParty.Form.Model.IsManual ? string.Empty : "bg-light")">
                                     <div class="d-flex">
                                         <div class="mr-auto p-2">
                                             <strong>@certificateInfo.Subject</strong><br />
@@ -160,26 +154,26 @@
                     @if (samlUpParty.Form.Model.IsManual || (!samlUpParty.Form.Model.IsManual && !samlUpParty.CreateMode))
                     {
                         <div class="col">
-                            <div class="form-group active-group">
-                                @if (samlUpParty.Form.Model.IsManual)
-                                {
+                            @if (samlUpParty.Form.Model.IsManual)
+                            {
+                                <div class="form-group active-group">
                                     <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnRequestBinding" For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
                                         <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
                                         <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
                                     </FInputSelect>
-                                }
-                                else if (!samlUpParty.CreateMode)
-                                {
-                                    <div class="active-group active">
-                                        <div class="card bg-light">
-                                            <div class="card-body px-3 py-2">
-                                                @samlUpParty.Form.Model.AuthnRequestBinding.ToString()
-                                            </div>
+                                </div>
+                            }
+                            else if (!samlUpParty.CreateMode)
+                            {
+                                <div class="active-group active">
+                                    <div class="card bg-light">
+                                        <div class="card-body px-3 py-2">
+                                            @samlUpParty.Form.Model.AuthnRequestBinding.ToString()
                                         </div>
-                                        <Label For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" class="label-control" />
                                     </div>
-                                }
-                            </div>
+                                    <Label For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" class="label-control" />
+                                </div>
+                            }
                         </div>
                     }
                     <div class="col">
@@ -211,7 +205,7 @@
                     {
                         <FInputText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
                     }
-                    else if (!samlUpParty.CreateMode)
+                    else if (!samlUpParty.CreateMode && !samlUpParty.Form.Model.SingleLogoutResponseUrl.IsNullOrEmpty())
                     {
                         <FFieldText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
                     }
@@ -220,26 +214,26 @@
                     @if (samlUpParty.Form.Model.IsManual || (!samlUpParty.Form.Model.IsManual && !samlUpParty.CreateMode))
                     {
                         <div class="col">
-                            <div class="form-group active-group">
-                                @if (samlUpParty.Form.Model.IsManual)
-                                {
+                            @if (samlUpParty.Form.Model.IsManual)
+                            {
+                                <div class="form-group active-group">
                                     <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutRequestBinding" For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
                                         <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
                                         <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
                                     </FInputSelect>
-                                }
-                                else if (!samlUpParty.CreateMode)
-                                {
-                                    <div class="active-group active">
-                                        <div class="card bg-light">
-                                            <div class="card-body px-3 py-2">
-                                                @samlUpParty.Form.Model.LogoutRequestBinding.ToString()
-                                            </div>
+                                </div>
+                            }
+                            else if (!samlUpParty.CreateMode)
+                            {
+                                <div class="active-group active">
+                                    <div class="card bg-light">
+                                        <div class="card-body px-3 py-2">
+                                            @samlUpParty.Form.Model.LogoutRequestBinding.ToString()
                                         </div>
-                                        <Label For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" class="label-control" />
                                     </div>
-                                }
-                            </div>
+                                    <Label For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" class="label-control" />
+                                </div>
+                            }
                         </div>
                     }
                     <div class="col">

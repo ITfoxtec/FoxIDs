@@ -17,7 +17,7 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "update_state")]
-        public PartyUpdateStates UpdateState { get; set; }
+        public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Manual;
 
         [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
         [JsonProperty(PropertyName = "metadata_update_rate")]

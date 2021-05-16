@@ -38,20 +38,6 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private void SetUpdateState(SamlUpPartyViewModel samlUpParty, PartyUpdateStates updateState)
-        {
-            if (updateState == PartyUpdateStates.Automatic)
-            {
-                samlUpParty.IsManual = false;
-            }
-            else
-            {
-                samlUpParty.IsManual = true;
-            }
-
-            samlUpParty.AutomaticStopped = false;
-        }
-
         private async Task OnReadMetadataFileAsync(GeneralSamlUpPartyViewModel generalSamlUpParty)
         {
             generalSamlUpParty.Form.ClearError();
@@ -256,9 +242,6 @@ namespace FoxIDs.Client.Pages.Components
                     else
                     {
                         afterMap.UpdateState = PartyUpdateStates.Automatic;
-
-
-
                     }
 
                     if (afterMap.ClaimTransforms?.Count() > 0)

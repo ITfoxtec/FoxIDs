@@ -28,7 +28,23 @@ namespace FoxIDs.Client.Models.ViewModels
         public int MetadataUpdateRate { get; set; } = 2592000; // 30 days
 
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        [Display(Name = "Metadata URL")]
         public string MetadataUrl { get; set; }
+
+        [Display(Name = "Automatic update")]
+        public bool AutomaticUpdate 
+        {
+            get 
+            {
+                AutomaticStopped = false;
+                return !IsManual; 
+            }
+            set
+            {
+                AutomaticStopped = false;
+                IsManual = !value;
+            }
+        }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Optional custom SP issuer (default auto generated)")]
@@ -100,7 +116,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string LogoutUrl { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
-        [Display(Name = "Single logout response URL (optional default logout URL is used)")]
+        [Display(Name = "Single logout response URL (optional, default logout URL is used)")]
         public string SingleLogoutResponseUrl { get; set; }
 
         /// <summary>

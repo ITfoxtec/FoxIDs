@@ -271,21 +271,13 @@ namespace FoxIDs.Client.Pages
                     var samlDownParty = await DownPartyService.GetSamlDownPartyAsync(downParty.Name);
                     await generalSamlDownParty.Form.InitAsync(samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
                     {
-                        afterMap.AuthnRequestBinding = samlDownParty.AuthnBinding.RequestBinding;
-                        afterMap.AuthnResponseBinding = samlDownParty.AuthnBinding.ResponseBinding;
-                        if (!samlDownParty.LoggedOutUrl.IsNullOrEmpty())
-                        {
-                            afterMap.LogoutRequestBinding = samlDownParty.LogoutBinding.RequestBinding;
-                            afterMap.LogoutResponseBinding = samlDownParty.LogoutBinding.ResponseBinding;
-                        }
-
-                        generalSamlDownParty.CertificateInfoList.Clear();
+                        generalSamlDownParty.KeyInfoList.Clear();
                         if (afterMap.Keys?.Count() > 0)
                         {
                             foreach (var key in afterMap.Keys)
                             {
                                 var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-                                generalSamlDownParty.CertificateInfoList.Add(new CertificateInfoViewModel
+                                generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
                                 {
                                     Subject = certificate.Subject,
                                     ValidFrom = certificate.NotBefore,

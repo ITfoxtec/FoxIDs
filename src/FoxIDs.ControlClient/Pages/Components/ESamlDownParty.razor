@@ -105,17 +105,17 @@
                     <Label For="@(() => samlDownParty.Form.Model.Keys)" class="label-control" />
                     <ValidationMessage For="@(() => samlDownParty.Form.Model.Keys)" />
                     <ul class="list-group">
-                        @foreach (var certificateInfo in samlDownParty.CertificateInfoList)
+                        @foreach (var keyInfo in samlDownParty.KeyInfoList)
                         {
                             <li class="list-group-item">
                                 <div class="d-flex">
                                     <div class="mr-auto p-2">
-                                        <strong>@certificateInfo.Subject</strong><br />
-                                        Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()<br />
-                                        Thumbprint: @certificateInfo.Thumbprint
+                                        <strong>@keyInfo.Subject</strong><br />
+                                        Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()<br />
+                                        Thumbprint: @keyInfo.Thumbprint
                                     </div>
                                     <div class="p-2">
-                                        <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                        <button type="button" class="btn btn-link" title="Remove" @onclick="@(() => RemoveSamlDownPartyCertificate(samlDownParty, keyInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
                                     </div>
                                 </div>
                             </li>
@@ -144,7 +144,6 @@
                     <FInputText @bind-Value="samlDownParty.Form.Model.IdPIssuer" For="@(() => samlDownParty.Form.Model.IdPIssuer)" />
                     <FInputNumber @bind-Value="samlDownParty.Form.Model.SubjectConfirmationLifetime" For="@(() => samlDownParty.Form.Model.SubjectConfirmationLifetime)" />
                     <FInputNumber @bind-Value="samlDownParty.Form.Model.IssuedTokenLifetime" For="@(() => samlDownParty.Form.Model.IssuedTokenLifetime)" />
-                    <FInputNumber @bind-Value="samlDownParty.Form.Model.MetadataLifetime" For="@(() => samlDownParty.Form.Model.MetadataLifetime)" />
                 }
             }
             else if (samlDownParty.ShowClaimTransformTab)

@@ -17,6 +17,9 @@ namespace FoxIDs.Models.Api
         [Required]
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
 
+        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
+        public int? OidcDiscoveryUpdateRate { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
         public string Authority { get; set; }
@@ -28,9 +31,6 @@ namespace FoxIDs.Models.Api
 
         [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
-
-        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        public int? OidcDiscoveryUpdateRate { get; set; }
 
         /// <summary>
         /// Default 10 hours.

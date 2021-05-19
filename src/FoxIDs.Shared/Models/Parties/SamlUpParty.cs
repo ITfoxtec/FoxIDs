@@ -15,6 +15,23 @@ namespace FoxIDs.Models
             Type = PartyTypes.Saml2;
         }
 
+        [Required]
+        [JsonProperty(PropertyName = "update_state")]
+        public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Manual;
+
+        [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
+        [JsonProperty(PropertyName = "metadata_update_rate")]
+        public int? MetadataUpdateRate { get; set; }
+
+        [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        [JsonProperty(PropertyName = "metadata_url")]
+        public string MetadataUrl { get; set; }
+
+        // Property can not be updated through API
+        [Required]
+        [JsonProperty(PropertyName = "last_updated")]
+        public long LastUpdated { get; set; }
+
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [JsonProperty(PropertyName = "sp_issuer")]
         public string SpIssuer { get; set; }
@@ -26,10 +43,6 @@ namespace FoxIDs.Models
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
-
-        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)] 
-        [JsonProperty(PropertyName = "metadata_lifetime")]
-        public int MetadataLifetime { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]

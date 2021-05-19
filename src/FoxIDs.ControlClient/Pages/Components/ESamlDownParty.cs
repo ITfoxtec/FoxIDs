@@ -60,7 +60,7 @@ namespace FoxIDs.Client.Pages.Components
                             return;
                         }
 
-                        generalSamlDownParty.CertificateInfoList.Add(new CertificateInfoViewModel
+                        generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
                         {
                             Subject = certificate.Subject,
                             ValidFrom = certificate.NotBefore,
@@ -80,12 +80,12 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private void RemoveSamlDownPartyCertificate(GeneralSamlDownPartyViewModel generalSamlDownParty, CertificateInfoViewModel certificateInfo)
+        private void RemoveSamlDownPartyCertificate(GeneralSamlDownPartyViewModel generalSamlDownParty, KeyInfoViewModel keyInfo)
         {
             generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
-            if (generalSamlDownParty.Form.Model.Keys.Remove(certificateInfo.Key))
+            if (generalSamlDownParty.Form.Model.Keys.Remove(keyInfo.Key))
             {
-                generalSamlDownParty.CertificateInfoList.Remove(certificateInfo);
+                generalSamlDownParty.KeyInfoList.Remove(keyInfo);
             }
         }
 
@@ -106,11 +106,6 @@ namespace FoxIDs.Client.Pages.Components
 
                 var samlDownParty = generalSamlDownParty.Form.Model.Map<SamlDownParty>(afterMap =>
                 {
-                    afterMap.AuthnBinding = new SamlBinding { RequestBinding = generalSamlDownParty.Form.Model.AuthnRequestBinding, ResponseBinding = generalSamlDownParty.Form.Model.AuthnResponseBinding };
-                    if (!afterMap.LoggedOutUrl.IsNullOrEmpty())
-                    {
-                        afterMap.LogoutBinding = new SamlBinding { RequestBinding = generalSamlDownParty.Form.Model.LogoutRequestBinding, ResponseBinding = generalSamlDownParty.Form.Model.LogoutResponseBinding };
-                    }
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
                         int order = 1;

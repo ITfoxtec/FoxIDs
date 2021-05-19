@@ -85,8 +85,22 @@ namespace FoxIDs.Logic
             try
             {
                 ValidateLogoutRequest(party, saml2LogoutRequest);
-                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
-                logger.ScopeTrace(() => "Down, SAML Logout request accepted.", triggerEvent: true);
+
+                try
+                {
+                    binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+                    logger.ScopeTrace(() => "Down, SAML Logout request accepted.", triggerEvent: true);
+
+                }
+                catch (Exception ex)
+                {
+                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (isex != null)
+                    {
+                        throw isex;
+                    }
+                    throw;
+                }
 
                 await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
                 {
@@ -332,8 +346,21 @@ namespace FoxIDs.Logic
             ValidateLogoutResponse(party, saml2LogoutResponse);
             await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
 
-            binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
-            logger.ScopeTrace(() => "Down, SAML Single Logout response accepted.", triggerEvent: true);
+            try
+            {
+                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+                logger.ScopeTrace(() => "Down, SAML Single Logout response accepted.", triggerEvent: true);
+
+            }
+            catch (Exception ex)
+            {
+                var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                if (isex != null)
+                {
+                    throw isex;
+                }
+                throw;
+            }
 
             return await singleLogoutDownLogic.HandleSingleLogoutAsync();
         }

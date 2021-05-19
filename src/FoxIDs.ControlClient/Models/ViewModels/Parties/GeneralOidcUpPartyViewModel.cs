@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using System.Collections.Generic;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -12,6 +13,8 @@ namespace FoxIDs.Client.Models.ViewModels
         { }
 
         public PageEditForm<OidcUpPartyViewModel> Form { get; set; }
+
+        public List<KeyInfoViewModel> KeyInfoList { get; set; } = new List<KeyInfoViewModel>();
 
         public bool ShowClientTab { get; set; } = true;
         public bool ShowClaimTransformTab { get; set; }

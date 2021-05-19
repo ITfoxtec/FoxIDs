@@ -94,52 +94,94 @@ namespace FoxIDs.Logic
                 {
                     throw new Exception("Logout URL is required if single logout response URL is configured.");
                 }
-
-                if (!samlUpParty.LogoutUrl.IsNullOrWhiteSpace())
-                {
-                    if(samlUpParty.LogoutBinding == null)
-                    {
-                        throw new Exception("Logout binding is required.");
-                    }
-                }
-                else
-                {
-                    samlUpParty.LogoutBinding = null;
-                }
             }
             catch (Exception ex)
             {
                 isValid = false;
                 logger.Warning(ex);
-                modelState.TryAddModelError(nameof(samlUpParty.LogoutBinding).ToCamelCase(), ex.Message);
+                modelState.TryAddModelError(nameof(samlUpParty.LogoutUrl).ToCamelCase(), ex.Message);
             }
+
+            if (!samlUpParty.LogoutUrl.IsNullOrWhiteSpace())
+            {
+                try
+                {
+                    if (samlUpParty.LogoutRequestBinding == null)
+                    {
+                        throw new Exception("Logout request binding is required.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isValid = false;
+                    logger.Warning(ex);
+                    modelState.TryAddModelError(nameof(samlUpParty.LogoutRequestBinding).ToCamelCase(), ex.Message);
+                }
+
+                try
+                {
+                    if (samlUpParty.LogoutResponseBinding == null)
+                    {
+                        throw new Exception("Logout response binding is required.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isValid = false;
+                    logger.Warning(ex);
+                    modelState.TryAddModelError(nameof(samlUpParty.LogoutResponseBinding).ToCamelCase(), ex.Message);
+                }
+            }
+            else
+            {
+                samlUpParty.LogoutRequestBinding = null;
+                samlUpParty.LogoutResponseBinding = null;
+            }
+
             return isValid;
         }
 
         private bool ValidateLogout(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)
         {
             var isValid = true;
-            try
+
+            if (!samlDownParty.LoggedOutUrl.IsNullOrWhiteSpace())
             {
-                if (!samlDownParty.LoggedOutUrl.IsNullOrWhiteSpace())
+                try
                 {
-                    if (samlDownParty.LogoutBinding == null)
+                    if (samlDownParty.LogoutRequestBinding == null)
                     {
-                        throw new Exception("Logout binding is required.");
+                        throw new Exception("Logout request binding is required.");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    samlDownParty.SingleLogoutUrl = null;
-                    samlDownParty.LogoutBinding = null;
+                    isValid = false;
+                    logger.Warning(ex);
+                    modelState.TryAddModelError(nameof(samlDownParty.LogoutRequestBinding).ToCamelCase(), ex.Message);
+                }
+
+                try
+                {
+                    if (samlDownParty.LogoutResponseBinding == null)
+                    {
+                        throw new Exception("Logout response binding is required.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    isValid = false;
+                    logger.Warning(ex);
+                    modelState.TryAddModelError(nameof(samlDownParty.LogoutResponseBinding).ToCamelCase(), ex.Message);
                 }
             }
-            catch (Exception ex)
+            else
             {
-                isValid = false;
-                logger.Warning(ex);
-                modelState.TryAddModelError(nameof(samlDownParty.LogoutBinding).ToCamelCase(), ex.Message);
+                samlDownParty.SingleLogoutUrl = null;
+                samlDownParty.LogoutRequestBinding = null;
+                samlDownParty.LogoutResponseBinding = null;
             }
+
             return isValid;
         }
     }

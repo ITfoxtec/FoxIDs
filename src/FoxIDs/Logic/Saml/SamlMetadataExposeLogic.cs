@@ -11,20 +11,23 @@ using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using UrlCombineLib;
+using FoxIDs.Models.Config;
+using System.Collections.Generic;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
-    public class SamlMetadataLogic : LogicBase
+    public class SamlMetadataExposeLogic : LogicBase
     {
+        private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlMetadataLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataExposeLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.settings = settings;
             this.logger = logger;
-            this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
@@ -32,31 +35,27 @@ namespace FoxIDs.Logic
         public async Task<IActionResult> SpMetadataAsync(string partyId)
         {
             logger.ScopeTrace(() => "Up, SP Metadata request.");
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);            
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, true);
-           
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSignatureValidationCertificates: false);
+
             var acsDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
             var singleLogoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout));
 
             var entityDescriptor = new EntityDescriptor(samlConfig);
             if (party != null)
             {
-                entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+                entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
             }
+
+            var trackCertificates = GettrackCertificates();
             entityDescriptor.SPSsoDescriptor = new SPSsoDescriptor
             {
                 //AuthnRequestsSigned = true,
                 //WantAssertionsSigned = true,
-                SigningCertificates = new X509Certificate2[]
-                {
-                    samlConfig.SigningCertificate
-                },
-                EncryptionCertificates = new X509Certificate2[]
-                {
-                    samlConfig.DecryptionCertificate
-                },
+                SigningCertificates = trackCertificates,
+                EncryptionCertificates = trackCertificates,
                 AssertionConsumerServices = new AssertionConsumerService[]
                 {
                     new AssertionConsumerService { Binding = ToSamleBindingUri(party?.AuthnBinding?.ResponseBinding), Location = acsDestination, },
@@ -76,7 +75,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlDownParty>(partyId) : null;
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
+            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, includeSignatureValidationCertificates: false);
 
             var authnDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAuthn));
             var logoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlLogout));
@@ -84,18 +83,14 @@ namespace FoxIDs.Logic
             var entityDescriptor = new EntityDescriptor(samlConfig);
             if (party != null)
             {
-                entityDescriptor.ValidUntil = new TimeSpan(0, 0, party.MetadataLifetime).Days;
+                entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
             }
+
+            var trackCertificates = GettrackCertificates();
             entityDescriptor.IdPSsoDescriptor = new IdPSsoDescriptor
             {
-                SigningCertificates = new X509Certificate2[]
-                {
-                    samlConfig.SigningCertificate
-                },
-                //EncryptionCertificates = new X509Certificate2[]
-                //{
-                //    config.DecryptionCertificate
-                //},
+                SigningCertificates = trackCertificates,
+                //EncryptionCertificates = trackCertificates,
                 SingleSignOnServices = new SingleSignOnService[]
                 {
                     new SingleSignOnService { Binding = ToSamleBindingUri(party?.AuthnBinding?.RequestBinding), Location = authnDestination, },
@@ -107,6 +102,18 @@ namespace FoxIDs.Logic
             };
 
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
+        }
+
+        private List<X509Certificate2> GettrackCertificates()
+        {
+            var trackCertificates = new List<X509Certificate2>();
+            trackCertificates.Add(RouteBinding.Key.PrimaryKey.Key.ToX509Certificate());
+            if (RouteBinding.Key.SecondaryKey != null)
+            {
+                trackCertificates.Add(RouteBinding.Key.SecondaryKey.Key.ToX509Certificate());
+            }
+
+            return trackCertificates;
         }
 
         private Uri ToSamleBindingUri(SamlBindingTypes? binding)

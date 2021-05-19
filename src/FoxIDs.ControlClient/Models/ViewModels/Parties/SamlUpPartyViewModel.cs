@@ -7,16 +7,44 @@ using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity.Models;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel : ISamlClaimTransformViewModel, IUpPartySessionLifetime
+    public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Up-party name")]
         public string Name { get; set; }
+
+        public bool IsManual { get; set; }
+
+        public bool AutomaticStopped { get; set; }
+
+        [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
+        [Display(Name = "Automatic update rate")]
+        public int MetadataUpdateRate { get; set; } = 2592000; // 30 days
+
+        [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
+        [Display(Name = "Metadata URL")]
+        public string MetadataUrl { get; set; }
+
+        [Display(Name = "Automatic update")]
+        public bool AutomaticUpdate 
+        {
+            get 
+            {
+                AutomaticStopped = false;
+                return !IsManual; 
+            }
+            set
+            {
+                AutomaticStopped = false;
+                IsManual = !value;
+            }
+        }
 
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Optional custom SP issuer (default auto generated)")]
@@ -32,13 +60,6 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Claims (in addition to default claims)")]
         public List<string> Claims { get; set; }
-
-        /// <summary>
-        /// Default 20 days.
-        /// </summary>
-        [Range(Constants.Models.SamlParty.MetadataLifetimeMin, Constants.Models.SamlParty.MetadataLifetimeMax)]
-        [Display(Name = "Metadata lifetime in seconds")]
-        public int MetadataLifetime { get; set; } = 1728000;
 
         /// <summary>
         /// Default SHA256.
@@ -62,28 +83,25 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [Required]
         [MaxLength(Constants.Models.SamlParty.IssuerLength)]
         [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 
-        [Required]
         [Display(Name = "Authn request binding")]
         public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Post;
 
-        [Required]
         [Display(Name = "Authn response binding")]
         public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
-        [Required]
         [MaxLength(Constants.Models.SamlParty.Up.AuthnUrlLength)]
         [Display(Name = "Authn URL")]
         public string AuthnUrl { get; set; }
 
+        [Display(Name = "Sign authn request")]
         public bool SignAuthnRequest { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.Up.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [Length(0, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "One or more signature validation certificates")]
         public List<JsonWebKey> Keys { get; set; }
 
@@ -98,7 +116,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string LogoutUrl { get; set; }
 
         [MaxLength(Constants.Models.SamlParty.Up.LogoutUrlLength)]
-        [Display(Name = "Single logout response URL (optional default logout URL is used)")]
+        [Display(Name = "Single logout response URL (optional, default logout URL is used)")]
         public string SingleLogoutResponseUrl { get; set; }
 
         /// <summary>
@@ -132,5 +150,33 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Single logout")]
         public bool EnableSingleLogout { get; set; } = true;
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (IsManual)
+            {
+                if (Issuer.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required.", new[] { nameof(Issuer) }));
+                }
+                if (AuthnUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required.", new[] { nameof(AuthnUrl) }));
+                }
+                if (Keys?.Count < Constants.Models.SamlParty.Up.KeysMin)
+                {
+                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}.", new[] { nameof(Keys) }));
+                }
+            }
+            else
+            {
+                if (MetadataUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required.", new[] { nameof(MetadataUrl) }));
+                }
+            }
+            return results;
+        }
     }
 }

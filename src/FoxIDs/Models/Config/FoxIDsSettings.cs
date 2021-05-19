@@ -33,10 +33,16 @@ namespace FoxIDs.Models.Config
         public int CorsPreflightMaxAge { get; set; }
 
         /// <summary>
-        /// Add time before where the token is valid in seconds.
+        /// Add time before where the SAML 2.0 token is valid in seconds.
         /// </summary>
         [Required]
-        public double SamlTokenAddNotBeforeTime { get; set; }
+        public int SamlTokenAddNotBeforeTime { get; set; }
+
+        /// <summary>
+        /// Exposed SAML 2.0 metadata lifetime.
+        /// </summary>
+        [Required]
+        public int SamlMetadataLifetime { get; set; }
 
         /// <summary>
         /// Account action sequence lifetime in seconds.
@@ -51,13 +57,13 @@ namespace FoxIDs.Models.Config
         public int ConfirmationEmailWaitPeriod { get; set; }
 
         /// <summary>
-        /// Up-party update wait period in seconds.
+        /// Up-party update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.
         /// </summary>
         [Required]
         public int UpPartyUpdateWaitPeriod { get; set; }
 
         /// <summary>
-        /// Up-party max failing update before automatic update is stopped.
+        /// Up-party max failing update with OIDC Discovery or SAML 2.0 Metadata before automatic update is stopped.
         /// </summary>
         [Required]
         public int UpPartyMaxFailingUpdate { get; set; }

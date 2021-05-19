@@ -25,6 +25,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "update_state")]
         public PartyUpdateStates UpdateState { get; set; }
 
+        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
+        [JsonProperty(PropertyName = "oidc_discovery_update_rate")]
+        public int? OidcDiscoveryUpdateRate { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
         [JsonProperty(PropertyName = "authority")]
@@ -40,10 +44,6 @@ namespace FoxIDs.Models
         [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
-
-        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        [JsonProperty(PropertyName = "oidc_discovery_update_rate")]
-        public int? OidcDiscoveryUpdateRate { get; set; }
 
         // Property can not be updated through API
         [Required]

@@ -55,22 +55,43 @@
 
         @if (oidcUpParty.Form.Model.EditIssuersInAutomatic == true)
         {
-            @if (UpParty.ShowAdvanced)
-            {
-                <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Issuers" For="@(() => oidcUpParty.Form.Model.Issuers)" />
-            }
+            <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Issuers" For="@(() => oidcUpParty.Form.Model.Issuers)" />
         }
         else
         {
-            @if (UpParty.ShowAdvanced && !oidcUpParty.CreateMode)
+            @if (!oidcUpParty.CreateMode)
             {
                 <FFieldText @bind-Value="oidcUpParty.Form.Model.FirstIssuer" For="@(() => oidcUpParty.Form.Model.FirstIssuer)" />
             }
         }
 
-        @if (UpParty.ShowAdvanced && !oidcUpParty.CreateMode)
+        @if (!oidcUpParty.CreateMode)
         {
-            <FFieldTextList @bind-ValueList="oidcUpParty.Form.Model.KeyIds" For="@(() => oidcUpParty.Form.Model.KeyIds)" />
+            <div class="form-group active-group active">
+                <Label For="@(() => oidcUpParty.Form.Model.Keys)" class="label-control" />
+                <ValidationMessage For="@(() => oidcUpParty.Form.Model.Keys)" />
+                <ul class="list-group">
+                    @foreach (var keyInfo in oidcUpParty.KeyInfoList)
+                    {
+                        <li class="list-group-item p-0 bg-light">
+                            <div class="d-flex">
+                                <div class="mr-auto p-2">
+                                    @if (!keyInfo.Subject.IsNullOrEmpty())
+                                    {
+                                        <strong>@keyInfo.Subject</strong><br />
+                                        <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span><br />
+                                    }
+                                    <span>Key id: @keyInfo.KeyId</span><br />
+                                    @if (!keyInfo.Thumbprint.IsNullOrEmpty())
+                                    {
+                                        <span>Thumbprint: @keyInfo.Thumbprint</span>
+                                    }
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
         }
 
         @if (UpParty.ShowAdvanced)
@@ -136,14 +157,14 @@
                     </FInputSelect>
                     <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnablePkce" For="@(() => oidcUpParty.Form.Model.Client.EnablePkce)" TextType="y.n" />
                     <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
+                    @if (!oidcUpParty.CreateMode)
+                    {
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
+                    }
                     @if (UpParty.ShowAdvanced)
                     {
-                        @if (!oidcUpParty.CreateMode)
-                        {
-                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
-                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
-                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
-                        }
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
                     }
                     <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" />

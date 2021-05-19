@@ -190,9 +190,31 @@ namespace FoxIDs.Client.Pages
                             afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
                         }
 
-                        foreach (var key in oidcUpParty.Keys)
+                        generalOidcUpParty.KeyInfoList.Clear();
+                        foreach (var key in afterMap.Keys)
                         {
-                            afterMap.KeyIds.Add(key.Kid);
+                            if (key.Kty == MTokens.JsonWebAlgorithmsKeyTypes.RSA && key.X5c?.Count >= 1)
+                            {
+                                var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
+                                generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                                {
+                                    Subject = certificate.Subject,
+                                    ValidFrom = certificate.NotBefore,
+                                    ValidTo = certificate.NotAfter,
+                                    IsValid = certificate.IsValid(),
+                                    Thumbprint = certificate.Thumbprint,
+                                    KeyId = key.Kid,
+                                    Key = key
+                                });
+                            }
+                            else
+                            {
+                                generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                                {
+                                    KeyId = key.Kid,
+                                    Key = key
+                                });
+                            }
                         }
 
                         if (afterMap.ClaimTransforms?.Count > 0)
@@ -218,21 +240,27 @@ namespace FoxIDs.Client.Pages
                     var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(upParty.Name);
                     await generalSamlUpParty.Form.InitAsync(samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
                     {
-                        afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
-
-                        afterMap.AuthnRequestBinding = samlUpParty.AuthnBinding.RequestBinding;
-                        afterMap.AuthnResponseBinding = samlUpParty.AuthnBinding.ResponseBinding;
-                        if (!samlUpParty.LogoutUrl.IsNullOrEmpty())
+                        if (samlUpParty.UpdateState == PartyUpdateStates.Manual)
                         {
-                            afterMap.LogoutRequestBinding = samlUpParty.LogoutBinding.RequestBinding;
-                            afterMap.LogoutResponseBinding = samlUpParty.LogoutBinding.ResponseBinding;
+                            afterMap.IsManual = true;
                         }
 
-                        generalSamlUpParty.CertificateInfoList.Clear();
+                        if (samlUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
+                        {
+                            afterMap.AutomaticStopped = true;
+                        }
+                        else
+                        {
+                            afterMap.AutomaticStopped = false;
+                        }
+
+                        afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
+
+                        generalSamlUpParty.KeyInfoList.Clear();
                         foreach (var key in afterMap.Keys)
                         {
                             var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-                            generalSamlUpParty.CertificateInfoList.Add(new CertificateInfoViewModel
+                            generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                             {
                                 Subject = certificate.Subject,
                                 ValidFrom = certificate.NotBefore,

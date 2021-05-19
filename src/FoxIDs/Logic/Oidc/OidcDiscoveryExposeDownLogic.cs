@@ -13,13 +13,13 @@ using System;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OidcDiscoveryExposeDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
         private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public OidcDiscoveryDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryExposeDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
@@ -79,6 +79,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };
+            var nowLocal = DateTime.Now;
             jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
             if (RouteBinding.Key.SecondaryKey != null)
             {

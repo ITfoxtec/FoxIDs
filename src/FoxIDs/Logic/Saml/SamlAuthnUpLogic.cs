@@ -16,7 +16,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2.Claims;
-using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
@@ -28,11 +27,12 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
+        private readonly SamlMetadataReadUpLogic samlMetadataReadUpLogic;
         private readonly ClaimTransformationsLogic claimTransformationsLogic;
         private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformationsLogic claimTransformationsLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -40,6 +40,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.securityHeaderLogic = securityHeaderLogic;
+            this.samlMetadataReadUpLogic = samlMetadataReadUpLogic;
             this.claimTransformationsLogic = claimTransformationsLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
@@ -77,6 +78,7 @@ namespace FoxIDs.Logic
             }
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
+            await samlMetadataReadUpLogic.CheckMetadataAndUpdateUpPartyAsync(party);
 
             switch (party.AuthnBinding.RequestBinding)
             {
@@ -172,8 +174,20 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException("Unsuccessful Authn response.") { RouteBinding = RouteBinding, Status = saml2AuthnResponse.Status };
                 }
 
-                binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
-                logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
+                try
+                {
+                    binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
+                }
+                catch (Exception ex)
+                {
+                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if(isex != null) 
+                    {
+                        throw isex;
+                    }
+                    throw;
+                }
 
                 if (saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() <= 0)
                 {

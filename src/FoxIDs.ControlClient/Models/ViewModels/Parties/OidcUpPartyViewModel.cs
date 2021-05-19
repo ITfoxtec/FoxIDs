@@ -3,20 +3,25 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Models.Api;
 using System.Linq;
+using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime
     {
-        public bool IsManual { get; set; }
-
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
         [Display(Name = "Up-party name (client ID)")]
         public string Name { get; set; }
 
+        public bool IsManual { get; set; }
+
         public bool AutomaticStopped { get; set; }
+
+        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
+        [Display(Name = "Automatic update rate")]
+        public int OidcDiscoveryUpdateRate { get; set; } = 2592000; // 30 days
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
@@ -33,12 +38,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Issuer")]
         public string FirstIssuer { get { return Issuers?.FirstOrDefault(); } set {} }
 
-        [Display(Name = "Key IDs")]
-        public List<string> KeyIds { get; set; } = new List<string>();
-
-        [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        [Display(Name = "Automatic update rate")]
-        public int OidcDiscoveryUpdateRate { get; set; } = 2592000; // 30 days
+        [Display(Name = "Keys")]
+        public List<JsonWebKey> Keys { get; set; }
 
         /// <summary>
         /// Default 10 hours.

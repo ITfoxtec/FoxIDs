@@ -1,7 +1,10 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.Discovery;
 using ITfoxtec.Identity.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -18,7 +21,25 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<(OidcDiscovery, JsonWebKeySet)> GetOidcDiscoveryAndValidateAsync(string authority)
+        public async Task PopulateModelAsync(OidcUpParty party)
+        {
+            (var oidcDiscovery, var jsonWebKeySet) = await GetOidcDiscoveryAndValidateAsync(party.Authority);
+
+            party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            if (party.EditIssuersInAutomatic != true || string.IsNullOrWhiteSpace(party.Issuers?.FirstOrDefault()))
+            {
+                party.Issuers = new List<string> { oidcDiscovery.Issuer };
+            }
+            party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
+            party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
+            if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
+            {
+                party.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
+            }
+            party.Keys = jsonWebKeySet.Keys?.ToList();
+        }
+
+        private async Task<(OidcDiscovery, JsonWebKeySet)> GetOidcDiscoveryAndValidateAsync(string authority)
         {
             var oidcDiscoveryUrl = UrlCombine.Combine(authority, IdentityConstants.OidcDiscovery.Path);
             try

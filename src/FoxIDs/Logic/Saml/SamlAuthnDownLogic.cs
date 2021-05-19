@@ -1,6 +1,4 @@
-﻿using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2;
-using ITfoxtec.Identity.Saml2.Claims;
+﻿using ITfoxtec.Identity.Saml2;
 using ITfoxtec.Identity.Saml2.MvcCore;
 using ITfoxtec.Identity.Saml2.Schemas;
 using FoxIDs.Infrastructure;
@@ -79,8 +77,22 @@ namespace FoxIDs.Logic
             try
             {
                 ValidateAuthnRequest(party, saml2AuthnRequest);
-                binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnRequest);
-                logger.ScopeTrace(() => "Down, SAML Authn request accepted.", triggerEvent: true);
+
+                try
+                {
+                    binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnRequest);
+                    logger.ScopeTrace(() => "Down, SAML Authn request accepted.", triggerEvent: true);
+
+                }
+                catch (Exception ex)
+                {
+                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (isex != null)
+                    {
+                        throw isex;
+                    }
+                    throw;
+                }
 
                 await sequenceLogic.SaveSequenceDataAsync(new SamlDownSequenceData
                 {

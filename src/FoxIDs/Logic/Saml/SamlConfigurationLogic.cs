@@ -1,26 +1,27 @@
-﻿using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2;
-using FoxIDs.Models;
+﻿using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using System;
-using UrlCombineLib;
+using System.Linq;
+using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Logic
 {
     public class Saml2ConfigurationLogic : LogicBase
     {
+        private readonly TelemetryScopedLogger logger;
         private readonly TrackKeyLogic trackKeyLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public Saml2ConfigurationLogic(TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public Saml2ConfigurationLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
+            this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;
             this.trackIssuerLogic = trackIssuerLogic;
         }
 
-        public Saml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningAndDecryptionCertificate = false)
+        public FoxIDsSaml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningAndDecryptionCertificate = false, bool includeSignatureValidationCertificates = true)
         {
-            var samlConfig = new Saml2Configuration();
+            var samlConfig = new FoxIDsSaml2Configuration();
             if (party != null)
             {
                 samlConfig.AllowedIssuer = party.Issuer;
@@ -37,9 +38,21 @@ namespace FoxIDs.Logic
                     samlConfig.SingleLogoutDestination = new Uri(party.LogoutUrl);
                 }
 
-                foreach (var key in party.Keys)
+                if (includeSignatureValidationCertificates)
                 {
-                    samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
+                    var partyCertificates = party.Keys.ToSaml2X509Certificates();
+                    var newLocal = DateTime.Now;
+                    foreach (var partyCertificate in partyCertificates)
+                    {
+                        if (partyCertificate.IsValid(newLocal))
+                        {
+                            samlConfig.SignatureValidationCertificates.Add(partyCertificate);
+                        }
+                        else
+                        {
+                            samlConfig.InvalidSignatureValidationCertificates.Add(partyCertificate);
+                        }
+                    }
                 }
             }
 
@@ -59,18 +72,27 @@ namespace FoxIDs.Logic
             return samlConfig;
         }
 
-        public Saml2Configuration GetSamlDownConfig(SamlDownParty party, bool includeSigningCertificate = false)
+        public FoxIDsSaml2Configuration GetSamlDownConfig(SamlDownParty party, bool includeSigningCertificate = false, bool includeSignatureValidationCertificates = true)
         {
-            var samlConfig = new Saml2Configuration();
+            var samlConfig = new FoxIDsSaml2Configuration();
             samlConfig.Issuer = !string.IsNullOrEmpty(party?.IdPIssuer) ? party.IdPIssuer : trackIssuerLogic.GetIssuer();
 
             if (party != null)
             {
-                if (party.Keys?.Count > 0)
+                if (party.Keys?.Count > 0 && includeSignatureValidationCertificates)
                 {
-                    foreach (var key in party.Keys)
+                    var partyCertificates = party.Keys.ToSaml2X509Certificates();
+                    var newLocal = DateTime.Now;
+                    foreach (var partyCertificate in partyCertificates)
                     {
-                        samlConfig.SignatureValidationCertificates.Add(key.ToSaml2X509Certificate());
+                        if (partyCertificate.IsValid(newLocal))
+                        {
+                            samlConfig.SignatureValidationCertificates.Add(partyCertificate);
+                        }
+                        else
+                        {
+                            samlConfig.InvalidSignatureValidationCertificates.Add(partyCertificate);
+                        }
                     }
                 }
             }
@@ -88,7 +110,16 @@ namespace FoxIDs.Logic
             }
 
             return samlConfig;
-        }
+        }      
 
+        public Exception GetInvalidSignatureValidationCertificateException(FoxIDsSaml2Configuration samlConfig, Exception ex)
+        {
+            if (samlConfig.InvalidSignatureValidationCertificates?.Count() > 0)
+            {
+                var certInfo = samlConfig.InvalidSignatureValidationCertificates.Select(c => $"'{c.Subject}, Valid from {c.NotBefore.ToShortDateString()} to {c.NotAfter.ToShortDateString()}, Thumbprint: {c.Thumbprint}'");
+                return new Exception($"Invalid signature validation certificates {string.Join(", ", certInfo)}.", ex);
+            }
+            return null;
+        }
     }
 }

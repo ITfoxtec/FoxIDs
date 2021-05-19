@@ -68,23 +68,14 @@ namespace FoxIDs.Client.Pages
         private async Task LoadLogAsync()
         {
             logLoadError = null;
-            var fromTime = DateTimeOffset.UtcNow;
-            if (!string.IsNullOrWhiteSpace(logRequestForm?.Model?.FromTime))
-            {
-                try
-                {
-                    fromTime = DateTimeOffset.Parse(logRequestForm.Model.FromTime);
-                }
-                catch (Exception tex)
-                {
-                    logRequestForm.SetFieldError(nameof(logRequestForm.Model.FromTime), tex.Message);
-                    return;
-                }
-            }
-
             var logRequest = new LogRequest();
-            logRequest.FromTime = fromTime.ToUnixTimeSeconds();
-            logRequest.ToTime = fromTime.AddSeconds((int)(logRequestForm?.Model != null ? logRequestForm.Model.TimeInterval : LogTimeIntervals.FifteenMinutes)).ToUnixTimeSeconds();
+            var fromTime = GetFromTime();
+            if(!fromTime.HasValue)
+            {
+                return;
+            }
+            logRequest.FromTime = fromTime.Value.ToUnixTimeSeconds();
+            logRequest.ToTime = fromTime.Value.AddSeconds((int)(logRequestForm?.Model != null ? logRequestForm.Model.TimeInterval : LogTimeIntervals.FifteenMinutes)).ToUnixTimeSeconds();
             if (logRequestForm?.Model != null)
             {
                 logRequest.Filter = logRequestForm.Model.Filter;
@@ -93,8 +84,31 @@ namespace FoxIDs.Client.Pages
                 logRequest.QueryEvents = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Events);
                 logRequest.QueryMetrics = logRequestForm.Model.QueryTypes.Contains(LogQueryTypes.Metrics);
             }
+            else 
+            {
+                logRequest.QueryExceptions = true;
+                logRequest.QueryEvents = true;
+            }
 
             logResponse = (await TrackService.GetTrackLogAsync(logRequest)).Map<LogResponseViewModel>();
+        }
+
+        private DateTimeOffset? GetFromTime()
+        {            
+            if (!string.IsNullOrWhiteSpace(logRequestForm?.Model?.FromTime))
+            {
+                try
+                {
+                    return DateTimeOffset.Parse(logRequestForm.Model.FromTime);
+                }
+                catch (Exception tex)
+                {
+                    logRequestForm.SetFieldError(nameof(logRequestForm.Model.FromTime), tex.Message);
+                    return null;
+                }
+            }
+
+            return LogRequestViewModel.DefaultFromTime;
         }
 
         private async Task OnLogRequestValidSubmitAsync(EditContext editContext)

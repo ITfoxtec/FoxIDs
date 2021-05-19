@@ -5,8 +5,8 @@ namespace FoxIDs.Models
     public enum SamlBindingTypes
     {
         [EnumMember(Value = "redirect")]
-        Redirect,
+        Redirect = 10,
         [EnumMember(Value = "post")]
-        Post
+        Post = 20
     }
 }

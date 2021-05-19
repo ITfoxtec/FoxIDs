@@ -11,11 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
-using ITfoxtec.Identity.Saml2.Claims;
 using System.Linq;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace FoxIDs.Logic
 {
@@ -226,8 +224,21 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException("Unsuccessful Logout response.") { RouteBinding = RouteBinding, Status = saml2LogoutResponse.Status };
                 }
 
-                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
-                logger.ScopeTrace(() => "Up, Successful SAML Logout response.", triggerEvent: true);
+                try
+                {
+                    binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+                    logger.ScopeTrace(() => "Up, Successful SAML Logout response.", triggerEvent: true);
+
+                }
+                catch (Exception ex)
+                {
+                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (isex != null)
+                    {
+                        throw isex;
+                    }
+                    throw;
+                }
 
                 if (party.DisableSingleLogout)
                 {
@@ -347,8 +358,21 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Up, SAML Single Logout request.", triggerEvent: true);
 
-                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
-                logger.ScopeTrace(() => "Up, Successful SAML Single Logout request.", triggerEvent: true);
+                try
+                {
+                    binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+                    logger.ScopeTrace(() => "Up, Successful SAML Single Logout request.", triggerEvent: true);
+
+                }
+                catch (Exception ex)
+                {
+                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if (isex != null)
+                    {
+                        throw isex;
+                    }
+                    throw;
+                }
 
                 var sequenceData = await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
                 {

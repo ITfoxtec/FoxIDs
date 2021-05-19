@@ -190,9 +190,31 @@ namespace FoxIDs.Client.Pages
                             afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
                         }
 
-                        foreach (var key in oidcUpParty.Keys)
+                        generalOidcUpParty.KeyInfoList.Clear();
+                        foreach (var key in afterMap.Keys)
                         {
-                            afterMap.KeyIds.Add(key.Kid);
+                            if (key.Kty == MTokens.JsonWebAlgorithmsKeyTypes.RSA && key.X5c?.Count >= 1)
+                            {
+                                var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
+                                generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                                {
+                                    Subject = certificate.Subject,
+                                    ValidFrom = certificate.NotBefore,
+                                    ValidTo = certificate.NotAfter,
+                                    IsValid = certificate.IsValid(),
+                                    Thumbprint = certificate.Thumbprint,
+                                    KeyId = key.Kid,
+                                    Key = key
+                                });
+                            }
+                            else
+                            {
+                                generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                                {
+                                    KeyId = key.Kid,
+                                    Key = key
+                                });
+                            }
                         }
 
                         if (afterMap.ClaimTransforms?.Count > 0)
@@ -234,11 +256,11 @@ namespace FoxIDs.Client.Pages
 
                         afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
 
-                        generalSamlUpParty.CertificateInfoList.Clear();
+                        generalSamlUpParty.KeyInfoList.Clear();
                         foreach (var key in afterMap.Keys)
                         {
                             var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-                            generalSamlUpParty.CertificateInfoList.Add(new CertificateInfoViewModel
+                            generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                             {
                                 Subject = certificate.Subject,
                                 ValidFrom = certificate.NotBefore,

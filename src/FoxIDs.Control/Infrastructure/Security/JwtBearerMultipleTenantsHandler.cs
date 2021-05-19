@@ -45,7 +45,7 @@ namespace FoxIDs.Infrastructure.Security
                 }
                 catch (SecurityTokenInvalidSignatureException isex)
                 {
-                    Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, uri '{oidcDiscoveryUri}'.");
+                    Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, Uri '{oidcDiscoveryUri}'.");
                     oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
                 }    

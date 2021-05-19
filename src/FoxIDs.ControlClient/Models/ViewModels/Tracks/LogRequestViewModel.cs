@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
     {
         [Required]
         [Display(Name = "From")]
-        public string FromTime { get; set; } = DateTimeOffset.Now.AddMinutes(-5).ToString();
+        public string FromTime { get; set; } = DefaultFromTime.ToString();
 
         [Display(Name = "Interval")]
         public LogTimeIntervals TimeInterval { get; set; } = LogTimeIntervals.FifteenMinutes;
@@ -18,6 +18,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Log types")]
         public List<string> QueryTypes { get; set; } = new List<string> { LogQueryTypes.Exceptions, LogQueryTypes.Events };
+
+        public static DateTimeOffset DefaultFromTime => DateTimeOffset.Now.AddMinutes(-5);
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

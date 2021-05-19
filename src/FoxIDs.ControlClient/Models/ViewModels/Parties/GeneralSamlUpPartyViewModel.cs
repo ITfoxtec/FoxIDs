@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public PageEditForm<SamlUpPartyViewModel> Form { get; set; }
 
-        public List<CertificateInfoViewModel> CertificateInfoList { get; set; } = new List<CertificateInfoViewModel>();
+        public List<KeyInfoViewModel> KeyInfoList { get; set; } = new List<KeyInfoViewModel>();
 
         public string CertificateFileStatus { get; set; } = DefaultCertificateFileStatus;
 

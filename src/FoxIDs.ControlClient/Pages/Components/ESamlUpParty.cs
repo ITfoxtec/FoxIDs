@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Pages.Components
                         generalSamlUpParty.Form.Model.LogoutRequestBinding = GetSamlBindingTypes(singleLogoutDestination.Binding?.OriginalString);
                     }
 
-                    generalSamlUpParty.CertificateInfoList = new List<CertificateInfoViewModel>();
+                    generalSamlUpParty.KeyInfoList = new List<KeyInfoViewModel>();
                     generalSamlUpParty.Form.Model.Keys = new List<JsonWebKey>();
                     if (entityDescriptor.IdPSsoDescriptor.SigningCertificates?.Count() > 0)
                     {
@@ -93,7 +93,7 @@ namespace FoxIDs.Client.Pages.Components
                         {
                             var jwk = await certificate.ToFTJsonWebKeyAsync();
 
-                            generalSamlUpParty.CertificateInfoList.Add(new CertificateInfoViewModel
+                            generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                             {
                                 Subject = certificate.Subject,
                                 ValidFrom = certificate.NotBefore,
@@ -185,7 +185,7 @@ namespace FoxIDs.Client.Pages.Components
                             return;
                         }
 
-                        generalSamlUpParty.CertificateInfoList.Add(new CertificateInfoViewModel
+                        generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                         {
                             Subject = certificate.Subject,
                             ValidFrom = certificate.NotBefore,
@@ -206,12 +206,12 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private void RemoveSamlUpPartyCertificate(GeneralSamlUpPartyViewModel generalSamlUpParty, CertificateInfoViewModel certificateInfo)
+        private void RemoveSamlUpPartyCertificate(GeneralSamlUpPartyViewModel generalSamlUpParty, KeyInfoViewModel keyInfo)
         {
             generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
-            if (generalSamlUpParty.Form.Model.Keys.Remove(certificateInfo.Key))
+            if (generalSamlUpParty.Form.Model.Keys.Remove(keyInfo.Key))
             {
-                generalSamlUpParty.CertificateInfoList.Remove(certificateInfo);
+                generalSamlUpParty.KeyInfoList.Remove(keyInfo);
             }
         }
 

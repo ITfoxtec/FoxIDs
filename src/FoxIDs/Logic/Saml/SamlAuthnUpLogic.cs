@@ -16,7 +16,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2.Claims;
-using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
@@ -175,8 +174,20 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException("Unsuccessful Authn response.") { RouteBinding = RouteBinding, Status = saml2AuthnResponse.Status };
                 }
 
-                binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
-                logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
+                try
+                {
+                    binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
+                }
+                catch (Exception ex)
+                {
+                    var isex = saml2ConfigurationLogic.GetInvalidSignatureValidationCertificateException(samlConfig, ex);
+                    if(isex != null) 
+                    {
+                        throw isex;
+                    }
+                    throw;
+                }
 
                 if (saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() <= 0)
                 {

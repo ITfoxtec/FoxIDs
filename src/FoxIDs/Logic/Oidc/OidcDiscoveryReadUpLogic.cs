@@ -2,17 +2,14 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryReadUpLogic : LogicBase
+    public class OidcDiscoveryReadUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
@@ -29,7 +26,7 @@ namespace FoxIDs.Logic
             this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
         }
 
-        public async Task CheckOidcDiscoveryAndUpdatePartyAsync(OidcUpParty party)
+        public async Task CheckOidcDiscoveryAndUpdatePartyAsync(TParty party)
         {
             if (party.UpdateState != PartyUpdateStates.Automatic)
             {
@@ -67,7 +64,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    await oidcDiscoveryReadLogic.PopulateModelAsync(party);
+                    await oidcDiscoveryReadLogic.PopulateModelAsync(party as OidcUpParty);
                 }
                 catch (Exception ex)
                 {

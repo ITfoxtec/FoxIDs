@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using UrlCombineLib;
 using ITfoxtec.Identity.Models;
 using System.Collections.Generic;
+using System;
 
 namespace FoxIDs.Logic
 {
@@ -78,6 +79,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };
+            var nowLocal = DateTime.Now;
             jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
             if (RouteBinding.Key.SecondaryKey != null)
             {

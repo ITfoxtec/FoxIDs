@@ -119,19 +119,19 @@
                         <Label For="@(() => samlUpParty.Form.Model.Keys)" class="label-control" />
                         <ValidationMessage For="@(() => samlUpParty.Form.Model.Keys)" />
                         <ul class="list-group">
-                            @foreach (var certificateInfo in samlUpParty.CertificateInfoList)
+                            @foreach (var keyInfo in samlUpParty.KeyInfoList)
                             {
                                 <li class="list-group-item p-0 @(samlUpParty.Form.Model.IsManual ? string.Empty : "bg-light")">
                                     <div class="d-flex">
                                         <div class="mr-auto p-2">
-                                            <strong>@certificateInfo.Subject</strong><br />
-                                            <span class="@(certificateInfo.IsValid ? "" : "text-danger")">Valid from @certificateInfo.ValidFrom.ToShortDateString() to @certificateInfo.ValidTo.ToShortDateString()</span><br />
-                                            Thumbprint: @certificateInfo.Thumbprint
+                                            <strong>@keyInfo.Subject</strong><br />
+                                            <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span><br />
+                                            Thumbprint: @keyInfo.Thumbprint
                                         </div>
                                         @if (samlUpParty.Form.Model.IsManual)
                                         {
                                             <div class="p-2">
-                                                <button type="button" class="btn btn-link p-0" title="Remove" @onclick="@(() => RemoveSamlUpPartyCertificate(samlUpParty, certificateInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                                <button type="button" class="btn btn-link p-0" title="Remove" @onclick="@(() => RemoveSamlUpPartyCertificate(samlUpParty, keyInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
                                             </div>
                                         }
                                     </div>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Models.Api;
 using System.Linq;
+using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -37,8 +38,8 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Issuer")]
         public string FirstIssuer { get { return Issuers?.FirstOrDefault(); } set {} }
 
-        [Display(Name = "Key IDs")]
-        public List<string> KeyIds { get; set; } = new List<string>();
+        [Display(Name = "Keys")]
+        public List<JsonWebKey> Keys { get; set; }
 
         /// <summary>
         /// Default 10 hours.

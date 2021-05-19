@@ -70,11 +70,11 @@ namespace FoxIDs.Logic
             var certificate = trackKey.PrimaryKey.Key.ToX509Certificate();
             if (certificate.NotBefore > nowLocal)
             {
-                throw new Exception($"Track primary key certificate not valid yet. NotBefore {certificate.NotBefore.ToUniversalTime():u}.");
+                throw new Exception($"Track primary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
             }
             if (certificate.NotAfter < nowLocal)
             {
-                throw new Exception($"Track primary key certificate is expired. NotAfter {certificate.NotAfter.ToUniversalTime():u}.");
+                throw new Exception($"Track primary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
             }
         }
     }

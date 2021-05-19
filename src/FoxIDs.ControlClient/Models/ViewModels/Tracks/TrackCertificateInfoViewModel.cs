@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackCertificateInfoViewModel : CertificateInfoViewModel
+    public class TrackCertificateInfoViewModel : KeyInfoViewModel
     {
         public bool IsPrimary { get; set; }
     }

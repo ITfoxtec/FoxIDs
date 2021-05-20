@@ -36,14 +36,15 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => "Up, SP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-            var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
+            var party = RouteBinding.UpParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
+            var signMetadata = party != null ? !party.DisableSignMetadata : true;
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSignatureValidationCertificates: false);
+            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: signMetadata, includeSignatureValidationCertificates: false);
 
             var acsDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAcs));
             var singleLogoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout));
 
-            var entityDescriptor = new EntityDescriptor(samlConfig);
+            var entityDescriptor = new EntityDescriptor(samlConfig, signMetadata);
             if (party != null)
             {
                 entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
@@ -74,13 +75,14 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, IdP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlDownParty>(partyId) : null;
+            var signMetadata = party != null ? !party.DisableSignMetadata : true;
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, includeSignatureValidationCertificates: false);
+            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, includeSigningCertificate: signMetadata, includeSignatureValidationCertificates: false);
 
             var authnDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlAuthn));
             var logoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName, RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlLogout));
 
-            var entityDescriptor = new EntityDescriptor(samlConfig);
+            var entityDescriptor = new EntityDescriptor(samlConfig, signMetadata);
             if (party != null)
             {
                 entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;

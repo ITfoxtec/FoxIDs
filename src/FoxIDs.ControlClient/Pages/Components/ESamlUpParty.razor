@@ -269,6 +269,7 @@
                         <option value="@X509RevocationMode.Offline">Offline</option>
                         <option value="@X509RevocationMode.Online">Online</option>
                     </FInputSelect>
+                    <FInputToggle @bind-Value="samlUpParty.Form.Model.SignMetadata" For="@(() => samlUpParty.Form.Model.SignMetadata)" TextType="y.n" />
                 }
             }
             else if (samlUpParty.ShowClaimTransformTab)

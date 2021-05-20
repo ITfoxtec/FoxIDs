@@ -86,5 +86,8 @@ namespace FoxIDs.Models
             }
             return results;
         }
+
+        [JsonProperty(PropertyName = "disable_sign_metadata")]
+        public bool DisableSignMetadata { get; set; }
     }
 }

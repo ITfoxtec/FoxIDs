@@ -91,7 +91,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "single_logout_response_url")]
         public string SingleLogoutResponseUrl { get; set; }
 
-
-
+        [JsonProperty(PropertyName = "disable_sign_metadata")]
+        public bool DisableSignMetadata { get; set; }
     }
 }

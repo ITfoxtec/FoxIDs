@@ -111,6 +111,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional one or more signature validation certificates")]
         public List<JsonWebKey> Keys { get; set; }
 
+        [Display(Name = "Sign metadata")]
+        public bool SignMetadata { get; set; } = true;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

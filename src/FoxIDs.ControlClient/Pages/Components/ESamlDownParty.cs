@@ -106,6 +106,8 @@ namespace FoxIDs.Client.Pages.Components
 
                 var samlDownParty = generalSamlDownParty.Form.Model.Map<SamlDownParty>(afterMap =>
                 {
+                    afterMap.DisableSignMetadata = !generalSamlDownParty.Form.Model.SignMetadata;
+
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
                         int order = 1;

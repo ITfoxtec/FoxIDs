@@ -255,6 +255,7 @@ namespace FoxIDs.Client.Pages
                         }
 
                         afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
+                        afterMap.SignMetadata = !samlUpParty.DisableSignMetadata;
 
                         generalSamlUpParty.KeyInfoList.Clear();
                         foreach (var key in afterMap.Keys)

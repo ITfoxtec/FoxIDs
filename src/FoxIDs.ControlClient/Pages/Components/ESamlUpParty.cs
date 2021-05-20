@@ -233,6 +233,7 @@ namespace FoxIDs.Client.Pages.Components
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
                 {
                     afterMap.DisableSingleLogout = !generalSamlUpParty.Form.Model.EnableSingleLogout;
+                    afterMap.DisableSignMetadata = !generalSamlUpParty.Form.Model.SignMetadata;
 
                     if (generalSamlUpParty.Form.Model.IsManual)
                     {

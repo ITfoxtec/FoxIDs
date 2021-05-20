@@ -151,6 +151,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Single logout")]
         public bool EnableSingleLogout { get; set; } = true;
 
+        [Display(Name = "Sign metadata")]
+        public bool SignMetadata { get; set; } = true;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

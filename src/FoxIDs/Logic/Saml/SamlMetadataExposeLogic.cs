@@ -14,6 +14,7 @@ using UrlCombineLib;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -67,6 +68,16 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination },
             };
 
+            if (party.MetadataNameIdFormats?.Count > 0)
+            {
+                entityDescriptor.SPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
+            }
+
+            if (party.MetadataContactPersons?.Count() > 0)
+            {
+                entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
+            }
+
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
@@ -103,6 +114,16 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
             };
 
+            if (party.MetadataNameIdFormats?.Count > 0)
+            {
+                entityDescriptor.IdPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
+            }
+
+            if (party.MetadataContactPersons?.Count() > 0)
+            {
+                entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
+            }
+
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
@@ -130,6 +151,18 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");
             }
+        }
+
+        private IEnumerable<ContactPerson> GetContactPersons(List<SamlMetadataContactPerson> metadataContactPersons)
+        {
+            return metadataContactPersons.Select(cp => new ContactPerson(cp.ContactType)
+            {
+                Company = cp.Company,
+                GivenName = cp.GivenName,
+                SurName = cp.Surname,
+                EmailAddress = cp.EmailAddress,
+                TelephoneNumber = cp.TelephoneNumber
+            });
         }
     }
 }

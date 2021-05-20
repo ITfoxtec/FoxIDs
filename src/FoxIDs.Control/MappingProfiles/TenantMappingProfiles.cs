@@ -94,6 +94,9 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
             CreateMap<Api.LogStreamApplicationInsightsSettings, ScopedStreamApplicationInsightsSettings>()
                 .ReverseMap();
+
+            CreateMap<Api.SamlMetadataContactPerson, SamlMetadataContactPerson>()
+                .ReverseMap();
         }
 
         private void UpPartyMapping()

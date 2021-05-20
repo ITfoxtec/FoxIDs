@@ -1,0 +1,102 @@
+﻿@using ITfoxtec.Identity.Saml2.Schemas.Metadata
+
+<div class="form-group active-group active">
+    <Label For="@(() => Model.MetadataContactPersons)" class="label-control" />
+    @if (Model.MetadataContactPersons.Count() <= 0)
+    {
+        <div class="card">
+            <div class="card-body px-3 py-2">
+            </div>
+        </div>
+    }
+    <ul class="list-group">
+        @foreach (var contactPerson in Model.MetadataContactPersons)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        @switch (contactPerson.ContactType)
+                        {
+                            case ContactTypes.Technical:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Technical</div>
+                                break;
+                            case ContactTypes.Support:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Support</div>
+                                break;
+                            case ContactTypes.Administrative:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Administrative</div>
+                                break;
+                            case ContactTypes.Billing:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Billing</div>
+                                break;
+                            case ContactTypes.Other:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Other</div>
+                                break;
+                            default:
+                                throw new NotSupportedException($"Metadata contact persons type '{contactPerson.ContactType}' not supported.");
+                        }
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveContactPerson(contactPerson))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="contactPerson.Company" For="@(() => contactPerson.Company)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="contactPerson.GivenName" For="@(() => contactPerson.GivenName)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="contactPerson.Surname" For="@(() => contactPerson.Surname)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="contactPerson.EmailAddress" For="@(() => contactPerson.EmailAddress)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="contactPerson.TelephoneNumber" For="@(() => contactPerson.TelephoneNumber)" />
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model.MetadataContactPersons)" />
+    <div class="btn-group" role="group">
+        <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add contact person
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Technical))">Technical</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Support))">Support</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Administrative))">Administrative</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Billing))">Billing</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Other))">Other</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public ISamlMetadataContactPersonVievModel Model { get; set; }
+
+    private void AddContactPerson(string contactType)
+    {
+        Model.MetadataContactPersons.Add(new SamlMetadataContactPerson
+        {
+            ContactType = contactType
+        });
+    }
+
+    private void RemoveContactPerson(SamlMetadataContactPerson contactPerson)
+    {
+        Model.MetadataContactPersons.Remove(contactPerson);
+    }
+}

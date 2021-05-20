@@ -73,6 +73,11 @@ namespace FoxIDs.Logic
                 entityDescriptor.SPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
             }
 
+            if (party.MetadataContactPersons?.Count() > 0)
+            {
+                entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
+            }
+
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
@@ -114,6 +119,11 @@ namespace FoxIDs.Logic
                 entityDescriptor.IdPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
             }
 
+            if (party.MetadataContactPersons?.Count() > 0)
+            {
+                entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
+            }
+
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
@@ -141,6 +151,18 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");
             }
+        }
+
+        private IEnumerable<ContactPerson> GetContactPersons(List<SamlMetadataContactPerson> metadataContactPersons)
+        {
+            return metadataContactPersons.Select(cp => new ContactPerson(cp.ContactType)
+            {
+                Company = cp.Company,
+                GivenName = cp.GivenName,
+                SurName = cp.Surname,
+                EmailAddress = cp.EmailAddress,
+                TelephoneNumber = cp.TelephoneNumber
+            });
         }
     }
 }

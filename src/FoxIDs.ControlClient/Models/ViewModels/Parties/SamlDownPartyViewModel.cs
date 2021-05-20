@@ -10,7 +10,7 @@ using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, ISamlClaimTransformViewModel
+    public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, ISamlClaimTransformViewModel, ISamlMetadataContactPersonVievModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -117,6 +117,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Optional NameID formats in metadata")]
         public List<string> MetadataNameIdFormats { get; set; }
+
+        [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
+        public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; } = new List<SamlMetadataContactPerson>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -84,6 +84,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_nameid_formats")]
         public List<string> MetadataNameIdFormats { get; set; }
 
+        [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
+        [JsonProperty(PropertyName = "metadata_contact_persons")]
+        public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

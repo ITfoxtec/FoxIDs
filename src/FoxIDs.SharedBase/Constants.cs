@@ -362,9 +362,12 @@ namespace FoxIDs
                 public const int MetadataUrlLength = 500;
                 public const int MetadataUpdateRateMin = 86400; // 24 hours
                 public const int MetadataUpdateRateMax = 31536000; // 12 month
-
                 public const int MetadataNameIdFormatsMin = 0;
                 public const int MetadataNameIdFormatsMax = 5;
+                public const int MetadataContactPersonsMin = 0;
+                public const int MetadataContactPersonsMax = 5;
+                public const int MetadataContactPersonsContactTypeLength = 20;
+                public const string MetadataContactPersonsContactTypeRegExPattern = @"^(technical|support|administrative|billing|other)$";
 
                 public const int IssuerLength = 300;
                 public const int SignatureAlgorithmLength = 100;

@@ -14,6 +14,7 @@ using UrlCombineLib;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -67,6 +68,11 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination },
             };
 
+            if (party.MetadataNameIdFormats?.Count > 0)
+            {
+                entityDescriptor.SPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
+            }
+
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
@@ -102,6 +108,11 @@ namespace FoxIDs.Logic
             {
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
             };
+
+            if (party.MetadataNameIdFormats?.Count > 0)
+            {
+                entityDescriptor.IdPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
+            }
 
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }

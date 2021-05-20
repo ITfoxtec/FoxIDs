@@ -24,13 +24,15 @@ namespace FoxIDs.Logic
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
         {
             return ValidateSignatureAlgorithmAndSigningKeys(modelState, samlUpParty) && 
-                ValidateLogout(modelState, samlUpParty);
+                ValidateLogout(modelState, samlUpParty) &&
+                ValidateMetadataNameIdFormats(modelState, samlUpParty);
         }
 
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)
         {
             return ValidateSignatureAlgorithmAndSigningKeys(modelState, samlDownParty) &&
-                ValidateLogout(modelState, samlDownParty);
+                ValidateLogout(modelState, samlDownParty) &&
+                ValidateMetadataNameIdFormats(modelState, samlDownParty);
         }
 
         private bool ValidateSignatureAlgorithmAndSigningKeys(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
@@ -141,6 +143,37 @@ namespace FoxIDs.Logic
             return isValid;
         }
 
+        private bool ValidateMetadataNameIdFormats(ModelStateDictionary modelState, Api.SamlUpParty samlUpParty)
+        {
+            var isValid = true;
+            try
+            {
+
+                if (samlUpParty.MetadataNameIdFormats?.Count > 0)
+                {
+                    foreach(var nameIdFormat in samlUpParty.MetadataNameIdFormats)
+                    {
+                        try
+                        {
+                            _ = new Uri(nameIdFormat);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception($"Metadata NameId format '{nameIdFormat}' not a Uri.", ex);
+                        }   
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+                logger.Warning(ex);
+                modelState.TryAddModelError(nameof(samlUpParty.MetadataNameIdFormats).ToCamelCase(), ex.Message);
+            }
+
+            return isValid;
+        }
+
         private bool ValidateLogout(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)
         {
             var isValid = true;
@@ -180,6 +213,37 @@ namespace FoxIDs.Logic
                 samlDownParty.SingleLogoutUrl = null;
                 samlDownParty.LogoutRequestBinding = null;
                 samlDownParty.LogoutResponseBinding = null;
+            }
+
+            return isValid;
+        }
+
+        private bool ValidateMetadataNameIdFormats(ModelStateDictionary modelState, Api.SamlDownParty samlDownParty)
+        {
+            var isValid = true;
+            try
+            {
+
+                if (samlDownParty.MetadataNameIdFormats?.Count > 0)
+                {
+                    foreach (var nameIdFormat in samlDownParty.MetadataNameIdFormats)
+                    {
+                        try
+                        {
+                            _ = new Uri(nameIdFormat);
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception($"Metadata NameId format '{nameIdFormat}' not a Uri.", ex);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                isValid = false;
+                logger.Warning(ex);
+                modelState.TryAddModelError(nameof(samlDownParty.MetadataNameIdFormats).ToCamelCase(), ex.Message);
             }
 
             return isValid;

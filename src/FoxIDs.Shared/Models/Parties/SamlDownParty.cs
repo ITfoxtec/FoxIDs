@@ -77,6 +77,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
 
+        [JsonProperty(PropertyName = "disable_sign_metadata")]
+        public bool DisableSignMetadata { get; set; }
+
+        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [JsonProperty(PropertyName = "metadata_nameid_formats")]
+        public List<string> MetadataNameIdFormats { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
@@ -86,8 +93,5 @@ namespace FoxIDs.Models
             }
             return results;
         }
-
-        [JsonProperty(PropertyName = "disable_sign_metadata")]
-        public bool DisableSignMetadata { get; set; }
     }
 }

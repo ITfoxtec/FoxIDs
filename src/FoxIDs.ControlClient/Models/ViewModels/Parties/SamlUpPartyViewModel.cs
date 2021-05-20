@@ -154,6 +154,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Sign metadata")]
         public bool SignMetadata { get; set; } = true;
 
+        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [Display(Name = "Optional NameID formats in metadata")]
+        public List<string> MetadataNameIdFormats { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

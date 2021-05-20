@@ -145,6 +145,7 @@
                     <FInputNumber @bind-Value="samlDownParty.Form.Model.SubjectConfirmationLifetime" For="@(() => samlDownParty.Form.Model.SubjectConfirmationLifetime)" />
                     <FInputNumber @bind-Value="samlDownParty.Form.Model.IssuedTokenLifetime" For="@(() => samlDownParty.Form.Model.IssuedTokenLifetime)" />
                     <FInputToggle @bind-Value="samlDownParty.Form.Model.SignMetadata" For="@(() => samlDownParty.Form.Model.SignMetadata)" TextType="y.n" />
+                    <FInputTextList @bind-ValueList="samlDownParty.Form.Model.MetadataNameIdFormats" For="@(() => samlDownParty.Form.Model.MetadataNameIdFormats)" />
                 }
             }
             else if (samlDownParty.ShowClaimTransformTab)

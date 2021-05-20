@@ -93,5 +93,9 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "disable_sign_metadata")]
         public bool DisableSignMetadata { get; set; }
+
+        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [JsonProperty(PropertyName = "metadata_nameid_formats")]
+        public List<string> MetadataNameIdFormats { get; set; }
     }
 }

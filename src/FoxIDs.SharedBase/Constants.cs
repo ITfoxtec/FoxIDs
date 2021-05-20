@@ -363,6 +363,9 @@ namespace FoxIDs
                 public const int MetadataUpdateRateMin = 86400; // 24 hours
                 public const int MetadataUpdateRateMax = 31536000; // 12 month
 
+                public const int MetadataNameIdFormatsMin = 0;
+                public const int MetadataNameIdFormatsMax = 5;
+
                 public const int IssuerLength = 300;
                 public const int SignatureAlgorithmLength = 100;
                 public const int KeysMax = 10;

@@ -155,7 +155,7 @@ namespace FoxIDs.Logic
 
         private IEnumerable<ContactPerson> GetContactPersons(List<SamlMetadataContactPerson> metadataContactPersons)
         {
-            return metadataContactPersons.Select(cp => new ContactPerson(cp.ContactType)
+            return metadataContactPersons.Select(cp => new ContactPerson((ContactTypes)Enum.Parse(typeof(ContactTypes), cp.ContactType.ToString()))
             {
                 Company = cp.Company,
                 GivenName = cp.GivenName,

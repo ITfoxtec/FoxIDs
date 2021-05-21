@@ -366,8 +366,6 @@ namespace FoxIDs
                 public const int MetadataNameIdFormatsMax = 5;
                 public const int MetadataContactPersonsMin = 0;
                 public const int MetadataContactPersonsMax = 5;
-                public const int MetadataContactPersonsContactTypeLength = 20;
-                public const string MetadataContactPersonsContactTypeRegExPattern = @"^(technical|support|administrative|billing|other)$";
 
                 public const int IssuerLength = 300;
                 public const int SignatureAlgorithmLength = 100;
@@ -381,6 +379,9 @@ namespace FoxIDs
                     public const int KeysMin = 1;
                     public const int AuthnUrlLength = 500;
                     public const int LogoutUrlLength = 500;
+
+                    public const int AuthnContextClassReferencesMin = 0;
+                    public const int AuthnContextClassReferencesMax = 20;
                 }
 
                 public static class Down

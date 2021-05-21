@@ -16,10 +16,8 @@ namespace FoxIDs.Models
         /// technical, support, administrative, billing, and other.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.SamlParty.MetadataContactPersonsContactTypeLength)]
-        [RegularExpression(Constants.Models.SamlParty.MetadataContactPersonsContactTypeRegExPattern)]
         [JsonProperty(PropertyName = "Contact_type")]
-        public string ContactType { get; set; }
+        public SamlMetadataContactPersonTypes ContactType { get; set; }
 
         /// <summary>
         /// [Optional]

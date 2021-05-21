@@ -91,6 +91,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "single_logout_response_url")]
         public string SingleLogoutResponseUrl { get; set; }
 
+        [JsonProperty(PropertyName = "authn_context_comparison_type")]
+        public SamlAuthnContextComparisonTypes? AuthnContextComparisonType { get; set; }
+
+        [Length(Constants.Models.SamlParty.Up.AuthnContextClassReferencesMin, Constants.Models.SamlParty.Up.AuthnContextClassReferencesMax, Constants.Models.Claim.ValueLength)]
+        [JsonProperty(PropertyName = "authn_context_class_references")]
+        public List<string> AuthnContextClassReferences { get; set; }
+
         [JsonProperty(PropertyName = "disable_sign_metadata")]
         public bool DisableSignMetadata { get; set; }
 

@@ -110,6 +110,15 @@ namespace FoxIDs.Logic
                     break;
             }
 
+            if (party.AuthnContextClassReferences?.Count() > 0)
+            {
+                saml2AuthnRequest.RequestedAuthnContext = new RequestedAuthnContext
+                {
+                    Comparison = party.AuthnContextComparison.HasValue ? (AuthnContextComparisonTypes)Enum.Parse(typeof(AuthnContextComparisonTypes), party.AuthnContextComparison.Value.ToString()) : null,
+                    AuthnContextClassRef = party.AuthnContextClassReferences,
+                };
+            }
+
             binding.Bind(saml2AuthnRequest);
             logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");

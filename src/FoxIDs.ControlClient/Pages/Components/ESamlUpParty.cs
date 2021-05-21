@@ -233,7 +233,11 @@ namespace FoxIDs.Client.Pages.Components
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
                 {
                     afterMap.DisableSingleLogout = !generalSamlUpParty.Form.Model.EnableSingleLogout;
-                    afterMap.DisableSignMetadata = !generalSamlUpParty.Form.Model.SignMetadata;
+
+                    if (generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel != SamlAuthnContextComparisonTypesVievModel.Null)
+                    {
+                        afterMap.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel.ToString());
+                    }                    
 
                     if (generalSamlUpParty.Form.Model.IsManual)
                     {

@@ -151,8 +151,17 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Single logout")]
         public bool EnableSingleLogout { get; set; } = true;
 
+        [Display(Name = "Optional Authn context comparison")]
+        public SamlAuthnContextComparisonTypesVievModel AuthnContextComparisonViewModel { get; set; }
+
+        [Display(Name = "Optional Authn context class references")]
+        public List<string> AuthnContextClassReferences { get; set; } = new List<string>();
+
         [Display(Name = "Sign metadata")]
-        public bool SignMetadata { get; set; } = true;
+        public bool SignMetadata { get; set; }
+
+        [Display(Name = "Include encryption certificates in metadata")]
+        public bool MetadataIncludeEncryptionCertificates { get; set; }
 
         [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Optional NameID formats in metadata")]

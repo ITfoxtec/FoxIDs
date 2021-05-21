@@ -288,8 +288,6 @@ namespace FoxIDs.Client.Pages
                             }
                         }
 
-                        afterMap.SignMetadata = !samlDownParty.DisableSignMetadata;
-
                         if (afterMap.ClaimTransforms?.Count > 0)
                         {
                             afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();

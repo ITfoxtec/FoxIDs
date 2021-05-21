@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Up, SP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = RouteBinding.UpParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
-            var signMetadata = party != null ? !party.DisableSignMetadata : true;
+            var signMetadata = party != null ? party.SignMetadata : false;
 
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: signMetadata, includeSignatureValidationCertificates: false);
 
@@ -57,10 +57,9 @@ namespace FoxIDs.Logic
                 //AuthnRequestsSigned = true,
                 //WantAssertionsSigned = true,
                 SigningCertificates = trackCertificates,
-                EncryptionCertificates = trackCertificates,
                 AssertionConsumerServices = new AssertionConsumerService[]
                 {
-                    new AssertionConsumerService { Binding = ToSamleBindingUri(party?.AuthnBinding?.ResponseBinding), Location = acsDestination, },
+                    new AssertionConsumerService { Binding = ToSamleBindingUri(party?.AuthnBinding?.ResponseBinding), Location = acsDestination },
                 },
             };
             entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
@@ -68,12 +67,17 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination },
             };
 
-            if (party.MetadataNameIdFormats?.Count > 0)
+            if (party?.MetadataIncludeEncryptionCertificates == true)
+            {
+                entityDescriptor.SPSsoDescriptor.EncryptionCertificates = trackCertificates;
+            }
+
+            if (party?.MetadataNameIdFormats?.Count > 0)
             {
                 entityDescriptor.SPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
             }
 
-            if (party.MetadataContactPersons?.Count() > 0)
+            if (party?.MetadataContactPersons?.Count() > 0)
             {
                 entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
             }
@@ -86,7 +90,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, IdP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlDownParty>(partyId) : null;
-            var signMetadata = party != null ? !party.DisableSignMetadata : true;
+            var signMetadata = party != null ? party.SignMetadata : false;
 
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, includeSigningCertificate: signMetadata, includeSignatureValidationCertificates: false);
 
@@ -106,7 +110,7 @@ namespace FoxIDs.Logic
                 //EncryptionCertificates = trackCertificates,
                 SingleSignOnServices = new SingleSignOnService[]
                 {
-                    new SingleSignOnService { Binding = ToSamleBindingUri(party?.AuthnBinding?.RequestBinding), Location = authnDestination, },
+                    new SingleSignOnService { Binding = ToSamleBindingUri(party?.AuthnBinding?.RequestBinding), Location = authnDestination },
                 },
             };
             entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
@@ -114,12 +118,12 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
             };
 
-            if (party.MetadataNameIdFormats?.Count > 0)
+            if (party?.MetadataNameIdFormats?.Count > 0)
             {
                 entityDescriptor.IdPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
             }
 
-            if (party.MetadataContactPersons?.Count() > 0)
+            if (party?.MetadataContactPersons?.Count() > 0)
             {
                 entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
             }

@@ -1,6 +1,4 @@
-﻿@using ITfoxtec.Identity.Saml2.Schemas.Metadata
-
-<div class="form-group active-group active">
+﻿<div class="form-group active-group active">
     <Label For="@(() => Model.MetadataContactPersons)" class="label-control" />
     @if (Model.MetadataContactPersons.Count() <= 0)
     {
@@ -17,19 +15,19 @@
                     <div class="col-11">
                         @switch (contactPerson.ContactType)
                         {
-                            case ContactTypes.Technical:
+                            case SamlMetadataContactPersonTypes.Technical:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Technical</div>
                                 break;
-                            case ContactTypes.Support:
+                            case SamlMetadataContactPersonTypes.Support:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Support</div>
                                 break;
-                            case ContactTypes.Administrative:
+                            case SamlMetadataContactPersonTypes.Administrative:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Administrative</div>
                                 break;
-                            case ContactTypes.Billing:
+                            case SamlMetadataContactPersonTypes.Billing:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Billing</div>
                                 break;
-                            case ContactTypes.Other:
+                            case SamlMetadataContactPersonTypes.Other:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Other</div>
                                 break;
                             default:
@@ -74,11 +72,11 @@
             <span class="oi oi-plus" aria-hidden="true"></span> Add contact person
         </button>
         <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Technical))">Technical</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Support))">Support</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Administrative))">Administrative</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Billing))">Billing</button>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(ContactTypes.Other))">Other</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Technical))">Technical</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Support))">Support</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Administrative))">Administrative</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Billing))">Billing</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddContactPerson(SamlMetadataContactPersonTypes.Other))">Other</button>
         </div>
     </div>
 </div>
@@ -87,7 +85,7 @@
     [Parameter]
     public ISamlMetadataContactPersonVievModel Model { get; set; }
 
-    private void AddContactPerson(string contactType)
+    private void AddContactPerson(SamlMetadataContactPersonTypes contactType)
     {
         Model.MetadataContactPersons.Add(new SamlMetadataContactPerson
         {

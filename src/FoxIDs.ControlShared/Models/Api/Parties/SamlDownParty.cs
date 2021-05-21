@@ -91,7 +91,7 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         public List<JsonWebKey> Keys { get; set; }
 
-        public bool DisableSignMetadata { get; set; }
+        public bool SignMetadata { get; set; }
 
         [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> MetadataNameIdFormats { get; set; }

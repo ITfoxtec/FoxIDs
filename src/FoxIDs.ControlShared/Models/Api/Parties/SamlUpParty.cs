@@ -112,7 +112,13 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
-        public bool DisableSignMetadata { get; set; }
+        public SamlAuthnContextComparisonTypes? AuthnContextComparison { get; set; }
+
+        public List<string> AuthnContextClassReferences { get; set; }
+
+        public bool SignMetadata { get; set; }
+
+        public bool MetadataIncludeEncryptionCertificates { get; set; }
 
         [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> MetadataNameIdFormats { get; set; }

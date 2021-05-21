@@ -15,9 +15,7 @@ namespace FoxIDs.Models.Api
         /// technical, support, administrative, billing, and other.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.SamlParty.MetadataContactPersonsContactTypeLength)]
-        [RegularExpression(Constants.Models.SamlParty.MetadataContactPersonsContactTypeRegExPattern)]
-        public string ContactType { get; set; }
+        public SamlMetadataContactPersonTypes ContactType { get; set; }
 
         /// <summary>
         /// [Optional]

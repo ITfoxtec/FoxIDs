@@ -255,8 +255,16 @@ namespace FoxIDs.Client.Pages
                         }
 
                         afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
-                        afterMap.SignMetadata = !samlUpParty.DisableSignMetadata;
 
+                        if (samlUpParty.AuthnContextComparison.HasValue)
+                        {
+                            afterMap.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), samlUpParty.AuthnContextComparison.Value.ToString());
+                        }
+                        else
+                        {
+                            afterMap.AuthnContextComparisonViewModel = SamlAuthnContextComparisonTypesVievModel.Null;
+                        }                       
+                        
                         generalSamlUpParty.KeyInfoList.Clear();
                         foreach (var key in afterMap.Keys)
                         {

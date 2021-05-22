@@ -125,10 +125,13 @@ namespace FoxIDs.Controllers
 
             var externalName = $"{RouteBinding.TenantNameDashTrackName}-{Guid.NewGuid()}";
             var certificatePolicy = new CertificatePolicy("self", RouteBinding.GetCertificateSubject())
-            {
+            {               
                 Exportable = false,
                 ValidityInMonths = mTrack.KeyExternalValidityInMonths
             };
+            certificatePolicy.KeyUsage.Add(CertificateKeyUsage.DigitalSignature);
+            certificatePolicy.KeyUsage.Add(CertificateKeyUsage.KeyEncipherment);
+            certificatePolicy.KeyUsage.Add(CertificateKeyUsage.DataEncipherment);
             certificatePolicy.LifetimeActions.Add(new LifetimeAction(CertificatePolicyAction.AutoRenew)
             {
                 DaysBeforeExpiry = mTrack.KeyExternalAutoRenewDaysBeforeExpiry

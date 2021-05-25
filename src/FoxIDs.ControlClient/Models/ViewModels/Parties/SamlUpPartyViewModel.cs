@@ -11,7 +11,7 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime, ISamlMetadataContactPersonVievModel
+    public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataContactPersonVievModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -167,6 +167,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional NameID formats in metadata")]
         public List<string> MetadataNameIdFormats { get; set; }
 
+        [ValidateComplexType]
+        [Length(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
+        public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; } = new List<SamlMetadataAttributeConsumingService>();
+
+        [ValidateComplexType]
         [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; } = new List<SamlMetadataContactPerson>();
 

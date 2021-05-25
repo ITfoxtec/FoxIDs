@@ -95,6 +95,13 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Api.LogStreamApplicationInsightsSettings, ScopedStreamApplicationInsightsSettings>()
                 .ReverseMap();
 
+            CreateMap<Api.SamlMetadataAttributeConsumingService, SamlMetadataAttributeConsumingService>()
+                .ReverseMap();
+            CreateMap<Api.SamlMetadataServiceName, SamlMetadataServiceName>()
+                .ReverseMap();
+            CreateMap<Api.SamlMetadataRequestedAttribute, SamlMetadataRequestedAttribute>()
+                .ReverseMap();
+
             CreateMap<Api.SamlMetadataContactPerson, SamlMetadataContactPerson>()
                 .ReverseMap();
         }

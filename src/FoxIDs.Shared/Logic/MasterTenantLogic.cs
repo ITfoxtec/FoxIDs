@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.Never
+                LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
             await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = loginName });
 
@@ -152,7 +152,7 @@ namespace FoxIDs.Logic
                 RefreshTokenAbsoluteLifetime = 21600, // 6 hours
                 RefreshTokenUseOneTime = true,
                 RefreshTokenLifetimeUnlimited = false,
-                RequireLogoutIdTokenHint = true,
+                RequireLogoutIdTokenHint = false,
             };
             
             await tenantRepository.CreateAsync(mControlClientDownParty);

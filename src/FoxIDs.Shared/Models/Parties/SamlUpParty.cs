@@ -108,6 +108,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_nameid_formats")]
         public List<string> MetadataNameIdFormats { get; set; }
 
+        [Length(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
+        [JsonProperty(PropertyName = "metadata_attribute_consuming_service")]
+        public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; }
+
         [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }

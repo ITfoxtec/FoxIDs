@@ -11,16 +11,14 @@ namespace FoxIDs.Models
     public class SamlMetadataContactPerson
     {
         /// <summary>
-        /// [Required]
         /// Specifies the type of contact using the ContactTypeType enumeration. The possible values are
         /// technical, support, administrative, billing, and other.
         /// </summary>
         [Required]
-        [JsonProperty(PropertyName = "Contact_type")]
+        [JsonProperty(PropertyName = "contact_type")]
         public SamlMetadataContactPersonTypes ContactType { get; set; }
 
         /// <summary>
-        /// [Optional]
         /// Optional string element that specifies the name of the company for the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
@@ -28,7 +26,6 @@ namespace FoxIDs.Models
         public string Company { get; set; }
 
         /// <summary>
-        /// [Optional]
         /// Optional string element that specifies the given (first) name of the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
@@ -36,7 +33,6 @@ namespace FoxIDs.Models
         public string GivenName { get; set; }
 
         /// <summary>
-        /// [Optional]
         /// Optional string element that specifies the surname of the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
@@ -44,7 +40,6 @@ namespace FoxIDs.Models
         public string Surname { get; set; }
 
         /// <summary>
-        /// [Optional]
         /// Optional string element containing mailto: URIs representing e-mail addresses belonging to the
         /// contact person.
         /// </summary>
@@ -53,7 +48,6 @@ namespace FoxIDs.Models
         public string EmailAddress { get; set; }
 
         /// <summary>
-        /// [Optional]
         /// Optional string element specifying a telephone number of the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]

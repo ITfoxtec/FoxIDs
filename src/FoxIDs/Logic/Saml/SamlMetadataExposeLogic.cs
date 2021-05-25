@@ -77,6 +77,18 @@ namespace FoxIDs.Logic
                 entityDescriptor.SPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
             }
 
+            if (party?.MetadataAttributeConsumingServices?.Count() > 0)
+            {
+                var attributeConsumingServices = new List<AttributeConsumingService>();
+                foreach(var aItem in party.MetadataAttributeConsumingServices)
+                {
+                    var attributeConsumingService = new AttributeConsumingService { ServiceName = new ServiceName(aItem.ServiceName.Name, aItem.ServiceName.Lang) };
+                    attributeConsumingService.RequestedAttributes = aItem.RequestedAttributes.Select(ra => string.IsNullOrEmpty(ra.NameFormat) ? new RequestedAttribute(ra.Name, ra.IsRequired) : new RequestedAttribute(ra.Name, ra.IsRequired, ra.NameFormat));
+                    attributeConsumingServices.Add(attributeConsumingService);
+                }
+                entityDescriptor.SPSsoDescriptor.AttributeConsumingServices = attributeConsumingServices;
+            }
+
             if (party?.MetadataContactPersons?.Count() > 0)
             {
                 entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);

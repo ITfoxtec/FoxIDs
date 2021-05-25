@@ -366,6 +366,10 @@ namespace FoxIDs
                 public const int MetadataNameIdFormatsMax = 5;
                 public const int MetadataContactPersonsMin = 0;
                 public const int MetadataContactPersonsMax = 5;
+                public const int MetadataAttributeConsumingServicesMin = 0;
+                public const int MetadataAttributeConsumingServicesMax = 10;
+                public const int MetadataRequestedAttributesMin = 1;
+                public const int MetadataRequestedAttributesMax = 100;
 
                 public const int IssuerLength = 300;
                 public const int SignatureAlgorithmLength = 100;
@@ -376,6 +380,8 @@ namespace FoxIDs
 
                 public static class Up
                 {
+                    public const int MetadataServiceNameLangLength = 10;
+
                     public const int KeysMin = 1;
                     public const int AuthnUrlLength = 500;
                     public const int LogoutUrlLength = 500;

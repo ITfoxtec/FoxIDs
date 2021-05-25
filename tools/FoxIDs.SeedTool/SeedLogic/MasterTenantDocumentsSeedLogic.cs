@@ -130,7 +130,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
                 PersistentSessionLifetimeUnlimited = false,
-                LogoutConsent = LoginUpPartyLogoutConsent.Never
+                LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
             await loginUpParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = loginName });
             loginUpParty.SetTenantPartitionId();
@@ -222,7 +222,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                 RefreshTokenAbsoluteLifetime = 86400, // 24 hours
                 RefreshTokenUseOneTime = true,
                 RefreshTokenLifetimeUnlimited = false,
-                RequireLogoutIdTokenHint = true,
+                RequireLogoutIdTokenHint = false,
             };
             controlClientDownParty.SetTenantPartitionId();
 

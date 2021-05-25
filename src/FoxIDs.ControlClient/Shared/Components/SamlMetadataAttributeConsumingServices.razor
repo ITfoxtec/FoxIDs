@@ -1,0 +1,107 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => Model.MetadataAttributeConsumingServices)" class="label-control" />
+    @if (Model.MetadataAttributeConsumingServices.Count() <= 0)
+    {
+        <div class="card">
+            <div class="card-body px-3 py-2">
+            </div>
+        </div>
+    }
+    <ul class="list-group">
+        @foreach (var attributeConsumingService in Model.MetadataAttributeConsumingServices)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="attributeConsumingService.ServiceName.Name" For="@(() => attributeConsumingService.ServiceName.Name)" />
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveAttributeConsumingService(attributeConsumingService))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="attributeConsumingService.ServiceName.Lang" For="@(() => attributeConsumingService.ServiceName.Lang)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                      
+                        <div class="form-group active-group active">
+                            <Label For="@(() => attributeConsumingService.RequestedAttributes)" class="label-control" />
+                            @if (attributeConsumingService.RequestedAttributes.Count() <= 0)
+                            {
+                                <div class="card">
+                                    <div class="card-body px-3 py-2">
+                                    </div>
+                                </div>
+                            }
+                            <ul class="list-group">
+                                @foreach (var requestedAttribute in attributeConsumingService.RequestedAttributes)
+                                {
+                                    <li class="list-group-item">
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <FInputText @bind-Value="requestedAttribute.Name" For="@(() => requestedAttribute.Name)" />
+                                            </div>
+                                            <div class="col-1 text-right">
+                                                <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveRequestedAttribute(attributeConsumingService, requestedAttribute))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <FInputText @bind-Value="requestedAttribute.NameFormat" For="@(() => requestedAttribute.NameFormat)" />
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-11">
+                                                <FInputToggle @bind-Value="requestedAttribute.IsRequired" For="@(() => requestedAttribute.IsRequired)" />
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                            <ValidationMessage For="@(() => attributeConsumingService.RequestedAttributes)" />
+                            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => AddRequestedAttribute(attributeConsumingService))"><span class="oi oi-plus" aria-hidden="true"></span> Add requested attribute</button>
+                        </div>
+
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model.MetadataAttributeConsumingServices)" />
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => AddAttributeConsumingService())"><span class="oi oi-plus" aria-hidden="true"></span> Add attribute consuming service</button>
+</div>
+
+@code {
+    [Parameter]
+    public ISamlMetadataAttributeConsumingServiceVievModel Model { get; set; }
+
+    private void AddAttributeConsumingService()
+    {
+        Model.MetadataAttributeConsumingServices.Add(new SamlMetadataAttributeConsumingService
+        {
+            ServiceName = new SamlMetadataServiceName
+            {
+                Lang = "en"
+            },
+            RequestedAttributes = new List<SamlMetadataRequestedAttribute>()
+        });
+    }
+
+    private void RemoveAttributeConsumingService(SamlMetadataAttributeConsumingService attributeConsumingService)
+    {
+        Model.MetadataAttributeConsumingServices.Remove(attributeConsumingService);
+    }
+
+    private void AddRequestedAttribute(SamlMetadataAttributeConsumingService attributeConsumingService)
+    {
+        attributeConsumingService.RequestedAttributes.Add(new SamlMetadataRequestedAttribute());
+    }
+
+    private void RemoveRequestedAttribute(SamlMetadataAttributeConsumingService attributeConsumingService, SamlMetadataRequestedAttribute requestedAttribute)
+    {
+        attributeConsumingService.RequestedAttributes.Remove(requestedAttribute);
+    }
+}

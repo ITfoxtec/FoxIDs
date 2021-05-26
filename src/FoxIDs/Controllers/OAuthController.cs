@@ -108,7 +108,7 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up-party not defined.");
+                    throw new NotSupportedException("Up-party not configured.");
                 }
                 if (RouteBinding.ToUpParties?.Count() != 1)
                 {
@@ -180,7 +180,7 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up-party not defined.");
+                    throw new NotSupportedException("Up-party not configured.");
                 }
                 if (RouteBinding.ToUpParties?.Count() != 1)
                 {

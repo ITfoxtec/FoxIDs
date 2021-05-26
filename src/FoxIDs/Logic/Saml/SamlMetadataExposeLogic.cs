@@ -70,6 +70,7 @@ namespace FoxIDs.Logic
             if (party?.MetadataIncludeEncryptionCertificates == true)
             {
                 entityDescriptor.SPSsoDescriptor.EncryptionCertificates = trackCertificates;
+                entityDescriptor.SPSsoDescriptor.SetDefaultEncryptionMethods();
             }
 
             if (party?.MetadataNameIdFormats?.Count > 0)

@@ -2,7 +2,7 @@
 
 FoxIDs support OpenID Connect as both up-party and down-party. OAuth 2.0 is only supported as down-party.
 
-![FoxIDs OAuth 2.0 and OpenID Connect](images/oauth_oidc.svg)
+![FoxIDs OAuth 2.0 and OpenID Connect](images/parties-oauth_oidc.svg)
 
 *FoxIDs do not support plain OAuth 2.0 client authorization because it is less secure then using OpenID Connect.*
 

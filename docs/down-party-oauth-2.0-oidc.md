@@ -4,6 +4,8 @@ FoxIDs down-party [OpenID Provider (OP)](#openid-provider-op) authenticating the
 
 FoxIDs support [down-party Client Credentials Grant](#client-credentials-grant) acting as an OAuth 2.0 resource owner.
 
+![FoxIDs down-party OpenID Connect and OAuth 2.0](images/parties-down-party-oauth-oidc.svg)
+
 
 ## OpenID Provider (OP)
 A relying party (RP) application can be connected to a FoxIDs down-party OpenID Provider (OP) with OpenID Connect.

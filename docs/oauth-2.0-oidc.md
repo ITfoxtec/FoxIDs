@@ -8,7 +8,7 @@ FoxIDs support OpenID Connect as both up-party and down-party. OAuth 2.0 is only
 
 ## Up-party
 
-FoxIDs up-party [OpenID Connect](up-party-oidc.md) which trust an external OpenID Provider (OP).
+FoxIDs [up-party OpenID Connect](up-party-oidc.md) which trust an external OpenID Provider (OP).
 
 How to guides:
 
@@ -17,7 +17,7 @@ How to guides:
 
 ## Down-party
 
-FoxIDs down-party [OpenID Connect](down-party-oauth-2.0-oidc.md). Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 resources](down-party-oauth-2.0-oidc.md#oauth-20-resource).
+FoxIDs [down-party OpenID Connect](down-party-oauth-2.0-oidc.md). Besides receiving an ID token the client can request an access token for multiple APIs defined as [down-party OAuth 2.0 resources](down-party-oauth-2.0-oidc.md#oauth-20-resource).
 
 FoxIDs support [down-party Client Credentials Grant](down-party-oauth-2.0-oidc.md#client-credentials-grant).
 

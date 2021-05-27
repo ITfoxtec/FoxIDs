@@ -25,9 +25,9 @@
 		<title>Page-1</title>
 		<g id="shape1-1" transform="translate(1,-89.5608)">
 			<title>Rectangle.17</title>
-			<desc>FoxIDs</desc>
+			<desc>FoxIDs - track</desc>
 			<rect x="0" y="90.5608" width="332.561" height="139.336" class="st1"/>
-			<text x="142.18" y="165.63" class="st2">FoxIDs</text>		</g>
+			<text x="116.99" y="165.63" class="st2">FoxIDs - track</text>		</g>
 		<g id="shape2-4" transform="translate(5.81889,-182.639)">
 			<title>Rectangle.18</title>
 			<desc>Up-party Login</desc>
@@ -35,14 +35,14 @@
 			<text x="48.69" y="205.4" class="st4">Up-party  <tspan x="57.33" dy="1.2em" class="st5">Login</tspan></text>		</g>
 		<g id="shape3-8" transform="translate(5.39367,-93.126)">
 			<title>Rectangle.20</title>
-			<desc>Down-party OpenID Provider (OP)</desc>
+			<desc>Down-party OpenID Connect</desc>
 			<rect x="0" y="188.107" width="156.047" height="41.7891" class="st3"/>
-			<text x="49.05" y="205.4" class="st4">Down-party  <tspan x="25.46" dy="1.2em" class="st5">OpenID Provider (OP)</tspan></text>		</g>
+			<text x="49.05" y="205.4" class="st4">Down-party  <tspan x="38" dy="1.2em" class="st5">OpenID Connect</tspan></text>		</g>
 		<g id="shape4-12" transform="translate(172.921,-93.126)">
 			<title>Rectangle.21</title>
-			<desc>Down-party SAML 2.0 Relying Party (RP)</desc>
+			<desc>Down-party SAML 2.0</desc>
 			<rect x="0" y="188.107" width="156.047" height="41.7891" class="st3"/>
-			<text x="49.05" y="205.4" class="st4">Down-party  <tspan x="10.64" dy="1.2em" class="st5">SAML 2.0 Relying Party (RP)</tspan></text>		</g>
+			<text x="49.05" y="205.4" class="st4">Down-party  <tspan x="55.19" dy="1.2em" class="st5">SAML 2.0</tspan></text>		</g>
 		<g id="shape7-16" transform="translate(1,-1)">
 			<title>Rectangle.29</title>
 			<desc>Client (web application, JS client, Blazor client ...)</desc>
@@ -57,9 +57,9 @@
 			<text x="-33.77" y="257.47" class="st9">OpenID Connect</text>		</g>
 		<g id="shape11-26" transform="translate(202.827,-1)">
 			<title>Rectangle.37</title>
-			<desc>Client Credential Grant (Backend application)</desc>
+			<desc>Relying Party (RP) (web application)</desc>
 			<rect x="0" y="188.107" width="130.394" height="41.7891" class="st3"/>
-			<text x="9.27" y="205.4" class="st4">Client Credential Grant <tspan x="21.25" dy="1.44em" class="st6">(Backend application)</tspan></text>		</g>
+			<text x="22.01" y="205.4" class="st4">Relying Party (RP) <tspan x="29.81" dy="1.44em" class="st6">(web application)</tspan></text>		</g>
 		<g id="shape12-30" transform="translate(252.398,-93.126)">
 			<title>Dynamic connector.38</title>
 			<desc>SAML 2.0</desc>

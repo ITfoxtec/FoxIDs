@@ -48,6 +48,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\login.md = docs\login.md
 		docs\oauth-2.0.md = docs\oauth-2.0.md
 		docs\oidc.md = docs\oidc.md
+		docs\parties.md = docs\parties.md
 		docs\README.md = docs\README.md
 		docs\saml-2.0.md = docs\saml-2.0.md
 		docs\samples.md = docs\samples.md

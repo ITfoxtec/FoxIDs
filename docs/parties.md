@@ -17,7 +17,7 @@ FoxIDs support tree different up-party types:
 
 - [Up-party Login](login.md)
 - [Up-party OpenID Connect](up-party-oidc.md)
-- [Up-party SAML 2.0]( up-party-saml-2.0.md)
+- [Up-party SAML 2.0](up-party-saml-2.0.md)
 
 ## Down-party
 

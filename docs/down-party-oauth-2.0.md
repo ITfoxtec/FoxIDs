@@ -1,6 +1,6 @@
 ﻿# Down-party - OAuth 2.0 
 
-FoxIDs down-party [OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc6749) enable you to connect an APIs as [OAuth 2.0 resources](#oauth-2-0-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
+FoxIDs down-party [OAuth 2.0](https://datatracker.ietf.org/doc/html/rfc6749) enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
 
 ![FoxIDs down-party OAuth 2.0](images/parties-down-party-oauth.svg)
 

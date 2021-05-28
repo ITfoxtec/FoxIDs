@@ -12,7 +12,7 @@ FoxIDs support [OpenID Connect authentication](https://openid.net/specs/openid-c
 FoxIDs can show a logout confirmation dialog depending on configuration and rather an ID token is included in the logout request or not.
 
 Default both id token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
-Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as [OAuth 2.0 resources](down-party-oauth-2-0.md#oauth-2-0-resource).  
+Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as [OAuth 2.0 resources](down-party-oauth-2.0.md#oauth-20-resource).  
 The application can then call an API securing the call with the access token using the [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).
 
 FoxIDs support both client secret and [Proof Key for Code Exchange
@@ -70,7 +70,7 @@ A public client could be a web application where the security is handled by the 
 ![Configure Implicit Code Flow with PKCE](images/configure-implicit-code-flow.png)
 
 ## Client and API
-It is possible to configure both client and API ([OAuth 2.0 resource](down-party-oauth-2-0.md#oauth-2-0-resource)) in the same OpenID Connect down-party configuration, where both the client and API is defined with the same name. Furthermore, it is possible to configure resource scopes for the API.
+It is possible to configure both client and API ([OAuth 2.0 resource](down-party-oauth-2.0.md#oauth-20-resource)) in the same OpenID Connect down-party configuration, where both the client and API is defined with the same name. Furthermore, it is possible to configure resource scopes for the API.
 
 **Client tap**
 

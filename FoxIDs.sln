@@ -38,6 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\control.md = docs\control.md
 		docs\deployment.md = docs\deployment.md
 		docs\development.md = docs\development.md
+		docs\down-party-howto-saml-2.0-adfs.md = docs\down-party-howto-saml-2.0-adfs.md
 		docs\down-party-oauth-2.0.md = docs\down-party-oauth-2.0.md
 		docs\down-party-oidc.md = docs\down-party-oidc.md
 		docs\down-party-saml-2.0.md = docs\down-party-saml-2.0.md
@@ -52,8 +53,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\samples.md = docs\samples.md
 		docs\up-party-howto-oidc-azure-ad.md = docs\up-party-howto-oidc-azure-ad.md
 		docs\up-party-howto-oidc-identityserver.md = docs\up-party-howto-oidc-identityserver.md
-		up-party-howto-saml-2.0-nemlogin.md = up-party-howto-saml-2.0-nemlogin.md
+		docs\up-party-howto-saml-2.0-adfs.md = docs\up-party-howto-saml-2.0-adfs.md
+		docs\up-party-howto-saml-2.0-nemlogin.md = docs\up-party-howto-saml-2.0-nemlogin.md
 		docs\up-party-oidc.md = docs\up-party-oidc.md
+		docs\up-party-saml-2.0.md = docs\up-party-saml-2.0.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"

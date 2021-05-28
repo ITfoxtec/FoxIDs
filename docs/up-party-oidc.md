@@ -1,6 +1,6 @@
 ﻿# Up-party - OpenID Connect
 
-FoxIDs up-party [OpenID Connect](#openid-connect) which trust an external OpenID Provider (OP) / Identity Provider (IdP).
+FoxIDs up-party [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) which trust an external OpenID Provider (OP) / Identity Provider (IdP).
 
 ![FoxIDs up-party OpenID Connect](images/parties-up-party-oidc.svg)
 
@@ -11,8 +11,8 @@ How to guides:
 - Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 
-## OpenID Connect
-An external OpenID Provider (OP) can be connected to a FoxIDs up-party OpenID Connect.
+## Configuration
+How to configure external OpenID Provider (OP) as an OpenID Provider (OP).
 
 The following screen shot show the FoxIDs up-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 

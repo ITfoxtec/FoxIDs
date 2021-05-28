@@ -4,7 +4,7 @@ A track contains one [user repository](#user-repository) and all up-party login'
 
 When a user authenticates the user's session is connected to the particular up-party login. Therefore, a user can authenticate in multiple configured up-party login's and have multiple separate user sessions. A up-party login will create a user session after the user is authenticated if the session lifetime is configured to more than 0 seconds.
 
-A down-party [OpenID Connect](down-party-oauth-2.0-oidc.md) or down-party [SAML 2.0](down-party-saml-2.0.md) can authenticate users by selecting an up-party login.
+A [down-party OpenID Connect](down-party-oauth-2.0-oidc.md) or [down-party SAML 2.0](down-party-saml-2.0.md) can authenticate users by selecting an up-party login.
 
 ![FoxIDs login](images/parties-login.svg)
 

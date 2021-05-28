@@ -15,17 +15,17 @@ There are four different party types:
 
 FoxIDs support tree different up-party types:
 
-- [Login](login.md)
-- [OpenID Connect](up-party-oidc.md)
-- [SAML 2.0]( up-party-saml-2.0.md)
+- [Up-party Login](login.md)
+- [Up-party OpenID Connect](up-party-oidc.md)
+- [Up-party SAML 2.0]( up-party-saml-2.0.md)
 
 ## Down-party
 
 FoxIDs support tree different down-party types:
 
-- [OpenID Connect](down-party-oidc.md)
-- [OAuth 2.0](down-party-oauth-2.0.md)
-- [SAML 2.0](down-party-saml-2.0.md)
+- [Down-party OpenID Connect](down-party-oidc.md)
+- [Down-party OAuth 2.0](down-party-oauth-2.0.md)
+- [Down-party SAML 2.0](down-party-saml-2.0.md)
 
 ## JWT and SAML 
 OpenID Connect, OAuth 2.0, JWT and JWT claims are first class citizens in FoxIDs. Internally claims are always represented as JWT claims and request / response properties are described with OAuth 2.0 and OpenID Connect attributes. 

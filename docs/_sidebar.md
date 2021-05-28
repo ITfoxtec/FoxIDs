@@ -1,5 +1,3 @@
-# Content
-
 - [Description](index.md)
 - [Getting Started](getting-started.md)
 - [Login](login.md)

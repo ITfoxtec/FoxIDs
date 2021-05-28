@@ -1,8 +1,10 @@
 ﻿# Up-party - OpenID Connect
 
-FoxIDs up-party [OpenID Connect](#openid-connect) client which trust an external OpenID Provider (OP) / Identity Provider (IdP).
+FoxIDs up-party [OpenID Connect](#openid-connect) which trust an external OpenID Provider (OP) / Identity Provider (IdP).
 
 ![FoxIDs up-party OpenID Connect](images/parties-up-party-oidc.svg)
+
+It is possible to configure multiple OpenID Connect up-parties which then can be selected by [down-parties](parties.md#down-party).
 
 How to guides:
 

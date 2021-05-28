@@ -1,9 +1,6 @@
 ﻿# FoxIDs parties
 
-FoxIDs is configured with up-parties and down-parties. 
-
-- Up-parties authenticate the users optionally by trust to an external identity provider (IdP). 
-- Applications and APIs are connected to FoxIDs as down-parties.
+FoxIDs is configured with up-parties and down-parties. Up-parties authenticate the users optionally by trust to an external identity provider (IdP). And applications and APIs are connected to FoxIDs as down-parties.
 
 ![FoxIDs up-parties and down-parties](images/parties.svg)
 

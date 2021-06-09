@@ -67,14 +67,14 @@
                                     break;
 
                                 case ClaimTransformTypes.Match:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value and replace the value with a new value.</div>
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value. Then add a new claim with the new value.</div>
                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                     <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
                                     <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
                                     break;
 
                                 case ClaimTransformTypes.RegexMatch:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then replace the value with a new value. E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then add a new claim with the new value. E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                     <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex match" />
                                     <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />

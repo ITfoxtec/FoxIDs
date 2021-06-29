@@ -45,8 +45,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
 
-
-
             return services;
         }
 

@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Moq;
 using System.Collections.Generic;
 
@@ -15,14 +14,10 @@ namespace FoxIDs.UnitTests.MockHelpers
             var mockHttpContext = new Mock<HttpContext>();
             mockHttpContext.SetupProperty(c => c.Items, items);
 
-            var routeData = new RouteData();
             routeBinding.TenantName = routeBinding.TenantName ?? "testtenant";
             routeBinding.TrackName = routeBinding.TrackName ?? "testtrack";
-            routeData.DataTokens.Add(Constants.Routes.RouteBindingKey, routeBinding);
-            routeData.DataTokens.Add(Constants.Routes.SequenceStringKey, "1234asdf1234");
-            var mockRoutingFeature = new Mock<IRoutingFeature>();
-            mockRoutingFeature.Setup(rf => rf.RouteData).Returns(routeData);
-            mockHttpContext.Setup(c => c.Features[typeof(IRoutingFeature)]).Returns(mockRoutingFeature.Object);
+            items.Add(Constants.Routes.RouteBindingKey, routeBinding);
+            items.Add(Constants.Routes.SequenceStringKey, "1234asdf1234");
 
             var mockHttpRequest = new Mock<HttpRequest>();
             mockHttpContext.Setup(c => c.Request).Returns(mockHttpRequest.Object);

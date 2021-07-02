@@ -28,29 +28,6 @@ Create a user:
 
 Normally you should not change the master track configuration or add new up-parties or down-parties, but it is possible. You can e.g., by adding an up-party gain single sign-on (SSO) to the master track. 
 
-
-### Languages 
-FoxIDs support translating the interfaces elements into the languages that are configured. English is default (FoxIDs Control Client only support English). It is possible to add text translations to all text elements in the FoxIDs user interface.  
-
-By default the text translations are read from the [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file. 
-
-> Translation contributions added to the EmbeddedResource.json file are appreciated and will become generally available. 
-
-It is possible to add track specific translations for each element in multiple languages.
-
-Add translation to a track:
-
-1. Open the track
-2. Select the Texts tab
-3. Select a text element
-4. Specify language and add the text
-5. Click Add text to add a translation in another language
-6. Click Create
-
-This is an example of a text element translated into two languages (da and es).
-
-![Configure text](images/configure-tenant-text.png)
-
 ### Tracks
 Configure a number of tracks, one for each of your environments e.g. dev, qa and prod.
 

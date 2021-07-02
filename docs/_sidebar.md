@@ -6,6 +6,7 @@
   - [OAuth 2.0](oauth-2.0.md)
   - [SAML 2.0](saml-2.0.md)
 - [FoxIDs Control](control.md)
+- [Languages](language.md)
 - [Deployment](deployment.md)
 - [Samples](samples.md)
 - [Development](development.md)

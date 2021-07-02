@@ -24,6 +24,8 @@ The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all 
 
 If you have questions please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with 'foxids' and I will answer as soon as possible.
 
+Otherwise you can use [support@itfoxtec.com](mailto:support@itfoxtec.com) for topics not suitable for Stack Overflow.
+
 ## How FoxIDs works
 
 FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding the company's entire security service.

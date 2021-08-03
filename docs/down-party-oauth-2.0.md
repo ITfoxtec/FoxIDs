@@ -9,7 +9,7 @@ An API is configured as a down-party OAuth 2.0 resource with a name and one or m
 
 ![Resource with scopes](images/configure-oauth-resource.png)
 
-A client can subsequently be given access by configuring [Resource and scopes](down-party-oidc.md#resource-and-scopes) in the client.
+A client can subsequently be given access by configuring [resource and scopes](down-party-oidc.md#resource-and-scopes) in the client.
 
 ## Client Credentials Grant
 An application using [Client Credentials Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4) could be a backend service secured by a client id and secret. PKCE is not validated in Client Credentials Grant.

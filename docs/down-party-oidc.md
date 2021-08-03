@@ -4,7 +4,7 @@ FoxIDs down-party [OpenID Connect](https://openid.net/specs/openid-connect-core-
 
 ![FoxIDs down-party OpenID Connect](images/parties-down-party-oidc.svg)
 
-Your application become a relying party (RP) and FoxIDs acts as an OpenID Provider (OP).
+Your application become a Relying Party (RP) and FoxIDs acts as an OpenID Provider (OP).
 
 FoxIDs support [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) where your application can discover the OpenID Provider.
 
@@ -23,10 +23,10 @@ There can be configured a maximum of 10 secrets per client.
 FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
 
 ## Configuration
-How to configure your application as an OpenID Connect relaying party (RP) / client.
+How to configure your application as an OpenID Connect Relaying Party (RP) / client.
 
 > The clients FoxIDs discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
-> if the client is located in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`  
+> if the client is configured in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`  
 > An up-party name e.g. `login` can possible be added to the discovery URL `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
 
 > A down-party client can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL. During RP-initiated logout the up-party name can be omitted in the URL if the ID Token is provided in the request.

@@ -12,13 +12,15 @@ How to guides:
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 
 ## Configuration
-How to configure external OpenID Provider (OP) as an OpenID Provider (OP).
+How to configure external OpenID Provider (OP) as an authority.
 
-The following screen shot show the FoxIDs up-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs up-party OpenID Connect configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+
+> More configuration options become available by clicking `Show advanced settings`.
 
 ![Configure OpenID Connect](images/configure-oidc-up-party.png)
 
-The external OP is configured as an authority. FoxIDs automatically calls the OpenID Configuration endpoint (`.well-known/openid-configuration`) on create. You can see the added configuration by opening the up-party again.
+FoxIDs automatically calls the OpenID Configuration endpoint (`.well-known/openid-configuration`) on create. You can see the added configuration by opening the up-party again.
 
 FoxIDs automatically read future updates. If the endpoint become unavailable for a period of time FoxIDs will stop the automated update process. It can be restarted by doing an up-party update in [FoxIDs Control Client](control.md#foxids-control-client) or [API](control.md#foxids-control-api).
 

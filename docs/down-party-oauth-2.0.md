@@ -19,6 +19,7 @@ An application using [Client Credentials Grant](https://datatracker.ietf.org/doc
 - Select `token` as response type.
 - Disable PKCE.
 - Specify a secret.
+- Optionally grant the client access to call the `party-api2` resource with the `read1` and `read2` scopes.
 
 ![Configure Client Credentials Grant](images/configure-client-credentials-grant.png)
 

@@ -26,17 +26,20 @@ FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/o
 How to configure your application as an OpenID Connect Relaying Party (RP) / client.
 
 > The clients FoxIDs discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
-> if the client is configured in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`  
-> An up-party name e.g. `login` can possible be added to the discovery URL `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
+> if the client is configured in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`.
 
-> A down-party client can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL. During RP-initiated logout the up-party name can be omitted in the URL if the ID Token is provided in the request.
+> A down-party client can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
+> An up-party name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
+
+During RP-initiated logout the up-party name can be omitted in the URL if the ID Token is provided in the request.
 
 ### Configure Authorization Code Flow for a confidant client
 A confidant client could be a web application where the security is handled by the webserver which also stores the client secret.
 
 - Specify client name in down-party name.
 - Select allowed up-parties.
-- Specify redirect URIs including both login and logout.
+- Specify redirect URIs.
+- Specify post logout redirect URI.
 - Select `code` as response type or possible but not recemented `code token` or `code token id_token`.
 - It is not required to use PKCE in a confidant client but recommended to mitigate replay attacks.
 - Specify a secret.
@@ -48,7 +51,8 @@ A public client could be a browser-based riches client, Blazor client or mobile 
 
 - Specify client name in down-party name.
 - Select allowed up parties.
-- Specify redirect URIs including both login and logout.
+- Specify redirect URIs.
+- Specify post logout redirect URI.
 - Select `code` as response type.
 - Use PKCE, default enabled.
 
@@ -62,7 +66,8 @@ A public client could be a web application where the security is handled by the 
 
 - Specify client name in down-party name.
 - Select allowed up parties.
-- Specify redirect URIs including both login and logout.
+- Specify redirect URIs.
+- Specify post logout redirect URI.
 - Select `token id_token` as response type or possible only `token`.
 - Disable PKCE.
 - Do not specify a secret.
@@ -99,4 +104,4 @@ The scopes can be configured in the client configuration tab. It is possible to 
 
 A set of default scopes is added to the client configuration, which subsequently can be changed or deleted.
 
-![Default scopes](images/configure-default-claims.png)
+![Default scopes](images/configure-default-scope-claims.png)

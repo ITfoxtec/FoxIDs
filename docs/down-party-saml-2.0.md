@@ -23,11 +23,16 @@ How to guides:
 How to configure your application as an SAML 2.0 Relying Party (RP).
 
 > The FoxIDs down-party SAML 2.0 metadata endpoint is `https://foxids.com/tenant-x/track-y/party-saml-pr1/saml/idpmetadata`  
-> if the application is configured in tenant `tenant-x` and track `track-y` with the down-party name `party-saml-pr1`  
-> An up-party name e.g. `login` can possible be added to the discovery URL `https://foxids.com/tenant-x/track-y/party-saml-pr1(login)/saml/idpmetadata`
+> if the application is configured in tenant `tenant-x` and track `track-y` with the down-party name `party-saml-pr1`.
 
-> A down-party application can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.
+> A down-party application can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
+> An up-party name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/party-saml-pr1(login)/saml/idpmetadata`
+
+The following screen shot show the basic FoxIDs down-party SAML 2.0 configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+
+> More configuration options become available by clicking `Show advanced settings`.
 
 ![Configure SAML 2.0](images/configure-saml-down-party.png)
+
 
 

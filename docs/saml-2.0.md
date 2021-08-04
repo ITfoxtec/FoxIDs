@@ -6,7 +6,7 @@ FoxIDs support SAML 2.0 as both up-party and down-party.
 
 ## Up-party
 
-Configure [up-party SAML 2.0 Identity Provider (IdP)](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
+Configure [up-party SAML 2.0](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
 
 How to guides:
 
@@ -15,7 +15,7 @@ How to guides:
 
 ## Down-party
 
-Configure your application as a [down-party SAML 2.0 Relying Party (RP)](down-party-saml-2.0.md).
+Configure your application as a [down-party SAML 2.0](down-party-saml-2.0.md).
 
 How to guides:
 
@@ -23,7 +23,9 @@ How to guides:
 - Connect yyy
 
 ## Claim mappings
-Claim mapping between SAML claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md).
+Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md).
 
-![Configure JWT and SAML mappings](images/configure-jwt-saml-mappings.png)
+> SAML 2.0 claims are internally [converted to JWT claims](parties.md#jwt-and-saml) between up-party and down-party.
+
+![Configure JWT and SAML 2.0 mappings](images/configure-jwt-saml-mappings.png)
 

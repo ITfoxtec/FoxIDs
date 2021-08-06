@@ -4,8 +4,9 @@ FoxIDs can be connected to a IdentityServer with OpenID Connect and thereby auth
 
 It is possible to connect a [IdentityServer client](#configure-identityserver-client) and read claims from the ID token or select a more complex case where claims is [read form the access token](#read-claims-from-access-token).
 
-> The [sample](samples.md) `IdentityServerOidcOpSample` is configured in the FoxIDs test-corp track with the up-party name `identityserver_oidc_op_sample`.  
-> You can test login (username `alice` and password `alice`) by running the `IdentityServerOidcOpSample` and the `AspNetCoreOidcAuthorizationCodeSample` [samples](samples.md) and clicking `OIDC IdentityServer Log in` in the `AspNetCoreOidcAuthorizationCodeSample` application. The `IdentityServerOidcOpSample` sample is configured with Implicit Flow to enable local testing, please use Authorization Code Flow in production.
+> The [sample](samples.md) `IdentityServerOidcOpSample` is configured in the FoxIDs `test-corp` with the up-party name `identityserver_oidc_op_sample`.  
+> You can test login (username `alice` and password `alice`) using the `IdentityServerOidcOpSample` and the `AspNetCoreOidcAuthorizationCodeSample` [samples](samples.md). By clicking `OIDC IdentityServer Log in` in the `AspNetCoreOidcAuthorizationCodeSample` application.  
+> The `IdentityServerOidcOpSample` sample is configured with Implicit Flow to enable local testing, please use Authorization Code Flow in production.
 
 ## Configure IdentityServer client
 
@@ -55,7 +56,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
  7. Click create
 
-That’s it, you are done. 
+That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
 > The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the IdentityServer access token as a claim in the issued access token.

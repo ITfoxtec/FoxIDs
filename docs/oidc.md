@@ -10,6 +10,7 @@ Configure [up-party OpenID Connect](up-party-oidc.md) which trust an external Op
 
 How to guides:
 
+- Connect [FoxIDs](up-party-howto-oidc-foxids.md) 
 - Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 

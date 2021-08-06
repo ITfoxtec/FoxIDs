@@ -38,7 +38,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Front channel logout URI")]
         public string FrontChannelLogoutUri { get; set; }
 
-        [Display(Name = "Front channel logout session required")]
+        [Display(Name = "Front channel logout require session")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
         /// <summary>

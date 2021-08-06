@@ -23,7 +23,7 @@ There can be configured a maximum of 10 secrets per client.
 FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
 
 ## Configuration
-How to configure your application as an OpenID Connect Relaying Party (RP) / client.
+How to configure your application as a down-party OpenID Connect Relaying Party (RP) / client.
 
 > The clients FoxIDs discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
 > if the client is configured in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`.

@@ -66,7 +66,7 @@ namespace FoxIDs.Controllers
                 var validSession = ValidSession(sequenceData, session);
                 if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
                 {
-                    return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
+                    return await LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -232,6 +232,18 @@ namespace FoxIDs.Controllers
             }
 
             return await loginUpLogic.LoginResponseAsync(claims);
+        }
+
+        private async Task<IActionResult> LoginResponseUpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        {
+            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
+            {
+                return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
+            }
+            else
+            {
+                throw new InvalidOperationException("Session do not exist or can not be updated.");
+            }            
         }
 
         private async Task<List<Claim>> GetClaimsAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
@@ -444,7 +456,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
+                    return await LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
@@ -488,7 +500,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
-                    return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
+                    return await LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
                 }
 
                 try

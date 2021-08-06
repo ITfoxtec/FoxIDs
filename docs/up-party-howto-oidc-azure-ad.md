@@ -41,7 +41,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token 
  7. Click create
 
-That’s it, you are done. 
+That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
 > The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the Azure AD access token as a claim in the issued access token.

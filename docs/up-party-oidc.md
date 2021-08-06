@@ -8,7 +8,7 @@ It is possible to configure multiple OpenID Connect up-parties which then can be
 
 How to guides:
 
-- Connect [FoxIDs track](up-party-howto-oidc-foxids.md) 
+- Connect [FoxIDs](up-party-howto-oidc-foxids.md) 
 - Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 

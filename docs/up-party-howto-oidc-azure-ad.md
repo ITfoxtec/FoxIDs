@@ -4,8 +4,8 @@ FoxIDs can be connected to Azure AD with OpenID Connect and thereby authenticati
 
 It is possible to connect both a [single tenant](#configure-single-tenant) and [multitenant](#configure-multitenant) Azure AD App as an up-party on FoxIDs using OpenID Connect. A more complex case is to [read claims form the access token](#read-claims-from-access-token).
 
-> A test multitenant Azure AD App supporting personal accounts is configured in the FoxIDs test-corp track with the up-party name `azuread_oidcpkce`.  
-> You can test Azure AD login in by running the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md) application and clicking `OIDC Azure AD Log in`.
+> A sample multitenant Azure AD App which support personal accounts is configured in the FoxIDs `test-corp` with the up-party name `azuread_oidcpkce`.  
+> You can test Azure AD login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md) application by clicking `OIDC Azure AD Log in`.
 
 ## Configure single tenant
 

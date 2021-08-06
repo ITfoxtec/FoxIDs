@@ -1,6 +1,6 @@
 # Up-party - connect FoxIDs with OpenID Connect
 
-FoxIDs can be connected to another FoxIDs with OpenID Connect and thereby authenticating an end user in another FoxIDs track.  
+FoxIDs can be connected to another FoxIDs with OpenID Connect and thereby authenticating end users in another FoxIDs track or an external Identity Provider (IdP) configured as up-party.  
 The integration can be used in the same FoxIDs tenant to connect to different tracks or e.g. between different FoxIDs deployments.
 
 The integration between two FoxIDs tracks support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session is invalidated on logout.

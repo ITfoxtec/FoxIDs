@@ -1,8 +1,8 @@
 ﻿# Up-party - connect IdentityServer with OpenID Connect
 
-FoxIDs can be connected to a IdentityServer with OpenID Connect and thereby authenticating an end user by trust to a IdentityServer client.
+FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.
 
-It is possible to connect a [IdentityServer client](#configure-identityserver-client) and read claims from the ID token or select a more complex case where claims is [read form the access token](#read-claims-from-access-token).
+It is possible to connect an [IdentityServer client](#configure-identityserver-client) and read claims from the ID token or select a more complex case where claims is [read form the access token](#read-claims-from-access-token).
 
 > The [sample](samples.md) `IdentityServerOidcOpSample` is configured in the FoxIDs `test-corp` with the up-party name `identityserver_oidc_op_sample`.  
 > You can test login (username `alice` and password `alice`) using the `IdentityServerOidcOpSample` and the `AspNetCoreOidcAuthorizationCodeSample` [samples](samples.md). By clicking `OIDC IdentityServer Log in` in the `AspNetCoreOidcAuthorizationCodeSample` application.  

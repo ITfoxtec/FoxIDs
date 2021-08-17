@@ -37,18 +37,7 @@ namespace FoxIDs.Controllers
 
         private byte[] ReadCertificate(byte[] certificateBytes, string password)
         {
-            var certs = new X509Certificate2Collection();
-            certs.Import(certificateBytes, password, X509KeyStorageFlags.Exportable);
-
-            X509Certificate2 certificate = null;
-            foreach (X509Certificate2 cert in certs)
-            {
-                if (cert.HasPrivateKey || certificate == null)
-                {
-                    certificate = cert;
-                }
-            }
-
+            var certificate = new X509Certificate2(certificateBytes, password, X509KeyStorageFlags.Exportable);                       
             return certificate.Export(X509ContentType.Pfx);
         }
     }

@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 
 namespace FoxIDs.Controllers
 {
@@ -26,19 +27,19 @@ namespace FoxIDs.Controllers
 
             var certificateRequestBytes = Convert.FromBase64String(certificateRequest.Bytes);
 
-            var certificateBytes = certificateRequest.Password.IsNullOrWhiteSpace() switch
+            var jwk = certificateRequest.Password.IsNullOrWhiteSpace() switch
             {
-                true => ReadCertificate(certificateRequestBytes, string.Empty),
-                false => ReadCertificate(certificateRequestBytes, certificateRequest.Password)
+                true => await ConvertCertificateToJwk(certificateRequestBytes, string.Empty),
+                false => await ConvertCertificateToJwk(certificateRequestBytes, certificateRequest.Password)
             };
 
-            return Ok(new Api.ConvertCertificateResponse { Bytes = Convert.ToBase64String(certificateBytes) });
+            return Ok(new Api.ConvertCertificateResponse { Key = jwk });
         }
 
-        private byte[] ReadCertificate(byte[] certificateBytes, string password)
+        private async Task<JsonWebKey> ConvertCertificateToJwk(byte[] certificateBytes, string password)
         {
-            var certificate = new X509Certificate2(certificateBytes, password, X509KeyStorageFlags.Exportable);                       
-            return certificate.Export(X509ContentType.Pfx);
-        }
+            var certificate = new X509Certificate2(certificateBytes, password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            return await certificate.ToFTJsonWebKeyAsync(true);
+        } 
     }
 }

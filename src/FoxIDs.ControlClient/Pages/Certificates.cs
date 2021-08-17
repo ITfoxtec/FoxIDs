@@ -201,22 +201,21 @@ namespace FoxIDs.Client.Pages
                         Password = generalCertificate.Form.Model.Password
                     });
 
-                    var certificate = new X509Certificate2(Convert.FromBase64String(certificateResponse.Bytes));
-                    var jwk = await certificate.ToFTJsonWebKeyAsync(true);
-                    if (!jwk.HasPrivateKey())
+                    if (!certificateResponse.Key.HasPrivateKey())
                     {
                         generalCertificate.Form.Model.Subject = null;
                         generalCertificate.Form.Model.Key = null;
                         generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required.");
                         return;
-                    }                        
+                    }
 
+                    var certificate = certificateResponse.Key.ToX509Certificate();
                     generalCertificate.Form.Model.Subject = certificate.Subject;
                     generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;
                     generalCertificate.Form.Model.ValidTo = certificate.NotAfter;
                     generalCertificate.Form.Model.IsValid = certificate.IsValid();
                     generalCertificate.Form.Model.Thumbprint = certificate.Thumbprint;
-                    generalCertificate.Form.Model.Key = jwk;
+                    generalCertificate.Form.Model.Key = certificateResponse.Key;
                 }
                 catch (Exception ex)
                 {

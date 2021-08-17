@@ -26,10 +26,15 @@ NemLog-in3 requires all requests (authn and logout) from the Relying Party (RP) 
 
 A OCES certificate is valid for three years where after it manually has to be updated.
 
-//TODO
+The OCES certificate is added as the primary certificate in the track.
 
+![Add OCES certificate](images/howto-saml-nemlogin3-certificate.png)
+
+It is possible to add a secondary certificate and to at swap between the primary and secondary certificate.
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
+
+
 
 //TODO
 

@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
 
         private async Task<JsonWebKey> ConvertCertificateToJwk(byte[] certificateBytes, string password)
         {
-            var certificate = new X509Certificate2(certificateBytes, password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.PersistKeySet);
+            var certificate = new X509Certificate2(certificateBytes, password, X509KeyStorageFlags.Exportable);
             return await certificate.ToFTJsonWebKeyAsync(true);
         } 
     }

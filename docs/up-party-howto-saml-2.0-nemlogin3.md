@@ -26,11 +26,19 @@ NemLog-in3 requires all requests (authn and logout) from the Relying Party (RP) 
 
 A OCES certificate is valid for three years where after it manually has to be updated.
 
-The OCES certificate is added as the primary certificate in the track.
+FoxIDs require a .PFX certificate where a OCES certificate default is a .P12. The OCES certificate can be concerted from .P12 to .PFX with the following .NET code.
+
+    var certificateFileName = "serviceprovider";
+    var password = "Test1234";
+
+    var certificate = new X509Certificate2($"{certificateFileName}.p12", password, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.EphemeralKeySet);
+    File.WriteAllBytes($"{certificateFileName}.pfx", certificate.Export(X509ContentType.Pfx, password));
+
+The .PFX OCES certificate is added as the primary certificate in the track.
 
 ![Add OCES certificate](images/howto-saml-nemlogin3-certificate.png)
 
-It is possible to add a secondary certificate and to at swap between the primary and secondary certificate.
+It is subsequently possible to add a secondary certificate and to at swap between the primary and secondary certificate.
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
 

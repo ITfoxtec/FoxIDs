@@ -201,7 +201,9 @@ namespace FoxIDs.Client.Pages
                         Password = generalCertificate.Form.Model.Password
                     });
 
-                    if (!certificateResponse.Key.HasPrivateKey())
+                    var certificate = new X509Certificate2(Convert.FromBase64String(certificateResponse.Bytes));
+                    var jwk = await certificate.ToFTJsonWebKeyAsync(true);
+                    if (!jwk.HasPrivateKey())
                     {
                         generalCertificate.Form.Model.Subject = null;
                         generalCertificate.Form.Model.Key = null;
@@ -209,13 +211,12 @@ namespace FoxIDs.Client.Pages
                         return;
                     }
 
-                    var certificate = certificateResponse.Key.ToX509Certificate();
                     generalCertificate.Form.Model.Subject = certificate.Subject;
                     generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;
                     generalCertificate.Form.Model.ValidTo = certificate.NotAfter;
                     generalCertificate.Form.Model.IsValid = certificate.IsValid();
                     generalCertificate.Form.Model.Thumbprint = certificate.Thumbprint;
-                    generalCertificate.Form.Model.Key = certificateResponse.Key;
+                    generalCertificate.Form.Model.Key = jwk;
                 }
                 catch (Exception ex)
                 {

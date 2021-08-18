@@ -1,14 +1,13 @@
-﻿using ITfoxtec.Identity.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
     public class ConvertCertificateResponse
     {
         /// <summary>
-        /// Certificate as JsonWebKey.
+        /// Certificate as base64 encoded byres.
         /// </summary>
         [Required]
-        public JsonWebKey Key { get; set; }
+        public string Bytes { get; set; }
     }
 }

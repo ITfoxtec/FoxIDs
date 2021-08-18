@@ -16,6 +16,7 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using MTokens = Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 
 namespace FoxIDs.Client.Pages
 {
@@ -31,9 +32,6 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public TrackService TrackService { get; set; }
-
-        [Inject]
-        public UtilService UtilService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -195,13 +193,12 @@ namespace FoxIDs.Client.Pages
                         certificateBytes = memoryStream.ToArray();
                     }
 
-                    var certificateResponse = await UtilService.ConvertCertificateAsync(new ConvertCertificateRequest
+                    var certificate = generalCertificate.Form.Model.Password.IsNullOrWhiteSpace() switch
                     {
-                        Bytes = Convert.ToBase64String(certificateBytes),
-                        Password = generalCertificate.Form.Model.Password
-                    });
+                        true => new X509Certificate2(certificateBytes, string.Empty),
+                        false => new X509Certificate2(certificateBytes, generalCertificate.Form.Model.Password),
+                    };
 
-                    var certificate = new X509Certificate2(Convert.FromBase64String(certificateResponse.Bytes));
                     var jwk = await certificate.ToFTJsonWebKeyAsync(true);
                     if (!jwk.HasPrivateKey())
                     {
@@ -222,10 +219,18 @@ namespace FoxIDs.Client.Pages
                 {
                     generalCertificate.Form.Model.Subject = null;
                     generalCertificate.Form.Model.Key = null;
-                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
+
+                    if (ex is CryptographicException cex && cex.Message.Contains("Invalid MAC", StringComparison.OrdinalIgnoreCase))
+                    {
+                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Password required or invalid password.");
+                    }
+                    else
+                    {
+                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
+                    }
                 }
 
-                generalCertificate.CertificateFileStatus = GeneralSamlUpPartyViewModel.DefaultCertificateFileStatus;
+                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
             }
         }
 

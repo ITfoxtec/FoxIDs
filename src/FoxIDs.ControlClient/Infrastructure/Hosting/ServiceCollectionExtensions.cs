@@ -33,7 +33,6 @@ namespace FoxIDs.Client.Infrastructure.Hosting
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddScoped<ClientService>();
-            services.AddScoped<UtilService>();
             services.AddScoped<TenantService>();
             services.AddScoped<TrackService>();
             services.AddScoped<DownPartyService>();

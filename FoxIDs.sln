@@ -97,6 +97,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-oidc-foxids-up-party.png = docs\images\howto-oidc-foxids-up-party.png
 		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
 		docs\images\howto-saml-nemlogin3-certificate.png = docs\images\howto-saml-nemlogin3-certificate.png
+		docs\images\howto-saml-nemlogin3-log.png = docs\images\howto-saml-nemlogin3-log.png
+		docs\images\howto-saml-nemlogin3-up-attributes.png = docs\images\howto-saml-nemlogin3-up-attributes.png
+		docs\images\howto-saml-nemlogin3-up-claims.png = docs\images\howto-saml-nemlogin3-up-claims.png
+		docs\images\howto-saml-nemlogin3-up-contact.png = docs\images\howto-saml-nemlogin3-up-contact.png
+		docs\images\howto-saml-nemlogin3-up-nameidformat.png = docs\images\howto-saml-nemlogin3-up-nameidformat.png
+		docs\images\howto-saml-nemlogin3-up-read-metadata.png = docs\images\howto-saml-nemlogin3-up-read-metadata.png
+		docs\images\howto-saml-nemlogin3-up-top.png = docs\images\howto-saml-nemlogin3-up-top.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\parties-down-party-oauth.svg = docs\images\parties-down-party-oauth.svg
 		docs\images\parties-down-party-oidc.svg = docs\images\parties-down-party-oidc.svg
@@ -115,7 +122,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\upload-risk-passwords.png = docs\images\upload-risk-passwords.png
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

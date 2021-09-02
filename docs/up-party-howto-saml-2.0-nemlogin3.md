@@ -2,7 +2,7 @@
 
 FoxIDs can be connected to NemLog-in3 with a [up-party SAML 2.0](up-party-saml-2.0.md). Where NemLog-in3 is a SAML 2.0 Identity Provider and FoxIDs is acting as an SAML 2.0 Relying Party (RP) / Service Provider (SP).
 
-NemLog-in3 is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in3 / OIOSAML 3 including NSIS, logging, issuer naming and required certificates.
+NemLog-in3 is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in3 / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
 
 > NemLog-in3 beta test environment:  
 > Guide https://www.nemlog-in.dk/vejledningertiltestmiljo  
@@ -137,3 +137,33 @@ The required log level is configured in the FoxIDs log settings:
  - Enable log message trace
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-log.png)
+
+## Request authentication context
+
+You can request a desired NSIS assurance level as an authn context class reference.
+
+![NSIS assurance level in SAML 2.0 up-party](images/howto-saml-nemlogin3-nsis-level.png)
+
+Possible NSIS assurance levels:
+ - `https://data.gov.dk/concept/core/nsis/loa/Low`
+ - `https://data.gov.dk/concept/core/nsis/loa/Substantial`
+ - `https://data.gov.dk/concept/core/nsis/loa/High`
+
+You can likewise specify ID type as an authn context class reference.
+
+![ID type in SAML 2.0 up-party](images/howto-saml-nemlogin3-id-type.png)
+
+Possible ID types:
+ - `https://data.gov.dk/eid/Person`
+ - `https://data.gov.dk/eid/Professional`
+
+And possible credential types:
+ - `https://nemlogin.dk/internal/credential/type/nemidkeycard`
+ - `https://nemlogin.dk/internal/credential/type/nemidkeyfile`
+ - `https://nemlogin.dk/internal/credential/type/mitid`
+ - `https://nemlogin.dk/internal/credential/type/local`
+ - `https://nemlogin.dk/internal/credential/type/test`
+
+
+In the case you need to provide different sets of authn context class references. You need to create multiple SAML 2.0 up-parties connected to NemLog-in as different IT systems.  
+E.g., if you need to support step-up authentication. Then you would create one SAML 2.0 up-party with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another SAML 2.0 up-party with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.

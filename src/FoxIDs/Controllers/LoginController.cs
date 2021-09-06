@@ -79,7 +79,7 @@ namespace FoxIDs.Controllers
                     return View(nameof(Login), new LoginViewModel
                     {
                         SequenceString = SequenceString,
-                        CssStyle = loginUpParty.CssStyle,
+                        CssStyle = loginUpParty.Css,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableResetPassword = !loginUpParty.DisableResetPassword,
                         EnableCreateUser = !validSession && loginUpParty.EnableCreateUser,
@@ -142,7 +142,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     login.SequenceString = SequenceString;
-                    login.CssStyle = loginUpParty.CssStyle;
+                    login.CssStyle = loginUpParty.Css;
                     login.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     login.EnableResetPassword = !loginUpParty.DisableResetPassword;
                     login.EnableCreateUser = loginUpParty.EnableCreateUser;
@@ -310,7 +310,7 @@ namespace FoxIDs.Controllers
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace(() => "Show logout consent dialog.");
-                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
+                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.Css });
                 }
                 else
                 {
@@ -338,7 +338,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     logout.SequenceString = SequenceString;
-                    logout.CssStyle = loginUpParty.CssStyle;
+                    logout.CssStyle = loginUpParty.Css;
                     return View(nameof(Logout), logout);
                 };
 
@@ -409,7 +409,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     logger.ScopeTrace(() => "Show logged in dialog.");
-                    return View("LoggedIn", new LoggedInViewModel { CssStyle = loginUpParty.CssStyle });
+                    return View("LoggedIn", new LoggedInViewModel { CssStyle = loginUpParty.Css });
                 }
             }
             else
@@ -435,7 +435,7 @@ namespace FoxIDs.Controllers
             {
                 loginUpParty = loginUpParty ?? await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 logger.ScopeTrace(() => "Show logged out dialog.");
-                return View("loggedOut", new LoggedOutViewModel { CssStyle = loginUpParty.CssStyle });
+                return View("loggedOut", new LoggedOutViewModel { CssStyle = loginUpParty.Css });
             }
         }
 
@@ -460,7 +460,7 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
-                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.CssStyle });
+                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, CssStyle = loginUpParty.Css });
 
             }
             catch (Exception ex)
@@ -486,7 +486,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     createUser.SequenceString = SequenceString;
-                    createUser.CssStyle = loginUpParty.CssStyle;
+                    createUser.CssStyle = loginUpParty.Css;
                     return View(nameof(CreateUser), createUser);
                 };
 
@@ -586,7 +586,7 @@ namespace FoxIDs.Controllers
                 return View(nameof(ChangePassword), new ChangePasswordViewModel
                 {
                     SequenceString = SequenceString,
-                    CssStyle = loginUpParty.CssStyle,
+                    CssStyle = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     Email = sequenceData.Email,
                 });
@@ -610,7 +610,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     changePassword.SequenceString = SequenceString;
-                    changePassword.CssStyle = loginUpParty.CssStyle;
+                    changePassword.CssStyle = loginUpParty.Css;
                     changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(nameof(ChangePassword), changePassword);
                 };

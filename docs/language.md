@@ -1,5 +1,5 @@
 # Languages
-FoxIDs support translating the interfaces elements into the configured languages. English is default (FoxIDs Control Client only support English). It is possible to add text translations to all text elements.  
+FoxIDs support translating the user interfaces elements into the configured languages. English is default (FoxIDs Control Client only support English). It is possible to add text translations to all text elements.  
 
 By default, the text translations are read from the embedded resource file. The [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file can be found in the git repository.  
 

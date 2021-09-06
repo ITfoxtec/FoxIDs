@@ -4,6 +4,6 @@
     {
         bool DisableResetPassword { get; set; }
 
-        string CssStyle { get; set; }
+        string Css { get; set; }
     }
 }

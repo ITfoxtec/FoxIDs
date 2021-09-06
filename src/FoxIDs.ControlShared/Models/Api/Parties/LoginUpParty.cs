@@ -45,7 +45,7 @@ namespace FoxIDs.Models.Api
         /// CSS style.
         /// </summary>
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
-        public string CssStyle { get; set; }
+        public string Css { get; set; }
 
         /// <summary>
         /// Default 10 hours.

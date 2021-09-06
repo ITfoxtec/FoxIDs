@@ -33,7 +33,7 @@ namespace FoxIDs.Models
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
-        [JsonProperty(PropertyName = "css_style")]
-        public string CssStyle { get; set; }
+        [JsonProperty(PropertyName = "css")]
+        public string Css { get; set; }
     }
 }

@@ -58,7 +58,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\up-party-howto-oidc-foxids.md = docs\up-party-howto-oidc-foxids.md
 		docs\up-party-howto-oidc-identityserver.md = docs\up-party-howto-oidc-identityserver.md
 		docs\up-party-howto-saml-2.0-adfs.md = docs\up-party-howto-saml-2.0-adfs.md
-		docs\up-party-howto-saml-2.0-nemlogin3.md = docs\up-party-howto-saml-2.0-nemlogin3.md
+		docs\up-party-howto-saml-2.0-nemlogin.md = docs\up-party-howto-saml-2.0-nemlogin.md
 		docs\up-party-oidc.md = docs\up-party-oidc.md
 		docs\up-party-saml-2.0.md = docs\up-party-saml-2.0.md
 	EndProjectSection
@@ -97,6 +97,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-oidc-foxids-up-party.png = docs\images\howto-oidc-foxids-up-party.png
 		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
 		docs\images\howto-saml-nemlogin3-certificate.png = docs\images\howto-saml-nemlogin3-certificate.png
+		docs\images\howto-saml-nemlogin3-claim-mappings.png = docs\images\howto-saml-nemlogin3-claim-mappings.png
 		docs\images\howto-saml-nemlogin3-id-type.png = docs\images\howto-saml-nemlogin3-id-type.png
 		docs\images\howto-saml-nemlogin3-log.png = docs\images\howto-saml-nemlogin3-log.png
 		docs\images\howto-saml-nemlogin3-nsis-level.png = docs\images\howto-saml-nemlogin3-nsis-level.png

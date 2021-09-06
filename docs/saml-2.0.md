@@ -11,7 +11,7 @@ Configure [up-party SAML 2.0](up-party-saml-2.0.md) which trust an external SAML
 How to guides:
 
 - Connect [AD SF](up-party-howto-saml-2.0-adfs.md)
-- Connect [NemLog-in3 (Danish IdP)](up-party-howto-saml-2.0-nemlogin3.md)
+- Connect [NemLog-in3 (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
 
 ## Down-party
 

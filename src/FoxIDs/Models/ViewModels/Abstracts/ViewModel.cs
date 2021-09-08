@@ -2,6 +2,6 @@
 {
     public abstract class ViewModel
     {
-        public string CssStyle { get; set; }
+        public string Css { get; set; }
     }
 }

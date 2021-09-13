@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 return View(new ConfirmationViewModel
                 {
-                    CssStyle = uiLoginUpParty.Css,
+                    Css = uiLoginUpParty.Css,
                     Verified = verified
                 });
             }
@@ -66,7 +66,7 @@ namespace FoxIDs.Controllers
                 return View(new ForgotPasswordViewModel
                 {
                     SequenceString = SequenceString,
-                    CssStyle = uiLoginUpParty.Css,
+                    Css = uiLoginUpParty.Css,
                     Receipt = false
                 });
             }
@@ -94,7 +94,7 @@ namespace FoxIDs.Controllers
 
                 return View(new ForgotPasswordViewModel
                 {
-                    CssStyle = uiLoginUpParty.Css,
+                    Css = uiLoginUpParty.Css,
                     Receipt = true
                 });
             }
@@ -120,7 +120,7 @@ namespace FoxIDs.Controllers
 
                 return View(new ResetPasswordViewModel
                 {
-                    CssStyle = uiLoginUpParty.Css,
+                    Css = uiLoginUpParty.Css,
                     Verified = verified,
                     Receipt = false
                 });
@@ -149,7 +149,7 @@ namespace FoxIDs.Controllers
 
                 Func<bool, IActionResult> viewResponse = (receipt) =>
                 {
-                    resetPassword.CssStyle = uiLoginUpParty.Css;
+                    resetPassword.Css = uiLoginUpParty.Css;
                     resetPassword.Verified = verified;
                     resetPassword.Receipt = receipt;
                     return View(resetPassword);

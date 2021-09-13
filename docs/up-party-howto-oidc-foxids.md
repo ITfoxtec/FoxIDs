@@ -39,7 +39,9 @@ The client is a confidant client using Authorization Code Flow and PKCE.
 
 **3 - Go back to your FoxIDs up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Add the parallel FoxIDs track down-party client authority.
+ 1. Add the parallel FoxIDs track down-party client authority.  
+     > Default the parallel track use the `login` up-party to authenticate users with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(login)/` authority.  
+     > It is possible to select another up-party in the parallel track. E.g. `azure_ad` with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(azure_ad)/` authority.
  2. Add the profile and email scopes (possible other or more scopes).
  3. Add the parallel FoxIDs track down-party client's client secret.
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel FoxIDs tracks access token.

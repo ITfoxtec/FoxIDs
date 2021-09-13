@@ -15,11 +15,11 @@
     </environment>
     @if (Model is ViewModel)
     {
-        var cssStyle = (Model as ViewModel).CssStyle;
-        if (!cssStyle.IsNullOrEmpty())
+        var css = (Model as ViewModel).Css;
+        if (!css.IsNullOrEmpty())
         {
             <style type="text/css">
-                @Html.Raw(cssStyle)
+                @Html.Raw(css)
             </style>
         }
     }

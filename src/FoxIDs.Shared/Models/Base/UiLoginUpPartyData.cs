@@ -16,7 +16,7 @@ namespace FoxIDs.Models
         public bool DisableResetPassword { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
-        [JsonProperty(PropertyName = "css_style")]
+        [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Client.Infrastructure.Security;
+﻿using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -10,14 +9,14 @@ using System;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class TrackSettings
     {
+        private string mailSettingsHref;
         private string claimMappingsHref;
-        private PageEditForm<UpdateTrackViewModel> updateTrackForm;
+        private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
 
@@ -29,6 +28,7 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
@@ -51,16 +51,7 @@ namespace FoxIDs.Client.Pages
                 deleteTrackError = null;
                 deleteTrackAcknowledge = false;
                 var track = await TrackService.GetTrackAsync(TrackSelectedLogic.Track.Name);
-                var trackSendEmail = await TrackService.GetTrackSendEmailAsync();           
-                await updateTrackForm.InitAsync(track.Map<UpdateTrackViewModel>(afterMap: afterMap => 
-                {
-                    if (trackSendEmail != null)
-                    {
-                        afterMap.SendMailExist = true;
-                        afterMap.FromEmail = trackSendEmail.FromEmail;
-                        afterMap.SendgridApiKey = trackSendEmail.SendgridApiKey;
-                    }
-                }));
+                await trackSettingsForm.InitAsync(track.Map<TrackSettingsViewModel>());
             }
             catch (TokenUnavailableException)
             {
@@ -68,11 +59,11 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                updateTrackForm.SetError(ex.Message);
+                trackSettingsForm.SetError(ex.Message);
             }
         }
 
-        private void UpdateTrackViewModelAfterInit(UpdateTrackViewModel updateTrackViewModel)
+        private void UpdateTrackViewModelAfterInit(TrackSettingsViewModel updateTrackViewModel)
         {
             updateTrackViewModel.FormattedName = updateTrackViewModel.Name.FormatTrackName();
         }
@@ -81,23 +72,11 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                await TrackService.UpdateTrackAsync(updateTrackForm.Model.Map<Track>());
-                if (!updateTrackForm.Model.FromEmail.IsNullOrWhiteSpace() && !updateTrackForm.Model.SendgridApiKey.IsNullOrWhiteSpace())
-                {
-                    await TrackService.UpdateTrackSendEmailAsync(new SendEmail
-                    {
-                        FromEmail = updateTrackForm.Model.FromEmail,
-                        SendgridApiKey = updateTrackForm.Model.SendgridApiKey
-                    });
-                }
-                else if (updateTrackForm.Model.SendMailExist)
-                {
-                    await TrackService.DeleteTrackSendEmailAsync();
-                }
+                await TrackService.UpdateTrackAsync(trackSettingsForm.Model.Map<Track>());
             }
             catch (Exception ex)
             {
-                updateTrackForm.SetError(ex.Message);
+                trackSettingsForm.SetError(ex.Message);
             }
         }
 

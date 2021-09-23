@@ -17,6 +17,7 @@ namespace FoxIDs.Client.Pages
     public partial class ClaimMappings
     {
         private string trackSettingsHref;
+        private string mailSettingsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
 
@@ -29,6 +30,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             trackSettingsHref = $"{TenantName}/tracksettings";
+            mailSettingsHref = $"{TenantName}/mailsettings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

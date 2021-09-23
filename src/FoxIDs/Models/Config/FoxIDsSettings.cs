@@ -21,6 +21,11 @@ namespace FoxIDs.Models.Config
         public SendgridSettings Sendgrid { get; set; }
 
         /// <summary>
+        /// SMTP configuration.
+        /// </summary>
+        public SmtpSettings Smtp { get; set; }
+
+        /// <summary>
         /// Persistent session max unlimited lifetime in years.
         /// </summary>
         [Required]

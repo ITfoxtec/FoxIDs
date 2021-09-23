@@ -1,0 +1,60 @@
+﻿@page "/{tenantName}/mailsettings"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Track settings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Mail settings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+</ul>
+
+<div class="tab-content">
+    <PageEditForm @ref="mailSettingsForm" TModel="MailSettingsViewModel" OnValidSubmit="OnUpdateMailValidSubmitAsync">
+        @if (TrackSelectedLogic.IsTrackSelected)
+        {
+            <div class="modal-body">
+                <FInputText @bind-Value="mailSettingsForm.Model.FromEmail" For="@(() => mailSettingsForm.Model.FromEmail)" />
+
+                <FInputSelect @bind-Value="mailSettingsForm.Model.MailProvider" For="@(() => mailSettingsForm.Model.MailProvider)">
+                    <option value="@MailProviders.SendGrid">SendGrid</option>
+                    <option value="@MailProviders.Smtp">SMTP</option>
+                </FInputSelect>
+
+                @if (mailSettingsForm.Model.MailProvider == MailProviders.SendGrid)
+                {
+                    <FInputText @bind-Value="mailSettingsForm.Model.SendgridApiKey" For="@(() => mailSettingsForm.Model.SendgridApiKey)" />
+                }
+                else if (mailSettingsForm.Model.MailProvider == MailProviders.Smtp)
+                {
+                    <FInputText @bind-Value="mailSettingsForm.Model.SmtpHost" For="@(() => mailSettingsForm.Model.SmtpHost)" />
+                    <FInputNumber @bind-Value="mailSettingsForm.Model.SmtpPort" For="@(() => mailSettingsForm.Model.SmtpPort)" />
+                    <FInputText @bind-Value="mailSettingsForm.Model.SmtpUsername" For="@(() => mailSettingsForm.Model.SmtpUsername)" />
+                    <FInputText @bind-Value="mailSettingsForm.Model.SmtpPassword" For="@(() => mailSettingsForm.Model.SmtpPassword)" />
+                }
+
+                @if (deleteMailAcknowledge)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <div>
+                            You are about to remove the mail settings, are you sure?
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteMailAsync">Yes remove mail settings</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => deleteMailAcknowledge = false)">No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" @onclick="@(() => deleteMailAcknowledge = true)">Remove mail settings</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        }
+    </PageEditForm>
+</div>

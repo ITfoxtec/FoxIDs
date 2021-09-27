@@ -13,13 +13,8 @@ The Azure deployment include:
 - Redis cache.
 - Application Insights.
 
-### Send emails with Sendgrid
-FoxIDs relay on Sendgrid to send emails to the users for account verification and password reset.  
-You can optionally configure a Sendgrid from email address and Sendgrid API key in the Azure deployment configuration. You can either [create Sendgrid in Azure](https://docs.microsoft.com/en-us/azure/sendgrid-dotnet-how-to-send-email) or directly on [Sendgrid](https://Sendgrid.com), there are more free emails in an Azure manage Sendgrid.
-
-> Remember to setup up [domain authentication](https://sendgrid.com/docs/ui/account-and-settings/how-to-set-up-domain-authentication/) in Sendgrid for the from email.
-
-A Sendgrid from email address and API Key can at a later time be configure per track.
+### Send emails with Sendgrid or SMTP
+FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email).
 
 ### First login and admin users
 After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.

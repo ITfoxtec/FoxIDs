@@ -32,8 +32,8 @@ Configuring SendGrid with the application setting names:
 
 Configuring SMTP with the application setting names:
 
-- Settings:Sendgrid:FromEmail
-- Settings:Sendgrid:Host
-- Settings:Sendgrid:Port
-- Settings:Sendgrid:Username
-- Settings:Sendgrid:Password
+- Settings:smtp:FromEmail
+- Settings:smtp:Host
+- Settings:smtp:Port
+- Settings:smtp:Username
+- Settings:smtp:Password

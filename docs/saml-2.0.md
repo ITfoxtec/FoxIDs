@@ -10,7 +10,7 @@ Configure [up-party SAML 2.0](up-party-saml-2.0.md) which trust an external SAML
 
 How to guides:
 
-- Connect [AD SF](up-party-howto-saml-2.0-adfs.md)
+- Connect [AD FS](up-party-howto-saml-2.0-adfs.md)
 - Connect [NemLog-in3 (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
 
 ## Down-party
@@ -19,7 +19,7 @@ Configure your application as a [down-party SAML 2.0](down-party-saml-2.0.md).
 
 How to guides:
 
-- Connect [AD SF](down-party-howto-saml-2.0-adfs.md)
+- Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
 
 ## Claim mappings
 Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md).

@@ -10,6 +10,7 @@
   - [CSS](css.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)
+  - [Email](email.md)
 - [Samples](samples.md)
 - [Development](development.md)
 - [FAQ](faq.md)

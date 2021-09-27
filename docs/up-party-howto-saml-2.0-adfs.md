@@ -1,4 +1,4 @@
-# Up-party - Connect AD SF with SAML 2.0
+# Up-party - Connect AD FS with SAML 2.0
 
 FoxIDs can be connected to AD FS with a [up-party SAML 2.0](up-party-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
  

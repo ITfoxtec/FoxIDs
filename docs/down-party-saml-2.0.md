@@ -16,7 +16,7 @@ Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-
 
 How to guides:
 
-- Connect [AD SF](down-party-howto-saml-2.0-adfs.md)
+- Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
 - Connect yyy
 
 ## Configuration

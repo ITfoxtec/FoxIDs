@@ -37,3 +37,5 @@ Configuring SMTP with the application setting names:
 - Settings:Smtp:Port
 - Settings:Smtp:Username
 - Settings:Smtp:Password
+
+The SMTP connection is required to be SSL/TLS.

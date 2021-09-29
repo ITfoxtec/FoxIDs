@@ -281,7 +281,7 @@ namespace FoxIDs.Logic
         {
             var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
 
-            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims, isSamlClaims: true);
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig)
             {

@@ -1,5 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using ITfoxtec.Identity;
+using ITfoxtec.Identity.Saml2.Claims;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -19,12 +21,14 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
+        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims, bool isSamlClaims = false)
         {
             if(claimTransforms == null|| claims == null)
             {
                 return Task.FromResult(new List<Claim>(claims));
             }
+
+            ValidateAndPrepareClaimTransforms(claimTransforms, isSamlClaims);
 
             logger.ScopeTrace(() => "Transform claims.");
             var outputClaims = new List<Claim>(claims);
@@ -63,6 +67,41 @@ namespace FoxIDs.Logic
                 }
             }
             return Task.FromResult(outputClaims);
+        }
+
+        private string[] ReplaceClaimOutJwtTypes = new [] { JwtClaimTypes.Subject, JwtClaimTypes.SessionId, JwtClaimTypes.AuthTime, JwtClaimTypes.Acr, JwtClaimTypes.Amr, JwtClaimTypes.ExpirationTime, JwtClaimTypes.NotBefore, JwtClaimTypes.IssuedAt, JwtClaimTypes.Nonce, JwtClaimTypes.Azp, JwtClaimTypes.AtHash, JwtClaimTypes.CHash };
+        private string[] ReplaceClaimOutSamlTypes = new[] { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod };
+
+        private void ValidateAndPrepareClaimTransforms(IEnumerable<ClaimTransform> claimTransforms, bool isSamlClaims)
+        {
+            if(!isSamlClaims)
+            {
+                foreach(var claimTransform in claimTransforms)
+                {
+                    if(ReplaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        claimTransform.ReplaceClaimOut = true;
+                    }
+                    else
+                    {
+                        claimTransform.ReplaceClaimOut = false;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var claimTransform in claimTransforms)
+                {
+                    if (ReplaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        claimTransform.ReplaceClaimOut = true;
+                    }
+                    else
+                    {
+                        claimTransform.ReplaceClaimOut = false;
+                    }
+                }
+            }
         }
 
         private static void UpdateClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)

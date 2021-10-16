@@ -165,13 +165,30 @@ namespace FoxIDs.Logic
             var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
 
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
+            try
+            {
+                binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+            }
+            catch (Exception ex)
+            {
+                if (samlConfig.SecondaryDecryptionCertificate != null && binding is Saml2PostBinding && ex.Source.Contains("cryptography", StringComparison.OrdinalIgnoreCase))
+                {
+                    samlConfig.DecryptionCertificate = samlConfig.SecondaryDecryptionCertificate;
+                    saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
+                    binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    logger.ScopeTrace(() => $"SAML Authn response decrypted with secondary certificate.", traceType: TraceTypes.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-            binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
             if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
 
             await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>();
-            
+
             try
             {
                 logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);

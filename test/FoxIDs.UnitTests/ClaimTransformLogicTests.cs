@@ -1,20 +1,17 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Models;
-using FoxIDs.Models.Config;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace FoxIDs.UnitTests
 {
-    public class ClaimTransformationsLogicTests
+    public class ClaimTransformLogicTests
     {
         [Theory]
         [InlineData("some-constant", "abc", 1)]
@@ -138,14 +135,14 @@ namespace FoxIDs.UnitTests
             yield return new Claim(JwtClaimTypes.Email, "andersen@abc.com");
         }
 
-        private ClaimTransformationsLogic ClaimTransformationsLogicInstance()
+        private ClaimTransformLogic ClaimTransformationsLogicInstance()
         {
             var routeBinding = new RouteBinding();
             var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
-            return new ClaimTransformationsLogic(telemetryScopedLogger, mockHttpContextAccessor);
+            return new ClaimTransformLogic(telemetryScopedLogger, mockHttpContextAccessor);
         }
     }
 }

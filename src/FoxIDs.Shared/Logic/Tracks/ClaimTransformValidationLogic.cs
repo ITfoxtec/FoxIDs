@@ -17,7 +17,7 @@ namespace FoxIDs.Logic
         public ClaimTransformValidationLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }
 
-        public void ValidateAndPrepareClaimTransforms(IEnumerable<ClaimTransform> claimTransforms)
+        public void ValidateAndPrepareClaimTransforms<TClaimTransform>(IEnumerable<TClaimTransform> claimTransforms) where TClaimTransform : ClaimTransform
         {
             var addActionClaimTransform = claimTransforms.Where(ct => ct.Action == ClaimTransformActions.Add);
 

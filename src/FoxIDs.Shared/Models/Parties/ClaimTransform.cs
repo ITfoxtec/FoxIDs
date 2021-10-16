@@ -38,69 +38,124 @@ namespace FoxIDs.Models
         {
             var results = new List<ValidationResult>();
 
-            switch (Type)
+            if (Action == ClaimTransformActions.Add || Action == ClaimTransformActions.Replace)
             {
-                case ClaimTransformTypes.Constant:
-                case ClaimTransformTypes.MatchClaim:
-                    if (ClaimsIn?.Count() > 0)
-                    {
-                        results.Add(new ValidationResult($"The field {nameof(ClaimsIn)} can not be used with claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                    }
-                    if (Transformation.IsNullOrWhiteSpace())
-                    {
-                        results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
-                    }
-                    break;
+                switch (Type)
+                {
+                    case ClaimTransformTypes.Constant:
+                        if (Transformation.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                        }
+                        break;
 
-                case ClaimTransformTypes.Match:
-                case ClaimTransformTypes.RegexMatch:
-                    if (ClaimsIn?.Count() != 1)
-                    {
-                        results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                    }
-                    if (Transformation.IsNullOrWhiteSpace())
-                    {
-                        results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
-                    }
-                    if (TransformationExtension.IsNullOrWhiteSpace())
-                    {
-                        results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation type '{Type}'.", new[] { nameof(TransformationExtension) }));
-                    }
-                    break;
+                    case ClaimTransformTypes.MatchClaim:
+                        ValidateMatchClaimAddReplace(results);
+                        break;
 
-                case ClaimTransformTypes.Map:
-                    if (ClaimsIn?.Count() != 1)
-                    {
-                        results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                    }
-                    break;
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                        ValidateMatchAddReplace(results);
+                        break;
 
-                case ClaimTransformTypes.RegexMap:
-                    if (ClaimsIn?.Count() != 1)
-                    {
-                        results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                    }
-                    if (Transformation.IsNullOrWhiteSpace())
-                    {
-                        results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
-                    }
-                    break;
+                    case ClaimTransformTypes.Map:
+                        if (ClaimsIn?.Count() != 1)
+                        {
+                            results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                        }
+                        break;
 
-                case ClaimTransformTypes.Concatenate:
-                    if (ClaimsIn?.Count() < 1)
-                    {
-                        results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                    }
-                    if (Transformation.IsNullOrWhiteSpace())
-                    {
-                        results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
-                    }
-                    break;
+                    case ClaimTransformTypes.RegexMap:
+                        if (ClaimsIn?.Count() != 1)
+                        {
+                            results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                        }
+                        if (Transformation.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                        }
+                        break;
 
-                default:
-                    throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                    case ClaimTransformTypes.Concatenate:
+                        if (ClaimsIn?.Count() < 1)
+                        {
+                            results.Add(new ValidationResult($"At least one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+                        }
+                        if (Transformation.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                        }
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                }
+            }
+            else if (Action == ClaimTransformActions.AddIfNot || Action == ClaimTransformActions.ReplaceIfNot)
+            {
+                switch (Type)
+                {
+                    case ClaimTransformTypes.MatchClaim:
+                        ValidateMatchClaimAddReplace(results);
+                        break;
+
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                        ValidateMatchAddReplace(results);
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                }
+            }
+            else if (Action == ClaimTransformActions.Remove)
+            {
+                switch (Type)
+                {
+                    case ClaimTransformTypes.MatchClaim:
+                        break;
+
+                    case ClaimTransformTypes.Match:
+                    case ClaimTransformTypes.RegexMatch:
+                        if (Transformation.IsNullOrWhiteSpace())
+                        {
+                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+                        }
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                }
             }
             return results;
+        }
+
+        private void ValidateMatchClaimAddReplace(List<ValidationResult> results)
+        {
+            if (ClaimsIn?.Count() != 1)
+            {
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+            }
+            if (Transformation.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+            }
+        }
+
+        private void ValidateMatchAddReplace(List<ValidationResult> results)
+        {
+            if (ClaimsIn?.Count() != 1)
+            {
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+            }
+            if (Transformation.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
+            }
+            if (TransformationExtension.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation type '{Type}'.", new[] { nameof(TransformationExtension) }));
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Claim.SamlTypeLength)]
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
-        [Display(Name = "Claim in")]
+        [Display(Name = "Select claim")]
         public string ClaimIn { get; set; }
     }
 }

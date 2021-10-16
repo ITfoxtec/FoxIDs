@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Models.Api;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,23 +15,35 @@ namespace FoxIDs.Client
             {
                 switch (claimTransform.Type)
                 {
+                    case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
-                        newClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                        if (claimTransform.Action != ClaimTransformActions.Remove)
                         {
-                            Type = claimTransform.Type,
-                            Order = claimTransform.Order,
-                            ClaimIn = claimTransform.ClaimsIn.First(),
-                            ClaimOut = claimTransform.ClaimOut,
-                            Transformation = claimTransform.Transformation,
-                            TransformationExtension = claimTransform.TransformationExtension
-                        });
+                            newClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                            {
+                                Type = claimTransform.Type,
+                                Order = claimTransform.Order,
+                                ClaimIn = claimTransform.ClaimsIn.First(),
+                                ClaimOut = claimTransform.ClaimOut,
+                                Action = claimTransform.Action,
+                                Transformation = claimTransform.Transformation,
+                                TransformationExtension = claimTransform.TransformationExtension
+                            });
+                        }
+                        else
+                        {
+                            newClaimTransforms.Add(claimTransform);
+                        }
                         break;
-                    default:
+                    case ClaimTransformTypes.Constant:
+                    case ClaimTransformTypes.Concatenate:
                         newClaimTransforms.Add(claimTransform);
                         break;
+                    default:
+                        throw new NotSupportedException("claim transform type not supported.");
                 }
             }
 
@@ -44,23 +57,35 @@ namespace FoxIDs.Client
             {
                 switch (claimTransform.Type)
                 {
+                    case ClaimTransformTypes.MatchClaim:
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
-                        newClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                        if (claimTransform.Action != ClaimTransformActions.Remove)
                         {
-                            Type = claimTransform.Type,
-                            Order = claimTransform.Order,
-                            ClaimIn = claimTransform.ClaimsIn.First(),
-                            ClaimOut = claimTransform.ClaimOut,
-                            Transformation = claimTransform.Transformation,
-                            TransformationExtension = claimTransform.TransformationExtension
-                        });
+                            newClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
+                            {
+                                Type = claimTransform.Type,
+                                Order = claimTransform.Order,
+                                ClaimIn = claimTransform.ClaimsIn.First(),
+                                ClaimOut = claimTransform.ClaimOut,
+                                Action = claimTransform.Action,
+                                Transformation = claimTransform.Transformation,
+                                TransformationExtension = claimTransform.TransformationExtension
+                            });
+                        }
+                        else
+                        {
+                            newClaimTransforms.Add(claimTransform);
+                        }
                         break;
-                    default:
+                    case ClaimTransformTypes.Constant:
+                    case ClaimTransformTypes.Concatenate:
                         newClaimTransforms.Add(claimTransform);
                         break;
+                    default:
+                        throw new NotSupportedException("claim transform type not supported.");
                 }
             }
 

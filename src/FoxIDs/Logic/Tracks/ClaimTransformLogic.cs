@@ -44,6 +44,9 @@ namespace FoxIDs.Logic
                         case ClaimTransformTypes.Constant:
                             ConstantTransformation(outputClaims, claimTransform);
                             break;
+                        case ClaimTransformTypes.MatchClaim:
+                            MatchClaimTransformation(outputClaims, claimTransform);
+                            break;
                         case ClaimTransformTypes.Match:
                             MatchTransformation(outputClaims, claimTransform);
                             break;
@@ -121,6 +124,19 @@ namespace FoxIDs.Logic
         {
             var newClaim = new Claim(claimTransform.ClaimOut, claimTransform.Transformation);
             UpdateClaims(claims, claimTransform, newClaim);
+        }
+
+        private void MatchClaimTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        {
+            var newClaims = new List<Claim>();
+            foreach (var claim in claims)
+            {
+                if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                {
+                    newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                }
+            }
+            UpdateClaims(claims, claimTransform, newClaims);
         }
 
         private void MatchTransformation(List<Claim> claims, ClaimTransform claimTransform)

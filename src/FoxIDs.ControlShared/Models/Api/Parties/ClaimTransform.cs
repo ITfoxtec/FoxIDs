@@ -35,6 +35,7 @@ namespace FoxIDs.Models.Api
             switch (Type)
             {
                 case ClaimTransformTypes.Constant:
+                case ClaimTransformTypes.MatchClaim:
                     if (ClaimsIn?.Count() > 0)
                     {
                         results.Add(new ValidationResult($"The field {nameof(ClaimsIn)} can not be used with claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));

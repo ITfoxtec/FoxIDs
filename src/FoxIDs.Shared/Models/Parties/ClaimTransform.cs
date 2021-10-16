@@ -26,7 +26,7 @@ namespace FoxIDs.Models
 
         [Required]
         [JsonProperty(PropertyName = "action")]
-        public ClaimTransformActions Action { get; set; }
+        public ClaimTransformActions Action { get; set; } = ClaimTransformActions.Add;
 
         [JsonProperty(PropertyName = "transformation")]
         public abstract string Transformation { get; set; }
@@ -41,6 +41,7 @@ namespace FoxIDs.Models
             switch (Type)
             {
                 case ClaimTransformTypes.Constant:
+                case ClaimTransformTypes.MatchClaim:
                     if (ClaimsIn?.Count() > 0)
                     {
                         results.Add(new ValidationResult($"The field {nameof(ClaimsIn)} can not be used with claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));

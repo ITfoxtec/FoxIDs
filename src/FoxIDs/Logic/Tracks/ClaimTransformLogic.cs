@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class ClaimTransformationsLogic : LogicBase
+    public class ClaimTransformLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
 
-        public ClaimTransformationsLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ClaimTransformLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
         }

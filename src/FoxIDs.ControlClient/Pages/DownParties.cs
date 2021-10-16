@@ -189,7 +189,7 @@ namespace FoxIDs.Client.Pages
                         {
                             afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                         }
-                    })));
+                    }));
                 }
                 catch (TokenUnavailableException)
                 {

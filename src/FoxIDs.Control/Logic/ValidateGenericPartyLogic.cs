@@ -16,11 +16,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
+        private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
 
-        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
+            this.claimTransformValidationLogic = claimTransformValidationLogic;
         }
 
         public bool ValidateApiModelClaimTransforms<T>(ModelStateDictionary modelState, List<T> claimTransforms) where T : Api.ClaimTransform
@@ -75,6 +77,33 @@ namespace FoxIDs.Logic
                 }
             }
             return isValid;
+        }
+
+        public bool ValidateModelClaimTransforms<MParty>(ModelStateDictionary modelState, MParty mParty) where MParty : Party
+        {
+            if(mParty is LoginUpParty loginUpParty)
+            {
+                claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(loginUpParty.ClaimTransforms);
+            }
+            else if (mParty is OAuthUpParty oauthUpParty)
+            {
+                claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(oauthUpParty.ClaimTransforms);
+            }
+            else if (mParty is SamlUpParty samlUpParty)
+            {
+                claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(samlUpParty.ClaimTransforms);
+            }
+            else if (mParty is OAuthDownParty oauthDownParty)
+            {
+                claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(oauthDownParty.ClaimTransforms);
+            }
+            else if (mParty is SamlDownParty samlDownParty)
+            {
+                claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(samlDownParty.ClaimTransforms);
+            }
+
+            return true;
+
         }
     }
 }

@@ -58,6 +58,7 @@ namespace FoxIDs.Controllers
 
                 var mParty = mapper.Map<MParty>(party);
                 if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
+                if (!validateGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (!(await modelActionAsync(party, mParty))) return BadRequest(ModelState);
 
                 await tenantRepository.CreateAsync(mParty);

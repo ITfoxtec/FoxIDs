@@ -15,20 +15,22 @@ namespace FoxIDs.Logic
     public class ClaimTransformLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
 
-        public ClaimTransformLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ClaimTransformLogic(TelemetryScopedLogger logger, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.claimTransformValidationLogic = claimTransformValidationLogic;
         }
 
-        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims, bool isSamlClaims = false)
+        public Task<List<Claim>> Transform(IEnumerable<ClaimTransform> claimTransforms, IEnumerable<Claim> claims)
         {
             if(claimTransforms == null|| claims == null)
             {
                 return Task.FromResult(new List<Claim>(claims));
             }
 
-            ValidateAndPrepareClaimTransforms(claimTransforms, isSamlClaims);
+            claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
 
             logger.ScopeTrace(() => "Transform claims.");
             var outputClaims = new List<Claim>(claims);
@@ -72,56 +74,46 @@ namespace FoxIDs.Logic
         private string[] ReplaceClaimOutJwtTypes = new [] { JwtClaimTypes.Subject, JwtClaimTypes.SessionId, JwtClaimTypes.AuthTime, JwtClaimTypes.Acr, JwtClaimTypes.Amr, JwtClaimTypes.ExpirationTime, JwtClaimTypes.NotBefore, JwtClaimTypes.IssuedAt, JwtClaimTypes.Nonce, JwtClaimTypes.Azp, JwtClaimTypes.AtHash, JwtClaimTypes.CHash };
         private string[] ReplaceClaimOutSamlTypes = new[] { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod };
 
-        private void ValidateAndPrepareClaimTransforms(IEnumerable<ClaimTransform> claimTransforms, bool isSamlClaims)
-        {
-            if(!isSamlClaims)
-            {
-                foreach(var claimTransform in claimTransforms)
-                {
-                    if(ReplaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        claimTransform.ReplaceClaimOut = true;
-                    }
-                    else
-                    {
-                        claimTransform.ReplaceClaimOut = false;
-                    }
-                }
-            }
-            else
-            {
-                foreach (var claimTransform in claimTransforms)
-                {
-                    if (ReplaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        claimTransform.ReplaceClaimOut = true;
-                    }
-                    else
-                    {
-                        claimTransform.ReplaceClaimOut = false;
-                    }
-                }
-            }
-        }
-
         private static void UpdateClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
         {
-            if (claimTransform.ReplaceClaimOut)
+            switch (claimTransform.Action)
             {
-                outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                case ClaimTransformActions.Add:
+                    outputClaims.Add(newClaim);
+                    break;
+                case ClaimTransformActions.Replace:
+                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                    outputClaims.Add(newClaim);
+                    break;
+                case ClaimTransformActions.Remove:
+                    throw new NotImplementedException();
+                    break;
+                default:
+                    throw new NotImplementedException();
+                    break;
             }
-            outputClaims.Add(newClaim);
         }
 
         private static void UpdateClaims(List<Claim> outputClaims, ClaimTransform claimTransform, List<Claim> newClaims)
         {
             if (newClaims.Count() > 0)
             {
-                if (claimTransform.ReplaceClaimOut)
+                switch (claimTransform.Action)
                 {
-                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                    case ClaimTransformActions.Add:
+                        outputClaims.AddRange(newClaims);
+                        break;
+                    case ClaimTransformActions.Replace:
+                        outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                        outputClaims.AddRange(newClaims);
+                        break;
+                    case ClaimTransformActions.Remove:
+                        throw new NotImplementedException();
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                        break;
                 }
-                outputClaims.AddRange(newClaims);
             }
         }
 

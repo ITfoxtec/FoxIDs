@@ -24,8 +24,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_out")]
         public abstract string ClaimOut { get; set; }
 
-        [JsonProperty(PropertyName = "replace_claim_out")]
-        public bool ReplaceClaimOut { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "action")]
+        public ClaimTransformActions Action { get; set; }
 
         [JsonProperty(PropertyName = "transformation")]
         public abstract string Transformation { get; set; }

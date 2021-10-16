@@ -25,8 +25,8 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut, 
                 Transformation = transformation 
             } };
-            var claimTransformationsLogic = ClaimTransformationsLogicInstance();
-            var claimsResult = await claimTransformationsLogic.Transform(claimTransformations, claims);
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
@@ -46,8 +46,8 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation, 
                 TransformationExtension = transformationExtension 
             } };
-            var claimTransformationsLogic = ClaimTransformationsLogicInstance();
-            var claimsResult = await claimTransformationsLogic.Transform(claimTransformations, claims);
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == count);
         }
 
@@ -66,8 +66,8 @@ namespace FoxIDs.UnitTests
                 Transformation = transformation,
                 TransformationExtension = transformationExtension
             } };
-            var claimTransformationsLogic = ClaimTransformationsLogicInstance();
-            var claimsResult = await claimTransformationsLogic.Transform(claimTransformations, claims);
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == transformationExtension).Count() == count);
         }
 
@@ -83,8 +83,8 @@ namespace FoxIDs.UnitTests
                 ClaimsIn = claimIn.ToList(),
                 ClaimOut = claimOut
             } };
-            var claimTransformationsLogic = ClaimTransformationsLogicInstance();
-            var claimsResult = await claimTransformationsLogic.Transform(claimTransformations, claims);
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == count);
         }
 
@@ -101,8 +101,8 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut,
                 Transformation = transformation
             } };
-            var claimTransformationsLogic = ClaimTransformationsLogicInstance();
-            var claimsResult = await claimTransformationsLogic.Transform(claimTransformations, claims);
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == count);
         }
 
@@ -122,8 +122,8 @@ namespace FoxIDs.UnitTests
                 ClaimOut = claimOut, 
                 Transformation = transformation
             } };
-            var claimTransformationsLogic = ClaimTransformationsLogicInstance();
-            var claimsResult = await claimTransformationsLogic.Transform(claimTransformations, claims);
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
             Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == count);
         }
 
@@ -135,14 +135,15 @@ namespace FoxIDs.UnitTests
             yield return new Claim(JwtClaimTypes.Email, "andersen@abc.com");
         }
 
-        private ClaimTransformLogic ClaimTransformationsLogicInstance()
+        private ClaimTransformLogic ClaimTransformLogicInstance()
         {
             var routeBinding = new RouteBinding();
             var mockHttpContextAccessor = HttpContextAccessorHelper.MockObject(routeBinding);
 
             var telemetryScopedLogger = TelemetryLoggerHelper.ScopedLoggerObject(mockHttpContextAccessor);
 
-            return new ClaimTransformLogic(telemetryScopedLogger, mockHttpContextAccessor);
+            var claimTransformValidationLogic = new ClaimTransformValidationLogic(mockHttpContextAccessor);
+            return new ClaimTransformLogic(telemetryScopedLogger, claimTransformValidationLogic, mockHttpContextAccessor);
         }
     }
 }

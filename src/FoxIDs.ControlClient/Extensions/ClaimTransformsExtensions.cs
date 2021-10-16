@@ -20,23 +20,17 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
-                        if (claimTransform.Action != ClaimTransformActions.Remove)
+                        newClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
                         {
-                            newClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
-                            {
-                                Type = claimTransform.Type,
-                                Order = claimTransform.Order,
-                                ClaimIn = claimTransform.ClaimsIn.First(),
-                                ClaimOut = claimTransform.ClaimOut,
-                                Action = claimTransform.Action,
-                                Transformation = claimTransform.Transformation,
-                                TransformationExtension = claimTransform.TransformationExtension
-                            });
-                        }
-                        else
-                        {
-                            newClaimTransforms.Add(claimTransform);
-                        }
+                            Type = claimTransform.Type,
+                            Order = claimTransform.Order,
+                            ClaimsIn = claimTransform.ClaimsIn,
+                            ClaimIn = claimTransform.ClaimsIn?.First(),
+                            ClaimOut = claimTransform.ClaimOut,
+                            Action = claimTransform.Action,
+                            Transformation = claimTransform.Transformation,
+                            TransformationExtension = claimTransform.TransformationExtension
+                        });
                         break;
                     case ClaimTransformTypes.Constant:
                     case ClaimTransformTypes.Concatenate:
@@ -62,23 +56,17 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
-                        if (claimTransform.Action != ClaimTransformActions.Remove)
+                        newClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
                         {
-                            newClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
-                            {
-                                Type = claimTransform.Type,
-                                Order = claimTransform.Order,
-                                ClaimIn = claimTransform.ClaimsIn.First(),
-                                ClaimOut = claimTransform.ClaimOut,
-                                Action = claimTransform.Action,
-                                Transformation = claimTransform.Transformation,
-                                TransformationExtension = claimTransform.TransformationExtension
-                            });
-                        }
-                        else
-                        {
-                            newClaimTransforms.Add(claimTransform);
-                        }
+                            Type = claimTransform.Type,
+                            Order = claimTransform.Order,
+                            ClaimsIn = claimTransform.ClaimsIn,
+                            ClaimIn = claimTransform.ClaimsIn?.First(),
+                            ClaimOut = claimTransform.ClaimOut,
+                            Action = claimTransform.Action,
+                            Transformation = claimTransform.Transformation,
+                            TransformationExtension = claimTransform.TransformationExtension
+                        });
                         break;
                     case ClaimTransformTypes.Constant:
                     case ClaimTransformTypes.Concatenate:

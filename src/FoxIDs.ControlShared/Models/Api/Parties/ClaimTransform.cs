@@ -31,7 +31,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Transformation extension")]
         public abstract string TransformationExtension { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
 

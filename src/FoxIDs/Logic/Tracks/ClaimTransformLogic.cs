@@ -74,48 +74,41 @@ namespace FoxIDs.Logic
             return Task.FromResult(outputClaims);
         }
 
-        private string[] ReplaceClaimOutJwtTypes = new [] { JwtClaimTypes.Subject, JwtClaimTypes.SessionId, JwtClaimTypes.AuthTime, JwtClaimTypes.Acr, JwtClaimTypes.Amr, JwtClaimTypes.ExpirationTime, JwtClaimTypes.NotBefore, JwtClaimTypes.IssuedAt, JwtClaimTypes.Nonce, JwtClaimTypes.Azp, JwtClaimTypes.AtHash, JwtClaimTypes.CHash };
-        private string[] ReplaceClaimOutSamlTypes = new[] { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod };
-
-        private static void UpdateClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
+        private static void AddReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
         {
             switch (claimTransform.Action)
             {
                 case ClaimTransformActions.Add:
+                case ClaimTransformActions.AddIfNot:
                     outputClaims.Add(newClaim);
                     break;
                 case ClaimTransformActions.Replace:
+                case ClaimTransformActions.ReplaceIfNot:
                     outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
                     outputClaims.Add(newClaim);
                     break;
-                case ClaimTransformActions.Remove:
-                    throw new NotImplementedException();
-                    break;
                 default:
-                    throw new NotImplementedException();
-                    break;
+                    throw new NotSupportedException("Claim transform action is not supported in method.");
             }
         }
 
-        private static void UpdateClaims(List<Claim> outputClaims, ClaimTransform claimTransform, List<Claim> newClaims)
+        private static void AddReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, List<Claim> newClaims)
         {
             if (newClaims.Count() > 0)
             {
                 switch (claimTransform.Action)
                 {
                     case ClaimTransformActions.Add:
+                    case ClaimTransformActions.AddIfNot:
                         outputClaims.AddRange(newClaims);
                         break;
                     case ClaimTransformActions.Replace:
+                    case ClaimTransformActions.ReplaceIfNot:
                         outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
                         outputClaims.AddRange(newClaims);
                         break;
-                    case ClaimTransformActions.Remove:
-                        throw new NotImplementedException();
-                        break;
                     default:
-                        throw new NotImplementedException();
-                        break;
+                        throw new NotSupportedException("Claim transform action is not supported in method.");
                 }
             }
         }
@@ -123,52 +116,101 @@ namespace FoxIDs.Logic
         private void ConstantTransformation(List<Claim> claims, ClaimTransform claimTransform)
         {
             var newClaim = new Claim(claimTransform.ClaimOut, claimTransform.Transformation);
-            UpdateClaims(claims, claimTransform, newClaim);
+            AddReplaceClaims(claims, claimTransform, newClaim);
         }
 
         private void MatchClaimTransformation(List<Claim> claims, ClaimTransform claimTransform)
         {
-            var newClaims = new List<Claim>();
-            foreach (var claim in claims)
+            if (claimTransform.Action != ClaimTransformActions.Remove)
             {
-                if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                var newClaims = new List<Claim>();
+                foreach (var claim in claims)
                 {
-                    newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                    }
+                }
+
+                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                {
+                    AddReplaceClaims(claims, claimTransform, newClaims);
+                }
+                else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
+                {
+                    AddReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
                 }
             }
-            UpdateClaims(claims, claimTransform, newClaims);
+            else
+            {
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         private void MatchTransformation(List<Claim> claims, ClaimTransform claimTransform)
         {
-            var newClaims = new List<Claim>();
-            foreach (var claim in claims)
+            if (claimTransform.Action != ClaimTransformActions.Remove)
             {
-                if(claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase) && claim.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase))
+                var newClaims = new List<Claim>();
+                foreach (var claim in claims)
                 {
-                    newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (claim.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase))
+                        {
+                            newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                        }
+                    }
+                }
+
+                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                {
+                    AddReplaceClaims(claims, claimTransform, newClaims);
+                }
+                else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
+                {
+                    AddReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                 }
             }
-            UpdateClaims(claims, claimTransform, newClaims);
+            else
+            {
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase) && c.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase));
+            }
         }
 
         private void RegexMatchTransformation(List<Claim> claims, ClaimTransform claimTransform)
         {
-            var newClaims = new List<Claim>();
             var regex = new Regex(claimTransform.Transformation, RegexOptions.IgnoreCase);
-            var claimIn = claimTransform.ClaimsIn.Single();
-            foreach (var claim in claims)
+
+            if (claimTransform.Action != ClaimTransformActions.Remove)
             {
-                if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                var newClaims = new List<Claim>();
+                var claimIn = claimTransform.ClaimsIn.Single();
+                foreach (var claim in claims)
                 {
-                    var match = regex.Match(claim.Value);
-                    if(match.Success)
+                    if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
                     {
-                        newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                        var match = regex.Match(claim.Value);
+                        if (match.Success)
+                        {
+                            newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                        }
                     }
                 }
+
+                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                {
+                    AddReplaceClaims(claims, claimTransform, newClaims);
+                }
+                else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
+                {
+                    AddReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                }
             }
-            UpdateClaims(claims, claimTransform, newClaims);
+            else
+            {
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase) && regex.Match(c.Value).Success);
+            }
         }
 
         private void MapTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -182,7 +224,7 @@ namespace FoxIDs.Logic
                     newClaims.Add(new Claim(claimTransform.ClaimOut, claim.Value));
                 }
             }
-            UpdateClaims(claims, claimTransform, newClaims);
+            AddReplaceClaims(claims, claimTransform, newClaims);
         }
 
         private void RegexMapTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -201,7 +243,7 @@ namespace FoxIDs.Logic
                     }
                 }
             }
-            UpdateClaims(claims, claimTransform, newClaims);
+            AddReplaceClaims(claims, claimTransform, newClaims);
         }
 
         private void ConcatenateTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -229,7 +271,7 @@ namespace FoxIDs.Logic
                 var transformationValue = string.Format(claimTransform.Transformation, values);
                 newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
             }
-            UpdateClaims(claims, claimTransform, newClaims);
+            AddReplaceClaims(claims, claimTransform, newClaims);
         }
     }
 }

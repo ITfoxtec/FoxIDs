@@ -144,7 +144,7 @@ namespace FoxIDs.Client.Pages
                     var generalOidcDownParty = downParty as GeneralOidcDownPartyViewModel;
                     var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
                     var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(downParty.Name);
-                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map((Action<OidcDownPartyViewModel>)(afterMap => 
+                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
                     {
                         if (afterMap.Client == null)
                         {
@@ -189,7 +189,7 @@ namespace FoxIDs.Client.Pages
                         {
                             afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                         }
-                    })));
+                    }));
                 }
                 catch (TokenUnavailableException)
                 {

@@ -9,6 +9,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System;
 
 namespace FoxIDs.Logic
 {
@@ -16,11 +17,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
+        private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
 
-        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;
+            this.claimTransformValidationLogic = claimTransformValidationLogic;
         }
 
         public bool ValidateApiModelClaimTransforms<T>(ModelStateDictionary modelState, List<T> claimTransforms) where T : Api.ClaimTransform
@@ -75,6 +78,113 @@ namespace FoxIDs.Logic
                 }
             }
             return isValid;
+        }
+
+        public bool ValidateModelClaimTransforms<MParty>(ModelStateDictionary modelState, MParty mParty) where MParty : Party
+        {
+            if (mParty is LoginUpParty loginUpParty)
+            {
+                return ValidateModelClaimTransforms(modelState, loginUpParty.ClaimTransforms);
+            }
+            else if (mParty is OAuthUpParty oauthUpParty)
+            {
+                return ValidateModelClaimTransforms(modelState, oauthUpParty.ClaimTransforms);
+            }
+            else if (mParty is SamlUpParty samlUpParty)
+            {
+                return ValidateModelClaimTransforms(modelState, samlUpParty.ClaimTransforms);
+            }
+            else if (mParty is OAuthDownParty oauthDownParty)
+            {
+                return ValidateModelClaimTransforms(modelState, oauthDownParty.ClaimTransforms);
+            }
+            else if (mParty is SamlDownParty samlDownParty)
+            {
+                return ValidateModelClaimTransforms(modelState, samlDownParty.ClaimTransforms);
+            }
+
+            return true;
+        }
+
+        public bool ValidateModelClaimTransforms<MClaimTransform>(ModelStateDictionary modelState, List<MClaimTransform> claimTransforms) where MClaimTransform : ClaimTransform
+        {
+            claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
+
+            foreach (var claimTransform in claimTransforms)
+            {
+                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                {
+                    switch (claimTransform.Type)
+                    {
+                        case ClaimTransformTypes.Constant:
+                            claimTransform.ClaimsIn = null;
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        case ClaimTransformTypes.MatchClaim:
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            break;
+
+                        case ClaimTransformTypes.Map:
+                            claimTransform.Transformation = null;
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        case ClaimTransformTypes.RegexMap:
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        case ClaimTransformTypes.Concatenate:
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                    }
+                }
+                else if (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot)
+                {
+                    switch (claimTransform.Type)
+                    {
+                        case ClaimTransformTypes.MatchClaim:
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                    }
+                }
+                else if (claimTransform.Action == ClaimTransformActions.Remove)
+                {
+                    switch (claimTransform.Type)
+                    {
+                        case ClaimTransformTypes.MatchClaim:
+                            claimTransform.ClaimsIn = null;
+                            claimTransform.Transformation = null;
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        case ClaimTransformTypes.Match:
+                        case ClaimTransformTypes.RegexMatch:
+                            claimTransform.ClaimsIn = null;
+                            claimTransform.TransformationExtension = null;
+                            break;
+
+                        default:
+                            throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                    }
+                }
+            }
+
+            return true;
         }
     }
 }

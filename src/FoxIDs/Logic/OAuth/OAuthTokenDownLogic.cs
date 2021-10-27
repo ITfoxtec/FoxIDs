@@ -19,16 +19,16 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
         private readonly SecretHashLogic secretHashLogic;
-        private readonly ClaimTransformationsLogic claimTransformationsLogic;
+        private readonly ClaimTransformLogic claimTransformLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, ClaimTransformationsLogic claimTransformationsLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.jwtDownLogic = jwtDownLogic;
             this.secretHashLogic = secretHashLogic;
-            this.claimTransformationsLogic = claimTransformationsLogic;
+            this.claimTransformLogic = claimTransformLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
         }
 
@@ -210,7 +210,7 @@ namespace FoxIDs.Logic
             //claims.AddClaim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
             logger.ScopeTrace(() => $"Down, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var scopes = tokenRequest.Scope.ToSpaceList();

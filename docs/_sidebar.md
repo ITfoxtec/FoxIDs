@@ -7,6 +7,8 @@
   - [SAML 2.0](saml-2.0.md)
 - [FoxIDs Control](control.md)
 - [Customization](customization.md)
+  - [Claim transform](claim-transform.md)
+  - [Logging](logging.md)
   - [CSS](css.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)

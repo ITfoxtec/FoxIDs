@@ -34,5 +34,4 @@ The following screen shot show the basic FoxIDs down-party SAML 2.0 configuratio
 
 ![Configure SAML 2.0](images/configure-saml-down-party.png)
 
-
-
+> Change the issued SAML 2.0 claim collection with [claim transforms](claim-transform.md).

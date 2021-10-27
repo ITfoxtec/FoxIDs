@@ -29,12 +29,12 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
-        private readonly ClaimTransformationsLogic claimTransformationsLogic;
+        private readonly ClaimTransformLogic claimTransformLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
         private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformationsLogic claimTransformationsLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -42,7 +42,7 @@ namespace FoxIDs.Logic
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
-            this.claimTransformationsLogic = claimTransformationsLogic;
+            this.claimTransformLogic = claimTransformLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
@@ -216,7 +216,7 @@ namespace FoxIDs.Logic
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
                 logger.ScopeTrace(() => $"Down, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-                claims = await claimTransformationsLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"Down, SAML Authn output SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);

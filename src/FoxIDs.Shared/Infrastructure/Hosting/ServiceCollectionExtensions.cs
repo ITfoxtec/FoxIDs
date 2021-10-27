@@ -1,4 +1,5 @@
-﻿using FoxIDs.Repository;
+﻿using FoxIDs.Logic;
+using FoxIDs.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
@@ -9,7 +10,9 @@ namespace FoxIDs.Infrastructure.Hosting
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddSharedLogic(this IServiceCollection services)
-        {            
+        {
+            services.AddTransient<ClaimTransformValidationLogic>();
+
             return services;
         }
 

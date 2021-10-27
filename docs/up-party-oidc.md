@@ -35,6 +35,8 @@ The up-party only transfer default claims and configured claim to the down-parti
 
 Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 
+> Change the claims the up-party pass on with [claim transforms](claim-transform.md).
+
 FoxIDs default use the brackets party pattern `.../(up-party)/...`. If not supported by the external OP (e.g., like Azure AD), the pattern can be changed to the tildes party pattern `.../~up-party~/...` or dot party pattern `.../.up-party./...`.
 
 If necessary, a custom client ID can be configured, otherwise the up-party name is used as the client ID.

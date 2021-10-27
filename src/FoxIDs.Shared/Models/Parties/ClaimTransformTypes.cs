@@ -6,6 +6,8 @@ namespace FoxIDs.Models
     {
         [EnumMember(Value = "constant")]
         Constant = 10,
+        [EnumMember(Value = "match_claim")]
+        MatchClaim = 17,
         [EnumMember(Value = "match")]
         Match = 20,
         [EnumMember(Value = "reg_ex_match")]

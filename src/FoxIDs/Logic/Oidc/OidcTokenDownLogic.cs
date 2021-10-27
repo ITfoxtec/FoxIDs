@@ -19,13 +19,13 @@ namespace FoxIDs.Logic
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic;
 
-        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantLogic, SecretHashLogic secretHashLogic, ClaimTransformationsLogic claimTransformationsLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, jwtDownLogic, secretHashLogic, claimTransformationsLogic, oauthResourceScopeDownLogic, httpContextAccessor)
+        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, jwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.jwtDownLogic = jwtDownLogic;
             this.oauthAuthCodeGrantDownLogic = oauthAuthCodeGrantDownLogic;
-            this.oauthRefreshTokenGrantDownLogic = oauthRefreshTokenGrantLogic;
+            this.oauthRefreshTokenGrantDownLogic = oauthRefreshTokenGrantDownLogic;
         }
 
         public override async Task<IActionResult> TokenRequestAsync(string partyId)

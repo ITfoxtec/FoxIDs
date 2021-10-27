@@ -143,15 +143,15 @@ You are done. The SAML 2.0 up-party can now be used as an up-party for down-part
 ## Logging
 
 NemLog-in requires requests and responses to be logged including the signature proof. It is also required to log which identity have done login and logout of which session, at what time and the IP address.  
-FoxIDs default log errors and events including the time and the IP address.
+[FoxIDs default log](logging.md) errors and events including the time and the IP address.
 
-It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a log stream.
+It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 
 The required log level is configured in the FoxIDs log settings:
 
- - Enable log info trace
- - Enable log claims trace
- - Enable log message trace
+ - Enable `log info trace`
+ - Enable `log claims trace`
+ - Enable `log message trace`
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-log.png)
 

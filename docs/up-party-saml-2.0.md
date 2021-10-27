@@ -36,3 +36,5 @@ Where the configuration is created with the external IdP metadata.
 Manual configuration become available by disabling `Automatic update`.
 
 ![Manual SAML 2.0 configuration](images/configure-saml-manual-up-party.png)
+
+> Change the issued SAML 2.0 claim collection with [claim transforms](claim-transform.md).

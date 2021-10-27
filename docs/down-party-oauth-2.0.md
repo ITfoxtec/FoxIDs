@@ -23,7 +23,9 @@ An application using [Client Credentials Grant](https://datatracker.ietf.org/doc
 
 ![Configure Client Credentials Grant](images/configure-client-credentials-grant.png)
 
-Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as OAuth 2.0 resources.  
+Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as OAuth 2.0 resources.
+
+> Change the claims the down-party pass on with [claim transforms](claim-transform.md).
 
 ## Resource Owner Password Credentials Grant
 [Resource Owner Password Credentials Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.3) is not supported for security reasons because it is insecure and should not be used.

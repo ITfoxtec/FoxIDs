@@ -40,7 +40,7 @@ A confidant client could be a web application where the security is handled by t
 - Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
-- Select `code` as response type or possible but not recemented `code token` or `code token id_token`.
+- Select `code` as response type or possible but not recommended `code token` or `code token id_token`.
 - It is not required to use PKCE in a confidant client but recommended to mitigate replay attacks.
 - Specify a secret.
 
@@ -62,7 +62,7 @@ A public client could be a browser-based riches client, Blazor client or mobile 
 
 ### Configure Implicit Code Flow for a public client
 A public client could be a web application where the security is handled by the webserver or a browser-based riches client. The application neither use PKCE or client secret.  
-*It is not recemented to use Implicit Code Flow because it is insecure.*
+*It is not recommended to use Implicit Code Flow because it is insecure.*
 
 - Specify client name in down-party name.
 - Select allowed up parties.
@@ -101,6 +101,8 @@ Scopes configured in the client is validated if the scopes exist on the API. If 
 
 ## Scopes
 The scopes can be configured in the client configuration tab. It is possible to define a set of claims which should be issued for at scope as voluntary claims.
+
+> Change the claims the down-party pass on with [claim transforms](claim-transform.md).
 
 A set of default scopes is added to the client configuration, which subsequently can be changed or deleted.
 

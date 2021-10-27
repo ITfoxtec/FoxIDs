@@ -29,6 +29,7 @@ The up-party login interface can be [customized with CSS](css).
 
 ![Configure Login](images/configure-login-advanced.png)
 
+> Change the claims the up-party pass on with [claim transforms](claim-transform.md).
 
 ## User repository 
 Each track contains a user repository supporting an unlimited number of users because they are saved in Cosmos DB. The users id, email and other claims are saved as text.  

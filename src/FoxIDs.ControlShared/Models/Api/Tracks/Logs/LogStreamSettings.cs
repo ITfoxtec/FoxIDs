@@ -20,7 +20,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Log critical error")]
         public bool LogCriticalError { get; set; }
 
-        [Display(Name = "Log events to see events about the login and logout sequences")]
+        [Display(Name = "Log events - to see events about the login and logout sequences")]
         public bool LogEvent { get; set; }
 
         [ValidateComplexType]

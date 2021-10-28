@@ -1,21 +1,26 @@
 # Getting Started
-FoxIDs support either being installed in your one Azure tenant or you can use FoxIDs at [FoxIDs.com](https://foxids.com).
 
-## FoxIDs in your Azure tenant
+FoxIDs is available at [FoxIDs.com](https://foxids.com) or you can install FoxIDs in Microsoft Azure as your own private cloud.
 
-1. [Deploy FoxIDs](deployment.md) in your Azure tenant.
+## FoxIDs.com 
+
+[FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure and all data is kept in Europe.
+
+1. Register at [FoxIDs.com](https://foxids.com), where you get access to your one FoxIDs tenant.
+2. Optionally run the [samples](samples.md) in the pre-configured [sample tenant](samples.md#foxidscom-test-tenant-for-samples).
+3. Configure [parties](parties.md) in the tracks with [FoxIDs Control Client](control.md#foxids-control-client).
+
+
+## FoxIDs Private Cloud
+
+1. [Deploy FoxIDs](deployment.md) in your Microsoft Azure tenant.
 2. Configure one tenant in [FoxIDs Control Client](control.md#foxids-control-client), you only need one.
 3. Optionally run the samples
-   * Add a test track in [FoxIDs Control Client](control.md#foxids-control-client) and [seed](samples.md#configure-samples-in-foxids-track) the sample applications.
+   * Create a test track with [FoxIDs Control Client](control.md#foxids-control-client) and [seed](samples.md#configure-samples-in-foxids-track) the sample applications.
    * Then run the [samples](samples.md).
-4. Configure the tenant in [FoxIDs Control Client](control.md#foxids-control-client).
+4. Configure [parties](parties.md) in the tracks with [FoxIDs Control Client](control.md#foxids-control-client).
 
 
-## Register at FoxIDs.com 
-
-1. Register at [FoxIDs.com](https://foxids.com), where you get access to your one tenant.
-2. Optionally run the [samples](samples.md) in the pre-configured [sample track](samples.md#foxidscom-test-track-for-samples).
-3. Configure the tenant in [FoxIDs Control Client](control.md#foxids-control-client).
 
 
 

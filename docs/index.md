@@ -1,30 +1,32 @@
-**FoxIDs is an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.  
-FoxIDs can at the same time work as both an authentication platform and a security broker converting between SAML 2.0 and OpenID Connect.**
+**FoxIDs is free an open source identity service supporting login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.**
 
-> STATUS: I'm currently working on the documentation and the first FoxIDs release.
+FoxIDs can at the same time work as both an authentication platform and a security broker converting between e.g., SAML 2.0 and OpenID Connect.
+
+> STATUS: I'm currently working on the documentation and the first FoxIDs [release](https://github.com/ITfoxtec/FoxIDs/milestone/1).
 
 FoxIDs consist of two services:
 
-- Identity service called FoxIDs which handles user login and all other security traffic.
-- Configuration client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
+- The identity service which in short is called FoxIDs. The service handles user login and all other security traffic.
+- The UI configuration client and API is called FoxIDs Control. The control service is used to configure FoxIDs in a user interface ([FoxIDs Control Client](control.md#foxids-control-client)) or by calling an API ([FoxIDs Control API](control.md#foxids-control-api)).
 
-Deployment or as a service:
+FoxIDs support Cloud and Private Cloud deployment:
 
-- FoxIDs is a cloud service ready to be [deployed](deployment.md) in you Azure tenant.
-- Or you can use FoxIDs as an Identity as a Service (IDaaS) at [FoxIDs.com](https://foxids.com).
+- FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity as a Service (IDaaS).
+- Install FoxIDs for free in Microsoft Azure as your own [private cloud](getting-started.md#foxids-private-cloud).
 
-> FoxIDs is .NET 5.0 and the FoxIDs Control Client is Blazor .NET Standard 2.1.
+> FoxIDs is build on .NET 5.0 and the FoxIDs Control Client is build on Blazor .NET Standard 2.1.
 
 ## Free and Open Source
 
-FoxIDs is free and the open source with a [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
-The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license restricts reselling FoxIDs e.g. as a cloud service to third parties, without a supplementary agreement.
+FoxIDs is free and the open source - [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
+The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license only restricts reselling FoxIDs as a IDaaS to third parties, without a supplementary agreement.
+You are free to use FoxIDs as a IDaaS for you own products.
 
 ## Support
 
-If you have questions please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with 'foxids' and I will answer as soon as possible.
+If you have questions please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with `foxids` and I will answer as soon as possible.
 
-Otherwise you can use [support@itfoxtec.com](mailto:support@itfoxtec.com) for topics not suitable for Stack Overflow.
+You are otherwise welcomme to use [support@itfoxtec.com](mailto:support@itfoxtec.com) e.g., for topics not suitable for Stack Overflow.
 
 ## How FoxIDs works
 
@@ -42,7 +44,7 @@ Both is exposed as websites where the [domains can be customized](development.md
 FoxIDs is divided into logical elements.
 
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
-- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](login.md#user-repository), a unique [certificate](#certificates) and a track contains the up parties and down parties.
+- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](login.md#user-repository), a unique [certificate](certificates.md) and a track contains the up parties and down parties.
 - **Up-party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
 - **Down-party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
 
@@ -67,28 +69,4 @@ Selecting multiple up parties *(future support)*:
 - Select all up parties allowed for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
 - Select a maximum of 5 up parties allowed for a down-party by adding the up parties as a comma separated list in round brackets in the URL after the down-party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
 
-A client which use client credentials as authorization grant would not specify the up-party. It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.  
-
-## Certificates
-When a track is created it is default equipped with a self-signed certificate stored in Cosmos DB, called a contained certificate. The certificate can afterword's be updated / changed and likewise the certificate container type can be changed.
-
-There are tree different certificate container types:
-
-**Contained certificates (default)**
-- Certificates is stored in Cosmos DB including private key.
-- Self-signed certificates is created by FoxIDs or you can upload your one certificates.
-- Support primary and secondary certificates, and certificate swap.
-- Not automatically renewed.
-- No cost per signing.
-
-**Key Vault, renewed self-signed certificates**
-- Certificates is stored in Key Vault and the private key is not exportable.
-- Self-signed certificates is created by Key Vault.
-- Automatically renewed with 3 month validity period. Renewed 10 days before expiration and exposed as the secondary certificate. Promoted to be the primary certificate 5 days before expiration.
-- Key Vault cost per signing.
-
-**Key Vault, upload your one certificate *(future support)***
-- Certificates is stored in Key Vault and the private key is not exportable.
-- Not automatically renewed.
-- Key Vault cost per signing.
-
+A client which use client credentials as authorization grant would not specify the up-party. It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

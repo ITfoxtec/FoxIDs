@@ -63,7 +63,7 @@ Local development domain and port: `https://localhost:44345`
 
 Local development domain and port: `https://localhost:44346`
 
-## FoxIDs.com test track for samples
+## FoxIDs.com test tenant for samples
 //TODO
 
 ## Configure samples in FoxIDs track

@@ -36,5 +36,15 @@ namespace FoxIDs.Infrastructure.Hosting
 
             return trackIdKey;
         }
+
+        protected override ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty)
+        {
+            routeBinding.PasswordLength = track.PasswordLength;
+            routeBinding.CheckPasswordComplexity = track.CheckPasswordComplexity.Value;
+            routeBinding.CheckPasswordRisk = track.CheckPasswordRisk.Value;
+            routeBinding.Logging = track.Logging;
+
+            return new ValueTask<RouteBinding>(routeBinding);
+        }
     }
 }

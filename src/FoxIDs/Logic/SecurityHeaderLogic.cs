@@ -7,11 +7,29 @@ namespace FoxIDs.Logic
 {
     public class SecurityHeaderLogic : LogicBase
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
-
         public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        { }
+
+        public List<string> GetImgSrcDomains()
         {
-            this.httpContextAccessor = httpContextAccessor;
+            if (HttpContext.Items.ContainsKey(Constants.SecurityHeader.ImgSrcDomains))
+            {
+                return HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] as List<string>;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void AddImgSrc(string url)
+        {
+            if(!url.IsNullOrWhiteSpace())
+            {
+                var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.ImgSrcDomains) ? HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] as List<string> : new List<string>();
+                domains = AddUrlToDomains(domains, url);
+                HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] = domains;
+            }
         }
 
         public List<string> GetFormActionDomains()

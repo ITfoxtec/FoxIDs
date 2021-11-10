@@ -18,5 +18,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
+
+        [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
+        [JsonProperty(PropertyName = "icon_url")]
+        public string IconUrl { get; set; }
     }
 }

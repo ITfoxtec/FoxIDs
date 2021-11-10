@@ -25,7 +25,7 @@ The following screen shut show how to create an up-party login with user session
 
 It is possible to configure an absolute session lifetime in the advanced settings. And if the persistent session is configured the session is also preserved after the browser has been closed.
 
-The up-party login interface can be [customized with CSS](css).
+The up-party login interface can be [customized with CSS and custom icon](css-icon).
 
 ![Configure Login](images/configure-login-advanced.png)
 

@@ -28,6 +28,7 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
@@ -36,13 +37,14 @@ namespace FoxIDs.Controllers
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
             this.sessionLogic = sessionLogic;
             this.sequenceLogic = sequenceLogic;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -61,6 +63,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 var validSession = ValidSession(sequenceData, session);
@@ -80,6 +83,7 @@ namespace FoxIDs.Controllers
                     {
                         SequenceString = SequenceString,
                         Css = loginUpParty.Css,
+                        IconUrl = loginUpParty.IconUrl,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableResetPassword = !loginUpParty.DisableResetPassword,
                         EnableCreateUser = !validSession && loginUpParty.EnableCreateUser,
@@ -138,11 +142,13 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
 
                 Func<IActionResult> viewError = () =>
                 {
                     login.SequenceString = SequenceString;
                     login.Css = loginUpParty.Css;
+                    login.IconUrl = loginUpParty.IconUrl;
                     login.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     login.EnableResetPassword = !loginUpParty.DisableResetPassword;
                     login.EnableCreateUser = loginUpParty.EnableCreateUser;
@@ -295,6 +301,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
 
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
@@ -310,7 +317,7 @@ namespace FoxIDs.Controllers
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace(() => "Show logout consent dialog.");
-                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, Css = loginUpParty.Css });
+                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, Css = loginUpParty.Css, IconUrl = loginUpParty.IconUrl });
                 }
                 else
                 {
@@ -334,11 +341,13 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
 
                 Func<IActionResult> viewError = () =>
                 {
                     logout.SequenceString = SequenceString;
                     logout.Css = loginUpParty.Css;
+                    logout.IconUrl = loginUpParty.IconUrl;
                     return View(nameof(Logout), logout);
                 };
 
@@ -409,7 +418,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     logger.ScopeTrace(() => "Show logged in dialog.");
-                    return View("LoggedIn", new LoggedInViewModel { Css = loginUpParty.Css });
+                    return View("LoggedIn", new LoggedInViewModel { Css = loginUpParty.Css, IconUrl = loginUpParty.IconUrl });
                 }
             }
             else
@@ -434,8 +443,9 @@ namespace FoxIDs.Controllers
             else
             {
                 loginUpParty = loginUpParty ?? await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 logger.ScopeTrace(() => "Show logged out dialog.");
-                return View("loggedOut", new LoggedOutViewModel { Css = loginUpParty.Css });
+                return View("loggedOut", new LoggedOutViewModel { Css = loginUpParty.Css, IconUrl = loginUpParty.IconUrl });
             }
         }
 
@@ -448,6 +458,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 if (!loginUpParty.EnableCreateUser)
                 {
                     throw new InvalidOperationException("Create user not enabled.");
@@ -460,7 +471,7 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
-                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, Css = loginUpParty.Css });
+                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, Css = loginUpParty.Css, IconUrl = loginUpParty.IconUrl });
 
             }
             catch (Exception ex)
@@ -478,6 +489,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 if (!loginUpParty.EnableCreateUser)
                 {
                     throw new InvalidOperationException("Create user not enabled.");
@@ -487,6 +499,7 @@ namespace FoxIDs.Controllers
                 {
                     createUser.SequenceString = SequenceString;
                     createUser.Css = loginUpParty.Css;
+                    createUser.IconUrl = loginUpParty.IconUrl;
                     return View(nameof(CreateUser), createUser);
                 };
 
@@ -578,6 +591,7 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSession(sequenceData, session);
@@ -587,6 +601,7 @@ namespace FoxIDs.Controllers
                 {
                     SequenceString = SequenceString,
                     Css = loginUpParty.Css,
+                    IconUrl = loginUpParty.IconUrl,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     Email = sequenceData.Email,
                 });
@@ -606,11 +621,13 @@ namespace FoxIDs.Controllers
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
 
                 Func<IActionResult> viewError = () =>
                 {
                     changePassword.SequenceString = SequenceString;
                     changePassword.Css = loginUpParty.Css;
+                    changePassword.IconUrl = loginUpParty.IconUrl;
                     changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(nameof(ChangePassword), changePassword);
                 };

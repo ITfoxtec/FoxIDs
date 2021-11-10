@@ -1,18 +1,19 @@
-# CSS
+# CSS and Icon
 
-The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different CSS.
+The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different CSS and icons.
 
-## Configue CSS
+## Add CSS and Icon
 
 Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 
  1. Select show advanced settings
  2. Add the CSS to the CSS field, if necessary drag the field bigger
- 3. Click Update
+ 4. Add the icon URL to an external site, supported image formats: ico, png, gif, jpeg and webp
+ 5. Click Update
 
- After update the CSS is instantly active.
+ After update the CSS and icon is instantly active.
 
- ![Configure CSS](images/configure-login-css.png)
+ ![Configure CSS](images/configure-login-css-icon.png)
 
  ## CSS examples
 

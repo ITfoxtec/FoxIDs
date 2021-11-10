@@ -359,6 +359,7 @@ namespace FoxIDs
             public static class LoginUpParty
             {
                 public const int CssStyleLength = 4000;
+                public const int IconUrlLength = 500;
             }
 
             public static class SamlParty
@@ -451,7 +452,8 @@ namespace FoxIDs
         }
 
         public static class SecurityHeader
-        {
+        {            
+            public const string ImgSrcDomains = "img_src_domains";
             public const string FormActionDomains = "form_action_domains";
             public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
             public const string FrameSrcDomains = "frame_src_domains";

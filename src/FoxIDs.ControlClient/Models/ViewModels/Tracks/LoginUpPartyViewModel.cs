@@ -77,5 +77,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [Display(Name = "CSS")]
         public string Css { get; set; }
+
+        [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
+        [Display(Name = "Icon URL (https://example.somewhere/favicon.ico)")]
+        public string IconUrl { get; set; }
     }
 }

@@ -13,14 +13,26 @@
     <environment exclude="Development">
         <link rel="stylesheet" href="~/css/site1.min.css" asp-append-version="true" />
     </environment>
-    @if (Model is ViewModel)
+    @if (Model is ViewModel generalViewModel)
     {
-        var css = (Model as ViewModel).Css;
-        if (!css.IsNullOrEmpty())
+        if (!generalViewModel.Css.IsNullOrWhiteSpace())
         {
             <style type="text/css">
-                @Html.Raw(css)
+                @Html.Raw(generalViewModel.Css)
             </style>
+        }
+        if (!generalViewModel.IconUrl.IsNullOrWhiteSpace())
+        {
+            var iconExtension = System.IO.Path.GetExtension(generalViewModel.IconUrl.Split('?')[0]);
+            var iconType = iconExtension switch
+            {
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".jpeg" => "image/jpeg",
+                ".webp" => "image/webp",
+                _ => "image/x-icon",
+            };
+            <link rel="icon" type="@iconType" href="@generalViewModel.IconUrl" />
         }
     }
     @Html.Raw(JavaScriptSnippet.FullScript)

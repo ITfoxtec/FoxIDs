@@ -19,6 +19,7 @@ namespace FoxIDs.Infrastructure.Filters
 
         private class FoxIDsHttpSecurityHeadersActionAttribute : HttpSecurityHeadersActionAttribute
         {
+            private List<string> allowImgSrcDomains;
             private List<string> allowFormActionOnDomains;
             private List<string> allowFrameSrcDomains;
             private List<string> allowIframeOnDomains;
@@ -34,6 +35,7 @@ namespace FoxIDs.Infrastructure.Filters
                 base.ActionExecutionInit(resultContext);
 
                 var securityHeaderLogic = serviceProvider.GetService<SecurityHeaderLogic>();
+                allowImgSrcDomains = securityHeaderLogic.GetImgSrcDomains();
                 allowFormActionOnDomains = securityHeaderLogic.GetFormActionDomains();
                 allowFrameSrcDomains = securityHeaderLogic.GetFrameSrcDomains();
 
@@ -77,6 +79,18 @@ namespace FoxIDs.Infrastructure.Filters
                 else
                 {
                     base.HeaderXFrameOptions(response);
+                }
+            }
+
+            protected override string CspImgSrc()
+            {
+                if (allowImgSrcDomains == null || allowImgSrcDomains.Count() < 1)
+                {
+                    return base.CspImgSrc();
+                }
+                else
+                {
+                    return $"img-src 'self' data: 'unsafe-inline' {allowImgSrcDomains.Select(d => d.DomainToOrigin()).ToSpaceList()};";
                 }
             }
 

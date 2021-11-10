@@ -18,14 +18,16 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
+        private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
+            this.securityHeaderLogic = securityHeaderLogic;
             this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
         }
@@ -39,9 +41,12 @@ namespace FoxIDs.Controllers
                 var verified = await accountActionLogic.VerifyConfirmationAsync();
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+
                 return View(new ConfirmationViewModel
                 {
                     Css = uiLoginUpParty.Css,
+                    IconUrl = uiLoginUpParty.IconUrl,
                     Verified = verified
                 });
             }
@@ -58,6 +63,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start forgot password.");
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -67,6 +73,7 @@ namespace FoxIDs.Controllers
                 {
                     SequenceString = SequenceString,
                     Css = uiLoginUpParty.Css,
+                    IconUrl = uiLoginUpParty.IconUrl,
                     Receipt = false
                 });
             }
@@ -87,6 +94,7 @@ namespace FoxIDs.Controllers
                 await accountActionLogic.SendResetPasswordEmailAsync(forgotPassword.Email);
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -95,6 +103,7 @@ namespace FoxIDs.Controllers
                 return View(new ForgotPasswordViewModel
                 {
                     Css = uiLoginUpParty.Css,
+                    IconUrl = uiLoginUpParty.IconUrl,
                     Receipt = true
                 });
             }
@@ -113,6 +122,7 @@ namespace FoxIDs.Controllers
                 (var verified, _) = await accountActionLogic.VerifyResetPasswordAsync();
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -121,6 +131,7 @@ namespace FoxIDs.Controllers
                 return View(new ResetPasswordViewModel
                 {
                     Css = uiLoginUpParty.Css,
+                    IconUrl = uiLoginUpParty.IconUrl,
                     Verified = verified,
                     Receipt = false
                 });
@@ -142,6 +153,7 @@ namespace FoxIDs.Controllers
                 (var verified, var user) = await accountActionLogic.VerifyResetPasswordAsync();
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
+                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -150,6 +162,7 @@ namespace FoxIDs.Controllers
                 Func<bool, IActionResult> viewResponse = (receipt) =>
                 {
                     resetPassword.Css = uiLoginUpParty.Css;
+                    resetPassword.IconUrl = uiLoginUpParty.IconUrl;
                     resetPassword.Verified = verified;
                     resetPassword.Receipt = receipt;
                     return View(resetPassword);

@@ -48,6 +48,12 @@ namespace FoxIDs.Models.Api
         public string Css { get; set; }
 
         /// <summary>
+        /// Icon URL.
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
+        public string IconUrl { get; set; }
+
+        /// <summary>
         /// Default 10 hours.
         /// </summary>
         [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]

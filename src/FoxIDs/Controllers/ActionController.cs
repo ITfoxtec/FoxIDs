@@ -45,8 +45,9 @@ namespace FoxIDs.Controllers
 
                 return View(new ConfirmationViewModel
                 {
-                    Css = uiLoginUpParty.Css,
+                    Title = uiLoginUpParty.Title,
                     IconUrl = uiLoginUpParty.IconUrl,
+                    Css = uiLoginUpParty.Css,
                     Verified = verified
                 });
             }
@@ -72,8 +73,9 @@ namespace FoxIDs.Controllers
                 return View(new ForgotPasswordViewModel
                 {
                     SequenceString = SequenceString,
-                    Css = uiLoginUpParty.Css,
+                    Title = uiLoginUpParty.Title,
                     IconUrl = uiLoginUpParty.IconUrl,
+                    Css = uiLoginUpParty.Css,
                     Receipt = false
                 });
             }
@@ -102,8 +104,9 @@ namespace FoxIDs.Controllers
 
                 return View(new ForgotPasswordViewModel
                 {
-                    Css = uiLoginUpParty.Css,
+                    Title = uiLoginUpParty.Title,
                     IconUrl = uiLoginUpParty.IconUrl,
+                    Css = uiLoginUpParty.Css,
                     Receipt = true
                 });
             }
@@ -130,8 +133,9 @@ namespace FoxIDs.Controllers
 
                 return View(new ResetPasswordViewModel
                 {
-                    Css = uiLoginUpParty.Css,
+                    Title = uiLoginUpParty.Title,
                     IconUrl = uiLoginUpParty.IconUrl,
+                    Css = uiLoginUpParty.Css,
                     Verified = verified,
                     Receipt = false
                 });
@@ -161,8 +165,9 @@ namespace FoxIDs.Controllers
 
                 Func<bool, IActionResult> viewResponse = (receipt) =>
                 {
-                    resetPassword.Css = uiLoginUpParty.Css;
+                    resetPassword.Title = uiLoginUpParty.Title;
                     resetPassword.IconUrl = uiLoginUpParty.IconUrl;
+                    resetPassword.Css = uiLoginUpParty.Css;
                     resetPassword.Verified = verified;
                     resetPassword.Receipt = receipt;
                     return View(resetPassword);

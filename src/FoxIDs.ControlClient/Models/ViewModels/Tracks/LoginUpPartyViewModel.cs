@@ -74,12 +74,16 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
+        [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
+        [Display(Name = "Browser Title (default FoxIDs)")]
+        public string Title { get; set; }
+
+        [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
+        [Display(Name = "Browser Icon URL (https://example.somewhere/favicon.ico)")]
+        public string IconUrl { get; set; }        
+
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [Display(Name = "CSS")]
         public string Css { get; set; }
-
-        [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
-        [Display(Name = "Icon URL (https://example.somewhere/favicon.ico)")]
-        public string IconUrl { get; set; }
     }
 }

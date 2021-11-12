@@ -14,7 +14,7 @@
 - [Development](development.md)
   - [Samples](samples.md)
 - [Customization](customization.md)
-  - [CSS and Icon](css-icon.md)
+  - [Title, Icon and CSS](title-icon-css.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)
 - [FAQ](faq.md)

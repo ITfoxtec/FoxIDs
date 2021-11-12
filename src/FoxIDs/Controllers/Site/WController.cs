@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
             if (exceptionHandlerPathFeature != null && exceptionHandlerPathFeature.Path.EndsWith($"/{Constants.Routes.OAuthController}/{Constants.Endpoints.Token}", StringComparison.OrdinalIgnoreCase))
             {
                 return HandleOAuthTokenException(exception);
-            } 
+            }
 
             var sequenceTimeoutException = FindException<SequenceTimeoutException>(exception);
             if (sequenceTimeoutException != null)

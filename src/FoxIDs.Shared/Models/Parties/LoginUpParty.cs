@@ -32,12 +32,16 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
-        [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
-        [JsonProperty(PropertyName = "css")]
-        public string Css { get; set; }
+        [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
+        [JsonProperty(PropertyName = "title")]
+        public string Title { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
         [JsonProperty(PropertyName = "icon_url")]
         public string IconUrl { get; set; }
+
+        [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
+        [JsonProperty(PropertyName = "css")]
+        public string Css { get; set; }
     }
 }

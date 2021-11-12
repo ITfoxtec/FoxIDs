@@ -66,8 +66,9 @@
                 @if (loginUpParty.ShowAdvanced)
                 {
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableSingleLogout" For="@(() => loginUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
-                    <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
+                    <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
+                    <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
                 }
             }
             else if (loginUpParty.ShowClaimTransformTab)

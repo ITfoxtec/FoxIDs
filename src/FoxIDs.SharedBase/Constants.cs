@@ -358,8 +358,9 @@ namespace FoxIDs
 
             public static class LoginUpParty
             {
-                public const int CssStyleLength = 4000;
+                public const int TitleLength = 40;
                 public const int IconUrlLength = 500;
+                public const int CssStyleLength = 4000;
             }
 
             public static class SamlParty

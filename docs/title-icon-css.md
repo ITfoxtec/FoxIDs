@@ -1,19 +1,20 @@
-# CSS and Icon
+# Title, Icon and CSS
 
-The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different CSS and icons.
+The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different browser title, icon and CSS.
 
-## Add CSS and Icon
+## Add Title, Icon and CSS
 
 Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 
  1. Select show advanced settings
+ 4. Add the bowser title text
+ 4. Add the bowser icon URL to an external site, supported image formats: ico, png, gif, jpeg and webp
  2. Add the CSS to the CSS field, if necessary drag the field bigger
- 4. Add the icon URL to an external site, supported image formats: ico, png, gif, jpeg and webp
  5. Click Update
 
- After update the CSS and icon is instantly active.
+ After update the title, icon and CSS is instantly active.
 
- ![Configure CSS](images/configure-login-css-icon.png)
+ ![Configure title, icon and CSS](images/configure-login-title-icon-css.png)
 
  ## CSS examples
 

@@ -42,16 +42,22 @@ namespace FoxIDs.Models.Api
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
-        /// CSS style.
+        /// Browser title.
         /// </summary>
-        [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
-        public string Css { get; set; }
+        [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
+        public string Title { get; set; }
 
         /// <summary>
         /// Icon URL.
         /// </summary>
         [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]
         public string IconUrl { get; set; }
+
+        /// <summary>
+        /// CSS style.
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
+        public string Css { get; set; }
 
         /// <summary>
         /// Default 10 hours.

@@ -16,8 +16,9 @@ namespace FoxIDs
         {
             public const string RouteTransformerPathKey = "path";
 
-            public const string DefaultSiteAction = "index";
+            public const string DefaultAction = "index";
             public const string DefaultSiteController = "w";
+            public const string ErrorController = "error";
             public const string DefaultClientController = "client";
 
             public const string OidcDiscoveryAction = "OpenidConfiguration";

@@ -42,6 +42,10 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 return null;
             }
+            else if (route.Length >= 1 && route[0].Equals(Constants.Routes.ErrorController, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
             else if (route.Length > 2)
             {
                 return new Track.IdKey

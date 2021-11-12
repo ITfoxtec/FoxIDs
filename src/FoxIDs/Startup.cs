@@ -40,7 +40,7 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseExceptionHandler($"/{Constants.Routes.DefaultSiteController}/Error");
+            app.UseExceptionHandler($"/{Constants.Routes.ErrorController}/{Constants.Routes.DefaultAction}");
 
             if (!CurrentEnvironment.IsDevelopment())
             {

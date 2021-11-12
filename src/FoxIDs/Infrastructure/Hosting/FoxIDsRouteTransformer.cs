@@ -60,7 +60,7 @@ namespace FoxIDs.Infrastructure.Hosting
             if(route.Length == 0)
             {
                 values[Constants.Routes.RouteControllerKey] = Constants.Routes.DefaultSiteController;
-                values[Constants.Routes.RouteActionKey] = Constants.Routes.DefaultSiteAction;
+                values[Constants.Routes.RouteActionKey] = Constants.Routes.DefaultAction;
             }
             else if (route.Length >= 1)
             {
@@ -71,7 +71,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    values[Constants.Routes.RouteActionKey] = Constants.Routes.DefaultSiteAction;
+                    values[Constants.Routes.RouteActionKey] = Constants.Routes.DefaultAction;
                 }
             }
         }

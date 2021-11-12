@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
-using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Filters
@@ -97,8 +96,13 @@ namespace FoxIDs.Infrastructure.Filters
 
                     yield return "default-src 'self';";
                     yield return "connect-src 'self' https://dc.services.visualstudio.com/v2/track;";
-                    //yield return "font-src 'self';";
-                    yield return "img-src 'self' data: 'unsafe-inline';";
+
+                    var cspImgSrc = CspImgSrc();
+                    if (!cspImgSrc.IsNullOrEmpty())
+                    {
+                        yield return cspImgSrc;
+                    }
+
                     yield return "script-src 'self' 'unsafe-inline' https://az416426.vo.msecnd.net;";
                     yield return "style-src 'self' 'unsafe-inline';";
 
@@ -124,6 +128,11 @@ namespace FoxIDs.Infrastructure.Filters
                 {
                     yield return "upgrade-insecure-requests;";
                 }
+            }
+
+            protected virtual string CspImgSrc()
+            {
+                return "img-src 'self' data: 'unsafe-inline';";
             }
 
             protected virtual string CspFormAction()

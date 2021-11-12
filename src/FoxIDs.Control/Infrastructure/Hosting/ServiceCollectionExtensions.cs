@@ -38,6 +38,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<TrackLogic>();
 
             services.AddTransient<ValidateGenericPartyLogic>();
+            services.AddTransient<ValidateLoginPartyLogic>();
             services.AddTransient<ValidateOAuthOidcPartyLogic>();
             services.AddTransient<OidcDiscoveryReadLogic>();
             services.AddTransient<OidcDiscoveryReadUpLogic>();

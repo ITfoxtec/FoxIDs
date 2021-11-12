@@ -4,8 +4,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FoxIDs@(ViewData.ContainsKey("Title") ? " - " : string.Empty)@ViewData["Title"]</title>
-
     <environment include="Development">
         <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
         <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -13,13 +11,29 @@
     <environment exclude="Development">
         <link rel="stylesheet" href="~/css/site1.min.css" asp-append-version="true" />
     </environment>
-    @if (Model is ViewModel)
+    @if (Model is ViewModel generalViewModel)
     {
-        var css = (Model as ViewModel).Css;
-        if (!css.IsNullOrEmpty())
+        var title = !generalViewModel.Title.IsNullOrWhiteSpace() ? generalViewModel.Title : "FoxIDs";
+        <title>@title@(ViewData.ContainsKey("Title") ? " - " : string.Empty)@ViewData["Title"]</title>
+
+        if (!generalViewModel.IconUrl.IsNullOrWhiteSpace())
+        {
+            var iconExtension = System.IO.Path.GetExtension(generalViewModel.IconUrl.Split('?')[0]);
+            var iconType = iconExtension switch
+            {
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                ".jpeg" => "image/jpeg",
+                ".webp" => "image/webp",
+                _ => "image/x-icon",
+            };
+            <link rel="icon" type="@iconType" href="@generalViewModel.IconUrl" />
+        }
+
+        if (!generalViewModel.Css.IsNullOrWhiteSpace())
         {
             <style type="text/css">
-                @Html.Raw(css)
+                @Html.Raw(generalViewModel.Css)
             </style>
         }
     }

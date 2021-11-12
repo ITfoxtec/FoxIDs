@@ -16,8 +16,9 @@ namespace FoxIDs
         {
             public const string RouteTransformerPathKey = "path";
 
-            public const string DefaultSiteAction = "index";
+            public const string DefaultAction = "index";
             public const string DefaultSiteController = "w";
+            public const string ErrorController = "error";
             public const string DefaultClientController = "client";
 
             public const string OidcDiscoveryAction = "OpenidConfiguration";
@@ -358,6 +359,8 @@ namespace FoxIDs
 
             public static class LoginUpParty
             {
+                public const int TitleLength = 40;
+                public const int IconUrlLength = 500;
                 public const int CssStyleLength = 4000;
             }
 
@@ -451,7 +454,8 @@ namespace FoxIDs
         }
 
         public static class SecurityHeader
-        {
+        {            
+            public const string ImgSrcDomains = "img_src_domains";
             public const string FormActionDomains = "form_action_domains";
             public const string FormActionDomainsAllowAll = "form_action_domains_allow_all";
             public const string FrameSrcDomains = "frame_src_domains";

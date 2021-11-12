@@ -2,6 +2,8 @@
 {
     public abstract class ViewModel
     {
+        public string Title { get; set; }
+        public string IconUrl { get; set; }
         public string Css { get; set; }
     }
 }

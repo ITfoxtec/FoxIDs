@@ -80,7 +80,10 @@ namespace FoxIDs.Logic
 
             var jonWebKeySet = new JsonWebKeySet() { Keys = new List<JsonWebKey>() };
             var nowLocal = DateTime.Now;
-            jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
+            if (!RouteBinding.Key.PrimaryKey.ExternalKeyIsNotReady)
+            {
+                jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
+            }
             if (RouteBinding.Key.SecondaryKey != null)
             {
                 jonWebKeySet.Keys.Add(RouteBinding.Key.SecondaryKey.Key.GetPublicKey());

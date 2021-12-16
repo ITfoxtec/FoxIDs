@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using UrlCombineLib;
+using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs.Logic
 {
@@ -167,20 +168,20 @@ namespace FoxIDs.Logic
         {
             return new List<OidcDownScope>
             {
-                new OidcDownScope { Scope = "offline_access" },
-                new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim>
+                new OidcDownScope { Scope = DefaultOidcScopes.OfflineAccess },
+                new OidcDownScope { Scope = DefaultOidcScopes.Profile, VoluntaryClaims = new List<OidcDownClaim>
                     {
-                        new OidcDownClaim { Claim = "name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "family_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "given_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "middle_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "locale" }
+                        new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Locale }
                     }
                 },
-                new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim>
+                new OidcDownScope { Scope = DefaultOidcScopes.Email, VoluntaryClaims = new List<OidcDownClaim>
                     {
-                        new OidcDownClaim { Claim = "email", InIdToken = true  },
-                        new OidcDownClaim { Claim = "email_verified" }
+                        new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified }
                     }
                 },
             };

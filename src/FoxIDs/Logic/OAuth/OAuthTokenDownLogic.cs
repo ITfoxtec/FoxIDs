@@ -61,8 +61,8 @@ namespace FoxIDs.Logic
                         throw new NotImplementedException();
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
-                        await ValidateSecret(party.Client, tokenRequest, clientCredentials);
-                        return await ClientCredentialsGrant(party, tokenRequest);
+                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials);
+                        return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.Delegation:
                         throw new NotImplementedException();
 
@@ -120,7 +120,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected async Task ValidateSecret(TClient client, TokenRequest tokenRequest, ClientCredentials clientCredentials, bool secretValidationRequired = true)
+        protected async Task ValidateSecretAsync(TClient client, TokenRequest tokenRequest, ClientCredentials clientCredentials, bool secretValidationRequired = true)
         {
             if(!secretValidationRequired && clientCredentials.ClientSecret.IsNullOrEmpty())
             {
@@ -152,7 +152,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected async Task ValidatePkce(TClient client, string codeChallenge, string codeChallengeMethod, CodeVerifierSecret codeVerifierSecret)
+        protected async Task ValidatePkceAsync(TClient client, string codeChallenge, string codeChallengeMethod, CodeVerifierSecret codeVerifierSecret)
         {
             codeVerifierSecret.Validate();
 
@@ -177,17 +177,17 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected virtual async Task<IActionResult> AuthorizationCodeGrant(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
+        protected virtual async Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
             throw new NotImplementedException();
         }
 
-        protected virtual Task<IActionResult> RefreshTokenGrant(TClient client, TokenRequest tokenRequest)
+        protected virtual Task<IActionResult> RefreshTokenGrantAsync(TClient client, TokenRequest tokenRequest)
         {
             throw new NotImplementedException();
         }
 
-        protected virtual async Task<IActionResult> ClientCredentialsGrant(TParty party, TokenRequest tokenRequest)
+        protected virtual async Task<IActionResult> ClientCredentialsGrantAsync(TParty party, TokenRequest tokenRequest)
         {
             logger.ScopeTrace(() => "Down, OAuth Client Credentials grant accepted.", triggerEvent: true);
             if (party.Client == null)

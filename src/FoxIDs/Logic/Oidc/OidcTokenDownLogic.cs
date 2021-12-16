@@ -60,16 +60,16 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.AuthorizationCode:
                         ValidateAuthCodeRequest(party.Client, tokenRequest);
                         var validatePkce = party.Client.RequirePkce && codeVerifierSecret != null;
-                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !validatePkce);
-                        return await AuthorizationCodeGrant(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
+                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !validatePkce);
+                        return await AuthorizationCodeGrantAsync(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
                     case IdentityConstants.GrantTypes.RefreshToken:
                         ValidateRefreshTokenRequest(party.Client, tokenRequest);
-                        await ValidateSecret(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !party.Client.RequirePkce);
-                        return await RefreshTokenGrant(party.Client, tokenRequest);
+                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !party.Client.RequirePkce);
+                        return await RefreshTokenGrantAsync(party.Client, tokenRequest);
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
-                        await ValidateSecret(party.Client, tokenRequest, clientCredentials);
-                        return await ClientCredentialsGrant(party, tokenRequest);
+                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials);
+                        return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.Delegation:
                         throw new NotImplementedException();
 
@@ -83,13 +83,13 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected override async Task<IActionResult> AuthorizationCodeGrant(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
+        protected override async Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
             var authCodeGrant = await oauthAuthCodeGrantDownLogic.GetAndValidateAuthCodeGrantAsync(tokenRequest.Code, tokenRequest.RedirectUri, tokenRequest.ClientId);
             Console.WriteLine($"authCodeGrant not null: {authCodeGrant != null}");
             if (validatePkce)
             {
-                await ValidatePkce(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);
+                await ValidatePkceAsync(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);
             }
             logger.ScopeTrace(() => "Down, OIDC Authorization code grant accepted.", triggerEvent: true);
 
@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
             return new JsonResult(tokenResponse);
         }
 
-        protected override async Task<IActionResult> RefreshTokenGrant(TClient client, TokenRequest tokenRequest)
+        protected override async Task<IActionResult> RefreshTokenGrantAsync(TClient client, TokenRequest tokenRequest)
         {
             (var refreshTokenGrant, var newRefreshToken) = await oauthRefreshTokenGrantDownLogic.ValidateAndUpdateRefreshTokenGrantAsync(client, tokenRequest.RefreshToken);
             logger.ScopeTrace(() => "Down, OIDC Refresh Token grant accepted.", triggerEvent: true);

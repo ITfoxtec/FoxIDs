@@ -17,13 +17,15 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly TrackLogic trackLogic;
+        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackLogic trackLogic) : base(logger)
+        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.trackLogic = trackLogic;
+            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -136,11 +138,16 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                //TODO delete all sub elements
-                // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
-                //            Add the ability to delete ALL data in a partition
+                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
+
                 await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
                 await tenantRepository.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
+
+                if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+                {
+                    await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                }
+
                 return NoContent();
             }
             catch (CosmosDataException ex)

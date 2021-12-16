@@ -17,15 +17,19 @@ namespace FoxIDs.Logic
 
         private readonly ITenantRepository tenantRepository;
         private readonly BaseAccountLogic accountLogic;
+        private readonly TrackLogic trackLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
+            this.trackLogic = trackLogic;
         }
 
         public async Task CreateMasterTrackDocumentAsync(string tenantName)
         {
+            tenantName = tenantName?.ToLower();
+
             var mTrack = new Track
             {
                 Name = Constants.Routes.MasterTrackName,
@@ -37,29 +41,18 @@ namespace FoxIDs.Logic
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
             };
-            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName });
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName });
 
-            var certificate = await (tenantName.ToLower(), mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
-            mTrack.Key = new TrackKey()
-            {
-                Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
-            };
-
-            await tenantRepository.CreateAsync(mTrack);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName);
         }
 
         public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack)
         {
-            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = mTrack.Name });
+            tenantName = tenantName?.ToLower();
 
-            var certificate = await (tenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
-            mTrack.Key = new TrackKey()
-            {
-                Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
-            };
-            await tenantRepository.CreateAsync(mTrack);
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = mTrack.Name });
+
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName);
         }
 
         public async Task<LoginUpParty> CreateMasterLoginDocumentAsync(string tenantName)

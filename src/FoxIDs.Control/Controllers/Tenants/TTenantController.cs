@@ -22,13 +22,15 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly MasterTenantLogic masterTenantLogic;
+        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.masterTenantLogic = masterTenantLogic;
+            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -128,15 +130,17 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException("The master track can not be deleted.");
                 }
-
-                //TODO delete all sub elements
-                // Waiting for https://feedback.azure.com/forums/263030-azure-cosmos-db/suggestions/17296813-add-the-ability-to-delete-all-data-in-a-partition
-                //            Add the ability to delete ALL data in a partition
+     
                 var mTracks = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = name, TrackName = mTrack.Name });
                     await tenantRepository.DeleteAsync<Track>(mTrack.Id);
+
+                    if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+                    {
+                        await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                    }
                 }
                 await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
 

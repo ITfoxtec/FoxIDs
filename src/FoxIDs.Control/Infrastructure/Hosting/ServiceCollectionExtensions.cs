@@ -36,6 +36,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
+            services.AddTransient<ExternalKeyLogic>();
 
             services.AddTransient<ValidateGenericPartyLogic>();
             services.AddTransient<ValidateLoginPartyLogic>();

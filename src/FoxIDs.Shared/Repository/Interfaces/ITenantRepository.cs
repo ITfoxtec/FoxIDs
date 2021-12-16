@@ -15,7 +15,7 @@ namespace FoxIDs.Repository
         Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool required = true);
         Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true);
 
-        Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument;
+        Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : IDataDocument;
 
         /// <summary>
         /// Create document. Throws exception if already exists.

@@ -19,13 +19,14 @@ namespace FoxIDs.Logic
             this.tokenCredential = tokenCredential;
         }
 
-        public async Task<string> CreateExternalKeyAsync(Track mTrack, string tenantName = null)
+        public async Task<string> CreateExternalKeyAsync(Track mTrack, string tenantName = null, string trackName = null)
         {
             var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
 
             tenantName = tenantName ?? RouteBinding.TenantName;
+            trackName = trackName ?? RouteBinding.TrackName;
             var externalName = $"{tenantName}-{mTrack.Name}-{Guid.NewGuid()}";
-            var certificatePolicy = new CertificatePolicy("self", RouteBinding.GetCertificateSubject())
+            var certificatePolicy = new CertificatePolicy("self", (tenantName, trackName).GetCertificateSubject())
             {
                 Exportable = false,
                 ValidityInMonths = mTrack.KeyExternalValidityInMonths

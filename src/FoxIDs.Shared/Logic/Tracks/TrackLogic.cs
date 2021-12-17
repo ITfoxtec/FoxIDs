@@ -17,12 +17,12 @@ namespace FoxIDs.Logic
             this.externalKeyLogic = externalKeyLogic;
         }
 
-        public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null)
+        public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null, string trackName = null)
         {
             mTrack.Key = new TrackKey()
             {
                 Type = TrackKeyType.KeyVaultRenewSelfSigned,
-                ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName)
+                ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
             };
 
             await tenantRepository.CreateAsync(mTrack);

@@ -29,10 +29,11 @@ namespace FoxIDs.Logic
         public async Task CreateMasterTrackDocumentAsync(string tenantName)
         {
             tenantName = tenantName?.ToLower();
+            var trackName = Constants.Routes.MasterTrackName;
 
             var mTrack = new Track
             {
-                Name = Constants.Routes.MasterTrackName,
+                Name = trackName,
                 SequenceLifetime = 1800,
                 MaxFailingLogins = 5,
                 FailingLoginCountLifetime = 36000,
@@ -41,9 +42,9 @@ namespace FoxIDs.Logic
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
             };
-            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = Constants.Routes.MasterTrackName });
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = trackName });
 
-            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, trackName);
         }
 
         public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack)
@@ -52,7 +53,7 @@ namespace FoxIDs.Logic
 
             await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = mTrack.Name });
 
-            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, mTrack.Name);
         }
 
         public async Task<LoginUpParty> CreateMasterLoginDocumentAsync(string tenantName)

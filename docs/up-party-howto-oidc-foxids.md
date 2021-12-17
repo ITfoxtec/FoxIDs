@@ -30,7 +30,7 @@ The client is a confidant client using Authorization Code Flow and PKCE.
 4. Specify redirect URI read in your up-party.
 5. Specify post logout redirect URI read in your up-party.
 6. Specify front channel logout URI read in your up-party.
-7. Specify a secret.
+7. Specify a secret (remember the secret to the next step).
 8. Remove the `offline_access`.
 9. Remove / edit the scopes depending on your needs.
 10. Click create.

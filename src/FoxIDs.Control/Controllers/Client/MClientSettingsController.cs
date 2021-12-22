@@ -22,7 +22,11 @@ namespace FoxIDs.Controllers.Client
         [ProducesResponseType(typeof(Api.ControlClientSettings), StatusCodes.Status200OK)]
         public ActionResult<Api.ControlClientSettings> GetClientSettings()
         {
-            return Ok(new Api.ControlClientSettings { FoxIDsEndpoint = settings.FoxIDsEndpoint });
+            return Ok(new Api.ControlClientSettings 
+            {
+                FoxIDsEndpoint = settings.FoxIDsEndpoint,
+                Version = GetType().Assembly.GetName().Version.ToString(3)
+            });
         }
     }
 }

@@ -6,5 +6,6 @@
         public string Authority { get; set; }
         public string LoginCallBackPath { get; set; }
         public string LogoutCallBackPath { get; set; }
+        public string Version { get; set; }
     }
 }

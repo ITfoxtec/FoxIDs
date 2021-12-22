@@ -22,6 +22,7 @@ namespace FoxIDs.Client.Logic
             {
                 var controlClientSettings = await clientService.GetControlClientSettingsAsync();
                 clientSettings.FoxIDsEndpoint = controlClientSettings.FoxIDsEndpoint;
+                clientSettings.Version = controlClientSettings.Version;
             }
         }
     }

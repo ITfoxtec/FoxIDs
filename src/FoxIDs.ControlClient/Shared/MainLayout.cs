@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using FoxIDs.Client.Models.Config;
 
 namespace FoxIDs.Client.Shared
 {
@@ -40,6 +41,9 @@ namespace FoxIDs.Client.Shared
 
         [Inject]
         public AuthenticationStateProvider authenticationStateProvider { get; set; }
+
+        [Inject]
+        public ClientSettings clientSettings { get; set; }
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }

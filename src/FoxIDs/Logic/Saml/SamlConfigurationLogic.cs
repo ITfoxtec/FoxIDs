@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using FoxIDs.Infrastructure;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
@@ -19,7 +20,7 @@ namespace FoxIDs.Logic
             this.trackIssuerLogic = trackIssuerLogic;
         }
 
-        public FoxIDsSaml2Configuration GetSamlUpConfig(SamlUpParty party, bool includeSigningAndDecryptionCertificate = false, bool includeSignatureValidationCertificates = true)
+        public async Task<FoxIDsSaml2Configuration> GetSamlUpConfigAsync(SamlUpParty party, bool includeSigningAndDecryptionCertificate = false, bool includeSignatureValidationCertificates = true)
         {
             var samlConfig = new FoxIDsSaml2Configuration();
             if (party != null)
@@ -58,7 +59,7 @@ namespace FoxIDs.Logic
 
             if (includeSigningAndDecryptionCertificate)
             {
-                samlConfig.SigningCertificate = samlConfig.DecryptionCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
+                samlConfig.SigningCertificate = samlConfig.DecryptionCertificate = await trackKeyLogic.GetPrimarySaml2X509CertificateAsync(RouteBinding.Key);
                 samlConfig.SecondaryDecryptionCertificate = trackKeyLogic.GetSecondarySaml2X509Certificate(RouteBinding.Key);
             }
             if (party != null)
@@ -73,7 +74,7 @@ namespace FoxIDs.Logic
             return samlConfig;
         }
 
-        public FoxIDsSaml2Configuration GetSamlDownConfig(SamlDownParty party, bool includeSigningCertificate = false, bool includeSignatureValidationCertificates = true)
+        public async Task<FoxIDsSaml2Configuration> GetSamlDownConfigAsync(SamlDownParty party, bool includeSigningCertificate = false, bool includeSignatureValidationCertificates = true)
         {
             var samlConfig = new FoxIDsSaml2Configuration();
             samlConfig.Issuer = !string.IsNullOrEmpty(party?.IdPIssuer) ? party.IdPIssuer : trackIssuerLogic.GetIssuer();
@@ -100,7 +101,7 @@ namespace FoxIDs.Logic
 
             if (includeSigningCertificate)
             {
-                samlConfig.SigningCertificate = trackKeyLogic.GetPrimarySaml2X509Certificate(RouteBinding.Key);
+                samlConfig.SigningCertificate = await trackKeyLogic.GetPrimarySaml2X509CertificateAsync(RouteBinding.Key);
             }
             if (party != null)
             {

@@ -91,6 +91,12 @@ namespace FoxIDs.Controllers
                 return HandleRouteCreationException(errorViewModel, routeCreationException);
             }
 
+            var externalKeyIsNotReadyException = FindException<ExternalKeyIsNotReadyException>(exception);
+            if (externalKeyIsNotReadyException != null)
+            {
+                return HandleexternalKeyIsNotReadyException(errorViewModel);
+            }
+
             if (environment.IsDevelopment())
             {
                 errorViewModel.TechnicalErrors = new List<string>(exception.ToString().Split('\n'));
@@ -121,6 +127,13 @@ namespace FoxIDs.Controllers
         private IActionResult HandleRouteCreationException(ErrorViewModel errorViewModel, RouteCreationException routeCreationException)
         {
             errorViewModel.TechnicalErrors = new List<string> { routeCreationException.Message };
+            return View(errorViewModel);
+        }
+
+        private IActionResult HandleexternalKeyIsNotReadyException(ErrorViewModel errorViewModel)
+        {
+            errorViewModel.ErrorTitle = localizer["Initializing certificate in Key Vault"];
+            errorViewModel.Error = localizer["The certificate will soon be ready. Please try again in a little while."];
             return View(errorViewModel);
         }
 

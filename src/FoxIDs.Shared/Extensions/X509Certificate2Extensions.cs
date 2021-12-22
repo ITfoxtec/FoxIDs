@@ -11,12 +11,7 @@ namespace FoxIDs
     /// </summary>
     public static class X509Certificate2Extensions
     {
-        public static string GetCertificateSubject(this RouteBinding routeBinding)
-        {
-            return (routeBinding.TenantName, routeBinding.TrackName).GetCertificateSubject();
-        }
-
-        private static string GetCertificateSubject(this (string tenantName, string trackName) subjectData)
+        public static string GetCertificateSubject(this (string tenantName, string trackName) subjectData)
         {
             return $"CN={subjectData.tenantName}{(subjectData.trackName.Equals("-", StringComparison.Ordinal) ? string.Empty : $"-{subjectData.trackName}")}, O=FoxIDs";
         }

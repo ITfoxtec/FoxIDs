@@ -3,10 +3,9 @@
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
 		<RootNamespace>FoxIDs</RootNamespace>
-		<Version>1.0.0</Version>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
-		<Copyright>Copyright © 2019</Copyright>
+		<Copyright>Copyright © 2021</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -20,12 +19,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.14.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
-	  <Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.15.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
+		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.14.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
+		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.15.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <EmbeddedResource Include="Models\Master\Resources\EmbeddedResource.json" />
+		<EmbeddedResource Include="Models\Master\Resources\EmbeddedResource.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,9 +33,10 @@
 		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.17.1" />
 		<PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.13.1" />
 		<PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.5" />
+		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.1.0" />
 		<PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.1" />
-    <PackageReference Include="SendGrid" Version="9.22.0" />
-    <PackageReference Include="NEST" Version="7.12.0" />
+		<PackageReference Include="SendGrid" Version="9.22.0" />
+		<PackageReference Include="NEST" Version="7.12.0" />
 		<PackageReference Include="UrlCombine" Version="2.0.0" />
 	</ItemGroup>
 

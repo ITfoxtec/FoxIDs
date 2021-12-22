@@ -9,11 +9,9 @@ using System.Threading.Tasks;
 using System.Net;
 using System;
 using ITfoxtec.Identity;
-using Azure.Core;
-using Azure.Security.KeyVault.Certificates;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
-using ITfoxtec.Identity.Util;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -23,15 +21,15 @@ namespace FoxIDs.Controllers
         private readonly FoxIDsControlSettings settings;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
-        private readonly TokenCredential tokenCredential;
+        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(TelemetryScopedLogger logger, FoxIDsControlSettings settings, IMapper mapper, ITenantRepository tenantRepository, TokenCredential tokenCredential) : base(logger)
+        public TTrackKeyTypeController(TelemetryScopedLogger logger, FoxIDsControlSettings settings, IMapper mapper, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.settings = settings;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
-            this.tokenCredential = tokenCredential;
+            this.externalKeyLogic = externalKeyLogic;
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace FoxIDs.Controllers
                             mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } };
                             if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                             {
-                                await DeleteExternalKeyAsync(mTrack.Key.ExternalName);
+                                await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                                 mTrack.Key.ExternalName = null;
                             }
                             break;
@@ -92,10 +90,7 @@ namespace FoxIDs.Controllers
                         case TrackKeyType.KeyVaultRenewSelfSigned:
                             mTrack.Key.Type = mTrackKey.Type;
                             mTrack.Key.Keys = null;
-                            if (mTrack.Key.ExternalName.IsNullOrWhiteSpace())
-                            {
-                                mTrack.Key.ExternalName = await CreateExternalKeyAsync(mTrack);
-                            }
+                            mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
                             break;
 
                         case TrackKeyType.KeyVaultUpload:
@@ -119,31 +114,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<string> CreateExternalKeyAsync(Track mTrack)
-        {
-            var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
 
-            var externalName = $"{RouteBinding.TenantNameDashTrackName}-{Guid.NewGuid()}";
-            var certificatePolicy = new CertificatePolicy("self", RouteBinding.GetCertificateSubject())
-            {               
-                Exportable = false,
-                ValidityInMonths = mTrack.KeyExternalValidityInMonths
-            };
-            certificatePolicy.KeyUsage.Add(CertificateKeyUsage.DigitalSignature);
-            certificatePolicy.KeyUsage.Add(CertificateKeyUsage.KeyEncipherment);
-            certificatePolicy.KeyUsage.Add(CertificateKeyUsage.DataEncipherment);
-            certificatePolicy.LifetimeActions.Add(new LifetimeAction(CertificatePolicyAction.AutoRenew)
-            {
-                DaysBeforeExpiry = mTrack.KeyExternalAutoRenewDaysBeforeExpiry
-            });            
-            await certificateClient.StartCreateCertificateAsync(externalName, certificatePolicy);
-            return externalName;
-        }
-
-        private async Task DeleteExternalKeyAsync(string externalName)
-        {
-            var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
-            await certificateClient.StartDeleteCertificateAsync(externalName);
-        }
     }
 }

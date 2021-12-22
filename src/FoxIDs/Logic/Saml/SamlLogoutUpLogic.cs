@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> LogoutRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
             binding.RelayState = SequenceString;
 
@@ -204,7 +204,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> LogoutResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
 
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
 
@@ -347,7 +347,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
                         
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
 
@@ -406,7 +406,7 @@ namespace FoxIDs.Logic
 
             if (party.DisableSingleLogout)
             {
-                var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+                var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
                 return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState);
             }
             else
@@ -419,7 +419,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+                    var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
                     return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState);
                 }
             }
@@ -448,7 +448,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlUpParty>(sequenceData.UpPartyId);
             ValidatePartyLogoutSupport(party);
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);            
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);            
             return await SingleLogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
 

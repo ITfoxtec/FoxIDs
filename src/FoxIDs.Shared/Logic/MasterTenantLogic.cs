@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using UrlCombineLib;
+using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs.Logic
 {
@@ -16,18 +17,23 @@ namespace FoxIDs.Logic
 
         private readonly ITenantRepository tenantRepository;
         private readonly BaseAccountLogic accountLogic;
+        private readonly TrackLogic trackLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
+            this.trackLogic = trackLogic;
         }
 
         public async Task CreateMasterTrackDocumentAsync(string tenantName)
         {
+            tenantName = tenantName?.ToLower();
+            var trackName = Constants.Routes.MasterTrackName;
+
             var mTrack = new Track
             {
-                Name = Constants.Routes.MasterTrackName,
+                Name = trackName,
                 SequenceLifetime = 1800,
                 MaxFailingLogins = 5,
                 FailingLoginCountLifetime = 36000,
@@ -36,29 +42,18 @@ namespace FoxIDs.Logic
                 CheckPasswordComplexity = true,
                 CheckPasswordRisk = true
             };
-            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName });
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = trackName });
 
-            var certificate = await (tenantName.ToLower(), mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
-            mTrack.Key = new TrackKey()
-            {
-                Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
-            };
-
-            await tenantRepository.CreateAsync(mTrack);
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, trackName);
         }
 
         public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack)
         {
-            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName?.ToLower(), TrackName = mTrack.Name });
+            tenantName = tenantName?.ToLower();
 
-            var certificate = await (tenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
-            mTrack.Key = new TrackKey()
-            {
-                Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
-            };
-            await tenantRepository.CreateAsync(mTrack);
+            await mTrack.SetIdAsync(new Track.IdKey { TenantName = tenantName, TrackName = mTrack.Name });
+
+            await trackLogic.CreateTrackDocumentAsync(mTrack, tenantName, mTrack.Name);
         }
 
         public async Task<LoginUpParty> CreateMasterLoginDocumentAsync(string tenantName)
@@ -167,20 +162,20 @@ namespace FoxIDs.Logic
         {
             return new List<OidcDownScope>
             {
-                new OidcDownScope { Scope = "offline_access" },
-                new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim>
+                new OidcDownScope { Scope = DefaultOidcScopes.OfflineAccess },
+                new OidcDownScope { Scope = DefaultOidcScopes.Profile, VoluntaryClaims = new List<OidcDownClaim>
                     {
-                        new OidcDownClaim { Claim = "name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "family_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "given_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "middle_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "locale" }
+                        new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Locale }
                     }
                 },
-                new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim>
+                new OidcDownScope { Scope = DefaultOidcScopes.Email, VoluntaryClaims = new List<OidcDownClaim>
                     {
-                        new OidcDownClaim { Claim = "email", InIdToken = true  },
-                        new OidcDownClaim { Claim = "email_verified" }
+                        new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified }
                     }
                 },
             };

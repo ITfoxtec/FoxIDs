@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using UrlCombineLib;
+using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs.SeedTool.SeedLogic
 {
@@ -234,29 +235,29 @@ namespace FoxIDs.SeedTool.SeedLogic
         {
             return new List<OidcDownScope>
             {
-                new OidcDownScope { Scope = "offline_access" },
-                new OidcDownScope { Scope = "profile", VoluntaryClaims = new List<OidcDownClaim>
+                new OidcDownScope { Scope = DefaultOidcScopes.OfflineAccess },
+                new OidcDownScope { Scope = DefaultOidcScopes.Profile, VoluntaryClaims = new List<OidcDownClaim>
                     {
-                        new OidcDownClaim { Claim = "name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "family_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "given_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "middle_name", InIdToken = true  },
-                        new OidcDownClaim { Claim = "nickname" },
-                        new OidcDownClaim { Claim = "preferred_username" },
-                        new OidcDownClaim { Claim = "profile" },
-                        new OidcDownClaim { Claim = "picture" },
-                        new OidcDownClaim { Claim = "website" },
-                        new OidcDownClaim { Claim = "gender" },
-                        new OidcDownClaim { Claim = "birthdate" },
-                        new OidcDownClaim { Claim = "zoneinfo" },
-                        new OidcDownClaim { Claim = "locale" },
-                        new OidcDownClaim { Claim = "updated_at" }
+                        new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Nickname },
+                        new OidcDownClaim { Claim = JwtClaimTypes.PreferredUsername },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Profile },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Picture },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Website },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Gender },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Birthdate },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Zoneinfo },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Locale },
+                        new OidcDownClaim { Claim = JwtClaimTypes.UpdatedAt }
                     }
                 },
-                new OidcDownScope { Scope = "email", VoluntaryClaims = new List<OidcDownClaim>
+                new OidcDownScope { Scope = DefaultOidcScopes.Email, VoluntaryClaims = new List<OidcDownClaim>
                     {
-                        new OidcDownClaim { Claim = "email", InIdToken = true  },
-                        new OidcDownClaim { Claim = "email_verified" }
+                        new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true  },
+                        new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified }
                     }
                 },
             };

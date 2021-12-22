@@ -93,7 +93,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
             binding.RelayState = SequenceString;
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
@@ -162,7 +162,7 @@ namespace FoxIDs.Logic
         private async Task<IActionResult> AuthnResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
         {
             var request = HttpContext.Request;
-            var samlConfig = saml2ConfigurationLogic.GetSamlUpConfig(party, includeSigningAndDecryptionCertificate: true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
             try

@@ -259,6 +259,14 @@
     {
       "name": "You are now logged out!",
       "id": 64
+    },
+    {
+      "name": "Initializing certificate in Key Vault",
+      "id": 65
+    },
+    {
+      "name": "The certificate will soon be ready. Please try again in a little while.",
+      "id": 66
     }
   ],
   "resources": [
@@ -863,6 +871,24 @@
         {
           "culture": "en",
           "value": "You are now logged out!"
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Initializing certificate in Key Vault"
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The certificate will soon be ready. Please try again in a little while."
         }
       ]
     }

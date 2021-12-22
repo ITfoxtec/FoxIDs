@@ -1,7 +1,7 @@
 # Samples
 The samples for FoxIDs show login and logout with OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and API call with OAuth 2.0. The samples is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
 
-> The samples need a FoxIDs track to run. The samples are configured in the [FoxIDs.com test track](#foxidscom-test-track-for-samples), or you can configure the [samples in your one FoxIDs track](#configure-samples-in-foxids-track).
+> The samples are pre configured in the [FoxIDs.com test track](#foxidscom-test-track-for-samples) and can immediately run in Visual Studio, or you can configure the [samples in your one FoxIDs track](#configure-samples-in-foxids-track).
 
 > The samples can be run locally in Visual Studio on the configured localhost ports. All sample applications will open in a browser tap except the [API sample](#aspnetcoreapi1sample).
 
@@ -88,11 +88,14 @@ Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configur
 Create the sample seed OAuth 2.0 client in the FoxIDs Control Client:
 
 1. Select the master track and create a OAuth 2.0 down-party.
-2. Set the client id to `sample_seed`, redirect Uri to `uri:sample:seed:client`) and response type to `token`. Add a client secret and Remember the secret.
-3. In the resource and scopes section. Remove the default resource scope and give the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
-4. In the scopes section. Remove all scopes.
-5. Click show advanced settings. 
-6. In the claims section. Granted the client the administrator role `foxids:tenant.admin`. 
+2. Set the Client to on and the Resource to off.
+3. Set the client id to `sample_seed`, redirect Uri to `uri:sample:seed:client` and response type to `token`. 
+4. Set Require PKCE to off.
+5. Add a client secret and Remember the secret.
+6. In the resource and scopes section. Remove the default resource scope and give the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
+7. In the scopes section. Remove all scopes.
+8. Click show advanced settings. 
+9. In the claims section. Granted the client the administrator role `foxids:tenant.admin`. 
 
 The sample seed client is thereby granted access to update the tenant.
 

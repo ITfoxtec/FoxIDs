@@ -104,7 +104,7 @@ namespace FoxIDs.Infrastructure.Hosting
         protected override async ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty)
         {
             routeBinding.PartyNameAndBinding = partyNameAndBinding;
-            routeBinding.Key = await LoadTrackKeyAsync(requestServices, trackIdKey, track);
+            routeBinding.Key = await LoadTrackKeyAsync(scopedLogger, trackIdKey, track);
             routeBinding.ClaimMappings = track.ClaimMappings;
             routeBinding.SequenceLifetime = track.SequenceLifetime;
             routeBinding.MaxFailingLogins = track.MaxFailingLogins;
@@ -155,7 +155,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return routeBinding;
         }
 
-        private async Task<RouteTrackKey> LoadTrackKeyAsync(IServiceProvider requestServices, Track.IdKey trackIdKey, Track track)
+        private async Task<RouteTrackKey> LoadTrackKeyAsync(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Track track)
         {
             switch (track.Key.Type)
             {
@@ -168,14 +168,22 @@ namespace FoxIDs.Infrastructure.Hosting
                     };
 
                 case TrackKeyType.KeyVaultRenewSelfSigned:
-                    var trackKeyExternal = await GetTrackKeyItemsAsync(trackIdKey.TenantName, trackIdKey.TrackName, track);
-                    return new RouteTrackKey
+                    var trackKeyExternal = await GetTrackKeyItemsAsync(scopedLogger, trackIdKey.TenantName, trackIdKey.TrackName, track);
+                    var externalRouteTrackKey = new RouteTrackKey
                     {
                         Type = track.Key.Type,
                         ExternalName = track.Key.ExternalName,
-                        PrimaryKey = new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[0].ExternalId, Key = trackKeyExternal.Keys[0].Key },
-                        SecondaryKey = trackKeyExternal.Keys.Count > 1 ? new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[1].ExternalId, Key = trackKeyExternal.Keys[1].Key } : null,
                     };
+                    if (trackKeyExternal == null)
+                    {
+                        externalRouteTrackKey.PrimaryKey = new RouteTrackKeyItem { ExternalKeyIsNotReady = true };
+                    }
+                    else
+                    {
+                        externalRouteTrackKey.PrimaryKey = new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[0].ExternalId, Key = trackKeyExternal.Keys[0].Key };
+                        externalRouteTrackKey.SecondaryKey = trackKeyExternal.Keys.Count > 1 ? new RouteTrackKeyItem { ExternalId = trackKeyExternal.Keys[1].ExternalId, Key = trackKeyExternal.Keys[1].Key } : null;
+                    }
+                    return externalRouteTrackKey;
 
                 case TrackKeyType.KeyVaultUpload:
                 default:
@@ -265,7 +273,7 @@ namespace FoxIDs.Infrastructure.Hosting
         }
 
 
-        public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(string tenantName, string trackName, Track track)
+        public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {
             var key = RadisKey(tenantName, trackName, track.Key.ExternalName);
             var db = redisConnectionMultiplexer.GetDatabase();
@@ -276,13 +284,15 @@ namespace FoxIDs.Infrastructure.Hosting
                 return trackKeyExternalValue.ToObject<TrackKeyExternal>();
             }
 
-            var trackKeyExternal = await LoadTrackKeyExternalFromKeyVaultAsync(track);
-            await db.StringSetAsync(key, trackKeyExternal.ToJson(), TimeSpan.FromSeconds(track.KeyExternalCacheLifetime));
-
+            var trackKeyExternal = await LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
+            if (trackKeyExternal != null)
+            {
+                await db.StringSetAsync(key, trackKeyExternal.ToJson(), TimeSpan.FromSeconds(track.KeyExternalCacheLifetime));
+            }
             return trackKeyExternal;
         }
 
-        private async Task<TrackKeyExternal> LoadTrackKeyExternalFromKeyVaultAsync(Track track)
+        private async Task<TrackKeyExternal> LoadTrackKeyExternalFromKeyVaultAsync(TelemetryScopedLogger scopedLogger, Track track)
         {
             var now = DateTimeOffset.UtcNow;
             var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
@@ -299,7 +309,15 @@ namespace FoxIDs.Infrastructure.Hosting
 
             if (externalKeys.Count <= 0)
             {
-                throw new Exception($"Track key external certificate '{track.Key.ExternalName}' do not exist in Key Vault.");
+                try
+                {
+                    throw new Exception($"Track key external certificate '{track.Key.ExternalName}' do not exist in Key Vault, probably because it is not ready in Key Vault.");
+                }
+                catch (Exception ex)
+                {
+                    scopedLogger.Warning(ex);
+                    return null;
+                }            
             }
 
             var trackKeyExternal = new TrackKeyExternal();

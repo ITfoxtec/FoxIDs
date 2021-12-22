@@ -33,6 +33,26 @@ h4 {
     padding-top: 30px;
 }
 
+.footer-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    line-height: 60px;
+    color: #6c757d;
+    font-family: MarkOT;
+    font-size: 11px;
+    font-weight: normal;
+    font-style: normal;
+    font-stretch: normal;
+    line-height: normal;
+    letter-spacing: normal;
+}
+
+.footer-content  {
+    padding-left: 1rem;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;

@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> LogoutRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
             binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
@@ -183,7 +183,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
             return await LogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
@@ -279,7 +279,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding, IEnumerable<Claim> claims)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, true);
 
             claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 
@@ -337,7 +337,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> SingleLogoutResponseAsync<T>(SamlDownParty party, Saml2Binding<T> binding)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
 
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
             binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);

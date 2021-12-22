@@ -11,8 +11,7 @@ namespace FoxIDs.Models
         public string RouteUrl { get; set; }
 
         public string TenantNameDotTrackName { get { return $"{TenantName}.{TrackName}"; } }
-        public string TenantNameDashTrackName { get { return $"{TenantName}-{TrackName}"; } }
-
+ 
         public string Route { get { return $"{TenantName}.{TrackName}.{PartyNameAndBinding}"; } }
 
         public string PartyNameAndBinding { get; set; }

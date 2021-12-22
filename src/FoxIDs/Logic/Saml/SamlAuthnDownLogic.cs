@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> AuthnRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding)
         {
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
             var request = HttpContext.Request;
 
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
@@ -180,7 +180,7 @@ namespace FoxIDs.Logic
 
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 
-            var samlConfig = saml2ConfigurationLogic.GetSamlDownConfig(party, true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
             var claims = jwtClaims != null ? await claimsDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
             return await AuthnResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);

@@ -121,7 +121,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 20) where T : IDataDocument
+        public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : IDataDocument
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             var orderedQueryable = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);

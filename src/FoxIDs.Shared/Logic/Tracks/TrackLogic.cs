@@ -1,8 +1,6 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -11,20 +9,22 @@ namespace FoxIDs.Logic
     {
         const string loginName = "login";
         private readonly ITenantRepository tenantRepository;
+        private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TrackLogic(ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
+            this.externalKeyLogic = externalKeyLogic;
         }
 
-        public async Task CreateTrackDocumentAsync(Track mTrack)
+        public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null, string trackName = null)
         {
-            var certificate = await (RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
             mTrack.Key = new TrackKey()
             {
-                Type = TrackKeyType.Contained,
-                Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
+                Type = TrackKeyType.KeyVaultRenewSelfSigned,
+                ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
             };
+
             await tenantRepository.CreateAsync(mTrack);
         }
 

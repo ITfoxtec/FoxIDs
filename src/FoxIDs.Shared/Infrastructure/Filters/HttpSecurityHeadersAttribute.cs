@@ -40,7 +40,7 @@ namespace FoxIDs.Infrastructure.Filters
 
             protected virtual void ActionExecutionInit(ActionExecutedContext resultContext)
             {
-                isHtmlContent = IsHtmlContent(resultContext.Result);
+                isHtmlContent = resultContext.Result.IsHtmlContent();
             }
 
             protected virtual void SetHeaders(HttpResponse response)
@@ -64,24 +64,7 @@ namespace FoxIDs.Infrastructure.Filters
                 }
 
                 logger.ScopeTrace(() => $"Http security headers added.");
-            }
-
-            private bool IsHtmlContent(IActionResult result)
-            {
-                if (result is ViewResult)
-                {
-                    return true;
-                }
-                else if (result is ContentResult)
-                {
-                    if ("text/html".Equals((result as ContentResult).ContentType, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
+            }       
 
             protected virtual void HeaderXFrameOptions(HttpResponse response)
             {

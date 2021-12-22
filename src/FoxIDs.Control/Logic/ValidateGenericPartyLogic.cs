@@ -108,78 +108,81 @@ namespace FoxIDs.Logic
 
         public bool ValidateModelClaimTransforms<MClaimTransform>(ModelStateDictionary modelState, List<MClaimTransform> claimTransforms) where MClaimTransform : ClaimTransform
         {
-            claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
-
-            foreach (var claimTransform in claimTransforms)
+            if (claimTransforms != null)
             {
-                if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+                claimTransformValidationLogic.ValidateAndPrepareClaimTransforms(claimTransforms);
+
+                foreach (var claimTransform in claimTransforms)
                 {
-                    switch (claimTransform.Type)
+                    if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
                     {
-                        case ClaimTransformTypes.Constant:
-                            claimTransform.ClaimsIn = null;
-                            claimTransform.TransformationExtension = null;
-                            break;
+                        switch (claimTransform.Type)
+                        {
+                            case ClaimTransformTypes.Constant:
+                                claimTransform.ClaimsIn = null;
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        case ClaimTransformTypes.MatchClaim:
-                            claimTransform.TransformationExtension = null;
-                            break;
+                            case ClaimTransformTypes.MatchClaim:
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        case ClaimTransformTypes.Match:
-                        case ClaimTransformTypes.RegexMatch:
-                            break;
+                            case ClaimTransformTypes.Match:
+                            case ClaimTransformTypes.RegexMatch:
+                                break;
 
-                        case ClaimTransformTypes.Map:
-                            claimTransform.Transformation = null;
-                            claimTransform.TransformationExtension = null;
-                            break;
+                            case ClaimTransformTypes.Map:
+                                claimTransform.Transformation = null;
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        case ClaimTransformTypes.RegexMap:
-                            claimTransform.TransformationExtension = null;
-                            break;
+                            case ClaimTransformTypes.RegexMap:
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        case ClaimTransformTypes.Concatenate:
-                            claimTransform.TransformationExtension = null;
-                            break;
+                            case ClaimTransformTypes.Concatenate:
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        default:
-                            throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                            default:
+                                throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                        }
                     }
-                }
-                else if (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot)
-                {
-                    switch (claimTransform.Type)
+                    else if (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot)
                     {
-                        case ClaimTransformTypes.MatchClaim:
-                            claimTransform.TransformationExtension = null;
-                            break;
+                        switch (claimTransform.Type)
+                        {
+                            case ClaimTransformTypes.MatchClaim:
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        case ClaimTransformTypes.Match:
-                        case ClaimTransformTypes.RegexMatch:
-                            break;
+                            case ClaimTransformTypes.Match:
+                            case ClaimTransformTypes.RegexMatch:
+                                break;
 
-                        default:
-                            throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                            default:
+                                throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                        }
                     }
-                }
-                else if (claimTransform.Action == ClaimTransformActions.Remove)
-                {
-                    switch (claimTransform.Type)
+                    else if (claimTransform.Action == ClaimTransformActions.Remove)
                     {
-                        case ClaimTransformTypes.MatchClaim:
-                            claimTransform.ClaimsIn = null;
-                            claimTransform.Transformation = null;
-                            claimTransform.TransformationExtension = null;
-                            break;
+                        switch (claimTransform.Type)
+                        {
+                            case ClaimTransformTypes.MatchClaim:
+                                claimTransform.ClaimsIn = null;
+                                claimTransform.Transformation = null;
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        case ClaimTransformTypes.Match:
-                        case ClaimTransformTypes.RegexMatch:
-                            claimTransform.ClaimsIn = null;
-                            claimTransform.TransformationExtension = null;
-                            break;
+                            case ClaimTransformTypes.Match:
+                            case ClaimTransformTypes.RegexMatch:
+                                claimTransform.ClaimsIn = null;
+                                claimTransform.TransformationExtension = null;
+                                break;
 
-                        default:
-                            throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                            default:
+                                throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                        }
                     }
                 }
             }

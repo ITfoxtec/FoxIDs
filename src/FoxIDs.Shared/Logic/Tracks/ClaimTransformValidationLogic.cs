@@ -19,29 +19,31 @@ namespace FoxIDs.Logic
 
         public void ValidateAndPrepareClaimTransforms<TClaimTransform>(IEnumerable<TClaimTransform> claimTransforms) where TClaimTransform : ClaimTransform
         {
-            var addActionClaimTransform = claimTransforms.Where(ct => ct.Action == ClaimTransformActions.Add);
-
-            foreach (var claimTransform in addActionClaimTransform)
+            if (claimTransforms != null)
             {
-                if (claimTransform is OAuthClaimTransform)
-                {
-                    if (replaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        claimTransform.Action = ClaimTransformActions.Replace;
-                    }
-                }
-                else if (claimTransform is SamlClaimTransform)
-                {
-                    if (replaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        claimTransform.Action = ClaimTransformActions.Replace;
-                    }
-                }
-                else
-                {
-                    throw new NotImplementedException();
-                }
+                var addActionClaimTransform = claimTransforms.Where(ct => ct.Action == ClaimTransformActions.Add);
 
+                foreach (var claimTransform in addActionClaimTransform)
+                {
+                    if (claimTransform is OAuthClaimTransform)
+                    {
+                        if (replaceClaimOutJwtTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            claimTransform.Action = ClaimTransformActions.Replace;
+                        }
+                    }
+                    else if (claimTransform is SamlClaimTransform)
+                    {
+                        if (replaceClaimOutSamlTypes.Any(rc => claimTransform.ClaimOut.Equals(rc, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            claimTransform.Action = ClaimTransformActions.Replace;
+                        }
+                    }
+                    else
+                    {
+                        throw new NotImplementedException();
+                    }
+                }
             }
         }
     }

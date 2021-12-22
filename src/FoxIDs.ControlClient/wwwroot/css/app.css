@@ -49,8 +49,9 @@ h4 {
     letter-spacing: normal;
 }
 
-.footer-content  {
+.footer-content {
     padding-left: 1rem;
+    z-index: -1;
 }
 
 #blazor-error-ui {

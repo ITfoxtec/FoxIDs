@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>FoxIDs</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ITfoxtec.Identity" Version="2.3.1" />
-    <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.7.0" />
+    <PackageReference Include="ITfoxtec.Identity" Version="2.5.1" />
+    <PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
-    <PackageReference Include="System.Net.Http.Json" Version="3.2.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="6.0.0" />
   </ItemGroup>
   
 </Project>

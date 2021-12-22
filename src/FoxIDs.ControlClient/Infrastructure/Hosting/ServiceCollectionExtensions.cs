@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddSingleton<OpenidConnectPkceSettings>();
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
-            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));
+            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
 
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
             services.AddTransient<AccessTokenMessageHandler>();

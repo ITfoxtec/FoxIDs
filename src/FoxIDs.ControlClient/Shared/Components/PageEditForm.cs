@@ -49,7 +49,6 @@ namespace FoxIDs.Client.Shared.Components
             validationMessageStore = new ValidationMessageStore(EditContext);
         }
 
-        [Obsolete("delete!")]
         public void Init(TModel model = null, Action<TModel> afterInit = null)
         {
             Model = model ?? new TModel();

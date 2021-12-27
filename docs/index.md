@@ -2,12 +2,14 @@
 
 FoxIDs can at the same time work as both an authentication platform and a security broker. Furthermore, FoxIDs support converting between SAML 2.0 and OpenID Connect.
 
-> STATUS: I'm currently working on the documentation and the first FoxIDs [release](https://github.com/ITfoxtec/FoxIDs/milestone/1).
+
+
+> FoxIDs version 1.0, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
 
 FoxIDs consist of two services:
 
 - The identity service which in short is called FoxIDs. The service handles user login and all other security traffic.
-- The UI configuration client and API is called FoxIDs Control. The control service is used to configure FoxIDs in a user interface ([FoxIDs Control Client](control.md#foxids-control-client)) or by calling an API ([FoxIDs Control API](control.md#foxids-control-api)).
+- The UI configuration client and API is called FoxIDs Control. FoxIDs Control is used to configure FoxIDs in a user interface ([FoxIDs Control Client](control.md#foxids-control-client)) or by calling an API ([FoxIDs Control API](control.md#foxids-control-api)).
 
 FoxIDs support Cloud and Private Cloud deployment:
 
@@ -18,7 +20,7 @@ FoxIDs support Cloud and Private Cloud deployment:
 
 ## Free and Open Source
 
-FoxIDs is free and the open source - [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
+FoxIDs is free and open source, see the [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
 The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license only restricts reselling FoxIDs as a IDaaS to third parties, without a supplementary agreement.
 You are free to use FoxIDs as a IDaaS for you own products.
 

@@ -10,7 +10,7 @@ Each time the FoxIDs app service are updated and restarted the new text resource
 
 > Text translation contributions are greatly appreciated.
 
-It is possible to contribute either by creating a pull request in the FoxIDs [GitHub repository](https://github.com/ITfoxtec/FoxIDs) or by sending an updated [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file to [support@itfoxtec.com](mailto:support@itfoxtec.com).
+It is possible to contribute either by creating a pull request in the FoxIDs [GitHub repository](https://github.com/ITfoxtec/FoxIDs) or by sending an updated [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file to [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=FoxIDs-embedded-resource).
 
 ## Translation in track
 

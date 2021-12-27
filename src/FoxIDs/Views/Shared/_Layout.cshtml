@@ -51,7 +51,10 @@
 
     <footer class="footer-container">
         <div class="container">
-            <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small>, version @(GetType().Assembly.GetName().Version.ToString(3))</small></span>
+            @{
+                var version = GetType().Assembly.GetName().Version;
+            }
+            <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="Version @(version.ToString(4))">, version @(version.ToString(2))</small></span>
         </div>
     </footer>
 

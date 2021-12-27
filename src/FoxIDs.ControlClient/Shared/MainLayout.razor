@@ -245,5 +245,5 @@
 </div>
 
 <footer class="footer-container">
-    <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small>@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {clientSettings.Version}")</small></span>
+    <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {clientSettings.FullVersion}")">@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {clientSettings.Version}")</small></span>
 </footer>

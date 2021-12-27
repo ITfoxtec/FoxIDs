@@ -125,7 +125,7 @@ namespace FoxIDs.Client.Pages
             logSreamSettingsList.Add(logStreamSettings);
         }
 
-        private async Task ShowUpdateLogStreamSettingsAsync(GeneralLogStreamSettingsViewModel generalLogStreamSettings)
+        private void ShowUpdateLogStreamSettings(GeneralLogStreamSettingsViewModel generalLogStreamSettings)
         {
             generalLogStreamSettings.CreateMode = false;
             generalLogStreamSettings.DeleteAcknowledge = false;

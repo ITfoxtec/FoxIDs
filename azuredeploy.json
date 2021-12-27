@@ -17,7 +17,7 @@
       }
     },
     "appServicePlanSize": {
-      "defaultValue": "S1",
+      "defaultValue": "P1",
       "allowedValues": [
         "F1",
         "D1",

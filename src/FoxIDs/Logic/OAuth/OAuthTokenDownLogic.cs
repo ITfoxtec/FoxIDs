@@ -177,7 +177,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected virtual async Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
+        protected virtual Task<IActionResult> AuthorizationCodeGrantAsync(TClient client, TokenRequest tokenRequest, bool validatePkce, CodeVerifierSecret codeVerifierSecret)
         {
             throw new NotImplementedException();
         }

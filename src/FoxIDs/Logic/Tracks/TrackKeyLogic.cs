@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
                     mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
                     await tenantRepository.UpdateAsync(mTrack);
 
-                    throw new ExternalKeyIsNotReadyException("Primary external track key certificate is probably not ready in Key Vault.", ex);
+                    throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary external track key certificate is under construction in Key Vault, it is ready in a little while.", ex);
                 }
 
                 throw;

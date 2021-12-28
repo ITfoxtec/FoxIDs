@@ -15,7 +15,7 @@
                 {
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @TrackSelectedLogic.Track.Name.FormatTrackName()
+                            @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
                         </a>
                         <div class="dropdown-menu searchDropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
@@ -36,7 +36,7 @@
                                 @foreach (var track in selectTrackTasks)
                                 {
                                     <button class="dropdown-item btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                        @track.Name.FormatTrackName()
+                                       @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
                                     </button>
                                 }
                             }
@@ -167,7 +167,7 @@
                         {
                             <li class="list-group-item">
                                 <button class="btn btn-link" @onclick="@(() => SelectTrackAsync(track))">
-                                    @track.Name.FormatTrackName()
+                                    @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
                                 </button>
                             </li>
                         }

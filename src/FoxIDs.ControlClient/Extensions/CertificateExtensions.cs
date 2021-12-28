@@ -1,15 +1,15 @@
-﻿using System;
-using System.Security.Cryptography.X509Certificates;
+﻿using FoxIDs.Models.Api;
+using System;
 
 namespace FoxIDs.Client
 {
     public static class CertificateExtensions
     {
-        public static bool IsValid(this X509Certificate2 certificate)
+        public static bool IsValid(this CertificateInfo certificateInfo)
         {
             var localTime = DateTime.Now;
-            if (certificate.NotBefore > localTime) return false;
-            if (certificate.NotAfter < localTime) return false;
+            if (certificateInfo.ValidFrom > localTime) return false;
+            if (certificateInfo.ValidTo < localTime) return false;
             return true;
         }
     }

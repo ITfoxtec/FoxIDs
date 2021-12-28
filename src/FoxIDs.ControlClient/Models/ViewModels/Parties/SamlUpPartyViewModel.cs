@@ -103,7 +103,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [Length(0, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "One or more signature validation certificates")]
-        public List<JsonWebKey> Keys { get; set; }
+        public List<JwtWithCertificateInfo> Keys { get; set; }
 
         [Display(Name = "Logout request binding")]
         public SamlBindingTypes LogoutRequestBinding { get; set; } = SamlBindingTypes.Post;

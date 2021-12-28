@@ -49,6 +49,7 @@ namespace FoxIDs.Controllers
                     ModelState.TryAddModelError(string.Empty, vex.Message);
                     return BadRequest(ModelState);
                 }
+
                 return Ok(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
             catch (CosmosDataException ex)

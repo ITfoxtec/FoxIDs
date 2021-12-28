@@ -38,6 +38,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<DownPartyService>();
             services.AddScoped<UpPartyService>();
             services.AddScoped<UserService>();
+            services.AddScoped<HelpersService>();            
 
             services.AddScoped<RiskPasswordService>();
 

@@ -20,12 +20,16 @@ using Microsoft.AspNetCore.Components;
 using Tewr.Blazor.FileReader;
 using System.Text;
 using ITfoxtec.Identity.Saml2.Schemas;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class ESamlUpParty : UpPartyBase
     {
         private ElementReference readMetadataFileElement;
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }
 
         [Inject]
         public IFileReaderService fileReaderService { get; set; }
@@ -157,7 +161,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalSamlUpParty.Form.Model.Keys == null)
             {
-                generalSamlUpParty.Form.Model.Keys = new List<JsonWebKey>();
+                generalSamlUpParty.Form.Model.Keys = new List<JwtWithCertificateInfo>();
             }
             generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
             foreach (var file in files)
@@ -176,10 +180,10 @@ namespace FoxIDs.Client.Pages.Components
 
                     try
                     {
-                        var certificate = new X509Certificate2(memoryStream.ToArray());
-                        var jwk = await certificate.ToFTJsonWebKeyAsync();
+                        var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
+                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
-                        if (generalSamlUpParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwk.X5t, StringComparison.OrdinalIgnoreCase)))
+                        if (generalSamlUpParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwtWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
                             generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Keys), "Signature validation keys (certificates) has duplicates.");
                             return;
@@ -187,14 +191,14 @@ namespace FoxIDs.Client.Pages.Components
 
                         generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                         {
-                            Subject = certificate.Subject,
-                            ValidFrom = certificate.NotBefore,
-                            ValidTo = certificate.NotAfter,
-                            IsValid = certificate.IsValid(),
-                            Thumbprint = certificate.Thumbprint,
-                            Key = jwk
+                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
+                            IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid(),
+                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwtWithCertificateInfo
                         });
-                        generalSamlUpParty.Form.Model.Keys.Add(jwk);
+                        generalSamlUpParty.Form.Model.Keys.Add(jwtWithCertificateInfo);
                     }
                     catch (Exception ex)
                     {

@@ -495,6 +495,7 @@
       "apiVersion": "2018-11-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test/web')]",
       "dependsOn": [
+        "[resourceId('Microsoft.Web/sites/slots/sourcecontrols', variables('foxidsControlSiteName'), '/test/web')]",
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'slotconfignames')]",
         "[resourceId('Microsoft.Web/sites/slots', variables('foxidsControlSiteName'), 'test')]",

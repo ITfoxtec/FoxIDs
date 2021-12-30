@@ -29,13 +29,16 @@ h4 {
     padding-bottom: 8px;
 }
 
+.container-fluid {
+    padding: 0 !important;
+}
+
 .main-container {
     padding-top: 30px;
 }
 
 .footer-container {
-    position: absolute;
-    bottom: 0;
+    padding-top: 10px;
     width: 100%;
     height: 30px;
     line-height: 60px;

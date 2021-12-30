@@ -276,13 +276,12 @@ namespace FoxIDs.Client.Pages
                         {
                             foreach (var key in afterMap.Keys)
                             {
-                                var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
                                 generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
                                 {
-                                    Subject = certificate.Subject,
-                                    ValidFrom = certificate.NotBefore,
-                                    ValidTo = certificate.NotAfter,
-                                    Thumbprint = certificate.Thumbprint,
+                                    Subject = key.CertificateInfo.Subject,
+                                    ValidFrom = key.CertificateInfo.ValidFrom,
+                                    ValidTo = key.CertificateInfo.ValidTo,
+                                    Thumbprint = key.CertificateInfo.Thumbprint,
                                     Key = key
                                 });
                             }

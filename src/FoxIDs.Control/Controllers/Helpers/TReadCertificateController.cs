@@ -22,7 +22,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get JWT with certificate information.
+        /// Read JWT with certificate information.
         /// </summary>
         /// <param name="certificateAndPassword">Base64 url encode certificate and optionally password.</param>
         /// <returns>User.</returns>

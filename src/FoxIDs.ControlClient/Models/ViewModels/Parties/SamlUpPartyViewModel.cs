@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity.Saml2.Schemas;
-using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
-using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Models.ViewModels

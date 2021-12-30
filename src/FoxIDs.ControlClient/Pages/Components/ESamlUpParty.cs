@@ -11,15 +11,11 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using BlazorInputFile;
-using ITfoxtec.Identity.Models;
 using System.Security.Claims;
-using ITfoxtec.Identity.Saml2.Schemas.Metadata;
 using Microsoft.AspNetCore.Components;
 using Tewr.Blazor.FileReader;
 using System.Text;
-using ITfoxtec.Identity.Saml2.Schemas;
 using Microsoft.AspNetCore.WebUtilities;
 
 namespace FoxIDs.Client.Pages.Components
@@ -54,106 +50,59 @@ namespace FoxIDs.Client.Pages.Components
                     return;
                 }
 
-                string metadata;
+                string metadataXml;
                 await using (var stream = await file.OpenReadAsync())
                 {
                     byte[] resultBytes = new byte[stream.Length];
                     await stream.ReadAsync(resultBytes, 0, (int)stream.Length);
 
-                    metadata = Encoding.ASCII.GetString(resultBytes);
+                    metadataXml = Encoding.ASCII.GetString(resultBytes);
                 }
 
-                var entityDescriptor = new EntityDescriptor();
-                entityDescriptor.ReadIdPSsoDescriptor(metadata);
-                if (entityDescriptor.IdPSsoDescriptor != null)
+                var samlUpParty = await UpPartyService.ReadSamlUpPartyMetadataAsync(metadataXml);
+
+                generalSamlUpParty.Form.Model.Issuer = samlUpParty.Issuer;
+                generalSamlUpParty.Form.Model.AuthnUrl = samlUpParty.AuthnUrl;
+                if (samlUpParty.AuthnResponseBinding.HasValue)
                 {
-                    generalSamlUpParty.Form.Model.Issuer = entityDescriptor.EntityId;
-                    var singleSignOnServices = entityDescriptor.IdPSsoDescriptor.SingleSignOnServices.FirstOrDefault();
-                    if (singleSignOnServices == null)
-                    {
-                        throw new Exception("IdPSsoDescriptor SingleSignOnServices is empty.");
-                    }
-
-                    generalSamlUpParty.Form.Model.AuthnUrl = singleSignOnServices.Location?.OriginalString;
-                    generalSamlUpParty.Form.Model.AuthnRequestBinding = GetSamlBindingTypes(singleSignOnServices.Binding?.OriginalString);
-
-                    var singleLogoutDestination = GetSingleLogoutServices(entityDescriptor.IdPSsoDescriptor.SingleLogoutServices);
-                    if (singleLogoutDestination != null)
-                    {
-                        generalSamlUpParty.Form.Model.LogoutUrl = singleLogoutDestination.Location?.OriginalString;
-                        var singleLogoutResponseLocation = singleLogoutDestination.ResponseLocation?.OriginalString;
-                        if (!string.IsNullOrEmpty(singleLogoutResponseLocation))
-                        {
-                            generalSamlUpParty.Form.Model.SingleLogoutResponseUrl = singleLogoutResponseLocation;
-                        }
-                        generalSamlUpParty.Form.Model.LogoutRequestBinding = GetSamlBindingTypes(singleLogoutDestination.Binding?.OriginalString);
-                    }
-
-                    generalSamlUpParty.KeyInfoList = new List<KeyInfoViewModel>();
-                    generalSamlUpParty.Form.Model.Keys = new List<JsonWebKey>();
-                    if (entityDescriptor.IdPSsoDescriptor.SigningCertificates?.Count() > 0)
-                    {
-                        foreach(var certificate in entityDescriptor.IdPSsoDescriptor.SigningCertificates)
-                        {
-                            var jwk = await certificate.ToFTJsonWebKeyAsync();
-
-                            generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
-                            {
-                                Subject = certificate.Subject,
-                                ValidFrom = certificate.NotBefore,
-                                ValidTo = certificate.NotAfter,
-                                IsValid = certificate.IsValid(),
-                                Thumbprint = certificate.Thumbprint,
-                                Key = jwk
-                            });
-                            generalSamlUpParty.Form.Model.Keys.Add(jwk);
-                        }
-
-                        generalSamlUpParty.Form.Model.Keys = await Task.FromResult(entityDescriptor.IdPSsoDescriptor.SigningCertificates.Select(c => c.ToFTJsonWebKey()).ToList());
-                    }
-
-                    if (entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.HasValue)
-                    {
-                        generalSamlUpParty.Form.Model.SignAuthnRequest = entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned.Value;
-                    }
+                    generalSamlUpParty.Form.Model.AuthnRequestBinding = samlUpParty.AuthnResponseBinding.Value;
                 }
-                else
+
+                generalSamlUpParty.Form.Model.LogoutUrl = samlUpParty.LogoutUrl;
+                if (!string.IsNullOrEmpty(samlUpParty.SingleLogoutResponseUrl))
                 {
-                    throw new Exception("IdPSsoDescriptor not loaded from metadata.");
+                    generalSamlUpParty.Form.Model.SingleLogoutResponseUrl = samlUpParty.SingleLogoutResponseUrl;
                 }
+                if (samlUpParty.LogoutRequestBinding.HasValue)
+                {
+                    generalSamlUpParty.Form.Model.LogoutRequestBinding = samlUpParty.LogoutRequestBinding.Value;
+                }
+    
+                generalSamlUpParty.KeyInfoList = new List<KeyInfoViewModel>();
+                generalSamlUpParty.Form.Model.Keys = new List<JwtWithCertificateInfo>();
+
+                if (samlUpParty.Keys?.Count() > 0)
+                {
+                    foreach(var key in samlUpParty.Keys)
+                    {
+                        generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            Subject = key.CertificateInfo.Subject,
+                            ValidFrom = key.CertificateInfo.ValidFrom,
+                            ValidTo = key.CertificateInfo.ValidTo,
+                            IsValid = key.CertificateInfo.IsValid(),
+                            Thumbprint = key.CertificateInfo.Thumbprint,
+                            Key = key
+                        });
+                        generalSamlUpParty.Form.Model.Keys.Add(key);
+                    }
+                }
+
+                generalSamlUpParty.Form.Model.SignAuthnRequest = samlUpParty.SignAuthnRequest;
             }
             catch (Exception ex)
             {
                 generalSamlUpParty.Form.SetError($"Failing SAML 2.0 metadata. {ex.Message}");
-            }
-        }
-
-        private SingleLogoutService GetSingleLogoutServices(IEnumerable<SingleLogoutService> singleLogoutServices)
-        {
-            var singleLogoutService = singleLogoutServices.Where(s => s.Binding.OriginalString == ProtocolBindings.HttpPost.OriginalString).FirstOrDefault();
-            if (singleLogoutService != null)
-            {
-                return singleLogoutService;
-            }
-            else
-            {
-                return singleLogoutServices.FirstOrDefault();
-            }
-        }
-
-        private SamlBindingTypes GetSamlBindingTypes(string binding)
-        {
-            if (binding == ProtocolBindings.HttpPost.OriginalString)
-            {
-                return SamlBindingTypes.Post;
-            }
-            else if (binding == ProtocolBindings.HttpRedirect.OriginalString)
-            {
-                return SamlBindingTypes.Redirect;
-            }
-            else
-            {
-                throw new Exception($"Binding '{binding}' not supported.");
             }
         }
 

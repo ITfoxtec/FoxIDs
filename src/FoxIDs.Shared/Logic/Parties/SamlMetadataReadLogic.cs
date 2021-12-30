@@ -15,6 +15,17 @@ namespace FoxIDs.Logic
         {
             var entityDescriptor = new EntityDescriptor();
             entityDescriptor.ReadIdPSsoDescriptorFromUrl(new Uri(party.MetadataUrl));
+            await PopulateModelInternalAsync(party, entityDescriptor);
+        }
+        public async Task PopulateModelAsync(SamlUpParty party, string metadataXml)
+        {
+            var entityDescriptor = new EntityDescriptor();
+            entityDescriptor.ReadIdPSsoDescriptor(metadataXml);
+            await PopulateModelInternalAsync(party, entityDescriptor);
+        }
+
+        private async Task PopulateModelInternalAsync(SamlUpParty party, EntityDescriptor entityDescriptor)
+        {
             if (entityDescriptor.IdPSsoDescriptor != null)
             {
                 party.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();

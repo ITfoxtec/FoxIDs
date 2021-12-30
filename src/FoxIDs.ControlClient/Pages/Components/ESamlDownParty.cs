@@ -11,9 +11,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
-using System.Security.Cryptography.X509Certificates;
 using BlazorInputFile;
-using ITfoxtec.Identity.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Components;
@@ -37,7 +35,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalSamlDownParty.Form.Model.Keys == null)
             {
-                generalSamlDownParty.Form.Model.Keys = new List<JsonWebKey>();
+                generalSamlDownParty.Form.Model.Keys = new List<JwtWithCertificateInfo>();
             }
             generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
             foreach (var file in files)

@@ -12,6 +12,7 @@ namespace FoxIDs.Client.Services
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcupparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
+        private const string samlReadMetadataApiUri = "api/{tenant}/{track}/!samluppartyreadmetadata";
 
         public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -32,5 +33,7 @@ namespace FoxIDs.Client.Services
         public async Task CreateSamlUpPartyAsync(SamlUpParty party) => await PostAsync(samlApiUri, party);
         public async Task UpdateSamlUpPartyAsync(SamlUpParty party) => await PutAsync(samlApiUri, party);
         public async Task DeleteSamlUpPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
+
+        public async Task<SamlUpParty> ReadSamlUpPartyMetadataAsync(string metadataXml) => await PostResponseAsync<string, SamlUpParty>(samlReadMetadataApiUri, metadataXml);
     }
 }

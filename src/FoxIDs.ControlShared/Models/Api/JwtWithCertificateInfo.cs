@@ -5,7 +5,6 @@ namespace FoxIDs.Models.Api
 {
     public class JwtWithCertificateInfo : JsonWebKey
     {
-        [Required]
         public CertificateInfo CertificateInfo { get; set; }
     }
 }

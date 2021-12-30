@@ -13,10 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using MTokens = Microsoft.IdentityModel.Tokens;
-using System.Security.Cryptography;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace FoxIDs.Client.Pages
 {
@@ -32,6 +30,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public TrackService TrackService { get; set; }
+
+        [Inject]
+        public HelpersService HelpersService { get; set; }        
 
         [Parameter]
         public string TenantName { get; set; }
@@ -184,51 +185,31 @@ namespace FoxIDs.Client.Pages
 
                 generalCertificate.CertificateFileStatus = "Loading...";
 
-                try
+                byte[] certificateBytes;
+                using (var memoryStream = new MemoryStream())
                 {
-                    byte[] certificateBytes;
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        await file.Data.CopyToAsync(memoryStream);
-                        certificateBytes = memoryStream.ToArray();
-                    }
-
-                    var certificate = generalCertificate.Form.Model.Password.IsNullOrWhiteSpace() switch
-                    {
-                        true => new X509Certificate2(certificateBytes, string.Empty),
-                        false => new X509Certificate2(certificateBytes, generalCertificate.Form.Model.Password),
-                    };
-
-                    var jwk = await certificate.ToFTJsonWebKeyAsync(true);
-                    if (!jwk.HasPrivateKey())
-                    {
-                        generalCertificate.Form.Model.Subject = null;
-                        generalCertificate.Form.Model.Key = null;
-                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required.");
-                        return;
-                    }
-
-                    generalCertificate.Form.Model.Subject = certificate.Subject;
-                    generalCertificate.Form.Model.ValidFrom = certificate.NotBefore;
-                    generalCertificate.Form.Model.ValidTo = certificate.NotAfter;
-                    generalCertificate.Form.Model.IsValid = certificate.IsValid();
-                    generalCertificate.Form.Model.Thumbprint = certificate.Thumbprint;
-                    generalCertificate.Form.Model.Key = jwk;
+                    await file.Data.CopyToAsync(memoryStream);
+                    certificateBytes = memoryStream.ToArray();
                 }
-                catch (Exception ex)
+
+                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
+                var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
+                    
+                if (!jwtWithCertificateInfo.HasPrivateKey())
                 {
                     generalCertificate.Form.Model.Subject = null;
                     generalCertificate.Form.Model.Key = null;
-
-                    if (ex is CryptographicException cex && cex.Message.Contains("Invalid MAC", StringComparison.OrdinalIgnoreCase))
-                    {
-                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Password required or invalid password.");
-                    }
-                    else
-                    {
-                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
-                    }
+                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required. Maybe a password is required to unlock the private key.");
+                    generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                    return;
                 }
+
+                generalCertificate.Form.Model.Subject = jwtWithCertificateInfo.CertificateInfo.Subject;
+                generalCertificate.Form.Model.ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom;
+                generalCertificate.Form.Model.ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo;
+                generalCertificate.Form.Model.IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid();
+                generalCertificate.Form.Model.Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint;
+                generalCertificate.Form.Model.Key = jwtWithCertificateInfo;
 
                 generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
             }
@@ -244,12 +225,14 @@ namespace FoxIDs.Client.Pages
                     afterMap.CreateSelfSigned = true;
                     afterMap.Key = null;
                 }));
-                var certificate = new MTokens.JsonWebKey((generalCertificate.Form.Model.IsPrimary ? trackKeyResponse.PrimaryKey : trackKeyResponse.SecondaryKey).JsonSerialize()).ToX509Certificate();
-                generalCertificate.Subject = certificate.Subject;
-                generalCertificate.ValidFrom = certificate.NotBefore;
-                generalCertificate.ValidTo = certificate.NotAfter;
-                generalCertificate.IsValid = certificate.IsValid();
-                generalCertificate.Thumbprint = certificate.Thumbprint;
+
+                var keyResponse = generalCertificate.Form.Model.IsPrimary ? trackKeyResponse.PrimaryKey : trackKeyResponse.SecondaryKey;
+
+                generalCertificate.Subject = keyResponse.CertificateInfo.Subject;
+                generalCertificate.ValidFrom = keyResponse.CertificateInfo.ValidFrom;
+                generalCertificate.ValidTo = keyResponse.CertificateInfo.ValidTo;
+                generalCertificate.IsValid = keyResponse.CertificateInfo.IsValid();
+                generalCertificate.Thumbprint = keyResponse.CertificateInfo.Thumbprint;
                 generalCertificate.CreateMode = false;
                 generalCertificate.Edit = false;
             }

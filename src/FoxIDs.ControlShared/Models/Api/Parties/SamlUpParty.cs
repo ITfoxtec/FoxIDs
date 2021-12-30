@@ -70,7 +70,7 @@ namespace FoxIDs.Models.Api
         public bool SignAuthnRequest { get; set; }
 
         [Length(0, Constants.Models.SamlParty.KeysMax)]
-        public List<JsonWebKey> Keys { get; set; }
+        public List<JwtWithCertificateInfo> Keys { get; set; }
 
         public SamlBindingTypes? LogoutRequestBinding { get; set; }
 

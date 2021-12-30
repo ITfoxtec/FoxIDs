@@ -2,16 +2,16 @@
 
 namespace FoxIDs.Models.Api
 {
-    public class ConvertCertificateRequest
+    public class CertificateAndPassword
     {
         /// <summary>
-        /// Certificate as base64 encoded byres.
+        /// Base64 url encode certificate.
         /// </summary>
         [Required]
-        public string Bytes { get; set; }
+        public string EncodeCertificate { get; set; }
 
         /// <summary>
-        /// Optional password
+        /// Optionally password
         /// </summary>
         public string Password { get; set; }
     }

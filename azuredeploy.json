@@ -271,7 +271,7 @@
       "properties": {
         "name": "[variables('foxidsSiteName')]",
         "siteConfig": {
-          "netFrameworkVersion": "v5.0",
+          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "alwaysOn": true,
           "webSocketsEnabled": false
@@ -298,7 +298,7 @@
       "properties": {
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
-          "netFrameworkVersion": "v5.0",
+          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "alwaysOn": true,
           "webSocketsEnabled": false
@@ -324,7 +324,7 @@
       },
       "properties": {
         "siteConfig": {
-          "netFrameworkVersion": "v5.0",
+          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "alwaysOn": true,
           "webSocketsEnabled": false,
@@ -351,7 +351,7 @@
       },
       "properties": {
         "siteConfig": {
-          "netFrameworkVersion": "v5.0",
+          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "alwaysOn": true,
           "webSocketsEnabled": false,
@@ -470,10 +470,10 @@
       "properties": {
         "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri" ]
       }
-    },   
+    },
     {
       "type": "Microsoft.Web/sites/slots/sourcecontrols",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-02-01",
       "name": "[concat(variables('foxidsSiteName'), '/test/web')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsSiteName'))]",
@@ -485,14 +485,14 @@
         "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--Sendgrid--ApiKey')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('repoURL')]",
+        "repoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
         "IsManualIntegration": true
       }
     },
     {
       "type": "Microsoft.Web/sites/slots/sourcecontrols",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-02-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test/web')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
@@ -504,7 +504,7 @@
         "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--Sendgrid--ApiKey')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('repoURL')]",
+        "repoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
         "IsManualIntegration": true
       }

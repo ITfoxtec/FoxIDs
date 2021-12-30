@@ -1,13 +1,11 @@
 ﻿using FoxIDs.Client.Shared.Components;
-using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
-using MTokens = Microsoft.IdentityModel.Tokens;
+using FoxIDs.Models.Api;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
     public class GeneralTrackCertificateViewModel : TrackCertificateInfoViewModel
     {
-        public const string DefaultCertificateFileStatus = "Drop .PFX certificate file here or click to select";
+        public const string DefaultCertificateFileStatus = "Drop .PFX or .P12 certificate file here or click to select";
         public const int CertificateMaxFileSize = 5 * 1024 * 1024; // 5MB
 
         public GeneralTrackCertificateViewModel(bool isPrimary)
@@ -15,14 +13,13 @@ namespace FoxIDs.Client.Models.ViewModels
             IsPrimary = isPrimary;
         }
 
-        public GeneralTrackCertificateViewModel(JsonWebKey key, bool isPrimary) : this(isPrimary)
+        public GeneralTrackCertificateViewModel(JwtWithCertificateInfo key, bool isPrimary) : this(isPrimary)
         {
-            var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
-            Subject = certificate.Subject;
-            ValidFrom = certificate.NotBefore;
-            ValidTo = certificate.NotAfter;
-            IsValid = certificate.IsValid();
-            Thumbprint = certificate.Thumbprint;
+            Subject = key.CertificateInfo.Subject;
+            ValidFrom = key.CertificateInfo.ValidFrom;
+            ValidTo = key.CertificateInfo.ValidTo;
+            IsValid = key.CertificateInfo.IsValid();
+            Thumbprint = key.CertificateInfo.Thumbprint;
         }
 
         public bool Edit { get; set; }

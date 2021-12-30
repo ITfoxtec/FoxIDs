@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Api = FoxIDs.Models.Api;
@@ -66,9 +68,12 @@ namespace FoxIDs.MappingProfiles
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 
+            CreateMap<JsonWebKey, Api.JwtWithCertificateInfo>()
+                .ForMember(d => d.CertificateInfo, opt => opt.MapFrom(s => GetCertificateInfo(s)));
+
             CreateMap<TrackKey, Api.TrackKeyItemsContained>()
                 .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0].Key.GetPublicKey()))
-                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));
+                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));              
 
             CreateMap<TrackKeyItem, Api.TrackKeyItemContained>()
                 .ForMember(d => d.Key, opt => opt.MapFrom(s => s.Key.GetPublicKey()))
@@ -219,6 +224,22 @@ namespace FoxIDs.MappingProfiles
         private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform
         {
             return claimTransforms.OrderBy(ct => ct.Order).ToList();
+        }
+
+        private Api.CertificateInfo GetCertificateInfo(JsonWebKey jsonWebKey)
+        {
+            var certificate = jsonWebKey.ToX509Certificate();
+            if (certificate != null)
+            {
+                return new Api.CertificateInfo
+                {
+                    Subject = certificate.Subject,
+                    ValidFrom = certificate.NotBefore,
+                    ValidTo = certificate.NotAfter,
+                    Thumbprint = certificate.Thumbprint
+                };
+            }
+            return null;
         }
     }
 }

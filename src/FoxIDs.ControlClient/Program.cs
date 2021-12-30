@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Client.Infrastructure.Hosting;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client
 {

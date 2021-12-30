@@ -11,8 +11,8 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [Required]
-        public JsonWebKey PrimaryKey { get; set; }
+        public JwtWithCertificateInfo PrimaryKey { get; set; }
 
-        public JsonWebKey SecondaryKey { get; set; }
+        public JwtWithCertificateInfo SecondaryKey { get; set; }
     }
 }

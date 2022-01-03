@@ -25,17 +25,28 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Read saml 2.0 up-party metadata.
         /// </summary>
-        /// <param name="metadataXml">SAML 2.0 metadata XML.</param>
+        /// <param name="samlReadMetadataRequest">SAML 2.0 metadata.</param>
         /// <returns>SAML 2.0 up-party.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpPartyReadMetadata([FromBody] string metadataXml)
+        public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpPartyReadMetadata([FromBody] Api.SamlReadMetadataRequest samlReadMetadataRequest)
         {
-            if (!ModelState.TryValidateRequiredParameter(metadataXml, nameof(metadataXml))) return BadRequest(ModelState);
+            if (!await ModelState.TryValidateObjectAsync(samlReadMetadataRequest)) return BadRequest(ModelState);
 
             try
             {
                 var samlUpParty = new SamlUpParty { AuthnBinding = new SamlBinding() };
-                await samlMetadataReadLogic.PopulateModelAsync(samlUpParty, metadataXml);
+                switch (samlReadMetadataRequest.Type)
+                {
+                    case Api.SamlReadMetadataType.Url:
+                        samlUpParty.MetadataUrl = samlReadMetadataRequest.Metadata;
+                        await samlMetadataReadLogic.PopulateModelAsync(samlUpParty);
+                        break;
+                    case Api.SamlReadMetadataType.Xml:
+                        await samlMetadataReadLogic.PopulateModelAsync(samlUpParty, samlReadMetadataRequest.Metadata);
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
                 return Ok(mapper.Map<Api.SamlUpParty>(samlUpParty));
             }
             catch (Exception ex)

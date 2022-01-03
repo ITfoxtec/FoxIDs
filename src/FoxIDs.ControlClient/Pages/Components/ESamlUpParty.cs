@@ -59,7 +59,7 @@ namespace FoxIDs.Client.Pages.Components
                     metadataXml = Encoding.ASCII.GetString(resultBytes);
                 }
 
-                var samlUpParty = await UpPartyService.ReadSamlUpPartyMetadataAsync(metadataXml);
+                var samlUpParty = await UpPartyService.ReadSamlUpPartyMetadataAsync(new SamlReadMetadataRequest { Type = SamlReadMetadataType.Xml, Metadata = metadataXml });
 
                 generalSamlUpParty.Form.Model.Issuer = samlUpParty.Issuer;
                 generalSamlUpParty.Form.Model.AuthnUrl = samlUpParty.AuthnUrl;

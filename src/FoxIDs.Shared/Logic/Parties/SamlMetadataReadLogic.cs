@@ -5,20 +5,50 @@ using ITfoxtec.Identity.Saml2.Schemas.Metadata;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
     public class SamlMetadataReadLogic
     {
+        private readonly IHttpClientFactory httpClientFactory;
+
+        public SamlMetadataReadLogic(IHttpClientFactory httpClientFactory)
+        {
+            this.httpClientFactory = httpClientFactory;
+        }
+
         public async Task PopulateModelAsync(SamlUpParty party)
         {
-            var entityDescriptor = new EntityDescriptor();
-            entityDescriptor.ReadIdPSsoDescriptorFromUrl(new Uri(party.MetadataUrl));
-            await PopulateModelInternalAsync(party, entityDescriptor);
+            var metadata = await ReadMetadataAsync(party.MetadataUrl);
+            await PopulateModelAsync(party, metadata);
         }
+
+        private async Task<string> ReadMetadataAsync(string metadataUrl)
+        {
+            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, metadataUrl));
+            // Handle the response
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.OK:
+                    var metadata = await response.Content.ReadAsStringAsync();
+                    return metadata;
+
+                default:
+                    throw new Exception($"Status Code OK expected. Unable to read SAML 2.0 metadata '{metadataUrl}'. StatusCode={response.StatusCode}..");
+            }
+        }
+
         public async Task PopulateModelAsync(SamlUpParty party, string metadataXml)
         {
+            if(metadataXml?.Length > Constants.Models.SamlParty.MetadataXmlSize)
+            {
+                throw new Exception($"Metadata XML must be a string with a maximum length of '{Constants.Models.SamlParty.MetadataXmlSize}'.");
+            }
+
             var entityDescriptor = new EntityDescriptor();
             entityDescriptor.ReadIdPSsoDescriptor(metadataXml);
             await PopulateModelInternalAsync(party, entityDescriptor);

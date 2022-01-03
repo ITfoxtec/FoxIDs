@@ -367,6 +367,7 @@ namespace FoxIDs
             public static class SamlParty
             {
                 public const int MetadataUrlLength = 500;
+                public const int MetadataXmlSize = 200000; // 200kB
                 public const int MetadataUpdateRateMin = 86400; // 24 hours
                 public const int MetadataUpdateRateMax = 31536000; // 12 month
                 public const int MetadataNameIdFormatsMin = 0;

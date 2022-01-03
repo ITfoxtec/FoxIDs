@@ -77,9 +77,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 });
             }
 
-            services.AddHttpContextAccessor();
-            services.AddHttpClient();
-
             services.AddApiSwagger();
             services.AddAutoMapper();
 

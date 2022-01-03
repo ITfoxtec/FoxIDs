@@ -34,6 +34,6 @@ namespace FoxIDs.Client.Services
         public async Task UpdateSamlUpPartyAsync(SamlUpParty party) => await PutAsync(samlApiUri, party);
         public async Task DeleteSamlUpPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
 
-        public async Task<SamlUpParty> ReadSamlUpPartyMetadataAsync(string metadataXml) => await PostResponseAsync<string, SamlUpParty>(samlReadMetadataApiUri, metadataXml);
+        public async Task<SamlUpParty> ReadSamlUpPartyMetadataAsync(SamlReadMetadataRequest metadata) => await PostResponseAsync<SamlReadMetadataRequest, SamlUpParty>(samlReadMetadataApiUri, metadata);
     }
 }

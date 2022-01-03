@@ -119,9 +119,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 });
             }
 
-            services.AddHttpContextAccessor();
-            services.AddHttpClient();
-
             var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
             services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
 

@@ -16,7 +16,7 @@ FoxIDs support Cloud and Private Cloud deployment:
 - FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity as a Service (IDaaS).
 - Install FoxIDs for free in Microsoft Azure as your own [private cloud](getting-started.md#foxids-private-cloud).
 
-> FoxIDs is build on .NET 5.0 and the FoxIDs Control Client is build on Blazor .NET Standard 2.1.
+> FoxIDs is .NET 6.0 and the FoxIDs Control Client is Blazor .NET 6.0.
 
 ## Free and Open Source
 

@@ -95,17 +95,17 @@ namespace FoxIDs.Client.Services
 
         protected async Task DeleteAsync(string url)
         {
-            await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
+            using var response = await httpClient.DeleteAsync(await GetTenantApiUrlAsync(url));
         }
 
         protected async Task DeleteAsync(string url, string value, string parmName = "name")
         {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
+            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName}={value}");
         }
 
         protected async Task DeleteAsync(string url, string value1, string value2, string parmName1, string parmName2)
         {
-            await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
+            using var response = await httpClient.DeleteAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={value1}&{parmName2}={value2}");
         }
 
     }

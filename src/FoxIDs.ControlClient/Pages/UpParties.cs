@@ -195,14 +195,13 @@ namespace FoxIDs.Client.Pages
                         {
                             if (key.Kty == MTokens.JsonWebAlgorithmsKeyTypes.RSA && key.X5c?.Count >= 1)
                             {
-                                var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
                                 generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
                                 {
-                                    Subject = certificate.Subject,
-                                    ValidFrom = certificate.NotBefore,
-                                    ValidTo = certificate.NotAfter,
-                                    IsValid = certificate.IsValid(),
-                                    Thumbprint = certificate.Thumbprint,
+                                    Subject = key.CertificateInfo.Subject,
+                                    ValidFrom = key.CertificateInfo.ValidFrom,
+                                    ValidTo = key.CertificateInfo.ValidTo,
+                                    IsValid = key.CertificateInfo.IsValid(),
+                                    Thumbprint = key.CertificateInfo.Thumbprint,
                                     KeyId = key.Kid,
                                     Key = key
                                 });
@@ -268,14 +267,13 @@ namespace FoxIDs.Client.Pages
                         generalSamlUpParty.KeyInfoList.Clear();
                         foreach (var key in afterMap.Keys)
                         {
-                            var certificate = new MTokens.JsonWebKey(key.JsonSerialize()).ToX509Certificate();
                             generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                             {
-                                Subject = certificate.Subject,
-                                ValidFrom = certificate.NotBefore,
-                                ValidTo = certificate.NotAfter,
-                                IsValid = certificate.IsValid(),
-                                Thumbprint = certificate.Thumbprint,
+                                Subject = key.CertificateInfo.Subject,
+                                ValidFrom = key.CertificateInfo.ValidFrom,
+                                ValidTo = key.CertificateInfo.ValidTo,
+                                IsValid = key.CertificateInfo.IsValid(),
+                                Thumbprint = key.CertificateInfo.Thumbprint,
                                 Key = key
                             });
                         }

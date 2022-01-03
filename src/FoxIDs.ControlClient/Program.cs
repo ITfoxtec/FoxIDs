@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using FoxIDs.Client.Infrastructure.Hosting;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FoxIDs.Client
 {
@@ -10,7 +11,7 @@ namespace FoxIDs.Client
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            builder.RootComponents.Add<App>("#app");
             ConfigureServices(builder.Services, builder.Configuration, builder.HostEnvironment);
    
             await builder.Build().RunAsync();

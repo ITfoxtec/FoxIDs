@@ -67,10 +67,8 @@ namespace FoxIDs.SeedTool.SeedLogic
         {
             var client = httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-            using (var response = await client.UpdateJsonAsync(PasswordRiskListApiEndpoint, new RiskPasswordRequestApiModel { RiskPasswords = riskPasswords }))
-            {
-                await response.ValidateResponseAsync();
-            }
+            using var response = await client.UpdateJsonAsync(PasswordRiskListApiEndpoint, new RiskPasswordRequestApiModel { RiskPasswords = riskPasswords });
+            await response.ValidateResponseAsync();
         }
     }
 }

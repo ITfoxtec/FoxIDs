@@ -89,7 +89,7 @@ namespace FoxIDs.Models.Api
         public string LoggedOutUrl { get; set; }
 
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
-        public List<JsonWebKey> Keys { get; set; }
+        public List<JwtWithCertificateInfo> Keys { get; set; }
 
         public bool SignMetadata { get; set; }
 

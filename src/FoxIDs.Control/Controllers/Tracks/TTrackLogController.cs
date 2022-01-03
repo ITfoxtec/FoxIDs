@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
                 logRequest.QueryEvents = true;
             }
 
-            var httpClient = httpClientFactory.CreateClient();
+            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, await GetAccessToken());
 
             var from = DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime);

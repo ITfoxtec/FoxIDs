@@ -78,41 +78,36 @@ namespace FoxIDs.Logic
 
         protected async Task<OidcDiscovery> GetOidcDiscoveryAsync(string oidcDiscoveryUrl)
         {
-            var httpClient = httpClientFactory.CreateClient();
-            using (var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, oidcDiscoveryUrl)))
+            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, oidcDiscoveryUrl));
+            // Handle the response
+            switch (response.StatusCode)
             {
-                // Handle the response
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.OK:
-                        var result = await response.Content.ReadAsStringAsync();
-                        var oidcDiscovery = result.ToObject<OidcDiscovery>();
-                        return oidcDiscovery;
+                case HttpStatusCode.OK:
+                    var result = await response.Content.ReadAsStringAsync();
+                    var oidcDiscovery = result.ToObject<OidcDiscovery>();
+                    return oidcDiscovery;
 
-                    default:
-                        throw new Exception($"Status Code OK expected. StatusCode={response.StatusCode}..");
-                }
+                default:
+                    throw new Exception($"Status Code OK expected. Unable to read OIDC Discovery '{oidcDiscoveryUrl}'. StatusCode={response.StatusCode}..");
             }
         }
 
         protected async Task<JsonWebKeySet> GetOidcDiscoveryKeysAsync(string jwksUri)
         {
-            var httpClient = httpClientFactory.CreateClient();
-            using (var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, jwksUri)))
+            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            using var response = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, jwksUri));
+            // Handle the response
+            switch (response.StatusCode)
             {
-                // Handle the response
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.OK:
-                        var result = await response.Content.ReadAsStringAsync();
-                        var jsonWebKeySet = result.ToObject<JsonWebKeySet>();
-                        return jsonWebKeySet;
+                case HttpStatusCode.OK:
+                    var result = await response.Content.ReadAsStringAsync();
+                    var jsonWebKeySet = result.ToObject<JsonWebKeySet>();
+                    return jsonWebKeySet;
 
-                    default:
-                        throw new Exception($"Status Code OK expected. StatusCode={response.StatusCode}.");
-                }
+                default:
+                    throw new Exception($"Status Code OK expected. StatusCode={response.StatusCode}.");
             }
         }
-
     }
 }

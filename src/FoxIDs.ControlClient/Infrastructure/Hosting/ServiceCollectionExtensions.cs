@@ -38,6 +38,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddScoped<DownPartyService>();
             services.AddScoped<UpPartyService>();
             services.AddScoped<UserService>();
+            services.AddScoped<HelpersService>();            
 
             services.AddScoped<RiskPasswordService>();
 
@@ -62,7 +63,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddTenantOpenidConnectPkce();
             services.AddTransient<CheckResponseMessageHandler>();
 
-            services.AddFileReaderService(options => options.UseWasmSharedBuffer = true);
+            services.AddFileReaderService(options => options.UseWasmSharedBuffer = false);
 
             return services;
         }
@@ -75,7 +76,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
 
             services.AddSingleton<OpenidConnectPkceSettings>();
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
-            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<HttpClient>()));
+            services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
 
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
             services.AddTransient<AccessTokenMessageHandler>();

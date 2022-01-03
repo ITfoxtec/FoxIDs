@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.156
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs", "src\FoxIDs\FoxIDs.csproj", "{82C6C190-C560-4A25-94C4-BF8233D5043C}"
 EndProject
@@ -141,8 +141,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\upload-risk-passwords.png = docs\images\upload-risk-passwords.png
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -181,10 +179,6 @@ Global
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -199,7 +193,6 @@ Global
 		{56C8921F-64BA-4AD0-A2EA-BAE0A183269F} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{CB88126F-3F28-4511-93E1-2454E239E9C7} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
-		{4A6F1993-D5A6-4CC2-910D-88469B8F3A9A} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

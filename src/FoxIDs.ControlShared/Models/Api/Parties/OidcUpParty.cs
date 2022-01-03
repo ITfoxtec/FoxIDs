@@ -30,7 +30,7 @@ namespace FoxIDs.Models.Api
         public List<string> Issuers { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
-        public List<JsonWebKey> Keys { get; set; }
+        public List<JwtWithCertificateInfo> Keys { get; set; }
 
         /// <summary>
         /// Default 10 hours.

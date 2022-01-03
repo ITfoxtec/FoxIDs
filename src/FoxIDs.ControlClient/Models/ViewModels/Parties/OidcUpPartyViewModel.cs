@@ -39,7 +39,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string FirstIssuer { get { return Issuers?.FirstOrDefault(); } set {} }
 
         [Display(Name = "Keys")]
-        public List<JsonWebKey> Keys { get; set; }
+        public List<JwtWithCertificateInfo> Keys { get; set; }
 
         /// <summary>
         /// Default 10 hours.

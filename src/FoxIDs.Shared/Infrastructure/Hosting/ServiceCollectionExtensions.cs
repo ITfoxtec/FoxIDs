@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
 using System;
+using System.Net.Http;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -43,6 +44,13 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<TelemetryScopedStreamLogger>();
             services.AddScoped<TelemetryScopedLogger>();
             services.AddScoped<TelemetryScopedProperties>();
+
+            services.AddHttpContextAccessor();
+            services.AddHttpClient(nameof(HttpClient), options => 
+            { 
+                options.MaxResponseContentBufferSize = 500000; // 500kB 
+                options.Timeout = TimeSpan.FromSeconds(30);
+            });
 
             return services;
         }

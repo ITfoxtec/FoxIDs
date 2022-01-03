@@ -327,7 +327,7 @@ namespace FoxIDs.Logic
             var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
             request.Content = new FormUrlEncodedContent(requestDictionary);
 
-            var response = await httpClientFactory.CreateClient().SendAsync(request);
+            using var response = await httpClientFactory.CreateClient(nameof(HttpClient)).SendAsync(request);
             switch (response.StatusCode)
             {
                 case HttpStatusCode.OK:

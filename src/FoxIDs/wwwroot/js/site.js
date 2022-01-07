@@ -33,6 +33,21 @@
     }
     setInterval(browserValueCheck, 100);
 
+    function setDisableOnSubmit() {
+        $("form").submit(function (event) {
+            if (!this.submitDisable) {
+                if ($(this).valid()) {
+                    $("input[type=submit]", this).attr("disabled", true);
+                    this.submitDisable = true;
+                }
+            }
+            else {
+                event.preventDefault();
+            }
+        });
+    }
+    setDisableOnSubmit();
+
 })();
 
 

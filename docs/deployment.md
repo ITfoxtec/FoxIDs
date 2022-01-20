@@ -65,7 +65,7 @@ Custom domains are configured in Azure portal on the FoxIDs App Service and the 
 
 Additionally primary custom domain configuration:
 
-1) First login to the FoxIDs Control client using the default/old primary domain. Select the `Parties` menu and under `Down Parties` select click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
+1) First login to the FoxIDs Control client using the default/old primary domain. Select the `Parties` menu and under `Down-parties` select click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
 
 - Add the FoxIDs Control sites new primary custom domain to the `Allow CORS origins` list without a trailing slash.
 - Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.

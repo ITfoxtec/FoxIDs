@@ -1,7 +1,6 @@
 **FoxIDs is a free and open source Identity Services (IDS) supporting: login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.**
 
-FoxIDs can at the same time work as both an authentication platform and a security broker. Furthermore, FoxIDs support converting between SAML 2.0 and OpenID Connect.
-
+FoxIDs can at the same time work as both an authentication platform and a security broker where FoxIDs support converting between SAML 2.0, OpenID Connect 1.0 and OAuth 2.0.
 
 
 > FoxIDs version 1.0, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
@@ -14,9 +13,9 @@ FoxIDs consist of two services:
 FoxIDs support Cloud and Private Cloud deployment:
 
 - FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).
-- Install FoxIDs for free in Microsoft Azure as your own [private cloud](getting-started.md#foxids-private-cloud).
+- You is free to install FoxIDs as your own [private cloud](getting-started.md#foxids-private-cloud) in a Microsoft Azure tenant.
 
-> FoxIDs is .NET 6.0 and the FoxIDs Control Client is Blazor .NET 6.0.
+> FoxIDs build on .NET 6.0 and the FoxIDs Control Client is Blazor.
 
 ## Free and Open Source
 
@@ -32,43 +31,42 @@ You are otherwise welcome to use [support@itfoxtec.com](mailto:support@itfoxtec.
 
 ## How FoxIDs works
 
-FoxIDs is a multi-tenant system designed to be deployed in the Azure cloud. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant. Or to be deployed in a company's Azure subscription where only one tenant is configured in FoxIDs holding the company's entire security service.
-
-FoxIDs is deployed in two App Services which expose:
-
-- FoxIDs, the identity service which handles all the security requests and user authentication
-- [FoxIDs Control](control.md), the administration application and API in which FoxIDs is configured
-
-Both is exposed as websites where the [domains can be customized](development.md#customized-domains). FoxIDs also relay on a number of backend service, please see [development](development.md) for details.
+FoxIDs is a multi-tenant system designed to be deployed in Azure. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant.  
+Or to be deployed in a company's Azure subscription where usually only one tenant is configured in FoxIDs holding the company's entire security service.  
+In some cases, it can be an advantage to configure several tenants to e.g., separate a large number of external connections.
 
 ### Structure
 
 FoxIDs is divided into logical elements.
 
-- **Tenant** contain the company, organization, individual etc. security service. A tenant contains the tracks.
-- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](login.md#user-repository), a unique [certificate](certificates.md) and a track contains the up parties and down parties.
-- **Up-party** is a upwards trust / federation or login configuration. Currently support: login (one view with both username and password) and SAML 2.0. Future support: OpenID Connect and two step login (two views separating the username and password input). 
-- **Down-party** is a downward application configuration. Currently support: OpenID Connect (secret or PKCE), OAuth 2.0 API and SAML 2.0.
+- **Tenant** contain the company, organization, individual etc. security service. A tenant contains tracks.
+- **Track** is a production, QA, test etc. environment. Each track contains a [user repository](login.md#user-repository), a unique [certificate](certificates.md) and a track contains the up-parties and down-parties.  
+In some cases, it can be an advantage to place external connections in a separate tracks to configure connections specific certificates or log levels.
+- **Up-party** is a upwards trust / federation or login configuration. Currently support: [login](login.md), [OpenID Connect 1.0](oidc.md#up-party) and [SAML 2.0](saml-2.0.md#up-party).
+- **Down-party** is a downward application configuration. Currently support: [OAuth 2.0](oauth-2.0.md#down-party), [OpenID Connect 1.0](oidc.md#down-party) and [SAML 2.0](saml-2.0.md#down-party).
 
 ![FoxIDs structure](images/structure.svg)
 
-**FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users, up parties and down parties in a track.**
+**FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users and unlimited up-parties and down-parties in a track.**
 
 ### Separation
-The structure is used to separate the different tenants, tracks and parties. 
+The structure is used to separate the different tenants, tracks and [parties](parties.md). 
 
-If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first folder of the URL `https://foxidsxxxx.com/tenant-x/`. The tracks are separated in the second folder of the URL `https://foxidsxxxx.com/tenant-x/track-y/` under each tenant.
+If the FoxIDs is hosted on `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
+The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/track-y/`.
 
-A down-party is call by adding the down-party name as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
-A up-party is call by adding the up-party name insight round brackets as the third folder in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. If FoxIDs handles a up-party sequence like e.g. user authentication the same URL notation is used thus locking the session cookie to the URL. 
+A down-party is call by adding the down-party name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
+A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
+If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to locking the cookie to the URL.
 
-A client (application) starting an OAuth 2.0, OpenID Connect or SAML 2.0 login sequence would like to specify in which up-party the user should authenticate. The resulting up-party is specified by adding the up-party name in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
+A client (application) starting an OpenID Connect or SAML 2.0 login sequence would like to specify in which up-party the user should authenticate. 
+The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
-> The allowed up parties for a down-party is configured for each down-party in FoxIDs Control.
+> The allowed up-parties for a down-party is configured for each down-party in [FoxIDs Control Client](control.md#foxids-control-client).
 
-Selecting multiple up parties *(future support)*:
+Selecting multiple up-parties *(future support)*:
 
-- Select all up parties allowed for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
-- Select a maximum of 5 up parties allowed for a down-party by adding the up parties as a comma separated list in round brackets in the URL after the down-party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
+- Select all up-parties allowed for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
+- Select a maximum of 5 up-parties allowed for a down-party by adding the up-parties as a comma separated list in round brackets in the URL after the down-party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
 
 A client which use client credentials as authorization grant would not specify the up-party. It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

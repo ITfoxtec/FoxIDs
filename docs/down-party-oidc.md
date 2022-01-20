@@ -50,7 +50,7 @@ A confidant client could be a web application where the security is handled by t
 A public client could be a browser-based riches client, Blazor client or mobile app. The application should use PKCE and not a client secret.
 
 - Specify client name in down-party name.
-- Select allowed up parties.
+- Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
 - Select `code` as response type.
@@ -65,7 +65,7 @@ A public client could be a web application where the security is handled by the 
 *It is not recommended to use Implicit Code Flow because it is insecure.*
 
 - Specify client name in down-party name.
-- Select allowed up parties.
+- Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
 - Select `token id_token` as response type or possible only `token`.

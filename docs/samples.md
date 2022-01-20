@@ -1,9 +1,8 @@
 # Samples
-The samples for FoxIDs show login and logout with OAuth 2.0, OpenID Connect 1.0, SAML 2.0 and API call with OAuth 2.0. The samples is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
+The samples for FoxIDs show login and logout with OpenID Connect 1.0 and SAML 2.0 and API call secured with OAuth 2.0. The samples is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
 
-> The samples are pre configured in the [FoxIDs.com test track](#foxidscom-test-track-for-samples) and can immediately run in Visual Studio, or you can configure the [samples in your one FoxIDs track](#configure-samples-in-foxids-track).
-
-> The samples can be run locally in Visual Studio on the configured localhost ports. All sample applications will open in a browser tap except the [API sample](#aspnetcoreapi1sample).
+> The samples are pre configured in the [FoxIDs.com test track](#foxidscom-test-tenant-for-samples) and can immediately run locally in Visual Studio on the pre configured localhost ports.   
+You can also configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
 
 ## Sample applications
 

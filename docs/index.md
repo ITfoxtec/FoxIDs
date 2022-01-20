@@ -12,8 +12,9 @@ FoxIDs consist of two services:
 
 FoxIDs support Cloud and Private Cloud deployment:
 
-- FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).
-- You is free to install FoxIDs as your own [private cloud](getting-started.md#foxids-private-cloud) in a Microsoft Azure tenant.
+- FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
+[FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland.
+- You is free to [deploy](deployment.md) FoxIDs as your own private cloud in a Microsoft Azure tenant.
 
 > FoxIDs build on .NET 6.0 and the FoxIDs Control Client is Blazor.
 

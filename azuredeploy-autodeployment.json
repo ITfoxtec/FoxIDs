@@ -473,7 +473,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots/sourcecontrols",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-02-01",
       "name": "[concat(variables('foxidsSiteName'), '/test/web')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsSiteName'))]",
@@ -485,7 +485,7 @@
         "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--Sendgrid--ApiKey')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('repoURL')]",
+        "repoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
         "IsManualIntegration": false,
         "deploymentRollbackEnabled": true
@@ -493,7 +493,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots/sourcecontrols",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-02-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test/web')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
@@ -505,7 +505,7 @@
         "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('keyVaultName'), 'Settings--Sendgrid--ApiKey')]"
       ],
       "properties": {
-        "RepoUrl": "[parameters('repoURL')]",
+        "repoUrl": "[parameters('repoURL')]",
         "branch": "[parameters('branch')]",
         "IsManualIntegration": false,
         "deploymentRollbackEnabled": true

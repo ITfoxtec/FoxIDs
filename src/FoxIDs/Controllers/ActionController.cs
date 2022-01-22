@@ -42,6 +42,7 @@ namespace FoxIDs.Controllers
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
 
                 return View(new ConfirmationViewModel
                 {
@@ -65,6 +66,7 @@ namespace FoxIDs.Controllers
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -97,6 +99,7 @@ namespace FoxIDs.Controllers
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -126,6 +129,7 @@ namespace FoxIDs.Controllers
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
@@ -158,6 +162,7 @@ namespace FoxIDs.Controllers
 
                 var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
                 securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                 if (uiLoginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");

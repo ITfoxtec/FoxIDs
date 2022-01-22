@@ -90,7 +90,7 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"img-src 'self' data: 'unsafe-inline' {allowImgSrcDomains.Select(d => d.DomainToOrigin()).ToSpaceList()};";
+                    return $"img-src 'self' 'unsafe-inline' {allowImgSrcDomains.Select(d => d.DomainToOrigin()).ToSpaceList()};";
                 }
             }
 

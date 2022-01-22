@@ -65,13 +65,13 @@
 			<text x="4" y="274.14" class="st2">User repository <tspan x="4" dy="1.2em" class="st6">(unlimited users)</tspan></text>		</g>
 		<g id="shape14-29" transform="translate(20.0826,-243.793)">
 			<title>Rectangle.14</title>
-			<desc>Up Parties (unlimited)</desc>
+			<desc>Up-parties (unlimited)</desc>
 			<rect x="0" y="304.658" width="205.164" height="24.3013" class="st5"/>
-			<text x="4" y="319.46" class="st2">Up Parties (unlimited)</text>		</g>
+			<text x="4" y="319.46" class="st2">Up-parties (unlimited)</text>		</g>
 		<g id="shape15-32" transform="translate(20.0826,-214.278)">
 			<title>Rectangle.15</title>
-			<desc>Down Parties (unlimited)</desc>
+			<desc>Down-parties (unlimited)</desc>
 			<rect x="0" y="304.658" width="205.164" height="24.3013" class="st5"/>
-			<text x="4" y="319.46" class="st2">Down Parties (unlimited)</text>		</g>
+			<text x="4" y="319.46" class="st2">Down-parties (unlimited)</text>		</g>
 	</g>
 </svg>

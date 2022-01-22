@@ -8,7 +8,7 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
 
  1. Select show advanced settings
  4. Add the bowser title text
- 4. Add the bowser icon URL to an external site, supported image formats: ico, png, gif, jpeg and webp
+ 4. Add the bowser icon URL from an external site, supported image formats: ico, png, gif, jpeg and webp
  2. Add the CSS to the CSS field, if necessary drag the field bigger
  5. Click Update
 
@@ -18,7 +18,7 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
 
  ## CSS examples
 
- Change background and add logo text. It is also possible to add a logo icon.
+ Change background and add logo text. It is also possible to add a logo image.
 
     body {
         background: #7c8391;
@@ -35,6 +35,19 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
     }
 
 ![Configure background and add logo with CSS](images/configure-login-css-backbround-logo.png)    
+
+Add a background image from an external site.
+
+    body {
+        background: #FFF;
+        background: url(https://some-external-site.com/image.png);
+        background-position: no-repeat center center fixed;
+        background-color: inherit;
+        background-repeat: no-repeat;
+        background-size:cover;
+    }
+
+![Configure background image](images/configure-login-css-backbround-image.png)   
 
  Add information to the login box.
 

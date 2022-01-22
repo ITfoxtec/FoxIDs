@@ -64,6 +64,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 var validSession = ValidSession(sequenceData, session);
@@ -144,6 +145,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -304,6 +306,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var session = await sessionLogic.GetSessionAsync(loginUpParty);
                 if (session == null)
@@ -344,6 +347,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -447,6 +451,7 @@ namespace FoxIDs.Controllers
             {
                 loginUpParty = loginUpParty ?? await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 logger.ScopeTrace(() => "Show logged out dialog.");
                 return View("loggedOut", new LoggedOutViewModel { Title = loginUpParty.Title, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
             }
@@ -462,6 +467,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 if (!loginUpParty.EnableCreateUser)
                 {
                     throw new InvalidOperationException("Create user not enabled.");
@@ -493,6 +499,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 if (!loginUpParty.EnableCreateUser)
                 {
                     throw new InvalidOperationException("Create user not enabled.");
@@ -596,6 +603,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSession(sequenceData, session);
@@ -627,6 +635,7 @@ namespace FoxIDs.Controllers
                 CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 Func<IActionResult> viewError = () =>
                 {

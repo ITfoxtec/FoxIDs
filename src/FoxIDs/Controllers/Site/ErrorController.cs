@@ -67,6 +67,7 @@ namespace FoxIDs.Controllers
                         {
                             var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(sequence.UiUpPartyId);
                             securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                            securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                             errorViewModel.Title = uiLoginUpParty.Title;
                             errorViewModel.IconUrl = uiLoginUpParty.IconUrl;
                             errorViewModel.Css = uiLoginUpParty.Css;

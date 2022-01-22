@@ -2,11 +2,15 @@
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace FoxIDs.Logic
 {
     public class SecurityHeaderLogic : LogicBase
     {
+        private const int domainsMaxCount = 20;
+        private static Regex urlsInTextRegex = new Regex(@"https:\/\/[\w/\-?=%.]+\.[\w/\-&?=%.]+", RegexOptions.Compiled);
+
         public SecurityHeaderLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }
 
@@ -29,6 +33,23 @@ namespace FoxIDs.Logic
                 var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.ImgSrcDomains) ? HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] as List<string> : new List<string>();
                 domains = AddUrlToDomains(domains, url);
                 HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] = domains;
+            }
+        }
+
+        public void AddImgSrcFromCss(string css)
+        {
+            if (!css.IsNullOrWhiteSpace())
+            {
+                var domains = HttpContext.Items.ContainsKey(Constants.SecurityHeader.ImgSrcDomains) ? HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] as List<string> : new List<string>();
+                if (domains.Count() <= domainsMaxCount)
+                {
+                    var urlMatchs = urlsInTextRegex.Matches(css);
+                    foreach (Match urlMatch in urlMatchs)
+                    {
+                        domains = AddUrlToDomains(domains, urlMatch.Value);
+                    }
+                    HttpContext.Items[Constants.SecurityHeader.ImgSrcDomains] = domains;
+                }
             }
         }
 
@@ -129,8 +150,11 @@ namespace FoxIDs.Logic
 
         private List<string> AddUrlToDomains(List<string> domains, string url)
         {
-            var domain = url.UrlToDomain();
-            domains = domains.ConcatOnce(domain);
+            if (domains.Count <= domainsMaxCount)
+            {
+                var domain = url.UrlToDomain();
+                domains = domains.ConcatOnce(domain);
+            }
             return domains;
         }
     }

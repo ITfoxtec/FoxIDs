@@ -20,18 +20,18 @@ namespace FoxIDs.Client.Services
         public async Task<IEnumerable<UpParty>> FilterUpPartyAsync(string filterName) => await FilterAsync<UpParty>(filterApiUri, filterName);
 
         public async Task<LoginUpParty> GetLoginUpPartyAsync(string name) => await GetAsync<LoginUpParty>(loginApiUri, name);
-        public async Task CreateLoginUpPartyAsync(LoginUpParty party) => await PostAsync(loginApiUri, party);
-        public async Task UpdateLoginUpPartyAsync(LoginUpParty party) => await PutAsync(loginApiUri, party);
+        public async Task<LoginUpParty> CreateLoginUpPartyAsync(LoginUpParty party) => await PostResponseAsync<LoginUpParty, LoginUpParty>(loginApiUri, party);
+        public async Task<LoginUpParty> UpdateLoginUpPartyAsync(LoginUpParty party) => await PutResponseAsync<LoginUpParty, LoginUpParty>(loginApiUri, party);
         public async Task DeleteLoginUpPartyAsync(string name) => await DeleteAsync(loginApiUri, name);
 
         public async Task<OidcUpParty> GetOidcUpPartyAsync(string name) => await GetAsync<OidcUpParty>(oidcApiUri, name);
-        public async Task CreateOidcUpPartyAsync(OidcUpParty party) => await PostAsync(oidcApiUri, party);
-        public async Task UpdateOidcUpPartyAsync(OidcUpParty party) => await PutAsync(oidcApiUri, party);
+        public async Task<OidcUpParty> CreateOidcUpPartyAsync(OidcUpParty party) => await PostResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
+        public async Task<OidcUpParty> UpdateOidcUpPartyAsync(OidcUpParty party) => await PutResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
         public async Task DeleteOidcUpPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
 
         public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);
-        public async Task CreateSamlUpPartyAsync(SamlUpParty party) => await PostAsync(samlApiUri, party);
-        public async Task UpdateSamlUpPartyAsync(SamlUpParty party) => await PutAsync(samlApiUri, party);
+        public async Task<SamlUpParty> CreateSamlUpPartyAsync(SamlUpParty party) => await PostResponseAsync<SamlUpParty, SamlUpParty>(samlApiUri, party);
+        public async Task<SamlUpParty> UpdateSamlUpPartyAsync(SamlUpParty party) => await PutResponseAsync<SamlUpParty, SamlUpParty>(samlApiUri, party);
         public async Task DeleteSamlUpPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
 
         public async Task<SamlUpParty> ReadSamlUpPartyMetadataAsync(SamlReadMetadataRequest metadata) => await PostResponseAsync<SamlReadMetadataRequest, SamlUpParty>(samlReadMetadataApiUri, metadata);

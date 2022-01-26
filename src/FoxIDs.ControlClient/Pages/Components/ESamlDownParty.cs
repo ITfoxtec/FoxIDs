@@ -15,6 +15,7 @@ using BlazorInputFile;
 using System.Security.Claims;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Components;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -22,6 +23,60 @@ namespace FoxIDs.Client.Pages.Components
     {
         [Inject]
         public HelpersService HelpersService { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!DownParty.CreateMode)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                var generalSamlDownParty = DownParty as GeneralSamlDownPartyViewModel;
+                var samlDownParty = await DownPartyService.GetSamlDownPartyAsync(DownParty.Name);
+                await generalSamlDownParty.Form.InitAsync(ToViewModel(generalSamlDownParty, samlDownParty));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                DownParty.Error = ex.Message;
+            }
+        }
+
+        private SamlDownPartyViewModel ToViewModel(GeneralSamlDownPartyViewModel generalSamlDownParty, SamlDownParty samlDownParty)
+        {
+            return samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
+            {
+                generalSamlDownParty.KeyInfoList.Clear();
+                if (afterMap.Keys?.Count() > 0)
+                {
+                    foreach (var key in afterMap.Keys)
+                    {
+                        generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            Subject = key.CertificateInfo.Subject,
+                            ValidFrom = key.CertificateInfo.ValidFrom,
+                            ValidTo = key.CertificateInfo.ValidTo,
+                            Thumbprint = key.CertificateInfo.Thumbprint,
+                            Key = key
+                        });
+                    }
+                }
+
+                if (afterMap.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                }
+            });
+        }
 
         private void SamlDownPartyViewModelAfterInit(GeneralSamlDownPartyViewModel samlDownParty, SamlDownPartyViewModel model)
         {
@@ -121,15 +176,16 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalSamlDownParty.CreateMode)
                 {
-                    await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
+                    var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
+                    generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
+                    generalSamlDownParty.CreateMode = false;
                 }
                 else
                 {
-                    await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
+                    var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
+                    generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
                 }
                 generalSamlDownParty.Name = generalSamlDownParty.Form.Model.Name;
-                generalSamlDownParty.Edit = false;
-                await OnStateHasChanged.InvokeAsync(DownParty);
             }
             catch (FoxIDsApiException ex)
             {

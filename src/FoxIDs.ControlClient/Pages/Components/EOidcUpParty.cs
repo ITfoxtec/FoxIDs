@@ -10,12 +10,98 @@ using Microsoft.AspNetCore.Components.Forms;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
+using MTokens = Microsoft.IdentityModel.Tokens;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcUpParty : UpPartyBase
     {
         protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!UpParty.CreateMode)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                var generalOidcUpParty = UpParty as GeneralOidcUpPartyViewModel;
+                var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(UpParty.Name);
+                await generalOidcUpParty.Form.InitAsync(ToViewModel(generalOidcUpParty, oidcUpParty));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                UpParty.Error = ex.Message;
+            }
+        }
+
+        private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty)
+        {
+            return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
+            {
+                if (oidcUpParty.UpdateState == PartyUpdateStates.Manual)
+                {
+                    afterMap.IsManual = true;
+                }
+
+                if (oidcUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
+                {
+                    afterMap.AutomaticStopped = true;
+                }
+                else
+                {
+                    afterMap.AutomaticStopped = false;
+                }
+
+                afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
+                if (oidcUpParty.Client != null)
+                {
+                    afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
+                }
+
+                generalOidcUpParty.KeyInfoList.Clear();
+                foreach (var key in afterMap.Keys)
+                {
+                    if (key.Kty == MTokens.JsonWebAlgorithmsKeyTypes.RSA && key.X5c?.Count >= 1)
+                    {
+                        generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            Subject = key.CertificateInfo.Subject,
+                            ValidFrom = key.CertificateInfo.ValidFrom,
+                            ValidTo = key.CertificateInfo.ValidTo,
+                            IsValid = key.CertificateInfo.IsValid(),
+                            Thumbprint = key.CertificateInfo.Thumbprint,
+                            KeyId = key.Kid,
+                            Key = key
+                        });
+                    }
+                    else
+                    {
+                        generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            KeyId = key.Kid,
+                            Key = key
+                        });
+                    }
+                }
+
+                if (afterMap.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                }
+            });
+        }
 
         private void OidcUpPartyViewModelAfterInit(GeneralOidcUpPartyViewModel oidcUpParty, OidcUpPartyViewModel model)
         {
@@ -58,16 +144,17 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalOidcUpParty.CreateMode)
                 {
-                    await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty);
+                    var oidcUpPartyResult = await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty);
+                    generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult));
+                    generalOidcUpParty.CreateMode = false;
                 }
                 else
                 {
-                    await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
+                    var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
+                    generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult));
                 }
 
                 generalOidcUpParty.Name = generalOidcUpParty.Form.Model.Name;
-                generalOidcUpParty.Edit = false;
-                await OnStateHasChanged.InvokeAsync(UpParty);
             }
             catch (FoxIDsApiException ex)
             {

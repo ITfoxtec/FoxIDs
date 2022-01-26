@@ -214,6 +214,6 @@
         {
             <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
         }
-        <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>

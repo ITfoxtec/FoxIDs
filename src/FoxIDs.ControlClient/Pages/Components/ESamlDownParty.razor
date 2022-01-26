@@ -177,6 +177,6 @@
             <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
         }
         <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Cancel</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>

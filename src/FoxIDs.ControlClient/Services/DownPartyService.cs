@@ -21,8 +21,8 @@ namespace FoxIDs.Client.Services
         public async Task<IEnumerable<DownParty>> FilterDownPartyAsync(string filterName) => await FilterAsync<DownParty>(filterApiUri, filterName);
 
         public async Task<OidcDownParty> GetOidcDownPartyAsync(string name) => await GetAsync<OidcDownParty>(oidcApiUri, name);
-        public async Task CreateOidcDownPartyAsync(OidcDownParty party) => await PostAsync(oidcApiUri, party);
-        public async Task UpdateOidcDownPartyAsync(OidcDownParty party) => await PutAsync(oidcApiUri, party);
+        public async Task<OidcDownParty> CreateOidcDownPartyAsync(OidcDownParty party) => await PostResponseAsync<OidcDownParty, OidcDownParty>(oidcApiUri, party);
+        public async Task<OidcDownParty> UpdateOidcDownPartyAsync(OidcDownParty party) => await PutResponseAsync<OidcDownParty, OidcDownParty>(oidcApiUri, party);
         public async Task DeleteOidcDownPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
 
         public async Task<List<OAuthClientSecretResponse>> GetOidcClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName: nameof(partyName));
@@ -30,8 +30,8 @@ namespace FoxIDs.Client.Services
         public async Task DeleteOidcClientSecretDownPartyAsync(string name) => await DeleteAsync(oidcclientsecretApiUri, name);
 
         public async Task<OAuthDownParty> GetOAuthDownPartyAsync(string name) => await GetAsync<OAuthDownParty>(oauthApiUri, name);
-        public async Task CreateOAuthDownPartyAsync(OAuthDownParty party) => await PostAsync(oauthApiUri, party);
-        public async Task UpdateOAuthDownPartyAsync(OAuthDownParty party) => await PutAsync(oauthApiUri, party);
+        public async Task<OAuthDownParty> CreateOAuthDownPartyAsync(OAuthDownParty party) => await PostResponseAsync<OAuthDownParty, OAuthDownParty>(oauthApiUri, party);
+        public async Task<OAuthDownParty> UpdateOAuthDownPartyAsync(OAuthDownParty party) => await PutResponseAsync<OAuthDownParty, OAuthDownParty>(oauthApiUri, party);
         public async Task DeleteOAuthDownPartyAsync(string name) => await DeleteAsync(oauthApiUri, name);
 
         public async Task<List<OAuthClientSecretResponse>> GetOAuthClientSecretDownPartyAsync(string partyName) => await GetAsync<List<OAuthClientSecretResponse>>(oauthclientsecretApiUri, partyName, parmName: nameof(partyName));
@@ -39,8 +39,8 @@ namespace FoxIDs.Client.Services
         public async Task DeleteOAuthClientSecretDownPartyAsync(string name) => await DeleteAsync(oauthclientsecretApiUri, name);
 
         public async Task<SamlDownParty> GetSamlDownPartyAsync(string name) => await GetAsync<SamlDownParty>(samlApiUri, name);
-        public async Task CreateSamlDownPartyAsync(SamlDownParty party) => await PostAsync(samlApiUri, party);
-        public async Task UpdateSamlDownPartyAsync(SamlDownParty party) => await PutAsync(samlApiUri, party);
+        public async Task<SamlDownParty> CreateSamlDownPartyAsync(SamlDownParty party) => await PostResponseAsync<SamlDownParty, SamlDownParty>(samlApiUri, party);
+        public async Task<SamlDownParty> UpdateSamlDownPartyAsync(SamlDownParty party) => await PutResponseAsync<SamlDownParty, SamlDownParty>(samlApiUri, party);
         public async Task DeleteSamlDownPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
     }
 }

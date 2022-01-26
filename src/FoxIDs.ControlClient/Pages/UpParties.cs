@@ -11,9 +11,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
-using ITfoxtec.Identity;
-using MTokens = Microsoft.IdentityModel.Tokens;
-using System.Net.Http;
 
 namespace FoxIDs.Client.Pages
 {
@@ -129,170 +126,13 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task ShowUpdateUpPartyAsync(GeneralUpPartyViewModel upParty)
+        private void ShowUpdateUpParty(GeneralUpPartyViewModel upParty)
         {
             upParty.CreateMode = false;
             upParty.DeleteAcknowledge = false;
             upParty.ShowAdvanced = false;
             upParty.Error = null;
-            upParty.Edit = true;
-            if (upParty.Type == PartyTypes.Login)
-            {
-                try
-                {
-                    var generalLoginUpParty = upParty as GeneralLoginUpPartyViewModel;
-                    var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(upParty.Name);
-                    await generalLoginUpParty.Form.InitAsync(loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap =>
-                    {
-                        afterMap.EnableSingleLogout = !loginUpParty.DisableSingleLogout;
-                        afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword;
-
-                        if (afterMap.ClaimTransforms?.Count > 0)
-                        {
-                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
-                        }
-                    }));
-                }
-                catch (TokenUnavailableException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (HttpRequestException ex)
-                {
-                    upParty.Error = ex.Message;
-                }
-            }
-            else if (upParty.Type == PartyTypes.Oidc)
-            {
-                try
-                {
-                    var generalOidcUpParty = upParty as GeneralOidcUpPartyViewModel;
-                    var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(upParty.Name);
-                    await generalOidcUpParty.Form.InitAsync(oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
-                    {
-                        if (oidcUpParty.UpdateState == PartyUpdateStates.Manual)
-                        {
-                            afterMap.IsManual = true;
-                        }
-
-                        if (oidcUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
-                        {
-                            afterMap.AutomaticStopped = true;
-                        }
-                        else
-                        {
-                            afterMap.AutomaticStopped = false;
-                        }
-
-                        afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
-                        if (oidcUpParty.Client != null)
-                        {
-                            afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
-                        }
-
-                        generalOidcUpParty.KeyInfoList.Clear();
-                        foreach (var key in afterMap.Keys)
-                        {
-                            if (key.Kty == MTokens.JsonWebAlgorithmsKeyTypes.RSA && key.X5c?.Count >= 1)
-                            {
-                                generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
-                                {
-                                    Subject = key.CertificateInfo.Subject,
-                                    ValidFrom = key.CertificateInfo.ValidFrom,
-                                    ValidTo = key.CertificateInfo.ValidTo,
-                                    IsValid = key.CertificateInfo.IsValid(),
-                                    Thumbprint = key.CertificateInfo.Thumbprint,
-                                    KeyId = key.Kid,
-                                    Key = key
-                                });
-                            }
-                            else
-                            {
-                                generalOidcUpParty.KeyInfoList.Add(new KeyInfoViewModel
-                                {
-                                    KeyId = key.Kid,
-                                    Key = key
-                                });
-                            }
-                        }
-
-                        if (afterMap.ClaimTransforms?.Count > 0)
-                        {
-                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
-                        }
-                    }));
-                }
-                catch (TokenUnavailableException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (HttpRequestException ex)
-                {
-                    upParty.Error = ex.Message;
-                }
-            }
-            else if (upParty.Type == PartyTypes.Saml2)
-            {
-                try
-                {
-                    var generalSamlUpParty = upParty as GeneralSamlUpPartyViewModel;
-                    var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(upParty.Name);
-                    await generalSamlUpParty.Form.InitAsync(samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
-                    {
-                        if (samlUpParty.UpdateState == PartyUpdateStates.Manual)
-                        {
-                            afterMap.IsManual = true;
-                        }
-
-                        if (samlUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
-                        {
-                            afterMap.AutomaticStopped = true;
-                        }
-                        else
-                        {
-                            afterMap.AutomaticStopped = false;
-                        }
-
-                        afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
-
-                        if (samlUpParty.AuthnContextComparison.HasValue)
-                        {
-                            afterMap.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), samlUpParty.AuthnContextComparison.Value.ToString());
-                        }
-                        else
-                        {
-                            afterMap.AuthnContextComparisonViewModel = SamlAuthnContextComparisonTypesVievModel.Null;
-                        }                       
-                        
-                        generalSamlUpParty.KeyInfoList.Clear();
-                        foreach (var key in afterMap.Keys)
-                        {
-                            generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
-                            {
-                                Subject = key.CertificateInfo.Subject,
-                                ValidFrom = key.CertificateInfo.ValidFrom,
-                                ValidTo = key.CertificateInfo.ValidTo,
-                                IsValid = key.CertificateInfo.IsValid(),
-                                Thumbprint = key.CertificateInfo.Thumbprint,
-                                Key = key
-                            });
-                        }
-
-                        if (afterMap.ClaimTransforms?.Count > 0)
-                        {
-                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
-                        }
-                    }));
-                }
-                catch (TokenUnavailableException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (HttpRequestException ex)
-                {
-                    upParty.Error = ex.Message;
-                }
-            }
+            upParty.Edit = true;          
         }
 
         private async Task OnStateHasChangedAsync(GeneralUpPartyViewModel upParty)

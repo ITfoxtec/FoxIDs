@@ -10,11 +10,53 @@ using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class ELoginUpParty : UpPartyBase
     {
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!UpParty.CreateMode)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                var generalLoginUpParty = UpParty as GeneralLoginUpPartyViewModel;                
+                var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(UpParty.Name);
+                await generalLoginUpParty.Form.InitAsync(ToViewModel(loginUpParty));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                UpParty.Error = ex.Message;
+            }
+        }
+
+        private LoginUpPartyViewModel ToViewModel(LoginUpParty loginUpParty)
+        {
+            return loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap =>
+            {
+                afterMap.EnableSingleLogout = !loginUpParty.DisableSingleLogout;
+                afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword;
+
+                if (afterMap.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                }
+            });           
+        }
+
         private async Task OnEditLoginUpPartyValidSubmitAsync(GeneralLoginUpPartyViewModel generalLoginUpParty, EditContext editContext)
         {
             try
@@ -32,7 +74,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalLoginUpParty.CreateMode)
                 {
-                    await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
+                    var loginUpPartyResult = await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
                         afterMap.DisableSingleLogout = !generalLoginUpParty.Form.Model.EnableSingleLogout;
                         afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
@@ -46,10 +88,12 @@ namespace FoxIDs.Client.Pages.Components
                             }
                         }
                     }));
+                    generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
+                    generalLoginUpParty.CreateMode = false;
                 }
                 else
                 {
-                    await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
+                    var loginUpParty = await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
                         afterMap.DisableSingleLogout = !generalLoginUpParty.Form.Model.EnableSingleLogout;
                         afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
@@ -63,10 +107,9 @@ namespace FoxIDs.Client.Pages.Components
                             }
                         }
                     }));
+                    generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
                 }
-                generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;
-                generalLoginUpParty.Edit = false;
-                await OnStateHasChanged.InvokeAsync(UpParty);
+                generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;             
             }
             catch (FoxIDsApiException ex)
             {

@@ -35,35 +35,35 @@
     <ul class="list-group">
         @foreach (var upParty in upParties)
         {
-        <li class="list-group-item @(upParty.Edit ? "active" : string.Empty)">
-            @if (!upParty.Error.IsNullOrWhiteSpace())
-            {
-                <div class="alert alert-danger" role="alert">
-                    @upParty.Error
-                </div>
-            }
-            @if (upParty.Edit)
-            {
-                if (upParty.Type == PartyTypes.Login)
+            <li class="list-group-item @(upParty.Edit ? "active" : string.Empty)">
+                @if (!upParty.Error.IsNullOrWhiteSpace())
                 {
-                    <ELoginUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    <div class="alert alert-danger" role="alert">
+                        @upParty.Error
+                    </div>
                 }
-                else if (upParty.Type == PartyTypes.Oidc)
+                @if (upParty.Edit)
                 {
-                    <EOidcUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    if (upParty.Type == PartyTypes.Login)
+                    {
+                        <ELoginUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    }
+                    else if (upParty.Type == PartyTypes.Oidc)
+                    {
+                        <EOidcUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    }
+                    else if (upParty.Type == PartyTypes.Saml2)
+                    {
+                        <ESamlUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    }
                 }
-                else if (upParty.Type == PartyTypes.Saml2)
+                else
                 {
-                    <ESamlUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    <button class="btn btn-link" @onclick="@(() => ShowUpdateUpParty(upParty))">
+                        @UpPartyInfoText(upParty)
+                    </button>
                 }
-            }
-            else
-            {
-                <button class="btn btn-link" @onclick="@(async () => await ShowUpdateUpPartyAsync(upParty))">
-                    @UpPartyInfoText(upParty)
-                </button>
-            }
-        </li>
+            </li>
         }
     </ul>
 </div>

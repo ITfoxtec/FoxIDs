@@ -11,10 +11,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
-using ITfoxtec.Identity;
-using MTokens = Microsoft.IdentityModel.Tokens;
-using System.Linq;
-using System.Net.Http;
 
 namespace FoxIDs.Client.Pages
 {
@@ -130,178 +126,13 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task ShowUpdateDownPartyAsync(GeneralDownPartyViewModel downParty)
+        private void ShowUpdateDownParty(GeneralDownPartyViewModel downParty)
         {
             downParty.CreateMode = false;
             downParty.DeleteAcknowledge = false;
             downParty.ShowAdvanced = false;
             downParty.Error = null;
             downParty.Edit = true;
-            if (downParty.Type == PartyTypes.Oidc)
-            {
-                try
-                {
-                    var generalOidcDownParty = downParty as GeneralOidcDownPartyViewModel;
-                    var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(downParty.Name);
-                    var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(downParty.Name);
-                    await generalOidcDownParty.Form.InitAsync(oidcDownParty.Map<OidcDownPartyViewModel>(afterMap => 
-                    {
-                        if (afterMap.Client == null)
-                        {
-                            generalOidcDownParty.EnableClientTab = false;
-                        }
-                        else
-                        {
-                            generalOidcDownParty.EnableClientTab = true;
-                            afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
-                            var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
-                            if (defaultResourceScopeIndex > -1)
-                            {
-                                afterMap.Client.DefaultResourceScope = true;
-                                var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
-                                if (defaultResourceScope.Scopes?.Count() > 0)
-                                {
-                                    foreach (var scope in defaultResourceScope.Scopes)
-                                    {
-                                        afterMap.Client.DefaultResourceScopeScopes.Add(scope);
-                                    }
-                                }
-                                afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
-                            }
-                            else
-                            {
-                                afterMap.Client.DefaultResourceScope = false;
-                            }
-
-                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OidcDownScopeViewModel>>() ?? new List<OidcDownScopeViewModel>();
-                        }
-
-                        if (afterMap.Resource == null)
-                        {
-                            generalOidcDownParty.EnableResourceTab = false;
-                        }
-                        else
-                        {
-                            generalOidcDownParty.EnableResourceTab = true;
-                        }
-
-                        if (afterMap.ClaimTransforms?.Count > 0)
-                        {
-                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
-                        }
-                    }));
-                }
-                catch (TokenUnavailableException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (HttpRequestException ex)
-                {
-                    downParty.Error = ex.Message;
-                }
-            }
-            else if (downParty.Type == PartyTypes.OAuth2)
-            {
-                try
-                {
-                    var generalOAuthDownParty = downParty as GeneralOAuthDownPartyViewModel;
-                    var oauthDownParty = await DownPartyService.GetOAuthDownPartyAsync(downParty.Name);
-                    var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(downParty.Name);
-                    await generalOAuthDownParty.Form.InitAsync(oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
-                    {
-                        if (afterMap.Client == null)
-                        {
-                            generalOAuthDownParty.EnableClientTab = false;
-                        }
-                        else
-                        {
-                            generalOAuthDownParty.EnableClientTab = true;
-                            afterMap.Client.ExistingSecrets = oauthDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
-                            var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOAuthDownParty.Name, StringComparison.Ordinal));
-                            if (defaultResourceScopeIndex > -1)
-                            {
-                                afterMap.Client.DefaultResourceScope = true;
-                                var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
-                                if (defaultResourceScope.Scopes?.Count() > 0)
-                                {
-                                    foreach (var scope in defaultResourceScope.Scopes)
-                                    {
-                                        afterMap.Client.DefaultResourceScopeScopes.Add(scope);
-                                    }
-                                }
-                                afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
-                            }
-                            else
-                            {
-                                afterMap.Client.DefaultResourceScope = false;
-                            }
-
-                            afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OAuthDownScopeViewModel>>() ?? new List<OAuthDownScopeViewModel>();
-                        }
-
-                        if (afterMap.Resource == null)
-                        {
-                            generalOAuthDownParty.EnableResourceTab = false;
-                        }
-                        else
-                        {
-                            generalOAuthDownParty.EnableResourceTab = true;
-                        }
-
-                        if (afterMap.ClaimTransforms?.Count > 0)
-                        {
-                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
-                        }
-                    }));
-                }
-                catch (TokenUnavailableException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (HttpRequestException ex)
-                {
-                    downParty.Error = ex.Message;
-                }
-            }
-            else if (downParty.Type == PartyTypes.Saml2)
-            {
-                try
-                {
-                    var generalSamlDownParty = downParty as GeneralSamlDownPartyViewModel;
-                    var samlDownParty = await DownPartyService.GetSamlDownPartyAsync(downParty.Name);
-                    await generalSamlDownParty.Form.InitAsync(samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
-                    {
-                        generalSamlDownParty.KeyInfoList.Clear();
-                        if (afterMap.Keys?.Count() > 0)
-                        {
-                            foreach (var key in afterMap.Keys)
-                            {
-                                generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
-                                {
-                                    Subject = key.CertificateInfo.Subject,
-                                    ValidFrom = key.CertificateInfo.ValidFrom,
-                                    ValidTo = key.CertificateInfo.ValidTo,
-                                    Thumbprint = key.CertificateInfo.Thumbprint,
-                                    Key = key
-                                });
-                            }
-                        }
-
-                        if (afterMap.ClaimTransforms?.Count > 0)
-                        {
-                            afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
-                        }
-                    }));
-                }
-                catch (TokenUnavailableException)
-                {
-                    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                }
-                catch (HttpRequestException ex)
-                {
-                    downParty.Error = ex.Message;
-                }
-            }
         }
 
         private async Task OnStateHasChangedAsync(GeneralDownPartyViewModel downParty)

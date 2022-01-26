@@ -94,7 +94,7 @@
                             <button type="button" class="btn btn-link" @onclick="@(() => user.DeleteAcknowledge = true)">Delete</button>
                         }
                         <button type="submit" class="btn btn-primary">@(user.CreateMode ? "Create" : "Update")</button>
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => UserCancel(user))">Cancel</button>
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => UserCancel(user))">@(@user.CreateMode ? "Cancel" : "Close")</button>
                     </div>
                 </PageEditForm>
             }

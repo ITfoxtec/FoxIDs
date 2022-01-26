@@ -2,6 +2,8 @@
 
 The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different browser title, icon and CSS.
 
+> FoxIDs use Bootstrap 4.6 and Flexbox CSS.
+
 ## Add Title, Icon and CSS
 
 Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.

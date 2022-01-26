@@ -14,7 +14,7 @@ FoxIDs support Cloud and Private Cloud deployment:
 
 - FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
 [FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland.
-- You is free to [deploy](deployment.md) FoxIDs as your own private cloud in a Microsoft Azure tenant.
+- You are free to [deploy](deployment.md) FoxIDs as your own private cloud in a Microsoft Azure tenant.
 
 > FoxIDs build on .NET 6.0 and the FoxIDs Control Client is Blazor.
 
@@ -33,7 +33,7 @@ You are otherwise welcome to use [support@itfoxtec.com](mailto:support@itfoxtec.
 ## How FoxIDs works
 
 FoxIDs is a multi-tenant system designed to be deployed in Azure. FoxIDs support being deployed as a service used by many companies, organizations etc. each with its one tenant.  
-Or to be deployed in a company's Azure subscription where usually only one tenant is configured in FoxIDs holding the company's entire security service.  
+Or to be deployed in a Azure subscription where usually only one tenant is configured in FoxIDs holding the organizations entire security service.  
 In some cases, it can be an advantage to configure several tenants to e.g., separate a large number of external connections.
 
 ### Structure

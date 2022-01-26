@@ -1,7 +1,7 @@
 # Samples
 The samples for FoxIDs show login and logout with OpenID Connect 1.0 and SAML 2.0 and API call secured with OAuth 2.0. The samples is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
 
-> The samples are pre configured in the [FoxIDs.com test track](#foxidscom-test-tenant-for-samples) and can immediately run locally in Visual Studio on the pre configured localhost ports.   
+> The samples are pre-configured in the [FoxIDs.com test track](#foxidscom-test-tenant-for-samples) and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
 You can also configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
 
 ## Sample applications
@@ -84,9 +84,11 @@ Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configur
 }
 ```
 
+> Access to create the sample configuration in a track is granted in the `master` track. The sample configuration should not be added to the `master` track.
+
 Create the sample seed OAuth 2.0 client in the FoxIDs Control Client:
 
-1. Select the master track and create a OAuth 2.0 down-party.
+1. Select the `master` track and create a OAuth 2.0 down-party.
 2. Set the Client to on and the Resource to off.
 3. Set the client id to `sample_seed`, redirect Uri to `uri:sample:seed:client` and response type to `token`. 
 4. Set Require PKCE to off.

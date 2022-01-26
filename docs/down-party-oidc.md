@@ -33,15 +33,15 @@ How to configure your application as a down-party OpenID Connect Relaying Party 
 
 During RP-initiated logout the up-party name can be omitted in the URL if the ID Token is provided in the request.
 
-### Configure Authorization Code Flow for a confidant client
-A confidant client could be a web application where the security is handled by the webserver which also stores the client secret.
+### Configure Authorization Code Flow for a confidential client
+A confidential client could be a web application where the security is handled by the webserver which also stores the client secret.
 
 - Specify client name in down-party name.
 - Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
 - Select `code` as response type or possible but not recommended `code token` or `code token id_token`.
-- It is not required to use PKCE in a confidant client but recommended to mitigate replay attacks.
+- It is not required to use PKCE in a confidential client but recommended to mitigate replay attacks.
 - Specify a secret.
 
 ![Configure Authorization Code Flow](images/configure-authorization-code-flow.png)

@@ -11,12 +11,91 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcDownParty : DownPartyBase
     {
         protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!DownParty.CreateMode)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                var generalOidcDownParty = DownParty as GeneralOidcDownPartyViewModel;
+                var oidcDownParty = await DownPartyService.GetOidcDownPartyAsync(DownParty.Name);
+                var oidcDownSecrets = await DownPartyService.GetOidcClientSecretDownPartyAsync(DownParty.Name);
+                await generalOidcDownParty.Form.InitAsync(ToViewModel(generalOidcDownParty, oidcDownParty, oidcDownSecrets));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                DownParty.Error = ex.Message;
+            }
+        }
+
+        private OidcDownPartyViewModel ToViewModel(GeneralOidcDownPartyViewModel generalOidcDownParty, OidcDownParty oidcDownParty, List<OAuthClientSecretResponse> oidcDownSecrets)
+        {
+            return oidcDownParty.Map<OidcDownPartyViewModel>(afterMap =>
+            {
+                if (afterMap.Client == null)
+                {
+                    generalOidcDownParty.EnableClientTab = false;
+                }
+                else
+                {
+                    generalOidcDownParty.EnableClientTab = true;
+                    afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
+                    var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOidcDownParty.Name, StringComparison.Ordinal));
+                    if (defaultResourceScopeIndex > -1)
+                    {
+                        afterMap.Client.DefaultResourceScope = true;
+                        var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
+                        if (defaultResourceScope.Scopes?.Count() > 0)
+                        {
+                            foreach (var scope in defaultResourceScope.Scopes)
+                            {
+                                afterMap.Client.DefaultResourceScopeScopes.Add(scope);
+                            }
+                        }
+                        afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
+                    }
+                    else
+                    {
+                        afterMap.Client.DefaultResourceScope = false;
+                    }
+
+                    afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OidcDownScopeViewModel>>() ?? new List<OidcDownScopeViewModel>();
+                }
+
+                if (afterMap.Resource == null)
+                {
+                    generalOidcDownParty.EnableResourceTab = false;
+                }
+                else
+                {
+                    generalOidcDownParty.EnableResourceTab = true;
+                }
+
+                if (afterMap.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                }
+            });
+        }
 
         private void OidcDownPartyViewModelAfterInit(GeneralOidcDownPartyViewModel oidcDownParty, OidcDownPartyViewModel model)
         {
@@ -125,13 +204,14 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
+                OidcDownParty oidcDownPartyResult;
                 if (generalOidcDownParty.CreateMode)
                 {
-                    await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
+                    oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
                 }
                 else
                 {
-                    await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
+                    oidcDownPartyResult = await DownPartyService.UpdateOidcDownPartyAsync(oidcDownParty);
                     if (oidcDownParty.Client != null)
                     {
                         foreach (var existingSecret in generalOidcDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
@@ -145,9 +225,18 @@ namespace FoxIDs.Client.Pages.Components
                     await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOidcDownParty.Form.Model.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets });
                 }
 
+                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oidcDownPartyResult.Name);
+                generalOidcDownParty.Form.UpdateModel(ToViewModel(generalOidcDownParty, oidcDownPartyResult, oauthDownSecrets));
+                if (generalOidcDownParty.CreateMode)
+                {
+                    generalOidcDownParty.CreateMode = false;
+                    toastService.ShowSuccess("OpenID Connect Down-party created.", "SUCCESS");
+                }
+                else
+                {
+                    toastService.ShowSuccess("OpenID Connect Down-party updated.", "SUCCESS");
+                }
                 generalOidcDownParty.Name = generalOidcDownParty.Form.Model.Name;
-                generalOidcDownParty.Edit = false;
-                await OnStateHasChanged.InvokeAsync(DownParty);
             }
             catch (FoxIDsApiException ex)
             {

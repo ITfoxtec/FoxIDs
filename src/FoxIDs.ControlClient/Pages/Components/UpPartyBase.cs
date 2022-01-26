@@ -10,11 +10,15 @@ using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models;
 using System;
 using FoxIDs.Models.Api;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public class UpPartyBase : ComponentBase
     {
+        [Inject]
+        public IToastService toastService { get; set; }
+
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 

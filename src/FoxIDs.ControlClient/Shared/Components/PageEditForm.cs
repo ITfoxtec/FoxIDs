@@ -58,6 +58,11 @@ namespace FoxIDs.Client.Shared.Components
             validationMessageStore = new ValidationMessageStore(EditContext);
         }
 
+        public void UpdateModel(TModel model)
+        {
+            Model = model;
+        }
+
         public void SetError(string error)
         {
             Console.WriteLine(error);

@@ -11,12 +11,91 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOAuthDownParty : DownPartyBase
     {
         protected List<string> responseTypeItems = new List<string>(Constants.OAuth.DefaultResponseTypes);
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!DownParty.CreateMode)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                var generalOAuthDownParty = DownParty as GeneralOAuthDownPartyViewModel;
+                var oauthDownParty = await DownPartyService.GetOAuthDownPartyAsync(DownParty.Name);
+                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(DownParty.Name);
+                await generalOAuthDownParty.Form.InitAsync(ToViewModel(generalOAuthDownParty, oauthDownParty, oauthDownSecrets));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                DownParty.Error = ex.Message;
+            }
+        }
+
+        private OAuthDownPartyViewModel ToViewModel(GeneralOAuthDownPartyViewModel generalOAuthDownParty, OAuthDownParty oauthDownParty, List<OAuthClientSecretResponse> oauthDownSecrets)
+        {
+            return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
+            {
+                if (afterMap.Client == null)
+                {
+                    generalOAuthDownParty.EnableClientTab = false;
+                }
+                else
+                {
+                    generalOAuthDownParty.EnableClientTab = true;
+                    afterMap.Client.ExistingSecrets = oauthDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
+                    var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOAuthDownParty.Name, StringComparison.Ordinal));
+                    if (defaultResourceScopeIndex > -1)
+                    {
+                        afterMap.Client.DefaultResourceScope = true;
+                        var defaultResourceScope = afterMap.Client.ResourceScopes[defaultResourceScopeIndex];
+                        if (defaultResourceScope.Scopes?.Count() > 0)
+                        {
+                            foreach (var scope in defaultResourceScope.Scopes)
+                            {
+                                afterMap.Client.DefaultResourceScopeScopes.Add(scope);
+                            }
+                        }
+                        afterMap.Client.ResourceScopes.RemoveAt(defaultResourceScopeIndex);
+                    }
+                    else
+                    {
+                        afterMap.Client.DefaultResourceScope = false;
+                    }
+
+                    afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OAuthDownScopeViewModel>>() ?? new List<OAuthDownScopeViewModel>();
+                }
+
+                if (afterMap.Resource == null)
+                {
+                    generalOAuthDownParty.EnableResourceTab = false;
+                }
+                else
+                {
+                    generalOAuthDownParty.EnableResourceTab = true;
+                }
+
+                if (afterMap.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                }
+            });
+        }
 
         private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
         {
@@ -110,13 +189,14 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
+                OAuthDownParty oauthDownPartyResult;
                 if (generalOAuthDownParty.CreateMode)
                 {
-                    await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
+                    oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
                 }
                 else
                 {
-                    await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
+                    oauthDownPartyResult = await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
                     if (oauthDownParty.Client != null)
                     {
                         foreach (var existingSecret in generalOAuthDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
@@ -129,9 +209,19 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOAuthDownParty.Form.Model.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
                 }
+
+                var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oauthDownPartyResult.Name);
+                generalOAuthDownParty.Form.UpdateModel(ToViewModel(generalOAuthDownParty, oauthDownPartyResult, oauthDownSecrets));
+                if (generalOAuthDownParty.CreateMode)
+                {
+                    generalOAuthDownParty.CreateMode = false;
+                    toastService.ShowSuccess("OAuth Down-party created.", "SUCCESS");
+                }
+                else
+                {
+                    toastService.ShowSuccess("OAuth Down-party updated.", "SUCCESS");
+                }
                 generalOAuthDownParty.Name = generalOAuthDownParty.Form.Model.Name;
-                generalOAuthDownParty.Edit = false;
-                await OnStateHasChanged.InvokeAsync(DownParty);
             }
             catch (FoxIDsApiException ex)
             {

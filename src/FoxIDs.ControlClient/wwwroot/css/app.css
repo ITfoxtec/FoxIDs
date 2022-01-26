@@ -29,6 +29,26 @@ h4 {
     padding-bottom: 8px;
 }
 
+.blazored-toast-container {
+    z-index: 100;
+}
+
+@media (min-width: 576px) {
+    .blazored-toast {
+        width: 22rem;
+        border-radius: 0 !important;
+    }
+}
+
+.blazored-toast-body .blazored-toast-header h5 {
+    font-size: inherit !important;
+    line-height: inherit !important;
+}
+
+.blazored-toast-body .blazored-toast-header .blazored-toast-close {
+    font-size: inherit !important;
+}
+
 .container-fluid {
     padding: 0 !important;
 }

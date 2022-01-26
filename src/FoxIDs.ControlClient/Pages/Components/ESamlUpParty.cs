@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Components;
 using Tewr.Blazor.FileReader;
 using System.Text;
 using Microsoft.AspNetCore.WebUtilities;
+using System.Net.Http;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -29,6 +30,83 @@ namespace FoxIDs.Client.Pages.Components
 
         [Inject]
         public IFileReaderService fileReaderService { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await base.OnInitializedAsync();
+            if (!UpParty.CreateMode)
+            {
+                await DefaultLoadAsync();
+            }
+        }
+
+        private async Task DefaultLoadAsync()
+        {
+            try
+            {
+                var generalSamlUpParty = UpParty as GeneralSamlUpPartyViewModel;
+                var samlUpParty = await UpPartyService.GetSamlUpPartyAsync(UpParty.Name);
+                await generalSamlUpParty.Form.InitAsync(ToViewModel(generalSamlUpParty, samlUpParty));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                UpParty.Error = ex.Message;
+            }
+        }
+
+        private SamlUpPartyViewModel ToViewModel(GeneralSamlUpPartyViewModel generalSamlUpParty, SamlUpParty samlUpParty)
+        {
+            return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
+            {
+                if (samlUpParty.UpdateState == PartyUpdateStates.Manual)
+                {
+                    afterMap.IsManual = true;
+                }
+
+                if (samlUpParty.UpdateState == PartyUpdateStates.AutomaticStopped)
+                {
+                    afterMap.AutomaticStopped = true;
+                }
+                else
+                {
+                    afterMap.AutomaticStopped = false;
+                }
+
+                afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
+
+                if (samlUpParty.AuthnContextComparison.HasValue)
+                {
+                    afterMap.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), samlUpParty.AuthnContextComparison.Value.ToString());
+                }
+                else
+                {
+                    afterMap.AuthnContextComparisonViewModel = SamlAuthnContextComparisonTypesVievModel.Null;
+                }
+
+                generalSamlUpParty.KeyInfoList.Clear();
+                foreach (var key in afterMap.Keys)
+                {
+                    generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
+                    {
+                        Subject = key.CertificateInfo.Subject,
+                        ValidFrom = key.CertificateInfo.ValidFrom,
+                        ValidTo = key.CertificateInfo.ValidTo,
+                        IsValid = key.CertificateInfo.IsValid(),
+                        Thumbprint = key.CertificateInfo.Thumbprint,
+                        Key = key
+                    });
+                }
+
+                if (afterMap.ClaimTransforms?.Count > 0)
+                {
+                    afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
+                }
+            });
+        }
 
         private void SamlUpPartyViewModelAfterInit(GeneralSamlUpPartyViewModel samlUpParty, SamlUpPartyViewModel model)
         {
@@ -214,15 +292,18 @@ namespace FoxIDs.Client.Pages.Components
 
                 if (generalSamlUpParty.CreateMode)
                 {
-                    await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                    var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
+                    generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
+                    generalSamlUpParty.CreateMode = false;
+                    toastService.ShowSuccess("SAML 2.0 Up-party created.", "SUCCESS");
                 }
                 else
                 {
-                    await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
+                    var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
+                    generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
+                    toastService.ShowSuccess("SAML 2.0 Up-party updated.", "SUCCESS");
                 }
                 generalSamlUpParty.Name = generalSamlUpParty.Form.Model.Name;
-                generalSamlUpParty.Edit = false;
-                await OnStateHasChanged.InvokeAsync(UpParty);
             }
             catch (FoxIDsApiException ex)
             {

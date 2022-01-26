@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Components.Web;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages
 {
@@ -20,6 +21,10 @@ namespace FoxIDs.Client.Pages
         private string mailSettingsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
+
+        [Inject]
+        public IToastService toastService { get; set; }
+
 
         [Inject]
         public TrackService TrackService { get; set; }
@@ -78,6 +83,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await TrackService.SaveTrackClaimMappingAsync(trackClaimMappingForm.Model.ClaimMappings);
+                toastService.ShowSuccess("Claim mappings updated.", "SUCCESS");
             }
             catch (Exception ex)
             {

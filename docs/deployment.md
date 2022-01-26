@@ -23,9 +23,11 @@ After successfully deployment open [FoxIDs Control Client](control.md#foxids-con
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 
-> Create your one admin users with a valid email address and grant the users the admin role 'foxids:tenant.admin'.
+Create more admin users with a valid email addresses and grant the users the admin `role` with the value `foxids:tenant.admin`.
 
 ![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
+
+> You should generally not change the parties configuration or add applications in the master tenant, unless you are sure about what you are doing.
 
 ### Troubleshooting deployent errors
 

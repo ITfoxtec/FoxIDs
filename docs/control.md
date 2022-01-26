@@ -15,6 +15,10 @@ Otherwise if FoxIDs is [deployed](development.md) in your one Azure tenant you g
 
 A tenant contains a master track, from where the entire tenant is configured. The master track contains a user repository and on creation only one administrator user.
 
+Normally you should not change the master track configuration or add new up-parties or down-parties, but it is possible. You can e.g., by adding an up-party gain single sign-on (SSO) to the master track. 
+
+### Create administrator user(s)
+
 It is possible to create more administrator users in the master track. A user become an administrator by adding the administrator role `foxids:tenant.admin` like shown below.
 
 Create a user:
@@ -25,8 +29,6 @@ Create a user:
 4. Add the user information and click Create.
 
 ![Configure administrator user](images/configure-tenant-adminuser.png)
-
-Normally you should not change the master track configuration or add new up-parties or down-parties, but it is possible. You can e.g., by adding an up-party gain single sign-on (SSO) to the master track. 
 
 ### Tracks
 Configure a number of tracks, one for each of your environments e.g. dev, qa and prod.

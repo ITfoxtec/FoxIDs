@@ -22,7 +22,7 @@ It is now possible to read the `Redirect URL`, `Post logout redirect URL` and `F
 
 **2 - Then go to the parallel FoxIDs track and create the down-party client**
 
-The client is a confidant client using Authorization Code Flow and PKCE.
+The client is a confidential client using Authorization Code Flow and PKCE.
 
 1. Specify client name in down-party name.
 2. Select allowed up-parties. E.g. `login` or some other up-party.

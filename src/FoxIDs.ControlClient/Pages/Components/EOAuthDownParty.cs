@@ -193,7 +193,6 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalOAuthDownParty.CreateMode)
                 {
                     oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
-                    generalOAuthDownParty.CreateMode = false;
                 }
                 else
                 {
@@ -213,6 +212,15 @@ namespace FoxIDs.Client.Pages.Components
 
                 var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oauthDownPartyResult.Name);
                 generalOAuthDownParty.Form.UpdateModel(ToViewModel(generalOAuthDownParty, oauthDownPartyResult, oauthDownSecrets));
+                if (generalOAuthDownParty.CreateMode)
+                {
+                    generalOAuthDownParty.CreateMode = false;
+                    toastService.ShowSuccess("OAuth Down-party created.", "SUCCESS");
+                }
+                else
+                {
+                    toastService.ShowSuccess("OAuth Down-party updated.", "SUCCESS");
+                }
                 generalOAuthDownParty.Name = generalOAuthDownParty.Form.Model.Name;
             }
             catch (FoxIDsApiException ex)

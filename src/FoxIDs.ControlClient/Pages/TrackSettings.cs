@@ -9,6 +9,7 @@ using System;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages
 {
@@ -19,6 +20,9 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public TrackService TrackService { get; set; }
@@ -73,6 +77,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await TrackService.UpdateTrackAsync(trackSettingsForm.Model.Map<Track>());
+                toastService.ShowSuccess("Track settings updated.", "SUCCESS");
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using FoxIDs.Client.Logic;
+﻿using Blazored.Toast.Services;
+using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
@@ -15,6 +16,9 @@ namespace FoxIDs.Client.Pages.Components
 {
     public abstract class DownPartyBase : ComponentBase
     {
+        [Inject]
+        public IToastService toastService { get; set; }
+
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 

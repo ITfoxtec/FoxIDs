@@ -230,6 +230,11 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalOidcDownParty.CreateMode)
                 {
                     generalOidcDownParty.CreateMode = false;
+                    toastService.ShowSuccess("OpenID Connect Down-party created.", "SUCCESS");
+                }
+                else
+                {
+                    toastService.ShowSuccess("OpenID Connect Down-party updated.", "SUCCESS");
                 }
                 generalOidcDownParty.Name = generalOidcDownParty.Form.Model.Name;
             }

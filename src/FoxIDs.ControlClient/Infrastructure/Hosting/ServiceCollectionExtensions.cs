@@ -14,6 +14,7 @@ using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.Logging;
 using System.IdentityModel.Tokens.Jwt;
+using Blazored.Toast;
 
 namespace FoxIDs.Client.Infrastructure.Hosting
 {
@@ -64,6 +65,8 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddTransient<CheckResponseMessageHandler>();
 
             services.AddFileReaderService(options => options.UseWasmSharedBuffer = false);
+
+            services.AddBlazoredToast();
 
             return services;
         }

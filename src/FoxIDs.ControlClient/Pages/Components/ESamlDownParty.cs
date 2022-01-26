@@ -179,11 +179,13 @@ namespace FoxIDs.Client.Pages.Components
                     var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
                     generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
                     generalSamlDownParty.CreateMode = false;
+                    toastService.ShowSuccess("SAML 2.0 Down-party created.", "SUCCESS");
                 }
                 else
                 {
                     var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
                     generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
+                    toastService.ShowSuccess("SAML 2.0 Down-party updated.", "SUCCESS");
                 }
                 generalSamlDownParty.Name = generalSamlDownParty.Form.Model.Name;
             }

@@ -10,6 +10,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using ITfoxtec.Identity;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages
 {
@@ -20,6 +21,9 @@ namespace FoxIDs.Client.Pages
         private PageEditForm<MailSettingsViewModel> mailSettingsForm;
         private string deleteMailError;
         private bool deleteMailAcknowledge = false;
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public TrackService TrackService { get; set; }
@@ -137,6 +141,7 @@ namespace FoxIDs.Client.Pages
                 {
                     throw new NotImplementedException("Mail provider not implemented.");
                 }
+                toastService.ShowSuccess("Mail settings updated.", "SUCCESS");
             }
             catch (Exception ex)
             {

@@ -90,6 +90,7 @@ namespace FoxIDs.Client.Pages.Components
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
                     generalLoginUpParty.CreateMode = false;
+                    toastService.ShowSuccess("Login Up-party created.", "SUCCESS");
                 }
                 else
                 {
@@ -108,6 +109,7 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
+                    toastService.ShowSuccess("Login Up-party updated.", "SUCCESS");
                 }
                 generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;             
             }

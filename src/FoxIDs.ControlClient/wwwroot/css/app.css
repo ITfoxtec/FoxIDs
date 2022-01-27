@@ -36,7 +36,6 @@ h4 {
 @media (min-width: 576px) {
     .blazored-toast {
         width: 22rem;
-        border-radius: 0 !important;
     }
 }
 

@@ -36,7 +36,6 @@ h4 {
 @media (min-width: 576px) {
     .blazored-toast {
         width: 22rem;
-        border-radius: 0 !important;
     }
 }
 
@@ -244,6 +243,10 @@ h4 {
     background-color: #fff;
     border-color: #df8935;
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.list-group-item .btn-link {
+    text-align: left;
 }
 
 .card-body.active, .card-body:active {

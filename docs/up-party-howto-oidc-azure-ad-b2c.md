@@ -1,6 +1,6 @@
 ﻿# Up-party - connect Azure AD B2C with OpenID Connect
 
-FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in a Azure AD B2C tenant.
+FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.
 
 ## Configure integration
 
@@ -19,7 +19,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 1. Create app profile
 2. The profile will result in an authority like this `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/`, including the profile name
 
-When the authority is registred in FoxIDs as an up-party. FoxIDs will call the discovery endpoint on the authority which in this case will bee `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/.well-known/openid-configuration`
+When the authority is registered in FoxIDs as an up-party. FoxIDs will call the discovery endpoint on the authority which in this case will be `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/.well-known/openid-configuration`
 
 > If you receive a discovery endpoint URL formatted with the Azure AD B2C profile name in the query string like this `...?p=B2C_1A_SOME_SIGNIN_PROFILE` you have to change the URL structure.  
 > The full URL would look like this `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_SOME_SIGNIN_PROFILE` and 

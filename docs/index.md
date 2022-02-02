@@ -1,6 +1,6 @@
 **FoxIDs is a free and open source Identity Services (IDS) supporting: login, OAuth 2.0, OpenID Connect 1.0 and SAML 2.0.**
 
-FoxIDs can at the same time work as both an authentication platform and a security broker where FoxIDs support converting between SAML 2.0, OpenID Connect 1.0 and OAuth 2.0.
+FoxIDs can at the same time work as an authentication platform and a security broker where FoxIDs support converting between SAML 2.0, OpenID Connect 1.0 and OAuth 2.0.
 
 
 > FoxIDs version 1.0, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
@@ -16,7 +16,7 @@ FoxIDs support Cloud and Private Cloud deployment:
 [FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland.
 - You are free to [deploy](deployment.md) FoxIDs as your own private cloud in a Microsoft Azure tenant.
 
-> FoxIDs build on .NET 6.0 and the FoxIDs Control Client is Blazor.
+> FoxIDs is build on .NET 6.0 and the FoxIDs Control Client is Blazor.
 
 ## Free and Open Source
 

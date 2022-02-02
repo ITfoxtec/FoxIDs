@@ -10,6 +10,7 @@ How to guides:
 
 - Connect [FoxIDs](up-party-howto-oidc-foxids.md) 
 - Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
+- Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 
 ## Configuration

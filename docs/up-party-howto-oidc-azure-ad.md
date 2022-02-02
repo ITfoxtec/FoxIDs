@@ -38,7 +38,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  3. Add the Azure AD client ID as a custom SP client ID
  4. Add the Azure AD client secret value as the client secret
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token 
+ 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token to down-parties
  7. Click create
 
 That's it, you are done. 

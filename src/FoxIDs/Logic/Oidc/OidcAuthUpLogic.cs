@@ -335,7 +335,6 @@ namespace FoxIDs.Logic
                     var tokenResponse = result.ToObject<TokenResponse>();
                     logger.ScopeTrace(() => $"Up, Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     tokenResponse.Validate(true);
-                    if (tokenResponse.AccessToken.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenResponse.AccessToken), tokenResponse.GetTypeName());
                     if (tokenResponse.ExpiresIn <= 0) throw new ArgumentNullException(nameof(tokenResponse.ExpiresIn), tokenResponse.GetTypeName());
                     return tokenResponse;
 

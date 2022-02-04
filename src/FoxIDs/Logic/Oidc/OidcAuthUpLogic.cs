@@ -33,6 +33,7 @@ namespace FoxIDs.Logic
         private readonly OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly IHttpClientFactory httpClientFactory;
+        private object resultUnexpectedRequest;
 
         public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
@@ -347,6 +348,14 @@ namespace FoxIDs.Logic
                     throw new EndpointException($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.") { RouteBinding = RouteBinding };
 
                 default:
+                    try
+                    {
+                        var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
+                        var tokenResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
+                        logger.ScopeTrace(() => $"Up, Unexpected status code response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        tokenResponseUnexpectedStatus.Validate(true);
+                    }
+                    catch { }
                     throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}") { RouteBinding = RouteBinding };
             }
         }

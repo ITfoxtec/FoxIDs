@@ -1,4 +1,5 @@
-﻿using FoxIDs.Client.Infrastructure.Security;
+﻿using Blazored.Toast.Services;
+using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
@@ -20,6 +21,9 @@ namespace FoxIDs.Client.Pages
         private GeneralLogSettingsViewModel generalLogSettings = new GeneralLogSettingsViewModel();
         private string logSreamSettingsListError;
         private List<GeneralLogStreamSettingsViewModel> logSreamSettingsList = new List<GeneralLogStreamSettingsViewModel>();
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -98,6 +102,7 @@ namespace FoxIDs.Client.Pages
             {
                 await TrackService.SaveTrackLogSettingAsync(generalLogSettings.Form.Model);
                 generalLogSettings.Edit = false;
+                toastService.ShowSuccess("Log settings updated.", "SUCCESS");
             }
             catch (Exception ex)
             {
@@ -203,6 +208,14 @@ namespace FoxIDs.Client.Pages
             }
             await TrackService.SaveTrackLogStreamSettingsAsync(logStreams);
             updatedgeneralLogStreamSettings.LogStreamSettings = generalLogStreamSettings.Form.Model;
+            if (generalLogStreamSettings.CreateMode)
+            {
+                toastService.ShowSuccess("Log stream settings created.", "SUCCESS");
+            }
+            else
+            {
+                toastService.ShowSuccess("Log stream settings updated.", "SUCCESS");
+            }
             generalLogStreamSettings.Edit = false;
         }
 

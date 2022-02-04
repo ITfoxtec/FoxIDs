@@ -2,7 +2,9 @@
 
 FoxIDs can be connected to Azure AD with OpenID Connect and thereby authenticating end users in a Azure AD tenant.
 
-It is possible to connect both a [single tenant](#configure-single-tenant) and [multitenant](#configure-multitenant) Azure AD App as an up-party on FoxIDs using OpenID Connect. A more complex case is to [read claims form the access token](#read-claims-from-access-token).
+It is possible to connect both a [single tenant](#configure-single-tenant) and [multitenant](#configure-multitenant) Azure AD App as an up-party on FoxIDs using OpenID Connect.
+A more complex case is to [read claims form the access token](#read-claims-from-access-token).
+If you configure [App roles](#app-roles) they are returned in the `roles` claim. 
 
 > A sample multitenant Azure AD App which support personal accounts is configured in the FoxIDs `test-corp` with the up-party name `azuread_oidcpkce`.  
 > You can test Azure AD login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md) application by clicking `OIDC Azure AD Log in`.
@@ -19,7 +21,7 @@ It is possible to connect both a [single tenant](#configure-single-tenant) and [
 
 It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
-**2 - Then go to the Azure Portal and create the Azure AD App**
+**2 - Then go to Azure Portal and create the Azure AD App**
 
  1. Add the name
  2. Select single tenant
@@ -38,7 +40,8 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  3. Add the Azure AD client ID as a custom SP client ID
  4. Add the Azure AD client secret value as the client secret
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token to down-parties
+ 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token to down-parties.  
+ It is possible to see the claims returned from the Azure AD app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the revived JWTs
  7. Click create
 
 That's it, you are done. 
@@ -64,14 +67,32 @@ The multitenant configuration differs slightly form the single tenant configurat
 
 If you want to read claims from the access token you need to add one more Azure AD App for a resource (API). Where the first Azure AD App is for a client.
 
-**1 - In the Azure Portal**
+**1 - In Azure Portal**
 
 1. Create the resource Azure AD App 
 2. Expose a scope from the resource app and grant the client app the resource app scope
 
 **2 - Then go to [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Add the resource app scope as a scope in the FoxIDs up-party client
-2. Read claims from access token by not selecting to use claims from ID token
+1. Select show advanced settings
+2. Select edit issuer
+3. Add the access token issuer `https://sts.windows.net/{Azure AD tenant ID}/`, where you add the Azure AD tenant ID
+4. Add the resource app scope as a scope in the FoxIDs up-party client
+5. Read claims from the access token by not selecting to use claims from ID token
 
 By during this the access token is issued by the same OP (IdP) and is thereby accepted.
+
+## App roles
+
+If you configure App roles on the Azure AD App under the App roles tab. 
+The roles are returned in the `roles` claim in the ID token for users assigned to the role.
+
+If you are [reading claims from access token](#read-claims-from-access-token) the roles has to be defined in the Azure AD App for a resource (API).
+
+**In FoxIDs Control Client**
+
+1. The roles are returned in the non-standard `roles` claim which can be changed to a `role` claim by adding a map claims transformation.  
+Write `role` in new claim, set action to replace claim and write `roles` in select claim
+2. Add the `role` claim to the claims which will be transferred from the up-party to the down-parties
+
+> Remember to also add the `role` claim in the down-party for it to be issued to the down-party application.

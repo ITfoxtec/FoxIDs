@@ -91,7 +91,7 @@ If you are [reading claims from access token](#read-claims-from-access-token) th
 
 **In FoxIDs Control Client**
 
-1. The roles are returned in the non-standard `roles` claim which can be changed to a `role` claim by adding a map claims transformation.  
+1. The roles are returned in a `roles` claim which can be changed to a `role` claim (without 's') by adding a map claims transformation.  
 Write `role` in new claim, set action to replace claim and write `roles` in select claim
 2. Add the `role` claim to the claims which will be transferred from the up-party to the down-parties
 

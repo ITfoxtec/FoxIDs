@@ -11,6 +11,8 @@ If you configure [App roles](#app-roles) they are returned in the `roles` claim.
 
 ## Configure single tenant
 
+This chapter describes how to configure a Azure AD single tenant connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
+
 **1 - Start by creating an OpenID Connect up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
@@ -50,6 +52,8 @@ That's it, you are done.
 > The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the Azure AD access token as a claim in the issued access token.
 
 ## Configure multitenant
+
+This chapter describes how to configure a Azure AD multitenant connection with OpenID Connect Authorization Code flow and PKCE.
 
 The multitenant configuration differs slightly form the single tenant configuration.
 

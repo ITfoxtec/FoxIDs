@@ -4,6 +4,8 @@ FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenti
 
 ## Configure integration
 
+This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
+
 **1 - Start by creating an OpenID Connect up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name

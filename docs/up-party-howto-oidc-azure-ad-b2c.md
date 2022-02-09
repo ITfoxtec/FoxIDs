@@ -29,9 +29,12 @@ When the authority is registered in FoxIDs as an up-party. FoxIDs will call the 
 
 **3 - Go back to the FoxIDs up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
+> Azure AD B2C is not by default return an access token in the token response and is thereby not OpenID Connect Authorization Code flow compliant. You need to add a Azure AD B2C client ID as a scope to get an access token returned.
+
  1. Add the authority, which is `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/`
  2. Add the profile and email scopes (possible other or more scopes)
  3. Add the Azure AD B2C client ID as a custom SP client ID
+ 3. Add the Azure AD B2C client ID as a scope
  4. Add the Azure AD B2C client secret value as the client secret
  5. You probably / maybe need to select use claims from ID token
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD B2C access token to down-parties

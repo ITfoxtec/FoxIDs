@@ -4,6 +4,8 @@ FoxIDs support OpenID Connect as both up-party and down-party.
 
 ![FoxIDs OpenID Connect](images/parties-oidc.svg)
 
+> It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
+
 ## Up-party
 
 Configure [up-party OpenID Connect](up-party-oidc.md) which trust an external OpenID Provider (OP).

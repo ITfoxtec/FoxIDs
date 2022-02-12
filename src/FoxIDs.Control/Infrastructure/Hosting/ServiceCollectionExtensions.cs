@@ -107,8 +107,6 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSwaggerGen(c =>
             {
-                //TODO Work around. Remove when JsonStringEnumConverter is supported.
-                c.DescribeAllEnumsAsStrings();
                 c.SwaggerDoc(Constants.ControlApi.Version, new OpenApiInfo { Title = "FoxIDs Control API", Version = Constants.ControlApi.Version });
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

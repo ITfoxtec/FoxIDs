@@ -273,6 +273,7 @@
         "siteConfig": {
           "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
+          "use32BitWorkerProcess": false,
           "alwaysOn": true,
           "webSocketsEnabled": false
         },
@@ -300,6 +301,7 @@
         "siteConfig": {
           "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
+          "use32BitWorkerProcess": false,
           "alwaysOn": true,
           "webSocketsEnabled": false
         },
@@ -326,6 +328,7 @@
         "siteConfig": {
           "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
+          "use32BitWorkerProcess": false,
           "alwaysOn": false,
           "webSocketsEnabled": false,
           "autoSwapSlotName": "production"
@@ -353,6 +356,7 @@
         "siteConfig": {
           "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
+          "use32BitWorkerProcess": false,
           "alwaysOn": false,
           "webSocketsEnabled": false,
           "autoSwapSlotName": "production"

@@ -29,7 +29,7 @@
 
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
-		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.18.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.20.0" />
 		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.17.1" />
 		<PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.13.1" />
 		<PackageReference Include="Microsoft.Azure.KeyVault" Version="3.0.5" />

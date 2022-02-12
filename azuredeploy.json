@@ -326,7 +326,7 @@
         "siteConfig": {
           "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
-          "alwaysOn": true,
+          "alwaysOn": false,
           "webSocketsEnabled": false,
           "autoSwapSlotName": "production"
         },
@@ -353,7 +353,7 @@
         "siteConfig": {
           "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
-          "alwaysOn": true,
+          "alwaysOn": false,
           "webSocketsEnabled": false,
           "autoSwapSlotName": "production"
         },

@@ -124,6 +124,10 @@ namespace FoxIDs.Controllers
                 mUser.EmailVerified = user.EmailVerified;
                 mUser.ChangePassword = user.ChangePassword;
                 mUser.DisableAccount = user.DisableAccount;
+                if (!user.ActiveTwoFactorApp)
+                {
+                    mUser.TwoFactorAppSecret = null;
+                }
                 var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);

@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class LoginUpParty : INameValue, IClaimTransform<OAuthClaimTransform>
+    public class LoginUpParty : INameValue, IClaimTransform<OAuthClaimTransform>, IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -34,6 +34,19 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [Required]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
+
+        /// <summary>
+        /// Enable two-factor authentication (2FA) app. Default false.
+        /// </summary>
+        public bool EnableTwoFactorApp { get; set; }
+
+        /// <summary>
+        /// Require two-factor authentication (2FA) app. Default false.
+        /// </summary>
+        public bool RequireTwoFactor { get; set; }
+
+        // TODO future implementation of MFA. EnableTwoFactorApp and EnableMultiFactor can not be true at the same time.
+        //public bool EnableMultiFactor { get; set; }
 
         /// <summary>
         /// Claim transforms.
@@ -83,5 +96,16 @@ namespace FoxIDs.Models.Api
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         public bool DisableSingleLogout { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (!EnableTwoFactorApp && RequireTwoFactor)
+            {
+                results.Add(new ValidationResult($"{nameof(EnableTwoFactorApp)} has to be true if {nameof(RequireTwoFactor)} is true.", new[] { nameof(EnableTwoFactorApp), nameof(RequireTwoFactor) }));
+            }
+            return results;
+        }
     }
 }

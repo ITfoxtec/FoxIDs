@@ -57,6 +57,22 @@ namespace FoxIDs.Client.Pages.Components
             });           
         }
 
+        private void OnValidChangeEnableTwoFactorApp(GeneralLoginUpPartyViewModel generalLoginUpParty, bool enable)
+        {
+            if (!enable && generalLoginUpParty.Form.Model.RequireTwoFactor)
+            {
+                generalLoginUpParty.Form.Model.RequireTwoFactor = false;
+            }
+        }
+
+        private void OnValidChangeRequireTwoFactor(GeneralLoginUpPartyViewModel generalLoginUpParty, bool require)
+        {
+            if (require && !generalLoginUpParty.Form.Model.EnableTwoFactorApp)
+            {
+                generalLoginUpParty.Form.Model.EnableTwoFactorApp = true;
+            }
+        }
+
         private async Task OnEditLoginUpPartyValidSubmitAsync(GeneralLoginUpPartyViewModel generalLoginUpParty, EditContext editContext)
         {
             try

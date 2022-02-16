@@ -76,6 +76,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_account")]
         public bool DisableAccount { get; set; }
 
+        [JsonProperty(PropertyName = "two_factor_app_secret")]
+        public string TwoFactorAppSecret { get; set; }
+
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }

@@ -74,6 +74,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Logout consent")]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
+        /// <summary>
+        /// Enable two-factor authentication (2FA) app. Default false.
+        /// </summary>
+        [Display(Name = "Two-factor app")]
+        public bool EnableTwoFactorApp { get; set; }
+
+        /// <summary>
+        /// Require two-factor authentication (2FA) app. Default false.
+        /// </summary>
+        [Display(Name = "Require two-factor")]
+        public bool RequireTwoFactor { get; set; }
+
         [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
         [Display(Name = "Browser Title (default FoxIDs)")]
         public string Title { get; set; }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
@@ -15,5 +16,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
+
+        [JsonProperty(PropertyName = "a")]
+        public IEnumerable<string> Acr { get; set; }
     }
 }

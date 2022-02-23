@@ -530,6 +530,8 @@ namespace FoxIDs
                 $"{FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 FoxI.IdentityConstants.ResponseTypes.IdToken
             };
+
+            public const string FoxIDsArcMfa = "acr:foxids.com:mfa";
         }
 
         public static class Saml

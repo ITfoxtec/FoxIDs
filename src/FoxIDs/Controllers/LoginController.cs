@@ -16,10 +16,11 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Infrastructure.Filters;
 using Microsoft.Extensions.Localization;
 using System.Linq;
-using System.IO;
 
 namespace FoxIDs.Controllers
 {
+
+
     [Sequence]
     public class LoginController : EndpointController
     {

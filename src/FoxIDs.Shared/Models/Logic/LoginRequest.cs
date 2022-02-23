@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models.Session;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Logic
@@ -15,5 +16,7 @@ namespace FoxIDs.Models.Logic
         public int? MaxAge { get; set; }
 
         public string EmailHint { get; set; }
+
+        public IEnumerable<string> Acr { get; set; }
     }
 }

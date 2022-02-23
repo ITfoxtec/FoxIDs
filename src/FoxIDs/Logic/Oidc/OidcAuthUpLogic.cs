@@ -33,7 +33,6 @@ namespace FoxIDs.Logic
         private readonly OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly IHttpClientFactory httpClientFactory;
-        private object resultUnexpectedRequest;
 
         public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
@@ -325,6 +324,7 @@ namespace FoxIDs.Logic
                 requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
+            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
             var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
             request.Content = new FormUrlEncodedContent(requestDictionary);
 

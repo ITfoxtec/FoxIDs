@@ -1,6 +1,6 @@
 ﻿@using System.Linq.Expressions
 
-<div class="@(IncludeActiveFormGroup ? "form-group active-group" + (DynamicFirstRow ? " active" : string.Empty) : string.Empty)">
+<div class="@(IncludeActiveFormGroup ? $"form-group active-group{(DynamicFirstRow ? " active" : string.Empty)}" : string.Empty)">
     @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
     {
         if (item.Index == 0 && !DynamicFirstRow)

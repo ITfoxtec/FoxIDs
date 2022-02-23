@@ -257,13 +257,16 @@
                                                         <FInputToggleN @bind-Value="claimAndValues.InIdToken" For="@(() => claimAndValues.InIdToken)" TextType="e.d" />
                                                     </div>
                                                 </div>
-                                                <div class="active-group active @(claimAndValues.Values?.Count() > 0 ? "pb-0 mb-0" : "p-0 m-0")">
-                                                    <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
-                                                    @if (claimAndValues.Values?.Count() > 0)
-                                                    {
-                                                        <Label For="@(() => claimAndValues.Values)" class="label-control" />
-                                                    }
-                                                </div>
+                                                @if (claimAndValues.Claim?.Contains('*') != true)
+                                                {
+                                                    <div class="active-group active @(claimAndValues.Values?.Count() > 0 ? "pb-0 mb-0" : "p-0 m-0")">
+                                                        <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                                        @if (claimAndValues.Values?.Count() > 0)
+                                                        {
+                                                            <Label For="@(() => claimAndValues.Values)" class="label-control" />
+                                                        }
+                                                    </div>
+                                                }
                                             </div>
                                             <div class="col-1 text-right">
                                                 <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveOidcClaim(e, oidcDownParty.Form.Model.Client.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>

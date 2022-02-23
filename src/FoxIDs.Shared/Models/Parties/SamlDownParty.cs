@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -23,7 +24,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<SamlClaimTransform> ClaimTransforms { get; set; }
 
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
@@ -94,6 +95,11 @@ namespace FoxIDs.Models
             if (AllowUpParties?.Count <= 0)
             {
                 results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
+            }
+
+            if (Claims?.Where(c => c == "*").Count() > 1)
+            {
+                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
             }
             return results;
         }

@@ -32,8 +32,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<SamlClaimTransformViewModel> ClaimTransforms { get; set; } = new List<SamlClaimTransformViewModel>();
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
-        [Display(Name = "Claims (in addition to default claims)")]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [Display(Name = "Issue claims (use * to issue all claims)")]
         public List<string> Claims { get; set; }
 
         /// <summary>

@@ -68,6 +68,15 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (Claims?.Where(c => c.Claim == "*").Count() > 1)
+            {
+                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+            }
+            if (Claims?.Where(c => c.Claim?.Contains('*') == true && c.Values?.Count() > 0).Count() > 1)
+            {
+                results.Add(new ValidationResult($"Claims.Values is not allowed in wildcard (*) claims.", new[] { nameof(Claims) }));
+            }
+
             if (RequirePkce && !ResponseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
             {
                 results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));

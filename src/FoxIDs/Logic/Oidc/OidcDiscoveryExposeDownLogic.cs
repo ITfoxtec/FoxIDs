@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
                 oidcDiscovery.ResponseTypesSupported = party.Client.ResponseTypes;
                 oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported.ConcatOnce(party.Client.Scopes?.Select(s => s.Scope));
                 oidcDiscovery.ClaimsSupported = oidcDiscovery.ClaimsSupported.ConcatOnce(Constants.DefaultClaims.IdToken).ConcatOnce(Constants.DefaultClaims.AccessToken)
-                    .ConcatOnce(party.Client.Claims?.Select(c => c.Claim).ToList()).ConcatOnce(party.Client.Scopes?.Where(s => s.VoluntaryClaims != null).SelectMany(s => s.VoluntaryClaims?.Select(c => c.Claim)).ToList());
+                    .ConcatOnce(party.Client.Claims?.Where(c => c.Claim?.Contains('*') != true)?.Select(c => c.Claim).ToList()).ConcatOnce(party.Client.Scopes?.Where(s => s.VoluntaryClaims != null).SelectMany(s => s.VoluntaryClaims?.Select(c => c.Claim)).ToList());
 
                 if(party?.Client.RequirePkce == true)
                 {

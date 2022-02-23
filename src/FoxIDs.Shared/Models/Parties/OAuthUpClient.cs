@@ -3,6 +3,7 @@ using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -22,7 +23,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "scopes")]
         public List<string> Scopes { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
+        [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
@@ -65,6 +66,11 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (Claims?.Where(c => c == "*").Count() > 1)
+            {
+                results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+            }
+
             if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
                 results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce), nameof(ResponseType) }));

@@ -1,9 +1,9 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel.Security;
 
@@ -31,7 +31,7 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<SamlClaimTransform> ClaimTransforms { get; set; }
 
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         public List<string> Claims { get; set; }
 
         /// <summary>
@@ -105,6 +105,11 @@ namespace FoxIDs.Models.Api
             if (AllowUpPartyNames?.Count <= 0)
             {
                 results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required.", new[] { nameof(AllowUpPartyNames) }));
+            }
+
+            if (Claims?.Where(c => c == "*").Count() > 1)
+            {
+                results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
             }
 
             if (!LoggedOutUrl.IsNullOrWhiteSpace())

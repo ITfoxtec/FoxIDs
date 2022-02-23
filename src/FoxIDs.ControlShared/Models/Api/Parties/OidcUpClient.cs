@@ -15,8 +15,8 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Scopes")]
         public List<string> Scopes { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
-        [Display(Name = "Claims")]
+        [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
+        [Display(Name = "Accept claims (use * to accept all claims)")]
         public List<string> Claims { get; set; }
 
         [Required]

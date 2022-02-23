@@ -19,7 +19,7 @@ namespace FoxIDs.Models.Api
 
         [ValidateComplexType]
         [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
-        [Display(Name = "Claims")]
+        [Display(Name = "Issue claims (use * to issue all claims)")]
         public List<OAuthDownClaim> Claims { get; set; }
 
         [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]

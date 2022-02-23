@@ -9,7 +9,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoxIDs.Logic
 {
@@ -24,15 +23,27 @@ namespace FoxIDs.Logic
 
         public Task<List<Claim>> FilterJwtClaimsAsync(TClient client, IEnumerable<Claim> jwtClaims, IEnumerable<string> selectedScopes, bool includeIdTokenClaims = false, bool includeAccessTokenClaims = false)
         {
+            if (!includeIdTokenClaims && !includeAccessTokenClaims)
+            {
+                throw new ArgumentException($"{nameof(includeIdTokenClaims)} and {nameof(includeAccessTokenClaims)} can not be false at the same time.");
+            }
+
             if (jwtClaims == null)
             {
                 return Task.FromResult(new List<Claim>(jwtClaims));
             }
 
             var filterClaimTypes = GetFilterJwtClaimTypes(client, selectedScopes, includeIdTokenClaims, includeAccessTokenClaims);
-            var filterClaims = jwtClaims.Where(c => filterClaimTypes.Contains(c.Type));
-
-            return Task.FromResult(TruncateJwtClaimValues(filterClaims));            
+            var acceptAllClaims = filterClaimTypes.Where(c => c == "*").Count() > 0;
+            if (acceptAllClaims)
+            {
+                return Task.FromResult(TruncateJwtClaimValues(jwtClaims));
+            }
+            else
+            {
+                var filterClaims = jwtClaims.Where(c => filterClaimTypes.Contains(c.Type));
+                return Task.FromResult(TruncateJwtClaimValues(filterClaims));
+            }
         }
 
         private List<string> GetFilterJwtClaimTypes(TClient client, IEnumerable<string> selectedScopes, bool includeIdTokenClaims, bool includeAccessTokenClaims)
@@ -46,11 +57,26 @@ namespace FoxIDs.Logic
 
             if (includeIdTokenClaims)
             {
+                var acceptAllIdTokenClaims = client.Claims?.Cast<OidcDownClaim>()?.Where(c => c.Claim == "*" && c.InIdToken)?.Count() > 0;
+                if (acceptAllIdTokenClaims)
+                {
+                    filterClaimTypes.Add("*");
+                    return filterClaimTypes;
+                }
+
                 filterClaimTypes = filterClaimTypes.ConcatOnce(client.Claims?.Cast<OidcDownClaim>().Where(c => c.InIdToken).Select(c => c.Claim));
                 filterClaimTypes = filterClaimTypes.ConcatOnce(Constants.DefaultClaims.IdToken);
             }
             if (includeAccessTokenClaims)
             {
+
+                var acceptAllAccessTokenClaims = client.Claims?.Where(c => c.Claim == "*")?.Count() > 0;
+                if (acceptAllAccessTokenClaims)
+                {
+                    filterClaimTypes.Add("*");
+                    return filterClaimTypes;
+                }
+
                 filterClaimTypes = filterClaimTypes.ConcatOnce(client.Claims?.Select(c => c.Claim));
                 filterClaimTypes = filterClaimTypes.ConcatOnce(Constants.DefaultClaims.AccessToken);
             }

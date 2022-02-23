@@ -259,8 +259,16 @@ namespace FoxIDs.Logic
 
         private List<Claim> ValidateClaims(TParty party, List<Claim> claims)
         {
-            var acceptedClaims = Constants.DefaultClaims.JwtTokenUpParty.ConcatOnce(party.Client.Claims).Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Contains(c));
-            claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type)).ToList();
+            var acceptAllClaims = party.Client.Claims?.Where(c => c == "*")?.Count() > 0;
+            if (acceptAllClaims)
+            {
+                claims = claims.Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Any(ic => ic == c.Type)).ToList();
+            }
+            else
+            {
+                var acceptedClaims = Constants.DefaultClaims.JwtTokenUpParty.ConcatOnce(party.Client.Claims).Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Contains(c));
+                claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type)).ToList();
+            }
             foreach (var claim in claims)
             {
                 if (claim.Type?.Length > Constants.Models.Claim.JwtTypeLength)

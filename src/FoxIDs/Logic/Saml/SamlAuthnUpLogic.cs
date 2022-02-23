@@ -266,9 +266,13 @@ namespace FoxIDs.Logic
 
         private IEnumerable<Claim> ValidateClaims(SamlUpParty party, IEnumerable<Claim> claims)
         {
-            IEnumerable<string> acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);
-            claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
-            foreach(var claim in claims)
+            var acceptAllClaims = party.Claims?.Where(c => c == "*")?.Count() > 0;
+            if (!acceptAllClaims)
+            {
+                var acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);
+                claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
+            }
+            foreach (var claim in claims)
             {
                 if(claim.Type?.Length > Constants.Models.Claim.SamlTypeLength)
                 {

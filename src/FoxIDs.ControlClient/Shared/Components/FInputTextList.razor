@@ -1,6 +1,6 @@
 ﻿@using System.Linq.Expressions
 
-<div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
+<div class="@(IncludeActiveFormGroup ? $"form-group active-group{(DynamicFirstRow ? " active" : string.Empty)}" : string.Empty)">
     @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
     {
         if (item.Index == 0 && !DynamicFirstRow)
@@ -32,6 +32,17 @@
             </div>
         }
     }
+    @if (IncludeActiveFormGroup && DynamicFirstRow)
+    {
+        if (!(ValueList?.Count() > 0))
+        {
+            <div class="card">
+                <div class="card-body px-3 py-2">
+                </div>
+            </div>
+        }
+        <Label For="@For" class="label-control" />
+    } 
     <ValidationMessage For="@For" />
     <button type="button" class="btn btn-link btn-xs" @onclick="@(async e => await AddAsync(e))"><span class="oi oi-plus" aria-hidden="true"></span> Add@(AddOneMoreName.IsNullOrEmpty() ? string.Empty : $" {AddOneMoreName}")</button>
 </div>

@@ -45,10 +45,15 @@ namespace FoxIDs.Logic
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 Email = loginRequest.EmailHint,
-                Acr = loginRequest.Acr?.Where(v => v.Equals(Constants.Oidc.FoxIDsArcMfa, StringComparison.Ordinal)),
+                Acr = GetSupportedAcr(loginRequest),
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
+        }
+
+        private IEnumerable<string> GetSupportedAcr(LoginRequest loginRequest)
+        {
+            return loginRequest.Acr?.Where(v => v.Equals(Constants.Oidc.Acr.Mfa, StringComparison.Ordinal));
         }
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)

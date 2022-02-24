@@ -531,7 +531,10 @@ namespace FoxIDs
                 FoxI.IdentityConstants.ResponseTypes.IdToken
             };
 
-            public const string FoxIDsArcMfa = "urn:foxids:arc:mfa";
+            public static class Acr
+            {
+                public const string Mfa = "urn:foxids:mfa";
+            }
         }
 
         public static class Saml

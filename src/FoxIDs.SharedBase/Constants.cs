@@ -531,7 +531,7 @@ namespace FoxIDs
                 FoxI.IdentityConstants.ResponseTypes.IdToken
             };
 
-            public const string FoxIDsArcMfa = "acr:foxids.com:mfa";
+            public const string FoxIDsArcMfa = "urn:foxids:arc:mfa";
         }
 
         public static class Saml

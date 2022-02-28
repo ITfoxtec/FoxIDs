@@ -108,6 +108,7 @@ namespace FoxIDs.Client.Pages.Components
             if (oidcUpParty.CreateMode)
             {
                 model.Client = new OidcUpClientViewModel();
+                model.Client.Claims = new List<string> { "*" };
             }
         }
 

@@ -112,7 +112,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (samlUpParty.CreateMode)
             {
-                model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
+                model.Claims = new List<string> { "*" };
             }
         }
 

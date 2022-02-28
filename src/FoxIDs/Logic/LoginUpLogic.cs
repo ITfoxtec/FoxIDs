@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.Oidc:
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseAsync(sequenceData.DownPartyLink.Id, claims);
                 case PartyTypes.Saml2:
-                    claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Email.OriginalString);
+                    claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
 
                 default:

@@ -59,21 +59,11 @@ namespace FoxIDs.Models
                         break;
 
                     case ClaimTransformTypes.Map:
-                        if (ClaimsIn?.Count() != 1)
-                        {
-                            results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                        }
+                        ValidateMapClaimAddReplace(results);
                         break;
 
                     case ClaimTransformTypes.RegexMap:
-                        if (ClaimsIn?.Count() != 1)
-                        {
-                            results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
-                        }
-                        if (Transformation.IsNullOrWhiteSpace())
-                        {
-                            results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
-                        }
+                        ValidateRegexMapClaimAddReplace(results);
                         break;
 
                     case ClaimTransformTypes.Concatenate:
@@ -102,6 +92,22 @@ namespace FoxIDs.Models
                     case ClaimTransformTypes.Match:
                     case ClaimTransformTypes.RegexMatch:
                         ValidateMatchAddReplace(results);
+                        break;
+
+                    default:
+                        throw new NotSupportedException($"Claim transformation type '{Type}' not supported.");
+                }
+            }
+            else if (Action == ClaimTransformActions.AddIfNotOut)
+            {
+                switch (Type)
+                {
+                    case ClaimTransformTypes.Map:
+                        ValidateMapClaimAddReplace(results);
+                        break;
+
+                    case ClaimTransformTypes.RegexMap:
+                        ValidateRegexMapClaimAddReplace(results);
                         break;
 
                     default:
@@ -155,6 +161,26 @@ namespace FoxIDs.Models
             if (TransformationExtension.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(TransformationExtension)} is required for claim transformation type '{Type}'.", new[] { nameof(TransformationExtension) }));
+            }
+        }
+
+        private void ValidateMapClaimAddReplace(List<ValidationResult> results)
+        {
+            if (ClaimsIn?.Count() != 1)
+            {
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+            }
+        }
+
+        private void ValidateRegexMapClaimAddReplace(List<ValidationResult> results)
+        {
+            if (ClaimsIn?.Count() != 1)
+            {
+                results.Add(new ValidationResult($"Exactly one is required in the field {nameof(ClaimsIn)} for claim transformation type '{Type}'.", new[] { nameof(ClaimsIn) }));
+            }
+            if (Transformation.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(Transformation)} is required for claim transformation type '{Type}'.", new[] { nameof(Transformation) }));
             }
         }
     }

@@ -471,6 +471,26 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
 
+        [Theory]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, "given_name2", 1, "Anders", 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.FamilyName, 0, "Anders", 1)]
+        [InlineData(new[] { "do-not-exist" }, "given_name2", 0, "", 0)]
+        public async Task TransformMap_AddIfNotOutClaim(string[] claimIn, string claimOut, int withValueCount, string result, int count)
+        {
+            var claims = GetTestClaims();
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
+            {
+                Type = ClaimTransformTypes.Map,
+                Action = ClaimTransformActions.AddIfNotOut,
+                ClaimsIn = claimIn.ToList(),
+                ClaimOut = claimOut
+            } };
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
+            Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
+        }
+
         [Fact]
         public async Task TransformMap_ReplaceIfNotClaim()
         {
@@ -547,6 +567,28 @@ namespace FoxIDs.UnitTests
                 ClaimOut = "some-constant"
             };
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
+        }
+
+        [Theory]
+        [InlineData(new[] { JwtClaimTypes.Email }, "domain", @"^\S+@(?<map>\S+)$", 1, "abc.com", 1)]
+        [InlineData(new[] { JwtClaimTypes.Email }, JwtClaimTypes.GivenName, @"^\S+@(?<map>\S+)$", 0, "abc.com", 1)]
+        [InlineData(new[] { JwtClaimTypes.Subject }, "sub_id", @"^\S+\|(?<map>\S+)$", 1, "12345", 1)]
+        [InlineData(new[] { "do-not-exist" }, "domain", @"^\S+@(?<map>\S+)$", 0, "", 0)]
+        public async Task TransformRegexMap_AddIfNotOutClaim(string[] claimIn, string claimOut, string transformation, int withValueCount, string result, int count)
+        {
+            var claims = GetTestClaims();
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
+            {
+                Type = ClaimTransformTypes.RegexMap,
+                    Action = ClaimTransformActions.AddIfNotOut,
+                ClaimsIn = claimIn.ToList(),
+                ClaimOut = claimOut,
+                Transformation = transformation
+            } };
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            Assert.True(claimsResult.Where(c => c.Type == claimOut && (result != "" ? c.Value == result : true)).Count() == withValueCount);
+            Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
         }
 
         [Fact]

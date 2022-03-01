@@ -86,6 +86,14 @@
                                 <option value="@ClaimTransformActions.Remove">Remove claim</option>
                             </FInputSelect>
                         }
+                        else if (claimTransform.Type == ClaimTransformTypes.Map || claimTransform.Type == ClaimTransformTypes.RegexMap)
+                        {
+                            <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
+                                <option value="@ClaimTransformActions.Add">Add claim</option>
+                                <option value="@ClaimTransformActions.Replace">Replace claim</option>
+                                <option value="@ClaimTransformActions.AddIfNotOut">Add claim, if new claim do not exist</option>
+                            </FInputSelect>
+                        }
                         else
                         {
                             <FInputSelect @bind-Value="claimTransform.Action" For="@(() => claimTransform.Action)">
@@ -109,7 +117,7 @@
                                 case ClaimTransformTypes.MatchClaim:
                                     @if (claimTransform.Action != ClaimTransformActions.Remove)
                                     {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? " if it do not match" : string.Empty).</div>
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim do not match" : string.Empty).</div>
                                         <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                         <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="New value" />
                                     }
@@ -122,7 +130,7 @@
                                 case ClaimTransformTypes.Match:
                                     @if (claimTransform.Action != ClaimTransformActions.Remove)
                                     {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? " if it do not match" : string.Empty).</div>
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and value. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim match but the value do not match" : string.Empty).</div>
                                         <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                         <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Match value" />
                                         <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
@@ -137,7 +145,7 @@
                                 case ClaimTransformTypes.RegexMatch:
                                     @if (claimTransform.Action != ClaimTransformActions.Remove)
                                     {
-                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? " if it do not match" : string.Empty). E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
+                                        <div class="p-0 alert alert-light font-italic small" role="alert">Match the claim and match the value with regex. Then add a new claim with the new value@(claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot ? ", if the claim match but the value do not match" : string.Empty). E.g. regex to match an email on domain @("@abc.com"): @(@"^\S+@abc.com$")</div>
                                         <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                         <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Regex value match" />
                                         <FInputText @bind-Value="claimTransformClaimIn.TransformationExtension" For="@(() => claimTransformClaimIn.TransformationExtension)" LabelText="New value" />
@@ -150,12 +158,12 @@
                                     break;
 
                                 case ClaimTransformTypes.Map:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value in the selected claim to a new claim.</div>
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value in the selected claim to a new claim@(claimTransform.Action == ClaimTransformActions.AddIfNotOut ? ", if the new claim do not exist" : string.Empty).</div>
                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                     break;
 
                                 case ClaimTransformTypes.RegexMap:
-                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value found with the regex group map to a new claim. E.g. regex to find domain in email: @(@"^\S+@(?<map>\S+)$")</div>
+                                    <div class="p-0 alert alert-light font-italic small" role="alert">Map the value found with the regex group map to a new claim@(claimTransform.Action == ClaimTransformActions.AddIfNotOut ? ", if the new claim do not exist" : string.Empty). E.g. regex to find domain in email: @(@"^\S+@(?<map>\S+)$")</div>
                                     <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
                                     <FInputText @bind-Value="claimTransformClaimIn.Transformation" For="@(() => claimTransformClaimIn.Transformation)" LabelText="Map value in regex map group" />
                                     break;
@@ -205,10 +213,12 @@
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Match))">Match claim and value</button>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMatch))">Regex match</button>
             <div class="dropdown-divider"></div>
-            <h6 class="dropdown-header">Actions: Add/Replace</h6>
-            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
+            <h6 class="dropdown-header">Actions: Add/Replace/If not</h6>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Map))">Map</button>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.RegexMap))">Regex map</button>
+            <div class="dropdown-divider"></div>
+            <h6 class="dropdown-header">Actions: Add/Replace</h6>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
         </div>
     </div>

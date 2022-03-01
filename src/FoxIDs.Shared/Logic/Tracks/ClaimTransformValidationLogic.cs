@@ -21,6 +21,8 @@ namespace FoxIDs.Logic
         {
             if (claimTransforms != null)
             {
+                HandleObsoleteActions(claimTransforms);
+
                 var addActionClaimTransform = claimTransforms.Where(ct => ct.Action == ClaimTransformActions.Add);
 
                 foreach (var claimTransform in addActionClaimTransform)
@@ -44,6 +46,28 @@ namespace FoxIDs.Logic
                         throw new NotImplementedException();
                     }
                 }
+            }
+        }
+
+        [Obsolete("backwards compatibility to support spelling error, remove method when 'ClaimTransformActions.AddIfNotObsolete' and 'ClaimTransformActions.ReplaceIfNotObsolete' is removed.")]
+        private static void HandleObsoleteActions<TClaimTransform>(IEnumerable<TClaimTransform> claimTransforms) where TClaimTransform : ClaimTransform
+        {
+            foreach (var ct in claimTransforms)
+            {
+                HandleObsoleteActions(ct);
+            }
+        }
+
+        [Obsolete("backwards compatibility to support spelling error, remove method when 'ClaimTransformActions.AddIfNotObsolete' and 'ClaimTransformActions.ReplaceIfNotObsolete' is removed.")]
+        public static void HandleObsoleteActions(ClaimTransform ct)
+        {
+            if (ct.Action == ClaimTransformActions.AddIfNotObsolete)
+            {
+                ct.Action = ClaimTransformActions.AddIfNot;
+            }
+            else if (ct.Action == ClaimTransformActions.ReplaceIfNotObsolete)
+            {
+                ct.Action = ClaimTransformActions.ReplaceIfNot;
             }
         }
     }

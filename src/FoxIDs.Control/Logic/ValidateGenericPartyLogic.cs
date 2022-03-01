@@ -164,6 +164,23 @@ namespace FoxIDs.Logic
                                 throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
                         }
                     }
+                    else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
+                    {
+                        switch (claimTransform.Type)
+                        {
+                            case ClaimTransformTypes.Map:
+                                claimTransform.Transformation = null;
+                                claimTransform.TransformationExtension = null;
+                                break;
+
+                            case ClaimTransformTypes.RegexMap:
+                                claimTransform.TransformationExtension = null;
+                                break;
+
+                            default:
+                                throw new NotSupportedException($"Claim transformation type '{claimTransform.Type}' not supported.");
+                        }
+                    }
                     else if (claimTransform.Action == ClaimTransformActions.Remove)
                     {
                         switch (claimTransform.Type)

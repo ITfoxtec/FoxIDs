@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FoxIDs.Logic;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
@@ -60,9 +61,11 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<OAuthClaimTransform, Api.OAuthClaimTransform>()
+                .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
                 .ReverseMap();
 
             CreateMap<SamlClaimTransform, Api.SamlClaimTransform>()
+                .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
                 .ReverseMap();
 
             CreateMap<TrackKey, Api.TrackKey>()
@@ -73,7 +76,7 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<TrackKey, Api.TrackKeyItemsContained>()
                 .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0].Key.GetPublicKey()))
-                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));              
+                .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));
 
             CreateMap<TrackKeyItem, Api.TrackKeyItemContained>()
                 .ForMember(d => d.Key, opt => opt.MapFrom(s => s.Key.GetPublicKey()))
@@ -110,6 +113,13 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<Api.SamlMetadataContactPerson, SamlMetadataContactPerson>()
                 .ReverseMap();
+        }
+
+        [Obsolete("backwards compatibility to support spelling error, remove method when 'ClaimTransformActions.AddIfNotObsolete' and 'ClaimTransformActions.ReplaceIfNotObsolete' is removed.")]
+        private static ClaimTransformActions MapAction(ClaimTransform ct)
+        {
+            ClaimTransformValidationLogic.HandleObsoleteActions(ct);
+            return ct.Action;
         }
 
         private void UpPartyMapping()

@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
             return Task.FromResult(outputClaims);
         }
 
-        private static void AddReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
+        private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, Claim newClaim)
         {
             switch (claimTransform.Action)
             {
@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private static void AddReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, List<Claim> newClaims)
+        private static void AddOrReplaceClaims(List<Claim> outputClaims, ClaimTransform claimTransform, List<Claim> newClaims)
         {
             if (newClaims.Count() > 0)
             {
@@ -100,6 +100,7 @@ namespace FoxIDs.Logic
                 {
                     case ClaimTransformActions.Add:
                     case ClaimTransformActions.AddIfNot:
+                    case ClaimTransformActions.AddIfNotOut:
                         outputClaims.AddRange(newClaims);
                         break;
                     case ClaimTransformActions.Replace:
@@ -116,7 +117,7 @@ namespace FoxIDs.Logic
         private void ConstantTransformation(List<Claim> claims, ClaimTransform claimTransform)
         {
             var newClaim = new Claim(claimTransform.ClaimOut, claimTransform.Transformation);
-            AddReplaceClaims(claims, claimTransform, newClaim);
+            AddOrReplaceClaims(claims, claimTransform, newClaim);
         }
 
         private void MatchClaimTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -134,11 +135,11 @@ namespace FoxIDs.Logic
 
                 if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
                 {
-                    AddReplaceClaims(claims, claimTransform, newClaims);
+                    AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }
                 else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
                 {
-                    AddReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
+                    AddOrReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
                 }
             }
             else
@@ -165,11 +166,11 @@ namespace FoxIDs.Logic
 
                 if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
                 {
-                    AddReplaceClaims(claims, claimTransform, newClaims);
+                    AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }
                 else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
                 {
-                    AddReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    AddOrReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                 }
             }
             else
@@ -200,11 +201,11 @@ namespace FoxIDs.Logic
 
                 if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
                 {
-                    AddReplaceClaims(claims, claimTransform, newClaims);
+                    AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }
                 else if (newClaims.Count() <= 0 && (claimTransform.Action == ClaimTransformActions.AddIfNot || claimTransform.Action == ClaimTransformActions.ReplaceIfNot))
                 {
-                    AddReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
+                    AddOrReplaceClaims(claims, claimTransform, new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                 }
             }
             else
@@ -224,7 +225,18 @@ namespace FoxIDs.Logic
                     newClaims.Add(new Claim(claimTransform.ClaimOut, claim.Value));
                 }
             }
-            AddReplaceClaims(claims, claimTransform, newClaims);
+
+            if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+            {
+                AddOrReplaceClaims(claims, claimTransform, newClaims);
+            }
+            else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
+            {
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase)).Count() > 0))
+                {
+                    AddOrReplaceClaims(claims, claimTransform, newClaims);
+                }                
+            }
         }
 
         private void RegexMapTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -243,7 +255,18 @@ namespace FoxIDs.Logic
                     }
                 }
             }
-            AddReplaceClaims(claims, claimTransform, newClaims);
+
+            if (claimTransform.Action == ClaimTransformActions.Add || claimTransform.Action == ClaimTransformActions.Replace)
+            {
+                AddOrReplaceClaims(claims, claimTransform, newClaims);
+            }
+            else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
+            {
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase)).Count() > 0))
+                {
+                    AddOrReplaceClaims(claims, claimTransform, newClaims);
+                }
+            }
         }
 
         private void ConcatenateTransformation(List<Claim> claims, ClaimTransform claimTransform)
@@ -271,7 +294,7 @@ namespace FoxIDs.Logic
                 var transformationValue = string.Format(claimTransform.Transformation, values);
                 newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
             }
-            AddReplaceClaims(claims, claimTransform, newClaims);
+            AddOrReplaceClaims(claims, claimTransform, newClaims);
         }
     }
 }

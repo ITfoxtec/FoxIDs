@@ -81,6 +81,10 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"Access token '{accessToken}'.");
 
                 var claimsPrincipal = await jwtLogic.ValidateTokenAsync(accessToken);
+                if (claimsPrincipal == null)
+                {
+                    throw new Exception("Unable to validate access token claimsPrincipal is null.");
+                }
                 return claimsPrincipal.Claims;
             }
             catch (Exception ex)

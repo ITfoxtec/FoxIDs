@@ -57,8 +57,16 @@ Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access 
 
 Local development domain and port: `https://localhost:44345`
 
+### BlazorServerOidcSample
+
+Blazor server sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
+Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+
+Local development domain and port: `https://localhost:44347`
+
 ### IdentityServerOidcOpSample
-//TODO
+
+Identity Server implementing OpenID Connect (OIDC) exposing a OpenID Provider (OP) / identity provider (IdP) making it possible to configure at sample OpenID Provider in the FoxIDs track.
 
 Local development domain and port: `https://localhost:44346`
 

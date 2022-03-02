@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger)
+        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
         {
             this.logger = logger;
             this.environment = environment;
@@ -55,7 +55,7 @@ namespace FoxIDs.Controllers
                 return HandleOAuthTokenException(exception);
             }
 
-            if (!exceptionHandlerPathFeature.Path.IsNullOrEmpty())
+            if (RouteBinding != null && !exceptionHandlerPathFeature.Path.IsNullOrEmpty())
             {
                 try
                 {

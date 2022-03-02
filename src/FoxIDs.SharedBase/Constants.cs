@@ -27,6 +27,7 @@ namespace FoxIDs
             
             public const string LoginController = "login";
             public const string ActionController = "action";
+            public const string MfaController = "Mfa";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";
@@ -472,6 +473,7 @@ namespace FoxIDs
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
             public const string ForgotPassword = "forgotpassword";
+            public const string TwoFactor = "twofactor";
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";

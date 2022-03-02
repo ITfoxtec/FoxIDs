@@ -19,5 +19,8 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }
+
+        [JsonProperty(PropertyName = "am")]
+        public IEnumerable<string> AuthMethods { get; set; }
     }
 }

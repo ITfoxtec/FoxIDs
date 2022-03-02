@@ -30,7 +30,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SecurityHeaderLogic>();
             services.AddTransient<TrackKeyLogic>();
             services.AddTransient<TrackIssuerLogic>();
-
+            
+            services.AddTransient<LoginPageLogic>();
             services.AddTransient<LoginUpLogic>();
             services.AddTransient<LogoutUpLogic>();
             services.AddTransient<SingleLogoutDownLogic>();            

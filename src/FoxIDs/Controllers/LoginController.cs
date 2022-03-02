@@ -19,14 +19,13 @@ using System.Linq;
 
 namespace FoxIDs.Controllers
 {
-
-
     [Sequence]
     public class LoginController : EndpointController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
+        private readonly LoginPageLogic loginPageLogic;
         private readonly SessionLoginUpPartyLogic sessionLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
@@ -38,11 +37,12 @@ namespace FoxIDs.Controllers
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
+            this.loginPageLogic = loginPageLogic;
             this.sessionLogic = sessionLogic;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -62,16 +62,16 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start login.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
-                var validSession = ValidSession(sequenceData, session);
+                var validSession = ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(loginUpParty, sequenceData));
                 if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
                 {
-                    return await LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
                 }
 
                 if (sequenceData.LoginAction == LoginAction.ReadSession)
@@ -101,23 +101,9 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private void CheckUpParty(UpSequenceData sequenceData)
-        {
-            if (!sequenceData.UpPartyId.Equals(RouteBinding.UpParty.Id, StringComparison.Ordinal))
-            {
-                throw new Exception("Invalid up-party id.");
-            }
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
-
-            if (RouteBinding.UpParty.Type != PartyTypes.Login)
-            {
-                throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
-            }
-        }
-
         private DownPartySessionLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
 
-        private bool ValidSession(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session)
+        private bool ValidSessionUpAgainstSequence(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
         {
             if (session == null) return false;
 
@@ -133,6 +119,12 @@ namespace FoxIDs.Controllers
                 return false;
             }
 
+            if (requereMfa && !(session.Claims?.Where(c => c.Claim == JwtClaimTypes.Amr && c.Values.Where(v => v == IdentityConstants.AuthenticationMethodReferenceValues.Mfa).Any())?.Count() > 0))
+            {
+                logger.ScopeTrace(() => "Session does not meet the MFA requirement.");
+                return false;
+            }
+
             return true;
         }
 
@@ -143,7 +135,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -191,7 +183,18 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, session);
+                    var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
+                    var requereMfa = loginPageLogic.GetRequereMfa(loginUpParty, sequenceData);
+                    if (requereMfa)
+                    {
+                        sequenceData.AuthMethods = authMethods;
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
+                    }
+                    else
+                    {
+                        return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods, session: session);
+                    }
                 }
                 catch (ChangePasswordException cpex)
                 {
@@ -224,69 +227,13 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoginResponseAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, User user, SessionLoginUpPartyCookie session = null)
-        {
-            var authTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            var authMethods = new List<string>();
-            authMethods.Add(IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
-
-            List<Claim> claims = null;
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
-            {
-                claims = session.Claims.ToClaimList();
-            }
-            else
-            {
-                var sessionId = RandomGenerator.Generate(24);
-                claims = await GetClaimsAsync(loginUpParty, user, authTime, authMethods, sessionId);
-                await sessionLogic.CreateSessionAsync(loginUpParty, newDownPartyLink, authTime, claims);
-            }
-
-            return await loginUpLogic.LoginResponseAsync(claims);
-        }
-
-        private async Task<IActionResult> LoginResponseUpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
-        {
-            if (session != null && await sessionLogic.UpdateSessionAsync(loginUpParty, newDownPartyLink, session))
-            {
-                return await loginUpLogic.LoginResponseAsync(session.Claims.ToClaimList());
-            }
-            else
-            {
-                throw new InvalidOperationException("Session do not exist or can not be updated.");
-            }            
-        }
-
-        private async Task<List<Claim>> GetClaimsAsync(LoginUpParty party, User user, long authTime, IEnumerable<string> authMethods, string sessionId)
-        {
-            var claims = new List<Claim>();
-            claims.AddClaim(JwtClaimTypes.Subject, user.UserId);
-            claims.AddClaim(JwtClaimTypes.AuthTime, authTime.ToString());
-            claims.AddRange(authMethods.Select(am => new Claim(JwtClaimTypes.Amr, am)));
-            claims.AddClaim(JwtClaimTypes.SessionId, sessionId);
-            claims.AddClaim(JwtClaimTypes.PreferredUsername, user.Email);
-            claims.AddClaim(JwtClaimTypes.Email, user.Email);
-            claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
-            claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
-            if (user.Claims?.Count() > 0)
-            {
-                claims.AddRange(user.Claims.ToClaimList());
-            }
-            logger.ScopeTrace(() => $"Up, OIDC created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-
-            var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return transformedClaims;
-        }
-
         public async Task<IActionResult> CancelLogin()
         {
             try
             {
                 logger.ScopeTrace(() => "Cancel login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginCanceled, "Login canceled by user.");
 
             }
@@ -304,7 +251,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start logout.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -345,7 +292,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -438,7 +385,7 @@ namespace FoxIDs.Controllers
         public async Task<IActionResult> SingleLogoutDone()
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: true);
-            CheckUpParty(sequenceData);
+            loginPageLogic.CheckUpParty(sequenceData);
             return await LogoutDoneAsync(null, sequenceData);
         }
 
@@ -465,7 +412,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start create user.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -477,7 +424,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
-                    return await LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
@@ -497,7 +444,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -525,7 +472,7 @@ namespace FoxIDs.Controllers
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
-                    return await LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
                 }
 
                 try
@@ -543,7 +490,8 @@ namespace FoxIDs.Controllers
                     var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
                     if (user != null)
                     {
-                        return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user);
+                        var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
+                        return await loginPageLogic.LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, authMethods);
                     }
                 }
                 catch (UserExistsException uex)
@@ -601,13 +549,13 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Start change password.");
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
-                _ = ValidSession(sequenceData, session);
+                _ = ValidSessionUpAgainstSequence(sequenceData, session);
 
                 logger.ScopeTrace(() => "Show change password dialog.");
                 return View(nameof(ChangePassword), new ChangePasswordViewModel
@@ -633,7 +581,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                CheckUpParty(sequenceData);
+                loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -679,7 +627,8 @@ namespace FoxIDs.Controllers
                         throw new NotImplementedException("Authenticated user and requested user do not match.");
                     }
 
-                    return await LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, session);
+                    var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
+                    return await loginPageLogic.LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, authMethods, session: session);
                 }
                 catch (UserObservationPeriodException uoex)
                 {

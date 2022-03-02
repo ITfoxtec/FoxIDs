@@ -16,10 +16,12 @@ namespace FoxIDs.Controllers
     public abstract class EndpointController : Controller, IRouteBinding
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly bool requireRouteBinding;
 
-        public EndpointController(TelemetryScopedLogger logger)
+        public EndpointController(TelemetryScopedLogger logger, bool requireRouteBinding = true)
         {
             this.logger = logger;
+            this.requireRouteBinding = requireRouteBinding;
         }
 
         public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
@@ -30,9 +32,9 @@ namespace FoxIDs.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            if (RouteBinding == null) throw new InvalidOperationException("Controller can not be called directly.");
+            if (requireRouteBinding && RouteBinding == null) throw new InvalidOperationException("Controller can not be called directly.");
 
-            logger.ScopeTrace(() => $"Url '{context.HttpContext.Request.Scheme}://{context.HttpContext.Request.Host}{context.HttpContext.Request.Path}'");
+            logger.ScopeTrace(() => $"URL '{context.HttpContext.Request.Scheme}://{context.HttpContext.Request.Host}{context.HttpContext.Request.Path}'");
             base.OnActionExecuting(context);
         }
 

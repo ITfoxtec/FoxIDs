@@ -75,6 +75,13 @@ namespace FoxIDs.Client.Models.ViewModels
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
         /// <summary>
+        /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.TwoFactorAppNameLength)]
+        [Display(Name = "Two-factor app name on the users phone")]
+        public string TwoFactorAppName { get; set; }
+
+        /// <summary>
         /// Enable two-factor authentication (2FA) app. Default false.
         /// </summary>
         [Display(Name = "Two-factor app")]

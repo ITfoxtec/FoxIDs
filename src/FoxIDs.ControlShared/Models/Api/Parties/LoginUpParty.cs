@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Models.Api
 {
@@ -34,6 +35,12 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [Required]
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
+
+        /// <summary>
+        /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.TwoFactorAppNameLength)]
+        public string TwoFactorAppName { get; set; }
 
         /// <summary>
         /// Enable two-factor authentication (2FA) app. Default false.
@@ -101,6 +108,10 @@ namespace FoxIDs.Models.Api
         {
             var results = new List<ValidationResult>();
 
+            if (EnableTwoFactorApp && TwoFactorAppName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(TwoFactorAppName)} is required. If {nameof(EnableTwoFactorApp)} is true.", new[] { nameof(TwoFactorAppName), nameof(EnableTwoFactorApp) }));
+            }
             if (!EnableTwoFactorApp && RequireTwoFactor)
             {
                 results.Add(new ValidationResult($"{nameof(EnableTwoFactorApp)} has to be true if {nameof(RequireTwoFactor)} is true.", new[] { nameof(EnableTwoFactorApp), nameof(RequireTwoFactor) }));

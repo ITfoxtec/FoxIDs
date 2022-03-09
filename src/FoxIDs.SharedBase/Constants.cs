@@ -212,6 +212,8 @@ namespace FoxIDs
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
+                public const int TwoFactorAppSecretLength = 300;
+                public const int TwoFactorInputCodeLength = 50;
             }
 
             public static class Claim
@@ -362,7 +364,8 @@ namespace FoxIDs
             {
                 public const int TitleLength = 40;
                 public const int IconUrlLength = 500;
-                public const int CssStyleLength = 4000;
+                public const int CssStyleLength = 4000; 
+                public const int TwoFactorAppNameLength = 50;
             }
 
             public static class SamlParty
@@ -473,6 +476,7 @@ namespace FoxIDs
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
             public const string ForgotPassword = "forgotpassword";
+            public const string RegisterTwoFactor = "regtwofactor";
             public const string TwoFactor = "twofactor";
 
             public const string Authorize = "authorize";

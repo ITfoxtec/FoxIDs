@@ -188,8 +188,16 @@ namespace FoxIDs.Controllers
                     if (requereMfa)
                     {
                         sequenceData.AuthMethods = authMethods;
+                        sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
+                        if (user.TwoFactorAppSecret.IsNullOrEmpty())
+                        {
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
+                        }
+                        else
+                        {
+                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
+                        }
                     }
                     else
                     {

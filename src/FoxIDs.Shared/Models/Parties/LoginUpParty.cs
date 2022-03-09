@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,6 +28,13 @@ namespace FoxIDs.Models
         [Required]
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
+
+        /// <summary>
+        /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.TwoFactorAppNameLength)]
+        [JsonProperty(PropertyName = "two_factor_app_name")]
+        public string TwoFactorAppName { get; set; }
 
         [JsonProperty(PropertyName = "enable_two_factor_app")]
         public bool EnableTwoFactorApp { get; set; }
@@ -58,6 +66,10 @@ namespace FoxIDs.Models
         {
             var results = new List<ValidationResult>();
 
+            if (EnableTwoFactorApp && TwoFactorAppName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"The field {nameof(TwoFactorAppName)} is required. If {nameof(EnableTwoFactorApp)} is true.", new[] { nameof(TwoFactorAppName), nameof(EnableTwoFactorApp) }));
+            }
             if (!EnableTwoFactorApp && RequireTwoFactor)
             {
                 results.Add(new ValidationResult($"{nameof(EnableTwoFactorApp)} has to be true if {nameof(RequireTwoFactor)} is true.", new[] { nameof(EnableTwoFactorApp), nameof(RequireTwoFactor) }));

@@ -56,6 +56,7 @@
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
+                <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableTwoFactorApp" For="@(() => loginUpParty.Form.Model.EnableTwoFactorApp)" OnValidChange="@((enable) => OnValidChangeEnableTwoFactorApp(loginUpParty, enable))" TextType="e.d" />
                 @if (loginUpParty.ShowAdvanced)
                 {
@@ -70,8 +71,6 @@
                 <UpPartySessionLifetime Model="loginUpParty.Form.Model" ShowAdvanced="loginUpParty.ShowAdvanced" />
                 @if (loginUpParty.ShowAdvanced)
                 {
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableTwoFactorApp" For="@(() => loginUpParty.Form.Model.EnableTwoFactorApp)" OnValidChange="@((enable) => OnValidChangeEnableTwoFactorApp(loginUpParty, enable))" TextType="e.d" />
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" OnValidChange="@((require) => OnValidChangeRequireTwoFactor(loginUpParty, require))" TextType="y.n" />
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableSingleLogout" For="@(() => loginUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />

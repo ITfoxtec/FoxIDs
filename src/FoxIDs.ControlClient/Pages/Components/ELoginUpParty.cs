@@ -59,6 +59,11 @@ namespace FoxIDs.Client.Pages.Components
 
         private void OnValidChangeEnableTwoFactorApp(GeneralLoginUpPartyViewModel generalLoginUpParty, bool enable)
         {
+            if (enable && generalLoginUpParty.Form.Model.TwoFactorAppName.IsNullOrWhiteSpace())
+            {
+                generalLoginUpParty.Form.Model.TwoFactorAppName = TenantName;
+            }
+
             if (!enable && generalLoginUpParty.Form.Model.RequireTwoFactor)
             {
                 generalLoginUpParty.Form.Model.RequireTwoFactor = false;

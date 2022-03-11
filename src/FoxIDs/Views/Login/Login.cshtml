@@ -3,7 +3,7 @@
 @model LoginViewModel
 
 @{
-    ViewData["Title"] = Localizer["Login"];
+    ViewData["Title"] = Localizer["Log in"];
 }
 
 <h1 class="heading">@ViewData["Title"]</h1>
@@ -23,7 +23,7 @@
                 <span asp-validation-for="Password"></span>
             </div>
             <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Login"]" class="btn btn-primary" />
+                <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
                 @if (Model.EnableCancelLogin)
                 {
                     <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>

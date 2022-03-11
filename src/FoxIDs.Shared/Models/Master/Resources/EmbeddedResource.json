@@ -5,7 +5,7 @@
   ],
   "names": [
     {
-      "name": "Login",
+      "name": "Log in",
       "id": 1
     },
     {
@@ -71,10 +71,6 @@
     {
       "name": "Create",
       "id": 17
-    },
-    {
-      "name": "Login with existing user",
-      "id": 18
     },
     {
       "name": "Given name",
@@ -161,7 +157,7 @@
       "id": 39
     },
     {
-      "name": "Login with your existing user",
+      "name": "Log in with your existing user",
       "id": 40
     },
     {
@@ -241,7 +237,7 @@
       "id": 59
     },
     {
-      "name": "Logout",
+      "name": "Log out",
       "id": 60
     },
     {
@@ -315,7 +311,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Login"
+          "value": "Log in"
         },
         {
           "culture": "da",
@@ -488,15 +484,6 @@
         {
           "culture": "en",
           "value": "Create"
-        }
-      ]
-    },
-    {
-      "id": 18,
-      "items": [
-        {
-          "culture": "en",
-          "value": "Login with existing user"
         }
       ]
     },
@@ -694,7 +681,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Login with your existing user"
+          "value": "Log in with your existing user"
         }
       ]
     },
@@ -874,7 +861,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Logout"
+          "value": "Log out"
+        },
+        {
+          "culture": "da",
+          "value": "Log af"
         }
       ]
     },

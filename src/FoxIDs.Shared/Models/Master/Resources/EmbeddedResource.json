@@ -267,6 +267,46 @@
     {
       "name": "The certificate will soon be ready. Please try again in a little while.",
       "id": 66
+    },
+    {
+      "name": "Two-factor authentication",
+      "id": 67
+    },
+    {
+      "name": "Register two-factor authentication app.",
+      "id": 68
+    },
+    {
+      "name": "Manual setup code (optional)",
+      "id": 69
+    },
+    {
+      "name": "Authenticator app code",
+      "id": 70
+    },
+    {
+      "name": "Please enter valid number",
+      "id": 71
+    },
+    {
+      "name": "Please enter valid integer number",
+      "id": 72
+    },
+    {
+      "name": "Register two-factor app",
+      "id": 73
+    },
+    {
+      "name": "Authenticator app code or a recovery code",
+      "id": 74
+    },
+    {
+      "name": "Invalid code, please try to register the two-factor app one more time.",
+      "id": 75
+    },
+    {
+      "name": "Invalid code, please try one more time.",
+      "id": 76
     }
   ],
   "resources": [
@@ -889,6 +929,96 @@
         {
           "culture": "en",
           "value": "The certificate will soon be ready. Please try again in a little while."
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Two-factor authentication"
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Register two-factor authentication app."
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Manual setup code (optional)"
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Authenticator app code"
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter valid number"
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter valid integer number"
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Register two-factor app"
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Authenticator app code or a recovery code"
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid code, please try to register the two-factor app one more time."
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid code, please try one more time."
         }
       ]
     }

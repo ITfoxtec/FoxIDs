@@ -187,6 +187,8 @@ namespace FoxIDs.Controllers
                     var requereMfa = loginPageLogic.GetRequereMfa(loginUpParty, sequenceData);
                     if (requereMfa)
                     {
+                        sequenceData.Email = user.Email;
+                        sequenceData.EmailVerified = user.EmailVerified;
                         sequenceData.AuthMethods = authMethods;
                         sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);

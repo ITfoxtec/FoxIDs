@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model RegisterTwoFactorViewModel
+@model TwoFactorViewModel
 
 @{
     ViewData["Title"] = Localizer["Two-factor authentication"];
@@ -11,22 +11,7 @@
 <div class="row page-container">
     <div class="col-md page-content">
         <form method="post">
-            <input type="hidden" asp-for="BarcodeImageUrl" autocomplete="off" />
-            <input type="hidden" asp-for="ManualSetupCode" autocomplete="off" />
-
-             <div class="info-message">
-                @Localizer["Register two-factor authentication app."]
-            </div>
             <div asp-validation-summary="ModelOnly"></div>
-            <img src="@Model.BarcodeImageUrl" /><br/>
-            <div class="form-group active-group active">
-                <div class="card bg-light">
-                    <div class="card-body px-3 py-2">
-                        @Model.ManualSetupCode
-                    </div>
-                </div>
-                <label asp-for="ManualSetupCode" class="label-control"></label>
-            </div>
             <div class="form-group active-group">
                 <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />
                 <label asp-for="AppCode" class="label-control"></label>
@@ -34,7 +19,7 @@
             </div>
 
             <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Register two-factor app"]" class="btn btn-primary" />
+                <input type="submit" value="@Localizer["Login"]" class="btn btn-primary" />
             </div>
         </form>
     </div>

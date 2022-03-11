@@ -16,6 +16,12 @@ namespace FoxIDs.Logic
             this.failingLoginLogic = failingLoginLogic;
         }
 
+        public async Task<User> GetUserAsync(string email)
+        {
+            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            return await tenantRepository.GetAsync<User>(id, required: false);
+        }
+
         public async Task<User> ValidateUser(string email, string password)
         {
             logger.ScopeTrace(() => $"Validating user '{email}', Route '{RouteBinding?.Route}'.");
@@ -117,6 +123,25 @@ namespace FoxIDs.Logic
             await tenantRepository.SaveAsync(user);
 
             logger.ScopeTrace(() => $"User '{user.Email}', password set.", triggerEvent: true);
+        }
+
+        public async Task<User> SetTwoFactorAppSecretUser(string email, string twoFactorAppSecret)
+        {
+            logger.ScopeTrace(() => $"Set two-factor app secret user '{email}', Route '{RouteBinding?.Route}'.");
+
+            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var user = await tenantRepository.GetAsync<User>(id, required: false);
+
+            if (user == null || user.DisableAccount)
+            {
+                throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to set two-factor app secret.");
+            }
+
+            user.TwoFactorAppSecret = twoFactorAppSecret;
+            await tenantRepository.SaveAsync(user);
+
+            logger.ScopeTrace(() => $"User '{user.Email}', two-factor app secret set.", triggerEvent: true);
+            return user;
         }
     }
 }

@@ -17,6 +17,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
 
+        [JsonProperty(PropertyName = "ev")]
+        public bool EmailVerified { get; set; }
+
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }
 

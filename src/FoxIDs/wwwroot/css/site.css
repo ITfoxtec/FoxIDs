@@ -68,33 +68,33 @@ code {
 
 @media (min-width: 576px) {
     .page-content {
-        -ms-flex: 0 0 75%;
-        flex: 0 0 75%;
-        max-width: 75%;
+        -ms-flex: 0 0 85%;
+        flex: 0 0 85%;
+        max-width: 85%;
     }
 }
 
 @media (min-width: 768px) {
     .page-content {
-        -ms-flex: 0 0 60%;
-        flex: 0 0 60%;
-        max-width: 60%;
+        -ms-flex: 0 0 70%;
+        flex: 0 0 70%;
+        max-width: 70%;
     }
 }
 
 @media (min-width: 992px) {
     .page-content {
-        -ms-flex: 0 0 47%;
-        flex: 0 0 47%;
-        max-width: 47%;
+        -ms-flex: 0 0 57%;
+        flex: 0 0 57%;
+        max-width: 57%;
     }
 }
 
 @media (min-width: 1200px) {
     .page-content {
-        -ms-flex: 0 0 40%;
-        flex: 0 0 40%;
-        max-width: 40%;
+        -ms-flex: 0 0 50%;
+        flex: 0 0 50%;
+        max-width: 50%;
     }
 }
 

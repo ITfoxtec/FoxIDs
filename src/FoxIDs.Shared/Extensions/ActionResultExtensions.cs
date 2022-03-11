@@ -9,7 +9,7 @@ namespace FoxIDs
         {
             if (result is ViewResult viewResult)
             {
-                if (notViewModelType != null && viewResult.Model.GetType() == notViewModelType)
+                if (notViewModelType != null && viewResult.Model != null && viewResult.Model.GetType() == notViewModelType)
                 {
                     return false;
                 }

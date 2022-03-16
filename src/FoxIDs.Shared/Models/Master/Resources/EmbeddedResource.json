@@ -303,6 +303,14 @@
     {
       "name": "Invalid code, please try one more time.",
       "id": 76
+    },
+    {
+      "name": "Confirmation required",
+      "id": 77
+    },
+    {
+      "name": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address.",
+      "id": 78
     }
   ],
   "resources": [
@@ -1010,6 +1018,24 @@
         {
           "culture": "en",
           "value": "Invalid code, please try one more time."
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirmation required"
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "items": [
+        {
+          "culture": "en",
+          "value": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
         }
       ]
     }

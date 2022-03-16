@@ -233,3 +233,10 @@ code {
 .field-validation-error {
     color: #a94442;
 }
+
+.btn-xs {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+    line-height: 0.5;
+    border-radius: 0.2rem;
+}

@@ -311,6 +311,10 @@
     {
       "name": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address.",
       "id": 78
+    },
+    {
+      "name": "Click to copy",
+      "id": 79
     }
   ],
   "resources": [
@@ -1036,6 +1040,15 @@
         {
           "culture": "en",
           "value": "You are about to register a two-factor authentication (2FA) app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Click to copy"
         }
       ]
     }

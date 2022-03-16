@@ -26,6 +26,9 @@
                     </div>
                 </div>
                 <label asp-for="ManualSetupCode" class="label-control"></label>
+                <small>
+                <button class="btn btn-link btn-xs" type="button" onclick="navigator.clipboard.writeText('@Model.ManualSetupCode')">@Localizer["Click to copy"]</button>
+                </small>
             </div>
             <div class="form-group active-group">
                 <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />

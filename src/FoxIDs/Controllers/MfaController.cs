@@ -58,7 +58,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var twoFactor = new TwoFactorAuthenticator();
-                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(50);
+                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(20);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 var setupInfo = twoFactor.GenerateSetupCode(loginUpParty.TwoFactorAppName, sequenceData.Email, sequenceData.TwoFactorAppSecret, false, 3);
 

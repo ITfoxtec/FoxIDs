@@ -936,7 +936,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Two-factor authentication"
+          "value": "Two-factor authentication (2FA)"
         }
       ]
     },
@@ -1035,7 +1035,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
+          "value": "You are about to register a two-factor authentication (2FA) app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
         }
       ]
     }

@@ -127,6 +127,7 @@ namespace FoxIDs.Controllers
                 if (!user.ActiveTwoFactorApp)
                 {
                     mUser.TwoFactorAppSecret = null;
+                    mUser.TwoFactorAppRecoveryCode = null;
                 }
                 var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;

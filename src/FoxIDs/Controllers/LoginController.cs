@@ -190,14 +190,17 @@ namespace FoxIDs.Controllers
                         sequenceData.Email = user.Email;
                         sequenceData.EmailVerified = user.EmailVerified;
                         sequenceData.AuthMethods = authMethods;
-                        sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
-                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                         if (user.TwoFactorAppSecret.IsNullOrEmpty())
                         {
+                            sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
+                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
                         }
                         else
                         {
+                            sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
+                            sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
+                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
                         }
                     }

@@ -213,6 +213,7 @@ namespace FoxIDs
                 public const int EmailLength = 60;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
                 public const int TwoFactorAppSecretLength = 50;
+                public const int TwoFactorAppCodeLength = 50;
             }
 
             public static class Claim

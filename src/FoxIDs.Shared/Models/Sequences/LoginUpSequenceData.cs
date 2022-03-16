@@ -26,7 +26,13 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "am")]
         public IEnumerable<string> AuthMethods { get; set; }
 
+        [JsonProperty(PropertyName = "fst")]
+        public TwoFactorAppSequenceStates TwoFactorAppState { get; set; }
+
         [JsonProperty(PropertyName = "fs")]
         public string TwoFactorAppSecret { get; set; }
+
+        [JsonProperty(PropertyName = "fr")]
+        public string TwoFactorAppRecoveryCode { get; set; }        
     }
 }

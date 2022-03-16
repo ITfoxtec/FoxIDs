@@ -3,7 +3,7 @@
 @model RegisterTwoFactorViewModel
 
 @{
-    ViewData["Title"] = Localizer["Two-factor authentication"];
+    ViewData["Title"] = Localizer["Two-factor authentication (2FA)"];
 }
 
 <h1 class="heading">@ViewData["Title"]</h1>
@@ -15,10 +15,16 @@
             <input type="hidden" asp-for="ManualSetupCode" autocomplete="off" />
 
              <div class="info-message">
-                @Localizer["Register two-factor authentication app."]
+                @Localizer["Register two-factor authentication with an app of your choice."]
             </div>
+
             <div asp-validation-summary="ModelOnly"></div>
-            <img src="@Model.BarcodeImageUrl" /><br/>
+            <div class="form-group active-group active">
+                <div>
+                    <img src="@Model.BarcodeImageUrl" />
+                </div>
+                <label asp-for="BarcodeImageUrl" class="label-control"></label>
+            </div>
             <div class="form-group active-group active">
                 <div class="card bg-light">
                     <div class="card-body px-3 py-2">
@@ -26,9 +32,7 @@
                     </div>
                 </div>
                 <label asp-for="ManualSetupCode" class="label-control"></label>
-                <small>
                 <button class="btn btn-link btn-xs" type="button" onclick="navigator.clipboard.writeText('@Model.ManualSetupCode')">@Localizer["Click to copy"]</button>
-                </small>
             </div>
             <div class="form-group active-group">
                 <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />

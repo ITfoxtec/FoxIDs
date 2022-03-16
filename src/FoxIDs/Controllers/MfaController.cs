@@ -47,6 +47,10 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+                if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.DoRegistration)
+                {
+                    throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
+                }
                 if (!sequenceData.EmailVerified)
                 {
                     await accountActionLogic.SendConfirmationEmailAsync(sequenceData.Email);
@@ -58,12 +62,15 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var twoFactor = new TwoFactorAuthenticator();
-                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(20);
+                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(40);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 var setupInfo = twoFactor.GenerateSetupCode(loginUpParty.TwoFactorAppName, sequenceData.Email, sequenceData.TwoFactorAppSecret, false, 3);
 
                 return View(new RegisterTwoFactorViewModel
                 {
+                    Title = loginUpParty.Title,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
                     BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl,
                     ManualSetupCode = setupInfo.ManualEntryKey
                 });
@@ -84,6 +91,10 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+                if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.DoRegistration)
+                {
+                    throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.DoRegistration}'.");
+                }
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -107,9 +118,17 @@ namespace FoxIDs.Controllers
                 bool isValid = twoFactor.ValidateTwoFactorPIN(sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode, false);
                 if (isValid)
                 {
-                    var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
-                    var user = await userAccountLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppSecret);
-                    return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+                    sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.RegisteredShowRecoveryCode;
+                    sequenceData.TwoFactorAppRecoveryCode = RandomGenerator.Generate(40);
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+
+                    return View(new RecoveryCodeTwoFactorViewModel
+                    {
+                        Title = loginUpParty.Title,
+                        IconUrl = loginUpParty.IconUrl,
+                        Css = loginUpParty.Css,
+                        RecoveryCode = sequenceData.TwoFactorAppRecoveryCode
+                    });
                 }
 
                 ModelState.AddModelError(nameof(RegisterTwoFactorViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
@@ -121,6 +140,39 @@ namespace FoxIDs.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RecCodeTwoFactor(RecoveryCodeTwoFactorViewModel recoveryCodeTwoFactor)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.RegisteredShowRecoveryCode)
+                {
+                    throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.RegisteredShowRecoveryCode}'.");
+                }
+                loginPageLogic.CheckUpParty(sequenceData);
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                if(sequenceData.TwoFactorAppRecoveryCode.IsNullOrEmpty())
+                {
+                    throw new InvalidOperationException($"The {nameof(RecCodeTwoFactor)} method is called with empty recovery code.");
+                }
+
+                logger.ScopeTrace(() => "Two factor recovery code post.");
+
+                var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
+                var user = await userAccountLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppSecret, sequenceData.TwoFactorAppRecoveryCode);
+                return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Two factor registration and recovery code failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
         public async Task<IActionResult> TwoFactor()
         {
             try
@@ -129,6 +181,10 @@ namespace FoxIDs.Controllers
 
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+                if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.Validate)
+                {
+                    throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
+                }
                 if (!sequenceData.EmailVerified)
                 {
                     await accountActionLogic.SendConfirmationEmailAsync(sequenceData.Email);
@@ -139,7 +195,12 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                return View(new TwoFactorViewModel());
+                return View(new TwoFactorViewModel
+                {
+                    Title = loginUpParty.Title,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                });
             }
             catch (Exception ex)
             {
@@ -155,6 +216,10 @@ namespace FoxIDs.Controllers
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
+                if (sequenceData.TwoFactorAppState != TwoFactorAppSequenceStates.Validate)
+                {
+                    throw new InvalidOperationException($"Invalid {nameof(TwoFactorAppSequenceStates)} is '{sequenceData.TwoFactorAppState}'. Required to be '{TwoFactorAppSequenceStates.Validate}'.");
+                }
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
@@ -174,17 +239,39 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                var twoFactor = new TwoFactorAuthenticator();
-                bool isValid = twoFactor.ValidateTwoFactorPIN(sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode, false);
-                if (isValid)
+                if(registerTwoFactor.AppCode.Length > 10)
                 {
-                    var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
-                    var user = await userAccountLogic.GetUserAsync(sequenceData.Email);
-                    return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
-                }
+                    // Is recovery code
+                    try
+                    {
+                        await userAccountLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.Email, registerTwoFactor.AppCode);
 
-                ModelState.AddModelError(nameof(TwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
-                return viewError();
+                        sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
+                        sequenceData.TwoFactorAppSecret = null;
+                        await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
+                    }
+                    catch (InvalidRecoveryCodeException rcex)
+                    {
+                        logger.ScopeTrace(() => rcex.Message, triggerEvent: true);
+                        ModelState.AddModelError(string.Empty, localizer["Invalid recovery code, please try one more time."]);
+                        return viewError();
+                    }
+                }
+                else
+                {
+                    var twoFactor = new TwoFactorAuthenticator();
+                    bool isValid = twoFactor.ValidateTwoFactorPIN(sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode, false);
+                    if (isValid)
+                    {
+                        var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
+                        var user = await userAccountLogic.GetUserAsync(sequenceData.Email);
+                        return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+                    }
+
+                    ModelState.AddModelError(nameof(TwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
+                    return viewError();
+                }
             }
             catch (Exception ex)
             {

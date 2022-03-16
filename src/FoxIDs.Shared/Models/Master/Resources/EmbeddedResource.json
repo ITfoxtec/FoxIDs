@@ -265,27 +265,27 @@
       "id": 66
     },
     {
-      "name": "Two-factor authentication",
+      "name": "Two-factor authentication (2FA)",
       "id": 67
     },
     {
-      "name": "Register two-factor authentication app.",
+      "name": "Register two-factor authentication with an app of your choice.",
       "id": 68
     },
     {
-      "name": "Manual setup code (optional)",
+      "name": "Or, use manual setup code (optional)",
       "id": 69
     },
     {
-      "name": "Authenticator app code",
+      "name": "Then, enter the authenticator app code",
       "id": 70
     },
     {
-      "name": "Please enter valid number",
+      "name": "Please enter a valid code",
       "id": 71
     },
     {
-      "name": "Please enter valid integer number",
+      "name": "Please enter a valid code or a recovery code",
       "id": 72
     },
     {
@@ -315,6 +315,10 @@
     {
       "name": "Click to copy",
       "id": 79
+    },
+    {
+      "name": "First, scan the QR code with your app",
+      "id": 80
     }
   ],
   "resources": [
@@ -949,7 +953,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Register two-factor authentication app."
+          "value": "Register two-factor authentication with an app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others."
         }
       ]
     },
@@ -958,7 +962,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Manual setup code (optional)"
+          "value": "Or, use manual setup code (optional)"
         }
       ]
     },
@@ -967,7 +971,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Authenticator app code"
+          "value": "Then, enter the authenticator app code"
         }
       ]
     },
@@ -976,7 +980,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter valid number"
+          "value": "Please enter a valid code"
         }
       ]
     },
@@ -985,7 +989,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter valid integer number"
+          "value": "Please enter a valid code or a recovery code"
         }
       ]
     },
@@ -1049,6 +1053,15 @@
         {
           "culture": "en",
           "value": "Click to copy"
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "items": [
+        {
+          "culture": "en",
+          "value": "First, scan the QR code with your app"
         }
       ]
     }

@@ -62,7 +62,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var twoFactor = new TwoFactorAuthenticator();
-                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(40);
+                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(30);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 var setupInfo = twoFactor.GenerateSetupCode(loginUpParty.TwoFactorAppName, sequenceData.Email, sequenceData.TwoFactorAppSecret, false, 3);
 
@@ -119,14 +119,15 @@ namespace FoxIDs.Controllers
                 if (isValid)
                 {
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.RegisteredShowRecoveryCode;
-                    sequenceData.TwoFactorAppRecoveryCode = RandomGenerator.Generate(40);
+                    sequenceData.TwoFactorAppRecoveryCode = RandomGenerator.Generate(30);
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
-                    return View(new RecoveryCodeTwoFactorViewModel
+                    return View(nameof(RecCodeTwoFactor), new RecoveryCodeTwoFactorViewModel
                     {
                         Title = loginUpParty.Title,
                         IconUrl = loginUpParty.IconUrl,
                         Css = loginUpParty.Css,
+                        SequenceString = SequenceString,
                         RecoveryCode = sequenceData.TwoFactorAppRecoveryCode
                     });
                 }

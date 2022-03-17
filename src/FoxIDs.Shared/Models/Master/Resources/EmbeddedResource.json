@@ -319,6 +319,26 @@
     {
       "name": "First, scan the QR code with your app",
       "id": 80
+    },
+    {
+      "name": "Two-factor authentication has been enabled for your account.",
+      "id": 81
+    },
+    {
+      "name": "IMPORTANT: Save your recovery code!",
+      "id": 82
+    },
+    {
+      "name": "Recovery code",
+      "id": 83
+    },
+    {
+      "name": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account.",
+      "id": 84
+    },
+    {
+      "name": "I have saved my recovery code",
+      "id": 85
     }
   ],
   "resources": [
@@ -1062,6 +1082,51 @@
         {
           "culture": "en",
           "value": "First, scan the QR code with your app"
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Two-factor authentication has been enabled for your account."
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "items": [
+        {
+          "culture": "en",
+          "value": "IMPORTANT: Save your recovery code!"
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Recovery code"
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "items": [
+        {
+          "culture": "en",
+          "value": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account."
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "items": [
+        {
+          "culture": "en",
+          "value": "I have saved my recovery code"
         }
       ]
     }

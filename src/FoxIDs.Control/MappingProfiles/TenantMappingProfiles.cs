@@ -50,7 +50,7 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => Track.IdFormat(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
             CreateMap<User, Api.User>()
-                .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecret.IsNullOrEmpty()))
+                .ForMember(d => d.ActiveTwoFactorApp, opt => opt.MapFrom(s => !s.TwoFactorAppSecretExternalName.IsNullOrEmpty()))
                 .ReverseMap()
                 .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormat(RouteBinding, s.Email.ToLower()).GetAwaiter().GetResult()));

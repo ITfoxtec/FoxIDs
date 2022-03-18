@@ -6,6 +6,7 @@ using System;
 using System.Threading.Tasks;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -15,12 +16,14 @@ namespace FoxIDs.Logic
 
         protected readonly TelemetryScopedLogger logger;
         protected readonly ITenantRepository tenantRepository;
+        private readonly ExternalSecretLogic externalSecretLogic;
         protected readonly SecretHashLogic secretHashLogic;
 
-        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
+            this.externalSecretLogic = externalSecretLogic;
             this.secretHashLogic = secretHashLogic;
         }
 
@@ -38,7 +41,7 @@ namespace FoxIDs.Logic
             };
         } 
         
-        public async Task ValidateTwoFactorAsync(string email, string secret, string appCode)
+        public async Task ValidateTwoFactorBySecretAsync(string email, string secret, string appCode)
         {
             var twoFactor = new TwoFactorAuthenticator();
             bool isValid = await Task.FromResult(twoFactor.ValidateTwoFactorPIN(secret, appCode, false));
@@ -49,12 +52,23 @@ namespace FoxIDs.Logic
             }
         }
 
+        public async Task ValidateTwoFactorByExternalSecretAsync(string email, string secretExternalName, string appCode)
+        {
+            var secret = await externalSecretLogic.GetExternalSecretAsync(secretExternalName);
+            if (secret.IsNullOrWhiteSpace())
+            {
+                throw new InvalidOperationException($"Unable to get external secret from Key Vault, {nameof(secretExternalName)} '{secretExternalName}'.");
+            }
+
+            await ValidateTwoFactorBySecretAsync(email, secret, appCode);
+        }
+
         public string CreateRecoveryCode()
         {
             return Base32Encoding.ToString(RandomGenerator.GenerateBytes(secretAndRecoveryCodeLength)).TrimEnd('=');
         }
 
-        public async Task<User> SetTwoFactorAppSecretUser(string email, string twoFactorAppSecret, string twoFactorAppRecoveryCode)
+        public async Task<User> SetTwoFactorAppSecretUser(string email, string newSecret, string secretExternalName, string twoFactorAppRecoveryCode)
         {
             logger.ScopeTrace(() => $"Set two-factor app secret user '{email}', Route '{RouteBinding?.Route}'.");
 
@@ -64,9 +78,21 @@ namespace FoxIDs.Logic
             if (user == null || user.DisableAccount)
             {
                 throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to set two-factor app secret.");
+            }          
+
+            if(!secretExternalName.IsNullOrEmpty())
+            {
+                try
+                {
+                    await externalSecretLogic.DeleteExternalSecretAsync(secretExternalName);
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex, $"Unable to delete external secret, {nameof(secretExternalName)} '{secretExternalName}'.");
+                }            
             }
 
-            user.TwoFactorAppSecret = twoFactorAppSecret;
+            user.TwoFactorAppSecretExternalName = await externalSecretLogic.CreateExternalSecretAsync("2fa", newSecret);
             var recoveryCode = new TwoFactorAppRecoveryCode();
             await secretHashLogic.AddSecretHashAsync(recoveryCode, twoFactorAppRecoveryCode);
             user.TwoFactorAppRecoveryCode = recoveryCode;

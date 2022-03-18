@@ -190,7 +190,7 @@ namespace FoxIDs.Controllers
                         sequenceData.Email = user.Email;
                         sequenceData.EmailVerified = user.EmailVerified;
                         sequenceData.AuthMethods = authMethods;
-                        if (user.TwoFactorAppSecret.IsNullOrEmpty())
+                        if (user.TwoFactorAppSecretExternalName.IsNullOrEmpty())
                         {
                             sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
@@ -198,7 +198,7 @@ namespace FoxIDs.Controllers
                         }
                         else
                         {
-                            sequenceData.TwoFactorAppSecret = user.TwoFactorAppSecret;
+                            sequenceData.TwoFactorAppSecretExternalName = user.TwoFactorAppSecretExternalName;
                             sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
                             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                             return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();

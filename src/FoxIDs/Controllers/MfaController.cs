@@ -62,7 +62,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName, sequenceData.Email);
-                sequenceData.TwoFactorAppSecret = twoFactorSetupInfo.Secret;
+                sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
                 return View(new RegisterTwoFactorViewModel
@@ -115,7 +115,7 @@ namespace FoxIDs.Controllers
 
                 try
                 {
-                    await accountTwoFactorLogic.ValidateTwoFactorAsync(sequenceData.Email, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
+                    await accountTwoFactorLogic.ValidateTwoFactorBySecretAsync(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, registerTwoFactor.AppCode);
 
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.RegisteredShowRecoveryCode;
                     sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorLogic.CreateRecoveryCode();
@@ -168,7 +168,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
                 var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
-                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppSecret, sequenceData.TwoFactorAppRecoveryCode);
+                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppSecretExternalName, sequenceData.TwoFactorAppRecoveryCode);
                 return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
             }
             catch (Exception ex)
@@ -251,7 +251,6 @@ namespace FoxIDs.Controllers
                         await accountTwoFactorLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.Email, registerTwoFactor.AppCode);
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
-                        sequenceData.TwoFactorAppSecret = null;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                         return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
                     }
@@ -266,7 +265,7 @@ namespace FoxIDs.Controllers
                 {
                     try
                     {
-                        await accountTwoFactorLogic.ValidateTwoFactorAsync(sequenceData.Email, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
+                        await accountTwoFactorLogic.ValidateTwoFactorByExternalSecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecretExternalName, registerTwoFactor.AppCode);
 
                         var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                         var user = await userAccountLogic.GetUserAsync(sequenceData.Email);

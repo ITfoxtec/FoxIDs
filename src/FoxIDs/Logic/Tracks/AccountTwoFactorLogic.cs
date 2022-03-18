@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
                 }            
             }
 
-            user.TwoFactorAppSecretExternalName = await externalSecretLogic.CreateExternalSecretAsync("2fa", newSecret);
+            user.TwoFactorAppSecretExternalName = await externalSecretLogic.SetExternalSecretAsync("2fa", newSecret);
             var recoveryCode = new TwoFactorAppRecoveryCode();
             await secretHashLogic.AddSecretHashAsync(recoveryCode, twoFactorAppRecoveryCode);
             user.TwoFactorAppRecoveryCode = recoveryCode;

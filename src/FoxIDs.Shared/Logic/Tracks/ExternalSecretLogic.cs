@@ -19,7 +19,7 @@ namespace FoxIDs.Logic
             this.tokenCredential = tokenCredential;
         }
 
-        public async Task<string> CreateExternalSecretAsync(string name, string value)
+        public async Task<string> SetExternalSecretAsync(string name, string value)
         {
             var externalName = $"{name}-{Guid.NewGuid()}";
 

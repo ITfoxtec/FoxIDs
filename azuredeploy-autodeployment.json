@@ -203,7 +203,9 @@
               ],
               "secrets": [
                 "get",
-                "List"
+                "List",
+                "Set",
+                "Delete"
               ],
               "certificates": [
                 "Get",
@@ -221,7 +223,9 @@
               ],
               "secrets": [
                 "get",
-                "List"
+                "List",
+                "Set",
+                "Delete"
               ],
               "certificates": [
                 "Get",

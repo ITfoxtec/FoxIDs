@@ -21,11 +21,10 @@ namespace FoxIDs.Logic
 
         public async Task<string> CreateExternalKeyAsync(Track mTrack, string tenantName = null, string trackName = null)
         {
-            var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
-
             tenantName = tenantName ?? RouteBinding.TenantName;
             trackName = trackName ?? RouteBinding.TrackName;
             var externalName = $"{tenantName}-{mTrack.Name}-{Guid.NewGuid()}";
+
             var certificatePolicy = new CertificatePolicy("self", (tenantName, trackName).GetCertificateSubject())
             {
                 Exportable = false,
@@ -38,7 +37,9 @@ namespace FoxIDs.Logic
             {
                 DaysBeforeExpiry = mTrack.KeyExternalAutoRenewDaysBeforeExpiry
             });
+            var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
             await certificateClient.StartCreateCertificateAsync(externalName, certificatePolicy);
+
             return externalName;
         }
 

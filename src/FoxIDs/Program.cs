@@ -1,10 +1,10 @@
-﻿using FoxIDs.Infrastructure.KeyVault;
+﻿using Azure.Identity;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.AzureKeyVault;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 
 namespace FoxIDs
 {
@@ -18,13 +18,12 @@ namespace FoxIDs
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureKestrel(options => options.AddServerHeader = false)
-                .ConfigureAppConfiguration((context, builder) =>
+                .ConfigureAppConfiguration((context, config) =>
                 {
-                    var builtConfig = builder.Build();
+                    var builtConfig = config.Build();
                     if (!context.HostingEnvironment.IsDevelopment())
                     {
-                        var keyVaultClient = FoxIDsKeyVaultClient.GetManagedClient();
-                        builder.AddAzureKeyVault(builtConfig["Settings:KeyVault:EndpointUri"], keyVaultClient, new DefaultKeyVaultSecretManager());
+                        config.AddAzureKeyVault(new Uri(builtConfig["Settings:KeyVault:EndpointUri"]), new DefaultAzureCredential());
                     }
                 })
                 .UseStartup<Startup>()

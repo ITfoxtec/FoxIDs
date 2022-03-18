@@ -7,9 +7,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
-using Google.Authenticator;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
@@ -26,8 +24,9 @@ namespace FoxIDs.Controllers
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
+        private readonly AccountTwoFactorLogic accountTwoFactorLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -37,6 +36,7 @@ namespace FoxIDs.Controllers
             this.securityHeaderLogic = securityHeaderLogic;
             this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
+            this.accountTwoFactorLogic = accountTwoFactorLogic;
         }
 
         public async Task<IActionResult> RegTwoFactor()
@@ -61,18 +61,17 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var twoFactor = new TwoFactorAuthenticator();
-                sequenceData.TwoFactorAppSecret = RandomGenerator.Generate(30);
+                var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName, sequenceData.Email);
+                sequenceData.TwoFactorAppSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                var setupInfo = twoFactor.GenerateSetupCode(loginUpParty.TwoFactorAppName, sequenceData.Email, sequenceData.TwoFactorAppSecret, false, 3);
 
                 return View(new RegisterTwoFactorViewModel
                 {
                     Title = loginUpParty.Title,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    BarcodeImageUrl = setupInfo.QrCodeSetupImageUrl,
-                    ManualSetupCode = setupInfo.ManualEntryKey
+                    QrCodeSetupImageUrl = twoFactorSetupInfo.QrCodeSetupImageUrl,
+                    ManualSetupKey = twoFactorSetupInfo.ManualSetupKey
                 });
             }
             catch (Exception ex)
@@ -114,12 +113,12 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                var twoFactor = new TwoFactorAuthenticator();
-                bool isValid = twoFactor.ValidateTwoFactorPIN(sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode, false);
-                if (isValid)
+                try
                 {
+                    await accountTwoFactorLogic.ValidateTwoFactorAsync(sequenceData.Email, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
+
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.RegisteredShowRecoveryCode;
-                    sequenceData.TwoFactorAppRecoveryCode = RandomGenerator.Generate(30);
+                    sequenceData.TwoFactorAppRecoveryCode = accountTwoFactorLogic.CreateRecoveryCode();
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 
                     return View(nameof(RecCodeTwoFactor), new RecoveryCodeTwoFactorViewModel
@@ -131,8 +130,12 @@ namespace FoxIDs.Controllers
                         RecoveryCode = sequenceData.TwoFactorAppRecoveryCode
                     });
                 }
+                catch (InvalidAppCodeException acex)
+                {
+                    logger.ScopeTrace(() => acex.Message, triggerEvent: true);
+                    ModelState.AddModelError(nameof(RegisterTwoFactorViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
+                }
 
-                ModelState.AddModelError(nameof(RegisterTwoFactorViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
                 return viewError();               
             }
             catch (Exception ex)
@@ -165,7 +168,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
                 var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
-                var user = await userAccountLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppSecret, sequenceData.TwoFactorAppRecoveryCode);
+                var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppSecret, sequenceData.TwoFactorAppRecoveryCode);
                 return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
             }
             catch (Exception ex)
@@ -245,7 +248,7 @@ namespace FoxIDs.Controllers
                     // Is recovery code
                     try
                     {
-                        await userAccountLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.Email, registerTwoFactor.AppCode);
+                        await accountTwoFactorLogic.ValidateTwoFactorAppRecoveryCodeUser(sequenceData.Email, registerTwoFactor.AppCode);
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                         sequenceData.TwoFactorAppSecret = null;
@@ -261,16 +264,20 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    var twoFactor = new TwoFactorAuthenticator();
-                    bool isValid = twoFactor.ValidateTwoFactorPIN(sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode, false);
-                    if (isValid)
+                    try
                     {
+                        await accountTwoFactorLogic.ValidateTwoFactorAsync(sequenceData.Email, sequenceData.TwoFactorAppSecret, registerTwoFactor.AppCode);
+
                         var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                         var user = await userAccountLogic.GetUserAsync(sequenceData.Email);
                         return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
                     }
+                    catch (InvalidAppCodeException acex)
+                    {
+                        logger.ScopeTrace(() => acex.Message, triggerEvent: true);
+                        ModelState.AddModelError(nameof(TwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
+                    }
 
-                    ModelState.AddModelError(nameof(TwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
                     return viewError();
                 }
             }

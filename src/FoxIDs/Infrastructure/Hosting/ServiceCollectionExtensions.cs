@@ -39,6 +39,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<FailingLoginLogic>();            
             services.AddTransient<AccountLogic>();
             services.AddTransient<AccountActionLogic>();
+            services.AddTransient<AccountTwoFactorLogic>();
             services.AddTransient<SendEmailLogic>();
             services.AddTransient<SessionLoginUpPartyLogic>();
             services.AddTransient<SessionUpPartyLogic>();            

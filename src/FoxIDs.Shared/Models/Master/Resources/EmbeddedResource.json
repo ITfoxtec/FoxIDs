@@ -273,7 +273,7 @@
       "id": 68
     },
     {
-      "name": "Or, use manual setup code (optional)",
+      "name": "Or, use manual setup key (optional)",
       "id": 69
     },
     {
@@ -982,7 +982,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Or, use manual setup code (optional)"
+          "value": "Or, use manual setup key (optional)"
         }
       ]
     },

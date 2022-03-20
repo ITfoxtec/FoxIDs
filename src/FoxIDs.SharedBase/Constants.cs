@@ -27,6 +27,7 @@ namespace FoxIDs
             
             public const string LoginController = "login";
             public const string ActionController = "action";
+            public const string MfaController = "Mfa";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";
@@ -211,6 +212,7 @@ namespace FoxIDs
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
+                public const int TwoFactorAppCodeLength = 50;
             }
 
             public static class Claim
@@ -363,7 +365,8 @@ namespace FoxIDs
             {
                 public const int TitleLength = 40;
                 public const int IconUrlLength = 500;
-                public const int CssStyleLength = 4000;
+                public const int CssStyleLength = 4000; 
+                public const int TwoFactorAppNameLength = 50;
             }
 
             public static class SamlParty
@@ -474,6 +477,8 @@ namespace FoxIDs
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
             public const string ForgotPassword = "forgotpassword";
+            public const string RegisterTwoFactor = "regtwofactor";
+            public const string TwoFactor = "twofactor";
 
             public const string Authorize = "authorize";
             public const string AuthorizationResponse = "authorizationresponse";
@@ -532,11 +537,21 @@ namespace FoxIDs
                 $"{FoxI.IdentityConstants.ResponseTypes.Token} {FoxI.IdentityConstants.ResponseTypes.IdToken}",
                 FoxI.IdentityConstants.ResponseTypes.IdToken
             };
+
+            public static class Acr
+            {
+                public const string Mfa = "urn:foxids:mfa";
+            }
         }
 
         public static class Saml
         {
             public const string RelayState = "RelayState";
+
+            public static class AuthnContextClassTypes
+            {
+                public const string Mfa = "urn:foxids:mfa";
+            }
         }
 
         /// <summary>
@@ -593,6 +608,7 @@ namespace FoxIDs
             public const string UpParty = "http://schemas.foxids.com/identity/claims/upparty";
             public const string UpPartyType = "http://schemas.foxids.com/identity/claims/uppartytype";
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
+            public const string Amr = "http://schemas.foxids.com/identity/claims/amr";
         }
 
         /// <summary>
@@ -608,6 +624,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Subject, SamlClaim = ClaimTypes.NameIdentifier },
                 new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Amr, SamlClaim = SamlClaimTypes.Amr },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpParty, SamlClaim = SamlClaimTypes.UpParty },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpPartyType, SamlClaim = SamlClaimTypes.UpPartyType },

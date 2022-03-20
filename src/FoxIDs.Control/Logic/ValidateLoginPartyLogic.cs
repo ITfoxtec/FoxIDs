@@ -49,6 +49,11 @@ namespace FoxIDs.Logic
                 }
             }
 
+            if (party.TwoFactorAppName.IsNullOrWhiteSpace())
+            {
+                party.TwoFactorAppName = RouteBinding.TenantName;
+            }
+
             return isValid;
         }
     }

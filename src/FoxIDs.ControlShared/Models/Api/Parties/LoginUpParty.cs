@@ -36,6 +36,20 @@ namespace FoxIDs.Models.Api
         public LoginUpPartyLogoutConsents LogoutConsent { get; set; } = LoginUpPartyLogoutConsents.IfRequired;
 
         /// <summary>
+        /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.TwoFactorAppNameLength)]
+        public string TwoFactorAppName { get; set; }
+
+        /// <summary>
+        /// Require two-factor authentication (2FA) app. Default false.
+        /// </summary>
+        public bool RequireTwoFactor { get; set; }
+
+        // TODO future implementation of MFA. If EnableMultiFactor is true, the default TwoFactor is disabled.
+        //public bool EnableMultiFactor { get; set; }
+
+        /// <summary>
         /// Claim transforms.
         /// </summary>
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]

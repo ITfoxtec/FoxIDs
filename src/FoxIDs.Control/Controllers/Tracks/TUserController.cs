@@ -9,6 +9,8 @@ using System.Net;
 using FoxIDs.Logic;
 using System.Security.Claims;
 using System.Collections.Generic;
+using ITfoxtec.Identity;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -18,13 +20,15 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly BaseAccountLogic accountLogic;
+        private readonly ExternalSecretLogic externalSecretLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, BaseAccountLogic accountLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
+            this.externalSecretLogic = externalSecretLogic;
         }
 
         /// <summary>
@@ -124,6 +128,23 @@ namespace FoxIDs.Controllers
                 mUser.EmailVerified = user.EmailVerified;
                 mUser.ChangePassword = user.ChangePassword;
                 mUser.DisableAccount = user.DisableAccount;
+                if (!user.ActiveTwoFactorApp)
+                {
+                    if (!mUser.TwoFactorAppSecretExternalName.IsNullOrEmpty())
+                    {
+                        try
+                        {
+                            await externalSecretLogic.DeleteExternalSecretAsync(mUser.TwoFactorAppSecretExternalName);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Warning(ex, $"Unable to delete external secret, secretExternalName '{mUser.TwoFactorAppSecretExternalName}'.");
+                        }
+                    }
+
+                    mUser.TwoFactorAppSecretExternalName = null;
+                    mUser.TwoFactorAppRecoveryCode = null;
+                }
                 var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);

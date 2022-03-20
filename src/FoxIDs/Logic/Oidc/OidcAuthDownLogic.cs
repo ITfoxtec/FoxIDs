@@ -138,6 +138,11 @@ namespace FoxIDs.Logic
                 loginRequest.UserId = authenticationRequest.LoginHint;
             }
 
+            if (!authenticationRequest.AcrValues.IsNullOrWhiteSpace())
+            {
+                loginRequest.Acr = authenticationRequest.AcrValues.ToSpaceList();
+            }
+
             return loginRequest;
         }
 

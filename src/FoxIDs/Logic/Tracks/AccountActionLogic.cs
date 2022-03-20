@@ -39,6 +39,13 @@ namespace FoxIDs.Logic
             this.sendEmailLogic = sendEmailLogic;
         }
 
+        public async Task SendConfirmationEmailAsync(string email)
+        {
+            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var user = await tenantRepository.GetAsync<User>(id, required: false);
+            await SendConfirmationEmailAsync(user);
+        }
+
         public async Task SendConfirmationEmailAsync(User user)
         {
             logger.ScopeTrace(() => $"Send confirmation email to '{user.Email}' for user id '{user.UserId}'.");

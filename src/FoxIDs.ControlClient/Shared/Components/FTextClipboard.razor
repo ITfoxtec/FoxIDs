@@ -1,4 +1,4 @@
-﻿<span>@Text <button type="button" class="btn btn-link btn-icon-xs" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(Text))"><span class="oi oi-clipboard oi-xs" aria-hidden="true" title="Copy to clipboard"></span></button></span>
+﻿<span>@Text <button type="button" class="btn btn-link btn-icon-xs" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(Text))"><span class="oi oi-clipboard oi-xs" aria-hidden="true" title="Click to copy"></span></button></span>
 
 @code {
     [Inject]

@@ -547,6 +547,11 @@ namespace FoxIDs
         public static class Saml
         {
             public const string RelayState = "RelayState";
+
+            public static class AuthnContextClassTypes
+            {
+                public const string Mfa = "urn:foxids:mfa";
+            }
         }
 
         /// <summary>

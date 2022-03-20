@@ -1,12 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class LoginUpParty : UpParty, IUiLoginUpParty, IValidatableObject
+    public class LoginUpParty : UpParty, IUiLoginUpParty
     {
         public LoginUpParty()
         {
@@ -36,13 +35,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "two_factor_app_name")]
         public string TwoFactorAppName { get; set; }
 
-        [JsonProperty(PropertyName = "enable_two_factor_app")]
-        public bool EnableTwoFactorApp { get; set; }
-
         [JsonProperty(PropertyName = "require_two_factor")]
         public bool RequireTwoFactor { get; set; }
 
-        // TODO future implementation of MFA. EnableTwoFactorApp and EnableMultiFactor can not be true at the same time.
+        // TODO future implementation of MFA. If EnableMultiFactor is true, the default TwoFactor is disabled.
         //[JsonProperty(PropertyName = "enable_multi_factor")]
         //public bool EnableMultiFactor { get; set; }
 
@@ -61,20 +57,5 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var results = new List<ValidationResult>();
-
-            if (EnableTwoFactorApp && TwoFactorAppName.IsNullOrWhiteSpace())
-            {
-                results.Add(new ValidationResult($"The field {nameof(TwoFactorAppName)} is required. If {nameof(EnableTwoFactorApp)} is true.", new[] { nameof(TwoFactorAppName), nameof(EnableTwoFactorApp) }));
-            }
-            if (!EnableTwoFactorApp && RequireTwoFactor)
-            {
-                results.Add(new ValidationResult($"{nameof(EnableTwoFactorApp)} has to be true if {nameof(RequireTwoFactor)} is true.", new[] { nameof(EnableTwoFactorApp), nameof(RequireTwoFactor) }));
-            }
-            return results;
-        }
     }
 }

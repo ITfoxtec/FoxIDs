@@ -82,12 +82,6 @@ namespace FoxIDs.Client.Models.ViewModels
         public string TwoFactorAppName { get; set; }
 
         /// <summary>
-        /// Enable two-factor authentication (2FA) app. Default false.
-        /// </summary>
-        [Display(Name = "Two-factor app")]
-        public bool EnableTwoFactorApp { get; set; }
-
-        /// <summary>
         /// Require two-factor authentication (2FA) app. Default false.
         /// </summary>
         [Display(Name = "Require two-factor")]

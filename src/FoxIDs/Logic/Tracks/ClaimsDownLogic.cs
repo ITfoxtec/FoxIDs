@@ -172,14 +172,21 @@ namespace FoxIDs.Logic
 
         private void FromJwtAmrToSaml(List<Claim> samlClaims, IEnumerable<Claim> jwtClaims)
         {
-            var jwtClaimValues = jwtClaims.Where(c => c.Type == JwtClaimTypes.Amr).FirstOrDefault()?.Value.ToSpaceList();
+            var jwtClaimValues = jwtClaims.Where(c => c.Type == JwtClaimTypes.Amr).Select(c => c.Value).ToList();
 
-            // TODO, implement mapping
+            var authenticationMethodMapped = false;
             if (jwtClaimValues?.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Pwd) == true)
             {
                 samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, AuthnContextClassTypes.PasswordProtectedTransport.OriginalString));
+                authenticationMethodMapped = true;
             }
-            else
+            if (jwtClaimValues?.Contains(IdentityConstants.AuthenticationMethodReferenceValues.Mfa) == true)
+            {
+                samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, Constants.Saml.AuthnContextClassTypes.Mfa));
+                authenticationMethodMapped = true;
+            }
+
+            if (!authenticationMethodMapped)
             {
                 samlClaims.Add(new Claim(ClaimTypes.AuthenticationMethod, AuthnContextClassTypes.Unspecified.OriginalString));
             }
@@ -283,10 +290,13 @@ namespace FoxIDs.Logic
 
             if(samlClaimValues?.Count > 0)
             {
-                // TODO, implement mapping
                 if (samlClaimValues.Any(c => AuthnContextClassTypes.PasswordProtectedTransport.OriginalString.Equals(c, StringComparison.InvariantCultureIgnoreCase) || AuthnContextClassTypes.UserNameAndPassword.OriginalString.Equals(c, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     jwtClaims.Add(new Claim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd));
+                }
+                if (samlClaimValues.Any(c => Constants.Saml.AuthnContextClassTypes.Mfa.Equals(c, StringComparison.InvariantCultureIgnoreCase)))
+                {
+                    jwtClaims.Add(new Claim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Mfa));
                 }
             }
         }

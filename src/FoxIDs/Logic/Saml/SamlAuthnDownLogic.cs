@@ -170,6 +170,11 @@ namespace FoxIDs.Logic
                 loginRequest.LoginAction = LoginAction.ReadSessionOrLogin;
             }
 
+            if (saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef?.Count() > 0)
+            {
+                loginRequest.Acr = saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef;
+            }
+
             return loginRequest;
         }
 

@@ -42,10 +42,10 @@ namespace FoxIDs.Logic
                 if (includeSignatureValidationCertificates)
                 {
                     var partyCertificates = party.Keys.ToSaml2X509Certificates();
-                    var newLocal = DateTime.Now;
+                    var nowLocal = DateTime.Now;
                     foreach (var partyCertificate in partyCertificates)
                     {
-                        if (partyCertificate.IsValid(newLocal))
+                        if (partyCertificate.IsValid(nowLocal))
                         {
                             samlConfig.SignatureValidationCertificates.Add(partyCertificate);
                         }
@@ -84,10 +84,10 @@ namespace FoxIDs.Logic
                 if (party.Keys?.Count > 0 && includeSignatureValidationCertificates)
                 {
                     var partyCertificates = party.Keys.ToSaml2X509Certificates();
-                    var newLocal = DateTime.Now;
+                    var nowLocal = DateTime.Now;
                     foreach (var partyCertificate in partyCertificates)
                     {
-                        if (partyCertificate.IsValid(newLocal))
+                        if (partyCertificate.IsValid(nowLocal))
                         {
                             samlConfig.SignatureValidationCertificates.Add(partyCertificate);
                         }

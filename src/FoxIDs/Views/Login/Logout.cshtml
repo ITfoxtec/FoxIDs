@@ -3,7 +3,7 @@
 @model LogoutViewModel
 
 @{
-    ViewData["Title"] = Localizer["Logout"];
+    ViewData["Title"] = Localizer["Log out"];
 }
 
 <h1 class="heading">@ViewData["Title"]</h1>
@@ -14,7 +14,7 @@
             <div asp-validation-summary="ModelOnly"></div>
             <div class="form-group active-group">
                 <label class="radio-label-control">
-                    <input asp-for="LogoutChoice" type="radio" value="Logout"> @Localizer["Logout"]
+                    <input asp-for="LogoutChoice" type="radio" value="Logout"> @Localizer["Log out"]
                 </label>
                 <br />
                 <label class="radio-label-control">

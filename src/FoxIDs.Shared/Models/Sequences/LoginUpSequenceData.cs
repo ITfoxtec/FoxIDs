@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models.Sequences
 {
@@ -15,5 +16,26 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
+
+        [JsonProperty(PropertyName = "ev")]
+        public bool EmailVerified { get; set; }
+
+        [JsonProperty(PropertyName = "a")]
+        public IEnumerable<string> Acr { get; set; }
+
+        [JsonProperty(PropertyName = "am")]
+        public IEnumerable<string> AuthMethods { get; set; }
+
+        [JsonProperty(PropertyName = "fst")]
+        public TwoFactorAppSequenceStates TwoFactorAppState { get; set; }
+
+        [JsonProperty(PropertyName = "fse")]
+        public string TwoFactorAppSecretExternalName { get; set; }
+
+        [JsonProperty(PropertyName = "fns")]
+        public string TwoFactorAppNewSecret { get; set; }
+
+        [JsonProperty(PropertyName = "frc")]
+        public string TwoFactorAppRecoveryCode { get; set; }        
     }
 }

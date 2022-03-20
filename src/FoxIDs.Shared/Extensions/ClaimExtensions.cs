@@ -28,7 +28,6 @@ namespace FoxIDs
             return claims?.Where(predicate)?.Select(c => c.Values?.FirstOrDefault()).FirstOrDefault();
         }
 
-
         /// <summary>
         /// Add Claim to List&lt;Claim&gt;.
         /// </summary>

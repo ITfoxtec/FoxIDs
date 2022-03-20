@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -44,9 +45,15 @@ namespace FoxIDs.Logic
                 UserId = loginRequest.UserId,
                 MaxAge = loginRequest.MaxAge,
                 Email = loginRequest.EmailHint,
+                Acr = GetSupportedAcr(loginRequest),
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
+        }
+
+        private IEnumerable<string> GetSupportedAcr(LoginRequest loginRequest)
+        {
+            return loginRequest.Acr?.Where(v => v.Equals(Constants.Oidc.Acr.Mfa, StringComparison.Ordinal));
         }
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)

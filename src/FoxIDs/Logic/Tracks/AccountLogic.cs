@@ -16,6 +16,12 @@ namespace FoxIDs.Logic
             this.failingLoginLogic = failingLoginLogic;
         }
 
+        public async Task<User> GetUserAsync(string email)
+        {
+            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            return await tenantRepository.GetAsync<User>(id, required: false);
+        }
+
         public async Task<User> ValidateUser(string email, string password)
         {
             logger.ScopeTrace(() => $"Validating user '{email}', Route '{RouteBinding?.Route}'.");

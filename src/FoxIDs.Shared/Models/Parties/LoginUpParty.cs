@@ -28,6 +28,20 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logout_consent")]
         public LoginUpPartyLogoutConsent LogoutConsent { get; set; }
 
+        /// <summary>
+        /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
+        /// </summary>
+        [MaxLength(Constants.Models.LoginUpParty.TwoFactorAppNameLength)]
+        [JsonProperty(PropertyName = "two_factor_app_name")]
+        public string TwoFactorAppName { get; set; }
+
+        [JsonProperty(PropertyName = "require_two_factor")]
+        public bool RequireTwoFactor { get; set; }
+
+        // TODO future implementation of MFA. If EnableMultiFactor is true, the default TwoFactor is disabled.
+        //[JsonProperty(PropertyName = "enable_multi_factor")]
+        //public bool EnableMultiFactor { get; set; }
+
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }

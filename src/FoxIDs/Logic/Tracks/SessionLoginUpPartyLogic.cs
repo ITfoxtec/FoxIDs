@@ -6,6 +6,7 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ namespace FoxIDs.Logic
             this.sessionCookieRepository = sessionCookieRepository;
         }
 
-        public async Task CreateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, List<Claim> claims)
+        public async Task CreateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, long authTime, IEnumerable<Claim> claims)
         {
             if(SessionEnabled(loginUpParty))
             {
@@ -42,7 +43,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session)
+        public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session, IEnumerable<Claim> claims = null)
         {
             logger.ScopeTrace(() => $"Update session, Route '{RouteBinding.Route}'.");
 
@@ -53,6 +54,10 @@ namespace FoxIDs.Logic
             {
                 AddDownPartyLink(session, newDownPartyLink);
                 session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+                if (claims?.Count() > 0)
+                {
+                    session.Claims = UpdateClaims(session, claims);
+                }
                 await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
                 return true;
@@ -61,6 +66,32 @@ namespace FoxIDs.Logic
             await sessionCookieRepository.DeleteAsync(loginUpParty);
             logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
             return false;
+        }
+
+        private IEnumerable<ClaimAndValues> UpdateClaims(SessionLoginUpPartyCookie session, IEnumerable<Claim> claims)
+        {
+            var sessionClaims = new List<ClaimAndValues>(session.Claims);
+            var addClaims = claims.ToClaimAndValues();
+            foreach(var addClaim in addClaims)
+            {
+                var claim = sessionClaims.Where(c => c.Claim == addClaim.Claim).FirstOrDefault();
+                if (claim == null)
+                {
+                    sessionClaims.Add(addClaim);
+                }
+                else
+                {
+                    foreach(var addValue in addClaim.Values)
+                    {
+                        if (!claim.Values.Where(v => v == addValue).Any())
+                        {
+                            claim.Values.Add(addValue);
+                        }
+                    }
+                }
+            }
+
+            return sessionClaims;
         }
 
         public async Task<SessionLoginUpPartyCookie> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink)

@@ -57,6 +57,14 @@ namespace FoxIDs.Client.Pages.Components
             });           
         }
 
+        private void LoginUpPartyViewModelAfterInit(LoginUpPartyViewModel model)
+        {
+            if (model.TwoFactorAppName.IsNullOrWhiteSpace())
+            {
+                model.TwoFactorAppName = TenantName;
+            }
+        }
+
         private async Task OnEditLoginUpPartyValidSubmitAsync(GeneralLoginUpPartyViewModel generalLoginUpParty, EditContext editContext)
         {
             try

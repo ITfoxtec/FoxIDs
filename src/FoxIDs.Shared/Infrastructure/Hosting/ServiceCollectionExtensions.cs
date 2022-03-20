@@ -11,7 +11,8 @@ namespace FoxIDs.Infrastructure.Hosting
     public static class ServiceCollectionExtensions
     {
         public static IServiceCollection AddSharedLogic(this IServiceCollection services)
-        {            
+        {
+            services.AddTransient<ExternalSecretLogic>();
             services.AddTransient<ExternalKeyLogic>();
             services.AddTransient<ClaimTransformValidationLogic>();
 

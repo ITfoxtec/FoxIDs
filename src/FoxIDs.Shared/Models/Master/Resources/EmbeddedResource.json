@@ -5,7 +5,7 @@
   ],
   "names": [
     {
-      "name": "Login",
+      "name": "Log in",
       "id": 1
     },
     {
@@ -71,10 +71,6 @@
     {
       "name": "Create",
       "id": 17
-    },
-    {
-      "name": "Login with existing user",
-      "id": 18
     },
     {
       "name": "Given name",
@@ -161,7 +157,7 @@
       "id": 39
     },
     {
-      "name": "Login with your existing user",
+      "name": "Log in with your existing user",
       "id": 40
     },
     {
@@ -241,7 +237,7 @@
       "id": 59
     },
     {
-      "name": "Logout",
+      "name": "Log out",
       "id": 60
     },
     {
@@ -267,6 +263,82 @@
     {
       "name": "The certificate will soon be ready. Please try again in a little while.",
       "id": 66
+    },
+    {
+      "name": "Two-factor authentication (2FA)",
+      "id": 67
+    },
+    {
+      "name": "Register two-factor authentication with an app of your choice.",
+      "id": 68
+    },
+    {
+      "name": "Or, use manual setup key (optional)",
+      "id": 69
+    },
+    {
+      "name": "Then, enter the authenticator app code",
+      "id": 70
+    },
+    {
+      "name": "Please enter a valid code",
+      "id": 71
+    },
+    {
+      "name": "Please enter a valid code or a recovery code",
+      "id": 72
+    },
+    {
+      "name": "Register two-factor app",
+      "id": 73
+    },
+    {
+      "name": "Authenticator app code or a recovery code",
+      "id": 74
+    },
+    {
+      "name": "Invalid code, please try to register the two-factor app one more time.",
+      "id": 75
+    },
+    {
+      "name": "Invalid code, please try one more time.",
+      "id": 76
+    },
+    {
+      "name": "Confirmation required",
+      "id": 77
+    },
+    {
+      "name": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address.",
+      "id": 78
+    },
+    {
+      "name": "Click to copy",
+      "id": 79
+    },
+    {
+      "name": "First, scan the QR code with your app",
+      "id": 80
+    },
+    {
+      "name": "Two-factor authentication has been enabled for your account.",
+      "id": 81
+    },
+    {
+      "name": "IMPORTANT: Save your recovery code!",
+      "id": 82
+    },
+    {
+      "name": "Recovery code",
+      "id": 83
+    },
+    {
+      "name": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account.",
+      "id": 84
+    },
+    {
+      "name": "I have saved my recovery code",
+      "id": 85
     }
   ],
   "resources": [
@@ -275,7 +347,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Login"
+          "value": "Log in"
         },
         {
           "culture": "da",
@@ -448,15 +520,6 @@
         {
           "culture": "en",
           "value": "Create"
-        }
-      ]
-    },
-    {
-      "id": 18,
-      "items": [
-        {
-          "culture": "en",
-          "value": "Login with existing user"
         }
       ]
     },
@@ -654,7 +717,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Login with your existing user"
+          "value": "Log in with your existing user"
         }
       ]
     },
@@ -834,7 +897,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Logout"
+          "value": "Log out"
+        },
+        {
+          "culture": "da",
+          "value": "Log af"
         }
       ]
     },
@@ -889,6 +956,177 @@
         {
           "culture": "en",
           "value": "The certificate will soon be ready. Please try again in a little while."
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Two-factor authentication (2FA)"
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Register two-factor authentication with an app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others."
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Or, use manual setup key (optional)"
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Then, enter the authenticator app code"
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter a valid code"
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please enter a valid code or a recovery code"
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Register two-factor app"
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Authenticator app code or a recovery code"
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid code, please try to register the two-factor app one more time."
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Invalid code, please try one more time."
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirmation required"
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "items": [
+        {
+          "culture": "en",
+          "value": "You are about to register a two-factor authentication (2FA) app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
+        }
+      ]
+    },
+    {
+      "id": 79,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Click to copy"
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "items": [
+        {
+          "culture": "en",
+          "value": "First, scan the QR code with your app"
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Two-factor authentication has been enabled for your account."
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "items": [
+        {
+          "culture": "en",
+          "value": "IMPORTANT: Save your recovery code!"
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Recovery code"
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "items": [
+        {
+          "culture": "en",
+          "value": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account."
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "items": [
+        {
+          "culture": "en",
+          "value": "I have saved my recovery code"
         }
       ]
     }

@@ -29,26 +29,6 @@ namespace FoxIDs
         }
 
         /// <summary>
-        /// Retrieves the last claim value that is matched by the specified predicate.
-        /// </summary>
-        /// <param name="claims">A claim collection.</param>
-        /// <param name="predicate">The function that performs the matching logic.</param>
-        public static string FindLastValue(this IEnumerable<Claim> claims, Func<Claim, bool> predicate)
-        {
-            return claims?.Where(predicate)?.Select(c => c.Value).LastOrDefault();
-        }
-
-        /// <summary>
-        /// Retrieves the last claim value that is matched by the specified predicate.
-        /// </summary>
-        /// <param name="claims">A claim collection.</param>
-        /// <param name="predicate">The function that performs the matching logic.</param>
-        public static string FindLastValue(this IEnumerable<ClaimAndValues> claims, Func<ClaimAndValues, bool> predicate)
-        {
-            return claims?.Where(predicate)?.Select(c => c.Values?.FirstOrDefault()).LastOrDefault();
-        }
-
-        /// <summary>
         /// Add Claim to List&lt;Claim&gt;.
         /// </summary>
         public static void AddClaim(this List<Claim> list, string type, string value)

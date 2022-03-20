@@ -608,6 +608,7 @@ namespace FoxIDs
             public const string UpParty = "http://schemas.foxids.com/identity/claims/upparty";
             public const string UpPartyType = "http://schemas.foxids.com/identity/claims/uppartytype";
             public const string AccessToken = "http://schemas.foxids.com/identity/claims/accesstoken";
+            public const string Amr = "http://schemas.foxids.com/identity/claims/amr";
         }
 
         /// <summary>
@@ -623,6 +624,7 @@ namespace FoxIDs
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Subject, SamlClaim = ClaimTypes.NameIdentifier },
                 new ClaimMap { JwtClaim = JwtClaimTypes.SubFormat, SamlClaim = Saml2ClaimTypes.NameIdFormat },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.SessionId, SamlClaim = Saml2ClaimTypes.SessionIndex },
+                new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Amr, SamlClaim = SamlClaimTypes.Amr },
                 new ClaimMap { JwtClaim = FoxI.JwtClaimTypes.Email, SamlClaim = ClaimTypes.Email },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpParty, SamlClaim = SamlClaimTypes.UpParty },
                 new ClaimMap { JwtClaim = JwtClaimTypes.UpPartyType, SamlClaim = SamlClaimTypes.UpPartyType },

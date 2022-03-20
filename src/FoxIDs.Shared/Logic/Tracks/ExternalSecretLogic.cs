@@ -19,11 +19,20 @@ namespace FoxIDs.Logic
             this.tokenCredential = tokenCredential;
         }
 
-        public async Task<string> SetExternalSecretAsync(string name, string value)
+        public async Task<string> SetExternalSecretByNameAsync(string name, string value)
         {
             var externalName = $"{name}-{Guid.NewGuid()}";
 
             var keyVaultSecret = new KeyVaultSecret(GetExternalFullName(externalName), value);
+            var secretClient = new SecretClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
+            await secretClient.SetSecretAsync(keyVaultSecret);
+
+            return externalName;
+        }
+
+        public async Task<string> SetExternalSecretByExternalNameAsync(string externalName, string value)
+        {
+            var keyVaultSecret = new KeyVaultSecret(externalName, value);
             var secretClient = new SecretClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);
             await secretClient.SetSecretAsync(keyVaultSecret);
 

@@ -13,6 +13,7 @@ namespace FoxIDs.Logic
     public class AccountTwoFactorLogic : LogicBase
     {
         private const int secretAndRecoveryCodeLength = 30;
+        private const string secretName = "2fa";  
 
         protected readonly TelemetryScopedLogger logger;
         protected readonly ITenantRepository tenantRepository;
@@ -82,17 +83,13 @@ namespace FoxIDs.Logic
 
             if(!secretExternalName.IsNullOrEmpty())
             {
-                try
-                {
-                    await externalSecretLogic.DeleteExternalSecretAsync(secretExternalName);
-                }
-                catch (Exception ex)
-                {
-                    logger.Warning(ex, $"Unable to delete external secret, {nameof(secretExternalName)} '{secretExternalName}'.");
-                }            
+                user.TwoFactorAppSecretExternalName = await externalSecretLogic.SetExternalSecretByExternalNameAsync(secretExternalName, newSecret);
+            }
+            else
+            {
+                user.TwoFactorAppSecretExternalName = await externalSecretLogic.SetExternalSecretByNameAsync(secretName, newSecret);
             }
 
-            user.TwoFactorAppSecretExternalName = await externalSecretLogic.SetExternalSecretAsync("2fa", newSecret);
             var recoveryCode = new TwoFactorAppRecoveryCode();
             await secretHashLogic.AddSecretHashAsync(recoveryCode, twoFactorAppRecoveryCode);
             user.TwoFactorAppRecoveryCode = recoveryCode;

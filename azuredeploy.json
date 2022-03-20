@@ -204,8 +204,7 @@
               "secrets": [
                 "get",
                 "List",
-                "Set",
-                "Delete"
+                "Set"
               ],
               "certificates": [
                 "Get",

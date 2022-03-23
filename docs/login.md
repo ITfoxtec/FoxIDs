@@ -14,7 +14,7 @@ The up-party login user interface authenticates users in a one-step user interfa
 
 ## Two-factor authentication (2FA/MFA)
 Two-factor authentication with an authenticator app is per default enabled and is initiated if required.  
-Two-factor authentication can be set as a requirement in each up-party login or required by the calling [OpenID Connect](down-party-oidc.md#require-two-factor-authentication) or [SAML 2.0](down-party-saml-2.0.md#require-two-factor-authentication) down-party.  
+Two-factor authentication can be set as a requirement in each [up-party login](login.md#configure-two-factor-authentication), per [user](users.md#configure-multi-factor-authentication) or required by the calling [OpenID Connect](down-party-oidc.md#require-two-factor-authentication) or [SAML 2.0](down-party-saml-2.0.md#require-two-factor-authentication) down-party.  
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
@@ -29,7 +29,7 @@ It can be configured whether users should be allowed to cancel login and whether
 ![Configure Login](images/configure-login.png)
 
 ### Configure two-factor authentication
-The Two-factor authenticator app name shown for the user's is per default set to the tenant's name. You most likely want to change the name to something more human readable.
+The two-factor authenticator app name shown for the user's is per default set to the tenant's name. You most likely want to change the name to something more human readable.
 
 You can select to require two-factor authentication for all users authenticating using the up-party login. 
 

@@ -1,10 +1,17 @@
 # Users
-Users is saved in [user repositories](#user-repository) where each track contains exactly one user repository. Users are authenticated using a [up-party login](login.md) user interface (UI).
+Users are saved in [user repositories](#user-repository) where each track contains exactly one user repository. Users are authenticated using the [up-party login](login.md) user interface (UI).
 
-## User configuration
+## Configuration
 New users can be created by the administrator through [FoxIDs Control Client](control.md#foxids-control-client) or be provisioned through [FoxIDs Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-user.png)
+
+### Configure multi-factor authentication
+Multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor authenticator app and to configure the authenticator app if not already configured.
+
+It is possible to see whether a two-factor authenticator app is configured for the user, and the administrator can deactivate the configured two-factor authenticator app.
+
+![Configure Login](images/configure-user-mfa.png)
 
 ## User repository 
 Each track contains a user repository supporting an unlimited number of users because they are saved in Cosmos DB. The users id, email and other claims are saved as text.  

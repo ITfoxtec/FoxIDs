@@ -1,7 +1,7 @@
 - [Description](index.md)
 - [Getting Started](getting-started.md)
 - [Parties](parties.md)
-  - [Login](login.md)
+  - [Login & 2FA/MFA](login.md)
   - [OpenID Connect](oidc.md)
   - [OAuth 2.0](oauth-2.0.md)
   - [SAML 2.0](saml-2.0.md)

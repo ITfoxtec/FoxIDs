@@ -78,7 +78,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// The name of the app when two-factor authentication (2FA) is configured on the users phone. 
         /// </summary>
         [MaxLength(Constants.Models.LoginUpParty.TwoFactorAppNameLength)]
-        [Display(Name = "Two-factor app name on the users phone")]
+        [Display(Name = "Two-factor app name shown on the user's phone")]
         public string TwoFactorAppName { get; set; }
 
         /// <summary>

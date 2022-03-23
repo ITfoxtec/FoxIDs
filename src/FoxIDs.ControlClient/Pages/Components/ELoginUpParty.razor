@@ -58,15 +58,14 @@
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
                 <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />
-                <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
-                    <option value="@LoginUpPartyLogoutConsents.IfRequired">If required</option>
-                    <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
-                    <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
-                </FInputSelect>
-
                 <UpPartySessionLifetime Model="loginUpParty.Form.Model" ShowAdvanced="loginUpParty.ShowAdvanced" />
                 @if (loginUpParty.ShowAdvanced)
                 {
+                    <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
+                        <option value="@LoginUpPartyLogoutConsents.IfRequired">If required</option>
+                        <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
+                        <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
+                    </FInputSelect>
                     <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableSingleLogout" For="@(() => loginUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />

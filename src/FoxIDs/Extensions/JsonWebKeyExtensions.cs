@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs
 {
@@ -20,10 +21,9 @@ namespace FoxIDs
             var invalidKeys = new List<(JsonWebKey key, X509Certificate2 certificate)>();
             if (keys?.Count() > 0)
             {
-                var nowLocal = DateTime.Now;
                 foreach (var key in keys)
                 {
-                    (var isValid, var certificate) = key.IsValid(nowLocal);
+                    (var isValid, var certificate) = key.IsValid();
                     if (isValid)
                     {
                         validKeys.Add(key);
@@ -37,12 +37,12 @@ namespace FoxIDs
             return (validKeys, invalidKeys);
         }
 
-        public static (bool, X509Certificate2) IsValid(this JsonWebKey key, DateTime nowLocal)
+        public static (bool, X509Certificate2) IsValid(this JsonWebKey key)
         {
             if (key.Kty == MTokens.JsonWebAlgorithmsKeyTypes.RSA && key.X5c?.Count >= 1)
             {
                 var certificate = key.ToX509Certificate();
-                return (certificate.IsValid(nowLocal), certificate);
+                return (certificate.IsValidLocalTime(), certificate);
             }
             else
             {

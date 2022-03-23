@@ -18,8 +18,8 @@ How to guides:
 
 - Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
 
-## Require two-factor authentication (2FA/MFA)
-The SAML 2.0 Relying Party (RP) can require two-factor authentication by specifying the `urn:foxids:mfa` value in the `RequestedAuthnContext.AuthnContextClassRef` property.
+## Require multi-factor authentication (MFA)
+The SAML 2.0 Relying Party (RP) can require multi-factor authentication by specifying the `urn:foxids:mfa` value in the `RequestedAuthnContext.AuthnContextClassRef` property.
 
 The `AuthnContextClassRef` property can be set in the `Login` method in `SamlController.cs`:
 

@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
             return sessionClaims;
         }
 
-        public async Task<SessionLoginUpPartyCookie> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink)
+        public async Task<(SessionLoginUpPartyCookie, User)> GetAndUpdateSessionCheckUserAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink)
         {
             logger.ScopeTrace(() => $"Get and update session and check user, Route '{RouteBinding.Route}'.");
 
@@ -109,14 +109,14 @@ namespace FoxIDs.Logic
                 {
                     var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email });
                     var user = await tenantRepository.GetAsync<User>(id, false);
-                    if (user != null && user.UserId == session.UserId)
+                    if (user != null && !user.DisableAccount && user.UserId == session.UserId)
                     {
                         AddDownPartyLink(session, newDownPartyLink);
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
                         logger.ScopeTrace(() => $"Session updated, Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
 
-                        return session;
+                        return (session, user);
                     }
                 }
 
@@ -128,7 +128,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => "Session do not exists.");
             }
 
-            return null;
+            return (null, null);
         }
 
         public async Task<SessionLoginUpPartyCookie> GetSessionAsync(LoginUpParty loginUpParty)

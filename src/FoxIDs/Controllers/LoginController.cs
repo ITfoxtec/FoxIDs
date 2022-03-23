@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Util;
 using FoxIDs.Infrastructure;
 using FoxIDs.Logic;
 using FoxIDs.Models;
@@ -67,8 +66,8 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
-                var validSession = ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(loginUpParty, sequenceData));
+                (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData));
                 if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
                 {
                     return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
@@ -184,7 +183,7 @@ namespace FoxIDs.Controllers
                     }
 
                     var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
-                    var requereMfa = loginPageLogic.GetRequereMfa(loginUpParty, sequenceData, user);
+                    var requereMfa = loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData);
                     if (requereMfa)
                     {
                         sequenceData.Email = user.Email;
@@ -434,7 +433,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }
 
-                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
                     return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
@@ -482,7 +481,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Create user post.");
 
-                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
                     return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
@@ -567,7 +566,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var session = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSessionUpAgainstSequence(sequenceData, session);
 
                 logger.ScopeTrace(() => "Show change password dialog.");

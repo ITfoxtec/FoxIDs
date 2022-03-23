@@ -6,8 +6,8 @@ New users can be created by the administrator through [FoxIDs Control Client](co
 
 ![Configure Login](images/configure-user.png)
 
-### Configure multi-factor authentication
-Multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor authenticator app and to configure the authenticator app if not already configured.
+### Configure multi-factor authentication (MFA)
+Multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor authenticator app in a [up-party login](login.md#two-factor-authentication-2famfa) and to configure the authenticator app if not already configured.
 
 It is possible to see whether a two-factor authenticator app is configured for the user, and the administrator can deactivate the configured two-factor authenticator app.
 

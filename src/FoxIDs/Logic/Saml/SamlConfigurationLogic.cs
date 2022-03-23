@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using FoxIDs.Infrastructure;
 using System.Threading.Tasks;
+using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Logic
 {
@@ -42,10 +43,9 @@ namespace FoxIDs.Logic
                 if (includeSignatureValidationCertificates)
                 {
                     var partyCertificates = party.Keys.ToSaml2X509Certificates();
-                    var nowLocal = DateTime.Now;
                     foreach (var partyCertificate in partyCertificates)
                     {
-                        if (partyCertificate.IsValid(nowLocal))
+                        if (partyCertificate.IsValidLocalTime())
                         {
                             samlConfig.SignatureValidationCertificates.Add(partyCertificate);
                         }
@@ -84,10 +84,9 @@ namespace FoxIDs.Logic
                 if (party.Keys?.Count > 0 && includeSignatureValidationCertificates)
                 {
                     var partyCertificates = party.Keys.ToSaml2X509Certificates();
-                    var nowLocal = DateTime.Now;
                     foreach (var partyCertificate in partyCertificates)
                     {
-                        if (partyCertificate.IsValid(nowLocal))
+                        if (partyCertificate.IsValidLocalTime())
                         {
                             samlConfig.SignatureValidationCertificates.Add(partyCertificate);
                         }

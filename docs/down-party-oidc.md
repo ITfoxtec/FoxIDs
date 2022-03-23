@@ -24,8 +24,8 @@ FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/o
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
-## Require two-factor authentication (2FA/MFA)
-The OpenID Connect client can require two-factor authentication by specifying the `urn:foxids:mfa` value in the `AcrValues` parameter.
+## Require multi-factor authentication (MFA)
+The OpenID Connect client can require multi-factor authentication by specifying the `urn:foxids:mfa` value in the `AcrValues` parameter.
 
 The `AcrValues` parameter can be set in the `OnRedirectToIdentityProvider` event in `Startup.cs`:
 

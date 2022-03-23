@@ -13,8 +13,10 @@ A [down-party OpenID Connect](down-party-oauth-2.0-oidc.md) or [down-party SAML 
 The up-party login user interface authenticates users in a one-step user interface with the username and password on the same page. In the future, a two-step login interface will be added hawing the username and password input on two separate pages.
 
 ## Two-factor authentication (2FA/MFA)
+A up-party login support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
+
 Two-factor authentication with an authenticator app is per default enabled and is initiated if required.  
-Two-factor authentication can be set as a requirement in each [up-party login](login.md#configure-two-factor-authentication), per [user](users.md#configure-multi-factor-authentication) or required by the calling [OpenID Connect](down-party-oidc.md#require-two-factor-authentication) or [SAML 2.0](down-party-saml-2.0.md#require-two-factor-authentication) down-party.  
+Two-factor authentication can be set as a requirement in each [up-party login](login.md#configure-two-factor-authentication-2fa), per [user](users.md#configure-multi-factor-authentication-mfa) or required by the calling [OpenID Connect](down-party-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](down-party-saml-2.0.md#require-multi-factor-authentication-mfa) down-party.  
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
@@ -28,7 +30,7 @@ It can be configured whether users should be allowed to cancel login and whether
 
 ![Configure Login](images/configure-login.png)
 
-### Configure two-factor authentication
+### Configure two-factor authentication (2FA)
 The two-factor authenticator app name shown for the user's is per default set to the tenant's name. You most likely want to change the name to something more human readable.
 
 You can select to require two-factor authentication for all users authenticating using the up-party login. 

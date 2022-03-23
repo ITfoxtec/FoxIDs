@@ -51,6 +51,7 @@
                         <FInputToggle @bind-Value="user.Form.Model.ChangePassword" For="@(() => user.Form.Model.ChangePassword)" />
                         <FInputToggle @bind-Value="user.Form.Model.AccountStatus" For="@(() => user.Form.Model.AccountStatus)" TextType="e.d" />
                         <FInputToggle @bind-Value="user.Form.Model.ActiveTwoFactorApp" For="@(() => user.Form.Model.ActiveTwoFactorApp)" TextType="y.n" />
+                        <FInputToggle @bind-Value="user.Form.Model.RequireMultiFactor" For="@(() => user.Form.Model.RequireMultiFactor)" TextType="y.n" />
 
                         <div class="form-group active-group active">
                             <Label For="@(() => user.Form.Model.Claims)" class="label-control" />

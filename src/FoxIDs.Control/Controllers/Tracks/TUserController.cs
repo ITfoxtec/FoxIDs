@@ -84,7 +84,7 @@ namespace FoxIDs.Controllers
                     }
                 }
                 var mUser = await accountLogic.CreateUser(createUserRequest.Email, createUserRequest.Password, changePassword: createUserRequest.ChangePassword, claims: claims, 
-                    confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, disableAccount: createUserRequest.DisableAccount);
+                    confirmAccount: createUserRequest.ConfirmAccount, emailVerified: createUserRequest.EmailVerified, disableAccount: createUserRequest.DisableAccount, requireMultiFactor: createUserRequest.RequireMultiFactor);
                 return Created(mapper.Map<Api.User>(mUser));
             }
             catch(UserExistsException ueex)
@@ -145,6 +145,7 @@ namespace FoxIDs.Controllers
                     mUser.TwoFactorAppSecretExternalName = null;
                     mUser.TwoFactorAppRecoveryCode = null;
                 }
+                mUser.RequireMultiFactor = user.RequireMultiFactor;
                 var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);

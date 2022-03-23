@@ -39,6 +39,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Active two-factor (2FA) app (only for deactivation)")]
         public bool ActiveTwoFactorApp { get; set; }
 
+        [Display(Name = "Require multi-factor (2FA/MFA)")]
+        public bool RequireMultiFactor { get; set; }
+
         [MaxLength(Constants.Models.User.UserIdLength)]
         [Display(Name = "User id (unique and persistent)")]
         public string UserId { get; set; }

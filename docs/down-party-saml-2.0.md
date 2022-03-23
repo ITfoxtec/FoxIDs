@@ -17,7 +17,34 @@ Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-
 How to guides:
 
 - Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
-- Connect yyy
+
+## Require two-factor authentication (2FA/MFA)
+The SAML 2.0 Relying Party (RP) can require two-factor authentication by specifying the `urn:foxids:mfa` value in the `RequestedAuthnContext.AuthnContextClassRef` property.
+
+The `AuthnContextClassRef` property can be set in the `Login` method in `SamlController.cs`:
+
+    public IActionResult Login(string returnUrl = null)
+    {
+        var binding = new Saml2RedirectBinding();
+        binding.SetRelayStateQuery(new Dictionary<string, string>
+        {
+            { relayStateReturnUrl, returnUrl ?? Url.Content("~/") }
+        });
+
+        var saml2AuthnRequest = new Saml2AuthnRequest(saml2Config)
+        {
+            // To require MFA
+            RequestedAuthnContext = new RequestedAuthnContext
+            {
+                Comparison = AuthnContextComparisonTypes.Exact,
+                AuthnContextClassRef = new string[] { "urn:foxids:mfa" },
+            }
+        };
+
+        return binding.Bind(saml2AuthnRequest).ToActionResult();
+    }
+
+See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and [SamlController.cs line 104](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreSamlSample/Controllers/SamlController.cs#L104).
 
 ## Configuration
 How to configure your application as an SAML 2.0 Relying Party (RP).

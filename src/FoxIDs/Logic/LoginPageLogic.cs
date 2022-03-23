@@ -50,13 +50,17 @@ namespace FoxIDs.Logic
             }
         }
 
-        public bool GetRequereMfa(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData)
+        public bool GetRequereMfa(LoginUpParty loginUpParty, LoginUpSequenceData sequenceData, User user = null)
         {
             if (loginUpParty.RequireTwoFactor)
             {
                 return true;
             }
             else if (sequenceData.Acr?.Where(v => v.Equals(Constants.Oidc.Acr.Mfa, StringComparison.Ordinal))?.Count() > 0)
+            {
+                return true;
+            }
+            else if (user != null && user.RequireMultiFactor)
             {
                 return true;
             }

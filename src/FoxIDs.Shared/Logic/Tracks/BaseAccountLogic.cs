@@ -27,14 +27,14 @@ namespace FoxIDs.Logic
             this.secretHashLogic = secretHashLogic;
         }
 
-        public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool disableAccount = false)
+        public async Task<User> CreateUser(string email, string password, bool changePassword = false, List<Claim> claims = null, string tenantName = null, string trackName = null, bool checkUserAndPasswordPolicy = true, bool confirmAccount = true, bool emailVerified = false, bool disableAccount = false, bool requireMultiFactor = false)
         {
             logger.ScopeTrace(() => $"Creating user '{email}', Route '{RouteBinding?.Route}'.");
 
             email = email?.ToLower();
             ValidateEmail(email);
 
-            var user = new User { UserId = Guid.NewGuid().ToString(), ConfirmAccount = confirmAccount, EmailVerified = emailVerified, DisableAccount = disableAccount };
+            var user = new User { UserId = Guid.NewGuid().ToString(), ConfirmAccount = confirmAccount, EmailVerified = emailVerified, DisableAccount = disableAccount, RequireMultiFactor = requireMultiFactor };
             var userIdKey = new User.IdKey { TenantName = tenantName ?? RouteBinding.TenantName, TrackName = trackName ?? RouteBinding.TrackName, Email = email?.ToLower() };
             await user.SetIdAsync(userIdKey);
 

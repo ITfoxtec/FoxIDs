@@ -28,6 +28,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Active two-factor (2FA) app")]
         public bool ActiveTwoFactorApp { get; set; }
 
+        [Display(Name = "Require multi-factor (2FA/MFA)")]
+        public bool RequireMultiFactor { get; set; }
+
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]
         public List<ClaimAndValues> Claims { get; set; }

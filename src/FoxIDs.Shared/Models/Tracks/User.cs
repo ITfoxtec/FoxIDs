@@ -82,6 +82,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "two_factor_app_recovery_code")]
         public TwoFactorAppRecoveryCode TwoFactorAppRecoveryCode { get; set; }
 
+        [JsonProperty(PropertyName = "require_multi_factor")]
+        public bool RequireMultiFactor { get; set; }
+
         [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }

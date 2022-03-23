@@ -184,7 +184,7 @@ namespace FoxIDs.Controllers
                     }
 
                     var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
-                    var requereMfa = loginPageLogic.GetRequereMfa(loginUpParty, sequenceData);
+                    var requereMfa = loginPageLogic.GetRequereMfa(loginUpParty, sequenceData, user);
                     if (requereMfa)
                     {
                         sequenceData.Email = user.Email;

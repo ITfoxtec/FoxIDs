@@ -1,7 +1,7 @@
 # Login and 2FA / MFA
 FoxIDs handle user login in the up-party login user interface (UI). There can be configured a number of up-party logins per track with different configurations and look and feel.
 
-A track contains one [user repository](#user-repository) and all up-party login's configured in a track authenticate users with the same user repository.
+A track contains one [user repository](users.md#user-repository) and all up-party login's configured in a track authenticate users with the same user repository.
 
 When a user authenticates the user's session is connected to the particular up-party login. Therefore, a user can authenticate in multiple configured up-party login's and have multiple separate user sessions.  
 A user session is only established in the up-party login if the session lifetime is set to more than 0 seconds.
@@ -61,19 +61,3 @@ You can change the claims the up-party login pass on with [claim transforms](cla
 All login configurations are available after clicking show advanced settings.
 
 ![Configure Login](images/configure-login-advanced.png)
-
-## User repository 
-Each track contains a user repository supporting an unlimited number of users because they are saved in Cosmos DB. The users id, email and other claims are saved as text.  
-The password is never saved needer in logs or in Cosmos DB. Instead, a hash of the password is saved along with the rest of the user information.
-
-### Password hash
-FoxIDs is designed to support a growing number of algorithms with different iterations by saving information about the hash algorithm used alongside the actually hash. Therefore, FoxIDs can validate an old hash algorithm and at the same time save new hashes with a new hash algorithm.
-
-Currently FoxIDs support and use hash algorithm `P2HS512:10` which is defined as:
-
-- The `HMAC` algorithm (`RFC 2104`) using the `SHA-512` hash function (`FIPS 180-4`).
-- With 10 iterations.
-- Salt is generated from 64 bytes.
-- Derived key length is 80 bytes.
-
-Standard .NET liberals are used to calculate the hash.

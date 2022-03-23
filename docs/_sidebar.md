@@ -7,6 +7,7 @@
   - [SAML 2.0](saml-2.0.md)
 - [FoxIDs Control](control.md)
 - Topics
+  - [Users](users.md)
   - [Claim transform](claim-transform.md)
   - [Certificates](certificates.md)
   - [Logging](logging.md)

@@ -69,6 +69,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\up-party-howto-saml-2.0-nemlogin.md = docs\up-party-howto-saml-2.0-nemlogin.md
 		docs\up-party-oidc.md = docs\up-party-oidc.md
 		docs\up-party-saml-2.0.md = docs\up-party-saml-2.0.md
+		docs\Users.md = docs\Users.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"

@@ -108,7 +108,6 @@ namespace FoxIDs.Logic
                 Nonce = nonce,
                 State = SequenceString
             };
-            logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             switch (oidcUpSequenceData.LoginAction)
             {
@@ -137,6 +136,7 @@ namespace FoxIDs.Logic
             //TODO add AcrValues
             //authenticationRequest.AcrValues = "urn:federation:authentication:windows";
 
+            logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
             if (party.Client.EnablePkce)
@@ -146,8 +146,8 @@ namespace FoxIDs.Logic
                     CodeChallenge = await oidcUpSequenceData.CodeVerifier.Sha256HashBase64urlEncodedAsync(),
                     CodeChallengeMethod = IdentityConstants.CodeChallengeMethods.S256,
                 };
-                logger.ScopeTrace(() => $"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
+                logger.ScopeTrace(() => $"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 

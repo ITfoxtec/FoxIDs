@@ -395,7 +395,6 @@ namespace FoxIDs.Logic
             return (claims, idToken);
         }
 
-
         private async Task<List<Claim>> ValidateIdTokenAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             try

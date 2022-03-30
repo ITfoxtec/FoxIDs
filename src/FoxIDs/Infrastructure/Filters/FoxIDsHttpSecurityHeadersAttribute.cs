@@ -102,7 +102,8 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"form-action 'self' {allowFormActionOnDomains.Select(d => d == "*" ? d : d.DomainToOrigin()).ToSpaceList()};";
+                    var formActionOnDomains = allowFormActionOnDomains.Where(d => d == "*").Any() ? "*" : allowFormActionOnDomains.Select(d => d.DomainToOrigin()).ToSpaceList();
+                    return $"form-action 'self' {formActionOnDomains};";
                 }
             }
 
@@ -114,7 +115,8 @@ namespace FoxIDs.Infrastructure.Filters
                 }
                 else
                 {
-                    return $"frame-src {allowFrameSrcDomains.Select(d => d == "*" ? d : d.DomainToOrigin()).ToSpaceList()};";
+                    var frameSrcDomains = allowFrameSrcDomains.Where(d => d == "*").Any() ? "*" : allowFrameSrcDomains.Select(d => d.DomainToOrigin()).ToSpaceList();
+                    return $"frame-src {frameSrcDomains};";
                 }
             }
 

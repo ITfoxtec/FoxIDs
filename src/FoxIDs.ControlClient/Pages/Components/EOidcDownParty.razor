@@ -33,10 +33,26 @@
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            <i>Authority and OIDC Discovery example for a up-party with the name 'login' as the target.</i>
-            @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name); }
-            <div>Authority: <FTextClipboard Text="@authority" /></div>
-            <div>OIDC Discovery: <FTextLinkClipboard Text="@oidcDiscovery" /></div>
+            @if (oidcDownParty.EnableClientTab || (!oidcDownParty.EnableClientTab && !oidcDownParty.EnableResourceTab))
+            {
+                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true);
+                <div>Client Authority and OIDC Discovery<br /><i>Example for a up-party with the name 'login' as the target.</i></div>                 
+                <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
+                <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
+            }
+
+            @if (oidcDownParty.EnableClientTab && oidcDownParty.EnableResourceTab)
+            {
+                <hr />
+            }
+
+            @if (oidcDownParty.EnableResourceTab)
+            {
+                (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
+                <div>Resource Authority and OIDC Discovery</div>
+                <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
+                <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
+            }
         </div>
 
         <ul class="nav nav-tabs">

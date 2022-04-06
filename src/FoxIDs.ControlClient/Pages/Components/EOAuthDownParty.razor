@@ -32,10 +32,26 @@
             <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         }
         <div class="mb-3 alert alert-info" role="alert">
-            <i>Authority and OIDC Discovery example for a up-party with the name 'login' as the target.</i>
-            @{ (var authority, var oidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name); }
-            <div>Authority: <FTextClipboard Text="@authority" /></div>
-            <div>OIDC Discovery: <FTextLinkClipboard Text="@oidcDiscovery" /></div>
+            @if (oauthDownParty.EnableClientTab || (!oauthDownParty.EnableClientTab && !oauthDownParty.EnableResourceTab))
+            {
+                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true);
+                <div>Client Authority and OIDC Discovery<br /><i>Example for a up-party with the name 'login' as the target.</i></div>                 
+                <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
+                <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
+            }
+
+            @if (oauthDownParty.EnableClientTab && oauthDownParty.EnableResourceTab)
+            {
+                <hr />
+            }
+
+            @if (oauthDownParty.EnableResourceTab)
+            {
+                (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, false);
+                <div>Resource Authority and OIDC Discovery</div>
+                <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
+                <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
+            }
         </div>
 
         <ul class="nav nav-tabs">

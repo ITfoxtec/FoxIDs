@@ -63,6 +63,7 @@ namespace FoxIDs
             public const string DownPartyId = "f_DownPartyId";
             public const string DownPartyClientId = "f_DownPartyClientId";
             public const string SequenceId = "f_SequenceId";
+            public const string ExternalSequenceId = "f_ExternalSequenceId";            
             public const string AccountAction = "f_AccountAction";            
             public const string SequenceCulture = "f_SequenceCulture";
             public const string Issuer = "f_Issuer";

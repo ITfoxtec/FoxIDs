@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
             var rpInitiatedLogoutRequest = new RpInitiatedLogoutRequest
             {
                 PostLogoutRedirectUri = postLogoutRedirectUrl,
-                State = SequenceString
+                State = await sequenceLogic.CreateExternalSequenceIdAsync()
             };
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
@@ -143,7 +143,7 @@ namespace FoxIDs.Logic
             rpInitiatedLogoutResponse.Validate();
             if (rpInitiatedLogoutResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(rpInitiatedLogoutResponse.State), rpInitiatedLogoutResponse.GetTypeName());
 
-            await sequenceLogic.ValidateSequenceAsync(rpInitiatedLogoutResponse.State);
+            await sequenceLogic.ValidateExternalSequenceIdAsync(rpInitiatedLogoutResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: party.DisableSingleLogout);
             logger.ScopeTrace(() => "Up, Successful OIDC End session response.", triggerEvent: true);
 

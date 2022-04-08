@@ -100,9 +100,9 @@ namespace FoxIDs.Client.Pages.Components
             arg.model.AllowUpPartyNames.Remove(arg.upPartyName);
         }
 
-        public (string, string) GetAuthorityAndOIDCDiscovery(string partyName)
+        public (string, string) GetAuthorityAndOIDCDiscovery(string partyName, bool addUpParty)
         {
-            var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}({Constants.Routes.LoginController})/";
+            var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}{(addUpParty ? $"({Constants.Routes.LoginController})" : String.Empty)}/";
             return (authority, authority + IdentityConstants.OidcDiscovery.Path);
         }
 

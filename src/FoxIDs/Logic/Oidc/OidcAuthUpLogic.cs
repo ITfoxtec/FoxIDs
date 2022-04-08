@@ -106,9 +106,8 @@ namespace FoxIDs.Logic
                 ResponseType = party.Client.ResponseType,
                 RedirectUri = loginCallBackUrl,
                 Nonce = nonce,
-                State = SequenceString
+                State = await sequenceLogic.CreateExternalSequenceIdAsync()
             };
-            logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
             switch (oidcUpSequenceData.LoginAction)
             {
@@ -137,6 +136,7 @@ namespace FoxIDs.Logic
             //TODO add AcrValues
             //authenticationRequest.AcrValues = "urn:federation:authentication:windows";
 
+            logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
             if (party.Client.EnablePkce)
@@ -146,8 +146,8 @@ namespace FoxIDs.Logic
                     CodeChallenge = await oidcUpSequenceData.CodeVerifier.Sha256HashBase64urlEncodedAsync(),
                     CodeChallengeMethod = IdentityConstants.CodeChallengeMethods.S256,
                 };
-                logger.ScopeTrace(() => $"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
+                logger.ScopeTrace(() => $"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 
@@ -177,7 +177,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
-            await sequenceLogic.ValidateSequenceAsync(authenticationResponse.State);
+            await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
 
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
@@ -394,7 +394,6 @@ namespace FoxIDs.Logic
 
             return (claims, idToken);
         }
-
 
         private async Task<List<Claim>> ValidateIdTokenAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {

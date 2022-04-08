@@ -290,7 +290,7 @@ namespace FoxIDs.Logic
                 SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims)
             };
 
-            binding.RelayState = SequenceString;
+            binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
             binding.Bind(saml2LogoutRequest);
             logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Single logged out URL '{party.SingleLogoutUrl}'.");
@@ -344,7 +344,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             
             ValidateLogoutResponse(party, saml2LogoutResponse);
-            await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
+            await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
 
             try
             {

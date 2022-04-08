@@ -72,6 +72,15 @@ namespace FoxIDs.Logic
             var accessTokenClaims = new List<Claim>();
 
             (var audiences, var audienceScopes) = await oauthResourceScopeDownLogic.GetValidResourceAsync(client, selectedScopes);
+
+            accessTokenClaims.AddRange(await claimsDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeAccessTokenClaims: true));
+
+            var clientClaims = claimsDownLogic.GetClientJwtClaims(client);
+            if (clientClaims?.Count() > 0)
+            {
+                accessTokenClaims.AddRange(clientClaims);
+            }
+
             if (audiences.Count() > 0)
             {
                 accessTokenClaims.AddClaim(JwtClaimTypes.Scope, audienceScopes.ToSpaceList());
@@ -82,14 +91,6 @@ namespace FoxIDs.Logic
             }
 
             accessTokenClaims.AddClaim(JwtClaimTypes.ClientId, client.ClientId);
-
-            accessTokenClaims.AddRange(await claimsDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeAccessTokenClaims: true));
-
-            var clientClaims = claimsDownLogic.GetClientJwtClaims(client);
-            if (clientClaims?.Count() > 0)
-            {
-                accessTokenClaims.AddRange(clientClaims);
-            }
 
             logger.ScopeTrace(() => $"Down, JWT access token claims '{accessTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);

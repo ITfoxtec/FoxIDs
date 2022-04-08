@@ -251,5 +251,57 @@ namespace FoxIDs.Logic
                 }
             }
         }
+
+        public async Task<string> CreateExternalSequenceIdAsync()
+        {
+            var sequence = HttpContext.GetSequence();
+            var sequenceString = HttpContext.GetSequenceString();
+
+            var externalId = RandomGenerator.Generate(50);
+            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpiration = absoluteExpiration
+            };
+            await distributedCache.SetStringAsync(ExternalDataKey(externalId), sequenceString, options);
+            return externalId;
+        }
+
+        public async Task ValidateExternalSequenceIdAsync(string externalId)
+        {
+            if (externalId.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(externalId));
+
+            try
+            {
+                var key = ExternalDataKey(externalId);
+                var sequenceString = await distributedCache.GetStringAsync(key);
+                if (sequenceString == null)
+                {
+                    throw new SequenceException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
+                }
+                await distributedCache.RemoveAsync(key);
+
+                var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
+                CheckTimeout(sequence);
+                HttpContext.Items[Constants.Sequence.Object] = sequence;
+                HttpContext.Items[Constants.Sequence.String] = sequenceString;
+
+                logger.ScopeTrace(() => $"Sequence is validated from external id, sequence id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.ExternalSequenceId, externalId }, { Constants.Logs.AccountAction, sequence.AccountAction == true ? "true" : "false" } });
+            }
+            catch (SequenceException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new SequenceException($"Sequence is not loaded from external sequence id '{externalId}'.", ex);
+            }
+        }
+
+        private string ExternalDataKey(string externalId)
+        {
+            var routeBinding = HttpContext.GetRouteBinding();
+            return $"{routeBinding.TenantName}.{routeBinding.TrackName}.seqext.{externalId}";
+        }
     }
 }

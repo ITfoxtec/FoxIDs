@@ -19,7 +19,5 @@ namespace FoxIDs.Logic
         public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
 
         public Sequence Sequence => HttpContext.GetSequence();
-
-        public string SequenceString => HttpContext.GetSequenceString();
     }
 }

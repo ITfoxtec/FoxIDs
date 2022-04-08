@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
                 ResponseType = party.Client.ResponseType,
                 RedirectUri = loginCallBackUrl,
                 Nonce = nonce,
-                State = SequenceString
+                State = await sequenceLogic.CreateExternalSequenceIdAsync()
             };
 
             switch (oidcUpSequenceData.LoginAction)
@@ -177,7 +177,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
-            await sequenceLogic.ValidateSequenceAsync(authenticationResponse.State);
+            await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
 
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();

@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
-            binding.RelayState = SequenceString;
+            binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
 
             switch (samlUpSequenceData.LoginAction)
@@ -186,7 +186,7 @@ namespace FoxIDs.Logic
 
             if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
 
-            await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
+            await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>();
 
             try

@@ -110,7 +110,7 @@ namespace FoxIDs.Logic
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
-            binding.RelayState = SequenceString;
+            binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
 
@@ -210,7 +210,7 @@ namespace FoxIDs.Logic
 
             binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
 
-            await sequenceLogic.ValidateSequenceAsync(binding.RelayState);
+            await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: party.DisableSingleLogout);
 
             try

@@ -195,31 +195,38 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Party Client not configured.");
             }
 
-            var tokenResponse = new TokenResponse
+            try
             {
-                TokenType = IdentityConstants.TokenTypes.Bearer,
-                ExpiresIn = party.Client.AccessTokenLifetime,
-            };
+                var tokenResponse = new TokenResponse
+                {
+                    TokenType = IdentityConstants.TokenTypes.Bearer,
+                    ExpiresIn = party.Client.AccessTokenLifetime,
+                };
 
-            string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
 
-            var claims = new List<Claim>();
-            claims.AddClaim(JwtClaimTypes.Subject, $"c_{party.Client.ClientId}");
-            claims.AddClaim(JwtClaimTypes.AuthTime, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
-            //TODO should the amr claim be included???
-            //claims.AddClaim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
+                var claims = new List<Claim>();
+                claims.AddClaim(JwtClaimTypes.Subject, $"c_{party.Client.ClientId}");
+                claims.AddClaim(JwtClaimTypes.AuthTime, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+                //TODO should the amr claim be included???
+                //claims.AddClaim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
-            logger.ScopeTrace(() => $"Down, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"Down, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+                logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var scopes = tokenRequest.Scope.ToSpaceList();
+                var scopes = tokenRequest.Scope.ToSpaceList();
 
-            tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
 
-            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-            logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
-            return new JsonResult(tokenResponse);
+                logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
+                return new JsonResult(tokenResponse);
+            }
+            catch (KeyException kex)
+            {
+                throw new OAuthRequestException(kex.Message, kex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.ServerError };
+            }
         }
     }
 }

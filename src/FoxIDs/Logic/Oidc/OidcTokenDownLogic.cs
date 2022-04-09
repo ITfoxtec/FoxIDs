@@ -93,28 +93,35 @@ namespace FoxIDs.Logic
             }
             logger.ScopeTrace(() => "Down, OIDC Authorization code grant accepted.", triggerEvent: true);
 
-            var tokenResponse = new TokenResponse
+            try
             {
-                TokenType = IdentityConstants.TokenTypes.Bearer,
-                ExpiresIn = client.AccessTokenLifetime,
-            };
+                var tokenResponse = new TokenResponse
+                {
+                    TokenType = IdentityConstants.TokenTypes.Bearer,
+                    ExpiresIn = client.AccessTokenLifetime,
+                };
 
-            string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
-            var claims = authCodeGrant.Claims.ToClaimList();
-            var scopes = authCodeGrant.Scope.ToSpaceList();
-   
-            tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
-            var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
-            tokenResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(client, claims, scopes, authCodeGrant.Nonce, responseTypes, null, tokenResponse.AccessToken, algorithm);
+                string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                var claims = authCodeGrant.Claims.ToClaimList();
+                var scopes = authCodeGrant.Scope.ToSpaceList();
 
-            if (scopes.Contains(IdentityConstants.DefaultOidcScopes.OfflineAccess))
-            {
-                tokenResponse.RefreshToken = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
+                tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
+                var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
+                tokenResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(client, claims, scopes, authCodeGrant.Nonce, responseTypes, null, tokenResponse.AccessToken, algorithm);
+
+                if (scopes.Contains(IdentityConstants.DefaultOidcScopes.OfflineAccess))
+                {
+                    tokenResponse.RefreshToken = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
+                }
+
+                logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
+                return new JsonResult(tokenResponse);
             }
-
-            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-            logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
-            return new JsonResult(tokenResponse);
+            catch (KeyException kex)
+            {
+                throw new OAuthRequestException(kex.Message, kex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.ServerError };
+            }
         }
 
         protected override async Task<IActionResult> RefreshTokenGrantAsync(TClient client, TokenRequest tokenRequest)
@@ -134,28 +141,35 @@ namespace FoxIDs.Logic
 
                 scopes = scopes.Where(s => requestScopes.Contains(s)).Select(s => s).ToArray();
             }
-
-            var tokenResponse = new TokenResponse
+            try
             {
-                TokenType = IdentityConstants.TokenTypes.Bearer,
-                ExpiresIn = client.AccessTokenLifetime,
-            };
 
-            string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
-            var claims = refreshTokenGrant.Claims.ToClaimList();
+                var tokenResponse = new TokenResponse
+                {
+                    TokenType = IdentityConstants.TokenTypes.Bearer,
+                    ExpiresIn = client.AccessTokenLifetime,
+                };
 
-            tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
-            var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
-            tokenResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(client, claims, scopes, null, responseTypes, null, tokenResponse.AccessToken, algorithm);
+                string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                var claims = refreshTokenGrant.Claims.ToClaimList();
 
-            if (!newRefreshToken.IsNullOrEmpty())
-            {
-                tokenResponse.RefreshToken = newRefreshToken;
+                tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
+                var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
+                tokenResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(client, claims, scopes, null, responseTypes, null, tokenResponse.AccessToken, algorithm);
+
+                if (!newRefreshToken.IsNullOrEmpty())
+                {
+                    tokenResponse.RefreshToken = newRefreshToken;
+                }
+
+                logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
+                return new JsonResult(tokenResponse);
             }
-
-            logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-            logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
-            return new JsonResult(tokenResponse);
+            catch (KeyException kex)
+            {
+                throw new OAuthRequestException(kex.Message, kex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.ServerError };
+            }
         }
     }
 }

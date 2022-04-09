@@ -250,45 +250,7 @@ namespace FoxIDs.Logic
             claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             logger.ScopeTrace(() => $"Down, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var authenticationResponse = new AuthenticationResponse
-            {
-                State = sequenceData.State,
-                ExpiresIn = party.Client.AccessTokenLifetime,
-            };
-            var sessionResponse = new SessionResponse
-            {
-                SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId).GetSessionStateValue(party.Client.ClientId, sequenceData.RedirectUri)
-            };
-
-            logger.ScopeTrace(() => $"Response type '{sequenceData.ResponseType}'.");
-            var responseTypes = sequenceData.ResponseType.ToSpaceList();
-
-            if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
-            {
-                authenticationResponse.Code = await oauthAuthCodeGrantDownLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
-            }
-
-            string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;                
-            if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
-            {
-                authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
-                authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
-            }
-            if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
-            {
-                authenticationResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
-            }
-
-            logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-            var nameValueCollection = authenticationResponse.ToDictionary();
-            if(!sessionResponse.SessionState.IsNullOrWhiteSpace())
-            {
-                logger.ScopeTrace(() => $"Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                nameValueCollection = nameValueCollection.AddToDictionary(sessionResponse);
-            }
-
-            logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.");
-            logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
+            var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
@@ -312,6 +274,64 @@ namespace FoxIDs.Logic
 
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private async Task<Dictionary<string, string>> CreateAuthenticationAndSessionResponse(TParty party, List<Claim> claims, OidcDownSequenceData sequenceData)
+        {
+            try
+            {
+                var authenticationResponse = new AuthenticationResponse
+                {
+                    State = sequenceData.State,
+                    ExpiresIn = party.Client.AccessTokenLifetime,
+                };
+                var sessionResponse = new SessionResponse
+                {
+                    SessionState = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId).GetSessionStateValue(party.Client.ClientId, sequenceData.RedirectUri)
+                };
+
+                logger.ScopeTrace(() => $"Response type '{sequenceData.ResponseType}'.");
+                var responseTypes = sequenceData.ResponseType.ToSpaceList();
+
+                if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
+                {
+                    authenticationResponse.Code = await oauthAuthCodeGrantDownLogic.CreateAuthCodeGrantAsync(party.Client as TClient, claims, sequenceData.RedirectUri, sequenceData.Scope, sequenceData.Nonce, sequenceData.CodeChallenge, sequenceData.CodeChallengeMethod);
+                }
+
+                string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
+                {
+                    authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
+                    authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
+                }
+                if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
+                {
+                    authenticationResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
+                }
+
+                logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+
+                var nameValueCollection = authenticationResponse.ToDictionary();
+                if (!sessionResponse.SessionState.IsNullOrWhiteSpace())
+                {
+                    logger.ScopeTrace(() => $"Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    nameValueCollection = nameValueCollection.AddToDictionary(sessionResponse);
+                }
+
+                logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.");
+                logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
+                return nameValueCollection;
+            }
+            catch (KeyException kex)
+            {
+                var errorAuthenticationResponse = new AuthenticationResponse
+                {
+                    State = sequenceData.State,
+                    Error = IdentityConstants.ResponseErrors.ServerError,
+                    ErrorDescription = kex.Message
+                };
+                return errorAuthenticationResponse.ToDictionary();
             }
         }
 

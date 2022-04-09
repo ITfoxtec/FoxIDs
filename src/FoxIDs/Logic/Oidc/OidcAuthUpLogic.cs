@@ -352,7 +352,14 @@ namespace FoxIDs.Logic
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var tokenResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
                     logger.ScopeTrace(() => $"Up, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                    tokenResponseBadRequest.Validate(true);
+                    try
+                    {
+                        tokenResponseBadRequest.Validate(true);
+                    }
+                    catch (ResponseErrorException rex)
+                    {
+                        throw new OAuthRequestException($"External {rex.Message}") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    }
                     throw new EndpointException($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.") { RouteBinding = RouteBinding };
 
                 default:
@@ -361,9 +368,23 @@ namespace FoxIDs.Logic
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                         var tokenResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
                         logger.ScopeTrace(() => $"Up, Unexpected status code response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                        tokenResponseUnexpectedStatus.Validate(true);
+                        try
+                        {
+                            tokenResponseUnexpectedStatus.Validate(true);
+                        }
+                        catch (ResponseErrorException rex)
+                        {
+                            throw new OAuthRequestException($"External {rex.Message}") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                        }
                     }
-                    catch { }
+                    catch (OAuthRequestException)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex) 
+                    {
+                        throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}", ex) { RouteBinding = RouteBinding };
+                    }
                     throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}") { RouteBinding = RouteBinding };
             }
         }

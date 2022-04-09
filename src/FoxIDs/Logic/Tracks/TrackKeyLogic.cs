@@ -101,11 +101,11 @@ namespace FoxIDs.Logic
             {
                 if (certificate.NotBefore > nowLocal)
                 {
-                    throw new Exception($"Track primary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
+                    throw new KeyException($"Track primary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
                 }
                 if (certificate.NotAfter < nowLocal)
                 {
-                    throw new Exception($"Track primary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
+                    throw new KeyException($"Track primary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
                 }
             }
             catch (Exception ex)
@@ -131,11 +131,11 @@ namespace FoxIDs.Logic
             var certificate = trackKey.SecondaryKey.Key.ToX509Certificate();
             if (certificate.NotBefore > nowLocal)
             {
-                throw new Exception($"Track secondary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
+                throw new KeyException($"Track secondary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
             }
             if (certificate.NotAfter < nowLocal)
             {
-                throw new Exception($"Track secondary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
+                throw new KeyException($"Track secondary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
             }
         }
     }

@@ -174,44 +174,59 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnCertificateFileSelectedAsync(GeneralTrackCertificateViewModel generalCertificate, IFileListEntry[] files)
         {
-            generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
-            foreach (var file in files)
+            try
             {
-                if (file.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
+                generalCertificate.Form.ClearFieldError(nameof(generalCertificate.Form.Model.Key));
+                foreach (var file in files)
                 {
-                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
-                    return;
-                }
+                    if (file.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
+                    {
+                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
+                        return;
+                    }
 
-                generalCertificate.CertificateFileStatus = "Loading...";
+                    generalCertificate.CertificateFileStatus = "Loading...";
 
-                byte[] certificateBytes;
-                using (var memoryStream = new MemoryStream())
-                {
-                    await file.Data.CopyToAsync(memoryStream);
-                    certificateBytes = memoryStream.ToArray();
-                }
+                    byte[] certificateBytes;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await file.Data.CopyToAsync(memoryStream);
+                        certificateBytes = memoryStream.ToArray();
+                    }
 
-                var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
+                    var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
+                    var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
                     
-                if (!jwtWithCertificateInfo.HasPrivateKey())
-                {
-                    generalCertificate.Form.Model.Subject = null;
-                    generalCertificate.Form.Model.Key = null;
-                    generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required. Maybe a password is required to unlock the private key.");
+                    if (!jwtWithCertificateInfo.HasPrivateKey())
+                    {
+                        generalCertificate.Form.Model.Subject = null;
+                        generalCertificate.Form.Model.Key = null;
+                        generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), "Private key is required. Maybe a password is required to unlock the private key.");
+                        generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                        return;
+                    }
+
+                    generalCertificate.Form.Model.Subject = jwtWithCertificateInfo.CertificateInfo.Subject;
+                    generalCertificate.Form.Model.ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom;
+                    generalCertificate.Form.Model.ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo;
+                    generalCertificate.Form.Model.IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid();
+                    generalCertificate.Form.Model.Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint;
+                    generalCertificate.Form.Model.Key = jwtWithCertificateInfo;
+
                     generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
-                    return;
                 }
-
-                generalCertificate.Form.Model.Subject = jwtWithCertificateInfo.CertificateInfo.Subject;
-                generalCertificate.Form.Model.ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom;
-                generalCertificate.Form.Model.ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo;
-                generalCertificate.Form.Model.IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid();
-                generalCertificate.Form.Model.Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint;
-                generalCertificate.Form.Model.Key = jwtWithCertificateInfo;
-
-                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
+            }
+            catch (FoxIDsApiException aex)
+            {
+                generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), aex.Message);
             }
         }
 

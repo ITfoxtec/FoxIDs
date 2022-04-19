@@ -2,10 +2,9 @@
 
 namespace FoxIDs.Repository
 {
-    public interface IRepositoryCosmosClient
+    public interface IRepositoryBulkClient
     {
-        CosmosClient CosmosClient { get; }
-
+        CosmosClient Client { get; }
         Container Container { get; }
     }
 }

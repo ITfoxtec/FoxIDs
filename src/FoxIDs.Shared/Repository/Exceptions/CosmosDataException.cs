@@ -1,4 +1,4 @@
-﻿using Microsoft.Azure.Documents;
+﻿using Microsoft.Azure.Cosmos;
 using System;
 using System.Net;
 
@@ -20,7 +20,7 @@ namespace FoxIDs.Repository
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
 
-        public HttpStatusCode? StatusCode => (InnerException as DocumentClientException)?.StatusCode;
+        public HttpStatusCode? StatusCode => (InnerException as CosmosException)?.StatusCode;
 
         public override string Message => $"{base.Message}{GetStatus()}";
 

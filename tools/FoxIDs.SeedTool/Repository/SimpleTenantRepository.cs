@@ -1,36 +1,32 @@
-﻿using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.ObjectModel;
+﻿using System;
 using System.Threading.Tasks;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using FoxIDs.SeedTool.Model;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Fluent;
 
 namespace FoxIDs.SeedTool.Repository
 {
     public class SimpleTenantRepository
     {
         private readonly SeedSettings settings;
-        private DocumentClient client;
-        private Uri collectionUri;
+        private CosmosClient client;
+        private Container container;
         private bool isInitiated = false;
 
         public SimpleTenantRepository(SeedSettings settings)
         {
             this.settings = settings;
-            collectionUri = UriFactory.CreateDocumentCollectionUri(settings.CosmosDb.DatabaseId, settings.CosmosDb.CollectionId);
         }
 
         public async Task InitiateAsync()
         {
             if (!isInitiated)
             {
-                await CreateDocumentClient();
                 isInitiated = true;
+                await CreateDocumentClient();
             }
         }
 
@@ -38,36 +34,38 @@ namespace FoxIDs.SeedTool.Repository
         {
             Console.WriteLine("Creating Cosmos DB database and document collection(s)");
 
-            client = new DocumentClient(new Uri(settings.CosmosDb.EndpointUri), settings.CosmosDb.PrimaryKey,
-                new JsonSerializerSettings
-                {
-                    NullValueHandling = NullValueHandling.Ignore,
-                    DefaultValueHandling = DefaultValueHandling.Include,
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
-                },
-                new ConnectionPolicy
-                {
-                    ConnectionMode = ConnectionMode.Direct,
-                    ConnectionProtocol = Protocol.Tcp
-                });
+            var cosmosClientBuilder = new CosmosClientBuilder(settings.CosmosDb.EndpointUri, settings.CosmosDb.PrimaryKey)
+                .WithSerializerOptions(new CosmosSerializationOptions { IgnoreNullValues = true, Indented = false, PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase });
+            client = cosmosClientBuilder.Build();
 
-            await client.CreateDatabaseIfNotExistsAsync(new Database { Id = settings.CosmosDb.DatabaseId });
+            var databaseResponse = await client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.DatabaseId);
             Console.WriteLine("Cosmos DB database created");
 
-            var partitionKeyDefinition = new PartitionKeyDefinition { Paths = new Collection<string> { "/partition_id" } };
-            var documentCollection = new DocumentCollection { Id = settings.CosmosDb.CollectionId, PartitionKey = partitionKeyDefinition };
-            var ttlDocumentCollection = new DocumentCollection { Id = settings.CosmosDb.TtlCollectionId, PartitionKey = partitionKeyDefinition, DefaultTimeToLive = -1 };
-
-            var databaseUri = UriFactory.CreateDatabaseUri(settings.CosmosDb.DatabaseId);
             if (settings.CosmosDb.CollectionId == settings.CosmosDb.TtlCollectionId)
             {
-                await client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, ttlDocumentCollection);
+                container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+                    new ContainerProperties
+                    {
+                        Id = settings.CosmosDb.TtlCollectionId, 
+                        PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath, 
+                        DefaultTimeToLive = -1 
+                    });
                 Console.WriteLine("One Cosmos DB document collection created");
             }
             else
             {
-                await client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, documentCollection);
-                await client.CreateDocumentCollectionIfNotExistsAsync(databaseUri, ttlDocumentCollection);
+                container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
+                {
+                    Id = settings.CosmosDb.CollectionId,
+                    PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
+                });
+                _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+                    new ContainerProperties
+                    {
+                        Id = settings.CosmosDb.TtlCollectionId,
+                        PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
+                        DefaultTimeToLive = -1
+                    });
                 Console.WriteLine("Two Cosmos DB document collections created");
             }
         }
@@ -81,7 +79,7 @@ namespace FoxIDs.SeedTool.Repository
 
             try
             {
-                await client.UpsertDocumentAsync(collectionUri, item, new RequestOptions { PartitionKey = new PartitionKey(item.PartitionId) });
+                await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
             }
             catch (Exception ex)
             {

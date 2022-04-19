@@ -98,6 +98,8 @@ namespace FoxIDs
 
         public static class Models
         {
+            public const string CosmosPartitionKeyPath = "/partition_id";
+
             public const int MasterPartitionIdLength = 30;
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
             public const int DocumentPartitionIdLength = 70;

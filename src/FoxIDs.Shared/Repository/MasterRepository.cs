@@ -1,8 +1,5 @@
 ﻿using ITfoxtec.Identity;
 using FoxIDs.Models;
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
-using Microsoft.Azure.Documents.Linq;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,28 +7,21 @@ using FoxIDs.Infrastructure;
 using System.Net;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using Cosmos = Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace FoxIDs.Repository
 {
     public class MasterRepository : IMasterRepository
     {
-        private DocumentClient client;
-        private string databaseId;
-        private string collectionId;
-        private Uri collectionUri;
-        //private DocumentCollection documentCollection;
-        private Cosmos.Container container;
+        private Container container;
+        private Container bulkContainer;
         private readonly TelemetryLogger logger;
 
-        public MasterRepository(TelemetryLogger logger, IRepositoryClient repositoryClient, IRepositoryCosmosClient repositoryCosmosClient)
+        public MasterRepository(TelemetryLogger logger, IRepositoryClient repositoryClient, IRepositoryBulkClient repositoryBulkClient)
         {
-            client = repositoryClient.Client;
-            databaseId = repositoryClient.DatabaseId;
-            collectionId = repositoryClient.CollectionId;
-            collectionUri = repositoryClient.CollectionUri;
-            //documentCollection = repositoryClient.DocumentCollection;
-            container = repositoryCosmosClient.Container;
+            container = repositoryClient.Container;
+            bulkContainer = repositoryBulkClient.Container;
             this.logger = logger;
         }
 
@@ -101,74 +91,10 @@ namespace FoxIDs.Repository
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadDocumentAsync<T>(id, id.IdToMasterPartitionId(), required);
-        }
+            return await ReadItemAsync<T>(id, id.IdToMasterPartitionId(), required);
+        }        
 
-        //public Task<FeedResponse<TResult>> GetQueryAsync<T, TResult>(T item, Expression<Func<T, bool>> whereQuery, Expression<Func<T, TResult>> selector) where T : MasterDocument
-        //{
-        //    if (item == null) new ArgumentNullException(nameof(item));
-        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
-        //    if (whereQuery == null) new ArgumentNullException(nameof(whereQuery));
-        //    if (selector == null) new ArgumentNullException(nameof(selector));
-
-        //    return GetQueryAsync<T, TResult>(IdToPartitionId(item.Id), whereQuery, selector);
-        //}
-        //public async Task<FeedResponse<TResult>> GetQueryAsync<T, TResult>(string partitionId, Expression<Func<T, bool>> whereQuery, Expression<Func<T, TResult>> selector) where T : MasterDocument
-        //{
-        //    if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
-        //    if (whereQuery == null) new ArgumentNullException(nameof(whereQuery));
-        //    if (selector == null) new ArgumentNullException(nameof(selector));
-
-        //    var query = GetQueryAsync<T>(partitionId).Where(whereQuery).Select(selector).AsDocumentQuery();
-
-        //    double totalRU = 0;
-        //    try
-        //    {
-        //        var response = await query.ExecuteNextAsync<TResult>();
-        //        totalRU += response.RequestCharge;
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new CosmosDataException(partitionId, ex);
-        //    }
-        //    finally
-        //    {
-        //        logger.Metric($"CosmosDB RU get query partitionId '{partitionId}'.", totalRU);
-        //    }
-        //}
-
-        //public Task<int> GetQueryCountAsync<T>(T item, Expression<Func<T, bool>> whereQuery) where T : MasterDocument
-        //{
-        //    if (item == null) new ArgumentNullException(nameof(item));
-        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
-        //    if (whereQuery == null) new ArgumentNullException(nameof(whereQuery));
-
-        //    return GetQueryCountAsync<T>(IdToPartitionId(item.Id), whereQuery);
-        //}
-        //public Task<int> GetQueryCountAsync<T>(string partitionId, Expression<Func<T, bool>> whereQuery) where T : MasterDocument
-        //{
-        //    if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
-        //    if (whereQuery == null) new ArgumentNullException(nameof(whereQuery));
-
-        //    double totalRU = 0;
-        //    try
-        //    {
-        //        var result = GetQueryAsync<T>(partitionId).Where(whereQuery).CountAsync();
-        //        // Unable to get totalRU from RequestCharge...
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new CosmosDataException(partitionId, ex);
-        //    }
-        //    finally
-        //    {
-        //        logger.Trace($"CosmosDB RU ?'{totalRU}'?, get query count type '{typeof(T)}'.", totalRU);
-        //    }
-        //}
-
-        private async Task<T> ReadDocumentAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : MasterDocument
+        private async Task<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : MasterDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -176,22 +102,21 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var documentUri = GetDocumentLink<T>(id);
-                var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-                var item = await client.ReadDocumentAsync<T>(documentUri, requestOptions);
+                var partitionKey = new PartitionKey(partitionId);
+                var item = await container.ReadItemAsync<T>(id, partitionKey);
                 totalRU += item.RequestCharge;
                 if (delete)
                 {
-                    var deleteResponse = await client.DeleteDocumentAsync(documentUri, requestOptions);
+                    var deleteResponse = await container.DeleteItemAsync<T>(id, partitionKey);
                     totalRU += deleteResponse.RequestCharge;
                 }
                 if(item != null)
                 {
-                    await item.Document.ValidateObjectAsync();
+                    await item.Resource.ValidateObjectAsync();
                 }
                 return item;
             }
-            catch (DocumentClientException ex)
+            catch (CosmosException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound && !required)
                 {
@@ -221,7 +146,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var response = await client.UpsertDocumentAsync(collectionUri, item, new RequestOptions { PartitionKey = new PartitionKey(item.PartitionId) });
+                var response = await container.UpsertItemAsync(item, new PartitionKey(item.PartitionId));
                 totalRU += response.RequestCharge;
             }
             catch (Exception ex)
@@ -244,8 +169,7 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-                var response = await client.DeleteDocumentAsync(GetDocumentLink<T>(item.Id), requestOptions);
+                var response = await container.DeleteItemAsync<T>(item.Id, new PartitionKey(partitionId));
                 totalRU += response.RequestCharge;
             }
             catch (Exception ex)
@@ -275,11 +199,11 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var partitionKey = new Cosmos.PartitionKey(partitionId);
+                var partitionKey = new PartitionKey(partitionId);
                 var concurrentTasks = new List<Task>(items.Count);
                 foreach (var item in items)
                 {
-                    concurrentTasks.Add(container.UpsertItemAsync(item, partitionKey)
+                    concurrentTasks.Add(bulkContainer.UpsertItemAsync(item, partitionKey)
                         .ContinueWith(async (responseTask) =>
                         {
                             if (responseTask.Exception != null)
@@ -313,11 +237,11 @@ namespace FoxIDs.Repository
             double totalRU = 0;
             try
             {
-                var partitionKey = new Cosmos.PartitionKey(partitionId);
+                var partitionKey = new PartitionKey(partitionId);
                 var concurrentTasks = new List<Task>(ids.Count);
                 foreach (var id in ids)
                 {
-                    concurrentTasks.Add(container.DeleteItemAsync<T>(id, partitionKey)
+                    concurrentTasks.Add(bulkContainer.DeleteItemAsync<T>(id, partitionKey)
                         .ContinueWith(async (responseTask) =>
                         {
                             if (responseTask.Exception != null)
@@ -340,69 +264,9 @@ namespace FoxIDs.Repository
             }
         }
 
-        //public async Task DeleteAllByTypeAsync<T>(T item) where T : MasterDocument
-        //{
-        //    if (item == null) new ArgumentNullException(nameof(item));
-        //    if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
-        //    if (item.DataType.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.DataType), item.GetType().Name);
-
-        //    await DeleteAllByTypeAsync<T>(item.Id.IdToMasterPartitionId(), item.DataType);
-        //}
-
-        //public async Task DeleteAllByTypeAsync<T>(string partitionId, string dataType) where T : MasterDocument
-        //{
-        //    if (partitionId.IsNullOrEmpty()) throw new ArgumentNullException(partitionId);
-        //    if (dataType.IsNullOrEmpty()) throw new ArgumentNullException(dataType);
-
-        //    var query = GetAllQueryAsync<T>(partitionId).Where(d => d.DataType == dataType).Select(d => d.Id).AsDocumentQuery();
-
-        //    double totalRU = 0;
-        //    try
-        //    {
-        //        while (query.HasMoreResults)
-        //        {
-        //            var result = await query.ExecuteNextAsync<string>();
-        //            totalRU += result.RequestCharge;
-
-        //            foreach (var id in result.ToList())
-        //            {
-        //                var requestOptions = new RequestOptions { PartitionKey = new PartitionKey(partitionId) };
-        //                var deleteResponse = await client.DeleteDocumentAsync(GetDocumentLink<T>(id), requestOptions);
-        //                totalRU += deleteResponse.RequestCharge;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new CosmosDataException(partitionId, ex);
-        //    }
-        //    finally
-        //    {
-        //        logger.Metric($"CosmosDB RU delete all by data type '{dataType}'.", totalRU);
-        //    }
-        //}
-
         private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1) where T : IDataDocument
-        {
-            return client.CreateDocumentQuery<T>(collectionUri, new FeedOptions() { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount });
-        }
-
-        private string PartitionIdFormat<T>(MasterDocument.IdKey idKey) where T : MasterDocument
-        {
-            if (idKey == null) new ArgumentNullException(nameof(idKey));
-            if (typeof(T).Equals(typeof(RiskPassword)))
-            {
-                return RiskPassword.PartitionIdFormat(idKey);
-            }
-            else
-            {
-                return MasterDocument.PartitionIdFormat(idKey);
-            }
-        }
-
-        private Uri GetDocumentLink<T>(string id) where T : IDataDocument
-        {
-            return UriFactory.CreateDocumentUri(databaseId, collectionId, id);
+        {           
+            return container.GetItemLinqQueryable<T>(requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount });
         }
     }
 }

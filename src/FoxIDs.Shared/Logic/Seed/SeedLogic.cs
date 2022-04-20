@@ -44,7 +44,7 @@ namespace FoxIDs.Logic.Seed
                     {
                         if (settings.CosmosDb.ContainerId == settings.CosmosDb.TtlContainerId)
                         {
-                            _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+                            var container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                                 new ContainerProperties
                                 {
                                     Id = settings.CosmosDb.TtlContainerId,
@@ -52,15 +52,16 @@ namespace FoxIDs.Logic.Seed
                                     DefaultTimeToLive = -1
                                 });
                             logger.Trace("One Cosmos DB Document container created.");
+                            (repositoryClient as RepositoryClientBase).SetContainers(container, container);
                         }
                         else
                         {
-                            _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
+                            var container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
                                 {
                                     Id = settings.CosmosDb.ContainerId,
                                     PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
                                 });
-                            _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+                            var ttlContainer = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                                 new ContainerProperties
                                 {
                                     Id = settings.CosmosDb.TtlContainerId,
@@ -68,8 +69,9 @@ namespace FoxIDs.Logic.Seed
                                     DefaultTimeToLive = -1
                                 });
                             logger.Trace("Two Cosmos DB Document containers created.");
+                            (repositoryClient as RepositoryClientBase).SetContainers(container, ttlContainer);
                         }
-
+                        
                         await masterTenantDocumentsSeedLogic.SeedAsync();
                     }
                 }

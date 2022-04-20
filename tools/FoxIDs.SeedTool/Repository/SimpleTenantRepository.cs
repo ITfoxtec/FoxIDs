@@ -32,7 +32,7 @@ namespace FoxIDs.SeedTool.Repository
 
         private async Task CreateDocumentClient()
         {
-            Console.WriteLine("Creating Cosmos DB database and document collection(s)");
+            Console.WriteLine("Creating Cosmos DB database and document container(s)");
 
             var cosmosClientBuilder = new CosmosClientBuilder(settings.CosmosDb.EndpointUri, settings.CosmosDb.PrimaryKey)
                 .WithSerializerOptions(new CosmosSerializationOptions { IgnoreNullValues = true, Indented = false, PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase });
@@ -41,32 +41,32 @@ namespace FoxIDs.SeedTool.Repository
             var databaseResponse = await client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.DatabaseId);
             Console.WriteLine("Cosmos DB database created");
 
-            if (settings.CosmosDb.CollectionId == settings.CosmosDb.TtlCollectionId)
+            if (settings.CosmosDb.ContainerId == settings.CosmosDb.TtlContainerId)
             {
                 container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                     new ContainerProperties
                     {
-                        Id = settings.CosmosDb.TtlCollectionId, 
+                        Id = settings.CosmosDb.TtlContainerId, 
                         PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath, 
                         DefaultTimeToLive = -1 
                     });
-                Console.WriteLine("One Cosmos DB document collection created");
+                Console.WriteLine("One Cosmos DB document container created");
             }
             else
             {
                 container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
                 {
-                    Id = settings.CosmosDb.CollectionId,
+                    Id = settings.CosmosDb.ContainerId,
                     PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
                 });
                 _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                     new ContainerProperties
                     {
-                        Id = settings.CosmosDb.TtlCollectionId,
+                        Id = settings.CosmosDb.TtlContainerId,
                         PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
                         DefaultTimeToLive = -1
                     });
-                Console.WriteLine("Two Cosmos DB document collections created");
+                Console.WriteLine("Two Cosmos DB document containers created");
             }
         }
 

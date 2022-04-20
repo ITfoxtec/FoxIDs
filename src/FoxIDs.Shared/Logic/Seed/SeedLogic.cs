@@ -39,35 +39,35 @@ namespace FoxIDs.Logic.Seed
                         throw new InvalidConfigException("The Cosmos DB configuration is required to create the master tenant documents.", ex);
                     }
 
-                    var databaseResponse = await repositoryClient.Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.CollectionId);
+                    var databaseResponse = await repositoryClient.Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.ContainerId);
                     if (databaseResponse.StatusCode == HttpStatusCode.Created)
                     {
-                        if (settings.CosmosDb.CollectionId == settings.CosmosDb.TtlCollectionId)
+                        if (settings.CosmosDb.ContainerId == settings.CosmosDb.TtlContainerId)
                         {
                             _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                                 new ContainerProperties
                                 {
-                                    Id = settings.CosmosDb.TtlCollectionId,
+                                    Id = settings.CosmosDb.TtlContainerId,
                                     PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
                                     DefaultTimeToLive = -1
                                 });
-                            logger.Trace("One Cosmos DB Document Collection created.");
+                            logger.Trace("One Cosmos DB Document container created.");
                         }
                         else
                         {
                             _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
                                 {
-                                    Id = settings.CosmosDb.CollectionId,
+                                    Id = settings.CosmosDb.ContainerId,
                                     PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
                                 });
                             _ = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
                                 new ContainerProperties
                                 {
-                                    Id = settings.CosmosDb.TtlCollectionId,
+                                    Id = settings.CosmosDb.TtlContainerId,
                                     PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
                                     DefaultTimeToLive = -1
                                 });
-                            logger.Trace("Two Cosmos DB Document Collections created.");
+                            logger.Trace("Two Cosmos DB Document containers created.");
                         }
 
                         await masterTenantDocumentsSeedLogic.SeedAsync();

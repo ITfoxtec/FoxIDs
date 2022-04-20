@@ -31,10 +31,10 @@ namespace FoxIDs.Repository
                 .WithSerializerOptions(new CosmosSerializationOptions { IgnoreNullValues = true, Indented = false, PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase });
             Client = cosmosClientBuilder.Build();
 
-            Container = Client.GetContainer(settings.CosmosDb.DatabaseId, settings.CosmosDb.CollectionId);
+            Container = Client.GetContainer(settings.CosmosDb.DatabaseId, settings.CosmosDb.ContainerId);
             if (withTtlContainer)
             {
-                TtlContainer = Client.GetContainer(settings.CosmosDb.DatabaseId, settings.CosmosDb.TtlCollectionId);
+                TtlContainer = Client.GetContainer(settings.CosmosDb.DatabaseId, settings.CosmosDb.TtlContainerId);
             }
         }
 

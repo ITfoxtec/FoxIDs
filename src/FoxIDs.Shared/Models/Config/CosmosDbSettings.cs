@@ -23,11 +23,11 @@ namespace FoxIDs.Models.Config
         /// Default Collection Id.
         /// </summary>
         [Required]
-        public string CollectionId { get; set; }
+        public string ContainerId { get; set; }
         /// <summary>
         /// Time-to-live (TTL) Collection Id.
         /// </summary>
         [Required]
-        public string TtlCollectionId { get; set; }
+        public string TtlContainerId { get; set; }
     }
 }

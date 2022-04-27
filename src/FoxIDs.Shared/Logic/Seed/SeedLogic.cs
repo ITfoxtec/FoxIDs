@@ -4,9 +4,8 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
-using Microsoft.Azure.Documents;
-using System.Collections.ObjectModel;
 using System.Net;
+using Microsoft.Azure.Cosmos;
 
 namespace FoxIDs.Logic.Seed
 {
@@ -40,25 +39,41 @@ namespace FoxIDs.Logic.Seed
                         throw new InvalidConfigException("The Cosmos DB configuration is required to create the master tenant documents.", ex);
                     }
 
-                    var db = await repositoryClient.Client.CreateDatabaseIfNotExistsAsync(new Database { Id = repositoryClient.DatabaseId });
-                    if (db.StatusCode == HttpStatusCode.Created)
+                    var databaseResponse = await repositoryClient.Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.DatabaseId);
+                    if (databaseResponse.StatusCode == HttpStatusCode.Created)
                     {
-                        var partitionKeyDefinition = new PartitionKeyDefinition { Paths = new Collection<string> { "/partition_id" } };
-                        var documentCollection = new DocumentCollection { Id = repositoryClient.CollectionId, PartitionKey = partitionKeyDefinition };
-                        var ttlDocumentCollection = new DocumentCollection { Id = repositoryClient.TtlCollectionId, PartitionKey = partitionKeyDefinition, DefaultTimeToLive = -1 };
-                        if (repositoryClient.CollectionId == repositoryClient.TtlCollectionId)
+                        if (settings.CosmosDb.ContainerId == settings.CosmosDb.TtlContainerId)
                         {
-                            _ = await repositoryClient.Client.CreateDocumentCollectionIfNotExistsAsync(repositoryClient.DatabaseUri, ttlDocumentCollection);
-                            logger.Trace("One Cosmos DB Document Collection created.");
+                            var container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+                                new ContainerProperties
+                                {
+                                    Id = settings.CosmosDb.TtlContainerId,
+                                    PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
+                                    DefaultTimeToLive = -1
+                                });
+                            logger.Trace("One Cosmos DB Document container created.");
+                            (repositoryClient as RepositoryClientBase).SetContainers(container, container);
                         }
                         else
                         {
-                            _ = await repositoryClient.Client.CreateDocumentCollectionIfNotExistsAsync(repositoryClient.DatabaseUri, documentCollection);
-                            _ = await repositoryClient.Client.CreateDocumentCollectionIfNotExistsAsync(repositoryClient.DatabaseUri, ttlDocumentCollection);
-                            logger.Trace("Two Cosmos DB Document Collections created.");
+                            var container = await databaseResponse.Database.CreateContainerIfNotExistsAsync(new ContainerProperties
+                                {
+                                    Id = settings.CosmosDb.ContainerId,
+                                    PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath
+                                });
+                            var ttlContainer = await databaseResponse.Database.CreateContainerIfNotExistsAsync(
+                                new ContainerProperties
+                                {
+                                    Id = settings.CosmosDb.TtlContainerId,
+                                    PartitionKeyPath = Constants.Models.CosmosPartitionKeyPath,
+                                    DefaultTimeToLive = -1
+                                });
+                            logger.Trace("Two Cosmos DB Document containers created.");
+                            (repositoryClient as RepositoryClientBase).SetContainers(container, ttlContainer);
                         }
-
+                        
                         await masterTenantDocumentsSeedLogic.SeedAsync();
+                        logger.Trace("Cosmos DB Document container(s) seeded.");
                     }
                 }
             }

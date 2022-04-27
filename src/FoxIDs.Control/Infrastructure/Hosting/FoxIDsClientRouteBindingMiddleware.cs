@@ -13,7 +13,7 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsClientRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        protected override ValueTask SeedAsync(IServiceProvider requestServices) => new ValueTask(requestServices.GetService<SeedLogic>().SeedAsync());
+        protected override async ValueTask SeedAsync(IServiceProvider requestServices) => await requestServices.GetService<SeedLogic>().SeedAsync();
 
         protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route)
         {

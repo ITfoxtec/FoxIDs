@@ -109,8 +109,13 @@ namespace FoxIDs.Logic
                 {
                     var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = session.Email });
                     var user = await tenantRepository.GetAsync<User>(id, false);
-                    if (user != null && !user.DisableAccount && user.UserId == session.UserId)
+                    if (user != null && !user.DisableAccount)
                     {
+                        if (user.UserId != session.UserId)
+                        {
+                            throw new Exception("Session user id and the Users user id do not match, this should not be able to occur.");
+                        }
+
                         AddDownPartyLink(session, newDownPartyLink);
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
@@ -119,9 +124,11 @@ namespace FoxIDs.Logic
                         return (session, user);
                     }
                 }
-
-                await sessionCookieRepository.DeleteAsync(loginUpParty);
-                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+                else
+                {
+                    await sessionCookieRepository.DeleteAsync(loginUpParty);
+                    logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
+                }
             }
             else
             {

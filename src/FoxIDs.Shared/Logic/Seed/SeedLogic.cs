@@ -39,7 +39,7 @@ namespace FoxIDs.Logic.Seed
                         throw new InvalidConfigException("The Cosmos DB configuration is required to create the master tenant documents.", ex);
                     }
 
-                    var databaseResponse = await repositoryClient.Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.ContainerId);
+                    var databaseResponse = await repositoryClient.Client.CreateDatabaseIfNotExistsAsync(settings.CosmosDb.DatabaseId);
                     if (databaseResponse.StatusCode == HttpStatusCode.Created)
                     {
                         if (settings.CosmosDb.ContainerId == settings.CosmosDb.TtlContainerId)
@@ -73,6 +73,7 @@ namespace FoxIDs.Logic.Seed
                         }
                         
                         await masterTenantDocumentsSeedLogic.SeedAsync();
+                        logger.Trace("Cosmos DB Document container(s) seeded.");
                     }
                 }
             }

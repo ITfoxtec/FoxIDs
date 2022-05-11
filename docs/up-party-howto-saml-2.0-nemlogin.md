@@ -130,7 +130,7 @@ If you do not already have a service provider.
 You are done. The SAML 2.0 up-party can now be used as an up-party for down-parties in the track.
 
 > A down-party will only issue added claims.  
-> Therefor, remember to add the JWT claims to OpenID Connect down-parties and SAML 2.0 claims to SAML 2.0 down-party.
+> Therefor, remember to add the JWT claims to OpenID Connect down-parties.
 
 ## Logging
 

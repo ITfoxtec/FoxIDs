@@ -4,6 +4,8 @@ The samples for FoxIDs show login and logout with OpenID Connect 1.0 and SAML 2.
 > The samples are pre-configured in the [FoxIDs.com test track](#foxidscom-test-tenant-for-samples) and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
 You can also configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
 
+> You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with [certificate tool](https://www.foxids.com/tools/Certificate).
+
 ## Sample applications
 
 The sample Visual Studio solution contain the following sample applications.

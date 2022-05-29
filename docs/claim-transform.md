@@ -2,6 +2,8 @@
 
 Each FoxIDs up-party and down-party support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication.
 
+Please see [claim transform examples](#claim-transform-examples)
+
 > Enable `Log claim trace` in the [log settings](logging.md#log-settings) to see the claims before and after transformation in [logs](logging.md). 
 
 Claim transforms can e.g., be configured in a login up-party.
@@ -41,5 +43,18 @@ Claim transform types that support `Add` and `Replace` actions:
 - `Regex map` - do the action if the claim type match and claim value match the regular expression group, then map the group value to a new claim
 - `Concatenate` - do the action if one or more of the claim types match, then concatenate the claim values to a new claim
 
+## Claim transform examples
 
+### Transform name to given_name and family_name
 
+Transform the `name` claim approximately to the two claims `given_name` and `family_name`. 
+
+The transformation will split the value in the `name` claim at the first occurring space and respectively add the `given_name` and `family_name` claims, if they do not already exist.  
+If there are more than one space in the `name` claim value. New `given_name` and `family_name` claims will not be added because they already exist.
+
+Use two `Regex map` claim transformations.
+
+![Transform name to given_name and family_name](images/example-claim-transform-name-to-given_name-family_name.png)
+
+- Find the `family_name` claim value with regex `^\S+\s(?<map>\S+)$`
+- Find the `given_name` claim value with regex `^(?<map>\S+)\s\S+$`

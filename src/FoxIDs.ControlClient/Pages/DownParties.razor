@@ -11,7 +11,8 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Oidc))">OpenID Connect</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2))">OAuth 2.0</button>
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.Resource))">OAuth 2.0 - Resource (API)</button>
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.ClientCredentialsGrant))">OAuth 2.0 - Client Credentials Grant</button>
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Saml2))">SAML 2.0</button>
             </div>
         </div>

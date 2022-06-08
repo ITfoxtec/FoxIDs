@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using FoxIDs.Client.Models;
 
 namespace FoxIDs.Client.Pages
 {
@@ -101,7 +102,7 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowCreateDownParty(PartyTypes type)
+        private void ShowCreateDownParty(PartyTypes type, OAuthSubPartyTypes? oauthSubPartyType = null)
         {
             if (type == PartyTypes.Oidc)
             {
@@ -113,6 +114,11 @@ namespace FoxIDs.Client.Pages
             else if (type == PartyTypes.OAuth2)
             {
                 var oauthDownParty = new GeneralOAuthDownPartyViewModel();
+                if (!oauthSubPartyType.HasValue)
+                {
+                    throw new ArgumentNullException(nameof(oauthSubPartyType), "Required for OAuth 2.0 down parties.");
+                }
+                oauthDownParty.SubPartyType = oauthSubPartyType.Value;
                 oauthDownParty.CreateMode = true;
                 oauthDownParty.Edit = true;
                 downParties.Add(oauthDownParty);

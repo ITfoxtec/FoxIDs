@@ -4,7 +4,7 @@ The samples for FoxIDs show login and logout with OpenID Connect 1.0 and SAML 2.
 > The samples are pre-configured in the [FoxIDs.com test track](#foxidscom-test-tenant-for-samples) and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
 You can also configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
 
-> You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with [certificate tool](https://www.foxids.com/tools/Certificate).
+> You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
 ## Sample applications
 
@@ -100,13 +100,13 @@ Create the sample seed OAuth 2.0 client in the FoxIDs Control Client:
 
 1. Select the `master` track and create a OAuth 2.0 down-party.
 2. Set the Client to on and the Resource to off.
-3. Set the client id to `sample_seed`, redirect Uri to `uri:sample:seed:client` and response type to `token`. 
+3. Set the client id to `sample_seed` and response type to `token`. 
 4. Set Require PKCE to off.
 5. Add a client secret and Remember the secret.
-6. In the resource and scopes section. Remove the default resource scope and give the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
+6. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
 7. In the scopes section. Remove all scopes.
 8. Click show advanced settings. 
-9. In the claims section. Granted the client the administrator `role` with the value `foxids:tenant.admin`. 
+9. In the issue claims section. Granted the client the administrator `role` with the value `foxids:tenant.admin`. 
 
 The sample seed client is thereby granted access to update the tenant.
 
@@ -121,7 +121,6 @@ Change the tenant, the track and the sample seed tool client secret in the sampl
   "Tenant": "xxx",
   "Track": "xxx",
   "DownParty": "sample_seed",
-  "RedirectUri": "uri:sample:seed:client",
   "ClientSecret": "xxx"
 }
 ```

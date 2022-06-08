@@ -11,7 +11,7 @@
                 {
                     <input type="checkbox" class="form-check-input" id="oidcdefaultresource" @onchange="@((e) => ClientResourceScope.DefaultResourceScope = (bool)e.Value)" />
                 }
-                <label class="form-check-label" for="oidcdefaultresource">Default resource '@DownPartyNameModel.Name' for the application itself</label>
+                <label class="form-check-label" for="oidcdefaultresource">Default resource '@GetName()' for the application itself</label>
             </div>
             @if (ClientResourceScope.DefaultResourceScope)
             {
@@ -60,6 +60,16 @@
     [Parameter]
     public IClientResourceScope ClientResourceScope { get; set; }
 
+
+    private string GetName()
+    {
+        var name = DownPartyNameModel.Name;
+        if (name.IsNullOrWhiteSpace())
+        {
+            name = "--down-party-name--";
+        }
+        return name;
+    }
 
     private void AddResourceScope(MouseEventArgs e, List<OAuthDownResourceScope> resourceScopes)
     {

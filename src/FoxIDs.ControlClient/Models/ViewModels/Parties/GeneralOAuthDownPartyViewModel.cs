@@ -15,6 +15,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public SelectUpParty<OAuthDownPartyViewModel> SelectAllowUpPartyName;
 
+        public OAuthSubPartyTypes SubPartyType { get; set; }
+
         public bool EnableClientTab { get; set; }
 
         public bool EnableResourceTab { get; set; } = true;

@@ -1,5 +1,7 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
@@ -7,6 +9,10 @@ namespace FoxIDs.Models
     public class OidcDownClient : OidcDownClient<OidcDownScope, OidcDownClaim> { }
     public class OidcDownClient<TScope, TClaim> : OAuthDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
+        [Length(Constants.Models.OidcDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [JsonProperty(PropertyName = "redirect_uris")]
+        public override List<string> RedirectUris { get; set; }
+
         [Range(Constants.Models.OidcDownParty.Client.IdTokenLifetimeMin, Constants.Models.OidcDownParty.Client.IdTokenLifetimeMax)]
         [JsonProperty(PropertyName = "id_token_lifetime")]
         public int IdTokenLifetime { get; set; } = 300;

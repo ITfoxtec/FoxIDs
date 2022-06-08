@@ -12,6 +12,7 @@ using FoxIDs.Client.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using FoxIDs.Client.Util;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -107,6 +108,8 @@ namespace FoxIDs.Client.Pages.Components
                 if (model.Client != null)
                 {
                     model.Client.ResponseTypes.Add("code");
+
+                    model.Client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
 
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = IdentityConstants.DefaultOidcScopes.OfflineAccess });
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel

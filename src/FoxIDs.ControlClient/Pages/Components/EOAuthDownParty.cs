@@ -12,6 +12,8 @@ using FoxIDs.Client.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using FoxIDs.Client.Models;
+using FoxIDs.Client.Util;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -101,13 +103,34 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oauthDownParty.CreateMode)
             {
-                model.Client = oauthDownParty.EnableClientTab ? new OAuthDownClientViewModel() : null;
-                model.Resource = oauthDownParty.EnableResourceTab ? new OAuthDownResource() : null;
-
-                if(model.Client != null)
+                if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.Resource)
                 {
-                    model.Client.ResponseTypes.Add("code");
-                    model.Client.ScopesViewModel.Add(new OAuthDownScopeViewModel { Scope = IdentityConstants.DefaultOidcScopes.OfflineAccess });
+                    oauthDownParty.EnableClientTab = false;
+                    oauthDownParty.EnableResourceTab = true;
+                    oauthDownParty.ShowClientTab = false;
+                    oauthDownParty.ShowResourceTab = true;
+
+                    model.Resource = new OAuthDownResource();
+                }
+                else if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.ClientCredentialsGrant)
+                {
+                    oauthDownParty.EnableClientTab = true;
+                    oauthDownParty.EnableResourceTab = false;
+                    oauthDownParty.ShowClientTab = true;
+                    oauthDownParty.ShowResourceTab = false;
+
+                    model.Client = new OAuthDownClientViewModel();
+
+                    model.Client.DefaultResourceScope = false;
+
+                    model.Client.RequirePkce = false;
+                    model.Client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
+
+                    model.Client.ResponseTypes.Add("token");
+                }
+                else
+                {
+                    throw new NotSupportedException("OAuthSubPartyTypes not supported.");
                 }
             }
         }

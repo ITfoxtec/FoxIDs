@@ -65,7 +65,7 @@ FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` w
 
 Custom domains are configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link. The FoxIDs site support one primary domain and multiple secondary domains, where the FoxIDs Control only support one primary domain.
 
-Additionally primary custom domain configuration:
+Configure new primary custom domain:
 
 1) First login to the FoxIDs Control client using the default/old primary domain. Select the `Parties` menu and under `Down-parties` select click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
 

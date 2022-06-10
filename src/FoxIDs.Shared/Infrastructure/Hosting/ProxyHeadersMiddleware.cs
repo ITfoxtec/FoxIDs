@@ -27,6 +27,10 @@ namespace FoxIDs.Infrastructure.Hosting
             string ipHeader = context.Request.Headers["CF-Connecting-IP"];
             if (ipHeader.IsNullOrWhiteSpace())
             {
+                ipHeader = context.Request.Headers["X-Azure-ClientIP"];
+            }
+            if (ipHeader.IsNullOrWhiteSpace())
+            {
                 ipHeader = context.Request.Headers["X-Forwarded-For"];
             }
             if (!ipHeader.IsNullOrWhiteSpace())

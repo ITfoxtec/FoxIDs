@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -37,9 +39,29 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private static void XForwardedHost(HttpContext context)
         {
+            var logger = context.RequestServices.GetService<TelemetryLogger>();
+
+            try
+            {
+                throw new System.Exception("All headers " + string.Join(", ", context.Request.Headers.Select(h => h)));
+            }
+            catch (System.Exception ex)
+            {
+                logger.Error(ex);
+            }
+
             string hostHeader = context.Request.Headers["X-Forwarded-Host"];
             if (!hostHeader.IsNullOrWhiteSpace())
             {
+                try
+                {
+                    throw new System.Exception("X-Forwarded-Host: " + hostHeader);
+                }
+                catch (System.Exception ex)
+                {
+                    logger.Error(ex);
+                }
+
                 if (context.Request.Host.Port.HasValue)
                 {
                     context.Request.Host = new HostString(hostHeader, context.Request.Host.Port.Value);
@@ -47,12 +69,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 else
                 {
                     context.Request.Host = new HostString(hostHeader);
-                }
-
-                IPAddress ipAddress;
-                if (IPAddress.TryParse(hostHeader, out ipAddress))
-                {
-                    context.Connection.RemoteIpAddress = ipAddress;
                 }
             }
         }

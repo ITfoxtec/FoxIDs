@@ -41,7 +41,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IApplicationBuilder UseProxyClientIpMiddleware(this IApplicationBuilder app)
         {
-            return app.UseMiddleware<ProxyXForwardedMiddleware>();
+            return app.UseMiddleware<ProxyHeadersMiddleware>();
         }
 
         public static void UseEnLocalization(this IApplicationBuilder builder)

@@ -36,6 +36,8 @@ namespace FoxIDs.Infrastructure.Hosting
                     var trackIdKey = GetTrackIdKey(route);
                     if (trackIdKey != null)
                     {
+                        //TODO context.Items[Constants.Routes.RouteBindingTenantHeader]
+
                         var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
                     }

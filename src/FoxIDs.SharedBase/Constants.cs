@@ -38,6 +38,7 @@ namespace FoxIDs
             public const string RouteControllerKey = "controller";
             public const string RouteActionKey = "action";
             public const string RouteBindingKey = "binding";
+            public const string RouteBindingTenantHeader = "tenantheader";
 
             public const string SequenceStringKey = Sequence.String;
 

@@ -16,10 +16,20 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext context)
         {
+            Tenant(context);
             ClientIp(context);
             Host(context);
 
             await next.Invoke(context);
+        }
+
+        private void Tenant(HttpContext context)
+        {
+            string tenantHeader = context.Request.Headers["X-FoxIDs-Tenant"];
+            if (!tenantHeader.IsNullOrWhiteSpace())
+            {
+                context.Items[Constants.Routes.RouteBindingTenantHeader] = tenantHeader;
+            }
         }
 
         private static void ClientIp(HttpContext context)

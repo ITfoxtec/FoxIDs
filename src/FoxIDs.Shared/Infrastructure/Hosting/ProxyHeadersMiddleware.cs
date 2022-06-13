@@ -1,5 +1,8 @@
-﻿using ITfoxtec.Identity;
+﻿using FoxIDs.Models.Config;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -16,11 +19,25 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext context)
         {
+            Secret(context);
             Tenant(context);
             ClientIp(context);
             Host(context);
 
             await next.Invoke(context);
+        }
+
+        private void Secret(HttpContext context)
+        {
+            var settings = context.RequestServices.GetService<Settings>();
+            if (!settings.ProxySecret.IsNullOrEmpty())
+            {
+                string secretHeader = context.Request.Headers["X-FoxIDs-Secret"];
+                if (!settings.ProxySecret.Equals(secretHeader, StringComparison.Ordinal))
+                {
+                    throw new Exception("Proxy secret in 'X-FoxIDs-Secret' header not accepted.");
+                }
+            }
         }
 
         private void Tenant(HttpContext context)

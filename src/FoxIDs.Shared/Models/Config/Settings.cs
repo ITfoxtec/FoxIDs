@@ -27,6 +27,11 @@ namespace FoxIDs.Models.Config
         public bool MasterSeedEnabled { get; set; }
 
         /// <summary>
+        /// Optional proxy secret. Validating the HTTP header "X-FoxIDs-Secret" if not empty.
+        /// </summary>
+        public string ProxySecret { get; set; }
+
+        /// <summary>
         /// Only used in development!
         /// The servers client credentials. 
         /// </summary>

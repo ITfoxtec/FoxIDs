@@ -41,7 +41,7 @@ namespace FoxIDs.Client.Services
 
         protected async Task<IEnumerable<T>> FilterAsync<T>(string url, string parmValue1, string parmValue2 = null, string parmName1 = "filterName", string parmName2 = null) 
         {
-            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={parmValue1}{((!parmValue2.IsNullOrEmpty() && !parmName2.IsNullOrEmpty()) ? $"@{parmName2}={parmValue2}" : string.Empty)}");
+            using var response = await httpClient.GetAsync($"{await GetTenantApiUrlAsync(url)}?{parmName1}={parmValue1}{((!parmValue2.IsNullOrEmpty() && !parmName2.IsNullOrEmpty()) ? $"&{parmName2}={parmValue2}" : string.Empty)}");
             return await response.ToObjectAsync<IEnumerable<T>>();
         }
 

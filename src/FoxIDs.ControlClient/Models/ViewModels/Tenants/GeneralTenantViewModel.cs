@@ -11,6 +11,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralTenantViewModel(Tenant tenant)
         {
             Name = tenant.Name;
+            CustomDomain = tenant.CustomDomain;
+            CustomDomainVerified = tenant.CustomDomainVerified;
         }
 
         public bool Edit { get; set; }

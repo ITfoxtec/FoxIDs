@@ -44,6 +44,7 @@
                         </div>
                     }
                     <div class="modal-footer">
+                        <a class="btn btn-link" href="@tenant.Form.Model.LoginUri" target="_blank" @onclick="@(() => tenant.Edit = false)">Open tenant</a>
                         <button type="button" class="btn btn-link" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                         <button type="submit" class="btn btn-primary">Update</button>
                         <button type="button" class="btn btn-secondary" @onclick="@(() => tenant.Edit = false)">Close</button>
@@ -53,11 +54,7 @@
             else
             {
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
-                    @tenant.Name
-                    @if (!tenant.CustomDomain.IsNullOrEmpty())
-                    {
-                        <div>- Custom domain '@tenant.CustomDomain' @(tenant.CustomDomainVerified ? "verified" : string.Empty)</div>
-                    }
+                    @TenantInfoText(tenant)
                 </button>
             }
         </li>

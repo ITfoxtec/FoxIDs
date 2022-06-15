@@ -58,7 +58,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, Settings settings, IWebHostEnvironment env)
         {
-            services.AddSharedInfrastructure();
+            services.AddSharedInfrastructure(settings);
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
 

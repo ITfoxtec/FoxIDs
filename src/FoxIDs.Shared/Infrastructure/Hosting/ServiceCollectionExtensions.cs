@@ -3,6 +3,7 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
+using StackExchange.Redis;
 using System;
 using System.Net.Http;
 
@@ -32,7 +33,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return services;
         }
 
-        public static IServiceCollection AddSharedInfrastructure(this IServiceCollection services)
+        public static (IServiceCollection, IConnectionMultiplexer) AddSharedInfrastructure(this IServiceCollection services, Models.Config.Settings settings)
         {
             IdentityModelEventSource.ShowPII = true;
 
@@ -56,7 +57,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 options.Timeout = TimeSpan.FromSeconds(30);
             });
 
-            return services;
+            var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
+            services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
+            return (services, connectionMultiplexer);
         }
     }
 }

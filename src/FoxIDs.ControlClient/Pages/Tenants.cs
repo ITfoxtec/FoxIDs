@@ -13,6 +13,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using Blazored.Toast.Services;
 using System.Net.Http;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages
 {
@@ -123,6 +124,11 @@ namespace FoxIDs.Client.Pages
             });
         }
 
+        private string TenantInfoText(GeneralTenantViewModel generalTenant)
+        {
+            return $"{generalTenant.Name}{(!generalTenant.CustomDomain.IsNullOrEmpty() ? $" - Custom domain: '{generalTenant.CustomDomain}'{(generalTenant.CustomDomainVerified ? " verified" : string.Empty)}" : string.Empty)}";
+        }
+
         private async Task OnEditTenantValidSubmitAsync(GeneralTenantViewModel generalTenant, EditContext editContext)
         {
             try
@@ -130,6 +136,9 @@ namespace FoxIDs.Client.Pages
                 var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
                 generalTenant.Form.UpdateModel(ToViewModel(tenantResult));
                 toastService.ShowSuccess("Tenant updated.", "SUCCESS");
+
+                generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;
+                generalTenant.CustomDomainVerified = generalTenant.Form.Model.CustomDomainVerified;
             }
             catch (FoxIDsApiException ex)
             {

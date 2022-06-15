@@ -65,7 +65,7 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync<T>(string id) where T : IDataDocument
+        public Task<T> DeleteAsync<T>(string id) where T : IDataDocument
         {
             throw new NotImplementedException();
         }

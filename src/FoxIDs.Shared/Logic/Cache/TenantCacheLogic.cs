@@ -24,10 +24,11 @@ namespace FoxIDs.Logic
             this.tenantRepository = tenantRepository;
         }
 
-        // TODO invalidate tenant cache when the tenant is updated / deleted
-        public async void InvalidateCacheAsync(string tenantName)
+        public async Task InvalidateCustomDomainCacheAsync(string customDomain)
         {
-            throw new NotImplementedException();
+            var key = RadisTenantCustomDomainKey(customDomain);
+            var db = redisConnectionMultiplexer.GetDatabase();
+            await db.KeyDeleteAsync(key);
         }
 
         public async Task<string> GetTenantNameByCustomDomain(string customDomain)

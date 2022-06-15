@@ -14,9 +14,11 @@ namespace FoxIDs.Client.Services
         public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterName) => await FilterAsync<Tenant>(filterApiUri, filterName);
+        public async Task<IEnumerable<Tenant>> FilterTenantAsync(string filterValue) => await FilterAsync<Tenant>(filterApiUri, filterValue, parmValue2: filterValue, parmName2: "");
 
+        public async Task<Tenant> GetTenantAsync(string name) => await GetAsync<Tenant>(apiUri, name);
         public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
+        public async Task<Tenant> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, Tenant>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
     }
 }

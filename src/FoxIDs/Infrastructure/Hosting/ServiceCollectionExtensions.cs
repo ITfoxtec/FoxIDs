@@ -26,8 +26,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<EmbeddedResourceLogic>();
             services.AddSingleton<LocalizationLogic>();
 
-            services.AddTransient<TenantCacheLogic>();
-
             services.AddTransient<SequenceLogic>();
             services.AddTransient<SecurityHeaderLogic>();
             services.AddTransient<TrackKeyLogic>();

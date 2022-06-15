@@ -14,7 +14,10 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddTransient<ExternalSecretLogic>();
             services.AddTransient<ExternalKeyLogic>();
+
             services.AddTransient<ClaimTransformValidationLogic>();
+
+            services.AddTransient<TenantCacheLogic>();
 
             return services;
         }

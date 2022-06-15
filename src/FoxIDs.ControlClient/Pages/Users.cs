@@ -50,7 +50,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUpParties(await UserService.FilterUserAsync(null));
+                SetGeneralUsers(await UserService.FilterUserAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -67,7 +67,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                SetGeneralUpParties(await UserService.FilterUserAsync(userFilterForm.Model.FilterEmail));
+                SetGeneralUsers(await UserService.FilterUserAsync(userFilterForm.Model.FilterEmail));
             }
             catch (FoxIDsApiException ex)
             {
@@ -82,7 +82,7 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void SetGeneralUpParties(IEnumerable<User> dataUsers)
+        private void SetGeneralUsers(IEnumerable<User> dataUsers)
         {
             users.Clear();
             foreach (var dp in dataUsers)

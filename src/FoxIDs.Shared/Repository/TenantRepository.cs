@@ -217,7 +217,7 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task DeleteAsync<T>(string id) where T : IDataDocument
+        public async Task<T> DeleteAsync<T>(string id) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -229,6 +229,7 @@ namespace FoxIDs.Repository
                 var container = GetContainer<T>();
                 var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
                 totalRU += deleteResponse.RequestCharge;
+                return deleteResponse;
             }
             catch (CosmosException ex)
             {

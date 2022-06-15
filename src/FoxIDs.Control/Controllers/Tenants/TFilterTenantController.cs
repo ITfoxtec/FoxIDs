@@ -37,13 +37,13 @@ namespace FoxIDs.Controllers
         /// <returns>Tenant.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterTenant(string filterName)
+        public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterTenant(string filterName, string filterCustomDomain)
         {
             try
             {
-                var mTenants = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<Tenant>() : await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName));
+                var mTenants = await GetFilterTenantInternalAsync(filterName, filterCustomDomain);
                 var aTenants = new HashSet<Api.Tenant>(mTenants.Count());
-                foreach(var mTenant in mTenants.OrderBy(t => t.Name))
+                foreach (var mTenant in mTenants.OrderBy(t => t.Name))
                 {
                     aTenants.Add(mapper.Map<Api.Tenant>(mTenant));
                 }
@@ -57,6 +57,26 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.Tenant).Name, filterName);
                 }
                 throw;
+            }
+        }
+
+        private Task<HashSet<Tenant>> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
+        {
+            if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
+            {
+                return tenantRepository.GetListAsync<Tenant>();
+            }
+            else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
+            {
+                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName));
+            }
+            else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
+            {
+                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain));
+            }
+            else
+            {
+                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName) || t.CustomDomain.Contains(filterCustomDomain));
             }
         }
     }

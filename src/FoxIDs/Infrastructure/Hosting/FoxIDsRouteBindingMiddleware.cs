@@ -32,7 +32,7 @@ namespace FoxIDs.Infrastructure.Hosting
             this.tokenCredential = tokenCredential;
         }
 
-        protected override Track.IdKey GetTrackIdKey(string[] route)
+        protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
         {
             if (route.Length == 0)
             {
@@ -46,15 +46,25 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 return null;
             }
-            else if (route.Length > 2)
+            else if ((!hasCustomDomain && route.Length > 2) || (hasCustomDomain && route.Length > 1))
             {
-                return new Track.IdKey
+                if (!hasCustomDomain)
                 {
-                    TenantName = route[0].ToLower(),
-                    TrackName = route[1].ToLower()
-                };
+                    return new Track.IdKey
+                    {
+                        TenantName = route[0].ToLower(),
+                        TrackName = route[1].ToLower()
+                    };
+                }
+                else
+                {
+                    return new Track.IdKey
+                    {
+                        TrackName = route[0].ToLower()
+                    };
+                }
             }
-            else if (route.Length == 2)
+            else if ((!hasCustomDomain && route.Length == 2) || (hasCustomDomain && route.Length == 1))
             {
                 throw new NotSupportedException($"FoxIDs route '{string.Join('/', route)}' without an action is not supported.");
             }
@@ -89,11 +99,18 @@ namespace FoxIDs.Infrastructure.Hosting
             return false;
         }
 
-        protected override string GetPartyNameAndbinding(string[] route)
+        protected override string GetPartyNameAndbinding(string[] route, bool hasCustomDomain)
         {
-            if (route.Length >= 3)
+            if ((!hasCustomDomain && route.Length >= 3) || (hasCustomDomain && route.Length >= 2))
             {
-                return route[2].ToLower();
+                if (!hasCustomDomain)
+                {
+                    return route[2].ToLower();
+                }
+                else
+                {
+                    return route[1].ToLower();
+                }
             }
             else
             {
@@ -275,7 +292,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {
-            var key = RadisKey(tenantName, trackName, track.Key.ExternalName);
+            var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
             var db = redisConnectionMultiplexer.GetDatabase();
 
             var trackKeyExternalValue = (string)await db.StringGetAsync(key);
@@ -352,7 +369,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return trackKeyExternal;
         }
 
-        private string RadisKey(string tenantName, string trackName, string name)
+        private string RadisTrackKeyExternalKey(string tenantName, string trackName, string name)
         {
             return $"track_key_ext_{tenantName}_{trackName}_{name}";
         }

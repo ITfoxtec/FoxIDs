@@ -19,15 +19,20 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext context)
         {
-            Secret(context);
-            Tenant(context);
+            var hasSecret = Secret(context);
+
             ClientIp(context);
-            Host(context);
+            var host = Host(context);
+
+            if (hasSecret && !host.IsNullOrWhiteSpace())
+            {
+                context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
+            }
 
             await next.Invoke(context);
         }
 
-        private void Secret(HttpContext context)
+        private bool Secret(HttpContext context)
         {
             var settings = context.RequestServices.GetService<Settings>();
             if (!settings.ProxySecret.IsNullOrEmpty())
@@ -37,16 +42,9 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     throw new Exception("Proxy secret in 'X-FoxIDs-Secret' header not accepted.");
                 }
+                return true;
             }
-        }
-
-        private void Tenant(HttpContext context)
-        {
-            string tenantHeader = context.Request.Headers["X-FoxIDs-Tenant"];
-            if (!tenantHeader.IsNullOrWhiteSpace())
-            {
-                context.Items[Constants.Routes.RouteBindingTenantHeader] = tenantHeader;
-            }
+            return false;
         }
 
         private static void ClientIp(HttpContext context)
@@ -70,7 +68,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private static void Host(HttpContext context)
+        private static string Host(HttpContext context)
         {
             string hostHeader = context.Request.Headers["X-ORIGINAL-HOST"];
             if (hostHeader.IsNullOrWhiteSpace())
@@ -88,6 +86,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     context.Request.Host = new HostString(hostHeader);
                 }
             }
+            return hostHeader;
         }
     }
 }

@@ -12,5 +12,12 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
         [Display(Name = "Tenant name")]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
+        [Display(Name = "Custom domain")]
+        public string CustomDomain { get; set; }
+
+        [Display(Name = "Custom domain is verified")]
+        public bool CustomDomainVerified { get; set; }
     }
 }

@@ -32,6 +32,11 @@ namespace FoxIDs.Models.Config
         public string ProxySecret { get; set; }
 
         /// <summary>
+        /// Time to cache custom domains in seconds (default 12 hours).
+        /// </summary>
+        public int CustomDomainCacheLifetime { get; set; } = 43200;
+
+        /// <summary>
         /// Only used in development!
         /// The servers client credentials. 
         /// </summary>

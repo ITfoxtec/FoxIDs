@@ -114,6 +114,38 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Update tenant.
+        /// </summary>
+        /// <param name="tenant">Tenant.</param>
+        /// <returns>Tenant.</returns>
+        [ProducesResponseType(typeof(Api.Track), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Api.Track>> PutTrack([FromBody] Api.TenantRequest tenant)
+        {
+            try
+            {
+                if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
+                tenant.Name = tenant.Name.ToLower();
+
+                var mTenant = await tenantRepository.GetTenantByNameAsync(tenant.Name);
+                mTenant.CustomDomain = tenant.CustomDomain;
+                mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
+                await tenantRepository.UpdateAsync(mTenant);
+
+                return Ok(mapper.Map<Api.Tenant>(mTenant));
+            }
+            catch (CosmosDataException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
+                    return NotFound(typeof(Api.Tenant).Name, tenant.Name);
+                }
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Delete tenant.
         /// </summary>
         /// <param name="name">Tenant name.</param>

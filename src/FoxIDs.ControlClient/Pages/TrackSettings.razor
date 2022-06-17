@@ -2,6 +2,12 @@
 @inherits PageBase
 
 <ul class="nav nav-tabs">
+    @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tenantSettingsHref">Tenant settings</a>
+        </li>
+    }
     <li class="nav-item">
         <a class="nav-link active">Track settings</a>
     </li>
@@ -53,7 +59,7 @@
                 }
             </div>
             <div class="modal-footer">
-                @if (!Constants.Routes.MasterTrackName.Equals(trackSettingsForm.Model.Name, StringComparison.OrdinalIgnoreCase))
+                @if (!IsMasterTrack)
                 {
                     <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete track</button>
                 }

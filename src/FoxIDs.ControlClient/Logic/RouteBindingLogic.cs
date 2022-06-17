@@ -17,24 +17,33 @@ namespace FoxIDs.Client.Logic
     {
         private const string tenanSessionKey = "tenant_session";
         private string tenantName;
-        private Tenant tenant;
+        private Tenant myTenant;
         private bool? isMastertenant;
         private readonly ClientSettings clientSettings;
         private readonly IServiceProvider serviceProvider;
+        private readonly TrackSelectedLogic trackSelectedLogic;
         private readonly NavigationManager navigationManager;
         private readonly ISessionStorageService sessionStorage;
         private readonly AuthenticationStateProvider authenticationStateProvider;
 
-        public RouteBindingLogic(ClientSettings clientSettings, IServiceProvider serviceProvider, NavigationManager navigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider)
+        public RouteBindingLogic(ClientSettings clientSettings, IServiceProvider serviceProvider, TrackSelectedLogic trackSelectedLogic, NavigationManager navigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider)
         {
             this.clientSettings = clientSettings;
             this.serviceProvider = serviceProvider;
+            this.trackSelectedLogic = trackSelectedLogic;
             this.navigationManager = navigationManager;
             this.sessionStorage = sessionStorage;
             this.authenticationStateProvider = authenticationStateProvider;
         }
 
         public bool IsMasterTenant => (isMastertenant ?? (isMastertenant = "master".Equals(tenantName, StringComparison.OrdinalIgnoreCase))).Value;
+
+        private bool IsMasterTrack => trackSelectedLogic.Track != null && Constants.Routes.MasterTrackName.Equals(trackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+
+        public void SetMyTenant(Tenant tenant)
+        {
+            myTenant = tenant;
+        }
 
         public async Task<string> GetTenantNameAsync()
         {
@@ -47,9 +56,9 @@ namespace FoxIDs.Client.Logic
 
         public string GetFoxIDsTenantEndpoint()
         {
-            if (!IsMasterTenant && tenant.CustomDomainVerified)
+            if (trackSelectedLogic.Track != null && !IsMasterTrack && !IsMasterTenant && myTenant != null && myTenant.CustomDomainVerified)
             {
-                return $"https://{tenant.CustomDomain}";
+                return $"https://{myTenant.CustomDomain}";
             }
             else
             {
@@ -108,7 +117,7 @@ namespace FoxIDs.Client.Logic
             if (!IsMasterTenant)
             {
                 var myTenantService = serviceProvider.GetService<MyTenantService>();
-                tenant = await myTenantService.GetTenantAsync();
+                myTenant = await myTenantService.GetTenantAsync();
             }
         }
     }

@@ -65,7 +65,6 @@ namespace FoxIDs.Client.Shared
 
         protected override async Task OnInitializedAsync()
         {
-            var user = (await authenticationStateTask).User;
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnShowSelectTrackAsync += OnShowSelectTrackAsync;

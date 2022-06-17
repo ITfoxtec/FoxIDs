@@ -40,7 +40,7 @@ namespace FoxIDs.Models
         public string Name { get; set; }
 
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
-        [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern)]
+        [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]
         [JsonProperty(PropertyName = "custom_domain")]
         public string CustomDomain { get; set; }
 

@@ -102,13 +102,13 @@ namespace FoxIDs.Client.Pages.Components
 
         public (string, string) GetAuthorityAndOIDCDiscovery(string partyName, bool addUpParty)
         {
-            var authority = $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}{(addUpParty ? $"({Constants.Routes.LoginController})" : String.Empty)}/";
+            var authority = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}{(addUpParty ? $"({Constants.Routes.LoginController})" : String.Empty)}/";
             return (authority, authority + IdentityConstants.OidcDiscovery.Path);
         }
 
         public string GetSamlMetadata(string partyName)
         {
-            return $"{ClientSettings.FoxIDsEndpoint}/{TenantName}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}({Constants.Routes.LoginController})/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";
+            return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}({Constants.Routes.LoginController})/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";
         }
 
         public async Task DownPartyCancelAsync(GeneralDownPartyViewModel downParty)

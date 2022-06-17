@@ -150,6 +150,7 @@ namespace FoxIDs
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
                 public const int CustomDomainLength = 200;
+                public const string CustomDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
             }
 
             public static class Track

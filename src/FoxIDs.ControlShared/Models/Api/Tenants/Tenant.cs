@@ -14,6 +14,7 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
+        [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern)]
         [Display(Name = "Custom domain")]
         public string CustomDomain { get; set; }
 

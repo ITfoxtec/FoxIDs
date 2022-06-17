@@ -28,6 +28,11 @@ namespace FoxIDs.Models.Config
         public RedisCacheSettings RedisCache { get; set; }
 
         /// <summary>
+        /// Cache configuration.
+        /// </summary>
+        public CacheSettings Cache { get; set; } = new CacheSettings();
+
+        /// <summary>
         /// Enable master seed if true.
         /// </summary>
         public bool MasterSeedEnabled { get; set; }
@@ -36,11 +41,6 @@ namespace FoxIDs.Models.Config
         /// Optional proxy secret. Validating the HTTP header "X-FoxIDs-Secret" if not empty.
         /// </summary>
         public string ProxySecret { get; set; }
-
-        /// <summary>
-        /// Time to cache custom domains in seconds (default 12 hours).
-        /// </summary>
-        public int CustomDomainCacheLifetime { get; set; } = 43200;
 
         /// <summary>
         /// Only used in development!

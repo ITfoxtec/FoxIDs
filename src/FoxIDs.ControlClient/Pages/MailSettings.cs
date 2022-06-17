@@ -16,6 +16,7 @@ namespace FoxIDs.Client.Pages
 {
     public partial class MailSettings
     {
+        private string tenantSettingsHref;
         private string trackSettingsHref;
         private string claimMappingsHref;
         private PageEditForm<MailSettingsViewModel> mailSettingsForm;
@@ -26,13 +27,21 @@ namespace FoxIDs.Client.Pages
         public IToastService toastService { get; set; }
 
         [Inject]
+        public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
         public TrackService TrackService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+
         protected override async Task OnInitializedAsync()
         {
+            tenantSettingsHref = $"{TenantName}/tenantsettings";
             trackSettingsHref = $"{TenantName}/tracksettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             await base.OnInitializedAsync();

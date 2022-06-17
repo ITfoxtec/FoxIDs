@@ -11,7 +11,15 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsApiRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
-        protected override Track.IdKey GetTrackIdKey(string[] route)
+        protected override void CheckCustomDomainSupport(bool hasCustomDomain)
+        {
+            if (hasCustomDomain)
+            {
+                throw new NotSupportedException("Host in header not supported in Control API.");
+            }
+        }
+
+        protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
         {
             var trackIdKey = new Track.IdKey();
             trackIdKey.TrackName = Constants.Routes.MasterTrackName;

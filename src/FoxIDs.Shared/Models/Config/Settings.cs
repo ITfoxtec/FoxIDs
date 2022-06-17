@@ -22,6 +22,17 @@ namespace FoxIDs.Models.Config
         public KeyVaultSettings KeyVault { get; set; }
 
         /// <summary>
+        /// Redis Cache configuration.
+        /// </summary>
+        [Required]
+        public RedisCacheSettings RedisCache { get; set; }
+
+        /// <summary>
+        /// Cache configuration.
+        /// </summary>
+        public CacheSettings Cache { get; set; } = new CacheSettings();
+
+        /// <summary>
         /// Enable master seed if true.
         /// </summary>
         public bool MasterSeedEnabled { get; set; }

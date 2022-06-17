@@ -11,23 +11,25 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using Blazored.Toast.Services;
+using System.Net.Http;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class Tenants : IDisposable 
     {
         private PageEditForm<FilterTenantViewModel> searchTenantForm;
-        private IEnumerable<Tenant> tenants = new List<Tenant>();
-        private Modal tenantModal;
-        private TenantInfoViewModel tenantInfo = new TenantInfoViewModel();
-        private string deleteTenantError;
-        private bool deleteTenantAcknowledge = false;
+        private List<GeneralTenantViewModel> tenants = new List<GeneralTenantViewModel>();
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public TenantService TenantService { get; set; }
@@ -38,38 +40,27 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            await DefaultLoadTenentsAsync();
+            await DefaultLoadAsync();
             NotificationLogic.OnTenantUpdatedAsync += OnTenantUpdatedAsync;
         }
 
         private async Task OnTenantUpdatedAsync()
         {
-            try
-            {
-                await OnValidSubmitAsync(null);
-                StateHasChanged();
-            }
-            catch (TokenUnavailableException)
-            {
-                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-            }
-            catch (Exception ex)
-            {
-                searchTenantForm.SetError(ex.Message);
-            }
+            await DefaultLoadAsync();
+            StateHasChanged();
         }
 
-        private async Task OnValidSubmitAsync(EditContext editContext)
+        private async Task OnTenantFilterValidSubmitAsync(EditContext editContext)
         {
             try
             {
-                tenants = await TenantService.FilterTenantAsync(searchTenantForm.Model.FilterName);
+                SetGeneralTenants(await TenantService.FilterTenantAsync(searchTenantForm.Model.FilterValue));
             }
             catch (FoxIDsApiException ex)
             {
                 if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.FilterName), ex.Message);
+                    searchTenantForm.SetFieldError(nameof(searchTenantForm.Model.FilterValue), ex.Message);
                 }
                 else
                 {
@@ -78,11 +69,11 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private async Task DefaultLoadTenentsAsync()
+        private async Task DefaultLoadAsync()
         {
             try
             {
-                tenants = await TenantService.FilterTenantAsync(null);
+                SetGeneralTenants(await TenantService.FilterTenantAsync(null));
             }
             catch (TokenUnavailableException)
             {
@@ -94,22 +85,80 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowTenant(string tenantName)
+        private void SetGeneralTenants(IEnumerable<Tenant> dataTenans)
         {
-            tenantInfo.Name = tenantName;
-            tenantInfo.LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{tenantName}".ToLower();
-            deleteTenantError = null;
-            deleteTenantAcknowledge = false;
-            tenantModal.Show();
+            tenants.Clear();
+            foreach (var dp in dataTenans)
+            {
+                tenants.Add(new GeneralTenantViewModel(dp));
+            }
         }
 
-        private async Task DeleteTenantAsync(string tenantName)
+        private async Task ShowUpdateTenantAsync(GeneralTenantViewModel generalTenant)
+        {
+            generalTenant.DeleteAcknowledge = false;
+            generalTenant.ShowAdvanced = false;
+            generalTenant.Error = null;
+            generalTenant.Edit = true;
+
+            try
+            {
+                var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
+                await generalTenant.Form.InitAsync(ToViewModel(tenant));
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalTenant.Error = ex.Message;
+            }
+        }
+
+        private TenantViewModel ToViewModel(Tenant tenant)
+        {
+            return tenant.Map<TenantViewModel>(afterMap: afterMap =>
+            {
+                afterMap.LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{tenant.Name}".ToLower();
+            });
+        }
+
+        private string TenantInfoText(GeneralTenantViewModel generalTenant)
+        {
+            return $"{generalTenant.Name}{(!generalTenant.CustomDomain.IsNullOrEmpty() ? $" - Custom domain: '{generalTenant.CustomDomain}'{(generalTenant.CustomDomainVerified ? " verified" : string.Empty)}" : string.Empty)}";
+        }
+
+        private async Task OnEditTenantValidSubmitAsync(GeneralTenantViewModel generalTenant, EditContext editContext)
         {
             try
             {
-                await TenantService.DeleteTenantAsync(tenantName);
-                await OnTenantUpdatedAsync();
-                tenantModal.Hide();
+                var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
+                generalTenant.Form.UpdateModel(ToViewModel(tenantResult));
+                toastService.ShowSuccess("Tenant updated.", "SUCCESS");
+
+                generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;
+                generalTenant.CustomDomainVerified = generalTenant.Form.Model.CustomDomainVerified;
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    generalTenant.Form.SetFieldError(nameof(generalTenant.Form.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private async Task DeleteTenantAsync(GeneralTenantViewModel generalTenant)
+        {
+            try
+            {
+                await TenantService.DeleteTenantAsync(generalTenant.Name);
+                tenants.Remove(generalTenant);
             }
             catch (TokenUnavailableException)
             {
@@ -117,7 +166,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (Exception ex)
             {
-                deleteTenantError = ex.Message;
+                generalTenant.Form.SetError(ex.Message);
             }
         }
 

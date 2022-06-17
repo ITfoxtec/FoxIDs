@@ -10,12 +10,6 @@ namespace FoxIDs.Models.Config
         public string WebsiteUrl { get; set; }
 
         /// <summary>
-        /// Redis Cache configuration.
-        /// </summary>
-        [Required]
-        public RedisCacheSettings RedisCache { get; set; }
-
-        /// <summary>
         /// Sendgrid configuration.
         /// </summary>
         public SendgridSettings Sendgrid { get; set; }

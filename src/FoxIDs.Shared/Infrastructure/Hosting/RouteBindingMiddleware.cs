@@ -8,6 +8,7 @@ using System.Linq;
 using FoxIDs.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -33,12 +34,15 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 if (await PreAsync(httpContext, route))
                 {
-                    var trackIdKey = GetTrackIdKey(route);
+                    var customDomain = httpContext.Items[Constants.Routes.RouteBindingCustomDomainHeader] as string;
+                    var hasCustomDomain = !customDomain.IsNullOrEmpty();
+
+                    CheckCustomDomainSupport(hasCustomDomain);
+
+                    var trackIdKey = GetTrackIdKey(route, hasCustomDomain);
                     if (trackIdKey != null)
                     {
-                        //TODO context.Items[Constants.Routes.RouteBindingTenantHeader]
-
-                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, GetPartyNameAndbinding(route), AcceptUnknownParty(httpContext.Request.Path.Value, route));
+                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, hasCustomDomain, customDomain, GetPartyNameAndbinding(route, hasCustomDomain), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
                     }
 
@@ -56,21 +60,29 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
+        protected virtual void CheckCustomDomainSupport(bool hasCustomDomain) { }
+
         protected virtual ValueTask SeedAsync(IServiceProvider requestServices) => default;
 
         protected virtual ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
 
-        protected abstract Track.IdKey GetTrackIdKey(string[] route);
+        protected abstract Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain);
 
         protected virtual bool AcceptUnknownParty(string path, string[] route) => false;
 
-        protected virtual string GetPartyNameAndbinding(string[] route) => null;
+        protected virtual string GetPartyNameAndbinding(string[] route, bool hasCustomDomain) => null;
 
         protected virtual ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty) => new ValueTask<RouteBinding>(routeBinding);
 
-        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, string partyNameAndBinding, bool acceptUnknownParty)
+        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool hasCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
         {
-            var track = await GetTrackAsync(tenantRepository, trackIdKey);
+            if (hasCustomDomain)
+            {
+                var tenantCacheLogic = requestServices.GetService<TenantCacheLogic>();               
+                trackIdKey.TenantName = await tenantCacheLogic.GetTenantNameByCustomDomain(customDomain);
+            }
+
+            var track = await GetTrackAsync(trackIdKey);
             scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
@@ -84,7 +96,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);
         }
 
-        private async Task<Track> GetTrackAsync(ITenantRepository tenantRepository, Track.IdKey idKey)
+        private async Task<Track> GetTrackAsync(Track.IdKey idKey)
         {
             try
             {

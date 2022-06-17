@@ -39,6 +39,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
+        [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]
+        [JsonProperty(PropertyName = "custom_domain")]
+        public string CustomDomain { get; set; }
+
+        [JsonProperty(PropertyName = "custom_domain_verified")]
+        public bool CustomDomainVerified { get; set; }
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));

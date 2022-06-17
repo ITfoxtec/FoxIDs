@@ -11,6 +11,7 @@ using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
 using System;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
@@ -22,14 +23,16 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly MasterTenantLogic masterTenantLogic;
+        private readonly TenantCacheLogic tenantCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.masterTenantLogic = masterTenantLogic;
+            this.tenantCacheLogic = tenantCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
 
@@ -114,6 +117,46 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
+        /// Update tenant.
+        /// </summary>
+        /// <param name="tenant">Tenant.</param>
+        /// <returns>Tenant.</returns>
+        [ProducesResponseType(typeof(Api.Tenant), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<Api.Tenant>> PutTenant([FromBody] Api.TenantRequest tenant)
+        {
+            try
+            {
+                if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
+                tenant.Name = tenant.Name.ToLower();
+
+                var mTenant = await tenantRepository.GetTenantByNameAsync(tenant.Name);
+
+                var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
+
+                mTenant.CustomDomain = tenant.CustomDomain;
+                mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
+                await tenantRepository.UpdateAsync(mTenant);
+
+                if (!invalidateCustomDomainInCache.IsNullOrEmpty())
+                {
+                    await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
+                }
+
+                return Ok(mapper.Map<Api.Tenant>(mTenant));
+            }
+            catch (CosmosDataException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
+                    return NotFound(typeof(Api.Tenant).Name, tenant.Name);
+                }
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Delete tenant.
         /// </summary>
         /// <param name="name">Tenant name.</param>
@@ -128,7 +171,7 @@ namespace FoxIDs.Controllers
 
                 if (name.Equals(Constants.Routes.MasterTenantName, StringComparison.OrdinalIgnoreCase))
                 {
-                    throw new InvalidOperationException("The master track can not be deleted.");
+                    throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
                 var mTracks = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
@@ -142,7 +185,12 @@ namespace FoxIDs.Controllers
                         await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
                 }
-                await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
+                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
+
+                if (!string.IsNullOrEmpty(mTenant?.CustomDomain))
+                {
+                    await tenantCacheLogic.InvalidateCustomDomainCacheAsync(mTenant.CustomDomain);
+                }
 
                 return NoContent();
             }

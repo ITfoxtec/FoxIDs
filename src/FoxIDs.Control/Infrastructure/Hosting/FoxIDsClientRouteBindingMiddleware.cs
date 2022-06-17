@@ -13,6 +13,14 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsClientRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
         { }
 
+        protected override void CheckCustomDomainSupport(bool hasCustomDomain)
+        {
+            if (hasCustomDomain)
+            {
+                throw new NotSupportedException("Host in header not supported in Control Client.");
+            }
+        }
+
         protected override async ValueTask SeedAsync(IServiceProvider requestServices) => await requestServices.GetService<SeedLogic>().SeedAsync();
 
         protected override ValueTask<bool> PreAsync(HttpContext httpContext, string[] route)
@@ -25,7 +33,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return new ValueTask<bool>(true);
         }
 
-        protected override Track.IdKey GetTrackIdKey(string[] route)
+        protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
         {
             if (route.Length >= 1)
             {

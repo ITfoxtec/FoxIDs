@@ -14,7 +14,7 @@ namespace FoxIDs.Client.Services
         public UserService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<IEnumerable<User>> FilterUserAsync(string filterEmail) => await FilterAsync<User>(filterApiUri, filterEmail, parmName: nameof(filterEmail));
+        public async Task<IEnumerable<User>> FilterUserAsync(string filterEmail) => await FilterAsync<User>(filterApiUri, filterEmail, parmName2: nameof(filterEmail));
 
         public async Task<User> GetUserAsync(string email) => await GetAsync<User>(apiUri, email, parmName: nameof(email));
         public async Task<User> CreateUserAsync(CreateUserRequest user) => await PostResponseAsync<CreateUserRequest, User>(apiUri, user);

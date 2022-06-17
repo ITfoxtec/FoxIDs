@@ -97,7 +97,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, FoxIDsSettings settings, IWebHostEnvironment env)
         {
-            services.AddSharedInfrastructure();
+            (_, var connectionMultiplexer) = services.AddSharedInfrastructure(settings);
 
             services.AddSingleton<IStringLocalizer, FoxIDsStringLocalizer>();
             services.AddSingleton<IStringLocalizerFactory, FoxIDsStringLocalizerFactory>();
@@ -120,9 +120,6 @@ namespace FoxIDs.Infrastructure.Hosting
                     return new ClientSecretCredential(settings.ServerClientCredential?.TenantId, settings.ServerClientCredential?.ClientId, settings.ServerClientCredential?.ClientSecret);
                 });
             }
-
-            var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
-            services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
 
             services.AddDataProtection()
                 .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");

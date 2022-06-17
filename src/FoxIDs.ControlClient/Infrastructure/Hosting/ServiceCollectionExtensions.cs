@@ -35,6 +35,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
         {
             services.AddScoped<ClientService>();
             services.AddScoped<TenantService>();
+            services.AddScoped<MyTenantService>();
             services.AddScoped<TrackService>();
             services.AddScoped<DownPartyService>();
             services.AddScoped<UpPartyService>();

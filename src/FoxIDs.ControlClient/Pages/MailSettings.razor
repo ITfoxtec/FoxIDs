@@ -2,6 +2,12 @@
 @inherits PageBase
 
 <ul class="nav nav-tabs">
+    @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tenantSettingsHref">Tenant settings</a>
+        </li>
+    }
     <li class="nav-item">
         <a class="nav-link" href="@trackSettingsHref">Track settings</a>
     </li>
@@ -18,6 +24,12 @@
         @if (TrackSelectedLogic.IsTrackSelected)
         {
             <div class="modal-body">
+                 @if (!deleteMailError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @deleteMailError
+                    </div>
+                }
                 <FInputText @bind-Value="mailSettingsForm.Model.FromEmail" For="@(() => mailSettingsForm.Model.FromEmail)" />
 
                 <FInputSelect @bind-Value="mailSettingsForm.Model.MailProvider" For="@(() => mailSettingsForm.Model.MailProvider)">

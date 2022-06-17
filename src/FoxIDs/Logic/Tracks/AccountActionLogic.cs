@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
                 Email = user.Email
             }, separateSequence);
 
-            var confirmationUrl = UrlCombine.Combine(HttpContext.GetHost(), $"{RouteBinding.TenantName}/{RouteBinding.TrackName}/({RouteBinding.UpParty.Name})/action/confirmation/_{separateSequenceString}");
+            var confirmationUrl = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), $"({RouteBinding.UpParty.Name})/action/confirmation/_{separateSequenceString}");
             await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)),
                 localizer["Please confirm your email address"], 
                 localizer["<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>", confirmationUrl]);
@@ -148,7 +148,7 @@ namespace FoxIDs.Logic
                     PasswordHash = PasswordHashToSha256(user)
                 }, separateSequence);
 
-                var confirmationUrl = UrlCombine.Combine(HttpContext.GetHost(), $"{RouteBinding.TenantName}/{RouteBinding.TrackName}/({RouteBinding.UpParty.Name})/action/resetpassword/_{separateSequenceString}");
+                var confirmationUrl = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), $"({RouteBinding.UpParty.Name})/action/resetpassword/_{separateSequenceString}");
                 await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)),
                     localizer["Your password reset request"],
                     localizer["<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Your password reset request</h2><p style='margin-bottom:30px'>Click on this <a href='{0}'>link</a> to reset your password.</p>", confirmationUrl]);

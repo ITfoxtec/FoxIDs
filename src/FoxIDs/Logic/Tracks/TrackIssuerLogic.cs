@@ -1,6 +1,4 @@
-﻿using FoxIDs.Models;
-using Microsoft.AspNetCore.Http;
-using UrlCombineLib;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Logic
 {
@@ -11,7 +9,7 @@ namespace FoxIDs.Logic
 
         public string GetIssuer()
         {
-            var issuerWithoutSlash = UrlCombine.Combine(HttpContext.GetHost(), RouteBinding.TenantName, RouteBinding.TrackName);
+            var issuerWithoutSlash = HttpContext.GetHostWithTenantAndTrack();
             return $"{issuerWithoutSlash}/";
         }
     }

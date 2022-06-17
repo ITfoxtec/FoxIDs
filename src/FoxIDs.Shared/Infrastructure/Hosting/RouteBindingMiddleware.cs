@@ -86,7 +86,8 @@ namespace FoxIDs.Infrastructure.Hosting
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
             {
-                RouteUrl = $"{trackIdKey.TenantName}/{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
+                HasCustomDomain = hasCustomDomain,
+                RouteUrl = $"{(!hasCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
@@ -105,7 +106,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 if (hasCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase)) 
                 {
-                    throw new RouteCreationException($"Invalid tenant and track name '{idKey.TenantName}'. The URL for a custom domain is without the tenant element.", ex);
+                    throw new RouteCreationException($"Invalid tenant and track name '{idKey.TenantName}'. The URL for a custom domain has to be without the tenant element.", ex);
                 }
                 throw new RouteCreationException($"Invalid tenant name '{idKey.TenantName}' and track name '{idKey.TrackName}'.", ex);
             }

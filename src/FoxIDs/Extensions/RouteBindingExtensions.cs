@@ -16,8 +16,7 @@ namespace FoxIDs
 
         public static string GetUpPartyUrl(this HttpContext httpContext, string upPartyName, string controller, string action = null, bool includeSequence = false, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
         {
-            var routeBinding = httpContext.GetRouteBinding();
-            var elements = new List<string> { routeBinding.TenantName, routeBinding.TrackName, upPartyName.ToUpPartyBinding(partyBindingPattern), controller };
+            var elements = new List<string> { upPartyName.ToUpPartyBinding(partyBindingPattern), controller };
             if (!action.IsNullOrEmpty())
             {
                 elements.Add(action);
@@ -26,7 +25,7 @@ namespace FoxIDs
             {
                 elements.Add($"_{httpContext.GetSequenceString()}");
             }
-            return UrlCombine.Combine(httpContext.GetHost(), elements.ToArray());
+            return UrlCombine.Combine(httpContext.GetHostWithTenantAndTrack(), elements.ToArray());
         }
 
         public static string ToUpPartyBinding(this string upPartyName, PartyBindingPatterns partyBindingPattern)
@@ -42,8 +41,7 @@ namespace FoxIDs
 
         public static string GetDownPartyUrl(this HttpContext httpContext, string downPartyName, string upPartyName, string controller, string action = null, bool includeSequence = false)
         {
-            var routeBinding = httpContext.GetRouteBinding();
-            var elements = new List<string> { routeBinding.TenantName, routeBinding.TrackName, $"{downPartyName}({upPartyName})", controller };
+            var elements = new List<string> { $"{downPartyName}({upPartyName})", controller };
             if (!action.IsNullOrEmpty())
             {
                 elements.Add(action);
@@ -52,7 +50,7 @@ namespace FoxIDs
             {
                 elements.Add($"_{httpContext.GetSequenceString()}");
             }
-            return UrlCombine.Combine(httpContext.GetHost(), elements.ToArray());
+            return UrlCombine.Combine(httpContext.GetHostWithTenantAndTrack(), elements.ToArray());
         }
     }
 }

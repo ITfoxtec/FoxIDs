@@ -58,14 +58,14 @@ namespace FoxIDs.Logic
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    throw new Exception($"Unknown custom domain '{customDomain}', not connected to a tenant.", ex);
+                    throw new Exception($"Custom domain '{customDomain}' is not connected to a tenant.", ex);
                 }
 
                 throw new Exception($"Unable to find tenant by custom domain '{customDomain}'.", ex);
             }
             catch (Exception ex)
             {
-                throw new Exception($"Generally unable to find tenant by custom domain '{customDomain}'.", ex);
+                throw new Exception($"Unknown custom domain '{customDomain}' is not connected to a tenant.", ex);
             }
         }
 

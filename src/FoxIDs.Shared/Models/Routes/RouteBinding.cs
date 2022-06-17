@@ -4,6 +4,8 @@ namespace FoxIDs.Models
 {
     public class RouteBinding
     {
+        public bool HasCustomDomain { get; set; }
+
         public string TenantName { get; set; }
 
         public string TrackName { get; set; }

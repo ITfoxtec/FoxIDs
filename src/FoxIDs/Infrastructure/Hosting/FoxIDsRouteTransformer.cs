@@ -37,15 +37,15 @@ namespace FoxIDs.Infrastructure.Hosting
             return path;
         }
 
-        protected override async Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, RouteValueDictionary values, string[] route)
+        protected override async Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, bool hasCustomDomain, RouteValueDictionary values, string[] route)
         {
             if (route.Length <= 3)
             {
                 HandleWebSiteRoute(values, route);
             }
-            else if (route.Length >= 5 && route.Length <= 6)
+            else if ((!hasCustomDomain && route.Length >= 5 && route.Length <= 6) || (hasCustomDomain && route.Length >= 4 && route.Length <= 5))
             {
-                await HandleTenantRouteAsync(httpContext, values, route);
+                await HandleTenantRouteAsync(httpContext, hasCustomDomain, values, route);
             }
             else
             {
@@ -76,7 +76,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task HandleTenantRouteAsync(HttpContext httpContext, RouteValueDictionary values, string[] route)
+        private async Task HandleTenantRouteAsync(HttpContext httpContext, bool hasCustomDomain, RouteValueDictionary values, string[] route)
         {
             var scopedLogger = httpContext.RequestServices.GetService<TelemetryScopedLogger>();
 
@@ -86,8 +86,8 @@ namespace FoxIDs.Infrastructure.Hosting
             var routeAction = route[route.Length - 1];
             if (routeAction.StartsWith('_'))
             {
-                var routeController = route.Length == 5 ? route[route.Length - 2] : route[route.Length - 3];
-                var subRoutAction = route.Length == 5 ? routeController : route[route.Length - 2];
+                var routeController = (!hasCustomDomain && route.Length == 5) || (hasCustomDomain && route.Length == 4) ? route[route.Length - 2] : route[route.Length - 3];
+                var subRoutAction = (!hasCustomDomain && route.Length == 5) || (hasCustomDomain && route.Length == 4) ? routeController : route[route.Length - 2];
                 values[Constants.Routes.RouteControllerKey] = routeController;
                 values[Constants.Routes.RouteActionKey] = subRoutAction;
 

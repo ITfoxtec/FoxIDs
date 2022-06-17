@@ -114,7 +114,8 @@ namespace FoxIDs.Client.Logic
 
         private async Task LoadMyTenantAsync()
         {
-            if (!IsMasterTenant)
+            var authenticationState = await authenticationStateProvider.GetAuthenticationStateAsync();
+            if (authenticationState.User.Identity.IsAuthenticated && !IsMasterTenant)
             {
                 var myTenantService = serviceProvider.GetService<MyTenantService>();
                 myTenant = await myTenantService.GetTenantAsync();

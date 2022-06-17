@@ -36,7 +36,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     var customDomain = httpContext.Items[Constants.Routes.RouteBindingCustomDomainHeader] as string;
                     var hasCustomDomain = !customDomain.IsNullOrEmpty();
-
                     CheckCustomDomainSupport(hasCustomDomain);
 
                     var trackIdKey = GetTrackIdKey(route, hasCustomDomain);
@@ -82,7 +81,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 trackIdKey.TenantName = await tenantCacheLogic.GetTenantNameByCustomDomain(customDomain);
             }
 
-            var track = await GetTrackAsync(trackIdKey);
+            var track = await GetTrackAsync(trackIdKey, hasCustomDomain);
             scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
@@ -96,7 +95,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);
         }
 
-        private async Task<Track> GetTrackAsync(Track.IdKey idKey)
+        private async Task<Track> GetTrackAsync(Track.IdKey idKey, bool hasCustomDomain)
         {
             try
             {
@@ -104,7 +103,11 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenantName '{idKey.TenantName}' and trackName '{idKey.TrackName}'.", ex);
+                if (hasCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase)) 
+                {
+                    throw new RouteCreationException($"Invalid tenant and track name '{idKey.TenantName}'. The URL for a custom domain is without the tenant element.", ex);
+                }
+                throw new RouteCreationException($"Invalid tenant name '{idKey.TenantName}' and track name '{idKey.TrackName}'.", ex);
             }
         }
     }

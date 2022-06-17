@@ -16,7 +16,12 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 var path = MapPath(values[Constants.Routes.RouteTransformerPathKey] is string ? values[Constants.Routes.RouteTransformerPathKey] as string : string.Empty);
                 var route = path.Split('/').Where(r => !r.IsNullOrWhiteSpace()).ToArray();
-                return await HandleRouteAsync(httpContext, values, route);
+
+                var customDomain = httpContext.Items[Constants.Routes.RouteBindingCustomDomainHeader] as string;
+                var hasCustomDomain = !customDomain.IsNullOrEmpty();
+                CheckCustomDomainSupport(hasCustomDomain);
+
+                return await HandleRouteAsync(httpContext, hasCustomDomain, values, route);
             }
             catch (Exception ex)
             {
@@ -24,8 +29,10 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
+        protected virtual void CheckCustomDomainSupport(bool hasCustomDomain) { }
+
         protected abstract string MapPath(string path);
 
-        protected abstract Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, RouteValueDictionary values, string[] route);
+        protected abstract Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, bool hasCustomDomain, RouteValueDictionary values, string[] route);
     }
 }

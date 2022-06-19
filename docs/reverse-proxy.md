@@ -1,5 +1,5 @@
 # Reverse proxy
-It is recommended to place FoxIDs behind a reverse proxy. FoxIDs service support domain rewrite where FoxIDs Control require to be called on the same domain as exposed on the reverse proxy.
+It is recommended to place FoxIDs behind a reverse proxy. FoxIDs service support [custom domain](custom-domain.md) rewrite (not [custom primary domain](deployment.md#custom-primary-domains)). FoxIDs Control only support custom primary domain and require to be called on the same domain as exposed on the reverse proxy.
 
 ## Restrict the access
 Both FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
@@ -18,7 +18,7 @@ FoxIDs service support reading the client IP address in the following prioritize
  2. `X-Azure-ClientIP`
  3. `X-Forwarded-For`
 
-FoxIDs service support reading the custom domain (hostname) exposed on the revers proxy in the following prioritized HTTP headers:
+FoxIDs service support reading the [custom domain](custom-domain.md) (hostname) exposed on the revers proxy in the following prioritized HTTP headers:
 
  1. `X-ORIGINAL-HOST`
  2. `X-Forwarded-Host`

@@ -103,6 +103,11 @@ h4 {
 
 .navbar .navbar-brand {
     font-size: 1.5rem;
+    color: #ef8310 !important;
+}
+
+.navbar .navbar-subbrand {
+    color: #bbbbbb !important;
 }
 
 .navbar .searchDropdown {

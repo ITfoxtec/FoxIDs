@@ -54,16 +54,17 @@ Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwne
 
 It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-track).
 
-## Custom domains
+## Custom primary domains
 
-The FoxIDs and FoxIDs Control domains can be customized.  
+The FoxIDs service and FoxIDs Control primary domains can be customized. 
 
 > Important: change the primary domain before adding tenants.
 
-FoxIDs default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom a domain like e.g., `https://foxidsxxxx.com` or `https://foxids.xxxx.com`  
-FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a domain like e.g., `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`
+FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://foxidsxxxx.com` or `https://foxids.xxxx.com`  
+FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.foxidsxxxx.com` or `https://foxidscontrol.xxxx.com`
 
-Custom domains are configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link. The FoxIDs site support one primary domain and multiple secondary domains, where the FoxIDs Control only support one primary domain.
+Custom primary domains are configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link.
+The FoxIDs site support one primary domain and multiple secondary domains, where the FoxIDs Control only support one primary domain.
 
 Configure new primary custom domain:
 
@@ -78,6 +79,9 @@ Configure new primary custom domain:
 
 - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs sites primary custom domains.
 - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites primary custom domains.
+
+## Reverse proxy
+It is recommended to place FoxIDs behind a [reverse proxy](reverse-proxy.md). If optionally using a reverse proxy, the [custom primary domains](#custom-primary-domains) exposed on the proxy need to be the same as on the Azure App services. 
 
 ## Specify default page
 

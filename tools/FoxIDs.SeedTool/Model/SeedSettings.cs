@@ -17,12 +17,6 @@ namespace FoxIDs.SeedTool.Model
         public string ClientSecret { get; set; }
 
         /// <summary>
-        /// Seed tool redirect uri.
-        /// </summary>
-        [Required]
-        public string RedirectUri { get; set; }
-
-        /// <summary>
         /// FoxIDs endpoint.
         /// </summary>
         [Required]

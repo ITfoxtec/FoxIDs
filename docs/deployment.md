@@ -37,6 +37,9 @@ In this case you can experience getting a 'ConflictError' with the error message
 
 The solution is to delete (purge) the old Key Vault, which will release the name.
 
+## Reverse proxy
+It is recommended to place FoxIDs behind a [reverse proxy](reverse-proxy.md). 
+
 ## Seed
 
 ### Upload risk passwords

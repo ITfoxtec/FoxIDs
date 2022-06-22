@@ -17,6 +17,8 @@
   - [Samples](samples.md)
 - [Customization](customization.md)
   - [Title, Icon and CSS](title-icon-css.md)
+  - [Custom domain](custom-domain.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)
+  - [Reverse proxy](reverse-proxy.md)
 - [FAQ](faq.md)

@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FoxIDs.Models.Config
+﻿namespace FoxIDs.Models.Config
 {
     public class CacheSettings
     {
         /// <summary>
-        /// Time to cache custom domains in seconds (default 12 hours).
+        /// Time to cache custom domains in seconds (default 24 hours).
         /// </summary>
-        public int CustomDomainCacheLifetime { get; set; } = 43200;
+        public int CustomDomainCacheLifetime { get; set; } = 86400;
     }
 }

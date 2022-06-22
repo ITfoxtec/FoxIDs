@@ -49,6 +49,9 @@ code {
     line-height: 1.2;
     color: #fc7e01;
 }
+.brand-content-text-sub {
+    color: #bbbbbb;
+}
 
 .footer-container {
     position: absolute;

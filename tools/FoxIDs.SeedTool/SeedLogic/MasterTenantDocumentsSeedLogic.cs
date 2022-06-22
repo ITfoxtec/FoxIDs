@@ -277,7 +277,6 @@ namespace FoxIDs.SeedTool.SeedLogic
             await seedClientDownParty.SetIdAsync(new Party.IdKey { TenantName = settings.MasterTenant, TrackName = settings.MasterTrack, PartyName = settings.ClientId });
             seedClientDownParty.Client = new OAuthDownClient
             {
-                RedirectUris = new[] { settings.RedirectUri }.ToList(),
                 ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = controlApiResourceName, Scopes = new[] { controlApiResourceMasterScope }.ToList() } },
                 ResponseTypes = new[] { "token" }.ToList(),
                 AccessTokenLifetime = 1800 // 30 minutes

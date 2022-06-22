@@ -19,14 +19,17 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext context)
         {
-            var hasSecret = Secret(context);
-
             ClientIp(context);
-            var host = Host(context);
 
-            if (hasSecret && !host.IsNullOrWhiteSpace())
+            var hasVerifiedSecret = Secret(context);
+            if (hasVerifiedSecret)
             {
-                context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
+                var host = Host(context);
+
+                if (!host.IsNullOrWhiteSpace())
+                {
+                    context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
+                }
             }
 
             await next.Invoke(context);

@@ -60,15 +60,19 @@ The track properties can be configured by clicking the top right setting icon.
 ## FoxIDs Control API
 FoxIDs Control API is a REST API. The API expose a Swagger (OpenApi) interface document.
 
-FoxIDs Control API require that the client calling the API is granted the `foxids:master` scope to access master data or the `foxids:tenant` scope access tenant data. Normally only tenant data is accessed.
-The client can be an OAuth 2.0 client granted the administrator role `foxids:tenant.admin` acting as the client itself. Or a OpenID Connect client with an authenticated user granted the administrator role `foxids:tenant.admin`. 
+FoxIDs Control API require that the client calling the API is granted the `foxids:master` scope to access master tenant data or the `foxids:tenant` scope access tenant data in a particular tenant. Normally only tenant data is accessed.
 
-This shows the FoxIDs Control API configuration in the master track with a scope that grants access to tenant data.
+ - The client can be an OAuth 2.0 client. Where the client is granted the administrator role `foxids:tenant.admin` acting as the client itself using client credentials grant.  
+ Her is how the [sample seed tool](https://localhost:44333/docs/samples#configure-the-sample-seed-tool) client is granted access.
+ - Or a OpenID Connect client with an authenticated master track user. Where the user is granted the administrator role `foxids:tenant.admin`. 
+
+This shows the FoxIDs Control API configuration in a tenants master track with a scope that grants access to tenant data.
 
 ![Configure foxids_control_api](images/configure-foxids_control_api.png)
 
-FoxIDs Control API is called with an access token as described in the OAuth 2.0 Bearer Token standard.
+FoxIDs Control API is called with an access token as described in the [OAuth 2.0 Bearer Token (RFC 6750)](https://datatracker.ietf.org/doc/html/rfc6750) standard.
 
 The Swagger (OpenApi) interface document is exposed on `.../api/swagger/v1/swagger.json`.  
-You can also find the Swagger (OpenApi) [interface document](https://control.foxids.com/api/swagger/v1/swagger.json) online.
+
+You can also find the FoxIDs.com Swagger (OpenApi) [interface document](https://control.foxids.com/api/swagger/v1/swagger.json) online.
 

@@ -5,12 +5,17 @@ in your tenants master track under Settings --> Tenant settings.
 
 ![Configure reverse proxy secret](images/configure-tenant-custom-domain-my-track.png)
 
-> When a new custom domain is added it needs to be verified.
+> When a new custom domain is added it needs to be verified. 
+> After verification the domain is enabled in all tracks in the tenant.
 
 ## FoxIDs.com
-Configuring a custom domain in a FoxIDs.com tenant:
+Configuring a custom domain in your FoxIDs.com tenant.
 
- 1. In your DNS, add a CNAME with your custom domain and the target `custom-domains.foxids.com`
+> Only sub domains is supported as custom domains, like e.g., `auth.some-domain.com`, `login.some-domain.com` or `auth.zyx.some-domain.com`
+
+Steps:
+
+ 1. In your DNS, add a CNAME with your custom domain and the target `custom-domains.foxids.com`    
  2. Configure your custom domain in your FoxIDs tenants master track.
  3. Write an email to [FoxIDs support (support@foxids.com)](mailto:support@foxids.com) and ask for a custom domain verification.
  4. FoxIDs support will ask you to add one or two TXT records to your DNS for verification.

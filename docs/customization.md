@@ -14,5 +14,8 @@ The text elements on the FoxIDs user interface can be translated into different 
 
 ## Domain
 
-The FoxIDs and FoxIDs Control can be configured with your own domain. You can configure [custom domains](deployment#custom-domains) on your one instance of FoxIDs.  
-Your FoxIDs as an Identity as a Service (IDaaS) at [FoxIDs.com](https://foxids.com) can be configured with your domain, please contact [support](https://www.foxids.com/support) to get it configured.
+FoxIDs support domain configuration on two levels; [custom domains](custom-domain.md) and [custom primary domains](deployment#custom-primary-domains).
+
+You can configure a [custom domain](custom-domain.md) on each tenant.
+
+The FoxIDs service and FoxIDs Control sites in your own private cloud can be configured with your own domain / sub domain on the two sites as [custom primary domains](deployment#custom-primary-domains).

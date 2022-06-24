@@ -1,6 +1,6 @@
 ﻿# Deployment
 
-Deploy FoxIDs in your Azure tenant. 
+Deploy FoxIDs in your Azure tenant as your own private cloud. 
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
@@ -56,7 +56,7 @@ It is possible to run the sample applications after they are configured in a Fox
 
 ## Custom primary domains
 
-The FoxIDs service and FoxIDs Control primary domains can be customized. 
+The FoxIDs service and FoxIDs Control sites primary domains can be customized. 
 
 > Important: change the primary domain before adding tenants.
 

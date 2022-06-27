@@ -134,8 +134,10 @@ You are done. The SAML 2.0 up-party can now be used as an up-party for down-part
 
 ## Logging
 
-NemLog-in requires requests and responses to be logged including the signature proof. It is also required to log which identity have done login and logout of which session, at what time and the IP address.  
+NemLog-in requires requests and responses to be logged including the signature proof and stored for half a year (180 days). It is also required to log which identity have done login and logout of which session, at what time and the IP address.  
 [FoxIDs default log](logging.md) errors and events including the time and the IP address.
+
+> FoxIDs.com stores log data between 90 days to 180 days depending on the selected plan.
 
 It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 

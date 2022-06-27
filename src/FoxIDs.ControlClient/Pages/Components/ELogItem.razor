@@ -79,7 +79,7 @@
         {
             <div>@metricsName</div>
         }
-        @if (Item.Values.TryGetValue(Constants.Logs.Results.Value, out var metricsValue))
+        @if (Item.Values.TryGetValue(Constants.Logs.Results.Sum, out var metricsValue))
         {
             <div>Value: @metricsValue</div>
         }

@@ -98,6 +98,7 @@
     "foxidsSiteEndpoint": "[concat('https://', variables('foxidsSiteName'), '.azurewebsites.net')]",
     "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]",
     "serverfarmsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "workspacesAppInsightsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "appInsightsName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "redisName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "keyVaultName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
@@ -136,8 +137,28 @@
       }
     },
     {
+      "type": "microsoft.operationalinsights/workspaces",
+      "apiVersion": "2022-01-01",
+      "name": "[variables('workspacesAppInsightsName')]",
+      "location": "[variables('location')]",
+      "properties": {
+        "sku": {
+          "name": "pergb2018"
+        },
+        "retentionInDays": 30,
+        "features": {
+          "enableLogAccessUsingOnlyResourcePermissions": true
+        },
+        "workspaceCapping": {
+          "dailyQuotaGb": -1
+        },
+        "publicNetworkAccessForIngestion": "Enabled",
+        "publicNetworkAccessForQuery": "Enabled"
+      }
+    },
+    {
       "type": "microsoft.insights/components",
-      "apiVersion": "2015-05-01",
+      "apiVersion": "2020-02-02",
       "name": "[variables('appInsightsName')]",
       "location": "[variables('location')]",
       "tags": {
@@ -150,9 +171,9 @@
         "Flow_Type": "Redfield",
         "Request_Source": "IbizaAIExtension",
         "DisableIpMasking": true,
-        "SamplingPercentage": 100,
-        "RetentionInDays": 180,
-        "applicationId": "[variables('appInsightsName')]"
+        "RetentionInDays": 90,
+        "WorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('workspacesAppInsightsName'))]",
+        "IngestionMode": "LogAnalytics"
       }
     },
     {
@@ -407,7 +428,7 @@
         "MasterSeedEnabled": false,
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:AppId": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).AppId]"
+        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('workspacesAppInsightsName'))).WorkspaceId]"
       }
     },
     {
@@ -451,7 +472,7 @@
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:AppId": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).AppId]"
+        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('workspacesAppInsightsName'))).WorkspaceId]"
       }
     },
     {

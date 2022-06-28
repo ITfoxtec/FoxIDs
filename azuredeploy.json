@@ -138,7 +138,7 @@
     },
     {
       "type": "microsoft.operationalinsights/workspaces",
-      "apiVersion": "2022-01-01",
+      "apiVersion": "2021-12-01-preview",
       "name": "[variables('workspacesAppInsightsName')]",
       "location": "[variables('location')]",
       "properties": {

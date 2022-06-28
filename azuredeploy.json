@@ -574,9 +574,9 @@
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2018-09-01-preview",
-      "name": "[guid(uniqueString(variables('appInsightsName'), 'read', variables('foxidsControlSiteName')))]",
-      "scope": "[format('Microsoft.Insights/components/{0}', variables('appInsightsName'))]",
+      "apiVersion": "2019-01-01",
+      "name": "[guid(uniqueString(variables('workspacesAppInsightsName'), 'read', variables('foxidsControlSiteName')))]",
+      "scope": "[format('microsoft.operationalinsights/workspaces/{0}', variables('appInsightsName'))]",
       "properties": {
         "roleDefinitionId": "[resourceId('Microsoft.Authorization/roleDefinitions', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]",
         "principalId": "[reference(concat('Microsoft.Web/sites/', variables('foxidsControlSiteName')), '2018-02-01', 'Full').identity.principalId]",
@@ -584,7 +584,7 @@
       },
       "dependsOn": [
         "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]",
-        "[resourceId('microsoft.insights/components', variables('appInsightsName'))]"
+        "[resourceId('microsoft.operationalinsights/workspaces', variables('workspacesAppInsightsName'))]"
       ]
     }
   ]

@@ -349,10 +349,10 @@ f_UserAgent contains '{filter}'";
             var values = new Dictionary<string, string>();
             foreach (var key in keys)
             {
-                var value = row.GetString(key);
+                var value = row[key];
                 if (value != null)
                 {
-                    values.Add(key, value);
+                    values.Add(key, value.ToString());
                 }
             }
             return values;

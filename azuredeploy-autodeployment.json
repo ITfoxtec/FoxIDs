@@ -161,6 +161,9 @@
       "apiVersion": "2020-02-02",
       "name": "[variables('appInsightsName')]",
       "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('microsoft.operationalinsights/workspaces', variables('workspacesAppInsightsName'))]"
+      ],
       "tags": {
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsSiteName'))]": "Resource",
         "[concat('hidden-link:', resourceGroup().id, '/providers/Microsoft.Web/sites/', variables('foxidsControlSiteName'))]": "Resource"

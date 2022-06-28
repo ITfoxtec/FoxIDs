@@ -5,9 +5,9 @@ namespace FoxIDs.Models.Config
     public class ApplicationInsightsSettings
     {
         /// <summary>
-        /// ApplicationInsights app ID.
+        /// ApplicationInsights Workspace ID.
         /// </summary>
         [Required]
-        public string AppId { get; set; }
+        public string WorkspaceId { get; set; }
     }
 }

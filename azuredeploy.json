@@ -431,7 +431,7 @@
         "MasterSeedEnabled": false,
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('workspacesAppInsightsName'))).WorkspaceId]"
+        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('workspacesAppInsightsName'))).customerId]"
       }
     },
     {
@@ -475,7 +475,7 @@
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('workspacesAppInsightsName'))).WorkspaceId]"
+        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('workspacesAppInsightsName'))).customerId]"
       }
     },
     {
@@ -577,7 +577,7 @@
     },
     {
       "type": "Microsoft.Authorization/roleAssignments",
-      "apiVersion": "2019-01-01",
+      "apiVersion": "2018-09-01-preview",
       "name": "[guid(uniqueString(variables('workspacesAppInsightsName'), 'read', variables('foxidsControlSiteName')))]",
       "scope": "[format('microsoft.operationalinsights/workspaces/{0}', variables('appInsightsName'))]",
       "properties": {

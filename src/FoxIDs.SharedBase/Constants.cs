@@ -117,6 +117,24 @@ namespace FoxIDs
                 public const string IdRegExPattern = @"^[\w@]*$";
             }
 
+            public static class Plan
+            {
+                public const int IdLength = 70;
+                public const int TextLength = 4000;
+                public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const int NameLength = 30;
+                public const string NameRegExPattern = @"^[\w\-]*$";
+                public const int CurrencyLength = 10;
+                public const string CurrencyRegExPattern = @"^[\w]*$";
+                public const int CostPerMonthMin = 0;
+                public const int IncludedMin = 0;
+                public const int ThresholdMin = 0;
+                public const int AppInsightsKeyLength = 40;
+                public const string AppInsightsKeyRegExPattern = @"^[A-F0-9\-]*$";
+                public const int AppInsightsWorkspaceIdLength = 40;
+                public const string AppInsightsWorkspaceIdRegExPattern = @"^[A-F0-9\-]*$";
+            }
+
             public static class RiskPassword
             {
                 public const int IdLength = 70;

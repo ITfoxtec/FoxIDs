@@ -19,8 +19,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext context)
         {
-            var clientIdIsLocalhost = ClientIp(context);
-            if (!clientIdIsLocalhost)
+            var clientIpIsLoopback = ClientIp(context);
+            if (!clientIpIsLoopback)
             {
                 var hasVerifiedSecret = Secret(context);
                 if (hasVerifiedSecret)
@@ -68,20 +68,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 if (IPAddress.TryParse(ipHeader, out ipAddress))
                 {
                     context.Connection.RemoteIpAddress = ipAddress;
+                    return IPAddress.IsLoopback(ipAddress);
                 }
-
-                return IsLocalhost(ipHeader);
             }
 
-            return false;
-        }
-
-        private bool IsLocalhost(string ipHeader)
-        {
-            if ("127.0.0.1".Equals(ipHeader) || "::1".Equals(ipHeader))
-            {
-                return true;
-            }
             return false;
         }
 

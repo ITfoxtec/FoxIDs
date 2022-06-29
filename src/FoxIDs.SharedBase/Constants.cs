@@ -78,22 +78,22 @@ namespace FoxIDs
 
             public static class Results
             {
-                public const int CustomDimensionsValueMaxLength = 100;
+                public const int PropertiesValueMaxLength = 100;
 
-                public const string Name = "name";
-                public const string Value = "value";
-                public const string Message = "message";
-                public const string Details = "details";
-                public const string CustomDimensions = "customDimensions";
-                public const string OperationName = "operation_Name";
-                public const string SeverityLevel = "severityLevel";
-                public const string Timestamp = "timestamp";
-                public const string Operation_Id = "operation_Id";
+                public const string Name = "Name";
+                public const string Sum = "Sum";
+                public const string Message = "Message";
+                public const string Details = "Details";
+                public const string Properties = "Properties";
+                public const string OperationName = "OperationName";
+                public const string SeverityLevel = "SeverityLevel";
+                public const string TimeGenerated = "TimeGenerated";
+                public const string OperationId = "OperationId";
                 public const string RequestId = "RequestId";
                 public const string RequestPath = "RequestPath";                
-                public const string ClientType = "client_Type";
-                public const string ClientIp = "client_IP";
-                public const string CloudRoleInstance = "cloud_RoleInstance";
+                public const string ClientType = "ClientType";
+                public const string ClientIp = "ClientIP";
+                public const string AppRoleInstance = "AppRoleInstance";
             }
         }
 

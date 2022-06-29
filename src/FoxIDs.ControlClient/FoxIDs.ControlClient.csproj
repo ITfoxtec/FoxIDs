@@ -3,6 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<RazorLangVersion>3.0</RazorLangVersion>
+		<Version>1.0.4.2</Version>
 		<RootNamespace>FoxIDs.Client</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>

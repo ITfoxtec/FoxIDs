@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
             }
 
             var tenant = await GetTenantByCustomDomain(customDomain);
-            await db.StringSetAsync(key, tenant.Name, TimeSpan.FromSeconds(settings.Cache.CustomDomainCacheLifetime));
+            await db.StringSetAsync(key, tenant.Name, TimeSpan.FromSeconds(settings.Cache.CustomDomainLifetime));
             return tenant.Name;
         }
 

@@ -19,16 +19,17 @@ namespace FoxIDs.Infrastructure.Hosting
 
         public async Task Invoke(HttpContext context)
         {
-            ClientIp(context);
-
-            var hasVerifiedSecret = Secret(context);
-            if (hasVerifiedSecret)
+            var clientIdIsLocalhost = ClientIp(context);
+            if (!clientIdIsLocalhost)
             {
-                var host = Host(context);
-
-                if (!host.IsNullOrWhiteSpace())
+                var hasVerifiedSecret = Secret(context);
+                if (hasVerifiedSecret)
                 {
-                    context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
+                    var host = Host(context);
+                    if (!host.IsNullOrWhiteSpace())
+                    {
+                        context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
+                    }
                 }
             }
 
@@ -50,7 +51,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return false;
         }
 
-        private static void ClientIp(HttpContext context)
+        private bool ClientIp(HttpContext context)
         {
             string ipHeader = context.Request.Headers["CF-Connecting-IP"];
             if (ipHeader.IsNullOrWhiteSpace())
@@ -68,10 +69,23 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     context.Connection.RemoteIpAddress = ipAddress;
                 }
+
+                return IsLocalhost(ipHeader);
             }
+
+            return false;
         }
 
-        private static string Host(HttpContext context)
+        private bool IsLocalhost(string ipHeader)
+        {
+            if ("127.0.0.1".Equals(ipHeader) || "::1".Equals(ipHeader))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private string Host(HttpContext context)
         {
             string hostHeader = context.Request.Headers["X-ORIGINAL-HOST"];
             if (hostHeader.IsNullOrWhiteSpace())

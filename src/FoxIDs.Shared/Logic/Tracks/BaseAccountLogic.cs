@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
 
             if(checkUserAndPasswordPolicy)
             {
-                if (await tenantRepository.ExistsAsync<User>(await User.IdFormat(userIdKey)))
+                if (await tenantRepository.ExistsAsync<User>(await User.IdFormatAsync(userIdKey)))
                 {
                     throw new UserExistsException($"User '{email}' already exists.");
                 }
@@ -152,7 +152,7 @@ namespace FoxIDs.Logic
         private async Task CheckPasswordRisk(string email, string password)
         {
             var passwordSha1Hash = password.Sha1Hash();
-            if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormat(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
+            if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormatAsync(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
             {
                 throw new PasswordRiskException($"Password has appeared in a data breach and is at risk, user '{email}'.");
             }

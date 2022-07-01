@@ -141,7 +141,7 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
 
                 await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
-                await tenantRepository.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
+                await tenantRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
 
                 if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
                 {

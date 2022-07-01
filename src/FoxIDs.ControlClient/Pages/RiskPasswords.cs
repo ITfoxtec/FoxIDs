@@ -126,7 +126,7 @@ namespace FoxIDs.Client.Pages
                                         {
                                             uploadRiskPassword.Form.Model.UploadCount += GeneralUploadRiskPasswordViewModel.UploadRiskPasswordBlokCount;
                                             StateHasChanged();
-                                            await RiskPasswordService.UpdateUserAsync(new RiskPasswordRequest { RiskPasswords = riskPasswords });
+                                            await RiskPasswordService.UpdateRiskPasswordAsync(new RiskPasswordRequest { RiskPasswords = riskPasswords });
                                             riskPasswords = new List<RiskPassword>();
                                         }
                                     }
@@ -151,7 +151,7 @@ namespace FoxIDs.Client.Pages
                     {
                         uploadRiskPassword.Form.Model.UploadCount += riskPasswords.Count;
                         StateHasChanged();
-                        await RiskPasswordService.UpdateUserAsync(new RiskPasswordRequest { RiskPasswords = riskPasswords });
+                        await RiskPasswordService.UpdateRiskPasswordAsync(new RiskPasswordRequest { RiskPasswords = riskPasswords });
                     }
                 }
             }

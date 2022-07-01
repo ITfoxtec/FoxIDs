@@ -28,7 +28,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Filter up-party.
+        /// Filter user.
         /// </summary>
         /// <param name="filterEmail">Filter user email.</param>
         /// <returns>Users.</returns>

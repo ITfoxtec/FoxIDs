@@ -34,7 +34,7 @@ namespace FoxIDs.Controllers
         /// Filter tenant.
         /// </summary>
         /// <param name="filterName">Filter tenant name.</param>
-        /// <returns>Tenant.</returns>
+        /// <returns>Tenants.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Tenant>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.Tenant>>> GetFilterTenant(string filterName, string filterCustomDomain)

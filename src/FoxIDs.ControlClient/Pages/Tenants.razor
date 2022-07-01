@@ -24,7 +24,8 @@
                     <div class="modal-body">
                         <FFieldText @bind-Value="tenant.Form.Model.Name" For="@(() => tenant.Form.Model.Name)" />
                         <input type="hidden" @bind="tenant.Form.Model.Name" />
-                        <FInputText @bind-Value="tenant.Form.Model.CustomDomain" For="@(() => tenant.Form.Model.CustomDomain)" Focus="true" />
+                        <FInputText @bind-Value="tenant.Form.Model.PlanName" For="@(() => tenant.Form.Model.PlanName)" Focus="true" />
+                        <FInputText @bind-Value="tenant.Form.Model.CustomDomain" For="@(() => tenant.Form.Model.CustomDomain)" />
                         <FInputToggle @bind-Value="tenant.Form.Model.CustomDomainVerified" For="@(() => tenant.Form.Model.CustomDomainVerified)" TextType="y.n" />
                     </div>
 

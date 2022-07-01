@@ -19,7 +19,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Plan, Api.Plan>()
                .ReverseMap()
                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
-               .ForMember(d => d.Id, opt => opt.MapFrom(s => Plan.IdFormat(s.Name.ToLower()).GetAwaiter().GetResult()));
+               .ForMember(d => d.Id, opt => opt.MapFrom(s => Plan.IdFormatAsync(s.Name.ToLower()).GetAwaiter().GetResult()));
             CreateMap<PlanItem, Api.PlanItem>()
                 .ReverseMap();
 

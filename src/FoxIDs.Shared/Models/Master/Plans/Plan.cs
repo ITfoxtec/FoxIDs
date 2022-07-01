@@ -8,7 +8,7 @@ namespace FoxIDs.Models
 {
     public class Plan : MasterDocument
     {
-        public static async Task<string> IdFormat(IdKey idKey)
+        public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -16,7 +16,7 @@ namespace FoxIDs.Models
             return $"plan:{idKey.Master}:{idKey.PlanName}";
         }
 
-        public static async Task<string> IdFormat(string planName)
+        public static async Task<string> IdFormatAsync(string planName)
         {
             if (planName == null) new ArgumentNullException(nameof(planName));
 
@@ -25,7 +25,7 @@ namespace FoxIDs.Models
                 PlanName = planName
             };
 
-            return await IdFormat(idKey);
+            return await IdFormatAsync(idKey);
         }
 
         public static new string PartitionIdFormat(MasterDocument.IdKey idKey) => $"{idKey.Master}:plan";

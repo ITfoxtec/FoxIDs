@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MPlan = await masterRepository.GetAsync<Plan>(await Plan.IdFormat(name));
+                var MPlan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(name));
 
                 return Ok(mapper.Map<Api.Plan>(MPlan));
             }
@@ -125,7 +125,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                await masterRepository.DeleteAsync<Plan>(await Plan.IdFormat(name));
+                await masterRepository.DeleteAsync<Plan>(await Plan.IdFormatAsync(name));
 
                 return NoContent();
             }

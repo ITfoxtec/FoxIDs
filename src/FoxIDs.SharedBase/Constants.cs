@@ -128,7 +128,7 @@ namespace FoxIDs
                 public const string CurrencyRegExPattern = @"^[\w]*$";
                 public const int CostPerMonthMin = 0;
                 public const int IncludedMin = 0;
-                public const int ThresholdMin = 0;
+                public const int FirstLevelThresholdMin = 0;
                 public const int AppInsightsKeyLength = 40;
                 public const string AppInsightsKeyRegExPattern = @"^[A-F0-9\-]*$";
                 public const int AppInsightsWorkspaceIdLength = 40;

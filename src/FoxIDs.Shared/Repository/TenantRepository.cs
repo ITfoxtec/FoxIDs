@@ -217,10 +217,6 @@ namespace FoxIDs.Repository
                 totalRU += deleteResponse.RequestCharge;
                 return deleteResponse;
             }
-            catch (CosmosException ex)
-            {
-                throw new CosmosDataException(id, partitionId, ex);
-            }
             catch (Exception ex)
             {
                 throw new CosmosDataException(id, partitionId, ex);

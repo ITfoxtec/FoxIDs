@@ -134,6 +134,7 @@ namespace FoxIDs.Controllers
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
+                mTenant.PlanName = mTenant.PlanName;
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
                 await tenantRepository.UpdateAsync(mTenant);

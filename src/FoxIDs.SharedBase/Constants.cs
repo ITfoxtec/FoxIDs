@@ -121,7 +121,7 @@ namespace FoxIDs
             {
                 public const int IdLength = 70;
                 public const int TextLength = 4000;
-                public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int CurrencyLength = 10;

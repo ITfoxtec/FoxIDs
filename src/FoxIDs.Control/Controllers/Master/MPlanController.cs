@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using System.Linq;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -14,12 +16,14 @@ namespace FoxIDs.Controllers
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
+        private readonly ITenantRepository tenantRepository;
         private readonly IMasterRepository masterRepository;
 
-        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterRepository) : base(logger)
+        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
+            this.tenantRepository = tenantRepository;
             this.masterRepository = masterRepository;
         }
 
@@ -125,6 +129,8 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
+                if (!await ValidatePlanNotUsedAsync(name)) return BadRequest(ModelState);
+
                 await masterRepository.DeleteAsync<Plan>(await Plan.IdFormatAsync(name));
 
                 return NoContent();
@@ -138,6 +144,25 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task<bool> ValidatePlanNotUsedAsync(string planName)
+        {
+            var tenants = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName.Equals(planName), maxItemCount: 1);
+            if (tenants.Count() > 0)
+            {
+                try
+                {
+                    throw new Exception($"Plan is used by tenant '{tenants.First().Name}' and can not be deleted.");
+                }
+                catch (Exception ex)
+                {
+                    logger.Warning(ex);
+                    ModelState.TryAddModelError(string.Empty, ex.Message);
+                    return false;
+                }                                 
+            }
+            return true;
         }
     }
 }

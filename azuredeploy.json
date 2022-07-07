@@ -285,7 +285,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[variables('foxidsSiteName')]",
       "location": "[variables('location')]",
       "dependsOn": [
@@ -313,7 +313,7 @@
     },
     {
       "type": "Microsoft.Web/sites",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[variables('foxidsControlSiteName')]",
       "location": "[variables('location')]",
       "dependsOn": [
@@ -326,7 +326,6 @@
       "properties": {
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
-          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "use32BitWorkerProcess": false,
           "alwaysOn": true,
@@ -341,7 +340,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsSiteName'), '/test')]",
       "location": "[variables('location')]",
       "dependsOn": [
@@ -353,7 +352,6 @@
       },
       "properties": {
         "siteConfig": {
-          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "use32BitWorkerProcess": false,
           "alwaysOn": false,
@@ -369,7 +367,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test')]",
       "location": "[variables('location')]",
       "dependsOn": [
@@ -381,7 +379,6 @@
       },
       "properties": {
         "siteConfig": {
-          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "use32BitWorkerProcess": false,
           "alwaysOn": false,
@@ -397,7 +394,7 @@
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsSiteName'), '/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsSiteName'))]",
@@ -406,6 +403,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v6.0",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
@@ -415,7 +413,7 @@
     },
     {
       "type": "Microsoft.Web/sites/config",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
@@ -424,6 +422,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v6.0",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
@@ -436,7 +435,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsSiteName'), '/test/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsSiteName'))]",
@@ -446,6 +445,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v6.0",
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
@@ -457,7 +457,7 @@
     },
     {
       "type": "Microsoft.Web/sites/slots/config",
-      "apiVersion": "2018-11-01",
+      "apiVersion": "2021-03-01",
       "name": "[concat(variables('foxidsControlSiteName'), '/test/appsettings')]",
       "dependsOn": [
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]",
@@ -467,6 +467,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v6.0",
         "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",

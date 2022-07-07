@@ -56,6 +56,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "cost_per_month")]
         public decimal CostPerMonth { get; set; }
 
+        [JsonProperty(PropertyName = "block_after_included")]
+        public bool BlockAfterIncluded { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "user_per_month")]
         public PlanItem UserPerMonth { get; set; }

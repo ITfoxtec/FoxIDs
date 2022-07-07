@@ -27,6 +27,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Cost per month")]
         public decimal CostPerMonth { get; set; }
 
+        [Display(Name = "Block after included is used")]
+        public bool BlockAfterIncluded { get; set; }
+
         [Required]
         [Display(Name = "Users per month")]
         public PlanItem UserPerMonth { get; set; }
@@ -49,12 +52,12 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]
-        [Display(Name = "ApplicationInsights key")]
+        [Display(Name = "Application Insights key")]
         public string AppInsightsKey { get; set; }
 
         [MaxLength(Constants.Models.Plan.AppInsightsWorkspaceIdLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsWorkspaceIdRegExPattern)]
-        [Display(Name = "ApplicationInsights workspace ID")]
+        [Display(Name = "Application Insights workspace ID")]
         public string AppInsightsWorkspaceId { get; set; }
     }
 }

@@ -64,8 +64,7 @@ The FoxIDs service and FoxIDs Control sites primary domains can be customized.
 - FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://auth.somedomain.com`  
 - FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com` or `https://foxidscontrol.somedomain.com`
 
-Custom primary domains are configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link.
-The FoxIDs site support one primary domain and multiple secondary domains, where the FoxIDs Control only support one primary domain.
+The FoxIDs site support one primary domain and multiple [custom domains](custom-domain.md) (secondary domains), where the FoxIDs Control only support one primary domain.
 
 Configure new primary custom domain:
 
@@ -76,7 +75,12 @@ Configure new primary custom domain:
 
 > If you have added tenants before changing the primary domain, the `OpenID Connect - foxids_control_client` configuration have to be done in each tenant.
 
-2) Then configure the FoxIDs and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
+2) The custom primary domains can be configured on each App Service a) or if using a [reverse proxy](reverse-proxy.md) alternatively in the `Settings:HostEndpoint` setting b):
+
+ - a) Custom primary domains can be configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link.
+ - b) Custom primary domains can be configured in the setting `Settings:HostEndpoint` on the FoxIDs App Service and the FoxIDs Control App Service.
+
+3) Then configure the FoxIDs and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
 
 - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs sites primary custom domains.
 - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites primary custom domains.

@@ -1,5 +1,4 @@
-﻿using FoxIDs.Models;
-using FoxIDs.Models.Config;
+﻿using FoxIDs.Models.Config;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,16 +12,16 @@ namespace FoxIDs
         public static string GetHost(this HttpContext context)
         {
             var settings = context.RequestServices.GetService<Settings>();
-            if (!settings.HostEndpoint.IsNullOrEmpty())
+            if (settings != null)
             {
-                if (settings.HostEndpoint.EndsWith('/'))
+                if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
                 {
-                    return settings.HostEndpoint;
+                    return AddSlash(settings.FoxIDsControlEndpoint);
                 }
-                else
+                if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
                 {
-                    return $"{settings.HostEndpoint}/";
-                }
+                    return AddSlash(settings.FoxIDsEndpoint);
+                } 
             }
 
             return $"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/";
@@ -44,6 +43,18 @@ namespace FoxIDs
         public static Uri GetHostUri(this HttpContext context)
         {
             return new Uri(context.GetHost());
+        }
+
+        private static string AddSlash(string url)
+        {
+            if (url.EndsWith('/'))
+            {
+                return url;
+            }
+            else
+            {
+                return $"{url}/";
+            }
         }
     }
 }

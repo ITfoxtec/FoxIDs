@@ -32,7 +32,10 @@
         "P3V2",
         "P1V3",
         "P2V3",
-        "P3V3"
+        "P3V3",
+        "P1",
+        "P2",
+        "P3"
       ],
       "type": "string",
       "metadata": {

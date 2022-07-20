@@ -7,9 +7,6 @@ namespace FoxIDs.Models.Config
     public class FoxIDsControlSettings : Settings, IValidatableObject
     {
         [Required]
-        public string FoxIDsEndpoint { get; set; }
-
-        [Required]
         public string DownParty { get; set; }
 
         [Required]
@@ -18,6 +15,10 @@ namespace FoxIDs.Models.Config
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (FoxIDsEndpoint.IsNullOrEmpty())
+            {
+                results.Add(new ValidationResult($"The field {nameof(FoxIDsEndpoint)} is required.", new[] { nameof(FoxIDsEndpoint) }));
+            }
             if (FoxIDsControlEndpoint.IsNullOrEmpty())
             {
                 results.Add(new ValidationResult($"The field {nameof(FoxIDsControlEndpoint)} is required.", new[] { nameof(FoxIDsControlEndpoint) }));

@@ -64,25 +64,33 @@ The FoxIDs service and FoxIDs Control sites primary domains can be customized.
 - FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://auth.somedomain.com`  
 - FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com` or `https://foxidscontrol.somedomain.com`
 
-Custom primary domains are configured in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab and by clicking the `Add custom domain` link.
-The FoxIDs site support one primary domain and multiple secondary domains, where the FoxIDs Control only support one primary domain.
+The FoxIDs site support one primary domain and multiple [custom domains](custom-domain.md) which are connected to tenants, where the FoxIDs Control site only support one primary domain.
 
-Configure new primary custom domain:
+Configure new primary custom domains:
 
-1) First login to the FoxIDs Control client using the default/old primary domain. Select the `Parties` menu and under `Down-parties` select click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
+1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Parties` tab and under `Down-parties` select click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
 
-- Add the FoxIDs Control sites new primary custom domain to the `Allow CORS origins` list without a trailing slash.
-- Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.
+   - Add the FoxIDs Control sites new primary custom domain to the `Allow CORS origins` list without a trailing slash.
+   - Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.
 
-> If you have added tenants before changing the primary domain, the `OpenID Connect - foxids_control_client` configuration have to be done in each tenant.
+   > If you have added tenants before changing the primary domain, the `OpenID Connect - foxids_control_client` configuration have to be done in each tenant.
 
-2) Then configure the FoxIDs and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
+2) The custom primary domains is configured on each App Service or by using a [reverse proxy](reverse-proxy.md):
 
-- The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs sites primary custom domains.
-- The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites primary custom domains.
+   - If configured on App Services: add the custom primary domains in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab by clicking the `Add custom domain` link.
+   - If using reverse proxy: the custom primary domains are exposed through the [reverse proxy](reverse-proxy.md).
+
+3) Then configure the FoxIDs service sites new primary custom domains in the FoxIDs App Service under the `Configuration` tab and `Applications settings` sub tab: 
+
+   - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
+
+4) And configure the FoxIDs service and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
+
+   - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
+   - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
 
 ## Reverse proxy
-It is recommended to place FoxIDs behind a [reverse proxy](reverse-proxy.md). If optionally using a reverse proxy, the [custom primary domains](#custom-primary-domains) exposed on the proxy need to be the same as on the Azure App services. 
+It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a [reverse proxy](reverse-proxy.md). 
 
 ## Specify default page
 

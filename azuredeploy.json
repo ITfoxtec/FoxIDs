@@ -298,7 +298,6 @@
       "properties": {
         "name": "[variables('foxidsSiteName')]",
         "siteConfig": {
-          "netFrameworkVersion": "v6.0",
           "ftpsState": "Disabled",
           "use32BitWorkerProcess": false,
           "alwaysOn": true,
@@ -403,9 +402,9 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v6.0",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
+        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
         "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]"
@@ -422,7 +421,6 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v6.0",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
@@ -445,10 +443,10 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v6.0",
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
+        "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('cosmosDbName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))).vaultUri]",
@@ -467,7 +465,6 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]"
       ],
       "properties": {
-        "netFrameworkVersion": "v6.0",
         "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
@@ -488,7 +485,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:FoxIDsEndpoint", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
       }
     },
     {

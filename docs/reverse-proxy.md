@@ -1,10 +1,11 @@
 # Reverse proxy
-It is recommended to place FoxIDs behind a reverse proxy. 
+It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a reverse proxy. 
 
-The [custom primary domains](deployment.md#custom-primary-domains) exposed on the reverse proxy need to be the same as on the FoxIDs and FoxIDs Control Azure App services.  
 The FoxIDs service support [custom domains](custom-domain.md) which is handled with domain rewrite through the reverse proxy.
 
 > FoxIDs only support [custom domains](custom-domain.md) if it is behind a reverse proxy and the access is restricted by the `X-FoxIDs-Secret` HTTP header.
+
+The [custom primary domains](deployment.md#custom-primary-domains) is exposed through the reverse proxy alongside optionally [custom domains](custom-domain.md).  
 
 ## Restrict access
 Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  

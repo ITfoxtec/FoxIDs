@@ -10,7 +10,6 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using UrlCombineLib;
 using ITfoxtec.Identity.Tokens;
-using FoxIDs.Models.Config;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
@@ -31,7 +30,7 @@ namespace FoxIDs.Infrastructure.Security
                 var accessToken = GetAccessTokenFromHeader();
 
                 var routeBinding = Context.GetRouteBinding();
-                var authority = UrlCombine.Combine(GetFoxIDsEndpoint(), routeBinding.TenantName, Constants.Routes.MasterTrackName, Options.DownParty);
+                var authority = UrlCombine.Combine(Options.FoxIDsEndpoint, routeBinding.TenantName, Constants.Routes.MasterTrackName, Options.DownParty);
 
                 var oidcDiscoveryUri = UrlCombine.Combine(authority, IdentityConstants.OidcDiscovery.Path);
                 var oidcDiscoveryHandler = Context.RequestServices.GetService<OidcDiscoveryHandlerService>();
@@ -70,27 +69,6 @@ namespace FoxIDs.Infrastructure.Security
             }
 
             return accessToken;
-        }
-
-        private string GetFoxIDsEndpoint()
-        {
-            if (!Options.FoxIDsEndpoint.IsNullOrEmpty())
-            {
-                return Options.FoxIDsEndpoint;
-            }
-
-            var host = Context.GetHost();
-            if (host.Contains("://api.", StringComparison.OrdinalIgnoreCase))
-            {
-                return host.Replace("://api.", "://");
-            }
-
-            if (host.Contains("api", StringComparison.OrdinalIgnoreCase))
-            {
-                return host.Replace("api", "", StringComparison.OrdinalIgnoreCase);
-            }
-
-            throw new InvalidConfigException("Cannot find FoxIDs API endpoint automatically from the FoxIDs endpoint. The Settings.FoxIDsEndpoint is required.");
         }
     }
 }

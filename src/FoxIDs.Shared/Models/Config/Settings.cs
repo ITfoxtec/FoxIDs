@@ -5,9 +5,9 @@ namespace FoxIDs.Models.Config
     public class Settings
     {
         /// <summary>
-        /// Optionally set host endpoint and overwrite the actually hosting domain.
+        /// FoxIDs endpoint, used in both FoxIDs and FoxIDs Control. Optionally in FoxIDs.
         /// </summary>
-        public string HostEndpoint { get; set; }
+        public string FoxIDsEndpoint { get; set; }
 
         /// <summary>
         /// FoxIDs Control endpoint, used in FoxIDs Control.

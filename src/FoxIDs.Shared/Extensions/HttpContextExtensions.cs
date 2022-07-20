@@ -16,15 +16,15 @@ namespace FoxIDs
             {
                 if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
                 {
-                    return addTrailingSlash ? AddSlash(settings.FoxIDsControlEndpoint): settings.FoxIDsControlEndpoint;
+                    return AddSlash(settings.FoxIDsControlEndpoint, addTrailingSlash);
                 }
                 if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
                 {
-                    return addTrailingSlash ? AddSlash(settings.FoxIDsEndpoint) : settings.FoxIDsEndpoint;
+                    return AddSlash(settings.FoxIDsEndpoint, addTrailingSlash);
                 } 
             }
 
-            return $"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/";
+            return AddSlash($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/", addTrailingSlash);
         }
 
         public static string GetHostWithTenantAndTrack(this HttpContext context)
@@ -45,15 +45,15 @@ namespace FoxIDs
             return new Uri(context.GetHost());
         }
 
-        private static string AddSlash(string url)
+        private static string AddSlash(string url, bool addTrailingSlash = true)
         {
             if (url.EndsWith('/'))
             {
-                return url;
+                return addTrailingSlash ? url : url.Substring(0, url.Length - 1);
             }
             else
             {
-                return $"{url}/";
+                return addTrailingSlash ? $"{url}/" : url;
             }
         }
     }

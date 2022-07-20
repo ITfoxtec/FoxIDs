@@ -75,10 +75,11 @@ Configure new primary custom domains:
 
    > If you have added tenants before changing the primary domain, the `OpenID Connect - foxids_control_client` configuration have to be done in each tenant.
 
-2) The custom primary domains is configured on each App Service or by using a [reverse proxy](reverse-proxy.md):
+2) The custom primary domains is configured on each App Service or by using a [reverse proxy](reverse-proxy.md). 
+Depending on the reverse proxy your are using you might be required to also configure the domains on each App Service:
 
    - If configured on App Services: add the custom primary domains in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab by clicking the `Add custom domain` link.
-   - If using reverse proxy: the custom primary domains are exposed through the [reverse proxy](reverse-proxy.md).
+   - If configured on reverse proxy: the custom primary domains are exposed through the [reverse proxy](reverse-proxy.md).
 
 3) Then configure the FoxIDs service sites new primary custom domains in the FoxIDs App Service under the `Configuration` tab and `Applications settings` sub tab: 
 

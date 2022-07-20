@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
 
         private void CheckPasswordComplexityContainsUrl(string email, string password)
         {
-            var url = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.ToUriComponent()}{HttpContext.Request.Path.Value}";
+            var url = $"{HttpContext.GetHost(false)}{HttpContext.Request.Path.Value}";
             var urlSplit = url.Substring(0, url.LastIndexOf('/')).Split(':', '/', '(', ')', '.', '-', '_');
             foreach (var us in urlSplit)
             {

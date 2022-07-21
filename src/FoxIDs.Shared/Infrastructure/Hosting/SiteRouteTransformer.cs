@@ -19,7 +19,10 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 var customDomain = httpContext.Items[Constants.Routes.RouteBindingCustomDomainHeader] as string;
                 var hasCustomDomain = !customDomain.IsNullOrEmpty();
-                CheckCustomDomainSupport(hasCustomDomain);
+                if (hasCustomDomain && !CheckCustomDomainSupport(route))
+                {
+                    hasCustomDomain = false;
+                }
 
                 return await HandleRouteAsync(httpContext, hasCustomDomain, values, route);
             }
@@ -29,7 +32,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        protected virtual void CheckCustomDomainSupport(bool hasCustomDomain) { }
+        protected abstract bool CheckCustomDomainSupport(string[] route);
 
         protected abstract string MapPath(string path);
 

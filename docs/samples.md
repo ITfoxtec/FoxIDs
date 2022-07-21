@@ -100,11 +100,11 @@ Create the sample seed OAuth 2.0 client in the FoxIDs Control Client:
 
 1. Select the `master` track and create a OAuth 2.0 down-party, click `OAuth 2.0 - Client Credentials Grant`.
 2. Set the client id to `sample_seed`.
-4. Remember the client secret.
-5. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
-6. In the scopes section. Remove all scopes.
-7. Click show advanced settings. 
-8. In the issue claims section. Granted the client the administrator `role` with the value `foxids:tenant.admin`. 
+3. Remember the client secret.
+4. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.
+5. In the scopes section. Remove all scopes.
+6. Click show advanced settings. 
+7. In the issue claims section. Granted the client the administrator `role` with the value `foxids:tenant.admin`. 
 
 The sample seed client is thereby granted access to update the tenant.
 

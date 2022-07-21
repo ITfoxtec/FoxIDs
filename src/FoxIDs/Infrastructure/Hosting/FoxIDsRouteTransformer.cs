@@ -120,7 +120,16 @@ namespace FoxIDs.Infrastructure.Hosting
             else
             {
                 var providerResultCulture = await new AcceptLanguageHeaderRequestCultureProvider().DetermineProviderCultureResult(httpContext);
-                return localizationLogic.GetSupportedCulture(providerResultCulture.UICultures.Select(c => c.Value), routeBinding);
+                var culture = providerResultCulture?.UICultures?.Select(c => c.Value);
+                if (!(culture?.Count() > 0))
+                {
+                    culture = providerResultCulture?.Cultures?.Select(c => c.Value);
+                    if (!(culture?.Count() > 0))
+                    {
+                        culture = new[] { "en" };
+                    }
+                }
+                return localizationLogic.GetSupportedCulture(culture, routeBinding);
             }
         }
 

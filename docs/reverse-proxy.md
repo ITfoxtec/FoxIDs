@@ -38,6 +38,8 @@ FoxIDs is tested with the following reverse proxies.
 Azure Front Door can be configured as a reverse proxy with close to the default setup. Azure Front Door rewrite domains by default. 
 The `X-FoxIDs-Secret` HTTP header can optionally be added but is required to support [custom domain](custom-domain.md).
 
+> Do NOT enable caching. The `Accept-Language` header is not forwarded if caching is enabled. The header is required by FoxIDs to support cultures.
+
 ### Cloudflare
 Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). The `X-FoxIDs-Secret` HTTP header should can be added.
 

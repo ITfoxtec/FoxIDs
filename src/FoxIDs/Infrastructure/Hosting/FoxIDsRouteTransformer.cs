@@ -119,18 +119,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             else
             {
-                var acceptLanguageHeaderRequestCultureProvider = new AcceptLanguageHeaderRequestCultureProvider();
-                if (acceptLanguageHeaderRequestCultureProvider == null)
-                {
-                    throw new Exception("acceptLanguageHeaderRequestCultureProvider is null.");
-                }
-
                 var providerResultCulture = await new AcceptLanguageHeaderRequestCultureProvider().DetermineProviderCultureResult(httpContext);
-                if (providerResultCulture == null)
-                {
-                    throw new Exception("providerResultCulture is null.");
-                }
-
                 var culture = providerResultCulture?.UICultures?.Select(c => c.Value);
                 if (!(culture?.Count() > 0))
                 {
@@ -139,10 +128,6 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         culture = new[] { "en" };
                     }
-                }
-                if (localizationLogic == null)
-                {
-                    throw new Exception("localizationLogic is null.");
                 }
                 return localizationLogic.GetSupportedCulture(culture, routeBinding);
             }

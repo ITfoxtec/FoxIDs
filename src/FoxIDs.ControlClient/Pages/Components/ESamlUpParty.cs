@@ -141,9 +141,9 @@ namespace FoxIDs.Client.Pages.Components
 
                 generalSamlUpParty.Form.Model.Issuer = samlUpParty.Issuer;
                 generalSamlUpParty.Form.Model.AuthnUrl = samlUpParty.AuthnUrl;
-                if (samlUpParty.AuthnResponseBinding.HasValue)
+                if (samlUpParty.AuthnRequestBinding.HasValue)
                 {
-                    generalSamlUpParty.Form.Model.AuthnRequestBinding = samlUpParty.AuthnResponseBinding.Value;
+                    generalSamlUpParty.Form.Model.AuthnRequestBinding = samlUpParty.AuthnRequestBinding.Value;
                 }
 
                 generalSamlUpParty.Form.Model.LogoutUrl = samlUpParty.LogoutUrl;

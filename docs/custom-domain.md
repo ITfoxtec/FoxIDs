@@ -1,7 +1,11 @@
 # Custom domain
 
-Each FoxIDs tenant can be configured with a custom domain. The custom domain can be configured with [Control Client](control.md#foxids-control-client) 
-in your tenants master track under Settings --> Tenant settings. 
+Each FoxIDs tenant can be configured with a custom domain. A tenant connected to a custom domain does not include the tenant name in the URL like a tenant without a custom domain.
+
+- A default tenant e.g., `my-tenant` without a custom domain would on FoxIDs.com result in a URL like this `https://foxids.com/my-tenant/some-track/...`.
+- If the same tenant is connected to a custom domain e.g., `my-domain.com` the URL on FoxIDs.com would be `https://my-domain.com/some-track/...` without the tenant element.
+
+The custom domain can be configured with [Control Client](control.md#foxids-control-client) in your tenants master track under Settings --> Tenant settings. 
 
 ![Configure reverse proxy secret](images/configure-tenant-custom-domain-my-track.png)
 

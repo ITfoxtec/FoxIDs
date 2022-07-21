@@ -90,6 +90,8 @@ Depending on the reverse proxy your are using you might be required to also conf
    - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
    - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
 
+> HINT: You can create a `main` tenant and add the custom primary domain used on the FoxIDs service as a [custom domain](custom-domain.md) to remove the tenant element from the URL.
+
 ## Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a [reverse proxy](reverse-proxy.md). 
 

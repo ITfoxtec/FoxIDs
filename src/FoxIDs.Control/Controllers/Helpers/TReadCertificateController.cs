@@ -24,7 +24,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Read JWT with certificate information.
         /// </summary>
-        /// <param name="certificateAndPassword">Base64 url encode certificate and optionally password.</param>
+        /// <param name="certificateAndPassword">Base64 URL encode certificate and optionally password.</param>
         /// <returns>User.</returns>
         [ProducesResponseType(typeof(Api.JwtWithCertificateInfo), StatusCodes.Status200OK)]
         public async Task<ActionResult<Api.JwtWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
@@ -35,8 +35,8 @@ namespace FoxIDs.Controllers
             {
                 var certificate = certificateAndPassword.Password.IsNullOrWhiteSpace() switch
                 {
-                    true => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.Exportable),
-                    false => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password, keyStorageFlags: X509KeyStorageFlags.Exportable),
+                    true => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), string.Empty, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
+                    false => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
                 };
 
                 var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);

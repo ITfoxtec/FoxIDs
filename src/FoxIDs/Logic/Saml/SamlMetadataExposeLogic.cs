@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
                 entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
             }
 
-            var trackCertificates = GettrackCertificates();
+            var trackCertificates = GetTrackCertificates();
             entityDescriptor.SPSsoDescriptor = new SPSsoDescriptor
             {
                 //AuthnRequestsSigned = true,
@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
                 entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
             }
 
-            var trackCertificates = GettrackCertificates();
+            var trackCertificates = GetTrackCertificates();
             entityDescriptor.IdPSsoDescriptor = new IdPSsoDescriptor
             {
                 SigningCertificates = trackCertificates,
@@ -144,7 +144,7 @@ namespace FoxIDs.Logic
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
-        private List<X509Certificate2> GettrackCertificates()
+        private List<X509Certificate2> GetTrackCertificates()
         {
             var trackCertificates = new List<X509Certificate2>();
             trackCertificates.Add(RouteBinding.Key.PrimaryKey.Key.ToX509Certificate());

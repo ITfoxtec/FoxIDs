@@ -23,7 +23,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Read saml 2.0 up-party metadata.
+        /// Read SAML 2.0 up-party metadata.
         /// </summary>
         /// <param name="samlReadMetadataRequest">SAML 2.0 metadata.</param>
         /// <returns>SAML 2.0 up-party.</returns>

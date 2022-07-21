@@ -32,6 +32,27 @@ namespace FoxIDs.Infrastructure.Hosting
             this.tokenCredential = tokenCredential;
         }
 
+        protected override bool CheckCustomDomainSupport(string[] route)
+        {
+            if (route.Length > 1)
+            {
+                if(route[0].Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                if (route.Length > 2)
+                {
+                    if (route[1].Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
         {
             if (route.Length == 0)

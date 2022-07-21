@@ -8,6 +8,8 @@ in your tenants master track under Settings --> Tenant settings.
 > When a new custom domain is added it needs to be verified. 
 > After verification the domain is enabled in all tracks in the tenant.
 
+Custom domains is not supported in the master tenant and master tracks.
+
 ## FoxIDs.com
 Configuring a custom domain in your FoxIDs.com tenant.
 

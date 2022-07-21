@@ -23,6 +23,27 @@ namespace FoxIDs.Infrastructure.Hosting
             this.sequenceLogic = sequenceLogic;
         }
 
+        protected override bool CheckCustomDomainSupport(string[] route)
+        {
+            if (route.Length > 1)
+            {
+                if (route[0].Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+
+                if (route.Length > 2)
+                {
+                    if (route[1].Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
         protected override string MapPath(string path)
         {
             if (path.EndsWith(IdentityConstants.OidcDiscovery.Path, StringComparison.InvariantCultureIgnoreCase))

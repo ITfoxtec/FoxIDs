@@ -7,12 +7,9 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsApiRouteTransformer : SiteRouteTransformer
     {
-        protected override void CheckCustomDomainSupport(bool hasCustomDomain)
+        protected override bool CheckCustomDomainSupport(string[] route)
         {
-            if (hasCustomDomain)
-            {
-                throw new NotSupportedException("Host in header not supported in Control API.");
-            }
+            throw new NotSupportedException("Host in header not supported in Control API.");
         }
 
         protected override string MapPath(string path)

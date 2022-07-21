@@ -3,7 +3,7 @@ It is recommended to place both the FoxIDs Azure App service and the FoxIDs Cont
 
 The FoxIDs service support [custom domains](custom-domain.md) which is handled with domain rewrite through the reverse proxy.
 
-> FoxIDs only support [custom domains](custom-domain.md) if it is behind a reverse proxy and the access is restricted by the `X-FoxIDs-Secret` HTTP header.
+> FoxIDs only support [custom domains](custom-domain.md) if it is behind a reverse proxy and the access is restricted by the `X-FoxIDs-Secret` HTTP header or the `Settings:TrustProxyHeaders` setting is set to `true` in the FoxIDs App Service configuration.
 
 The [custom primary domains](deployment.md#custom-primary-domains) is exposed through the reverse proxy alongside optionally [custom domains](custom-domain.md).  
 

@@ -22,8 +22,8 @@ namespace FoxIDs.Infrastructure.Hosting
             var clientIpIsLoopback = ClientIp(context);
             if (!clientIpIsLoopback)
             {
-                var hasVerifiedSecret = Secret(context);
-                if (hasVerifiedSecret)
+                var trustProxyHeaders = Secret(context);
+                if (trustProxyHeaders)
                 {
                     var host = Host(context);
                     if (!host.IsNullOrWhiteSpace())
@@ -48,7 +48,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 return true;
             }
-            return false;
+            return settings.TrustProxyHeaders;
         }
 
         private bool ClientIp(HttpContext context)

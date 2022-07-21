@@ -48,6 +48,11 @@ namespace FoxIDs.Models.Config
         public string ProxySecret { get; set; }
 
         /// <summary>
+        /// Optional trust proxy headers. Default false. Trust and accept headers received without requiring a proxy secret.
+        /// </summary>
+        public bool TrustProxyHeaders { get; set; }
+
+        /// <summary>
         /// Only used in development!
         /// The servers client credentials. 
         /// </summary>

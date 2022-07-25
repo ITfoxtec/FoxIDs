@@ -14,7 +14,6 @@ namespace FoxIDs.Client.Services
         { }
 
         public async Task<RiskPassword> GetRiskPasswordAsync(string passwordSha1Hash) => await GetAsync<RiskPassword>(apiUri, passwordSha1Hash, parmName: nameof(passwordSha1Hash));
-        public async Task UpdateUserAsync(RiskPasswordRequest riskPasswordRequest) => await PutAsync(apiUri, riskPasswordRequest);
 
         public async Task<RiskPasswordInfo> GetRiskPasswordInfoAsync() => await GetAsync<RiskPasswordInfo>(infoApiUri);
     }

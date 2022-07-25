@@ -12,6 +12,8 @@ namespace FoxIDs.SeedTool.SeedLogic
 {
     public class RiskPasswordSeedLogic
     {
+        private const int riskPasswordMoreThenBreachesCount = 100;
+        private const int uploadRiskPasswordBlokSize = 10000;
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
@@ -27,7 +29,8 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         public async Task SeedAsync()
         {
-            Console.WriteLine("Creating risk passwords");
+            Console.WriteLine("Uploading risk passwords");
+            var totalCount = 0;
             var riskPasswords = new List<RiskPasswordApiModel>();            
             using (var streamReader = File.OpenText(settings.PwnedPasswordsPath))
             {
@@ -36,14 +39,15 @@ namespace FoxIDs.SeedTool.SeedLogic
                 {
                     i++;
                     var split = streamReader.ReadLine().Split(':');
-                    var passwordCount = Convert.ToInt32(split[1]);
-                    if (passwordCount >= 100)
+                    var breachesCount = Convert.ToInt32(split[1]);
+                    if (breachesCount >= riskPasswordMoreThenBreachesCount)
                     {
-                        riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = passwordCount });
-                        if (riskPasswords.Count >= 10000)
+                        riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
+                        if (riskPasswords.Count >= uploadRiskPasswordBlokSize)
                         {
-                            Console.WriteLine($"Saving risk passwords, current password count '{passwordCount}'");
+                            totalCount += riskPasswords.Count;
                             await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
+                            Console.WriteLine($"Risk passwords uploaded '{totalCount}', last breaches count '{breachesCount}'");
                             riskPasswords = new List<RiskPasswordApiModel>();
                         }
                     }
@@ -56,11 +60,11 @@ namespace FoxIDs.SeedTool.SeedLogic
 
             if (riskPasswords.Count > 0)
             {
-                Console.WriteLine("Saving the last risk passwords");
+                Console.WriteLine("Uploading the last risk passwords");
                 await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
             }
 
-            Console.WriteLine("Risk passwords seeded");
+            Console.WriteLine($"All '{totalCount}' risk passwords uploaded");
         }
 
         private async Task SavePasswordsRiskListAsync(string accessToken, List<RiskPasswordApiModel> riskPasswords)

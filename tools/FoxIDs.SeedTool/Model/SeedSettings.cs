@@ -57,19 +57,9 @@ namespace FoxIDs.SeedTool.Model
         public string FoxIDsMasterControlApiEndpoint => UrlCombine.Combine(FoxIDsControlApiEndpoint, "@master");
 
         /// <summary>
-        /// FoxIDs master track control client endpoint.
-        /// </summary>
-        public string FoxIDsMasterControlClientEndpoint => UrlCombine.Combine(FoxIDsControlEndpoint, MasterTenant);
-
-        /// <summary>
         /// Pwned passwords (SHA1 ordered by count) path.
         /// </summary>
         [Required]
         public string PwnedPasswordsPath { get; set; }
-
-        /// <summary>
-        /// Cosmos DB configuration.
-        /// </summary>
-        public CosmosDbSettings CosmosDb { get; set; }
     }
 }

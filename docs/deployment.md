@@ -38,20 +38,61 @@ In this case you can experience getting a 'ConflictError' with the error message
 
 The solution is to delete (purge) the old Key Vault, which will release the name.
 
-## Seed
+## Upload risk passwords
 
-### Upload risk passwords
+You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
 
-You can upload risk passwrods in FoxIDs Control Client master tenant on the Risk Passwords tap. 
+You can upload risk passwords with the FoxIDs seed tool. The seed tool is a console application. 
 
-![FoxIDs Control Client - Upload risk passwrods](images/upload-risk-passwords.png)
+> The seed tool code can be [downloaded](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.SeedTool) and need to be compiled to run.
 
 Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
 > Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.  
-> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 20000 RU/s) temporarily.
 
-### Add sample configuration to a track
+The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 20000 RU/s or higher) temporarily. 
+The throughput can be adjusted in Azure Cosmos DB --> Data Explorer --> Scale & Settings.
+
+### Configure the seed tool
+
+The seed tool is configured in the `appsettings.json` file.
+
+> Access to upload risk passwords is granted in the `master` tenant.
+
+Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
+
+1. Login to the `master` track and select the Parties tab
+2. Create a OAuth 2.0 down-party, click `OAuth 2.0 - Client Credentials Grant`.
+3. Set the client id to `foxids_seed`.
+4. Remember the client secret.
+5. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:master`.
+6. Click show advanced settings. 
+7. In the issue claims section. Add a claim with the name `role` and the value `foxids:tenant.admin`. This will granted the client the administrator role. 
+
+The seed tool client is thereby granted access to update to the master tenant.
+
+![FoxIDs Control Client - seed tool client](images/upload-risk-passwords-seed-client.png)
+
+Add the FoxIDs and FoxIDs Control API endpoints and client secret to the seed tool configuration. 
+
+```json
+"SeedSettings": {
+    "FoxIDsEndpoint": "https://foxidsxxxx.azurewebsites.net",
+    "FoxIDsControlEndpoint": "https://foxidscontrolxxxx.azurewebsites.net",
+    "ClientSecret": "xxx",
+    ...
+}
+```
+
+### Run the seed tool
+
+Run the seed tool executable SeedTool.exe or run the seed tool directly from Visual Studio. 
+
+* Click 'p' to start uploading risk passwords  
+
+The risk password upload will take a while.
+
+## Add sample configuration to a track
 
 It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-track).
 
@@ -90,7 +131,7 @@ Depending on the reverse proxy your are using you might be required to also conf
    - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
    - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
 
-> HINT: You can create a `main` tenant and add the custom primary domain used on the FoxIDs service as a [custom domain](custom-domain.md) to remove the tenant element from the URL.
+> You can create a `main` tenant and add the custom primary domain used on the FoxIDs service as a [custom domain](custom-domain.md) to remove the tenant element from the URL.
 
 ## Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a [reverse proxy](reverse-proxy.md). 

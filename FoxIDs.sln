@@ -35,7 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.SharedBase", "src\Fo
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}"
 	ProjectSection(SolutionItems) = preProject
-		docs\_sidebar.md = docs\_sidebar.md
 		docs\certificates.md = docs\certificates.md
 		docs\claim-transform.md = docs\claim-transform.md
 		docs\control.md = docs\control.md
@@ -73,6 +72,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\up-party-oidc.md = docs\up-party-oidc.md
 		docs\up-party-saml-2.0.md = docs\up-party-saml-2.0.md
 		docs\users.md = docs\users.md
+		docs\_sidebar.md = docs\_sidebar.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"
@@ -153,7 +153,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\structure.png = docs\images\structure.png
 		docs\images\structure.svg = docs\images\structure.svg
 		docs\images\structure.vsdx = docs\images\structure.vsdx
-		docs\images\upload-risk-passwords.png = docs\images\upload-risk-passwords.png
+		docs\images\upload-risk-passwords-seed-client.png = docs\images\upload-risk-passwords-seed-client.png
 	EndProjectSection
 EndProject
 Global

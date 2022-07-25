@@ -7,14 +7,13 @@ namespace FoxIDs.Client.Services
 {
     public class RiskPasswordService : BaseService
     {
-        private const string apiUri = "api/@master/!riskpassword";
+        private const string apiUri = "api/@master/!riskpasswordtest";
         private const string infoApiUri = "api/@master/!riskpasswordinfo";
 
         public RiskPasswordService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<RiskPassword> GetRiskPasswordAsync(string passwordSha1Hash) => await GetAsync<RiskPassword>(apiUri, passwordSha1Hash, parmName: nameof(passwordSha1Hash));
-        public async Task UpdateUserAsync(RiskPasswordRequest riskPasswordRequest) => await PutAsync(apiUri, riskPasswordRequest);
+        public async Task<bool> GetRiskPasswordTestAsync(string password) => await GetAsync<bool>(apiUri, password, parmName: nameof(password));
 
         public async Task<RiskPasswordInfo> GetRiskPasswordInfoAsync() => await GetAsync<RiskPasswordInfo>(infoApiUri);
     }

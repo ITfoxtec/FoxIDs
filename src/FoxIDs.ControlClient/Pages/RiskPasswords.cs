@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Client.Infrastructure.Security;
+﻿using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
@@ -51,23 +50,13 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
-                var passwordSha1Hash = testRiskPasswordForm.Model.Password.Sha1Hash();
-                var riskPassword = await RiskPasswordService.GetRiskPasswordAsync(passwordSha1Hash);
-                if(riskPassword != null)
-                {
-                    testRiskPasswordForm.Model.IsValid = false;
-                }
+                var passwordInRisk = await RiskPasswordService.GetRiskPasswordTestAsync(testRiskPasswordForm.Model.Password);
+                testRiskPasswordForm.Model.IsValid = !passwordInRisk;
             }
-            catch (FoxIDsApiException ex)
+            catch
             {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                {
-                    testRiskPasswordForm.Model.IsValid = true;
-                }
-                else
-                {
-                    throw;
-                }
+                testRiskPasswordForm.Model.IsValid = true;
+                throw;
             }
         }
     }

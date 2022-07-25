@@ -28,4 +28,10 @@
     <ProjectReference Include="..\..\src\FoxIDs.Shared\FoxIDs.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="appsettings.Development.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
 </Project>

@@ -12,7 +12,6 @@ using System.Net.Http;
 using System.IO;
 using UrlCombineLib;
 using ITfoxtec.Identity.Helpers;
-using FoxIDs.SeedTool.Repository;
 
 namespace FoxIDs.SeedTool.Infrastructure
 {
@@ -26,7 +25,6 @@ namespace FoxIDs.SeedTool.Infrastructure
 
             AddConfiguration();
             AddInfrastructure(services);
-            AddRepository(services);
             AddLogic(services);
             AddSeedLogic(services);
 
@@ -36,7 +34,6 @@ namespace FoxIDs.SeedTool.Infrastructure
 
         private static void AddSeedLogic(ServiceCollection services)
         {
-            services.AddTransient<MasterTenantDocumentsSeedLogic>();
             services.AddTransient<RiskPasswordSeedLogic>();
         }
 
@@ -45,11 +42,6 @@ namespace FoxIDs.SeedTool.Infrastructure
             services.AddTransient<SecretHashLogic>();
 
             services.AddSingleton<AccessLogic>();            
-        }
-
-        private static void AddRepository(ServiceCollection services)
-        {
-            services.AddSingleton<SimpleTenantRepository>();
         }
 
         private static void AddInfrastructure(ServiceCollection services)

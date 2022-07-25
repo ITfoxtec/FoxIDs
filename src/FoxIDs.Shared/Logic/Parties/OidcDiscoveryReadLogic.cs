@@ -31,7 +31,15 @@ namespace FoxIDs.Logic
                 party.Issuers = new List<string> { oidcDiscovery.Issuer };
             }
             party.Client.AuthorizeUrl = oidcDiscovery.AuthorizationEndpoint;
-            party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;
+            if (!oidcDiscovery.TokenEndpoint.IsNullOrEmpty())
+            {
+                party.Client.TokenUrl = oidcDiscovery.TokenEndpoint;                
+            }
+            else if (party.Client.ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
+            {
+                party.Client.ResponseType = $"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}";
+                party.Client.EnablePkce = false;
+            }            
             if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
             {
                 party.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
@@ -52,10 +60,6 @@ namespace FoxIDs.Logic
                 if (oidcDiscovery.AuthorizationEndpoint.IsNullOrEmpty())
                 {
                     throw new Exception($"{nameof(oidcDiscovery.AuthorizationEndpoint)} is required.");
-                }
-                if (oidcDiscovery.TokenEndpoint.IsNullOrEmpty())
-                {
-                    throw new Exception($"{nameof(oidcDiscovery.TokenEndpoint)} is required.");
                 }
                 if (oidcDiscovery.JwksUri.IsNullOrEmpty())
                 {

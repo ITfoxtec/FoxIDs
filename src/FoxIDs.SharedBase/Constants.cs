@@ -372,7 +372,7 @@ namespace FoxIDs
             {
                 public const int TitleLength = 40;
                 public const int IconUrlLength = 500;
-                public const int CssStyleLength = 4000; 
+                public const int CssStyleLength = 20000; 
                 public const int TwoFactorAppNameLength = 50;
             }
 

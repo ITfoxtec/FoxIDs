@@ -58,3 +58,20 @@ Use two `Regex map` claim transformations.
 
 - Find the `family_name` claim value with regex `^\S+\s(?<map>\S+)$`
 - Find the `given_name` claim value with regex `^(?<map>\S+)\s\S+$`
+
+
+### Remove the default added up-party name from sub
+
+The up-party name is default added to the `sub` claim ID value as a post name divided by a pipe e.g., `some-up-party|my-external-user-id`.
+
+You can do a transform replace claim on the `sub` claim to remove the default added post value.
+
+The transformation will split the value in the `sub` claim and replace the claim with a new `sub` only containing the original ID.
+
+Use a `Regex map` claim transformation and select the `Replace claim` action.
+
+![Remove default added post up-party name](images/example-claim-transform-remove-post-up-party-name.png)
+
+- Find the ID without the default added post up-party name with regex `^(nemlogin\|)(?<map>.+)$`
+
+You can do the same in a SAML 2.0 up-party using the `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim instead of the `sub` claim.

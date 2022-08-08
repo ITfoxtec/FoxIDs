@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
                     return trackKey.PrimaryKey.Key.ToSecurityKey();
 
                 case TrackKeyType.KeyVaultRenewSelfSigned:
-                    return new RsaSecurityKey(GetRSAKeyVault(trackKey));
+                    return GetPrimaryRSAKeyVault(trackKey).ToSecurityKey(trackKey.PrimaryKey.Key.Kid);
 
                 case TrackKeyType.KeyVaultUpload:
                 default:
@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
                     return trackKey.PrimaryKey.Key.ToSaml2X509Certificate(true);
 
                 case TrackKeyType.KeyVaultRenewSelfSigned:
-                    return new Saml2X509Certificate(trackKey.PrimaryKey.Key.ToX509Certificate(), GetRSAKeyVault(trackKey));
+                    return new Saml2X509Certificate(trackKey.PrimaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
 
                 case TrackKeyType.KeyVaultUpload:
                 default:
@@ -80,7 +80,7 @@ namespace FoxIDs.Logic
                     return trackKey.SecondaryKey.Key.ToSaml2X509Certificate(true);
 
                 case TrackKeyType.KeyVaultRenewSelfSigned:
-                    return new Saml2X509Certificate(trackKey.SecondaryKey.Key.ToX509Certificate(), GetRSAKeyVault(trackKey));
+                    return new Saml2X509Certificate(trackKey.SecondaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
 
                 case TrackKeyType.KeyVaultUpload:
                 default:
@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private RSA GetRSAKeyVault(RouteTrackKey trackKey)
+        private RSA GetPrimaryRSAKeyVault(RouteTrackKey trackKey)
         {
             return RSAFactory.Create(tokenCredential, new Uri(UrlCombine.Combine(settings.KeyVault.EndpointUri, "keys", trackKey.ExternalName, trackKey.PrimaryKey.ExternalId)), new Azure.Security.KeyVault.Keys.JsonWebKey(trackKey.PrimaryKey.Key.ToRsa()));
         }

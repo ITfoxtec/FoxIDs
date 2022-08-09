@@ -82,11 +82,11 @@ namespace FoxIDs.Logic
             var nowLocal = DateTime.Now;
             if (!RouteBinding.Key.PrimaryKey.ExternalKeyIsNotReady)
             {
-                jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey());
+                jonWebKeySet.Keys.Add(RouteBinding.Key.PrimaryKey.Key.GetPublicKey().AddSignatureUse());
             }
             if (RouteBinding.Key.SecondaryKey != null)
             {
-                jonWebKeySet.Keys.Add(RouteBinding.Key.SecondaryKey.Key.GetPublicKey());
+                jonWebKeySet.Keys.Add(RouteBinding.Key.SecondaryKey.Key.GetPublicKey().AddSignatureUse());
             }
 
             return jonWebKeySet;

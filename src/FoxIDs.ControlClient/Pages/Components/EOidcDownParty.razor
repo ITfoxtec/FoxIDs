@@ -115,7 +115,7 @@
                     <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                     @if (DownParty.ShowAdvanced)
                     {
-                        <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" />
+                        <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.AllowCorsOrigins" For="@(() => oidcDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true"  />
                     }
                     <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
                     <FInputText @bind-Value="oidcDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oidcDownParty.Form.Model.Client.PostLogoutRedirectUri)" />

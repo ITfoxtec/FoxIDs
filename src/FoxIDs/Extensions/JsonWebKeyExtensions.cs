@@ -2,11 +2,11 @@
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Cryptography;
 using MTokens = Microsoft.IdentityModel.Tokens;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Saml2;
+using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs
 {
@@ -70,6 +70,12 @@ namespace FoxIDs
                 }
             }
             return certificates;
+        }
+
+        public static JsonWebKey AddSignatureUse(this JsonWebKey key)
+        {
+            key.Use = JsonPublicKeyUse.Signature;
+            return key;
         }
     }
 }

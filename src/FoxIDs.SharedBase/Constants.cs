@@ -237,7 +237,7 @@ namespace FoxIDs
                 /// <summary>
                 /// JWT and SAML claim value max length.
                 /// </summary>
-                public const int ValueLength = 300;               
+                public const int ValueLength = 1000;               
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -599,7 +599,7 @@ namespace FoxIDs
         public class EmbeddedJwtToken
         {
             public readonly static string[] JwtTokenClaims = { JwtClaimTypes.AccessToken };
-            public const int ValueLength = 2000;
+            public const int ValueLength = 4000;
         }
 
         public static class JwtClaimTypes

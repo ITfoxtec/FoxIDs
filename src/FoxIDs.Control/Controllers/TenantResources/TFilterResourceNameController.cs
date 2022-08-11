@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
             {
                 var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
                 var filderResourceNames = filterName.IsNullOrWhiteSpace() ? resourceEnvelope.Names : resourceEnvelope.Names.Where(r => r.Name.Contains(filterName, System.StringComparison.OrdinalIgnoreCase));
-                return Ok(mapper.Map<List<Api.ResourceName>>(filderResourceNames.OrderBy(r => r.Name)));
+                return Ok(mapper.Map<List<Api.ResourceName>>(filderResourceNames.OrderBy(r => r.Id)));
             }
             catch (CosmosDataException ex)
             {

@@ -35,16 +35,6 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
-        public Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool required = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : IDataDocument
         {
             throw new NotImplementedException();

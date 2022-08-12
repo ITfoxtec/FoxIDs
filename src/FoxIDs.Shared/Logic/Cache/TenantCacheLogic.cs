@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             await db.KeyDeleteAsync(key);
         }
 
-        public async Task<string> GetTenantNameByCustomDomain(string customDomain)
+        public async Task<string> GetTenantNameByCustomDomainAsync(string customDomain)
         {
             var key = RadisTenantCustomDomainKey(customDomain);
             var db = redisConnectionMultiplexer.GetDatabase();
@@ -42,12 +42,12 @@ namespace FoxIDs.Logic
                 return tenantName;
             }
 
-            var tenant = await GetTenantByCustomDomain(customDomain);
+            var tenant = await GetTenantByCustomDomainAsync(customDomain);
             await db.StringSetAsync(key, tenant.Name, TimeSpan.FromSeconds(settings.Cache.CustomDomainLifetime));
             return tenant.Name;
         }
 
-        private async Task<Tenant> GetTenantByCustomDomain(string customDomain)
+        private async Task<Tenant> GetTenantByCustomDomainAsync(string customDomain)
         {
             try
             {

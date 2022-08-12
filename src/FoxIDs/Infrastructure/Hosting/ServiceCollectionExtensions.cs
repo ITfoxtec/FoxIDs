@@ -13,7 +13,6 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Localization;
-using StackExchange.Redis;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -30,7 +29,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SecurityHeaderLogic>();
             services.AddTransient<TrackKeyLogic>();
             services.AddTransient<TrackIssuerLogic>();
-            
+
             services.AddTransient<LoginPageLogic>();
             services.AddTransient<LoginUpLogic>();
             services.AddTransient<LogoutUpLogic>();

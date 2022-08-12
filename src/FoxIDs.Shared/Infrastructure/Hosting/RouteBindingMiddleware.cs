@@ -81,7 +81,7 @@ namespace FoxIDs.Infrastructure.Hosting
             if (hasCustomDomain)
             {
                 var tenantCacheLogic = requestServices.GetService<TenantCacheLogic>();               
-                trackIdKey.TenantName = await tenantCacheLogic.GetTenantNameByCustomDomain(customDomain);
+                trackIdKey.TenantName = await tenantCacheLogic.GetTenantNameByCustomDomainAsync(customDomain);
             }
 
             var track = await GetTrackAsync(trackIdKey, hasCustomDomain);

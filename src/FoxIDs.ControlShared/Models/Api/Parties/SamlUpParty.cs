@@ -132,6 +132,28 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 
+        /// <summary>
+        /// Home realm discovery (HRD) domains.
+        /// </summary>
+        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [Display(Name = "Domains")]
+        public List<string> HrdDomains { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) display name.
+        /// </summary>
+        [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
+        [Display(Name = "Display name")]
+        public string HrdDisplayName { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) logo URL.
+        /// </summary>
+        [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [Display(Name = "Logo URL")]
+        public string HrdLogoUrl { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

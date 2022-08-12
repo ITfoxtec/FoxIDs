@@ -6,5 +6,15 @@
         /// Time to cache custom domains in seconds (default 24 hours).
         /// </summary>
         public int CustomDomainLifetime { get; set; } = 86400;
+
+        /// <summary>
+        /// Time to cache up-parties in seconds (default 6 hours).
+        /// </summary>
+        public int UpPartyLifetime { get; set; } = 21600;
+
+        /// <summary>
+        /// Time to cache down-parties in seconds (default 6 hours).
+        /// </summary>
+        public int DownPartyLifetime { get; set; } = 21600;
     }
 }

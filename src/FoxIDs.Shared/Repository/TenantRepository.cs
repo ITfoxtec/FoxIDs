@@ -54,20 +54,6 @@ namespace FoxIDs.Repository
             return await ReadItemAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), required);
         }
 
-        public async Task<UpParty> GetUpPartyByNameAsync(Party.IdKey idKey, bool required = true)
-        {
-            if (idKey == null) new ArgumentNullException(nameof(idKey));
-
-            return await ReadItemAsync<UpParty>(await UpParty.IdFormatAsync(idKey), DataDocument.PartitionIdFormat(idKey), required);
-        }
-
-        public async Task<DownParty> GetDownPartyByNameAsync(Party.IdKey idKey, bool required = true)
-        {
-            if (idKey == null) new ArgumentNullException(nameof(idKey));
-
-            return await ReadItemAsync<DownParty>(await DownParty.IdFormatAsync(idKey), DataDocument.PartitionIdFormat(idKey), required);
-        }
-
         private async Task<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));

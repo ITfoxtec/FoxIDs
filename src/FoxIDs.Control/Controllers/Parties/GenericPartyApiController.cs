@@ -19,13 +19,17 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly DownPartyCacheLogic downPartyCacheLogic;
+        private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly ValidateGenericPartyLogic validateGenericPartyLogic;
 
-        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger)
+        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.downPartyCacheLogic = downPartyCacheLogic;
+            this.upPartyCacheLogic = upPartyCacheLogic;
             this.validateGenericPartyLogic = validateGenericPartyLogic;
         }
 
@@ -106,6 +110,15 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.UpdateAsync(mParty);
 
+                if (party is Api.DownParty)
+                {
+                    await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
+                }
+                else
+                {
+                    await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
+                }
+
                 return Ok(mapper.Map<AParty>(mParty));
             }
             catch (CosmosDataException ex)
@@ -127,6 +140,14 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 await tenantRepository.DeleteAsync<MParty>(await GetId(name));
+                if (typeof(MParty) is Api.DownParty)
+                {
+                    await downPartyCacheLogic.InvalidateDownPartyCacheAsync(name);
+                }
+                else
+                {
+                    await upPartyCacheLogic.InvalidateUpPartyCacheAsync(name);
+                }
                 return NoContent();
             }
             catch (CosmosDataException ex)

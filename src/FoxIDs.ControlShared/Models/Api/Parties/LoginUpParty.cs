@@ -59,6 +59,7 @@ namespace FoxIDs.Models.Api
         /// Browser title.
         /// </summary>
         [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
+        [RegularExpression(Constants.Models.LoginUpParty.TitleRegExPattern)]
         public string Title { get; set; }
 
         /// <summary>
@@ -97,5 +98,27 @@ namespace FoxIDs.Models.Api
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         public bool DisableSingleLogout { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) domains.
+        /// </summary>
+        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [Display(Name = "Domains")] 
+        public List<string> HrdDomains { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) display name.
+        /// </summary>
+        [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
+        [Display(Name = "Display name")]
+        public string HrdDisplayName { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) logo URL.
+        /// </summary>
+        [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [Display(Name = "Logo URL")]
+        public string HrdLogoUrl { get; set; }
     }
 }

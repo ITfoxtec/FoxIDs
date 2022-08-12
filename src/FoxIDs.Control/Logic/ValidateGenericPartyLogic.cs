@@ -16,13 +16,13 @@ namespace FoxIDs.Logic
     public class ValidateGenericPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly ITenantRepository tenantService;
+        private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
 
-        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, UpPartyCacheLogic upPartyCacheLogic, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.tenantService = tenantService;
+            this.upPartyCacheLogic = upPartyCacheLogic;
             this.claimTransformValidationLogic = claimTransformValidationLogic;
         }
 
@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
                 {
                     try
                     {
-                        var upParty = await tenantService.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, upPartyLink.Name));
+                        var upParty = await upPartyCacheLogic.GetUpPartyAsync(upPartyLink.Name);
                         upPartyLink.Type = upParty.Type;
                     }
                     catch (CosmosDataException ex)

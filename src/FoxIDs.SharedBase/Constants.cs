@@ -331,6 +331,13 @@ namespace FoxIDs
                 public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
                 public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
                 public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
+                public const int HrdDomainMin = 0;
+                public const int HrdDomainMax = 10;
+                public const int HrdDomainLength = 200;
+                public const int HrdDisplayNameLength = 30;
+                public const string HrdDisplayNameRegExPattern = "^[^<^>]*$";
+                public const string HrdDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
+                public const int HrdLogoUrlLength = 500;
             }
 
             public static class OAuthUpParty
@@ -371,6 +378,7 @@ namespace FoxIDs
             public static class LoginUpParty
             {
                 public const int TitleLength = 40;
+                public const string TitleRegExPattern = "^[^<^>]*$";
                 public const int IconUrlLength = 500;
                 public const int CssStyleLength = 20000; 
                 public const int TwoFactorAppNameLength = 50;

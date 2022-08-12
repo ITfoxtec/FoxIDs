@@ -24,7 +24,7 @@
             <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
         }
         <div class="mb-3 alert alert-info" role="alert">
-            <i>SAML 2.0 Metadata example for a up-party with the name 'login' as the target.</i>
+            <i>SAML 2.0 Metadata selecting all up-parties with '*'. You can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i>
             @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name); }
             <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
         </div>

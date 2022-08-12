@@ -40,7 +40,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MParty = await tenantRepository.GetAsync<MParty>(await GetId(name));
+                var MParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
                 return Ok(mapper.Map<AParty>(MParty));
             }
             catch (CosmosDataException ex)
@@ -110,13 +110,17 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.UpdateAsync(mParty);
 
-                if (party is Api.DownParty)
+                if (mParty is UpParty)
+                {
+                    await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
+                }
+                else if (mParty is DownParty)
                 {
                     await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
                 }
                 else
                 {
-                    await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
+                    throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
                 }
 
                 return Ok(mapper.Map<AParty>(mParty));
@@ -139,15 +143,18 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                await tenantRepository.DeleteAsync<MParty>(await GetId(name));
-                if (typeof(MParty) is Api.DownParty)
-                {
-                    await downPartyCacheLogic.InvalidateDownPartyCacheAsync(name);
-                }
-                else
+                var isUpParty = IsUpParty();
+                var mParty = await tenantRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
+
+                if (isUpParty)
                 {
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(name);
                 }
+                else
+                {
+                    await downPartyCacheLogic.InvalidateDownPartyCacheAsync(name);
+                }
+
                 return NoContent();
             }
             catch (CosmosDataException ex)
@@ -161,19 +168,31 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private Task<string> GetId(string name)
+        private bool IsUpParty()
         {
-            if(EqualsBaseType(0, typeof(MParty), (typeof(UpParty))))
+            if (EqualsBaseType(0, typeof(MParty), (typeof(UpParty))))
             {
-                return UpParty.IdFormatAsync(RouteBinding, name);
+                return true;
             }
             else if (EqualsBaseType(0, typeof(MParty), (typeof(DownParty))))
             {
-                return DownParty.IdFormatAsync(RouteBinding, name);
+                return false;
             }
             else
             {
                 throw new NotSupportedException($"{typeof(MParty)} type not supported.");
+            }
+        }
+
+        private Task<string> GetId(bool isUpParty, string name)
+        {
+            if(isUpParty)
+            {
+                return UpParty.IdFormatAsync(RouteBinding, name);
+            }
+            else 
+            {
+                return DownParty.IdFormatAsync(RouteBinding, name);
             }
         }
 

@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName, sequenceData.Email);
+                var twoFactorSetupInfo = await accountTwoFactorLogic.GenerateSetupCodeAsync(loginUpParty.TwoFactorAppName.IsNullOrWhiteSpace() ? RouteBinding.TenantName : loginUpParty.TwoFactorAppName, sequenceData.Email);
                 sequenceData.TwoFactorAppNewSecret = twoFactorSetupInfo.Secret;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 

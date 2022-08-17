@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
         private readonly ValidateSamlPartyLogic validateSamlPartyLogic;
         private readonly SamlMetadataReadUpLogic samlMetadataReadUpLogic;
 
-        public TSamlUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateSamlPartyLogic validateSamlPartyLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, validateGenericPartyLogic)
+        public TSamlUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateSamlPartyLogic validateSamlPartyLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateGenericPartyLogic)
         {
             this.validateSamlPartyLogic = validateSamlPartyLogic;
             this.samlMetadataReadUpLogic = samlMetadataReadUpLogic;

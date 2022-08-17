@@ -18,7 +18,7 @@ namespace FoxIDs.Controllers
         private readonly ValidateOAuthOidcPartyLogic validateOAuthOidcPartyLogic;
         private readonly OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic;
 
-        public TOidcUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateOAuthOidcPartyLogic validateOAuthOidcPartyLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, validateGenericPartyLogic)
+        public TOidcUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateOAuthOidcPartyLogic validateOAuthOidcPartyLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateGenericPartyLogic)
         {
             this.validateOAuthOidcPartyLogic = validateOAuthOidcPartyLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;

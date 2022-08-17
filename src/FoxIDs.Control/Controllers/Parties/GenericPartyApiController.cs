@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System;
 using FoxIDs.Logic;
+using System.Linq;
 
 namespace FoxIDs.Controllers
 {
@@ -21,15 +22,17 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
+        private readonly DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic;
         private readonly ValidateGenericPartyLogic validateGenericPartyLogic;
 
-        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger)
+        public GenericPartyApiController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateGenericPartyLogic validateGenericPartyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
+            this.downPartyAllowUpPartiesQueueLogic = downPartyAllowUpPartiesQueueLogic;
             this.validateGenericPartyLogic = validateGenericPartyLogic;
         }
 
@@ -108,11 +111,17 @@ namespace FoxIDs.Controllers
                     }
                 }
 
+                var oldMUpParty = (mParty is UpParty) ? await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;      
                 await tenantRepository.UpdateAsync(mParty);
 
                 if (mParty is UpParty)
                 {
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
+
+                    if (UpPartyHrdHasChanged(oldMUpParty, mParty as UpParty))
+                    {
+                        await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(mParty as UpParty);
+                    }
                 }
                 else if (mParty is DownParty)
                 {
@@ -136,6 +145,29 @@ namespace FoxIDs.Controllers
             }
         }
 
+        private bool UpPartyHrdHasChanged(UpParty oldMUpParty, UpParty newMUpParty)
+        {
+            var oldHrdDomains = oldMUpParty.HrdDomains != null ? string.Join(',', oldMUpParty.HrdDomains) : string.Empty;
+            var newHrdDomains = newMUpParty.HrdDomains != null ? string.Join(',', newMUpParty.HrdDomains) : string.Empty;
+
+            if (oldHrdDomains != newHrdDomains)
+            {
+                return true;
+            }
+
+            if(oldMUpParty.HrdDisplayName != newMUpParty.HrdDisplayName)
+            {
+                return true;
+            }
+
+            if (oldMUpParty.HrdLogoUrl != newMUpParty.HrdLogoUrl)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         protected async Task<IActionResult> Delete(string name)
         {
             try
@@ -149,6 +181,7 @@ namespace FoxIDs.Controllers
                 if (isUpParty)
                 {
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(name);
+                    await downPartyAllowUpPartiesQueueLogic.DeleteUpParty(mParty as UpParty);
                 }
                 else
                 {

@@ -117,11 +117,7 @@ namespace FoxIDs.Controllers
                 if (mParty is UpParty)
                 {
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
-
-                    if (UpPartyHrdHasChanged(oldMUpParty, mParty as UpParty))
-                    {
-                        await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(mParty as UpParty);
-                    }
+                    await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(oldMUpParty, mParty as UpParty);
                 }
                 else if (mParty is DownParty)
                 {
@@ -143,29 +139,6 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
-        }
-
-        private bool UpPartyHrdHasChanged(UpParty oldMUpParty, UpParty newMUpParty)
-        {
-            var oldHrdDomains = oldMUpParty.HrdDomains != null ? string.Join(',', oldMUpParty.HrdDomains) : string.Empty;
-            var newHrdDomains = newMUpParty.HrdDomains != null ? string.Join(',', newMUpParty.HrdDomains) : string.Empty;
-
-            if (oldHrdDomains != newHrdDomains)
-            {
-                return true;
-            }
-
-            if(oldMUpParty.HrdDisplayName != newMUpParty.HrdDisplayName)
-            {
-                return true;
-            }
-
-            if (oldMUpParty.HrdLogoUrl != newMUpParty.HrdLogoUrl)
-            {
-                return true;
-            }
-
-            return false;
         }
 
         protected async Task<IActionResult> Delete(string name)

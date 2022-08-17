@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mTracks = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && p.Name.Contains(filterName));
+                (var mTracks, _) = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<Track>(idKey, whereQuery: p => p.DataType.Equals(dataType) && p.Name.Contains(filterName));
                 var aTracks = new HashSet<Api.Track>(mTracks.Count());
                 foreach(var mTrack in mTracks.OrderBy(t => t.Name))
                 {

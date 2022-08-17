@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                var tenants = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Equals(customDomain, StringComparison.OrdinalIgnoreCase) && t.CustomDomainVerified);
+                (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Equals(customDomain, StringComparison.OrdinalIgnoreCase) && t.CustomDomainVerified);
                 return tenants.First();
             }
             catch (CosmosDataException ex)

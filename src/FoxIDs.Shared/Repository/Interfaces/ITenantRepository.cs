@@ -13,7 +13,7 @@ namespace FoxIDs.Repository
         Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true);
         Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true);
 
-        Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : IDataDocument;
+        Task<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null) where T : IDataDocument;
 
         /// <summary>
         /// Create document. Throws exception if already exists.

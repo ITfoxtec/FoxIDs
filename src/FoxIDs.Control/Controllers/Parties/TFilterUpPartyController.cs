@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
             {
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                var mUpPartys = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
+                (var mUpPartys, _) = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
                 foreach(var mUpParty in mUpPartys.OrderBy(p => p.Name))
                 {

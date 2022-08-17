@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Infrastructure.Queue
-{   
+{
     public class BackgroundQueueService : BackgroundService
     {
         public const string QueueKey = "background_queue_service";
@@ -110,7 +110,7 @@ namespace FoxIDs.Infrastructure.Queue
                                 throw new Exception($"Logic type '{envelopeObj.LogicClassType.Name}' is not of type '{nameof(IQueueProcessingService)}'.");
                             }
 
-                            await processingService.DoWorkAsync(envelopeObj.Message, stoppingToken);
+                            await processingService.DoWorkAsync(envelopeObj.TenantName, envelopeObj.TrackName, envelopeObj.Message, stoppingToken);
                             scopedLogger.Event($"Done processing '{envelopeObj.Info}'.");
                         }
                         catch (Exception ex)

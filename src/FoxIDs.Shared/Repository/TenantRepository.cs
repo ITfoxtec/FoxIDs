@@ -96,10 +96,10 @@ namespace FoxIDs.Repository
             }
         }
 
-        public async Task<HashSet<T>> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : IDataDocument
+        public async Task<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null) where T : IDataDocument
         {
             var partitionId = PartitionIdFormat<T>(idKey);
-            var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
+            var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount, continuationToken: continuationToken);
             var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
 
             double totalRU = 0;
@@ -109,7 +109,7 @@ namespace FoxIDs.Repository
                 totalRU += response.RequestCharge;
                 var items = response.ToHashSet();
                 await items.ValidateObjectAsync();
-                return items;
+                return (items, response.ContinuationToken);
             }
             catch (Exception ex)
             {
@@ -321,10 +321,10 @@ namespace FoxIDs.Repository
             }
         }
 
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1) where T : IDataDocument
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1, string continuationToken = null) where T : IDataDocument
         {
             var container = GetContainer<T>();
-            return container.GetItemLinqQueryable<T>(requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount });
+            return container.GetItemLinqQueryable<T>(requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount }, continuationToken: continuationToken);
         }
 
         private Container GetContainer<T>() where T : IDataDocument

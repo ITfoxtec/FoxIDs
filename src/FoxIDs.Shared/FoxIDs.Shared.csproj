@@ -35,7 +35,7 @@
 		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.3.0" />
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.3.0" />
 		<PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.6" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.8" />
 		<PackageReference Include="SendGrid" Version="9.28.0" />
 		<PackageReference Include="UrlCombine" Version="2.0.0" />
 	</ItemGroup>

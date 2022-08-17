@@ -265,7 +265,7 @@ namespace FoxIDs
             public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;
-                public const int AllowUpPartyNamesMax = 2000;            
+                public const int AllowUpPartyNamesMax = 50;
             }
 
             public static class OAuthDownParty
@@ -332,8 +332,8 @@ namespace FoxIDs
                 public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
                 public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
                 public const int HrdDomainMin = 0;
-                public const int HrdDomainMax = 10;
-                public const int HrdDomainLength = 200;
+                public const int HrdDomainMax = 5;
+                public const int HrdDomainLength = 100;
                 public const int HrdDisplayNameLength = 30;
                 public const string HrdDisplayNameRegExPattern = "^[^<^>]*$";
                 public const string HrdDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";

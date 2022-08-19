@@ -1,21 +1,9 @@
-﻿@if (!AllAdvanced || ShowAdvanced)
-{
-    <FInputNumber @bind-Value="Model.SessionLifetime" For="@(() => Model.SessionLifetime)" />
-}
-@if (ShowAdvanced)
-{
-    <FInputNumber @bind-Value="Model.SessionAbsoluteLifetime" For="@(() => Model.SessionAbsoluteLifetime)" />
-    <FInputNumber @bind-Value="Model.PersistentSessionAbsoluteLifetime" For="@(() => Model.PersistentSessionAbsoluteLifetime)" />
-    <FInputToggle @bind-Value="Model.PersistentSessionLifetimeUnlimited" For="@(() => Model.PersistentSessionLifetimeUnlimited)" />
-}
+﻿<FInputNumber @bind-Value="Model.SessionLifetime" For="@(() => Model.SessionLifetime)" />
+<FInputNumber @bind-Value="Model.SessionAbsoluteLifetime" For="@(() => Model.SessionAbsoluteLifetime)" />
+<FInputNumber @bind-Value="Model.PersistentSessionAbsoluteLifetime" For="@(() => Model.PersistentSessionAbsoluteLifetime)" />
+<FInputToggle @bind-Value="Model.PersistentSessionLifetimeUnlimited" For="@(() => Model.PersistentSessionLifetimeUnlimited)" />
 
 @code {
-    [Parameter]
-    public bool ShowAdvanced { get; set; }
-
-    [Parameter]
-    public bool AllAdvanced { get; set; } = false;
-
     [Parameter]
     public IUpPartySessionLifetime Model { get; set; }
 }

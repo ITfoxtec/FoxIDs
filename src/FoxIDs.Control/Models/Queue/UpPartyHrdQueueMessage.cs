@@ -23,6 +23,7 @@ namespace FoxIDs.Models.Queue
         public string HrdDisplayName { get; set; }
 
         [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [JsonProperty(PropertyName = "hl")]
         public string HrdLogoUrl { get; set; }
 

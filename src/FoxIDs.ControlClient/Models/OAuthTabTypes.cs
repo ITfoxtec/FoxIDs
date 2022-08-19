@@ -4,6 +4,8 @@
     {
         Client,
         Resource,
-        ClaimsTransform
+        ClaimsTransform,
+        Session,
+        Hrd
     }
 }

@@ -24,6 +24,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Update="Shared\Components\UpPartyHrd.razor">
+		  <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+		</Content>
 		<Content Update="wwwroot\favicon.ico">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>

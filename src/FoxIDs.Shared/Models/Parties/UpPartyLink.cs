@@ -27,6 +27,7 @@ namespace FoxIDs.Models
         public string HrdDisplayName { get; set; }
 
         [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [JsonProperty(PropertyName = "hrd_logo_url")]
         public string HrdLogoUrl { get; set; }
     }

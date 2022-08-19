@@ -338,6 +338,7 @@ namespace FoxIDs
                 public const string HrdDisplayNameRegExPattern = "^[^<^>]*$";
                 public const string HrdDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
                 public const int HrdLogoUrlLength = 500;
+                public const string HrdLogoUrlRegExPattern = @"^https:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}";
             }
 
             public static class OAuthUpParty

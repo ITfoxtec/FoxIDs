@@ -1,0 +1,8 @@
+﻿<FInputText @bind-Value="Model.HrdDisplayName" For="@(() => Model.HrdDisplayName)" />
+<FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
+<FInputText @bind-Value="Model.HrdLogoUrl" For="@(() => Model.HrdLogoUrl)" />
+
+@code {
+    [Parameter]
+    public IUpPartyHrd Model { get; set; }
+}

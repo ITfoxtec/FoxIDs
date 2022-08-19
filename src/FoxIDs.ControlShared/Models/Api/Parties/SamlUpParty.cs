@@ -151,6 +151,7 @@ namespace FoxIDs.Models.Api
         /// Home realm discovery (HRD) logo URL.
         /// </summary>
         [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [Display(Name = "Logo URL")]
         public string HrdLogoUrl { get; set; }
 

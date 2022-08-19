@@ -48,6 +48,26 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim transform</button>
                 }
             </li>
+            <li class="nav-item">
+                @if (loginUpParty.ShowSessionTab)
+                {
+                    <a class="nav-link active">Session</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Session))">Session</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (loginUpParty.ShowHrdTab)
+                {
+                    <a class="nav-link active">Home Realm Discovery</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.Hrd))">Home Realm Discovery</button>
+                }
+            </li>
         </ul>
 
         <div class="tab-content pt-3">
@@ -57,8 +77,7 @@
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
                 <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />
-                <UpPartySessionLifetime Model="loginUpParty.Form.Model" ShowAdvanced="loginUpParty.ShowAdvanced" />
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />                
                 @if (loginUpParty.ShowAdvanced)
                 {
                     <FInputSelect @bind-Value="loginUpParty.Form.Model.LogoutConsent" For="@(() => loginUpParty.Form.Model.LogoutConsent)">
@@ -75,6 +94,14 @@
             else if (loginUpParty.ShowClaimTransformTab)
             {
                 <OAuthClaimTransforms Model="loginUpParty.Form.Model" />
+            }
+            else if (loginUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="loginUpParty.Form.Model" />
+            }
+            else if (loginUpParty.ShowHrdTab)
+            {
+                <UpPartyHrd Model="loginUpParty.Form.Model" />
             }
         </div>
     </div>

@@ -22,16 +22,21 @@ namespace FoxIDs.Logic
             this.tenantRepository = tenantRepository;
         }
 
-        public async Task InvalidateUpPartyCacheAsync(string upPartyName, string tenantName = null, string trackName = null)
+        public async Task InvalidateUpPartyCacheAsync(Party.IdKey idKey)
         {
-            var key = RadisUpPartyNameKey(GetUpPartyIdKey(upPartyName, tenantName, trackName));
+            var key = RadisUpPartyNameKey(idKey);
             var db = redisConnectionMultiplexer.GetDatabase();
             await db.KeyDeleteAsync(key);
         }
 
-        public async Task<UpParty> GetUpPartyAsync(string upPartyName, string tenantName = null, string trackName = null, bool required = true)
+        public async Task InvalidateUpPartyCacheAsync(string upPartyName, string tenantName = null, string trackName = null)
         {
-            var key = RadisUpPartyNameKey(GetUpPartyIdKey(upPartyName, tenantName, trackName));
+            await InvalidateUpPartyCacheAsync(GetUpPartyIdKey(upPartyName, tenantName, trackName));
+        }
+
+        public async Task<UpParty> GetUpPartyAsync(Party.IdKey idKey, bool required = true)
+        {
+            var key = RadisUpPartyNameKey(idKey);
             var db = redisConnectionMultiplexer.GetDatabase();
 
             var upPartyAsString = (string)await db.StringGetAsync(key);
@@ -40,12 +45,17 @@ namespace FoxIDs.Logic
                 return upPartyAsString.ToObject<UpParty>();
             }
 
-            var upParty = await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(GetUpPartyIdKey(upPartyName, tenantName, trackName)), required: required);
+            var upParty = await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(idKey), required: required);
             if (upParty != null)
             {
                 await db.StringSetAsync(key, upParty.ToJson(), TimeSpan.FromSeconds(settings.Cache.UpPartyLifetime));
             }
             return upParty;
+        }
+
+        public async Task<UpParty> GetUpPartyAsync(string upPartyName, string tenantName = null, string trackName = null, bool required = true)
+        {
+            return await GetUpPartyAsync(GetUpPartyIdKey(upPartyName, tenantName, trackName), required);
         }
 
         private string RadisUpPartyNameKey(Party.IdKey partyIdKey)

@@ -62,9 +62,9 @@ namespace FoxIDs.Logic
             return false;
         }
 
-        public async Task DeleteUpParty(UpParty upParty)
+        public async Task DeleteUpParty(string upPartyName)
         {
-            await AddToQueue(upParty, true);
+            await AddToQueue(new UpParty { Name = upPartyName }, true);
         }
 
         private async Task AddToQueue(UpParty upParty, bool remove)

@@ -1,7 +1,5 @@
-﻿using FoxIDs.Infrastructure;
-using FoxIDs.Infrastructure.Queue;
+﻿using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Models;
-using FoxIDs.Models.Config;
 using FoxIDs.Models.Queue;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -17,22 +15,23 @@ namespace FoxIDs.Logic
     public class DownPartyAllowUpPartiesQueueLogic : LogicBase, IQueueProcessingService
     {
         private const string downPartyDataType = "party:down";
-        private readonly FoxIDsControlSettings settings;
-        private readonly TelemetryScopedLogger logger;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly ITenantRepository tenantRepository;
+        private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public DownPartyAllowUpPartiesQueueLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.settings = settings;
-            this.logger = logger;
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
             this.tenantRepository = tenantRepository;
+            this.downPartyCacheLogic = downPartyCacheLogic;
         }
 
         public async Task UpdateUpParty(UpParty oldUpParty, UpParty newUpParty)
         {
-            await AddToQueue(newUpParty, false);
+            if (UpPartyHrdHasChanged(oldUpParty, newUpParty))
+            {
+                await AddToQueue(newUpParty, false);
+            }
         }
 
         private bool UpPartyHrdHasChanged(UpParty oldUpParty, UpParty newUpParty)
@@ -164,6 +163,7 @@ namespace FoxIDs.Logic
                 }
 
                 await tenantRepository.UpdateAsync(downPartyFullObj);
+                await downPartyCacheLogic.InvalidateDownPartyCacheAsync(idKey);
             }
         }
     }

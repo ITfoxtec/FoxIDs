@@ -22,16 +22,21 @@ namespace FoxIDs.Logic
             this.tenantRepository = tenantRepository;
         }
 
-        public async Task InvalidateDownPartyCacheAsync(string downPartyName, string tenantName = null, string trackName = null)
+        public async Task InvalidateDownPartyCacheAsync(Party.IdKey idKey)
         {
-            var key = RadisDownPartyNameKey(GetDownPartyIdKey(downPartyName, tenantName, trackName));
+            var key = RadisDownPartyNameKey(idKey);
             var db = redisConnectionMultiplexer.GetDatabase();
             await db.KeyDeleteAsync(key);
         }
 
-        public async Task<DownParty> GetDownPartyAsync(string downPartyName, string tenantName = null, string trackName = null, bool required = true)
+        public async Task InvalidateDownPartyCacheAsync(string downPartyName, string tenantName = null, string trackName = null)
         {
-            var key = RadisDownPartyNameKey(GetDownPartyIdKey(downPartyName, tenantName, trackName));
+            await InvalidateDownPartyCacheAsync(GetDownPartyIdKey(downPartyName, tenantName, trackName));
+        }
+
+        public async Task<DownParty> GetDownPartyAsync(Party.IdKey idKey, bool required = true)
+        {
+            var key = RadisDownPartyNameKey(idKey);
             var db = redisConnectionMultiplexer.GetDatabase();
 
             var downPartyAsString = (string)await db.StringGetAsync(key);
@@ -40,12 +45,17 @@ namespace FoxIDs.Logic
                 return downPartyAsString.ToObject<DownParty>();
             }
 
-            var downParty = await tenantRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(GetDownPartyIdKey(downPartyName, tenantName, trackName)), required: required);
+            var downParty = await tenantRepository.GetAsync<DownParty>(await DownParty.IdFormatAsync(idKey), required: required);
             if (downParty != null)
             {
                 await db.StringSetAsync(key, downParty.ToJson(), TimeSpan.FromSeconds(settings.Cache.DownPartyLifetime));
             }
             return downParty;
+        }
+
+        public async Task<DownParty> GetDownPartyAsync(string downPartyName, string tenantName = null, string trackName = null, bool required = true)
+        {
+            return await GetDownPartyAsync(GetDownPartyIdKey(downPartyName, tenantName, trackName), required);
         }
 
         private string RadisDownPartyNameKey(Party.IdKey partyIdKey)

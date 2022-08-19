@@ -149,12 +149,12 @@ namespace FoxIDs.Controllers
                 name = name?.ToLower();
 
                 var isUpParty = IsUpParty();
-                var mParty = await tenantRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
+                await tenantRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
 
                 if (isUpParty)
                 {
                     await upPartyCacheLogic.InvalidateUpPartyCacheAsync(name);
-                    await downPartyAllowUpPartiesQueueLogic.DeleteUpParty(mParty as UpParty);
+                    await downPartyAllowUpPartiesQueueLogic.DeleteUpParty(name);
                 }
                 else
                 {

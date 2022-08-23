@@ -23,7 +23,7 @@ You can use a two-factor authenticator app of your choice like [Anthy](https://a
 ## Configuration
 A default up-party login is created in each track. 
 
-> The default login can be changed or deleted but be careful as you may lose access.
+> The default login with the name `login` can be changed but not deleted, be careful as you may lose access.
 
 ### Configure login options
 It can be configured whether users should be allowed to cancel login and whether users are allowed to create a new user online through the login user interface. New users can alternatively be created by the administrator through [FoxIDs Control Client](control.md#foxids-control-client) or be provisioned through [FoxIDs Control API](control.md#foxids-control-api).

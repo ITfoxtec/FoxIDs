@@ -110,6 +110,8 @@ namespace FoxIDs.Logic
             }
         }
 
+        //TODO login - remember selected up-party to do logout...
+
         private UpPartyLink GetToUpParty(IEnumerable<Claim> idTokenClaims)
         {
             if (RouteBinding.DefaultToUpParties)

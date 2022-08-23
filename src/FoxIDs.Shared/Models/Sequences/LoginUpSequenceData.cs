@@ -20,6 +20,12 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "ev")]
         public bool EmailVerified { get; set; }
 
+        [JsonProperty(PropertyName = "tui")]
+        public IEnumerable<HrdUpParty> ToUpParties { get; set; }
+
+        [JsonProperty(PropertyName = "li")]
+        public bool DoLoginIdentifierStep { get; set; }
+
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }
 
@@ -36,6 +42,7 @@ namespace FoxIDs.Models.Sequences
         public string TwoFactorAppNewSecret { get; set; }
 
         [JsonProperty(PropertyName = "frc")]
-        public string TwoFactorAppRecoveryCode { get; set; }        
+        public string TwoFactorAppRecoveryCode { get; set; }
+
     }
 }

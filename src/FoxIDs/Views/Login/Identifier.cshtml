@@ -1,6 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Mvc.Localization
 @inject IViewLocalizer Localizer
-@model LoginViewModel
+@model IdentifierViewModel
 
 @{
     ViewData["Title"] = Localizer["Log in"];
@@ -17,20 +17,11 @@
                 <label asp-for="Email" class="label-control"></label>
                 <span asp-validation-for="Email"></span>
             </div>
-            <div class="form-group active-group">
-                <input asp-for="Password" autocomplete="current-password" class="form-control input-control" />
-                <label asp-for="Password" class="label-control"></label>
-                <span asp-validation-for="Password"></span>
-            </div>
             <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Log in"]" class="btn btn-primary" />
+                <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
                 @if (Model.EnableCancelLogin)
                 {
                     <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
-                }
-                @if (Model.EnableResetPassword)
-                {
-                    <a href="../@Constants.Routes.ActionController/@Constants.Endpoints.ForgotPassword/_@Model.SequenceString" class="btn btn-link float-right forgot-password">@Localizer["Forgot your password?"]</a>
                 }
             </div>
             @if (Model.EnableCreateUser)
@@ -43,6 +34,9 @@
         </form>
     </div>
 </div>
+
+<!-- //TODO login - create hrd select dialog-->
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

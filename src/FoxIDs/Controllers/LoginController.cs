@@ -14,7 +14,9 @@ using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Infrastructure.Filters;
 using Microsoft.Extensions.Localization;
+using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FoxIDs.Controllers
 {
@@ -22,6 +24,7 @@ namespace FoxIDs.Controllers
     public class LoginController : EndpointController
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly IServiceProvider serviceProvider;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
         private readonly LoginPageLogic loginPageLogic;
@@ -36,9 +39,10 @@ namespace FoxIDs.Controllers
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public LoginController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
+        public LoginController(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, LogoutUpLogic logoutUpLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic) : base(logger)
         {
             this.logger = logger;
+            this.serviceProvider = serviceProvider;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
             this.loginPageLogic = loginPageLogic;
@@ -54,49 +58,249 @@ namespace FoxIDs.Controllers
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
-        public async Task<IActionResult> Login()
+        public async Task<IActionResult> Login(bool edit)
         {
             try
             {
                 logger.ScopeTrace(() => "Start login.");
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (edit)
+                {
+                    sequenceData.DoLoginIdentifierStep = true;
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                }
+                if (sequenceData.DoLoginIdentifierStep || edit)
+                {
+                    return await IdentifierInternalAsync();
+                }
+                else 
+                {
+                    return await PasswordInternalAsync();
+                }
+            }
+            catch (EndpointException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel login)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (sequenceData.DoLoginIdentifierStep)
+                {
+                    ModelState[nameof(login.Password)].ValidationState = ModelValidationState.Valid;
+                    return await IdentifierInternalAsync(login);
+                }
+                else
+                {
+                    ModelState[nameof(login.Email)].ValidationState = ModelValidationState.Valid;
+                    return await PasswordInternalAsync(login);
+                }
+            }
+            catch (EndpointException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> IdentifierInternalAsync()
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start identifier.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
-                var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData));
-                if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
+                logger.ScopeTrace(() => "Show identifier dialog.");
+                return View("Identifier", new IdentifierViewModel
                 {
-                    return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
-                }
-
-                if (sequenceData.LoginAction == LoginAction.ReadSession)
-                {
-                    return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired);
-                }
-                else
-                {
-                    logger.ScopeTrace(() => "Show login dialog.");
-                    return View(nameof(Login), new LoginViewModel
-                    {
-                        SequenceString = SequenceString,
-                        Title = loginUpParty.Title,
-                        IconUrl = loginUpParty.IconUrl,
-                        Css = loginUpParty.Css,
-                        EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                        EnableResetPassword = !loginUpParty.DisableResetPassword,
-                        EnableCreateUser = !validSession && loginUpParty.EnableCreateUser,
-                        Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
-                    });
-                }
-
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                    EnableCreateUser = loginUpParty.EnableCreateUser,
+                    Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
+                    UpPatries = sequenceData.ToUpParties.Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName, LogoUrl = up.HrdLogoUrl })
+                });
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> IdentifierInternalAsync(LoginViewModel login)
+        {
+            try
+            {
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                Func<IActionResult> viewError = () =>
+                {
+                    var identifier = new IdentifierViewModel { Email = login.Email };
+                    identifier.SequenceString = SequenceString;
+                    identifier.Title = loginUpParty.Title;
+                    identifier.IconUrl = loginUpParty.IconUrl;
+                    identifier.Css = loginUpParty.Css;
+                    identifier.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    identifier.EnableCreateUser = loginUpParty.EnableCreateUser;
+                    identifier.UpPatries = sequenceData.ToUpParties.Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
+                    return View("Identifier", identifier);
+                };
+
+                if (!ModelState.IsValid)
+                {
+                    return viewError();
+                }
+
+                logger.ScopeTrace(() => "Identifier post.");
+
+                sequenceData.Email = login.Email;
+                sequenceData.DoLoginIdentifierStep = false;
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+
+                ModelState.Clear();
+                return await StartPasswordInternal(sequenceData, loginUpParty);
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        public async Task<IActionResult> LoginUpParty(string upParty)
+        {
+            try
+            {
+                if (upParty.IsNullOrWhiteSpace())
+                    throw new ArgumentNullException(nameof(upParty));
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.DoLoginIdentifierStep)
+                {
+                    throw new InvalidOperationException("Sequence not aimed for the identifier step.");
+                }
+
+                var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name.Equals(upParty, StringComparison.Ordinal)).FirstOrDefault();
+                if (selectedUpParty == null)
+                {
+                    throw new InvalidOperationException($"Selected up-party '{upParty}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
+                }
+
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+
+                switch (selectedUpParty.Type)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    default:
+                        throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private UpPartyLink ToUpPartyLink(HrdUpParty upParty)
+        {
+            return new UpPartyLink { Name = upParty.Name, Type = upParty.Type, HrdDomains = upParty.HrdDomains, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl };
+        }
+
+        private LoginRequest GetLoginRequest(LoginUpSequenceData sequenceData)
+        {
+            return new LoginRequest
+            {
+                DownPartyLink = sequenceData.DownPartyLink,
+                LoginAction = sequenceData.LoginAction,
+                UserId = sequenceData.UserId,
+                MaxAge = sequenceData.MaxAge,
+                EmailHint = sequenceData.Email,
+                Acr = sequenceData.Acr
+            };
+        }
+        
+        private async Task<IActionResult> PasswordInternalAsync()
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Start password.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (sequenceData.DoLoginIdentifierStep)
+                {
+                    throw new InvalidOperationException("Sequence not aimed for the password step.");
+                }
+                loginPageLogic.CheckUpParty(sequenceData);
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                return await StartPasswordInternal(sequenceData, loginUpParty);
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        {
+            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+            var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData));
+            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
+            {
+                return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+            }
+
+            if (sequenceData.LoginAction == LoginAction.ReadSession)
+            {
+                return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired);
+            }
+            else
+            {
+                if (sequenceData.Email.IsNullOrWhiteSpace())
+                {
+                    throw new InvalidOperationException("Required email is empty in sequence.");
+                }
+
+                logger.ScopeTrace(() => "Show password dialog.");
+                return View("Password", new PasswordViewModel
+                {
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                    EnableResetPassword = !loginUpParty.DisableResetPassword,
+                    Email = sequenceData.Email,
+                });
             }
         }
 
@@ -127,13 +331,15 @@ namespace FoxIDs.Controllers
             return true;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel login)
+        private async Task<IActionResult> PasswordInternalAsync(LoginViewModel login)
         {
             try
             {
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (sequenceData.DoLoginIdentifierStep)
+                {
+                    throw new InvalidOperationException("Sequence not aimed for the password step.");
+                }
                 loginPageLogic.CheckUpParty(sequenceData);
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
@@ -141,14 +347,15 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    login.SequenceString = SequenceString;
-                    login.Title = loginUpParty.Title;
-                    login.IconUrl = loginUpParty.IconUrl;
-                    login.Css = loginUpParty.Css;
-                    login.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    login.EnableResetPassword = !loginUpParty.DisableResetPassword;
-                    login.EnableCreateUser = loginUpParty.EnableCreateUser;
-                    return View(nameof(Login), login);
+                    var password = new PasswordViewModel { Password = login.Password };
+                    password.SequenceString = SequenceString;
+                    password.Title = loginUpParty.Title;
+                    password.IconUrl = loginUpParty.IconUrl;
+                    password.Css = loginUpParty.Css;
+                    password.EnableCancelLogin = loginUpParty.EnableCancelLogin;
+                    password.EnableResetPassword = !loginUpParty.DisableResetPassword;
+                    password.Email = sequenceData.Email;
+                    return View("Password", password);
                 };
 
                 if (!ModelState.IsValid)
@@ -156,11 +363,11 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                logger.ScopeTrace(() => "Login post.");
+                logger.ScopeTrace(() => "Password post.");
                 
                 try
                 {
-                    var user = await userAccountLogic.ValidateUser(login.Email, login.Password);
+                    var user = await userAccountLogic.ValidateUser(sequenceData.Email, login.Password);
 
                     if(user.ConfirmAccount && !user.EmailVerified)
                     {
@@ -211,7 +418,7 @@ namespace FoxIDs.Controllers
                 catch (ChangePasswordException cpex)
                 {
                     logger.ScopeTrace(() => cpex.Message, triggerEvent: true);
-                    return await StartChangePassword(login.Email, sequenceData);
+                    return await StartChangePassword(sequenceData.Email, sequenceData);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -235,7 +442,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -254,7 +461,6 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Cancel login failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-
 
         public async Task<IActionResult> Logout()
         {

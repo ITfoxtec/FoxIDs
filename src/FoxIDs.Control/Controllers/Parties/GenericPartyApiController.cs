@@ -148,6 +148,11 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
+                if (Constants.DefaultLogin.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new Exception($"The default login with the name '{Constants.DefaultLogin.Name}' can not be deleted.");
+                }
+
                 var isUpParty = IsUpParty();
                 await tenantRepository.DeleteAsync<MParty>(await GetId(isUpParty, name));
 

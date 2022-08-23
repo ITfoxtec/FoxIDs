@@ -339,6 +339,14 @@
     {
       "name": "I have saved my recovery code",
       "id": 85
+    },
+    {
+      "name": "Next",
+      "id": 86
+    },
+    {
+      "name": "Edit",
+      "id": 87
     }
   ],
   "resources": [
@@ -1431,6 +1439,24 @@
         {
           "culture": "da",
           "value": "Jeg har gemt min genoprettelses kode"
+        }
+      ]
+    },
+    {
+      "id": 86,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Next"
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Edit"
         }
       ]
     }

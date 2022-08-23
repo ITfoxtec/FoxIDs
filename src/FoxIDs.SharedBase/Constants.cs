@@ -12,6 +12,11 @@ namespace FoxIDs
             public const string Password = "FirstAccess!";
         }
 
+        public static class DefaultLogin
+        {
+            public const string Name = "login";
+        }
+
         public static class Routes
         {
             public const string RouteTransformerPathKey = "path";
@@ -27,7 +32,7 @@ namespace FoxIDs
             
             public const string LoginController = "login";
             public const string ActionController = "action";
-            public const string MfaController = "Mfa";
+            public const string MfaController = "mfa";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";

@@ -2,10 +2,15 @@
 
 namespace FoxIDs.Models.ViewModels
 {
-    public class LoginViewModel : ViewModel
+    public class PasswordViewModel : ViewModel
     {
+        public string SequenceString { get; set; }
+
+        public bool EnableCancelLogin { get; set; }
+
+        public bool EnableResetPassword { get; set; }
+
         [Display(Name = "Email")]
-        [Required]
         [MaxLength(Constants.Models.User.EmailLength)]
         [EmailAddress]
         public string Email { get; set; }

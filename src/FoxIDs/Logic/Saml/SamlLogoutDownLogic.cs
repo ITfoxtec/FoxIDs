@@ -108,6 +108,8 @@ namespace FoxIDs.Logic
                     RelayState = binding.RelayState
                 });
 
+                //TODO login - remember selected up-party to do logout...
+
                 var type = RouteBinding.ToUpParties.First().Type;
                 logger.ScopeTrace(() => $"Request, Up type '{type}'.");
                 switch (type)

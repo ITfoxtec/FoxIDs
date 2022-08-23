@@ -21,7 +21,6 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~)|(?:.(?<upparty>[\w-_]+).))$", RegexOptions.Compiled);
         private readonly FoxIDsSettings settings;
-        private readonly ITenantRepository tenantRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
@@ -30,7 +29,6 @@ namespace FoxIDs.Infrastructure.Hosting
         public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, tenantRepository)
         {
             this.settings = settings;
-            this.tenantRepository = tenantRepository;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;

@@ -1,4 +1,4 @@
-# Login and 2FA / MFA
+# Login, Home Realm Discovery (HRD) and 2FA / MFA
 FoxIDs handle user login in the up-party login user interface (UI). There can be configured a number of up-party logins per track with different configurations and look and feel.
 
 A track contains one [user repository](users.md#user-repository) and all up-party login's configured in a track authenticate users with the same user repository.
@@ -10,7 +10,12 @@ A [down-party OpenID Connect](down-party-oauth-2.0-oidc.md) or [down-party SAML 
 
 ![FoxIDs login](images/parties-login.svg)
 
-The up-party login user interface authenticates users in a one-step user interface with the username and password on the same page. In the future, a two-step login interface will be added hawing the username and password input on two separate pages.
+The up-party login user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
+
+## Home Realm Discovery (HRD)
+
+HRD domain with *
+
 
 ## Two-factor authentication (2FA/MFA)
 A up-party login support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
@@ -20,7 +25,7 @@ Two-factor authentication can be set as a requirement in each [up-party login](l
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
-## Configuration
+## Login configuration
 A default up-party login is created in each track. 
 
 > The default login with the name `login` can be changed but not deleted, be careful as you may lose access.

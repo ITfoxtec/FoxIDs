@@ -109,13 +109,19 @@ namespace FoxIDs.Logic
 
         private UpPartyLink AutoSelectUpParty(List<UpPartyLink> toUpParties, string email)
         {
+            var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
+            if (starUpParty != null)
+            {
+                return starUpParty;
+            }
+
             if (!email.IsNullOrWhiteSpace())
             {
                 var emailSplit = email.Split('@');
                 if (emailSplit.Count() > 1)
                 {
                     var domain = emailSplit[1];
-                    var selectedUpParty = toUpParties.Where(up => up.HrdDomains.Any(d => d.Equals(domain, StringComparison.OrdinalIgnoreCase))).FirstOrDefault();
+                    var selectedUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d.Equals(domain, StringComparison.OrdinalIgnoreCase)).Count() > 0).FirstOrDefault();
                     if (selectedUpParty != null)
                     {
                         return selectedUpParty;

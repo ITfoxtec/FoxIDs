@@ -156,7 +156,7 @@ namespace FoxIDs.Logic
                 {
                     upParty.HrdDomains = messageObj.HrdDomains;
                     upParty.HrdDisplayName = messageObj.HrdDisplayName;
-                    upParty.HrdLogoUrl = upParty.HrdLogoUrl;
+                    upParty.HrdLogoUrl = messageObj.HrdLogoUrl;
                 }
                 else
                 {

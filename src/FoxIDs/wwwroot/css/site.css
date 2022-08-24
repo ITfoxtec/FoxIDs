@@ -235,10 +235,17 @@ code {
     margin: 40px 0px 30px 0px;
 }
 
+.info-message-filter {
+    margin: 15px 0px;
+}
 
-.list-group-item-action {
-    font-weight: 600;
-    vertical-align: middle;
+.list-item-filter {
+    margin-bottom: 5px;
+}
+
+.img-item-filter {
+    max-height: 20px;
+    width: auto;
 }
 
 .input-validation-error {

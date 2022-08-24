@@ -65,7 +65,7 @@ namespace FoxIDs.Infrastructure
 
             if (!message.IsNullOrEmpty())
             {
-                exceptionTelemetry.Message = $"{message} <-- {exception.Message}";
+                exceptionTelemetry.Message = $"{message} --> {exception.Message}";
             }
             
             if (properties != null)

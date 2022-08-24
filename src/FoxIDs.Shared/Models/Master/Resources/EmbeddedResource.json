@@ -1467,6 +1467,32 @@
           "value": "Skift e-mail"
         }
       ]
+    },
+    {
+      "id": 86,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Next"
+        },
+        {
+          "culture": "da",
+          "value": "Næste"
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "items": [
+        {
+            "culture": "en",
+            "value": "Change email"
+        },
+        {
+          "culture": "da",
+          "value": "Skift e-mail"
+        }
+      ]
     }
   ]
 }

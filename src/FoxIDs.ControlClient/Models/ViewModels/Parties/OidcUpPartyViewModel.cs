@@ -89,15 +89,18 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Home realm discovery (HRD) domains.
         /// </summary>
         [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
-        [Display(Name = "Domains")]
-        public List<string> HrdDomains { get; set; } = new List<string>();
+        [Display(Name = "HRD domains")]
+        public List<string> HrdDomains { get; set; }
+
+        [Display(Name = "Show HRD button with domain")]
+        public bool HrdShowButtonWithDomain { get; set; }
 
         /// <summary>
         /// Home realm discovery (HRD) display name.
         /// </summary>
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
-        [Display(Name = "Display name")]
+        [Display(Name = "HRD display name")]
         public string HrdDisplayName { get; set; }
 
         /// <summary>
@@ -105,7 +108,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
         [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
-        [Display(Name = "Logo URL")]
+        [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
     }
 }

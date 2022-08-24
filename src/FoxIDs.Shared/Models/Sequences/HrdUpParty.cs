@@ -17,6 +17,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
 
+        [JsonProperty(PropertyName = "hs")]
+        public bool HrdShowButtonWithDomain { get; set; }
+
         [JsonProperty(PropertyName = "hn")]
         public string HrdDisplayName { get; set; }
 

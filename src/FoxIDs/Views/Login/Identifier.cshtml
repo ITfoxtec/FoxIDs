@@ -32,11 +32,27 @@
                 </div>
             }
         </form>
+
+        @if(Model.UpPatries?.Count() > 0)
+        {
+            <div style="min-height: 250px">
+                <div>
+                    <hr>
+                    <h2 class="mb-2">OR select:</h2>>
+
+                    <div class="list-group">
+                        @foreach (var upParty in Model.UpPatries)
+                        {
+                            <a upPartyName="@upParty.Name" class="list-group-item list-group-item-action btn btn-secondary btn-lg font-weight-bold" style="margin: 5px 0px" href="../@nameof(FoxIDs.Controllers.LoginController.LoginUpParty).ToLower()/_@Model.SequenceString?name=@upParty.Name">
+                                @upParty.DisplayName
+                            </a>                                
+                        }
+                    </div>
+                </div>
+            </div>            
+        }
     </div>
 </div>
-
-<!-- //TODO login - create hrd select dialog-->
-
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

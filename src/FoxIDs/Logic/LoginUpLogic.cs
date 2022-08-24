@@ -109,12 +109,7 @@ namespace FoxIDs.Logic
 
         private UpPartyLink AutoSelectUpParty(List<UpPartyLink> toUpParties, string email)
         {
-            var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
-            if (starUpParty != null)
-            {
-                return starUpParty;
-            }
-
+            // Select specified up-party first
             if (!email.IsNullOrWhiteSpace())
             {
                 var emailSplit = email.Split('@');
@@ -128,12 +123,20 @@ namespace FoxIDs.Logic
                     }
                 }
             }
+
+            // Select start up-party second
+            var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
+            if (starUpParty != null)
+            {
+                return starUpParty;
+            }
+
             return null;
         }
 
         private IEnumerable<HrdUpParty> GetToUpPartis(RouteBinding routeBinding)
         {
-            return routeBinding.ToUpParties.Select(up => new HrdUpParty { Name = up.Name, Type = up.Type, HrdDomains = up.HrdDomains, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl });
+            return routeBinding.ToUpParties.Select(up => new HrdUpParty { Name = up.Name, Type = up.Type, HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl });
         }
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)

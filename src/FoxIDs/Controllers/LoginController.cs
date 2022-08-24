@@ -116,6 +116,45 @@ namespace FoxIDs.Controllers
             }
         }
 
+        public async Task<IActionResult> LoginUpParty(string name)
+        {
+            try
+            {
+                if (name.IsNullOrWhiteSpace())
+                    throw new ArgumentNullException(nameof(name));
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                if (!sequenceData.DoLoginIdentifierStep)
+                {
+                    throw new InvalidOperationException("Sequence not aimed for the identifier step.");
+                }
+
+                var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name.Equals(name, StringComparison.Ordinal)).FirstOrDefault();
+                if (selectedUpParty == null)
+                {
+                    throw new InvalidOperationException($"Selected up-party '{name}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
+                }
+
+                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+
+                switch (selectedUpParty.Type)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    default:
+                        throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
         private async Task<IActionResult> IdentifierInternalAsync()
         {
             try
@@ -128,7 +167,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
                 logger.ScopeTrace(() => "Show identifier dialog.");
-                return View("Identifier", new IdentifierViewModel
+                return base.View("Identifier", new IdentifierViewModel
                 {
                     SequenceString = SequenceString,
                     Title = loginUpParty.Title,
@@ -137,13 +176,18 @@ namespace FoxIDs.Controllers
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     EnableCreateUser = loginUpParty.EnableCreateUser,
                     Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
-                    UpPatries = sequenceData.ToUpParties.Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName, LogoUrl = up.HrdLogoUrl })
+                    UpPatries = GetToUpPartiesToShow(sequenceData)
                 });
             }
             catch (Exception ex)
             {
                 throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
+        }
+
+        private static IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(LoginUpSequenceData sequenceData)
+        {
+            return sequenceData.ToUpParties.Where(up => up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0)).Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
         }
 
         private async Task<IActionResult> IdentifierInternalAsync(LoginViewModel login)
@@ -165,7 +209,7 @@ namespace FoxIDs.Controllers
                     identifier.Css = loginUpParty.Css;
                     identifier.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     identifier.EnableCreateUser = loginUpParty.EnableCreateUser;
-                    identifier.UpPatries = sequenceData.ToUpParties.Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
+                    identifier.UpPatries = GetToUpPartiesToShow(sequenceData);
                     return View("Identifier", identifier);
                 };
 
@@ -182,45 +226,6 @@ namespace FoxIDs.Controllers
 
                 ModelState.Clear();
                 return await StartPasswordInternal(sequenceData, loginUpParty);
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
-        }
-
-        public async Task<IActionResult> LoginUpParty(string upParty)
-        {
-            try
-            {
-                if (upParty.IsNullOrWhiteSpace())
-                    throw new ArgumentNullException(nameof(upParty));
-
-                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                if (!sequenceData.DoLoginIdentifierStep)
-                {
-                    throw new InvalidOperationException("Sequence not aimed for the identifier step.");
-                }
-
-                var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name.Equals(upParty, StringComparison.Ordinal)).FirstOrDefault();
-                if (selectedUpParty == null)
-                {
-                    throw new InvalidOperationException($"Selected up-party '{upParty}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
-                }
-
-                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-
-                switch (selectedUpParty.Type)
-                {
-                    case PartyTypes.OAuth2:
-                        throw new NotImplementedException();
-                    case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
-                    case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
-                    default:
-                        throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
-                }
             }
             catch (Exception ex)
             {

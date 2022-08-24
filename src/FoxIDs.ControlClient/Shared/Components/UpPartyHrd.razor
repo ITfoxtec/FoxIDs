@@ -1,4 +1,5 @@
 ﻿<FInputText @bind-Value="Model.HrdDisplayName" For="@(() => Model.HrdDisplayName)" />
+<FInputToggle @bind-Value="Model.HrdShowButtonWithDomain" For="@(() => Model.HrdShowButtonWithDomain)" TextType="y.n" />   
 <FInputTextList @bind-ValueList="Model.HrdDomains" For="@(() => Model.HrdDomains)" DynamicFirstRow="true" />
 <FInputText @bind-Value="Model.HrdLogoUrl" For="@(() => Model.HrdLogoUrl)" />
 

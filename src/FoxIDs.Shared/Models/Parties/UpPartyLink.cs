@@ -21,6 +21,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "hrd_domains")]
         public List<string> HrdDomains { get; set; }
 
+        [JsonProperty(PropertyName = "hrd_show_buttom_with_domain")]
+        public bool HrdShowButtonWithDomain { get; set; }
+
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
         [JsonProperty(PropertyName = "hrd_display_name")]

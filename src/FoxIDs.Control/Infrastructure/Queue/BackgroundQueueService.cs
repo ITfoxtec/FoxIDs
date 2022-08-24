@@ -110,7 +110,7 @@ namespace FoxIDs.Infrastructure.Queue
                                 throw new Exception($"Logic type '{envelopeObj.LogicClassType.Name}' is not of type '{nameof(IQueueProcessingService)}'.");
                             }
 
-                            await processingService.DoWorkAsync(envelopeObj.TenantName, envelopeObj.TrackName, envelopeObj.Message, stoppingToken);
+                            await processingService.DoWorkAsync(scopedLogger, envelopeObj.TenantName, envelopeObj.TrackName, envelopeObj.Message, stoppingToken);
                             scopedLogger.Event($"Done processing '{envelopeObj.Info}'.");
                         }
                         catch (Exception ex)

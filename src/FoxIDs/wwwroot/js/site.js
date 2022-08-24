@@ -48,6 +48,24 @@
     }
     setDisableOnSubmit();
 
+    $('.input-filter-button').click(function () {
+        var filterValue = $('.input-filter').val();
+        $('.list-group-item').each(function () {
+            var item = $(this);
+            if (!filterValue) {
+                item.removeClass('d-none');
+            }
+            else { 
+                var upParty = item.attr('up-party-name');
+                if (upParty.indexOf(filterValue) >= 0) {
+                    item.removeClass('d-none');
+                }
+                else {
+                    item.addClass('d-none');
+                }
+            }
+        });
+    });
 })();
 
 

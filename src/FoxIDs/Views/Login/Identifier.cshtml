@@ -10,46 +10,58 @@
 
 <div class="row page-container">
     <div class="col-md page-content">
-        <form method="post">
-            <div asp-validation-summary="ModelOnly"></div>
-            <div class="form-group active-group">
-                <input asp-for="Email" autocomplete="username" class="form-control input-control" autofocus />
-                <label asp-for="Email" class="label-control"></label>
-                <span asp-validation-for="Email"></span>
-            </div>
-            <div class="form-group button-group">
-                <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
-                @if (Model.EnableCancelLogin)
-                {
-                    <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
-                }
-            </div>
-            @if (Model.EnableCreateUser)
-            {
-                <div class="form-group create-user-group">
-                    @Localizer["Don't have an account?"]
-                    <a href="@Constants.Endpoints.CreateUser/_@Model.SequenceString" class="link">@Localizer["Create User"]</a>
-                </div>
-            }
-        </form>
-
-        @if(Model.UpPatries?.Count() > 0)
+        @if (Model.ShowEmailSelection)
         {
-            <div style="min-height: 250px">
-                <div>
-                    <hr>
-                    <h2 class="mb-2">OR select:</h2>>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly"></div>
+                <div class="form-group active-group">
+                    <input asp-for="Email" autocomplete="username" class="form-control input-control" autofocus />
+                    <label asp-for="Email" class="label-control"></label>
+                    <span asp-validation-for="Email"></span>
+                </div>
+                <div class="form-group button-group">
+                    <input type="submit" value="@Localizer["Next"]" class="btn btn-primary" />
+                    @if (Model.EnableCancelLogin)
+                    {
+                        <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                    }
+                    @if (Model.EnableCreateUser)
+                    {
+                        <a href="@Constants.Endpoints.CreateUser/_@Model.SequenceString" class="btn btn-link float-right create-user">@Localizer["Create user"]</a>
+                    }
+                </div>
+            </form>
+        }
 
-                    <div class="list-group">
-                        @foreach (var upParty in Model.UpPatries)
-                        {
-                            <a upPartyName="@upParty.Name" class="list-group-item list-group-item-action btn btn-secondary btn-lg font-weight-bold" style="margin: 5px 0px" href="../@nameof(FoxIDs.Controllers.LoginController.LoginUpParty).ToLower()/_@Model.SequenceString?name=@upParty.Name">
-                                @upParty.DisplayName
-                            </a>                                
-                        }
+        @if (Model.UpPatries?.Count() > 0)
+        {
+            <div>
+                <hr class="dividing-line">
+                <div class="info-message">
+                    @Localizer["OR select where to log in"]
+                </div>
+                <div class="form-group active-group group-filter">
+                    <div class="input-group">
+                        <input asp-for="UpPartyFilter" class="form-control input-control input-filter" />
+                        <label asp-for="UpPartyFilter" class="label-control"></label>
+                        <div class="input-group-append">
+                            <button class="btn btn-primary input-filter-button" type="button">@Localizer["Search"]</button>
+                        </div>
                     </div>
                 </div>
-            </div>            
+                <div class="list-group">
+                    @foreach (var upParty in Model.UpPatries)
+                    {
+                        <a up-party-name="@upParty.Name" class="list-group-item list-group-item-action" href="@nameof(FoxIDs.Controllers.LoginController.LoginUpParty).ToLower()/_@Model.SequenceString?name=@upParty.Name">
+                            @if (!upParty.LogoUrl.IsNullOrEmpty())
+                            {
+                                    <img src="@upParty.LogoUrl" class="img-fluid" alt="@upParty.DisplayName">
+                            }                                
+                            @upParty.DisplayName
+                        </a>                                
+                    }
+                </div>
+            </div>
         }
     </div>
 </div>

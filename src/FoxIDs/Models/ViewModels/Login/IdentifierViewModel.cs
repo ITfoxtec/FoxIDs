@@ -17,6 +17,11 @@ namespace FoxIDs.Models.ViewModels
         [EmailAddress]
         public string Email { get; set; }
 
+        public bool ShowEmailSelection { get; set; }
+
+        [Display(Name = "Search log in")]
+        public string UpPartyFilter { get; set; }
+
         public IEnumerable<IdentifierUpPartyViewModel> UpPatries { get; set; }
     }
 }

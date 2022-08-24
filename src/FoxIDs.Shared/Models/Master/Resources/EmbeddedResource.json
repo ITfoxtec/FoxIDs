@@ -61,7 +61,7 @@
       "id": 14
     },
     {
-      "name": "Create User",
+      "name": "Next",
       "id": 15
     },
     {
@@ -145,7 +145,7 @@
       "id": 36
     },
     {
-      "name": "Your account is temporarily locked because of too many login attempts. Please wait for a while and try again.",
+      "name": "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again.",
       "id": 37
     },
     {
@@ -153,7 +153,7 @@
       "id": 38
     },
     {
-      "name": "Don't have an account?",
+      "name": "OR select where to log in",
       "id": 39
     },
     {
@@ -341,12 +341,20 @@
       "id": 85
     },
     {
-      "name": "Next",
+      "name": "Change email",
       "id": 86
     },
     {
-      "name": "Change email",
+      "name": "There is no account connected to this email.",
       "id": 87
+    },
+    {
+      "name": "Search log in",
+      "id": 88
+    },
+    {
+      "name": "Search",
+      "id": 89
     }
   ],
   "resources": [
@@ -359,7 +367,7 @@
         },
         {
           "culture": "da",
-          "value": "Login"
+          "value": "Log ind"
         }
       ]
     },
@@ -537,11 +545,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Create User"
+          "value": "Next"
         },
         {
           "culture": "da",
-          "value": "Opret bruger"
+          "value": "Næste"
         }
       ]
     },
@@ -810,11 +818,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."
+          "value": "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."
         },
         {
           "culture": "da",
-          "value": "Din konto er midlertidigt låst på grund af for mange login-forsøg. Vent venligst et stykke tid og prøv så igen."
+          "value": "Din konto er midlertidigt låst på grund af for mange log ind forsøg. Vent venligst et stykke tid og prøv så igen."
         }
       ]
     },
@@ -836,11 +844,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Don't have an account?"
+          "value": "OR select where to log in"
         },
         {
           "culture": "da",
-          "value": "Har du ikke en konto?"
+          "value": "ELLER vælg hvor du vil logge ind"
         }
       ]
     },
@@ -853,7 +861,7 @@
         },
         {
           "culture": "da",
-          "value": "Login med din eksisterende bruger"
+          "value": "Log ind med din eksisterende bruger"
         }
       ]
     },
@@ -1113,7 +1121,7 @@
         },
         {
           "culture": "da",
-          "value": "Log af"
+          "value": "Log ud"
         }
       ]
     },
@@ -1152,7 +1160,7 @@
         },
         {
           "culture": "da",
-          "value": "logget af"
+          "value": "logget ud"
         }
       ]
     },
@@ -1165,7 +1173,7 @@
         },
         {
           "culture": "da",
-          "value": "Du er nu logget af!"
+          "value": "Du er nu logget ud!"
         }
       ]
     },
@@ -1447,20 +1455,7 @@
       "items": [
         {
           "culture": "en",
-          "value": "Next"
-        },
-        {
-          "culture": "da",
-          "value": "Næste"
-        }
-      ]
-    },
-    {
-      "id": 87,
-      "items": [
-        {
-            "culture": "en",
-            "value": "Change email"
+          "value": "Change email"
         },
         {
           "culture": "da",
@@ -1469,28 +1464,41 @@
       ]
     },
     {
-      "id": 86,
+      "id": 87,
       "items": [
         {
           "culture": "en",
-          "value": "Next"
+          "value": "There is no account connected to this email."
         },
         {
           "culture": "da",
-          "value": "Næste"
+          "value": "Der er ingen konto knyttet til denne e-mail."
         }
       ]
     },
     {
-      "id": 87,
+      "id": 88,
       "items": [
         {
-            "culture": "en",
-            "value": "Change email"
+          "culture": "en",
+          "value": "Search log in"
         },
         {
           "culture": "da",
-          "value": "Skift e-mail"
+          "value": "Søg log ind"
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Search"
+        },
+        {
+          "culture": "da",
+          "value": "Søg"
         }
       ]
     }

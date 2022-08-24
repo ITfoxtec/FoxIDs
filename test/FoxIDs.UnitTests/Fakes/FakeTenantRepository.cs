@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Models;
 using FoxIDs.Repository;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace FoxIDs.UnitTests.Mocks
     public class FakeTenantRepository : ITenantRepository
     {
 
-        public Task<bool> ExistsAsync<T>(string id) where T : IDataDocument
+        public Task<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if(id == "user:testtenant:testtrack:a2@test.com")
             {
@@ -20,52 +21,52 @@ namespace FoxIDs.UnitTests.Mocks
             return Task.FromResult(false);
         }
 
-        public Task<T> GetAsync<T>(string id, bool required = true, bool delete = false) where T : IDataDocument
+        public Task<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true)
+        public Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true)
+        public Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             throw new NotImplementedException();
         }
 
-        public Task<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null) where T : IDataDocument
+        public Task<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task CreateAsync<T>(T item) where T : IDataDocument
+        public Task CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             return Task.CompletedTask;
         }
 
-        public Task UpdateAsync<T>(T item) where T : IDataDocument
+        public Task UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task SaveAsync<T>(T item) where T : IDataDocument
+        public Task SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(string id) where T : IDataDocument
+        public Task<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
+        public Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }
 
-        public Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
+        public Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();
         }

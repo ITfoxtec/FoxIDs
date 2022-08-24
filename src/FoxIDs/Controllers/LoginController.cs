@@ -129,29 +129,36 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Sequence not aimed for the identifier step.");
                 }
 
-                var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name.Equals(name, StringComparison.Ordinal)).FirstOrDefault();
+                var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name == name).FirstOrDefault();
                 if (selectedUpParty == null)
                 {
                     throw new InvalidOperationException($"Selected up-party '{name}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
                 }
 
-                await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
-
-                switch (selectedUpParty.Type)
-                {
-                    case PartyTypes.OAuth2:
-                        throw new NotImplementedException();
-                    case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
-                    case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
-                    default:
-                        throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
-                }
+                return await GoToUpParty(sequenceData, selectedUpParty);
             }
             catch (Exception ex)
             {
                 throw new EndpointException($"Identifier failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<IActionResult> GoToUpParty(LoginUpSequenceData sequenceData, HrdUpParty selectedUpParty)
+        {
+            await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
+
+            switch (selectedUpParty.Type)
+            {
+                case PartyTypes.Login:
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(loginUpLogic.ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                case PartyTypes.OAuth2:
+                    throw new NotImplementedException();
+                case PartyTypes.Oidc:
+                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(loginUpLogic.ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                case PartyTypes.Saml2:
+                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(loginUpLogic.ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                default:
+                    throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
             }
         }
 
@@ -176,7 +183,8 @@ namespace FoxIDs.Controllers
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     EnableCreateUser = loginUpParty.EnableCreateUser,
                     Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
-                    UpPatries = GetToUpPartiesToShow(sequenceData)
+                    ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
+                    UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
                 });
             }
             catch (Exception ex)
@@ -185,9 +193,23 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private static IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(LoginUpSequenceData sequenceData)
+        private bool ShowEmailSelection(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
-            return sequenceData.ToUpParties.Where(up => up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0)).Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
+            if (sequenceData.ToUpParties.Where(up => up.Name == currentUpPartyName).Any())
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(string currentUpPartyName, LoginUpSequenceData sequenceData)
+        {
+            var toUpParties = sequenceData.ToUpParties.Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0))).Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
+            foreach(var upPartyWithUrl in toUpParties.Where(up => !up.LogoUrl.IsNullOrWhiteSpace()))
+            {
+                securityHeaderLogic.AddImgSrc(upPartyWithUrl.LogoUrl);
+            }
+            return toUpParties;
         }
 
         private async Task<IActionResult> IdentifierInternalAsync(LoginViewModel login)
@@ -209,7 +231,8 @@ namespace FoxIDs.Controllers
                     identifier.Css = loginUpParty.Css;
                     identifier.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     identifier.EnableCreateUser = loginUpParty.EnableCreateUser;
-                    identifier.UpPatries = GetToUpPartiesToShow(sequenceData);
+                    identifier.ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData);
+                    identifier.UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData);
                     return View("Identifier", identifier);
                 };
 
@@ -219,6 +242,21 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Identifier post.");
+
+                var autoSelectedUpParty = loginUpLogic.AutoSelectUpParty(sequenceData.ToUpParties, login.Email);
+                if (autoSelectedUpParty != null)
+                {
+                    if (autoSelectedUpParty.Name != loginUpParty.Name)
+                    {
+                        return await GoToUpParty(sequenceData, autoSelectedUpParty);
+                    }
+                }
+
+                if (!sequenceData.ToUpParties.Where(up => up.Name == loginUpParty.Name).Any())
+                {
+                    ModelState.AddModelError(nameof(login.Email), localizer["There is no account connected to this email."]);
+                    return viewError();
+                }
 
                 sequenceData.Email = login.Email;
                 sequenceData.DoLoginIdentifierStep = false;
@@ -233,10 +271,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private UpPartyLink ToUpPartyLink(HrdUpParty upParty)
-        {
-            return new UpPartyLink { Name = upParty.Name, Type = upParty.Type, HrdDomains = upParty.HrdDomains, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl };
-        }
+
 
         private LoginRequest GetLoginRequest(LoginUpSequenceData sequenceData)
         {
@@ -428,7 +463,7 @@ namespace FoxIDs.Controllers
                 catch (UserObservationPeriodException uoex)
                 {
                     logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
                 catch (AccountException aex)
                 {
@@ -856,7 +891,7 @@ namespace FoxIDs.Controllers
                 catch (UserObservationPeriodException uoex)
                 {
                     logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
-                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many login attempts. Please wait for a while and try again."]);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
                 catch (InvalidPasswordException ipex)
                 {

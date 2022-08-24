@@ -5,6 +5,6 @@ namespace FoxIDs.Infrastructure.Queue
 {
     public interface IQueueProcessingService
     {
-        Task DoWorkAsync(string tenantName, string trackName, string message, CancellationToken stoppingToken);
+        Task DoWorkAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, string message, CancellationToken stoppingToken);
     }
 }

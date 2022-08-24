@@ -1,4 +1,5 @@
-﻿using FoxIDs.Infrastructure.Queue;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Models;
 using FoxIDs.Models.Queue;
 using FoxIDs.Repository;
@@ -97,7 +98,7 @@ namespace FoxIDs.Logic
             await sub.PublishAsync(BackgroundQueueService.QueueEventKey, string.Empty);
         }
 
-        public async Task DoWorkAsync(string tenantName, string trackName, string message, CancellationToken stoppingToken)
+        public async Task DoWorkAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, string message, CancellationToken stoppingToken)
         {
             var messageObj = message.ToObject<UpPartyHrdQueueMessage>();
             await messageObj.ValidateObjectAsync();
@@ -106,12 +107,12 @@ namespace FoxIDs.Logic
             string continuationToken = null;
             while (!stoppingToken.IsCancellationRequested) 
             {
-                (var downParties, continuationToken) = await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(downPartyDataType) && p.AllowUpParties.Exists(up => up.Name.Equals(messageObj.Name)), maxItemCount: 30, continuationToken: continuationToken);
+                (var downParties, continuationToken) = await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType == downPartyDataType && p.AllowUpParties.Where(up => up.Name == messageObj.Name).Any(), maxItemCount: 30, continuationToken: continuationToken, scopedLogger: scopedLogger);
                 stoppingToken.ThrowIfCancellationRequested();
                 foreach (var downParty in downParties)
                 {
                     stoppingToken.ThrowIfCancellationRequested();
-                    await UpdateDownPartyAsync(tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync(scopedLogger, tenantName, trackName, downParty, messageObj);
                 }
                 
                 if (continuationToken == null)
@@ -121,25 +122,25 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task UpdateDownPartyAsync(string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj)
+        private async Task UpdateDownPartyAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj)
         {
             switch (downParty.Type)
             {
                 case PartyTypes.Oidc:
-                    await UpdateDownPartyAsync<OidcDownParty>(tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync<OidcDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
                     break;
                 case PartyTypes.Saml2:
-                    await UpdateDownPartyAsync<SamlDownParty>(tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync<SamlDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
                     break;
                 case PartyTypes.OAuth2:
-                    await UpdateDownPartyAsync<OAuthDownParty>(tenantName, trackName, downParty, messageObj);
+                    await UpdateDownPartyAsync<OAuthDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
                     break;
                 default:
                     throw new NotSupportedException($"Down-party type {downParty.Type} not supported.");
             }
         }
 
-        private async Task UpdateDownPartyAsync<T>(string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj) where T : DownParty
+        private async Task UpdateDownPartyAsync<T>(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, DownParty downParty, UpPartyHrdQueueMessage messageObj) where T : DownParty
         {
             var idKey = new Party.IdKey
             {
@@ -147,8 +148,8 @@ namespace FoxIDs.Logic
                 TrackName = trackName,
                 PartyName = downParty.Name
             };
-            var downPartyFullObj = await tenantRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey));
-            var upParty = downPartyFullObj.AllowUpParties.Where(up => up.Name.Equals(messageObj.Name)).FirstOrDefault();
+            var downPartyFullObj = await tenantRepository.GetAsync<T>(await DownParty.IdFormatAsync(idKey), scopedLogger: scopedLogger);
+            var upParty = downPartyFullObj.AllowUpParties.Where(up => up.Name == messageObj.Name).FirstOrDefault();
             if (upParty != null)
             {
                 if (!messageObj.Remove)
@@ -162,7 +163,7 @@ namespace FoxIDs.Logic
                     downPartyFullObj.AllowUpParties.Remove(upParty);
                 }
 
-                await tenantRepository.UpdateAsync(downPartyFullObj);
+                await tenantRepository.UpdateAsync(downPartyFullObj, scopedLogger: scopedLogger);
                 await downPartyCacheLogic.InvalidateDownPartyCacheAsync(idKey);
             }
         }

@@ -188,6 +188,7 @@ code {
     }
 
     .active-group .label-control {
+        display: block;
         color: #788489;
         padding-left: 0.8rem;
         top: 1.35rem;
@@ -217,10 +218,27 @@ code {
         transform: scale(.85) translateY(-2.4rem);
     }
 
+    .active-group .input-group {
+        position: initial;
+    }
+
+    .active-group.group-filter {
+        margin: 5px 0px;
+    }
+
 .heading {
     font-weight: 300;
     padding-bottom: 15px;
-    /*margin: 15px 0px;*/
+}
+
+.dividing-line {
+    margin: 40px 0px 30px 0px;
+}
+
+
+.list-group-item-action {
+    font-weight: 600;
+    vertical-align: middle;
 }
 
 .input-validation-error {

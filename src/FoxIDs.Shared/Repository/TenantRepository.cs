@@ -25,36 +25,36 @@ namespace FoxIDs.Repository
             this.repositoryClient = repositoryClient;
         }
 
-        public async Task<bool> ExistsAsync<T>(string id) where T : IDataDocument
+        public async Task<bool> ExistsAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false);
+            var item = await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), false, scopedLogger: scopedLogger);
             return item != null;
         }
 
-        public async Task<T> GetAsync<T>(string id, bool required = true, bool delete = false) where T : IDataDocument
+        public async Task<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
-            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete);
+            return await ReadItemAsync<T>(id, id.IdToTenantPartitionId(), required, delete, scopedLogger: scopedLogger);
         }
 
-        public async Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true)
+        public async Task<Tenant> GetTenantByNameAsync(string tenantName, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
 
-            return await ReadItemAsync<Tenant>(await Tenant.IdFormat(tenantName), Tenant.PartitionIdFormat(), required);
+            return await ReadItemAsync<Tenant>(await Tenant.IdFormat(tenantName), Tenant.PartitionIdFormat(), required, scopedLogger: scopedLogger);
         }
 
-        public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true)
+        public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadItemAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), required);
+            return await ReadItemAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), required, scopedLogger: scopedLogger);
         }
 
-        private async Task<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false) where T : IDataDocument
+        private async Task<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
             if (partitionId.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(partitionId));
@@ -91,12 +91,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null) where T : IDataDocument
+        public async Task<(HashSet<T> items, string continuationToken)> GetListAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50, string continuationToken = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             var partitionId = PartitionIdFormat<T>(idKey);
             var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount, continuationToken: continuationToken);
@@ -117,12 +117,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task CreateAsync<T>(T item) where T : IDataDocument
+        public async Task CreateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -144,12 +144,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - create type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task UpdateAsync<T>(T item) where T : IDataDocument
+        public async Task UpdateAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -171,12 +171,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - update type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task SaveAsync<T>(T item) where T : IDataDocument
+        public async Task SaveAsync<T>(T item, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
             if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
@@ -198,12 +198,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - save type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task<T> DeleteAsync<T>(string id) where T : IDataDocument
+        public async Task<T> DeleteAsync<T>(string id, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
 
@@ -227,12 +227,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete document id '{id}', partitionId '{partitionId}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
+        public async Task<T> DeleteAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -262,12 +262,12 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
 
-        public async Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null) where T : IDataDocument
+        public async Task<int> DeleteListAsync<T>(Track.IdKey idKey, Expression<Func<T, bool>> whereQuery = null, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -298,7 +298,7 @@ namespace FoxIDs.Repository
             }
             finally
             {
-                var scopedLogger = GetScopedLogger();
+                scopedLogger = scopedLogger ?? GetScopedLogger();
                 scopedLogger.ScopeMetric(metric => { metric.Message = $"CosmosDB RU, tenant - delete list type '{typeof(T)}'."; metric.Value = totalRU; }, properties: GetProperties());
             }
         }
@@ -346,7 +346,7 @@ namespace FoxIDs.Repository
 
         private IDictionary<string, string> GetProperties()
         {
-            var routeBinding = httpContextAccessor.HttpContext.TryGetRouteBinding();
+            var routeBinding = httpContextAccessor?.HttpContext?.TryGetRouteBinding();
             if (routeBinding != null)
             {
                 return new Dictionary<string, string> { { Constants.Logs.TenantName, routeBinding.TenantName }, { Constants.Logs.TrackName, routeBinding.TrackName } };

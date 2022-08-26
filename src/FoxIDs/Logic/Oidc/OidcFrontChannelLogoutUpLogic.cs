@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var frontChannelLogoutRequest = queryDictionary.ToObject<FrontChannelLogoutRequest>();
             logger.ScopeTrace(() => $"Up, Front channel logout request '{frontChannelLogoutRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-            frontChannelLogoutRequest.Validate();
+            frontChannelLogoutRequest.Validate(acceptEmptyIssuer: true);
             if (party.Client.FrontChannelLogoutSessionRequired)
             {
                 if (frontChannelLogoutRequest.SessionId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(frontChannelLogoutRequest.SessionId), frontChannelLogoutRequest.GetTypeName());

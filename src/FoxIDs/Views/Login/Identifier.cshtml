@@ -40,15 +40,18 @@
                 <div class="info-message info-message-filter">
                     @Localizer["OR select where to log in"]
                 </div>
-                <div class="form-group active-group group-filter">
-                    <div class="input-group">
-                        <input asp-for="UpPartyFilter" class="form-control input-control" />
-                        <label asp-for="UpPartyFilter" class="label-control"></label>
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">@Localizer["Search"]</button>
+                @if (Model.UpPatries.Count() > 5)
+                {
+                    <div class="form-group active-group group-filter">
+                        <div class="input-group">
+                            <input asp-for="UpPartyFilter" class="form-control input-control" />
+                            <label asp-for="UpPartyFilter" class="label-control"></label>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">@Localizer["Search"]</button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                }
                 <div class="list-filter">
                     @foreach (var upParty in Model.UpPatries)
                     {

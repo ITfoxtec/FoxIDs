@@ -204,8 +204,10 @@ namespace FoxIDs.Controllers
 
         private IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
-            var toUpParties = sequenceData.ToUpParties.Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0))).Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
-            foreach(var upPartyWithUrl in toUpParties.Where(up => !up.LogoUrl.IsNullOrWhiteSpace()))
+            var toUpParties = sequenceData.ToUpParties
+                .OrderBy(up => up.Type).ThenBy(up => up.Name)
+                .Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0))).Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });            
+            foreach (var upPartyWithUrl in toUpParties.Where(up => !up.LogoUrl.IsNullOrWhiteSpace()))
             {
                 securityHeaderLogic.AddImgSrc(upPartyWithUrl.LogoUrl);
             }

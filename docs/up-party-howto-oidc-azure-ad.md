@@ -21,7 +21,7 @@ This chapter describes how to configure a Azure AD single tenant connection with
 
 ![Read the redirect URLs](images/howto-oidc-azuread-readredirect.png)
 
-It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
+It is now possible to read the `Redirect URL` and `Front channel logout URL`.
 
 **2 - Then go to Azure Portal and create the Azure AD App**
 
@@ -31,7 +31,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  4. Click Register
  5. Copy the Application (client) ID
  6. Copy the Directory (tenant) ID
- 7. Go to the Authentication tab and add the FoxIDs up-party `Post logout redirect URL` as `Front-channel logout URL`, click save
+ 7. Go to the Authentication tab and add the FoxIDs up-party `Front channel logout URL`, click save
  8. Go to the Certificates & secrets tab and click New client secret and add the secret
  9. Copy the client secret value
  10. Go to the Token configuration tab and click Add optional claims. Then select ID (for adding claims to the ID token) and select email, family_name, given_name, ipaddr, preferred_username and click Add twice. 

@@ -14,7 +14,7 @@ This chapter describes how to configure a connection with OpenID Connect Authori
 
 ![Read the redirect URLs](images/howto-oidc-azuread-readredirect.png)
 
-It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
+It is now possible to read the `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL`.
 
 **2 - Then go to Azure AD B2C and create the app profile**
 

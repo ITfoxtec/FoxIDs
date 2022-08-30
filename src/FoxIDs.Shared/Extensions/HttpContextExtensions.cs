@@ -11,17 +11,21 @@ namespace FoxIDs
     {
         public static string GetHost(this HttpContext context, bool addTrailingSlash = true)
         {
-            var settings = context.RequestServices.GetService<Settings>();
-            if (settings != null)
+            var routeBinding = context.GetRouteBinding();
+            if (!routeBinding.HasCustomDomain)
             {
-                if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
+                var settings = context.RequestServices.GetService<Settings>();
+                if (settings != null)
                 {
-                    return AddSlash(settings.FoxIDsControlEndpoint, addTrailingSlash);
+                    if (!settings.FoxIDsControlEndpoint.IsNullOrEmpty())
+                    {
+                        return AddSlash(settings.FoxIDsControlEndpoint, addTrailingSlash);
+                    }
+                    if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
+                    {
+                        return AddSlash(settings.FoxIDsEndpoint, addTrailingSlash);
+                    }
                 }
-                if (!settings.FoxIDsEndpoint.IsNullOrEmpty())
-                {
-                    return AddSlash(settings.FoxIDsEndpoint, addTrailingSlash);
-                } 
             }
 
             return AddSlash($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/", addTrailingSlash);

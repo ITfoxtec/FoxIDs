@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class SamlMetadataReadUpLogic : LogicBase
+    public class SamlMetadataReadUpLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;

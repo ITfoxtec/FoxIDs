@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.WebUtilities;
 
 namespace FoxIDs.Logic
 {
-    public class OidcFrontChannelLogoutDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
+    public class OidcFrontChannelLogoutDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly TrackIssuerLogic trackIssuerLogic;

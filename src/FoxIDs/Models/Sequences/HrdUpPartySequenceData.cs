@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class HrdUpParty
+    public class HrdUpPartySequenceData
     {
         [Required]
         [JsonProperty(PropertyName = "n")]

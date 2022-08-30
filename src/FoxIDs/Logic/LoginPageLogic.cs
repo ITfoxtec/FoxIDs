@@ -14,7 +14,7 @@ using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
-    public class LoginPageLogic : LogicBase
+    public class LoginPageLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly SessionLoginUpPartyLogic sessionLogic;

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryReadUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcDiscoveryReadUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;

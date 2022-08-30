@@ -7,9 +7,6 @@ namespace FoxIDs.Models.Session
 {
     public abstract class SessionBaseCookie : CookieMessage
     {
-        [JsonProperty(PropertyName = "lu")]
-        public long LastUpdated { get; set; }
-
         [JsonIgnore]
         public IEnumerable<string> AuthMethods => Claims?.Where(c => c.Claim == JwtClaimTypes.Amr)?.SelectMany(c => c.Values);
 

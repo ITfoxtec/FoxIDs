@@ -43,7 +43,7 @@ namespace FoxIDs.Controllers
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mDownPartys, _) = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<DownParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName) || (doFilterPartyType && p.Type == filterPartyType)));
                 var aDownPartys = new HashSet<Api.DownParty>(mDownPartys.Count());
-                foreach(var mDownParty in mDownPartys.OrderBy(p => p.Name))
+                foreach(var mDownParty in mDownPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
                 {
                     aDownPartys.Add(mapper.Map<Api.DownParty>(mDownParty));
                 }

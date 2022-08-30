@@ -14,7 +14,7 @@ using UrlCombineLib;
 
 namespace FoxIDs.Logic
 {
-    public class TrackKeyLogic : LogicBase
+    public class TrackKeyLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TokenCredential tokenCredential;

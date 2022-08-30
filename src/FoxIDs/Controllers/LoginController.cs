@@ -135,7 +135,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException($"Selected up-party '{name}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
                 }
 
-                return await GoToUpParty(sequenceData, selectedUpParty);
+                return await GoToUpParty(sequenceData, ToUpPartyLink(selectedUpParty));
             }
             catch (Exception ex)
             {
@@ -143,20 +143,25 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> GoToUpParty(LoginUpSequenceData sequenceData, HrdUpParty selectedUpParty)
+        private UpPartyLink ToUpPartyLink(HrdUpPartySequenceData upParty)
+        {
+            return new UpPartyLink { Name = upParty.Name, Type = upParty.Type, HrdDomains = upParty.HrdDomains, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl };
+        }
+
+        private async Task<IActionResult> GoToUpParty(LoginUpSequenceData sequenceData, UpPartyLink selectedUpParty)
         {
             await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
 
             switch (selectedUpParty.Type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(loginUpLogic.ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData));
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(loginUpLogic.ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData));
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(loginUpLogic.ToUpPartyLink(selectedUpParty), GetLoginRequest(sequenceData));
+                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData));
                 default:
                     throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
             }
@@ -204,9 +209,9 @@ namespace FoxIDs.Controllers
 
         private IEnumerable<IdentifierUpPartyViewModel> GetToUpPartiesToShow(string currentUpPartyName, LoginUpSequenceData sequenceData)
         {
-            var toUpParties = sequenceData.ToUpParties
-                .OrderBy(up => up.Type).ThenBy(up => up.Name)
-                .Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0))).Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });            
+            var toUpParties = sequenceData.ToUpParties.Where(up => up.Name != currentUpPartyName && (up.HrdShowButtonWithDomain || !(up.HrdDomains?.Count() > 0)))
+                .Select(up => new IdentifierUpPartyViewModel { Name = up.Name, DisplayName = up.HrdDisplayName.IsNullOrWhiteSpace() ? up.Name : up.HrdDisplayName, LogoUrl = up.HrdLogoUrl });
+            
             foreach (var upPartyWithUrl in toUpParties.Where(up => !up.LogoUrl.IsNullOrWhiteSpace()))
             {
                 securityHeaderLogic.AddImgSrc(upPartyWithUrl.LogoUrl);
@@ -245,7 +250,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Identifier post.");
 
-                var autoSelectedUpParty = loginUpLogic.AutoSelectUpParty(sequenceData.ToUpParties, login.Email);
+                var autoSelectedUpParty = await loginUpLogic.AutoSelectUpPartyAsync(sequenceData.ToUpParties, login.Email);
                 if (autoSelectedUpParty != null)
                 {
                     if (autoSelectedUpParty.Name != loginUpParty.Name)

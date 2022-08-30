@@ -76,6 +76,7 @@ namespace FoxIDs.Logic
                         }
                     }
                 }
+                downParty.AllowUpParties = downParty.AllowUpParties.OrderBy(up => up.Type).ThenBy(up => up.Name).ToList();
             }
             return isValid;
         }

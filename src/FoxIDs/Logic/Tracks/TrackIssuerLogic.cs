@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Logic
 {
-    public class TrackIssuerLogic : LogicBase
+    public class TrackIssuerLogic : LogicSequenceBase
     {
         public TrackIssuerLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }

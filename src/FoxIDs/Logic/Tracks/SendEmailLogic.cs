@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class SendEmailLogic : LogicBase
+    public class SendEmailLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;

@@ -18,7 +18,7 @@ using UrlCombineLib;
 
 namespace FoxIDs.Logic
 {
-    public class AccountActionLogic : LogicBase
+    public class AccountActionLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;

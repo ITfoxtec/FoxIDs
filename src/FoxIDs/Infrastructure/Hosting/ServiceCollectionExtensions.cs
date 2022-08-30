@@ -2,6 +2,7 @@
 using Azure.Identity;
 using FoxIDs.Infrastructure.Localization;
 using FoxIDs.Logic;
+using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
@@ -40,6 +41,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<AccountActionLogic>();
             services.AddTransient<AccountTwoFactorLogic>();
             services.AddTransient<SendEmailLogic>();
+            services.AddTransient<HrdLogic>();
             services.AddTransient<SessionLoginUpPartyLogic>();
             services.AddTransient<SessionUpPartyLogic>();            
             services.AddTransient<ClaimTransformLogic>();         
@@ -89,7 +91,8 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             services.AddSharedRepository();
 
-            services.AddTransient(typeof(SingleCookieRepository<>));
+            services.AddTransient(typeof(TrackCookieRepository<>));
+            services.AddTransient(typeof(UpPartyCookieRepository<>));
 
             return services;
         }

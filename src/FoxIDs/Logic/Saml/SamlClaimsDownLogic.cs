@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace FoxIDs.Logic
 {
-    public class SamlClaimsDownLogic : LogicBase
+    public class SamlClaimsDownLogic : LogicSequenceBase
     {
         public SamlClaimsDownLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }

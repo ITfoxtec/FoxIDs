@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Sequences
         public bool EmailVerified { get; set; }
 
         [JsonProperty(PropertyName = "tui")]
-        public IEnumerable<HrdUpParty> ToUpParties { get; set; }
+        public IEnumerable<HrdUpPartySequenceData> ToUpParties { get; set; }
 
         [JsonProperty(PropertyName = "li")]
         public bool DoLoginIdentifierStep { get; set; }

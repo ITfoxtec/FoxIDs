@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcFrontChannelLogoutUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcFrontChannelLogoutUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;

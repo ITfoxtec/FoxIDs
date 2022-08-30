@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Logic
 {
-    public class LocalizationLogic : LogicBase
+    public class LocalizationLogic : LogicSequenceBase
     {
         // The maximum number of culture names to attempt to test.
         private const int maximumCultureNamesToTry = 3;

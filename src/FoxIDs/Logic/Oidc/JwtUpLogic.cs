@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class JwtUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class JwtUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         public JwtUpLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         { }

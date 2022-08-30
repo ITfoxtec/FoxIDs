@@ -14,7 +14,7 @@ using FoxIDs.Repository;
 
 namespace FoxIDs.Logic
 {
-    public class SingleLogoutDownLogic : LogicBase
+    public class SingleLogoutDownLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;

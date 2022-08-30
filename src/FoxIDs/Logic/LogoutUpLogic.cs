@@ -10,7 +10,7 @@ using FoxIDs.Models.Sequences;
 
 namespace FoxIDs.Logic
 {
-    public class LogoutUpLogic : LogicBase
+    public class LogoutUpLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;

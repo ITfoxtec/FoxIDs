@@ -19,6 +19,14 @@ FoxIDs support tree different up-party types:
 - [Up-party OpenID Connect](up-party-oidc.md)
 - [Up-party SAML 2.0](up-party-saml-2.0.md)
 
+
+### Up-party session
+Each up-party creates a session when a user is authenticated. All sessions are separately connected to an up-party. There are two different kinds of sessions.
+A login up-party create a [user session](login.md#configure-user-session). An OpenID Connect up-party and SAML 2.0 up-party create an up-party session which only holds information to enable logout. 
+
+Both session types lifetime, absolute lifetime and persistence (if the session should be saved when the browser is closed) can be configured.
+
+
 ## Down-party
 
 FoxIDs support tree different down-party types:

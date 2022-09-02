@@ -42,7 +42,6 @@ You can select to require two-factor authentication for all users authenticating
 
 ![Configure Login](images/configure-login-2fa.png)
 
-
 ### Configure user session
 The user sessions lifetime can be changed. The default lifetime is 10 hours. 
 The user session is a sliding session, where the lifetime is extended every time, an application makes a login request until the absolute session lifetime is reached.  

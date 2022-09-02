@@ -23,9 +23,9 @@ namespace FoxIDs.Repository
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public Task<TMessage> GetAsync(bool delete = false, bool tryGet = false)
+        public Task<TMessage> GetAsync()
         {
-            return Task.FromResult(Get(delete, tryGet));
+            return Task.FromResult(Get());
         }
 
         public Task SaveAsync(TMessage message)
@@ -34,18 +34,18 @@ namespace FoxIDs.Repository
             return Task.FromResult(0);
         }
 
-        public Task DeleteAsync(bool tryDelete = false)
+        public Task DeleteAsync()
         {
-            Delete(tryDelete);
+            Delete();
             return Task.FromResult(0);
         }
 
-        private TMessage Get(bool delete, bool tryGet = false)
+        private TMessage Get()
         {
-            if (tryGet && RouteBindingDoNotExists()) return null;
+            if (RouteBindingDoNotExists()) return null;
             CheckRouteBinding();
 
-            logger.ScopeTrace(() => $"Get track cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}', delete '{delete}'.");
+            logger.ScopeTrace(() => $"Get track cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
@@ -53,13 +53,6 @@ namespace FoxIDs.Repository
                 try
                 {
                     var envelope = CookieEnvelope<TMessage>.FromCookieString(CreateProtector(), cookie);
-
-                    if (delete)
-                    {
-                        logger.ScopeTrace(() => $"Delete track cookie, '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
-                        DeleteByName(CookieName());
-                    }
-
                     return envelope.Message;
                 }
                 catch (CryptographicException ex)
@@ -104,9 +97,9 @@ namespace FoxIDs.Repository
                 cookieOptions);
         }
 
-        private void Delete(bool tryDelete = false)
+        private void Delete()
         {
-            if (tryDelete && RouteBindingDoNotExists()) return;
+            if (RouteBindingDoNotExists()) return;
             CheckRouteBinding();
 
             logger.ScopeTrace(() => $"Delete track cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");

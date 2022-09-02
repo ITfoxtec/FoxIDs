@@ -8,7 +8,7 @@ using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Logic
 {
-    public class Saml2ConfigurationLogic : LogicBase
+    public class Saml2ConfigurationLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly TrackKeyLogic trackKeyLogic;

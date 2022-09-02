@@ -9,6 +9,9 @@ namespace FoxIDs.Models.Session
         [JsonProperty(PropertyName = "ct")]
         public long CreateTime { get; set; } = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
+        [JsonProperty(PropertyName = "lu")]
+        public long LastUpdated { get; set; }
+
         [JsonIgnore]
         public abstract SameSiteMode SameSite { get; }
     }

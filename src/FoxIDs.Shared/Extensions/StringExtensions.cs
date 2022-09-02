@@ -1,7 +1,6 @@
 ﻿using ITfoxtec.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace FoxIDs
 {
@@ -30,6 +29,17 @@ namespace FoxIDs
             }
 
             return string.Join('.', resultText);
+        }
+
+        public static string PartyIdToName(this string upPartyId)
+        {
+            if (upPartyId.IsNullOrEmpty())
+            {
+                return upPartyId;
+            }
+
+            var split = upPartyId.Split(':');
+            return split[split.Length - 1];
         }
     }
 }

@@ -14,7 +14,7 @@ namespace FoxIDs
         {
             try
             {
-                if (httpContext.Items.ContainsKey(Constants.Routes.RouteBindingKey))
+                if (httpContext != null && httpContext.Items.ContainsKey(Constants.Routes.RouteBindingKey))
                 {
                     return httpContext.GetRouteBinding();
                 }

@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Models;
-using FoxIDs.Models.Sequences;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +8,7 @@ namespace FoxIDs.Logic
     {
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public LogicBase([FromServices] IHttpContextAccessor httpContextAccessor)
+        public LogicBase(IHttpContextAccessor httpContextAccessor)
         {
             this.httpContextAccessor = httpContextAccessor;
         }
@@ -17,7 +16,5 @@ namespace FoxIDs.Logic
         public HttpContext HttpContext => httpContextAccessor.HttpContext;
 
         public RouteBinding RouteBinding => HttpContext.GetRouteBinding();
-
-        public Sequence Sequence => HttpContext.GetSequence();
     }
 }

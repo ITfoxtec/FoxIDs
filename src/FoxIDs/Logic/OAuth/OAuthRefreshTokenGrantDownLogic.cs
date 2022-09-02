@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : LogicBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;

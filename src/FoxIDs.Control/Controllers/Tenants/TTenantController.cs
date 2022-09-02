@@ -174,7 +174,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("The master tenant can not be deleted.");
                 }
      
-                var mTracks = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
+                (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
                     await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = name, TrackName = mTrack.Name });

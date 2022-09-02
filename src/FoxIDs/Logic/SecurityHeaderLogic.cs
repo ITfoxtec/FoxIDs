@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 
 namespace FoxIDs.Logic
 {
-    public class SecurityHeaderLogic : LogicBase
+    public class SecurityHeaderLogic : LogicSequenceBase
     {
         private const int domainsMaxCount = 20;
         private static Regex urlsInTextRegex = new Regex(@"https:\/\/[\w/\-?=%.]+\.[\w/\-&?=%.]+", RegexOptions.Compiled);

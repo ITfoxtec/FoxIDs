@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Core;
 using Azure.Identity;
+using FoxIDs.Infrastructure.Queue;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
 using FoxIDs.Logic.Seed;
@@ -30,6 +31,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<SeedLogic>();
             services.AddTransient<MasterTenantDocumentsSeedLogic>();
+
+            services.AddTransient<DownPartyAllowUpPartiesQueueLogic>();
 
             services.AddTransient<BaseAccountLogic>();
             services.AddTransient<SecretHashLogic>();
@@ -64,6 +67,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddSingleton<OidcDiscoveryHandlerService>();
             services.AddHostedService<OidcDiscoveryBackgroundService>();
+
+            services.AddHostedService<BackgroundQueueService>();
 
             if (!env.IsDevelopment())
             {

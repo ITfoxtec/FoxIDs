@@ -35,6 +35,7 @@ namespace FoxIDs.Models.Config
         /// <summary>
         /// Cache configuration.
         /// </summary>
+        [Required]
         public CacheSettings Cache { get; set; } = new CacheSettings();
 
         /// <summary>

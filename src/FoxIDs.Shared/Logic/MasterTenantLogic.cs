@@ -13,8 +13,6 @@ namespace FoxIDs.Logic
 {
     public class MasterTenantLogic : LogicBase
     {
-        const string loginName = "login";
-
         private readonly ITenantRepository tenantRepository;
         private readonly BaseAccountLogic accountLogic;
         private readonly TrackLogic trackLogic;
@@ -60,14 +58,14 @@ namespace FoxIDs.Logic
         {
             var mLoginUpParty = new LoginUpParty
             {
-                Name = loginName,
+                Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = false,
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = loginName });
+            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.DefaultLogin.Name });
 
             await tenantRepository.CreateAsync(mLoginUpParty);
             return mLoginUpParty;
@@ -77,14 +75,14 @@ namespace FoxIDs.Logic
         {
             var mLoginUpParty = new LoginUpParty
             {
-                Name = loginName,
+                Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
                 SessionLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = loginName });
+            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = Constants.DefaultLogin.Name });
 
             await tenantRepository.CreateAsync(mLoginUpParty);
             return mLoginUpParty;

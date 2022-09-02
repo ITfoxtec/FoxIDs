@@ -3,6 +3,8 @@
     public enum LoginTabTypes
     {
         Login,
-        ClaimsTransform
+        ClaimsTransform,
+        Session,
+        Hrd
     }
 }

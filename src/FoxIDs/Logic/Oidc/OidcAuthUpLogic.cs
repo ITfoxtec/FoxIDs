@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
@@ -21,26 +22,28 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcAuthUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcAuthUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly JwtUpLogic<TParty, TClient> jwtUpLogic;
         private readonly SequenceLogic sequenceLogic;
+        private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.jwtUpLogic = jwtUpLogic;
             this.sequenceLogic = sequenceLogic;
+            this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
@@ -48,7 +51,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "Up, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -61,6 +64,7 @@ namespace FoxIDs.Logic
             var oidcUpSequenceData = new OidcUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
+                HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
@@ -214,6 +218,11 @@ namespace FoxIDs.Logic
                 if (!sessionId.IsNullOrEmpty())
                 {
                     validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                }
+
+                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+                {
+                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
                 }
 
                 logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);

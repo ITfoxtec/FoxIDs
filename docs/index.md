@@ -58,16 +58,17 @@ The tracks are separated under each tenant in the second path element of the URL
 
 A down-party is call by adding the down-party name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
 A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
-If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to locking the cookie to the URL.
+If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
 A client (application) starting an OpenID Connect or SAML 2.0 login sequence would like to specify in which up-party the user should authenticate. 
 The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
-> The allowed up-parties for a down-party is configured for each down-party in [FoxIDs Control Client](control.md#foxids-control-client).
+> The allowed up-parties for a [down-party](parties.md#down-party) is configured for each down-party in [FoxIDs Control Client](control.md#foxids-control-client).
 
-Selecting multiple up-parties *(future support)*:
+Selecting multiple up-parties:
 
 - Select all up-parties allowed for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
-- Select a maximum of 5 up-parties allowed for a down-party by adding the up-parties as a comma separated list in round brackets in the URL after the down-party name `https://foxidsxxxx.com/*tenant-x*/*track-y*/*down-party-z*(up-party-v1*,up-party-v2*,up-party-v3,up-party-v4,up-party-v5)/`
+- Select a maximum of 4 up-parties allowed for a down-party by adding the up-parties as a comma separated list in round brackets 
+  in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
 
 A client which use client credentials as authorization grant would not specify the up-party. It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

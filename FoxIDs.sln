@@ -97,6 +97,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-login-css-backbround-image.png = docs\images\configure-login-css-backbround-image.png
 		docs\images\configure-login-css-backbround-logo.png = docs\images\configure-login-css-backbround-logo.png
 		docs\images\configure-login-css-sample-test.png = docs\images\configure-login-css-sample-test.png
+		docs\images\configure-login-hrd.png = docs\images\configure-login-hrd.png
 		docs\images\configure-login-title-icon-css.png = docs\images\configure-login-title-icon-css.png
 		docs\images\configure-login.png = docs\images\configure-login.png
 		docs\images\configure-oauth-resource.png = docs\images\configure-oauth-resource.png

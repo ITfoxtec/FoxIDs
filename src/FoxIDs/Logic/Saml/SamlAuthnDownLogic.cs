@@ -21,7 +21,7 @@ using FoxIDs.Models.Session;
 
 namespace FoxIDs.Logic
 {
-    public class SamlAuthnDownLogic : LogicBase
+    public class SamlAuthnDownLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
@@ -101,21 +101,29 @@ namespace FoxIDs.Logic
                     AcsResponseUrl = GetAcsUrl(party, saml2AuthnRequest),
                 });
 
-                var type = RouteBinding.ToUpParties.First().Type;
-                logger.ScopeTrace(() => $"Request, Up type '{type}'.");
-                switch (type)
+                var toUpParties = RouteBinding.ToUpParties;
+                if (toUpParties.Count() == 1)
                 {
-                    case PartyTypes.Login:
-                        return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
-                    case PartyTypes.OAuth2:
-                        throw new NotImplementedException();
-                    case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
-                    case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(RouteBinding.ToUpParties.First(), GetLoginRequestAsync(party, saml2AuthnRequest));
+                    var toUpParty = toUpParties.First();
+                    logger.ScopeTrace(() => $"Request, Up type '{toUpParty:Type}'.");
+                    switch (toUpParty.Type)
+                    {
+                        case PartyTypes.Login:
+                            return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                        case PartyTypes.OAuth2:
+                            throw new NotImplementedException();
+                        case PartyTypes.Oidc:
+                            return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                        case PartyTypes.Saml2:
+                            return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
 
-                    default:
-                        throw new NotSupportedException($"Party type '{type}' not supported.");
+                        default:
+                            throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                    }
+                }
+                else
+                {
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(GetLoginRequestAsync(party, saml2AuthnRequest));
                 }
             }
             catch (SamlRequestException ex)

@@ -3,7 +3,7 @@
 
     $('.input-control').each(function () {
         var input = $(this);
-        var parent = $(this.parentNode);
+        var parent = input.closest('.active-group');
 
         if (setFocus) {
             input.focus();
@@ -26,8 +26,12 @@
 
     function browserValueCheck() {
         $('.input-control:not(.active)').each(function () {
-            if ($(this).val()) {
-                $(this.parentNode).addClass('active');
+            var input = $(this);
+            if (input.val()) {
+                var parent = input.closest('.active-group');
+                if (parent) {
+                    parent.addClass('active');
+                }
             }
         });
     }
@@ -48,6 +52,25 @@
     }
     setDisableOnSubmit();
 
+    $('#form-filter').submit(function (event) {
+        var filterValue = $('.input-control', this).val();
+        $('.list-item-filter', this).each(function () {
+            var item = $(this);
+            if (!filterValue) {
+                item.removeClass('d-none');
+            }
+            else { 
+                var upParty = item.attr('up-party-name');
+                if (upParty.indexOf(filterValue) >= 0) {
+                    item.removeClass('d-none');
+                }
+                else {
+                    item.addClass('d-none');
+                }
+            }
+        });
+        event.preventDefault();
+    });
 })();
 
 

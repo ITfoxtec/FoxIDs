@@ -8,7 +8,7 @@ using FoxIDs.Infrastructure;
 
 namespace FoxIDs.Logic
 {
-    public class FailingLoginLogic : LogicBase
+    public class FailingLoginLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;

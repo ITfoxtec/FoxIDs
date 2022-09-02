@@ -47,6 +47,7 @@ namespace FoxIDs.Models
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
+        [RegularExpression(Constants.Models.LoginUpParty.TitleRegExPattern)]
         [JsonProperty(PropertyName = "title")]
         public string Title { get; set; }
 

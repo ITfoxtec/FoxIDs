@@ -1,7 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity;
 using System.Linq;
 
@@ -73,6 +72,32 @@ namespace FoxIDs.Models.Api
         /// URL party binding pattern.
         /// </summary>
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        /// <summary>
+        /// Home realm discovery (HRD) domains.
+        /// </summary>
+        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [Display(Name = "HRD domains")]
+        public List<string> HrdDomains { get; set; }
+
+        [Display(Name = "Show HRD button with domain")]
+        public bool HrdShowButtonWithDomain { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) display name.
+        /// </summary>
+        [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
+        [Display(Name = "HRD display name")]
+        public string HrdDisplayName { get; set; }
+
+        /// <summary>
+        /// Home realm discovery (HRD) logo URL.
+        /// </summary>
+        [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
+        [Display(Name = "HRD logo URL")]
+        public string HrdLogoUrl { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

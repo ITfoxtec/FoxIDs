@@ -15,7 +15,7 @@ using UrlCombineLib;
 
 namespace FoxIDs.Logic
 {
-    public class OidcRpInitiatedLogoutUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcRpInitiatedLogoutUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;

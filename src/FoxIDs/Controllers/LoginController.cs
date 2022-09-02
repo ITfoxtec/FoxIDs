@@ -152,16 +152,25 @@ namespace FoxIDs.Controllers
         {
             await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
 
+            if (sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+            {
+                throw new InvalidOperationException("Sequence data HRD login up-party name is null or empty.");
+            }
+            if (selectedUpParty.Name == sequenceData.HrdLoginUpPartyName)
+            {
+                throw new InvalidOperationException("Selected up-party name is the same as HRD login up-party name.");
+            }
+
             switch (selectedUpParty.Type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData));
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.HrdLoginUpPartyName);
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData));
+                    return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData));
+                    return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
                 default:
                     throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
             }
@@ -250,13 +259,16 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Identifier post.");
 
-                var autoSelectedUpParty = await loginUpLogic.AutoSelectUpPartyAsync(sequenceData.ToUpParties, login.Email);
-                if (autoSelectedUpParty != null)
+                if (sequenceData.ToUpParties.Count() > 1)
                 {
-                    if (autoSelectedUpParty.Name != loginUpParty.Name)
+                    var autoSelectedUpParty = await loginUpLogic.AutoSelectUpPartyAsync(sequenceData.ToUpParties, login.Email);
+                    if (autoSelectedUpParty != null)
                     {
-                        return await GoToUpParty(sequenceData, autoSelectedUpParty);
-                    }
+                        if (autoSelectedUpParty.Name != loginUpParty.Name)
+                        {
+                            return await GoToUpParty(sequenceData, autoSelectedUpParty);
+                        }
+                    } 
                 }
 
                 if (!sequenceData.ToUpParties.Where(up => up.Name == loginUpParty.Name).Any())

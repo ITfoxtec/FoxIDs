@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
@@ -16,14 +17,16 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
+        private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic;
 
-        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcFrontChannelLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, OAuthRefreshTokenGrantDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim> oauthRefreshTokenGrantLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
+            this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
@@ -50,6 +53,8 @@ namespace FoxIDs.Logic
             {
                 if (frontChannelLogoutRequest.SessionId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(frontChannelLogoutRequest.SessionId), frontChannelLogoutRequest.GetTypeName());
             }
+
+            await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
 
             var session = await sessionUpPartyLogic.GetSessionAsync(party);
             logger.ScopeTrace(() => "Up, Successful OIDC Front channel logout request.", triggerEvent: true);

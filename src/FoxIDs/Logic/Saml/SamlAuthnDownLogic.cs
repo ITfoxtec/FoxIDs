@@ -101,9 +101,10 @@ namespace FoxIDs.Logic
                     AcsResponseUrl = GetAcsUrl(party, saml2AuthnRequest),
                 });
 
-                if (RouteBinding.ToUpParties.Count() == 1)
+                var toUpParties = RouteBinding.ToUpParties;
+                if (toUpParties.Count() == 1)
                 {
-                    var toUpParty = RouteBinding.ToUpParties.First();
+                    var toUpParty = toUpParties.First();
                     logger.ScopeTrace(() => $"Request, Up type '{toUpParty:Type}'.");
                     switch (toUpParty.Type)
                     {
@@ -122,7 +123,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties, GetLoginRequestAsync(party, saml2AuthnRequest));
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(GetLoginRequestAsync(party, saml2AuthnRequest));
                 }
             }
             catch (SamlRequestException ex)

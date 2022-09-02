@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
-        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "Up, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -61,6 +61,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new SamlUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
+                HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
@@ -248,7 +249,10 @@ namespace FoxIDs.Logic
                     jwtValidClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
                 }
 
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Saml2);
+                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+                {
+                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Saml2);
+                }
 
                 logger.ScopeTrace(() => $"Up, SAML Authn output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, jwtValidClaims);

@@ -176,14 +176,16 @@ namespace FoxIDs.Infrastructure.Hosting
 
                     if (routeBinding.DownParty?.AllowUpParties?.Count() >= 1)
                     {
+                        //TODO can be deleted when data is updated everywhere, delete after summer 2023
+                        var allowUpParties = routeBinding.DownParty.AllowUpParties.OrderBy(p => p.Type).ThenBy(p => p.Name);
+
                         if (partyNameBindingMatch.Groups["toupparty"].Success)
                         {
-                            routeBinding.ToUpParties = GetAllowedToUpPartyIds(scopedLogger, trackIdKey, partyNameBindingMatch.Groups["toupparty"], routeBinding.DownParty);
+                            routeBinding.ToUpParties = GetAllowedToUpPartyIds(scopedLogger, partyNameBindingMatch.Groups["toupparty"], routeBinding.DownParty.Id, allowUpParties);
                         }
                         else
                         {
-                            routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties?.Count() > 0 ? routeBinding.DownParty.AllowUpParties.Take(1).ToList() : new List<UpPartyLink>();
-                            routeBinding.DefaultToUpParties = true;
+                            routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties;
                         }
                     }
                 }
@@ -256,11 +258,11 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private List<UpPartyLink> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Group toUpPartyGroup, DownParty downParty)
+        private List<UpPartyLink> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Group toUpPartyGroup, string downPartyId, IEnumerable<UpPartyLink> allowUpParties)
         {
             if (toUpPartyGroup.Captures.Count > 4)
             {
-                throw new ArgumentException($"More then 4 to up-party for down-party '{downParty.Id}'.");
+                throw new ArgumentException($"More then 4 to up-party for down-party '{downPartyId}'.");
             }
 
             var toUpParties = new List<UpPartyLink>();
@@ -269,12 +271,12 @@ namespace FoxIDs.Infrastructure.Hosting
                 if (upPartyCapture.Value == "*")
                 {
                     toUpParties.Clear();
-                    toUpParties.AddRange(downParty.AllowUpParties);
+                    toUpParties.AddRange(allowUpParties);
                     break;
                 }
                 else
                 {
-                    var allowUpParty = downParty.AllowUpParties.Where(ap => ap.Name.Equals(upPartyCapture.Value, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    var allowUpParty = allowUpParties.Where(ap => ap.Name.Equals(upPartyCapture.Value, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
                     if (allowUpParty != null)
                     {
                         if (!toUpParties.Contains(allowUpParty))
@@ -286,7 +288,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         try
                         {
-                            throw new ArgumentException($"Up-party name '{upPartyCapture.Value}' not allowed for down-party '{downParty.Id}',");
+                            throw new ArgumentException($"Up-party name '{upPartyCapture.Value}' not allowed for down-party '{downPartyId}',");
                         }
                         catch (Exception ex)
                         {

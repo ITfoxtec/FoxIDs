@@ -4,10 +4,13 @@ namespace FoxIDs.Models.Session
 {
     public class HrdUpPartyCookieData
     {
-        [JsonProperty(PropertyName = "n")]
-        public string Name { get; set; }
+        [JsonProperty(PropertyName = "ln")]
+        public string LoginUpPartyName { get; set; }
 
-        [JsonProperty(PropertyName = "t")]
-        public PartyTypes Type { get; set; }
+        [JsonProperty(PropertyName = "sn")]
+        public string SelectedUpPartyName { get; set; }
+
+        [JsonProperty(PropertyName = "st")]
+        public PartyTypes SelectedUpPartyType { get; set; }
     }
 }

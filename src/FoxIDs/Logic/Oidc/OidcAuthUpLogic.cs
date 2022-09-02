@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "Up, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -64,6 +64,7 @@ namespace FoxIDs.Logic
             var oidcUpSequenceData = new OidcUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
+                HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
@@ -219,7 +220,10 @@ namespace FoxIDs.Logic
                     validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
                 }
 
-                await hrdLogic.SaveHrdSelectionAsync(sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
+                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+                {
+                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
+                }
 
                 logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);

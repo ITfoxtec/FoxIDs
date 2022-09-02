@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, bool isAutoRedirect = false)
+        public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => $"Up, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} up-party link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -47,6 +47,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
+                HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 ToUpParties = new [] { new HrdUpPartySequenceData { Name = partyLink.Name } },
                 LoginAction = loginRequest.LoginAction,
@@ -60,12 +61,10 @@ namespace FoxIDs.Logic
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LoginRedirectAsync(List<UpPartyLink> toUpParties, LoginRequest loginRequest)
+        public async Task<IActionResult> LoginRedirectAsync(LoginRequest loginRequest)
         {
             logger.ScopeTrace(() => "Up, Login redirect (multiple up-party links).");
-            toUpParties = toUpParties.OrderBy(p => p.Type).ThenBy(p => p.Name).ToList();
-            var login = toUpParties.Where(up => up.Type == PartyTypes.Login).FirstOrDefault();
-            var loginName = login != null ? login.Name : Constants.DefaultLogin.Name;
+            (var loginName, var toUpParties) = hrdLogic.GetLoginUpPartyNameAndToUpParties();
             var partyId = await UpParty.IdFormatAsync(RouteBinding, loginName);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -80,14 +79,14 @@ namespace FoxIDs.Logic
                 switch (autoSelectedUpParty.Type)
                 {
                     case PartyTypes.Login:
-                        return await LoginRedirectAsync(autoSelectedUpParty, loginRequest, isAutoRedirect: true);
+                        return await LoginRedirectAsync(autoSelectedUpParty, loginRequest, isAutoRedirect: true, hrdLoginUpPartyName: loginName);
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
                         //sessionHrdUpParty.
-                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(autoSelectedUpParty, loginRequest);
+                        return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(autoSelectedUpParty, loginRequest);
+                        return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
                     default:
                         throw new NotSupportedException($"Party type '{autoSelectedUpParty.Type}' not supported.");
                 }
@@ -97,6 +96,7 @@ namespace FoxIDs.Logic
                 await sequenceLogic.SaveSequenceDataAsync(new LoginUpSequenceData
                 {
                     DownPartyLink = loginRequest.DownPartyLink,
+                    HrdLoginUpPartyName = loginName,
                     UpPartyId = partyId,
                     ToUpParties = hrdUpParties,
                     LoginAction = loginRequest.LoginAction,
@@ -132,10 +132,10 @@ namespace FoxIDs.Logic
             var hrdUpParties = await hrdLogic.GetHrdSelectionAsync();
             if (hrdUpParties?.Count() > 0)
             {
-                var hrdUpParty = hrdUpParties.Where(hu => toUpParties.Any(up => up.Name == hu.Name)).FirstOrDefault();
+                var hrdUpParty = hrdUpParties.Where(hu => toUpParties.Any(up => up.Name == hu.SelectedUpPartyName)).FirstOrDefault();
                 if (hrdUpParty != null)
                 {
-                    return new UpPartyLink { Name = hrdUpParty.Name, Type = hrdUpParty.Type };
+                    return new UpPartyLink { Name = hrdUpParty.SelectedUpPartyName, Type = hrdUpParty.SelectedUpPartyType };
                 }
             }
 
@@ -149,7 +149,7 @@ namespace FoxIDs.Logic
             return null;
         }
 
-        private IEnumerable<HrdUpPartySequenceData> ToHrdUpPartis(List<UpPartyLink> toUpParties)
+        private IEnumerable<HrdUpPartySequenceData> ToHrdUpPartis(IEnumerable<UpPartyLink> toUpParties)
         {
             return toUpParties.Select(up => new HrdUpPartySequenceData { Name = up.Name, Type = up.Type, HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl });
         }
@@ -161,7 +161,10 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            await hrdLogic.SaveHrdSelectionAsync(sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Login);
+            if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+            {
+                await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Login);
+            }
 
             logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
             switch (sequenceData.DownPartyLink.Type)

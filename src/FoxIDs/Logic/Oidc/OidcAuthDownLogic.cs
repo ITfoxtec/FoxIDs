@@ -87,9 +87,10 @@ namespace FoxIDs.Logic
                     CodeChallengeMethod = codeChallengeSecret?.CodeChallengeMethod,
                 });
 
-                if (RouteBinding.ToUpParties.Count() == 1)
+                var toUpParties = RouteBinding.ToUpParties;
+                if (toUpParties.Count() == 1)
                 {
-                    var toUpParty = RouteBinding.ToUpParties.First();
+                    var toUpParty = toUpParties.First();
                     logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
                     switch (toUpParty.Type)
                     {
@@ -107,7 +108,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(RouteBinding.ToUpParties, await GetLoginRequestAsync(party, authenticationRequest));
+                    return await serviceProvider.GetService<LoginUpLogic>().LoginRedirectAsync(await GetLoginRequestAsync(party, authenticationRequest));
                 }
             }
             catch (OAuthRequestException ex)

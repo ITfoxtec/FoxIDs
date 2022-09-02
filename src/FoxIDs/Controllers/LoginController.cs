@@ -187,6 +187,12 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
+                var redirectAction = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                if (redirectAction != null)
+                {
+                    return redirectAction;
+                }
+
                 logger.ScopeTrace(() => "Show identifier dialog.");
                 return base.View("Identifier", new IdentifierViewModel
                 {
@@ -331,6 +337,32 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
+            var redirectAction = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            if (redirectAction != null)
+            {
+                return redirectAction;
+            }
+
+            if (sequenceData.Email.IsNullOrWhiteSpace())
+            {
+                throw new InvalidOperationException("Required email is empty in sequence.");
+            }
+
+            logger.ScopeTrace(() => "Show password dialog.");
+            return View("Password", new PasswordViewModel
+            {
+                SequenceString = SequenceString,
+                Title = loginUpParty.Title,
+                IconUrl = loginUpParty.IconUrl,
+                Css = loginUpParty.Css,
+                EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                EnableResetPassword = !loginUpParty.DisableResetPassword,
+                Email = sequenceData.Email,
+            });
+        }
+
+        private async Task<IActionResult> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
             var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
@@ -342,25 +374,8 @@ namespace FoxIDs.Controllers
             {
                 return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired);
             }
-            else
-            {
-                if (sequenceData.Email.IsNullOrWhiteSpace())
-                {
-                    throw new InvalidOperationException("Required email is empty in sequence.");
-                }
 
-                logger.ScopeTrace(() => "Show password dialog.");
-                return View("Password", new PasswordViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = loginUpParty.Title,
-                    IconUrl = loginUpParty.IconUrl,
-                    Css = loginUpParty.Css,
-                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    EnableResetPassword = !loginUpParty.DisableResetPassword,
-                    Email = sequenceData.Email,
-                });
-            }
+            return null;
         }
 
         private DownPartySessionLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;

@@ -80,11 +80,11 @@
             <li class="nav-item">
                 @if (samlUpParty.ShowSessionTab)
                 {
-                    <a class="nav-link active">Session</a>
+                    <a class="nav-link active">Logout session</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Session</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout session</button>
                 }
             </li>
             <li class="nav-item">

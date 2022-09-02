@@ -245,6 +245,7 @@ code {
 
 .img-item-filter {
     max-height: 20px;
+    max-width: 60px;
     width: auto;
 }
 

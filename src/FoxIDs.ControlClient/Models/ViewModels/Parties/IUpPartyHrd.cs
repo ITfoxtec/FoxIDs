@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public interface IUpPartyHrd
     {
-        [Display(Name = "Home Realm Discovery (HRD) Domains")]
+        [Display(Name = "HRD Domains (use * to accept all domains)")]
         public List<string> HrdDomains { get; set; }
 
         [Display(Name = "Show HRD button together with HRD domain")]

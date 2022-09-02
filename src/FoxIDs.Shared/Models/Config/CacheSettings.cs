@@ -11,6 +11,12 @@ namespace FoxIDs.Models.Config
         public int CustomDomainLifetime { get; set; } = 86400;
 
         /// <summary>
+        /// Time to cache tracks in seconds (default 24 hours).
+        /// </summary>
+        [Required]
+        public int TrackLifetime { get; set; } = 86400;
+
+        /// <summary>
         /// Time to cache up-parties in seconds (default 6 hours).
         /// </summary>
         [Required] 

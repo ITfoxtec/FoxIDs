@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using FoxIDs.Models;
 using System.Linq;
-using FoxIDs.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Logic;
@@ -15,12 +14,12 @@ namespace FoxIDs.Infrastructure.Hosting
     public abstract class RouteBindingMiddleware
     {
         private readonly RequestDelegate next;
-        private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public RouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository)
+        public RouteBindingMiddleware(RequestDelegate next, TrackCacheLogic trackCacheLogic)
         {
             this.next = next;
-            this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -103,7 +102,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             try
             {
-                return await tenantRepository.GetTrackByNameAsync(idKey);
+                return await trackCacheLogic.GetTrackAsync(idKey);
             }
             catch (Exception ex)
             {

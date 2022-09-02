@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using System.Collections.Generic;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -16,12 +17,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackLogStreamsSettingsController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackLogStreamsSettingsController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         /// <summary>
@@ -69,13 +72,16 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(logStreams)) return BadRequest(ModelState);
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 if (mTrack.Logging == null)
                 {
                     mTrack.Logging = new Logging();
                 }
                 mTrack.Logging.ScopedStreamLoggers = mapper.Map<List<ScopedStreamLogger>>(logStreams.LogStreamSettings);
                 await tenantRepository.UpdateAsync(mTrack);
+
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<HashSet<Api.LogStreamSettings>>(mTrack.Logging.ScopedStreamLoggers));
             }

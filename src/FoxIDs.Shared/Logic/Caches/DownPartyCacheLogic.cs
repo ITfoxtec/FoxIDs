@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
 
         private string RadisDownPartyNameKey(Party.IdKey partyIdKey)
         {
-            return $"downParty_name_{partyIdKey.TenantName}_{partyIdKey.TrackName}_{partyIdKey.PartyName}";
+            return $"downParty_cache_name_{partyIdKey.TenantName}_{partyIdKey.TrackName}_{partyIdKey.PartyName}";
         }
 
         private Party.IdKey GetDownPartyIdKey(string downPartyName, string tenantName = null, string trackName = null)

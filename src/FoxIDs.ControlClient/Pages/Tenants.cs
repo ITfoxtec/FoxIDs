@@ -90,7 +90,10 @@ namespace FoxIDs.Client.Pages
             tenants.Clear();
             foreach (var dp in dataTenans)
             {
-                tenants.Add(new GeneralTenantViewModel(dp));
+                tenants.Add(new GeneralTenantViewModel(dp) 
+                {
+                    LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{dp.Name}".ToLower()
+                });
             }
         }
 
@@ -104,7 +107,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var tenant = await TenantService.GetTenantAsync(generalTenant.Name);
-                await generalTenant.Form.InitAsync(ToViewModel(tenant));
+                await generalTenant.Form.InitAsync(tenant);
             }
             catch (TokenUnavailableException)
             {
@@ -114,14 +117,6 @@ namespace FoxIDs.Client.Pages
             {
                 generalTenant.Error = ex.Message;
             }
-        }
-
-        private TenantViewModel ToViewModel(Tenant tenant)
-        {
-            return tenant.Map<TenantViewModel>(afterMap: afterMap =>
-            {
-                afterMap.LoginUri = $"{RouteBindingLogic.GetBaseUri().Trim('/')}/{tenant.Name}".ToLower();
-            });
         }
 
         private string TenantInfoText(GeneralTenantViewModel generalTenant)
@@ -134,7 +129,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var tenantResult = await TenantService.UpdateTenantAsync(generalTenant.Form.Model.Map<TenantRequest>());
-                generalTenant.Form.UpdateModel(ToViewModel(tenantResult));
+                generalTenant.Form.UpdateModel(tenantResult);
                 toastService.ShowSuccess("Tenant updated.", "SUCCESS");
 
                 generalTenant.CustomDomain = generalTenant.Form.Model.CustomDomain;

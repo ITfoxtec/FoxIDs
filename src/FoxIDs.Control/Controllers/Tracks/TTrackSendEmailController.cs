@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using System;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -16,12 +17,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackSendEmailController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackSendEmailController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         /// <summary>
@@ -66,10 +69,13 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(sendEmail)) return BadRequest(ModelState);
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
 
                 mTrack.SendEmail = mapper.Map<SendEmail>(sendEmail);
                 await tenantRepository.UpdateAsync(mTrack);
+
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<Api.SendEmail>(mTrack.SendEmail));
             }
@@ -93,10 +99,13 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
 
                 mTrack.SendEmail = null;
                 await tenantRepository.UpdateAsync(mTrack);
+
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return NoContent();
             }

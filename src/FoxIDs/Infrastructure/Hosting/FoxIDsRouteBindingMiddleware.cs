@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Models;
-using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -26,7 +25,7 @@ namespace FoxIDs.Infrastructure.Hosting
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly TokenCredential tokenCredential;
 
-        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, tenantRepository)
+        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, trackCacheLogic)
         {
             this.settings = settings;
             this.downPartyCacheLogic = downPartyCacheLogic;

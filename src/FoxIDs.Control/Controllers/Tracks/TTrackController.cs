@@ -16,14 +16,16 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
         private readonly TrackLogic trackLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
             this.trackLogic = trackLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
@@ -101,7 +103,8 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
                 track.Name = track.Name?.ToLower();
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 mTrack.SequenceLifetime = track.SequenceLifetime;
                 mTrack.MaxFailingLogins = track.MaxFailingLogins;
                 mTrack.FailingLoginCountLifetime = track.FailingLoginCountLifetime;
@@ -111,6 +114,8 @@ namespace FoxIDs.Controllers
                 mTrack.CheckPasswordRisk = track.CheckPasswordRisk;
                 mTrack.AllowIframeOnDomains = track.AllowIframeOnDomains;
                 await tenantRepository.UpdateAsync(mTrack);
+
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Ok(mapper.Map<Api.Track>(mTrack));
             }
@@ -138,15 +143,18 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
 
-                await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name });
+                await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                 await tenantRepository.DeleteAsync<Track>(await Track.IdFormat(RouteBinding, name));
 
                 if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
                 {
                     await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                 }
+
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return NoContent();
             }

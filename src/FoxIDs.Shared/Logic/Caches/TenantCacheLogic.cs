@@ -71,7 +71,7 @@ namespace FoxIDs.Logic
 
         private string RadisTenantCustomDomainKey(string customDomain)
         {
-            return $"tenant_customdomain_{customDomain}";
+            return $"tenant_cache_customdomain_{customDomain}";
         }
     }
 }

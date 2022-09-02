@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Net;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -17,12 +18,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackKeyContainedController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackKeyContainedController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         /// <summary>
@@ -94,7 +97,8 @@ namespace FoxIDs.Controllers
                     }
                 }
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyType.Contained)
@@ -133,6 +137,8 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.UpdateAsync(mTrack);
 
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
+
                 return Ok(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }
             catch (CosmosDataException ex)
@@ -155,7 +161,8 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyType.Contained)
@@ -174,6 +181,8 @@ namespace FoxIDs.Controllers
                 {
                     mTrack.Key.Keys.RemoveAt(1);
                     await tenantRepository.UpdateAsync(mTrack);
+
+                    await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
 
                 return NoContent();

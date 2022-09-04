@@ -99,7 +99,6 @@
             <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
         }
 
-        <UpPartySessionLifetime Model="oidcUpParty.Form.Model" ShowAdvanced="oidcUpParty.ShowAdvanced" AllAdvanced="true" />
         @if (UpParty.ShowAdvanced)
         {
             <FInputToggle @bind-Value="oidcUpParty.Form.Model.EnableSingleLogout" For="@(() => oidcUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
@@ -131,7 +130,27 @@
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, Models.OAuthTabTypes.ClaimsTransform))">Claim transform</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (oidcUpParty.ShowSessionTab)
+                {
+                    <a class="nav-link active">Logout session</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout session</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (oidcUpParty.ShowHrdTab)
+                {
+                    <a class="nav-link active">Home Realm Discovery</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Hrd))">Home Realm Discovery</button>
                 }
             </li>
         </ul>
@@ -183,6 +202,14 @@
             else if (oidcUpParty.ShowClaimTransformTab)
             {
                 <OAuthClaimTransforms Model="oidcUpParty.Form.Model" />
+            }    
+            else if (oidcUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="oidcUpParty.Form.Model" />
+            }
+            else if (oidcUpParty.ShowHrdTab)
+            {
+                <UpPartyHrd Model="oidcUpParty.Form.Model" />
             }
         </div>
     </div>

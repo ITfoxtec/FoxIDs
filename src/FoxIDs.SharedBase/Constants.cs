@@ -12,6 +12,11 @@ namespace FoxIDs
             public const string Password = "FirstAccess!";
         }
 
+        public static class DefaultLogin
+        {
+            public const string Name = "login";
+        }
+
         public static class Routes
         {
             public const string RouteTransformerPathKey = "path";
@@ -27,7 +32,7 @@ namespace FoxIDs
             
             public const string LoginController = "login";
             public const string ActionController = "action";
-            public const string MfaController = "Mfa";
+            public const string MfaController = "mfa";
 
             public const string OAuthController = "oauth";
             public const string SamlController = "saml";
@@ -265,7 +270,7 @@ namespace FoxIDs
             public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;
-                public const int AllowUpPartyNamesMax = 2000;            
+                public const int AllowUpPartyNamesMax = 50;
             }
 
             public static class OAuthDownParty
@@ -331,6 +336,14 @@ namespace FoxIDs
                 public const int SessionAbsoluteLifetimeMax = 172800; // 48 hours
                 public const int PersistentAbsoluteSessionLifetimeMin = 0; // 0 minutes 
                 public const int PersistentAbsoluteSessionLifetimeMax = 31536000; // 12 month
+                public const int HrdDomainMin = 0;
+                public const int HrdDomainMax = 5;
+                public const int HrdDomainLength = 100;
+                public const int HrdDisplayNameLength = 30;
+                public const string HrdDisplayNameRegExPattern = "^[^<^>]*$";
+                public const string HrdDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
+                public const int HrdLogoUrlLength = 500;
+                public const string HrdLogoUrlRegExPattern = @"^https:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}";
             }
 
             public static class OAuthUpParty
@@ -371,6 +384,7 @@ namespace FoxIDs
             public static class LoginUpParty
             {
                 public const int TitleLength = 40;
+                public const string TitleRegExPattern = "^[^<^>]*$";
                 public const int IconUrlLength = 500;
                 public const int CssStyleLength = 20000; 
                 public const int TwoFactorAppNameLength = 50;

@@ -15,24 +15,27 @@ using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
+using FoxIDs.Logic.Tracks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcRpInitiatedLogoutDownLogic<TParty, TClient, TScope, TClaim> : LogicBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
+    public class OidcRpInitiatedLogoutDownLogic<TParty, TClient, TScope, TClaim> : LogicSequenceBase where TParty : OidcDownParty<TClient, TScope, TClaim> where TClient : OidcDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
+        private readonly HrdLogic hrdLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
 
-        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
+            this.hrdLogic = hrdLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.jwtDownLogic = jwtDownLogic;
         }
@@ -88,7 +91,7 @@ namespace FoxIDs.Logic
                 State = rpInitiatedLogoutRequest.State,
             });
 
-            var toUpPartie = GetToUpParty(idTokenClaims);
+            var toUpPartie = await GetToUpPartyAsync(idTokenClaims);
             logger.ScopeTrace(() => $"Request, Up type '{toUpPartie.Type}'.");
             switch (toUpPartie.Type)
             {
@@ -110,19 +113,27 @@ namespace FoxIDs.Logic
             }
         }
 
-        private UpPartyLink GetToUpParty(IEnumerable<Claim> idTokenClaims)
+        private async Task<UpPartyLink> GetToUpPartyAsync(IEnumerable<Claim> idTokenClaims)
         {
-            if (RouteBinding.DefaultToUpParties)
+            var toUpPartyFromIdToken = GetUpPartyFromIdToken(idTokenClaims);
+            if (toUpPartyFromIdToken != null)
             {
-                var upPartyName = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
-                var upPartyTypeValue = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
-                if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
-                {
-                    return new UpPartyLink { Name = upPartyName, Type = upPartyType };
-                }
+                await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(toUpPartyFromIdToken.Name);
+                return toUpPartyFromIdToken;
             }
 
-            return RouteBinding.ToUpParties.First();
+            return await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
+        }
+
+        private UpPartyLink GetUpPartyFromIdToken(IEnumerable<Claim> idTokenClaims)
+        {
+            var upPartyName = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
+            var upPartyTypeValue = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
+            if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
+            {
+                return new UpPartyLink { Name = upPartyName, Type = upPartyType };
+            }
+            return null;
         }
 
         private LogoutRequest GetLogoutRequest(TParty party, string sessionId, bool validIdToken, string postLogoutRedirectUri)

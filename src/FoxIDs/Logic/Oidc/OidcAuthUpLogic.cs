@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
@@ -21,26 +22,28 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcAuthUpLogic<TParty, TClient> : LogicBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcAuthUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly JwtUpLogic<TParty, TClient> jwtUpLogic;
         private readonly SequenceLogic sequenceLogic;
+        private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.jwtUpLogic = jwtUpLogic;
             this.sequenceLogic = sequenceLogic;
+            this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
@@ -48,7 +51,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest)
+        public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
             logger.ScopeTrace(() => "Up, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -61,6 +64,7 @@ namespace FoxIDs.Logic
             var oidcUpSequenceData = new OidcUpSequenceData
             {
                 DownPartyLink = loginRequest.DownPartyLink,
+                HrdLoginUpPartyName = hrdLoginUpPartyName,
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
@@ -166,12 +170,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
-            var formOrQueryDictionary = HttpContext.Request.Method switch
-            {
-                "POST" => party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost ? HttpContext.Request.Form.ToDictionary() : throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'."),
-                "GET" => party.Client.ResponseMode == IdentityConstants.ResponseModes.Query ? HttpContext.Request.Query.ToDictionary() : throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'."),
-                _ => throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'")
-            };
+            (var formOrQueryDictionary, var onlyAcceptGetResponseWithError) = GetFormOrQueryDictionary(party);
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
             logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
@@ -191,7 +190,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => "Up, OIDC Authentication response.", triggerEvent: true);
 
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
-                ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow);
+                ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow, onlyAcceptGetResponseWithError);
 
                 (var claims, var idToken) = isImplicitFlow switch
                 {
@@ -214,6 +213,11 @@ namespace FoxIDs.Logic
                 if (!sessionId.IsNullOrEmpty())
                 {
                     validClaims.AddClaim(JwtClaimTypes.SessionId, sessionId);
+                }
+
+                if (!sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
+                {
+                    await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
                 }
 
                 logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
@@ -242,9 +246,40 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void ValidateAuthenticationResponse(TParty party, AuthenticationResponse authenticationResponse, SessionResponse sessionResponse, bool isImplicitFlow)
+        private (Dictionary<string, string> formOrQueryDictionary, bool onlyAcceptGetResponseWithError) GetFormOrQueryDictionary(TParty party)
+        {
+            switch (HttpContext.Request.Method)
+            {
+                case "POST":
+                    if (party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost)
+                    {
+                        return (HttpContext.Request.Form.ToDictionary(), false);
+                    }
+                    throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'.");
+
+                case "GET":
+                    var formOrQueryDictionary = HttpContext.Request.Query.ToDictionary();
+                    if (party.Client.ResponseMode == IdentityConstants.ResponseModes.Query)
+                    {
+                        return (formOrQueryDictionary, false);
+                    }
+                    else
+                    {
+                        return (formOrQueryDictionary, true);
+                    }
+
+                default:
+                    throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'");
+            }
+        }
+
+        private void ValidateAuthenticationResponse(TParty party, AuthenticationResponse authenticationResponse, SessionResponse sessionResponse, bool isImplicitFlow, bool onlyAcceptGetResponseWithError)
         {
             authenticationResponse.Validate(isImplicitFlow);
+            if (onlyAcceptGetResponseWithError)
+            {
+                throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'.");
+            }
 
             if (party.Client.EnablePkce && isImplicitFlow)
             {

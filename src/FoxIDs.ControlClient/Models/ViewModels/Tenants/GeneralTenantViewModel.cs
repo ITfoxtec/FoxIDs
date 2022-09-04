@@ -23,6 +23,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string Error { get; set; }
 
-        public PageEditForm<TenantViewModel> Form { get; set; }
+        public string LoginUri { get; set; }
+
+        public PageEditForm<Tenant> Form { get; set; }
     }
 }

@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Repository
 {
-    public class SingleCookieRepository<TMessage> where TMessage : CookieMessage, new()
+    public class UpPartyCookieRepository<TMessage> where TMessage : CookieMessage, new()
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtection;
         private readonly IHttpContextAccessor httpContextAccessor;
 
-        public SingleCookieRepository(TelemetryScopedLogger logger, IDataProtectionProvider dataProtection, IHttpContextAccessor httpContextAccessor)
+        public UpPartyCookieRepository(TelemetryScopedLogger logger, IDataProtectionProvider dataProtection, IHttpContextAccessor httpContextAccessor)
         {
             this.logger = logger;
             this.dataProtection = dataProtection;
@@ -45,7 +45,7 @@ namespace FoxIDs.Repository
             if (tryGet && RouteBindingDoNotExists()) return null;
             CheckRouteBinding();
 
-            logger.ScopeTrace(() => $"Get Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}', Delete '{delete}'.");
+            logger.ScopeTrace(() => $"Get up-party cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}', delete '{delete}'.");
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
@@ -56,7 +56,7 @@ namespace FoxIDs.Repository
 
                     if (delete)
                     {
-                        logger.ScopeTrace(() => $"Delete Cookie, '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+                        logger.ScopeTrace(() => $"Delete up-party cookie, '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
                         DeleteByName(party, CookieName());
                     }
 
@@ -64,13 +64,13 @@ namespace FoxIDs.Repository
                 }
                 catch (CryptographicException ex)
                 {
-                    logger.Warning(ex, $"Unable to Unprotect Cookie '{typeof(TMessage).Name}', deleting cookie.");
+                    logger.Warning(ex, $"Unable to unprotect up-party cookie '{typeof(TMessage).Name}', deleting cookie.");
                     DeleteByName(party, CookieName());
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Unable to Read Cookie '{typeof(TMessage).Name}'.", ex);
+                    throw new Exception($"Unable to read up-party cookie '{typeof(TMessage).Name}'.", ex);
                 }
             }
             else
@@ -84,7 +84,7 @@ namespace FoxIDs.Repository
             CheckRouteBinding();
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace(() => $"Save Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Save up-party cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
 
             var cookieOptions = new CookieOptions
             {
@@ -113,7 +113,7 @@ namespace FoxIDs.Repository
             if (tryDelete && RouteBindingDoNotExists()) return;
             CheckRouteBinding();
 
-            logger.ScopeTrace(() => $"Delete Cookie '{typeof(TMessage).Name}', Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete up-party cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
 
             DeleteByName(party, CookieName());
         }

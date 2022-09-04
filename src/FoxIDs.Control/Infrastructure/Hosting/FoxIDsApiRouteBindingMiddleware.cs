@@ -1,5 +1,5 @@
-﻿using FoxIDs.Models;
-using FoxIDs.Repository;
+﻿using FoxIDs.Logic;
+using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsApiRouteBindingMiddleware : RouteBindingMiddleware
     {
-        public FoxIDsApiRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
+        public FoxIDsApiRouteBindingMiddleware(RequestDelegate next, TrackCacheLogic trackCacheLogic) : base(next, trackCacheLogic)
         { }
 
         protected override bool CheckCustomDomainSupport(string[] route)

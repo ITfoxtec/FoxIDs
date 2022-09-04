@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
                         var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
                         if (sequence != null)
                         {
-                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(sequence.UiUpPartyId);
+                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
                             securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                             securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
                             errorViewModel.Title = uiLoginUpParty.Title;

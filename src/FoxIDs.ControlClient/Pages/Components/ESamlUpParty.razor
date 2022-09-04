@@ -43,7 +43,6 @@
             <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
         }
 
-        <UpPartySessionLifetime Model="samlUpParty.Form.Model" ShowAdvanced="samlUpParty.ShowAdvanced" AllAdvanced="true" />
         @if (UpParty.ShowAdvanced)
         {
             <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableSingleLogout" For="@(() => samlUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
@@ -76,6 +75,26 @@
                 else
                 {
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (samlUpParty.ShowSessionTab)
+                {
+                    <a class="nav-link active">Logout session</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout session</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (samlUpParty.ShowHrdTab)
+                {
+                    <a class="nav-link active">Home Realm Discovery</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">Home Realm Discovery</button>
                 }
             </li>
         </ul>
@@ -289,6 +308,14 @@
             else if (samlUpParty.ShowClaimTransformTab)
             {
                 <SamlClaimTransforms Model="samlUpParty.Form.Model" />
+            }
+            else if (samlUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="samlUpParty.Form.Model" />
+            }
+            else if (samlUpParty.ShowHrdTab)
+            {
+                <UpPartyHrd Model="samlUpParty.Form.Model" />
             }
         </div>
     </div>

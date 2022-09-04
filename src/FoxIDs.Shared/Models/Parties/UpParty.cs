@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
@@ -50,6 +52,23 @@ namespace FoxIDs.Models
 
         [JsonProperty(PropertyName = "disable_single_logout")]
         public bool DisableSingleLogout { get; set; }
+
+        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [JsonProperty(PropertyName = "hrd_domains")]
+        public List<string> HrdDomains { get; set; }
+
+        [JsonProperty(PropertyName = "hrd_show_buttom_with_domain")]
+        public bool HrdShowButtonWithDomain { get; set; }
+
+        [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "hrd_display_name")]
+        public string HrdDisplayName { get; set; }
+
+        [MaxLength(Constants.Models.UpParty.HrdLogoUrlLength)]
+        [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
+        [JsonProperty(PropertyName = "hrd_logo_url")]
+        public string HrdLogoUrl { get; set; }
 
         public async Task SetIdAsync(IdKey idKey)
         {

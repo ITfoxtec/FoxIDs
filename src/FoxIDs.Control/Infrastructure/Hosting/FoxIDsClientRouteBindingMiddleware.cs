@@ -1,6 +1,6 @@
-﻿using FoxIDs.Logic.Seed;
+﻿using FoxIDs.Logic;
+using FoxIDs.Logic.Seed;
 using FoxIDs.Models;
-using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -10,7 +10,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public class FoxIDsClientRouteBindingMiddleware : RouteBindingMiddleware
     {
-        public FoxIDsClientRouteBindingMiddleware(RequestDelegate next, ITenantRepository tenantRepository) : base(next, tenantRepository)
+        public FoxIDsClientRouteBindingMiddleware(RequestDelegate next, TrackCacheLogic trackCacheLogic) : base(next, trackCacheLogic)
         { }
 
         protected override bool CheckCustomDomainSupport(string[] route)

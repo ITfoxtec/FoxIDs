@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class ClaimTransformLogic : LogicBase
+    public class ClaimTransformLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ClaimTransformValidationLogic claimTransformValidationLogic;

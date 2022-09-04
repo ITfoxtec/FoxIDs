@@ -7,7 +7,6 @@ namespace FoxIDs.Logic
 {
     public  class TrackLogic : LogicBase
     {
-        const string loginName = "login";
         private readonly ITenantRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
@@ -32,14 +31,14 @@ namespace FoxIDs.Logic
         {
             var mLoginUpParty = new LoginUpParty
             {
-                Name = loginName,
+                Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,
                 SessionLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = loginName });
+            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = Constants.DefaultLogin.Name });
 
             await tenantRepository.CreateAsync(mLoginUpParty);
         }

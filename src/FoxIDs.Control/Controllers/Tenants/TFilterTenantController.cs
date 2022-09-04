@@ -41,7 +41,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var mTenants = await GetFilterTenantInternalAsync(filterName, filterCustomDomain);
+                (var mTenants, _) = await GetFilterTenantInternalAsync(filterName, filterCustomDomain);
                 var aTenants = new HashSet<Api.Tenant>(mTenants.Count());
                 foreach (var mTenant in mTenants.OrderBy(t => t.Name))
                 {
@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private Task<HashSet<Tenant>> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
+        private Task<(HashSet<Tenant> items, string continuationToken)> GetFilterTenantInternalAsync(string filterName, string filterCustomDomain)
         {
             if (filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {

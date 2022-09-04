@@ -170,12 +170,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             logger.SetScopeProperty(Constants.Logs.UpPartyClientId, party.Client.ClientId);
 
-            var formOrQueryDictionary = HttpContext.Request.Method switch
-            {
-                "POST" => party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost ? HttpContext.Request.Form.ToDictionary() : throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'."),
-                "GET" => party.Client.ResponseMode == IdentityConstants.ResponseModes.Query ? HttpContext.Request.Query.ToDictionary() : throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'."),
-                _ => throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'")
-            };
+            (var formOrQueryDictionary, var onlyAcceptGetResponseWithError) = GetFormOrQueryDictionary(party);
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
             logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
@@ -195,7 +190,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => "Up, OIDC Authentication response.", triggerEvent: true);
 
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
-                ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow);
+                ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow, onlyAcceptGetResponseWithError);
 
                 (var claims, var idToken) = isImplicitFlow switch
                 {
@@ -251,9 +246,40 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void ValidateAuthenticationResponse(TParty party, AuthenticationResponse authenticationResponse, SessionResponse sessionResponse, bool isImplicitFlow)
+        private (Dictionary<string, string> formOrQueryDictionary, bool onlyAcceptGetResponseWithError) GetFormOrQueryDictionary(TParty party)
+        {
+            switch (HttpContext.Request.Method)
+            {
+                case "POST":
+                    if (party.Client.ResponseMode == IdentityConstants.ResponseModes.FormPost)
+                    {
+                        return (HttpContext.Request.Form.ToDictionary(), false);
+                    }
+                    throw new NotSupportedException($"POST not supported by response mode '{party.Client.ResponseMode}'.");
+
+                case "GET":
+                    var formOrQueryDictionary = HttpContext.Request.Query.ToDictionary();
+                    if (party.Client.ResponseMode == IdentityConstants.ResponseModes.Query)
+                    {
+                        return (formOrQueryDictionary, false);
+                    }
+                    else
+                    {
+                        return (formOrQueryDictionary, true);
+                    }
+
+                default:
+                    throw new NotSupportedException($"Request method not supported by response mode '{party.Client.ResponseMode}'");
+            }
+        }
+
+        private void ValidateAuthenticationResponse(TParty party, AuthenticationResponse authenticationResponse, SessionResponse sessionResponse, bool isImplicitFlow, bool onlyAcceptGetResponseWithError)
         {
             authenticationResponse.Validate(isImplicitFlow);
+            if (onlyAcceptGetResponseWithError)
+            {
+                throw new NotSupportedException($"GET not supported by response mode '{party.Client.ResponseMode}'.");
+            }
 
             if (party.Client.EnablePkce && isImplicitFlow)
             {

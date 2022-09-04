@@ -66,6 +66,12 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public int UpPartyMaxFailingUpdate { get; set; }
-        
+
+        /// <summary>
+        /// The max number of up-parties in the HRD cookie.
+        /// </summary>
+        [Required]
+        public int HrdUpPartiesMaxCount { get; set; } = 5;
+
     }
 }

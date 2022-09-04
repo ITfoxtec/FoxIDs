@@ -46,17 +46,33 @@ namespace FoxIDs.Client.Pages.Components
         [Parameter]
         public string TenantName { get; set; }
 
-        public void ShowLoginTab(GeneralLoginUpPartyViewModel downParty, LoginTabTypes samlTabTypes)
+        public void ShowLoginTab(GeneralLoginUpPartyViewModel upParty, LoginTabTypes samlTabTypes)
         {
             switch (samlTabTypes)
             {
                 case LoginTabTypes.Login:
-                    downParty.ShowLoginTab = true;
-                    downParty.ShowClaimTransformTab = false;
+                    upParty.ShowLoginTab = true;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.ClaimsTransform:
-                    downParty.ShowLoginTab = false;
-                    downParty.ShowClaimTransformTab = true;
+                    upParty.ShowLoginTab = false;
+                    upParty.ShowClaimTransformTab = true;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case LoginTabTypes.Session:
+                    upParty.ShowLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = true;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case LoginTabTypes.Hrd:
+                    upParty.ShowLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = true;
                     break;
                 default:
                     throw new NotSupportedException();
@@ -70,27 +86,59 @@ namespace FoxIDs.Client.Pages.Components
                 case OAuthTabTypes.Client:
                     upParty.ShowClientTab = true;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
                     break;
                 case OAuthTabTypes.ClaimsTransform:
                     upParty.ShowClientTab = false;
                     upParty.ShowClaimTransformTab = true;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case OAuthTabTypes.Session:
+                    upParty.ShowClientTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = true;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case OAuthTabTypes.Hrd:
+                    upParty.ShowClientTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = true;
                     break;
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        public void ShowSamlTab(GeneralSamlUpPartyViewModel downParty, SamlTabTypes samlTabTypes)
+        public void ShowSamlTab(GeneralSamlUpPartyViewModel upParty, SamlTabTypes samlTabTypes)
         {
             switch (samlTabTypes)
             {
                 case SamlTabTypes.Saml:
-                    downParty.ShowSamlTab = true;
-                    downParty.ShowClaimTransformTab = false;
+                    upParty.ShowSamlTab = true;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
                     break;
                 case SamlTabTypes.ClaimsTransform:
-                    downParty.ShowSamlTab = false;
-                    downParty.ShowClaimTransformTab = true;
+                    upParty.ShowSamlTab = false;
+                    upParty.ShowClaimTransformTab = true;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case SamlTabTypes.Session:
+                    upParty.ShowSamlTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = true;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case SamlTabTypes.Hrd:
+                    upParty.ShowSamlTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = true;
                     break;
                 default:
                     throw new NotSupportedException();

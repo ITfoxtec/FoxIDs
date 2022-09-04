@@ -10,7 +10,7 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
-    public class AccountTwoFactorLogic : LogicBase
+    public class AccountTwoFactorLogic : LogicSequenceBase
     {
         private const int secretAndRecoveryCodeLength = 30;
         private const string secretName = "2fa";  

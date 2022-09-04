@@ -3,6 +3,8 @@
     public enum SamlTabTypes
     {
         Saml,
-        ClaimsTransform
+        ClaimsTransform,
+        Session,
+        Hrd
     }
 }

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class SequenceLogic : LogicBase
+    public class SequenceLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;

@@ -19,6 +19,9 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "sdl")]
         public List<DownPartySessionLink> SessionDownPartyLinks { get; set; }
+        
+        [JsonProperty(PropertyName = "hln")]
+        public string HrdLoginUpPartyName { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "ui")]

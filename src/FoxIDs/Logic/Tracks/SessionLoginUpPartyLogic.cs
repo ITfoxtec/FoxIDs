@@ -16,9 +16,9 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly SingleCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository;
+        private readonly UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository;
 
-        public SessionLoginUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, SingleCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
+        public SessionLoginUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, UpPartyCookieRepository<SessionLoginUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Update session, Route '{RouteBinding.Route}'.");
 
             var sessionEnabled = SessionEnabled(loginUpParty);
-            var sessionValid = SessionValid(loginUpParty, session);
+            var sessionValid = SessionValid(session, loginUpParty);
 
             if (sessionEnabled && sessionValid)
             {
@@ -102,7 +102,7 @@ namespace FoxIDs.Logic
             if (session != null)
             {
                 var sessionEnabled = SessionEnabled(loginUpParty);
-                var sessionValid = SessionValid(loginUpParty, session);
+                var sessionValid = SessionValid(session, loginUpParty);
 
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
@@ -146,7 +146,7 @@ namespace FoxIDs.Logic
             if (session != null)
             {
                 var sessionEnabled = SessionEnabled(loginUpParty);
-                var sessionValid = SessionValid(loginUpParty, session);
+                var sessionValid = SessionValid(session, loginUpParty);
 
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)

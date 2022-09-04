@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Models;
-using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -13,6 +12,7 @@ using FoxIDs.Models.Config;
 using StackExchange.Redis;
 using Azure.Core;
 using Azure.Security.KeyVault.Certificates;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -20,14 +20,16 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         private static Regex partyNameBindingRegex = new Regex(@"^(?:(?:(?<downparty>[\w-_]+)(?:\((?:(?:(?<toupparty>[\w-_]+)(?:,(?<toupparty>[\w-_]+))*)|(?<toupparty>\*))\))?)|(?:\((?<upparty>[\w-_]+)\))|(?:\~(?<upparty>[\w-_]+)\~)|(?:.(?<upparty>[\w-_]+).))$", RegexOptions.Compiled);
         private readonly FoxIDsSettings settings;
-        private readonly ITenantRepository tenantRepository;
+        private readonly DownPartyCacheLogic downPartyCacheLogic;
+        private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly TokenCredential tokenCredential;
 
-        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, ITenantRepository tenantRepository, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, tenantRepository)
+        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, trackCacheLogic)
         {
             this.settings = settings;
-            this.tenantRepository = tenantRepository;
+            this.downPartyCacheLogic = downPartyCacheLogic;
+            this.upPartyCacheLogic = upPartyCacheLogic;
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
             this.tokenCredential = tokenCredential;
         }
@@ -165,22 +167,24 @@ namespace FoxIDs.Infrastructure.Hosting
 
                 if (partyNameBindingMatch.Groups["upparty"].Success)
                 {
-                    routeBinding.UpParty = await GetUpPartyAsync(tenantRepository, trackIdKey, partyNameBindingMatch.Groups["upparty"], acceptUnknownParty);
+                    routeBinding.UpParty = await GetUpPartyAsync(trackIdKey, partyNameBindingMatch.Groups["upparty"], acceptUnknownParty);
                 }
                 else if (partyNameBindingMatch.Groups["downparty"].Success)
                 {
-                    routeBinding.DownParty = await GetDownPartyAsync(tenantRepository, trackIdKey, partyNameBindingMatch.Groups["downparty"], acceptUnknownParty);
+                    routeBinding.DownParty = await GetDownPartyAsync(trackIdKey, partyNameBindingMatch.Groups["downparty"], acceptUnknownParty);
 
                     if (routeBinding.DownParty?.AllowUpParties?.Count() >= 1)
                     {
+                        //TODO can be deleted when data is updated everywhere, delete after summer 2023
+                        var allowUpParties = routeBinding.DownParty.AllowUpParties.OrderBy(p => p.Type).ThenBy(p => p.Name);
+
                         if (partyNameBindingMatch.Groups["toupparty"].Success)
                         {
-                            routeBinding.ToUpParties = await GetAllowedToUpPartyIds(scopedLogger, trackIdKey, partyNameBindingMatch.Groups["toupparty"], routeBinding.DownParty);
+                            routeBinding.ToUpParties = GetAllowedToUpPartyIds(scopedLogger, partyNameBindingMatch.Groups["toupparty"], routeBinding.DownParty.Id, allowUpParties);
                         }
                         else
                         {
-                            routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties.Take(1).ToList();
-                            routeBinding.DefaultToUpParties = true;
+                            routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties;
                         }
                     }
                 }
@@ -229,87 +233,72 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private async Task<UpParty> GetUpPartyAsync(ITenantRepository tenantRepository, Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
+        private async Task<UpParty> GetUpPartyAsync(Track.IdKey trackIdKey, Group upPartyGroup, bool acceptUnknownParty)
         {
-            var upPartyIdKey = new Party.IdKey
-            {
-                TenantName = trackIdKey.TenantName,
-                TrackName = trackIdKey.TrackName,
-                PartyName = upPartyGroup.Value,
-            };
-
             try
             {
-                return await tenantRepository.GetUpPartyByNameAsync(upPartyIdKey, required: !acceptUnknownParty);
+                return await upPartyCacheLogic.GetUpPartyAsync(upPartyGroup.Value, tenantName: trackIdKey.TenantName, trackName: trackIdKey.TrackName, required: !acceptUnknownParty);
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenantName '{upPartyIdKey.TenantName}', trackName '{upPartyIdKey.TrackName}' and upPartyName '{upPartyIdKey.PartyName}'.", ex);
+                throw new RouteCreationException($"Invalid tenantName '{trackIdKey.TenantName}', trackName '{trackIdKey.TrackName}' and upPartyName '{upPartyGroup.Value}'.", ex);
             }
         }
 
-        private async Task<DownParty> GetDownPartyAsync(ITenantRepository tenantRepository, Track.IdKey trackIdKey, Group downPartyGroup, bool acceptUnknownParty)
+        private async Task<DownParty> GetDownPartyAsync(Track.IdKey trackIdKey, Group downPartyGroup, bool acceptUnknownParty)
         {
-            var downPartyIdKey = new Party.IdKey
-            {
-                TenantName = trackIdKey.TenantName,
-                TrackName = trackIdKey.TrackName,
-                PartyName = downPartyGroup.Value,
-            };
-
             try
             {
-                return await tenantRepository.GetDownPartyByNameAsync(downPartyIdKey, required: !acceptUnknownParty);
+                return await downPartyCacheLogic.GetDownPartyAsync(downPartyGroup.Value, tenantName: trackIdKey.TenantName, trackName: trackIdKey.TrackName, required: !acceptUnknownParty);
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenantName '{downPartyIdKey.TenantName}', trackName '{downPartyIdKey.TrackName}' and downPartyName '{downPartyIdKey.PartyName}'.", ex);
+                throw new RouteCreationException($"Invalid tenantName '{trackIdKey.TenantName}', trackName '{trackIdKey.TrackName}' and downPartyName '{downPartyGroup.Value}'.", ex);
             }
         }
 
-        private async Task<List<UpPartyLink>> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Track.IdKey trackIdKey, Group toUpPartyGroup, DownParty downParty)
+        private List<UpPartyLink> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Group toUpPartyGroup, string downPartyId, IEnumerable<UpPartyLink> allowUpParties)
         {
+            if (toUpPartyGroup.Captures.Count > 4)
+            {
+                throw new ArgumentException($"More then 4 to up-party for down-party '{downPartyId}'.");
+            }
+
             var toUpParties = new List<UpPartyLink>();
-            if (toUpPartyGroup.Captures.Count > 5)
-            {
-                throw new ArgumentException($"More then 5 to up-party for down-party '{downParty.Id}'.");
-            }
-
             foreach (Capture upPartyCapture in toUpPartyGroup.Captures)
             {
-                var toUpPartyIdKey = new Party.IdKey
+                if (upPartyCapture.Value == "*")
                 {
-                    TenantName = trackIdKey.TenantName,
-                    TrackName = trackIdKey.TrackName,
-                    PartyName = upPartyCapture.Value,
-                };
-                await toUpPartyIdKey.ValidateObjectAsync();
-
-                var allowUpParty = downParty.AllowUpParties.Where(ap => ap.Name == toUpPartyIdKey.PartyName).SingleOrDefault();
-                if (allowUpParty != null)
-                {
-                    toUpParties.Add(allowUpParty);
+                    toUpParties.Clear();
+                    toUpParties.AddRange(allowUpParties);
+                    break;
                 }
                 else
                 {
-                    try
+                    var allowUpParty = allowUpParties.Where(ap => ap.Name.Equals(upPartyCapture.Value, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+                    if (allowUpParty != null)
                     {
-                        throw new ArgumentException($"Up-party name '{toUpPartyIdKey.PartyName}' not allowed for down-party '{downParty.Id}',");
+                        if (!toUpParties.Contains(allowUpParty))
+                        {
+                            toUpParties.Add(allowUpParty);
+                        }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        scopedLogger.Warning(ex);
+                        try
+                        {
+                            throw new ArgumentException($"Up-party name '{upPartyCapture.Value}' not allowed for down-party '{downPartyId}',");
+                        }
+                        catch (Exception ex)
+                        {
+                            scopedLogger.Warning(ex);
+                        }
                     }
                 }
             }
 
-            if (toUpParties.Count() > 1)
-            {
-                throw new NotSupportedException("Currently only 0 and 1 to up-party is supported.");
-            }
             return toUpParties;
         }
-
 
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {

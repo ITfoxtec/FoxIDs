@@ -17,9 +17,9 @@ namespace FoxIDs.Logic
     public class SessionUpPartyLogic : SessionBaseLogic
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly SingleCookieRepository<SessionUpPartyCookie> sessionCookieRepository;
+        private readonly UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository;
 
-        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SingleCookieRepository<SessionUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
+        public SessionUpPartyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, UpPartyCookieRepository<SessionUpPartyCookie> sessionCookieRepository, IHttpContextAccessor httpContextAccessor) : base(settings, httpContextAccessor)
         {
             this.logger = logger;
             this.sessionCookieRepository = sessionCookieRepository;
@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
             var session = await sessionCookieRepository.GetAsync(upParty);
             if (session != null)
             {
-                var sessionValid = SessionValid(upParty, session);
+                var sessionValid = SessionValid(session, upParty);
 
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
@@ -119,7 +119,7 @@ namespace FoxIDs.Logic
             if (session != null)
             {
                 var sessionEnabled = SessionEnabled(upParty);
-                var sessionValid = SessionValid(upParty, session);
+                var sessionValid = SessionValid(session, upParty);
 
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
@@ -136,7 +136,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                logger.ScopeTrace(() => "Session up-party do not exists.");
+                logger.ScopeTrace(() => $"Session up-party '{upParty.Name}' do not exists.", triggerEvent: true);
             }
 
             return null;

@@ -7,9 +7,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using ITfoxtec.Identity.Saml2.Schemas;
-using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using System.Linq;
 using FoxIDs.Models.Session;
@@ -17,21 +14,17 @@ using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
-    public class LoginPageLogic : LogicBase
+    public class LoginPageLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly IServiceProvider serviceProvider;
         private readonly SessionLoginUpPartyLogic sessionLogic;
-        private readonly SequenceLogic sequenceLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly LoginUpLogic loginUpLogic;
 
-        public LoginPageLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SessionLoginUpPartyLogic sessionLogic, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginPageLogic(TelemetryScopedLogger logger, SessionLoginUpPartyLogic sessionLogic, ClaimTransformLogic claimTransformLogic, LoginUpLogic loginUpLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.serviceProvider = serviceProvider;
             this.sessionLogic = sessionLogic;
-            this.sequenceLogic = sequenceLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.loginUpLogic = loginUpLogic;
         }

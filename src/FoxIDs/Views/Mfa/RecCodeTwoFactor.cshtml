@@ -10,7 +10,7 @@
 
 <div class="row page-container">
     <div class="col-md page-content">
-        <form method="post" action="../@nameof(FoxIDs.Controllers.MfaController.RecCodeTwoFactor)/_@Model.SequenceString">
+        <form method="post" action="../@nameof(FoxIDs.Controllers.MfaController.RecCodeTwoFactor).ToLower()/_@Model.SequenceString">
             @Html.AntiForgeryToken()
             <div class="info-message">
                 @Localizer["Two-factor authentication has been enabled for your account."]

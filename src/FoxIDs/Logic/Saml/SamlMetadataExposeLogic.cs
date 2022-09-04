@@ -18,7 +18,7 @@ using System.Linq;
 
 namespace FoxIDs.Logic
 {
-    public class SamlMetadataExposeLogic : LogicBase
+    public class SamlMetadataExposeLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;

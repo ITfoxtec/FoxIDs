@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace FoxIDs.Logic
 {
-    public abstract class SessionBaseLogic : LogicBase
+    public abstract class SessionBaseLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
 
@@ -58,22 +58,27 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected bool SessionValid(UpParty upParty, SessionBaseCookie session)
+        protected bool SessionValid(CookieMessage session, UpParty upParty)
+        {
+            return SessionValid(session, upParty.SessionLifetime, upParty.SessionAbsoluteLifetime, upParty.PersistentSessionAbsoluteLifetime, upParty.PersistentSessionLifetimeUnlimited);
+        }
+
+        protected bool SessionValid(CookieMessage session, int sessionLifetime, int sessionAbsoluteLifetime, int persistentSessionAbsoluteLifetime, bool persistentSessionLifetimeUnlimited)
         {
             var created = DateTimeOffset.FromUnixTimeSeconds(session.CreateTime);
             var lastUpdated = DateTimeOffset.FromUnixTimeSeconds(session.LastUpdated);
             var now = DateTimeOffset.UtcNow;
 
-            if (upParty.PersistentSessionLifetimeUnlimited)
+            if (persistentSessionLifetimeUnlimited)
             {
                 return true;
             }
-            else if (created.AddSeconds(upParty.PersistentSessionAbsoluteLifetime) >= now)
+            else if (created.AddSeconds(persistentSessionAbsoluteLifetime) >= now)
             {
                 return true;
             }
-            else if (lastUpdated.AddSeconds(upParty.SessionLifetime) >= now && 
-                (upParty.SessionAbsoluteLifetime <= 0 || created.AddSeconds(upParty.SessionAbsoluteLifetime) >= now))
+            else if (lastUpdated.AddSeconds(sessionLifetime) >= now &&
+                (sessionAbsoluteLifetime <= 0 || created.AddSeconds(sessionAbsoluteLifetime) >= now))
             {
                 return true;
             }

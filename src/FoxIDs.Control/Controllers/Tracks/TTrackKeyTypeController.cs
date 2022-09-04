@@ -21,14 +21,16 @@ namespace FoxIDs.Controllers
         private readonly FoxIDsControlSettings settings;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(TelemetryScopedLogger logger, FoxIDsControlSettings settings, IMapper mapper, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackKeyTypeController(TelemetryScopedLogger logger, FoxIDsControlSettings settings, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.settings = settings;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
 
@@ -71,7 +73,8 @@ namespace FoxIDs.Controllers
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 if (mTrack.Key.Type != mTrackKey.Type)
                 {
                     switch (mTrackKey.Type)
@@ -99,6 +102,8 @@ namespace FoxIDs.Controllers
                     }
 
                     await tenantRepository.UpdateAsync(mTrack);
+
+                    await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
 
                 return Ok(mapper.Map<Api.TrackKey>(mTrack.Key));

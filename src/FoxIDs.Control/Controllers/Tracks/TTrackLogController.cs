@@ -38,103 +38,76 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LogResponse>> GetTrackLog(Api.LogRequest logRequest)
         {
-            try
+            if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
+
+            if (!logRequest.QueryExceptions && !logRequest.QueryTraces && !logRequest.QueryEvents && !logRequest.QueryMetrics)
             {
-                if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
+                logRequest.QueryExceptions = true;
+                logRequest.QueryEvents = true;
+            }
 
-                if (!logRequest.QueryExceptions && !logRequest.QueryTraces && !logRequest.QueryEvents && !logRequest.QueryMetrics)
-                {
-                    logRequest.QueryExceptions = true;
-                    logRequest.QueryEvents = true;
-                }
+            var client = new LogsQueryClient(tokenCredential);
 
-                var client = new LogsQueryClient(tokenCredential);
+            var queryTimeRange = new QueryTimeRange(DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime), DateTimeOffset.FromUnixTimeSeconds(logRequest.ToTime));
 
-                var queryTimeRange = new QueryTimeRange(DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime), DateTimeOffset.FromUnixTimeSeconds(logRequest.ToTime));
-
-                var responseTruncated = false;
-                var items = new List<Api.LogItem>();
-                if (logRequest.QueryExceptions)
-                {
-                    if (await LoadExceptionsAsync(client, items, queryTimeRange, logRequest.Filter))
-                    {
-                        responseTruncated = true;
-                    }
-                }
-                if (logRequest.QueryTraces)
-                {
-                    if (await LoadTracesAsync(client, items, queryTimeRange, logRequest.Filter))
-                    {
-                        responseTruncated = true;
-                    }
-                }
-                if (logRequest.QueryEvents)
-                {
-                    if (await LoadEventsAsync(client, items, queryTimeRange, logRequest.Filter))
-                    {
-                        responseTruncated = true;
-                    }
-                }
-                if (logRequest.QueryMetrics)
-                {
-                    if (await LoadMetricsAsync(client, items, queryTimeRange, logRequest.Filter))
-                    {
-                        responseTruncated = true;
-                    }
-                }
-
-                if (items.Count() >= maxResponseLogItems)
+            var responseTruncated = false;
+            var items = new List<Api.LogItem>();
+            if (logRequest.QueryExceptions)
+            {
+                if (await LoadExceptionsAsync(client, items, queryTimeRange, logRequest.Filter))
                 {
                     responseTruncated = true;
                 }
-
-                var orderedItems = items.OrderBy(i => i.Timestamp).Take(maxResponseLogItems);
-
-                var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>(), ResponseTruncated = responseTruncated };
-                foreach (var item in orderedItems)
+            }
+            if (logRequest.QueryTraces)
+            {
+                if (await LoadTracesAsync(client, items, queryTimeRange, logRequest.Filter))
                 {
-                    if (!string.IsNullOrEmpty(item.SequenceId))
+                    responseTruncated = true;
+                }
+            }
+            if (logRequest.QueryEvents)
+            {
+                if (await LoadEventsAsync(client, items, queryTimeRange, logRequest.Filter))
+                {
+                    responseTruncated = true;
+                }
+            }
+            if (logRequest.QueryMetrics)
+            {
+                if (await LoadMetricsAsync(client, items, queryTimeRange, logRequest.Filter))
+                {
+                    responseTruncated = true;
+                }
+            }
+
+            if (items.Count() >= maxResponseLogItems)
+            {
+                responseTruncated = true;
+            }
+
+            var orderedItems = items.OrderBy(i => i.Timestamp).Take(maxResponseLogItems);
+
+            var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>(), ResponseTruncated = responseTruncated };
+            foreach (var item in orderedItems)
+            {
+                if (!string.IsNullOrEmpty(item.SequenceId))
+                {
+                    var sequenceItem = logResponse.Items.Where(i => i.Type == Api.LogItemTypes.Sequence && i.SequenceId == item.SequenceId).FirstOrDefault();
+                    if (sequenceItem == null)
                     {
-                        var sequenceItem = logResponse.Items.Where(i => i.Type == Api.LogItemTypes.Sequence && i.SequenceId == item.SequenceId).FirstOrDefault();
-                        if (sequenceItem == null)
+                        sequenceItem = new Api.LogItem
                         {
-                            sequenceItem = new Api.LogItem
-                            {
-                                Timestamp = item.Timestamp,
-                                Type = Api.LogItemTypes.Sequence,
-                                SequenceId = item.SequenceId,
-                                SubItems = new List<Api.LogItem>()
-                            };
-                            logResponse.Items.Add(sequenceItem);
-                        }
-                        if (!string.IsNullOrEmpty(item.OperationId))
-                        {
-                            var operationItem = sequenceItem.SubItems.Where(i => i.Type == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
-                            if (operationItem == null)
-                            {
-                                operationItem = new Api.LogItem
-                                {
-                                    Timestamp = item.Timestamp,
-                                    Type = Api.LogItemTypes.Operation,
-                                    OperationId = item.OperationId,
-                                    SubItems = new List<Api.LogItem>(),
-                                    Values = new Dictionary<string, string>()
-                                };
-                                sequenceItem.SubItems.Add(operationItem);
-                            }
-                            HandleOperationName(item, operationItem);
-                            HandleOperationTimestamp(item, operationItem);
-                            operationItem.SubItems.Add(item);
-                        }
-                        else
-                        {
-                            HandleSequenceTimestamp(item, sequenceItem);
-                            sequenceItem.SubItems.Add(item);
-                        }
+                            Timestamp = item.Timestamp,
+                            Type = Api.LogItemTypes.Sequence,
+                            SequenceId = item.SequenceId,
+                            SubItems = new List<Api.LogItem>()
+                        };
+                        logResponse.Items.Add(sequenceItem);
                     }
-                    else if (!string.IsNullOrEmpty(item.OperationId))
+                    if (!string.IsNullOrEmpty(item.OperationId))
                     {
-                        var operationItem = logResponse.Items.Where(i => i.Type == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
+                        var operationItem = sequenceItem.SubItems.Where(i => i.Type == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
                         if (operationItem == null)
                         {
                             operationItem = new Api.LogItem
@@ -145,7 +118,7 @@ namespace FoxIDs.Controllers
                                 SubItems = new List<Api.LogItem>(),
                                 Values = new Dictionary<string, string>()
                             };
-                            logResponse.Items.Add(operationItem);
+                            sequenceItem.SubItems.Add(operationItem);
                         }
                         HandleOperationName(item, operationItem);
                         HandleOperationTimestamp(item, operationItem);
@@ -153,17 +126,36 @@ namespace FoxIDs.Controllers
                     }
                     else
                     {
-                        logResponse.Items.Add(item);
+                        HandleSequenceTimestamp(item, sequenceItem);
+                        sequenceItem.SubItems.Add(item);
                     }
                 }
-
-                return Ok(logResponse);
+                else if (!string.IsNullOrEmpty(item.OperationId))
+                {
+                    var operationItem = logResponse.Items.Where(i => i.Type == Api.LogItemTypes.Operation && i.OperationId == item.OperationId).FirstOrDefault();
+                    if (operationItem == null)
+                    {
+                        operationItem = new Api.LogItem
+                        {
+                            Timestamp = item.Timestamp,
+                            Type = Api.LogItemTypes.Operation,
+                            OperationId = item.OperationId,
+                            SubItems = new List<Api.LogItem>(),
+                            Values = new Dictionary<string, string>()
+                        };
+                        logResponse.Items.Add(operationItem);
+                    }
+                    HandleOperationName(item, operationItem);
+                    HandleOperationTimestamp(item, operationItem);
+                    operationItem.SubItems.Add(item);
+                }
+                else
+                {
+                    logResponse.Items.Add(item);
+                }
             }
-            catch (Exception ex)
-            {
 
-                throw;
-            }
+            return Ok(logResponse);
         }
 
         private static void HandleSequenceTimestamp(Api.LogItem item, Api.LogItem sequenceItem)

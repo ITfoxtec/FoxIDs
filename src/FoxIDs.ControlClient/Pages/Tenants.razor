@@ -17,7 +17,7 @@
             }
             @if (tenant.Edit)
             {
-                <PageEditForm @ref="tenant.Form" TModel="TenantViewModel" OnValidSubmit="@(async (editContext) => await OnEditTenantValidSubmitAsync(tenant, editContext))">
+                <PageEditForm @ref="tenant.Form" TModel="Tenant" OnValidSubmit="@(async (editContext) => await OnEditTenantValidSubmitAsync(tenant, editContext))">
                     <div class="modal-header">
                         Tenant
                     </div>
@@ -44,7 +44,7 @@
                         </div>
                     }
                     <div class="modal-footer">
-                        <a class="btn btn-link" href="@tenant.Form.Model.LoginUri" target="_blank" @onclick="@(() => tenant.Edit = false)">Open tenant</a>
+                        <a class="btn btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
                         <button type="button" class="btn btn-link" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                         <button type="submit" class="btn btn-primary">Update</button>
                         <button type="button" class="btn btn-secondary" @onclick="@(() => tenant.Edit = false)">Close</button>
@@ -56,6 +56,8 @@
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
                     @TenantInfoText(tenant)
                 </button>
+                <span> - </span>
+                <a class="btn btn-sm btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
             }
         </li>
     }

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using System.ComponentModel.DataAnnotations;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -16,12 +17,14 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackCacheLogic trackCacheLogic;
 
-        public TTrackKeyContainedSwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository) : base(logger)
+        public TTrackKeyContainedSwapController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.trackCacheLogic = trackCacheLogic;
         }
 
         /// <summary>
@@ -50,7 +53,8 @@ namespace FoxIDs.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
+                var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
+                var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
                     if (mTrack.Key.Type != TrackKeyType.Contained)
@@ -74,6 +78,8 @@ namespace FoxIDs.Controllers
                 mTrack.Key.Keys[0] = tempSecondaryKey;
 
                 await tenantRepository.UpdateAsync(mTrack);
+
+                await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
 
                 return Created(mapper.Map<Api.TrackKeyItemsContained>(mTrack.Key));
             }

@@ -136,7 +136,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                logger.ScopeTrace(() => "Session up-party do not exists.");
+                logger.ScopeTrace(() => $"Session up-party '{upParty.Name}' do not exists.", triggerEvent: true);
             }
 
             return null;

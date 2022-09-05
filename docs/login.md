@@ -24,6 +24,9 @@ A HRD button is shown for the up-party if not at least one domain or wildcard is
 
 ![Home Realm Discovery configuration](images/configure-login-hrd.png)
 
+An example of how a login screen with HRD looks like, it can be [customized](title-icon-css.md).
+![Home Realm Discovery configuration](images/configure-login-hrd-example.png)
+
 The [title, icon and CSS](title-icon-css.md) configured on the first allowed login up-party on the down-party is used. Without an allowed login up-party configured the title, icon and CSS from the default login up-party is used.
 
 ## Two-factor authentication (2FA/MFA)

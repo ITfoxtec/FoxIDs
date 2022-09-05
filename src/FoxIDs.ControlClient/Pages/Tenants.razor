@@ -44,7 +44,10 @@
                         </div>
                     }
                     <div class="modal-footer">
-                        <a class="btn btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                        @if (tenant.Name != Constants.Routes.MasterTenantName)
+                        {
+                            <a class="btn btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                        }
                         <button type="button" class="btn btn-link" @onclick="@(() => tenant.DeleteAcknowledge = true)">Delete</button>
                         <button type="submit" class="btn btn-primary">Update</button>
                         <button type="button" class="btn btn-secondary" @onclick="@(() => tenant.Edit = false)">Close</button>
@@ -56,8 +59,11 @@
                 <button class="btn btn-link" @onclick="@(async () => await ShowUpdateTenantAsync(tenant))">
                     @TenantInfoText(tenant)
                 </button>
-                <span> - </span>
-                <a class="btn btn-sm btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                @if (tenant.Name != Constants.Routes.MasterTenantName)
+                {
+                    <span> - </span>
+                    <a class="btn btn-sm btn-link" href="@tenant.LoginUri" target="_blank">Open tenant</a>
+                }
             }
         </li>
     }

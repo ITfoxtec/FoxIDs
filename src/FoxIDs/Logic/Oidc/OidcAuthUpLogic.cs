@@ -111,8 +111,7 @@ namespace FoxIDs.Logic
                 ResponseType = party.Client.ResponseType,
                 RedirectUri = loginCallBackUrl,
                 Nonce = nonce,
-                State = await sequenceLogic.CreateExternalSequenceIdAsync(),
-                LoginHint = oidcUpSequenceData.LoginEmailHint
+                State = await sequenceLogic.CreateExternalSequenceIdAsync()
             };
 
             switch (oidcUpSequenceData.LoginAction)
@@ -132,9 +131,9 @@ namespace FoxIDs.Logic
                 authenticationRequest.MaxAge = oidcUpSequenceData.MaxAge;
             }
 
-            if (!oidcUpSequenceData.UserId.IsNullOrEmpty())
+            if (!oidcUpSequenceData.LoginEmailHint.IsNullOrEmpty())
             {
-                authenticationRequest.LoginHint = oidcUpSequenceData.UserId;
+                authenticationRequest.LoginHint = oidcUpSequenceData.LoginEmailHint;
             }
 
             authenticationRequest.Scope = new[] { IdentityConstants.DefaultOidcScopes.OpenId}.ConcatOnce(party.Client.Scopes).ToSpaceList();

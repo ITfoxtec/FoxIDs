@@ -141,7 +141,7 @@ namespace FoxIDs.Logic
 
             if (!authenticationRequest.LoginHint.IsNullOrEmpty())
             {
-                loginRequest.UserId = authenticationRequest.LoginHint;
+                loginRequest.EmailHint = authenticationRequest.LoginHint;
             }
 
             if (!authenticationRequest.AcrValues.IsNullOrWhiteSpace())

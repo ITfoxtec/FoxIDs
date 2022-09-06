@@ -41,9 +41,9 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MPlan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(name));
+                var mPlan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(name));
 
-                return Ok(mapper.Map<Api.Plan>(MPlan));
+                return Ok(mapper.Map<Api.Plan>(mPlan));
             }
             catch (CosmosDataException ex)
             {
@@ -148,7 +148,7 @@ namespace FoxIDs.Controllers
 
         private async Task<bool> ValidatePlanNotUsedAsync(string planName)
         {
-            var tenants = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName.Equals(planName), maxItemCount: 1);
+            (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName.Equals(planName), maxItemCount: 1);
             if (tenants.Count() > 0)
             {
                 try

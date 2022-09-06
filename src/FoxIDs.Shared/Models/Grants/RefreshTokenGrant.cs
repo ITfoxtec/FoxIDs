@@ -9,7 +9,7 @@ namespace FoxIDs.Models
 {
     public class RefreshTokenGrant : DataDocument
     {
-        public static async Task<string> IdFormat(IdKey idKey)
+        public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -50,7 +50,7 @@ namespace FoxIDs.Models
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            Id = await IdFormat(idKey);
+            Id = await IdFormatAsync(idKey);
         }
 
         public class IdKey : Track.IdKey

@@ -50,6 +50,11 @@ namespace FoxIDs.Logic
                 return true;
             }
 
+            if (oldUpParty.HrdShowButtonWithDomain != newUpParty.HrdShowButtonWithDomain)
+            {
+                return true;
+            }
+
             if (oldUpParty.HrdDisplayName != newUpParty.HrdDisplayName)
             {
                 return true;
@@ -74,6 +79,7 @@ namespace FoxIDs.Logic
             {
                 Name = upParty.Name,
                 HrdDisplayName = upParty.HrdDisplayName,
+                HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain,
                 HrdDomains = upParty.HrdDomains,
                 HrdLogoUrl = upParty.HrdLogoUrl,
                 Remove = remove
@@ -155,6 +161,7 @@ namespace FoxIDs.Logic
                 if (!messageObj.Remove)
                 {
                     upParty.HrdDomains = messageObj.HrdDomains;
+                    upParty.HrdShowButtonWithDomain = messageObj.HrdShowButtonWithDomain;
                     upParty.HrdDisplayName = messageObj.HrdDisplayName;
                     upParty.HrdLogoUrl = messageObj.HrdLogoUrl;
                 }

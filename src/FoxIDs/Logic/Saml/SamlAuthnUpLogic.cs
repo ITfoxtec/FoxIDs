@@ -65,7 +65,8 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge
+                MaxAge = loginRequest.MaxAge,
+                LoginEmailHint = loginRequest.EmailHint
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
@@ -101,6 +102,10 @@ namespace FoxIDs.Logic
 
             binding.RelayState = await sequenceLogic.CreateExternalSequenceIdAsync();
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
+            if (!samlUpSequenceData.LoginEmailHint.IsNullOrWhiteSpace())
+            {
+                saml2AuthnRequest.Subject = new Subject { NameID = new NameID { ID = samlUpSequenceData.LoginEmailHint, Format = NameIdentifierFormats.Email.OriginalString } };
+            }
 
             switch (samlUpSequenceData.LoginAction)
             {

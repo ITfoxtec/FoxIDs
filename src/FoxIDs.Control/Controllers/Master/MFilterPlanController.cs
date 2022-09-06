@@ -40,7 +40,7 @@ namespace FoxIDs.Controllers
             {
                 var mPlans = await GetFilterPlanInternalAsync(filterName);
                 var aPlans = new HashSet<Api.Plan>(mPlans.Count());
-                foreach (var mPlan in mPlans.OrderBy(t => t.Name))
+                foreach (var mPlan in mPlans.OrderBy(p => p.CostPerMonth).ThenBy(t => t.Name))
                 {
                     aPlans.Add(mapper.Map<Api.Plan>(mPlan));
                 }

@@ -1,7 +1,7 @@
 ﻿@inherits FInputBase<Decimal>
 
 <div class="form-group active-group">
-    <input @ref="inputElement" type="number" @bind="@CurrentValue" class="form-control input-control" />
+    <input @ref="inputElement" type="number" step="0.000001" @bind="@CurrentValue" class="form-control input-control" />
     <Label For="@For" class="label-control" />
     <ValidationMessage For="@For" />
 </div>

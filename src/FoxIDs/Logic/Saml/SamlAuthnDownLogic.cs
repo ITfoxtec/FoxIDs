@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -176,6 +177,11 @@ namespace FoxIDs.Logic
             else
             {
                 loginRequest.LoginAction = LoginAction.ReadSessionOrLogin;
+            }
+
+            if (!string.IsNullOrWhiteSpace(saml2AuthnRequest.Subject?.NameID?.ID) && saml2AuthnRequest.Subject.NameID.Format == NameIdentifierFormats.Email.OriginalString)
+            {
+                loginRequest.EmailHint = saml2AuthnRequest.Subject.NameID.ID;
             }
 
             if (saml2AuthnRequest.RequestedAuthnContext?.AuthnContextClassRef?.Count() > 0)

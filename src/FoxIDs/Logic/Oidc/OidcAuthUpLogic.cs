@@ -68,7 +68,8 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 LoginAction = loginRequest.LoginAction,
                 UserId = loginRequest.UserId,
-                MaxAge = loginRequest.MaxAge
+                MaxAge = loginRequest.MaxAge,
+                LoginEmailHint = loginRequest.EmailHint
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
@@ -110,7 +111,8 @@ namespace FoxIDs.Logic
                 ResponseType = party.Client.ResponseType,
                 RedirectUri = loginCallBackUrl,
                 Nonce = nonce,
-                State = await sequenceLogic.CreateExternalSequenceIdAsync()
+                State = await sequenceLogic.CreateExternalSequenceIdAsync(),
+                LoginHint = oidcUpSequenceData.LoginEmailHint
             };
 
             switch (oidcUpSequenceData.LoginAction)

@@ -36,6 +36,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "ma")]
         public int? MaxAge { get; set; }
 
+        [JsonProperty(PropertyName = "lh")]
+        public string LoginEmailHint { get; set; }
+
         public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

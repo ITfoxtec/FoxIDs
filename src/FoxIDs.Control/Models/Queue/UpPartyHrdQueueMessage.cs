@@ -17,6 +17,9 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
 
+        [JsonProperty(PropertyName = "hb")]
+        public bool HrdShowButtonWithDomain { get; set; }
+
         [MaxLength(Constants.Models.UpParty.HrdDisplayNameLength)]
         [RegularExpression(Constants.Models.UpParty.HrdDisplayNameRegExPattern)]
         [JsonProperty(PropertyName = "hn")]

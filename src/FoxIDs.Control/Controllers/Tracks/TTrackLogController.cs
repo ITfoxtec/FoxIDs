@@ -364,7 +364,7 @@ f_UserAgent contains '{filter}'";
                     {
                         Name = logExceptionDetail.Message
                     };
-                    logItemDetail.Details = logExceptionDetail.ParsedStack.Select(s => s.ToString()).ToList();
+                    logItemDetail.Details = logExceptionDetail.ParsedStack?.Select(s => s.ToString()).ToList();
                     item.Details.Add(logItemDetail);
                 }
             }

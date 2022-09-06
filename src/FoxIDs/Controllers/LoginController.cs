@@ -265,6 +265,8 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Identifier post.");
 
+                sequenceData.Email = login.Email;
+
                 if (sequenceData.ToUpParties.Count() > 1)
                 {
                     var autoSelectedUpParty = await loginUpLogic.AutoSelectUpPartyAsync(sequenceData.ToUpParties, login.Email);
@@ -283,7 +285,6 @@ namespace FoxIDs.Controllers
                     return viewError();
                 }
 
-                sequenceData.Email = login.Email;
                 sequenceData.DoLoginIdentifierStep = false;
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
 

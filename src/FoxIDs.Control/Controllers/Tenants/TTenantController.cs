@@ -185,7 +185,7 @@ namespace FoxIDs.Controllers
                         await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
                 }
-                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormat(name));
+                var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
 
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))
                 {

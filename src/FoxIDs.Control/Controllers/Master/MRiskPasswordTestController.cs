@@ -31,7 +31,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(password, nameof(password))) return BadRequest(ModelState);
 
                 var passwordSha1Hash = password.Sha1Hash();
-                var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormat(passwordSha1Hash));
+                var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
                 return Ok(true);
             }
             catch (CosmosDataException ex)

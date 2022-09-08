@@ -44,7 +44,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormat(RouteBinding, email?.ToLower()));
+                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (CosmosDataException ex)
@@ -122,7 +122,7 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(user)) return BadRequest(ModelState);
                 user.Email = user.Email?.ToLower();
 
-                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormat(RouteBinding, user.Email));
+                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
 
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = user.EmailVerified;
@@ -176,7 +176,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
                 email = email?.ToLower();
 
-                await tenantRepository.DeleteAsync<Models.User>(await Models.User.IdFormat(RouteBinding, email));
+                await tenantRepository.DeleteAsync<Models.User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return NoContent();
             }
             catch (CosmosDataException ex)

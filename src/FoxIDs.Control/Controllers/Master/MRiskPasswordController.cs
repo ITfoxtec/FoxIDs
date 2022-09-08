@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(passwordSha1Hash, nameof(passwordSha1Hash))) return BadRequest(ModelState);
 
-                var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormat(passwordSha1Hash));
+                var mRiskPassword = await masterRepository.GetAsync<RiskPassword>(await RiskPassword.IdFormatAsync(passwordSha1Hash));
                 return Ok(mapper.Map<Api.RiskPassword>(mRiskPassword));
             }
             catch (CosmosDataException ex)
@@ -66,7 +66,7 @@ namespace FoxIDs.Controllers
             {
                 riskPasswords.Add(new RiskPassword
                 {
-                    Id = await RiskPassword.IdFormat(item.PasswordSha1Hash),
+                    Id = await RiskPassword.IdFormatAsync(item.PasswordSha1Hash),
                     Count = item.Count,
                     CreateTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
                 });
@@ -90,7 +90,7 @@ namespace FoxIDs.Controllers
             var ids = new List<string>();
             foreach (var passwordSha1Hash in riskPasswordDelete.PasswordSha1Hashs)
             {
-                ids.Add(await RiskPassword.IdFormat(passwordSha1Hash));
+                ids.Add(await RiskPassword.IdFormatAsync(passwordSha1Hash));
             }
 
             await masterRepository.DeleteBulkAsync<RiskPassword>(ids);

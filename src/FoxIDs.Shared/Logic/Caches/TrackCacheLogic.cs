@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
                 return trackAsString.ToObject<Track>();
             }
 
-            var track = await tenantRepository.GetAsync<Track>(await Track.IdFormat(idKey), required: required);
+            var track = await tenantRepository.GetAsync<Track>(await Track.IdFormatAsync(idKey), required: required);
             if (track != null)
             {
                 await db.StringSetAsync(key, track.ToJson(), TimeSpan.FromSeconds(settings.Cache.TrackLifetime));

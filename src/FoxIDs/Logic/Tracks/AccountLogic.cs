@@ -18,7 +18,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> GetUserAsync(string email)
         {
-            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             return await tenantRepository.GetAsync<User>(id, required: false);
         }
 
@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
-            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             var user = await tenantRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)
@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
             ValidateEmail(email);
             var failingLoginCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
-            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             var user = await tenantRepository.GetAsync<User>(id, required: false);
 
             if (user == null || user.DisableAccount)

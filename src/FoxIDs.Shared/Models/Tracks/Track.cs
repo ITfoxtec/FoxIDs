@@ -9,7 +9,7 @@ namespace FoxIDs.Models
 {
     public class Track : DataDocument
     {
-        public static async Task<string> IdFormat(IdKey idKey)
+        public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -17,7 +17,7 @@ namespace FoxIDs.Models
             return $"track:{idKey.TenantName}:{idKey.TrackName}";
         }
 
-        public static async Task<string> IdFormat(RouteBinding routeBinding, string name)
+        public static async Task<string> IdFormatAsync(RouteBinding routeBinding, string name)
         {
             if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
             if (name == null) new ArgumentNullException(nameof(name));
@@ -28,7 +28,7 @@ namespace FoxIDs.Models
                 TrackName = name,
             };
 
-            return await IdFormat(idKey);
+            return await IdFormatAsync(idKey);
         }
 
         public static new string PartitionIdFormat(IdKey idKey) => $"{idKey.TenantName}:tracks";
@@ -113,7 +113,7 @@ namespace FoxIDs.Models
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            Id = await IdFormat(idKey);
+            Id = await IdFormatAsync(idKey);
             Name = Id.Substring(Id.LastIndexOf(':') + 1); ;
         }
 

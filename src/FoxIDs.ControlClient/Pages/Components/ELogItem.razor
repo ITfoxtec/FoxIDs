@@ -4,7 +4,13 @@
 
     @if (Item.Type == LogItemTypes.CriticalError || Item.Type == LogItemTypes.Error || Item.Type == LogItemTypes.Warning)
     {
-        <div><b>@(Item.Type == LogItemTypes.CriticalError ? "Critical error" : Item.Type.ToString())</b> @Item.Timestamp.TimeToString()</div>
+        @if (Item.Type == LogItemTypes.CriticalError || Item.Type == LogItemTypes.Error)
+        {
+            <div class="text-danger"><b>@(Item.Type == LogItemTypes.CriticalError ? "Critical error" : Item.Type.ToString())</b> @Item.Timestamp.TimeToString()</div>
+        }
+        else {
+            <div class="text-warning"><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
+        }
 
         @if (Item.Details != null)
         {

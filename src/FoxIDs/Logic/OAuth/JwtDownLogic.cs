@@ -81,7 +81,7 @@ namespace FoxIDs.Logic
                 accessTokenClaims.AddRange(clientClaims);
             }
 
-            if (audiences.Count() > 0)
+            if (audiences.Count() > 0 && audienceScopes.Count() > 0)
             {
                 accessTokenClaims.AddClaim(JwtClaimTypes.Scope, audienceScopes.ToSpaceList());
             }

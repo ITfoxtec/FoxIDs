@@ -44,14 +44,14 @@ namespace FoxIDs.Repository
         {
             if (tenantName.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(tenantName));
 
-            return await ReadItemAsync<Tenant>(await Tenant.IdFormat(tenantName), Tenant.PartitionIdFormat(), required, scopedLogger: scopedLogger);
+            return await ReadItemAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), Tenant.PartitionIdFormat(), required, scopedLogger: scopedLogger);
         }
 
         public async Task<Track> GetTrackByNameAsync(Track.IdKey idKey, bool required = true, TelemetryScopedLogger scopedLogger = null)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
-            return await ReadItemAsync<Track>(await Track.IdFormat(idKey), Track.PartitionIdFormat(idKey), required, scopedLogger: scopedLogger);
+            return await ReadItemAsync<Track>(await Track.IdFormatAsync(idKey), Track.PartitionIdFormat(idKey), required, scopedLogger: scopedLogger);
         }
 
         private async Task<T> ReadItemAsync<T>(string id, string partitionId, bool required, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument

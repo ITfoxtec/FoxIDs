@@ -8,7 +8,7 @@ namespace FoxIDs.Models
 {
     public class RiskPassword : MasterDocument
     {
-        public static async Task<string> IdFormat(IdKey idKey)
+        public static async Task<string> IdFormatAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
             await idKey.ValidateObjectAsync();
@@ -16,7 +16,7 @@ namespace FoxIDs.Models
             return $"prisk:{idKey.Master}:{idKey.PasswordSha1Hash}";
         }
 
-        public static async Task<string> IdFormat(string passwordSha1Hash)
+        public static async Task<string> IdFormatAsync(string passwordSha1Hash)
         {
             if (passwordSha1Hash == null) new ArgumentNullException(nameof(passwordSha1Hash));
 
@@ -25,7 +25,7 @@ namespace FoxIDs.Models
                 PasswordSha1Hash = passwordSha1Hash
             };
 
-            return await IdFormat(idKey);
+            return await IdFormatAsync(idKey);
         }
 
         public static new string PartitionIdFormat(MasterDocument.IdKey idKey) => $"{idKey.Master}:prisks";

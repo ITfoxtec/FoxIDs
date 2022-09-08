@@ -41,7 +41,7 @@ namespace FoxIDs.Logic
 
         public async Task SendConfirmationEmailAsync(string email)
         {
-            var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             var user = await tenantRepository.GetAsync<User>(id, required: false);
             await SendConfirmationEmailAsync(user);
         }
@@ -94,7 +94,7 @@ namespace FoxIDs.Logic
                     var sequenceData = await sequenceLogic.GetSequenceDataAsync<ConfirmationSequenceData>(remove: true);
                     logger.ScopeTrace(() => $"Verify confirmation email '{sequenceData.Email}'.");
 
-                    var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
+                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
                     var user = await tenantRepository.GetAsync<User>(id, required: false);
                     if (user == null || user.DisableAccount)
                     {
@@ -134,7 +134,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+                var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
                 var user = await tenantRepository.GetAsync<User>(id, required: false);
                 if (user == null || user.DisableAccount)
                 {
@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
                     var sequenceData = await sequenceLogic.GetSequenceDataAsync<ResetPasswordSequenceData>(remove: false);
                     logger.ScopeTrace(() => $"Verify reset password email '{sequenceData.Email}'.");
 
-                    var id = await User.IdFormat(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
+                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
                     var user = await tenantRepository.GetAsync<User>(id, required: false);
                     if (user == null || user.DisableAccount)
                     {

@@ -120,7 +120,7 @@ namespace FoxIDs.Logic
             var grantIdKey = new RefreshTokenGrant.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, RefreshToken = refreshToken };
             await grantIdKey.ValidateObjectAsync();
 
-            var id = await RefreshTokenGrant.IdFormat(grantIdKey);
+            var id = await RefreshTokenGrant.IdFormatAsync(grantIdKey);
             if (refreshToken.StartsWith('u'))
             {
                 return await tenantRepository.GetAsync<RefreshTokenGrant>(id, required: false, delete: client.RefreshTokenUseOneTime == true);

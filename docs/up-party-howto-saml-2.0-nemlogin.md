@@ -1,38 +1,40 @@
-# Up-party - Connect NemLog-in3 (Danish IdP) with SAML 2.0
+# Up-party - Connect NemLog-in with SAML 2.0
 
-FoxIDs can be connected to NemLog-in3 with a [up-party SAML 2.0](up-party-saml-2.0.md). Where NemLog-in3 is a SAML 2.0 Identity Provider and FoxIDs is acting as an SAML 2.0 Relying Party (RP) / Service Provider (SP).
+FoxIDs can be connected to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-party-saml-2.0.md). Where NemLog-in is a SAML 2.0 Identity Provider and FoxIDs is acting as an SAML 2.0 Relying Party (RP) / Service Provider (SP).
 
-NemLog-in3 is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in3 / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
+> NemLog-in give your users access to authenticate with MitID.
 
-> NemLog-in3 beta test environment:  
->     - Guide https://www.nemlog-in.dk/vejledningertiltestmiljo  
->     - Create your service provider https://testportal.test-devtest4-nemlog-in.dk/TU  
->     - The administration https://administration.devtest4-nemlog-in.dk/  
->     - FOCES test certificate https://www.nemlog-in.dk/media/fvshwrp0/serviceprovider.p12, password: `Test1234`  
-> NemLog-in3 test and production environment:  
->     - Test portal https://test-nemlog-in.dk/testportal/. Where you can find the NemLog-in3 IdP-metadata for test and production.
+NemLog-in (currently called NemLog-in3) is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
 
-> A sample showing the NemLog-in3 integrations is configured in the FoxIDs `test-corp` with the up-party name `nemlogin_saml`. The configuration uses a separate track where the NemLog-in3 integrations is configured.  
-> You can test NemLog-in3 login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC NemLog-in Log in`.
+NemLog-in test and production environment:  
+- The [NemLog-in dev portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/), where you can find documentation and the NemLog-in IdP-metadata for test and production.
+- The [NemLog-in adminstration protal](https://administration.nemlog-in.dk/) where you configue IT-systems
+- Download [test FOCES certificate](https://tu.nemlog-in.dk/media/fvshwrp0/serviceprovider.p12) with password: `Test1234`  
+- Download [test NemLog-in IdP-metadata](https://tu.nemlog-in.dk/media/konm1nal/oio_saml_3_integrationstest-idp-metadata-xml.txt)  
+
+> A sample showing the NemLog-in integrations is configured in the FoxIDs `test-corp` with the up-party name `nemlogin_oidc`. The configuration uses a separate track where the NemLog-in integrations is configured and converted from SAMl 2.0 to OpenId Connect.  
+> You can test NemLog-in login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC NemLog-in Log in` or by clicking `Log in` and then `Danish NemLog-in`.
 
 ## Consider separate track
 
-NemLog-in3 requires the Relying Party (RP) to use a OSES certificate and a high level of logging. Therefore, consider connecting NemLog-in3 in a separate track where the OCES certificate and log level can be configured without affecting any other configuration.
+NemLog-in requires the Relying Party (RP) to use a OSES certificate and a high level of logging. Therefore, consider connecting NemLog-in in a separate track where the OCES certificate and log level can be configured without affecting any other configuration.
 
-Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect FoxIDs with OpenID Connect](up-party-howto-oidc-foxids.md) guide. The track with a up-party connected to NemLog-in3 is called the parallel FoxIDs track in the guide.
-
-Additional to the guide:
-
- - Remove the default created `login` up-party in the parallel track
- - Add the JWT claims mapped from SAML 2.0 claims to the OpenID Connect up-parties and down-parties
+Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect FoxIDs with OpenID Connect](up-party-howto-oidc-foxids.md) guide. The track with a up-party connected to NemLog-in is called the parallel FoxIDs track in the guide.
 
 ## Certificate
 
-NemLog-in3 requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in3 requires the RP to sign with a OCES certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
+NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
 
-A OCES certificate is valid for three years where after it manually has to be updated.
+A OCES certificate is valid for three years thereafter it manually has to be updated.
 
-The `.P12` OCES certificate file is added as the primary certificate in the track.
+Add the `.P12` OCES certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+1. Select (or create) the track to be used for NemLog-in
+2. Select the Certificates tab
+3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
+
+![Add OCES certificate](images/howto-saml-nemlogin3-certificate-container-type.png)
+
+4. Then click on the primary certificate, then write the password and upload the `.P12` OCES certificate 
 
 ![Add OCES certificate](images/howto-saml-nemlogin3-certificate.png)
 
@@ -40,11 +42,9 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
 
-The following configuration description is made from at track called `test-nemlogin`. The required OCES certificate is pre-configured. 
-
 > You need to [configure the OCES certificate](#certificate) before following this configuration.
 
-**1 - Start by creating your service provider in NemLog-in3**
+**1 - Start by creating your service provider in NemLog-in**
 
 If you do not already have a service provider.
 
@@ -52,7 +52,7 @@ If you do not already have a service provider.
  2. Select if the service provider type should be public or private
  3. Create your service provider 
 
- **2 - Then create an IT system in NemLog-in3 for the FoxIDs up-party**
+ **2 - Then create an IT system in NemLog-in for the FoxIDs up-party**
 
  1. Go to https://administration.devtest4-nemlog-in.dk/
  2. Select `IT system provider`
@@ -64,23 +64,30 @@ If you do not already have a service provider.
  8. Click on the IT system you just created
  9. Download the NemLog-in metadata. The metadata file is used to configure the FoxIDs SAML 2.0 up-party in the next step.
 
-**3 - Then create an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Add the name
- 2. Select show advanced settings
- 3. Select the dot URL binding pattern
- 4. Set the session lifetime to 1800 (30 minutes)
+
+
+
+**1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+1. Select the Parties tab and then the Up-parties
+2. Click Create up-party and then SMAL 2.0
+3. Add the name
+4. Select show advanced settings
+5. Select the dot URL binding pattern
+6. Set the session lifetime to 1800 (30 minutes) in the Logout session tab
+7. Go back to the SAML tab
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-top.png)
 
- 5. Disable automatic update
- 6. Click Read metadata from file and select the NemLog-in metadata
+8. Disable automatic update
+9. Click Read metadata from file and select the NemLog-in IdP-metadata
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-read-metadata.png)
 
- 7. Configure a custom SP issuer, the issuer is required to start with `https://saml.`
-    - The issuer in this example `https://saml.foxids.com/test-corp/test-nemlogin/`
- 8. Configure claims, the following claims is most often used:
+10. Configure a custom SP issuer, the issuer is required to start with `https://saml.`
+    - The issuer in this example `https://saml.foxids.com/test-corp/nemlogin-test/`
+11. Remove the `*` and configure claims, the following claims is most often used:
     - `https://data.gov.dk/concept/core/nsis/loa`
     - `https://data.gov.dk/model/core/eid/cprUuid`
     - `https://data.gov.dk/model/core/eid/email`
@@ -93,36 +100,42 @@ If you do not already have a service provider.
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-claims.png)
 
- 9. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
- 10. Select to include the encryption certificate in metadata
- 11. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
+ 12. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+ 13. Select to include the encryption certificate in metadata
+ 14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
  ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-nameidformat.png)
 
- 12. Add an attribute consuming service in metadata and add the service name.
- 13. Add all the claims configured in step 8 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
+ 15. Add an attribute consuming service in metadata and add the service name.
+ 16. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-attributes.png)
 
- 14. Add at least one technical contact person
+ 17. Add at least one technical contact person
  
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-contact.png)
 
- 15. Click create
- 16. Re-open the SAML 2.0 up-party you just created
- 17. Download the SAML 2.0 up-party metadata. The metadata file is used to configure the NemLog-in IT system.
+ 18. Click create
+ 19. Go to the top of the SAML 2.0 up-party
+ 20. Download the SAML 2.0 up-party SP-metadata, in this case https://idp.itfoxtec.com/nemlogin-test/.nemlogin./saml/spmetadata. 
+ 21. The SP-metadata file is used to configure the NemLog-in IT system.
  
- **4 - Then go to the IT system you created in NemLog-in3**
+ **2 - Then go to the [NemLog-in adminstration protal](https://administration.nemlog-in.dk/)**
 
- 1. Click upload metadata file and upload the SAML 2.0 up-party metadata file
- 2. Click apply for integration test (two times)
+ > You need to create an NemLog-in IT-system or have someone else creating an NemLog-in IT-system and assign you access.
 
- **5 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+1. Select the IT-system
+2. Click upload metadata file and upload the SAML 2.0 up-party SP-metadata file
+3. Go back to the IT-system
+4. Click the button Save the technical details
+5. Click Provision to integrationtest and then click Apply for integration test
 
- FoxIDs internally converts SAML 2.0 clams to JWT claims. NemLog-in3 / OIOSAML 3 defines a set of SAML 2.0 claims where JWT mappings need to be added.
+ **3 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Go to settings and claim mappings
- 2. Add mappings for all the claims configured in step 3.8
+ FoxIDs internally converts SAML 2.0 clams to JWT claims. NemLog-in / OIOSAML 3 defines a set of SAML 2.0 claims where JWT mappings need to be added.
+
+ 1. Go to Settings tab and Claim mappings
+ 2. Add mappings for all the claims configured in step 1.11, you can create you own short JWT claim names if no standard name exist
  3. Click update
 
 ![Claim mappings](images/howto-saml-nemlogin3-claim-mappings.png)
@@ -131,6 +144,8 @@ You are done. The SAML 2.0 up-party can now be used as an up-party for down-part
 
 > A down-party will only issue added claims.  
 > Therefor, remember to add the JWT claims to OpenID Connect down-parties.
+
+See [Consider separate track](#consider-separate-track) on how to connect the NemLog-in track.
 
 ## Logging
 
@@ -141,11 +156,12 @@ NemLog-in requires requests and responses to be logged including the signature p
 
 It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 
-The required log level is configured in the FoxIDs log settings:
+The log level NemLog-in require is configured in the FoxIDs log settings:
 
- - Enable `log info trace`
- - Enable `log claims trace`
- - Enable `log message trace`
+ 1. Enable `log info trace`
+ 2. Enable `log claims trace`
+ 3. Enable `log message trace`
+ 4. Click update
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-log.png)
 

@@ -8,7 +8,7 @@ NemLog-in (currently called NemLog-in3) is a Danish Identity Provider (IdP) whic
 
 NemLog-in test and production environment:  
 - The [NemLog-in dev portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/), where you can find documentation and the NemLog-in IdP-metadata for test and production.
-- The [NemLog-in adminstration protal](https://administration.nemlog-in.dk/) where you configue IT-systems
+- The [NemLog-in adminstration protal](https://administration.nemlog-in.dk/) where you configure IT-systems
 - Download [test FOCES certificate](https://tu.nemlog-in.dk/media/fvshwrp0/serviceprovider.p12) with password: `Test1234`  
 - Download [test NemLog-in IdP-metadata](https://tu.nemlog-in.dk/media/konm1nal/oio_saml_3_integrationstest-idp-metadata-xml.txt)  
 

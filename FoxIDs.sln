@@ -129,6 +129,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-oidc-foxids-up-party-readredirect.png = docs\images\howto-oidc-foxids-up-party-readredirect.png
 		docs\images\howto-oidc-foxids-up-party.png = docs\images\howto-oidc-foxids-up-party.png
 		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
+		docs\images\howto-saml-nemlogin3-certificate-container-type.png = docs\images\howto-saml-nemlogin3-certificate-container-type.png
 		docs\images\howto-saml-nemlogin3-certificate.png = docs\images\howto-saml-nemlogin3-certificate.png
 		docs\images\howto-saml-nemlogin3-claim-mappings.png = docs\images\howto-saml-nemlogin3-claim-mappings.png
 		docs\images\howto-saml-nemlogin3-id-type.png = docs\images\howto-saml-nemlogin3-id-type.png

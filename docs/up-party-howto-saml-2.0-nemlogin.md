@@ -117,7 +117,7 @@ If you do not already have a service provider.
 
  18. Click create
  19. Go to the top of the SAML 2.0 up-party
- 20. Download the SAML 2.0 up-party SP-metadata, in this case https://idp.itfoxtec.com/nemlogin-test/.nemlogin./saml/spmetadata. 
+ 20. Download the SAML 2.0 up-party SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
  21. The SP-metadata file is used to configure the NemLog-in IT system.
  
  **2 - Then go to the [NemLog-in adminstration protal](https://administration.nemlog-in.dk/)**

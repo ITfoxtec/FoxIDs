@@ -44,30 +44,6 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 > You need to [configure the OCES certificate](#certificate) before following this configuration.
 
-**1 - Start by creating your service provider in NemLog-in**
-
-If you do not already have a service provider.
-
- 1. Go to https://testportal.test-devtest4-nemlog-in.dk/TU
- 2. Select if the service provider type should be public or private
- 3. Create your service provider 
-
- **2 - Then create an IT system in NemLog-in for the FoxIDs up-party**
-
- 1. Go to https://administration.devtest4-nemlog-in.dk/
- 2. Select `IT system provider`
- 3. Click `Add new IT system`
- 4. Create the IT system
- 5. Grant someone else or your self access 
- 6. Login with the account you granted access (if you grant yourself access, then do logout and relogin to get access)
- 7. Select `IT systems`
- 8. Click on the IT system you just created
- 9. Download the NemLog-in metadata. The metadata file is used to configure the FoxIDs SAML 2.0 up-party in the next step.
-
-
-
-
-
 **1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Up-parties

@@ -12,7 +12,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 c.PreSerializeFilters.Add((openApiDocument, httpRequest) =>
                 {
-                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = httpRequest.HttpContext.GetHost(false) } };
+                    openApiDocument.Servers = new List<OpenApiServer> { new OpenApiServer { Url = httpRequest.HttpContext.GetHost(addTrailingSlash: false) } };
                 });
                 c.RouteTemplate = "api/swagger/{documentname}/swagger.json";
             });

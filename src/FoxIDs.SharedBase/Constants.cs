@@ -356,8 +356,8 @@ namespace FoxIDs
                 public const int KeysApiMin = 0;
                 public const int KeysMin = 1;
                 public const int KeysMax = 10;
-                public const int OidcDiscoveryUpdateRateMin = 86400; // 24 hours
-                public const int OidcDiscoveryUpdateRateMax = 31536000; // 12 month
+                public const int OidcDiscoveryUpdateRateMin = 14400; // 4 hours
+                public const int OidcDiscoveryUpdateRateMax = 5184000; // 60 days
 
                 public const int ScopeLength = 50;
                 public const string ScopeRegExPattern = @"^[\w:\-/.]*$";
@@ -394,8 +394,8 @@ namespace FoxIDs
             {
                 public const int MetadataUrlLength = 500;
                 public const int MetadataXmlSize = 200000; // 200kB
-                public const int MetadataUpdateRateMin = 86400; // 24 hours
-                public const int MetadataUpdateRateMax = 31536000; // 12 month
+                public const int MetadataUpdateRateMin = 14400; // 4 hours
+                public const int MetadataUpdateRateMax = 5184000; // 60 days
                 public const int MetadataNameIdFormatsMin = 0;
                 public const int MetadataNameIdFormatsMax = 5;
                 public const int MetadataContactPersonsMin = 0;

@@ -19,8 +19,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool AutomaticStopped { get; set; }
 
         [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        [Display(Name = "Automatic update rate")]
-        public int OidcDiscoveryUpdateRate { get; set; } = 2592000; // 30 days
+        [Display(Name = "Automatic update rate in seconds")]
+        public int OidcDiscoveryUpdateRate { get; set; } = 172800; // 2 days
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]

@@ -22,8 +22,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool AutomaticStopped { get; set; }
 
         [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
-        [Display(Name = "Automatic update rate")]
-        public int MetadataUpdateRate { get; set; } = 2592000; // 30 days
+        [Display(Name = "Automatic update rate in seconds")]
+        public int MetadataUpdateRate { get; set; } = 172800; // 2 days
 
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
         [Display(Name = "Metadata URL")]

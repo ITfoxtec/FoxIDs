@@ -27,28 +27,21 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Cost per month")]
         public decimal CostPerMonth { get; set; }
 
-        [Display(Name = "Block after included is used")]
-        public bool BlockAfterIncluded { get; set; }
-
         [Required]
-        [Display(Name = "Users per month")]
-        public PlanItem UserPerMonth { get; set; }
-
-        [Required]
-        [Display(Name = "Logins per month")]
-        public PlanItem LoginPerMonth { get; set; }
+        [Display(Name = "Active users per month")]
+        public PlanItem ActiveUsersPerMonth { get; set; }
 
         [Required]
         [Display(Name = "Token requests per month")]
-        public PlanItem TokenPerMonth { get; set; }
+        public PlanItem TokenRequestsPerMonth { get; set; }
 
         [Required]
-        [Display(Name = "Control API get per month")]
-        public PlanItem ControlApiGetPerMonth { get; set; }
+        [Display(Name = "Control API get requests per month")]
+        public PlanItem ControlApiGetRequestsPerMonth { get; set; }
 
         [Required]
-        [Display(Name = "Control API update per month")]
-        public PlanItem ControlApiUpdatePerMonth { get; set; }
+        [Display(Name = "Control API update requests per month")]
+        public PlanItem ControlApiUpdateRequestsPerMonth { get; set; }
 
         [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]

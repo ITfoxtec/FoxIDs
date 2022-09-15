@@ -46,43 +46,35 @@
                         <FInputText @bind-Value="plan.Form.Model.Text" For="@(() => plan.Form.Model.Text)" />
                         <FInputText @bind-Value="plan.Form.Model.Currency" For="@(() => plan.Form.Model.Currency)" />
                         <FInputNumberD @bind-Value="plan.Form.Model.CostPerMonth" For="@(() => plan.Form.Model.CostPerMonth)" />
-                        <FInputToggle @bind-Value="plan.Form.Model.BlockAfterIncluded" For="@(() => plan.Form.Model.BlockAfterIncluded)" TextType="y.n" />
 
                         <ul class="list-group">
                             <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.UserPerMonth)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.UserPerMonth.Included" For="@(() => plan.Form.Model.UserPerMonth.Included)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.UserPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.UserPerMonth.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.UserPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.UserPerMonth.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.UserPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.UserPerMonth.SecondLevelCost)" />
+                                <Label For="@(() => plan.Form.Model.ActiveUsersPerMonth)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.ActiveUsersPerMonth.Included" For="@(() => plan.Form.Model.ActiveUsersPerMonth.Included)" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.ActiveUsersPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.ActiveUsersPerMonth.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ActiveUsersPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.ActiveUsersPerMonth.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.ActiveUsersPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.ActiveUsersPerMonth.SecondLevelCost)" />
                             </li>
                             <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.LoginPerMonth)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.LoginPerMonth.Included" For="@(() => plan.Form.Model.LoginPerMonth.Included)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.LoginPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.LoginPerMonth.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.LoginPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.LoginPerMonth.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.LoginPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.LoginPerMonth.SecondLevelCost)" />
+                                <Label For="@(() => plan.Form.Model.TokenRequestsPerMonth)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.TokenRequestsPerMonth.Included" For="@(() => plan.Form.Model.TokenRequestsPerMonth.Included)" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.TokenRequestsPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.TokenRequestsPerMonth.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.TokenRequestsPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.TokenRequestsPerMonth.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.TokenRequestsPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.TokenRequestsPerMonth.SecondLevelCost)" />
                             </li>
                             <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.TokenPerMonth)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.TokenPerMonth.Included" For="@(() => plan.Form.Model.TokenPerMonth.Included)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.TokenPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.TokenPerMonth.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.TokenPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.TokenPerMonth.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.TokenPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.TokenPerMonth.SecondLevelCost)" />
+                                <Label For="@(() => plan.Form.Model.ControlApiGetRequestsPerMonth)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiGetRequestsPerMonth.Included" For="@(() => plan.Form.Model.ControlApiGetRequestsPerMonth.Included)" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiGetRequestsPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequestsPerMonth.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetRequestsPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiGetRequestsPerMonth.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiGetRequestsPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiGetRequestsPerMonth.SecondLevelCost)" />
                             </li>
                             <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.ControlApiGetPerMonth)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiGetPerMonth.Included" For="@(() => plan.Form.Model.ControlApiGetPerMonth.Included)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiGetPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiGetPerMonth.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiGetPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiGetPerMonth.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiGetPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiGetPerMonth.SecondLevelCost)" />
-                            </li>
-                            <li class="list-group-item">
-                                <Label For="@(() => plan.Form.Model.ControlApiUpdatePerMonth)" class="label-control" />
-                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiUpdatePerMonth.Included" For="@(() => plan.Form.Model.ControlApiUpdatePerMonth.Included)" />
-                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiUpdatePerMonth.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiUpdatePerMonth.FirstLevelCost)" />
-                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdatePerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiUpdatePerMonth.FirstLevelThreshold)" />
-                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdatePerMonth.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdatePerMonth.SecondLevelCost)" />
+                                <Label For="@(() => plan.Form.Model.ControlApiUpdateRequestsPerMonth)" class="label-control" />
+                                <FInputNumberL @bind-Value="plan.Form.Model.ControlApiUpdateRequestsPerMonth.Included" For="@(() => plan.Form.Model.ControlApiUpdateRequestsPerMonth.Included)" />
+                                <FInputNumberD @bind-Value="plan.Form.Model.ControlApiUpdateRequestsPerMonth.FirstLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequestsPerMonth.FirstLevelCost)" />
+                                <FInputNumberLN @bind-Value="plan.Form.Model.ControlApiUpdateRequestsPerMonth.FirstLevelThreshold" For="@(() => plan.Form.Model.ControlApiUpdateRequestsPerMonth.FirstLevelThreshold)" />
+                                <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdateRequestsPerMonth.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequestsPerMonth.SecondLevelCost)" />
                             </li>
                         </ul>
                             

@@ -56,28 +56,21 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "cost_per_month")]
         public decimal CostPerMonth { get; set; }
 
-        [JsonProperty(PropertyName = "block_after_included")]
-        public bool BlockAfterIncluded { get; set; }
+        [Required]
+        [JsonProperty(PropertyName = "active_users_per_month")]
+        public PlanItem ActiveUsersPerMonth { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "user_per_month")]
-        public PlanItem UserPerMonth { get; set; }
+        [JsonProperty(PropertyName = "token_req_per_month")]
+        public PlanItem TokenRequestsPerMonth { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "login_per_month")]
-        public PlanItem LoginPerMonth { get; set; }
+        [JsonProperty(PropertyName = "control_api_get_req_per_month")]
+        public PlanItem ControlApiGetRequestsPerMonth { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "token_per_month")]
-        public PlanItem TokenPerMonth { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "control_api_get_per_month")]
-        public PlanItem ControlApiGetPerMonth { get; set; }
-
-        [Required]
-        [JsonProperty(PropertyName = "control_api_update_per_month")]
-        public PlanItem ControlApiUpdatePerMonth { get; set; }
+        [JsonProperty(PropertyName = "control_api_update_req_per_month")]
+        public PlanItem ControlApiUpdateRequestsPerMonth { get; set; }
 
         [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]

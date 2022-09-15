@@ -261,7 +261,7 @@ namespace FoxIDs.Controllers
         private async Task<bool> LoadEventsAsync(LogsQueryClient client, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
-            var where = filter.IsNullOrEmpty() ? null : $"| where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
+            var where = $"| where isempty(Properties.f_UsageType){(filter.IsNullOrEmpty() ? String.Empty : $" | where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}")}";
             var eventsQuery = GetQuery("AppEvents", extend, where);
             Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
             var table = response.Value.Table;

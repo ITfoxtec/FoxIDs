@@ -33,8 +33,9 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
+        private readonly PlanUsageLogic planUsageLogic;
 
-        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformLogic claimTransformLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, SamlMetadataReadUpLogic samlMetadataReadUpLogic, ClaimTransformLogic claimTransformLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -47,6 +48,7 @@ namespace FoxIDs.Logic
             this.claimTransformLogic = claimTransformLogic;
             this.claimsDownLogic = claimsDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
+            this.planUsageLogic = planUsageLogic;
         }
         public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
@@ -348,6 +350,12 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+
+                if (status == Saml2StatusCodes.Success)
+                {
+                    planUsageLogic.LogActiveUserEvent(jwtClaims);
+                }
+
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:

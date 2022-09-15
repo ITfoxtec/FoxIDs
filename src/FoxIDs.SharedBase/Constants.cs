@@ -80,6 +80,8 @@ namespace FoxIDs
             public const string Email = "f_Email";
             public const string Type = "f_Type";
             public const string FailingLoginCount = "f_FailingLoginCount";
+            public const string UsageType = "f_UsageType";
+            public const string ActiveUserId = "f_ActiveUserId";
 
             public static class Results
             {
@@ -601,8 +603,7 @@ namespace FoxIDs
             /// <summary>
             /// Default ID Token claims.
             /// </summary>
-            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.SubFormat } ).ToArray();
+            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] { JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.SubFormat }).ToArray();
 
             /// <summary>
             /// Default Access Token claims.

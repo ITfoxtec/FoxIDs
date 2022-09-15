@@ -29,6 +29,7 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly JwtUpLogic<TParty, TClient> jwtUpLogic;
         private readonly SequenceLogic sequenceLogic;
+        private readonly PlanUsageLogic planUsageLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
@@ -36,13 +37,14 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.jwtUpLogic = jwtUpLogic;
             this.sequenceLogic = sequenceLogic;
+            this.planUsageLogic = planUsageLogic;
             this.hrdLogic = hrdLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -443,6 +445,12 @@ namespace FoxIDs.Logic
             }
 
             var subject = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+
+            if (subject.IsNullOrEmpty())
+            {
+                subject = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Email);
+            }
+
             if (!subject.IsNullOrEmpty())
             {
                 claims = claims.Where(c => c.Type != JwtClaimTypes.Subject).ToList();
@@ -521,6 +529,12 @@ namespace FoxIDs.Logic
             try
             {
                 logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+
+                if (error.IsNullOrEmpty())
+                {
+                    planUsageLogic.LogActiveUserEvent(claims);
+                }
+
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:

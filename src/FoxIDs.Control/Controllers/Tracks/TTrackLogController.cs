@@ -308,6 +308,8 @@ namespace FoxIDs.Controllers
 
         private string GetGeneralQueryExtend() =>
 @"| extend f_DownPartyId = Properties.f_DownPartyId 
+| extend f_UpPartyId = Properties.f_UpPartyId 
+| extend f_SequenceId = Properties.f_SequenceId 
 | extend f_SessionId = Properties.f_SessionId 
 | extend f_ExternalSessionId = Properties.f_ExternalSessionId 
 | extend f_UserId = Properties.f_UserId 
@@ -317,6 +319,8 @@ namespace FoxIDs.Controllers
         private string GetGeneralQueryWhere(string filter) =>
 @$"ClientIP contains '{filter}' or 
 f_DownPartyId contains '{filter}' or 
+f_UpPartyId contains '{filter}' or 
+f_SequenceId contains '{filter}' or 
 f_SessionId contains '{filter}' or 
 f_ExternalSessionId contains '{filter}' or 
 f_UserId contains '{filter}' or 

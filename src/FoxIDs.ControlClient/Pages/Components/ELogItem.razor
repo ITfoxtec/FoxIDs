@@ -49,7 +49,7 @@
 
         @foreach (var value in Item.Values)
         {
-            <div>@value.Key: @value.Value</div>
+            <div>@value.Key.RemovePreFLogKey(): @value.Value</div>
         }
     }
     else if (Item.Type == LogItemTypes.Trace)
@@ -70,7 +70,7 @@
 
         @foreach (var value in Item.Values)
         {
-            <div>@value.Key: @value.Value</div>
+            <div>@value.Key.RemovePreFLogKey(): @value.Value</div>
         }
     }
     else if (Item.Type == LogItemTypes.Event)
@@ -79,7 +79,7 @@
 
         @if (!Item.SequenceId.IsNullOrEmpty())
         {
-            <div>f_SequenceId: @Item.SequenceId</div>
+            <div>SequenceId: @Item.SequenceId</div>
         }
     }
     else if (Item.Type == LogItemTypes.Metrics)
@@ -97,7 +97,7 @@
 
         @if (!Item.SequenceId.IsNullOrEmpty())
         {
-            <div>f_SequenceId: @Item.SequenceId</div>
+            <div>SequenceId: @Item.SequenceId</div>
         }
     }
 </div>

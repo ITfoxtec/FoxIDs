@@ -43,9 +43,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var sessionForLog = new SessionLoginUpPartyCookie();
-                sessionForLog.Claims = claims.ToClaimAndValues();
-                SetScopeProperty(sessionForLog, includeSessionId: false);
+                logger.SetUserScopeProperty(claims);
             }
         }
 

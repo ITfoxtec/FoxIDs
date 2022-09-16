@@ -15,14 +15,16 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
+        private readonly PlanUsageLogic planUsageLogic;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic;
 
-        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, jwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, httpContextAccessor)
+        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, planUsageLogic, jwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
+            this.planUsageLogic = planUsageLogic;
             this.jwtDownLogic = jwtDownLogic;
             this.oauthAuthCodeGrantDownLogic = oauthAuthCodeGrantDownLogic;
             this.oauthRefreshTokenGrantDownLogic = oauthRefreshTokenGrantDownLogic;
@@ -103,6 +105,7 @@ namespace FoxIDs.Logic
 
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
                 var claims = authCodeGrant.Claims.ToClaimList();
+                logger.SetUserScopeProperty(claims);
                 var scopes = authCodeGrant.Scope.ToSpaceList();
 
                 tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
@@ -152,6 +155,7 @@ namespace FoxIDs.Logic
 
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
                 var claims = refreshTokenGrant.Claims.ToClaimList();
+                logger.SetUserScopeProperty(claims);
 
                 tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(client, claims, scopes, algorithm);
                 var responseTypes = new[] { IdentityConstants.ResponseTypes.IdToken, IdentityConstants.ResponseTypes.Token };
@@ -161,6 +165,8 @@ namespace FoxIDs.Logic
                 {
                     tokenResponse.RefreshToken = newRefreshToken;
                 }
+
+                planUsageLogic.LogTokenRequestEvent(PlanUsageTokenTypes.RefreshToken);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);

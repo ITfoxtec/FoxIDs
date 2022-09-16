@@ -1,10 +1,13 @@
 ﻿using FoxIDs.Infrastructure.Logging;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace FoxIDs.Infrastructure
 {
@@ -171,6 +174,21 @@ namespace FoxIDs.Infrastructure
             if (!value.IsNullOrWhiteSpace())
             {
                 telemetryScopedProperties.SetScopeProperty(new KeyValuePair<string, string>(key, value));
+            }
+        }
+
+        public void SetUserScopeProperty(IEnumerable<Claim> claims)
+        {
+            var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+            if (!userId.IsNullOrWhiteSpace())
+            {
+                SetScopeProperty(Constants.Logs.UserId, userId);
+            }
+
+            var email = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Email);
+            if (!email.IsNullOrWhiteSpace())
+            {
+                SetScopeProperty(Constants.Logs.Email, email);
             }
         }
 

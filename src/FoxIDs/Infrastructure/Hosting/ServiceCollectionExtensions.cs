@@ -26,7 +26,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSingleton<EmbeddedResourceLogic>();
             services.AddSingleton<LocalizationLogic>();
 
-            services.AddTransient<PlanUsageLogic>();
             services.AddTransient<SequenceLogic>();
             services.AddTransient<SecurityHeaderLogic>();
             services.AddTransient<TrackKeyLogic>();
@@ -108,9 +107,6 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddScoped<FoxIDsRouteTransformer>();
             services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
-
-            services.AddSingleton<OidcDiscoveryHandlerService>();
-            services.AddHostedService<OidcDiscoveryBackgroundService>();
 
             if (!env.IsDevelopment())
             {

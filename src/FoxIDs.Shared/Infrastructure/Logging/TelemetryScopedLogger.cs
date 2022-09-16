@@ -1,9 +1,7 @@
 ﻿using FoxIDs.Infrastructure.Logging;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;

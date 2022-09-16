@@ -128,10 +128,11 @@ namespace FoxIDs.Client.Pages
             {
                 plan.Currency = "EUR";
             }
-            plan.ActiveUsersPerMonth = plan.ActiveUsersPerMonth ?? new PlanItem();
-            plan.TokenRequestsPerMonth = plan.TokenRequestsPerMonth ?? new PlanItem();
-            plan.ControlApiGetRequestsPerMonth = plan.ControlApiGetRequestsPerMonth ?? new PlanItem();
-            plan.ControlApiUpdateRequestsPerMonth = plan.ControlApiUpdateRequestsPerMonth ?? new PlanItem();
+            plan.Users = plan.Users ?? new PlanItem();
+            plan.Logins = plan.Logins ?? new PlanItem();
+            plan.TokenRequests = plan.TokenRequests ?? new PlanItem();
+            plan.ControlApiGetRequests = plan.ControlApiGetRequests ?? new PlanItem();
+            plan.ControlApiUpdateRequests = plan.ControlApiUpdateRequests ?? new PlanItem();
         }
 
         private string PlanInfoText(GeneralPlanViewModel generalPlan)

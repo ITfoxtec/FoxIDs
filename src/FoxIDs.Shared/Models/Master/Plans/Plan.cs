@@ -57,20 +57,24 @@ namespace FoxIDs.Models
         public decimal CostPerMonth { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "active_users_per_month")]
-        public PlanItem ActiveUsersPerMonth { get; set; }
+        [JsonProperty(PropertyName = "users")]
+        public PlanItem Users { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "token_req_per_month")]
-        public PlanItem TokenRequestsPerMonth { get; set; }
+        [JsonProperty(PropertyName = "logins")]
+        public PlanItem Logins { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "control_api_get_req_per_month")]
-        public PlanItem ControlApiGetRequestsPerMonth { get; set; }
+        [JsonProperty(PropertyName = "token_req")]
+        public PlanItem TokenRequests { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "control_api_update_req_per_month")]
-        public PlanItem ControlApiUpdateRequestsPerMonth { get; set; }
+        [JsonProperty(PropertyName = "control_api_get_req")]
+        public PlanItem ControlApiGetRequests { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "control_api_update_req")]
+        public PlanItem ControlApiUpdateRequests { get; set; }
 
         [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]

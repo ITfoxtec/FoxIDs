@@ -168,7 +168,10 @@ namespace FoxIDs.Infrastructure
 
         public void SetScopeProperty(string key, string value)
         {
-            telemetryScopedProperties.SetScopeProperty(new KeyValuePair<string, string>(key, value));
+            if (!value.IsNullOrWhiteSpace())
+            {
+                telemetryScopedProperties.SetScopeProperty(new KeyValuePair<string, string>(key, value));
+            }
         }
 
         private RouteBinding RouteBinding => httpContextAccessor?.HttpContext?.GetRouteBinding();

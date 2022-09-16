@@ -532,7 +532,7 @@ namespace FoxIDs.Logic
 
                 if (error.IsNullOrEmpty())
                 {
-                    planUsageLogic.LogActiveUserEvent(claims);
+                    planUsageLogic.LogLoginEvent();
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

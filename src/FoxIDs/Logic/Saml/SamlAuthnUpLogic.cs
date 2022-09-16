@@ -353,7 +353,7 @@ namespace FoxIDs.Logic
 
                 if (status == Saml2StatusCodes.Success)
                 {
-                    planUsageLogic.LogActiveUserEvent(jwtClaims);
+                    planUsageLogic.LogLoginEvent();
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

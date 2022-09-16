@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
 
             logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
 
-            planUsageLogic.LogActiveUserEvent(claims);
+            planUsageLogic.LogLoginEvent();
 
             switch (sequenceData.DownPartyLink.Type)
             {

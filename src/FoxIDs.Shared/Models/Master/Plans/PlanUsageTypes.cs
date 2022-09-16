@@ -2,7 +2,7 @@
 {
     public enum PlanUsageTypes
     {
-        ActiveUser,
+        Login,
         TokenRequest,
         ControlApiGet,
         ControlApiUpdate

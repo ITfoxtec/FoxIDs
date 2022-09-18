@@ -28,26 +28,27 @@ namespace FoxIDs.Infrastructure
         public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Warning(exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+            telemetryLogger.Warning(exception, ConcatOnceIfProperties(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, ConcatOnceIfProperties(properties), metrics);
                 }
             }
         }
+
         public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Warning(exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+            telemetryLogger.Warning(exception, message, ConcatOnceIfProperties(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, message, ConcatOnceIfProperties(properties), metrics);
                 }
             }
         }
@@ -55,26 +56,26 @@ namespace FoxIDs.Infrastructure
         public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Error(exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+            telemetryLogger.Error(exception, ConcatOnceIfProperties(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, ConcatOnceIfProperties(properties), metrics);
                 }
             }
         }
         public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.Error(exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+            telemetryLogger.Error(exception, message, ConcatOnceIfProperties(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, message, ConcatOnceIfProperties(properties), metrics);
                 }
             }
         }
@@ -82,26 +83,26 @@ namespace FoxIDs.Infrastructure
         public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.CriticalError(exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+            telemetryLogger.CriticalError(exception, ConcatOnceIfProperties(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, ConcatOnceIfProperties(properties), metrics);
                 }
             }
         }
         public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
-            telemetryLogger.CriticalError(exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+            telemetryLogger.CriticalError(exception, message, ConcatOnceIfProperties(properties), metrics);
 
             if (RouteBinding?.Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, message, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, message, ConcatOnceIfProperties(properties), metrics);
                 }
             }
         }
@@ -115,7 +116,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in RouteBinding?.Logging.ScopedStreamLoggers.Where(l => l.LogEvent))
                 {
-                    telemetryScopedStreamLogger.Event(scopedStreamLogger, eventName, telemetryScopedProperties.Properties.ConcatOnce(properties), metrics);
+                    telemetryScopedStreamLogger.Event(scopedStreamLogger, eventName, ConcatOnceIfProperties(properties), metrics);
                 }
             }                        
         }
@@ -161,7 +162,7 @@ namespace FoxIDs.Infrastructure
                 {
                     foreach (var scopedStreamLogger in RouteBinding.Logging.ScopedStreamLoggers.Where(l => l.LogMetric))
                     {
-                        telemetryScopedStreamLogger.Metric(scopedStreamLogger, messageData.Message, messageData.Value, telemetryScopedProperties.Properties.ConcatOnce(properties));
+                        telemetryScopedStreamLogger.Metric(scopedStreamLogger, messageData.Message, messageData.Value, ConcatOnceIfProperties(properties));
                     }
                 }
             }
@@ -192,6 +193,11 @@ namespace FoxIDs.Infrastructure
 
         private RouteBinding RouteBinding => httpContextAccessor?.HttpContext?.GetRouteBinding();
 
+        private IDictionary<string, string> ConcatOnceIfProperties(IDictionary<string, string> properties)
+        {
+            return properties == null ? telemetryScopedProperties.Properties : new Dictionary<string, string>(telemetryScopedProperties.Properties).ConcatOnce(properties);
+        }
+
         bool isDisposed = false;
         public void Dispose()
         {
@@ -209,7 +215,7 @@ namespace FoxIDs.Infrastructure
                             (m.TraceType == TraceTypes.Message && scopedLogger.LogMessageTrace));
                         if (telemetryLoggertraceMessages.Count() > 0)
                         {
-                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties.ConcatOnce(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
+                            telemetryLogger.Trace(telemetryLoggertraceMessages.ToJson(), ConcatOnceIfProperties(new Dictionary<string, string> { { Constants.Logs.Type, nameof(TelemetryScopedLogger.ScopeTrace) } }));
                         }
                     }
 

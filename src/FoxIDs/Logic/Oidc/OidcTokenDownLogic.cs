@@ -166,7 +166,7 @@ namespace FoxIDs.Logic
                     tokenResponse.RefreshToken = newRefreshToken;
                 }
 
-                planUsageLogic.LogTokenRequestEvent(PlanUsageTokenTypes.RefreshToken);
+                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.RefreshToken);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);

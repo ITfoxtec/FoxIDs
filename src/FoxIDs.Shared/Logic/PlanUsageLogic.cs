@@ -16,25 +16,25 @@ namespace FoxIDs.Logic
 
         public void LogLoginEvent()
         {
-            LogEvent(PlanUsageTypes.Login);
+            LogEvent(UsageLogTypes.Login);
         }
 
-        public void LogTokenRequestEvent(PlanUsageTokenTypes tokenType)
+        public void LogTokenRequestEvent(UsageLogTokenTypes tokenType)
         {
-            logger.Event($"Usage {PlanUsageTypes.TokenRequest}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, PlanUsageTypes.TokenRequest.ToString() }, { Constants.Logs.UsageTokenType, tokenType.ToString() } });
+            logger.Event($"Usage {UsageLogTypes.TokenRequest}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.TokenRequest.ToString() }, { Constants.Logs.UsageTokenType, tokenType.ToString() } });
         }
 
         public void LogControlApiGetEvent()
         {
-            LogEvent(PlanUsageTypes.ControlApiGet);
+            LogEvent(UsageLogTypes.ControlApiGet);
         }
 
         public void LogControlApiUpdateEvent()
         {
-            LogEvent(PlanUsageTypes.ControlApiUpdate);
+            LogEvent(UsageLogTypes.ControlApiUpdate);
         }
 
-        private void LogEvent(PlanUsageTypes planUsageType)
+        private void LogEvent(UsageLogTypes planUsageType)
         {
             logger.Event($"Usage {planUsageType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, planUsageType.ToString() } });
         }

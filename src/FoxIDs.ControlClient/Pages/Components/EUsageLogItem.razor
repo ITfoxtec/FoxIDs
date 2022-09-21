@@ -1,0 +1,33 @@
+﻿@inherits ComponentBase
+
+<div class="row">
+    <div class="col-6">
+        <b>@GetTypeString(Item.Type)</b>
+    </div>
+    <div class="col-6 text-right">
+        @Item.Value
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public UsageLogItem Item { get; set; }
+
+    private string GetTypeString(UsageLogTypes type) 
+    {
+        switch (type)
+        {
+            case UsageLogTypes.Login:
+                return "Logins";
+            case UsageLogTypes.TokenRequest:
+                return "Token requests";
+            case UsageLogTypes.ControlApiGet:
+                return "Control API gets";
+            case UsageLogTypes.ControlApiUpdate:
+                return "Control API updates";
+            default:
+                throw new NotImplementedException();
+        }
+    }
+}
+

@@ -21,6 +21,7 @@ namespace FoxIDs.Client.Pages
         private string logLoadError;
         private PageEditForm<LogRequestViewModel> logRequestForm;
         private LogResponseViewModel logResponse;
+        private string logUsagesHref;
         private string logSettingsHref;
 
         [Inject]
@@ -34,6 +35,7 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             logSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logsettings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;

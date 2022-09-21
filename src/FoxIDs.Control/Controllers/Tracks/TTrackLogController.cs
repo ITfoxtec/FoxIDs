@@ -309,7 +309,6 @@ namespace FoxIDs.Controllers
         private string GetGeneralQueryExtend() =>
 @"| extend f_DownPartyId = Properties.f_DownPartyId 
 | extend f_UpPartyId = Properties.f_UpPartyId 
-| extend f_SequenceId = Properties.f_SequenceId 
 | extend f_SessionId = Properties.f_SessionId 
 | extend f_ExternalSessionId = Properties.f_ExternalSessionId 
 | extend f_UserId = Properties.f_UserId 

@@ -222,7 +222,7 @@ namespace FoxIDs.Logic
 
                 tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
 
-                planUsageLogic.LogTokenRequestEvent(PlanUsageTokenTypes.ClientCredentials);
+                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);

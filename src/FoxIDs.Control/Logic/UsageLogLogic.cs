@@ -145,12 +145,12 @@ namespace FoxIDs.Logic
             }
             var includeAll = logRequest.IncludeLogins && logRequest.IncludeTokenRequests && logRequest.IncludeControlApiGets && logRequest.IncludeControlApiUpdates;
 
-            var where = includeAll ? $"| where isnotempty(f_UsageType)" : $"| where {string.Join(" or ", GetIncludes(logRequest).Select(i => $"f_UsageType == '{i}'"))}";
+            var where = includeAll ? $"isnotempty(f_UsageType)" : $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"f_UsageType == '{i}'"))}";
 
             var preOrderSummarizeBy = logRequest.SummarizeLevel == UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc, ";
 
-            var eventsQuery = GetQuery("AppEvents", where, preOrderSummarizeBy, preSortBy);
+            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(logRequest), where, preOrderSummarizeBy, preSortBy);
             Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
@@ -176,14 +176,35 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string GetQuery(string fromType, string where, string preOrderSummarizeBy, string preSortBy)
+        private string GetWhereDataSlice(UsageLogRequest logRequest)
+        {
+            var whareDataSlice = new List<string>();
+
+            whareDataSlice.Add($"f_TenantName == '{RouteBinding.TenantName}'");
+
+            if (logRequest.TrackName.IsNullOrWhiteSpace())
+            {
+                if (!Constants.Routes.MasterTrackName.Equals(RouteBinding.TrackName, StringComparison.OrdinalIgnoreCase))
+                {
+                    whareDataSlice.Add($"f_TrackName == '{RouteBinding.TrackName}'");
+                }
+            }
+            else
+            {
+                whareDataSlice.Add($"f_TrackName == '{logRequest.TrackName}'");
+            }
+
+            return string.Join(" and ", whareDataSlice);
+        }
+
+        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy)
         {
             return
 @$"{fromType}
 | extend f_TenantName = Properties.f_TenantName
 | extend f_TrackName = Properties.f_TrackName
 | extend f_UsageType = Properties.f_UsageType
-| where f_TenantName == '{RouteBinding.TenantName}' and f_TrackName == '{RouteBinding.TrackName}' {where}
+| where {whereDataSlice} | where {where}
 | summarize UsageCount = count() by {preOrderSummarizeBy}tostring(f_UsageType)
 | sort by {(preSortBy.IsNullOrEmpty() ? string.Empty : preSortBy)}f_UsageType desc";
         }

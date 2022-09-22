@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
@@ -24,6 +23,11 @@ namespace FoxIDs.Models.Api
 
         public bool IncludeControlApiGets { get; set; }
 
-        public bool IncludeControlApiUpdates { get; set; }       
+        public bool IncludeControlApiUpdates { get; set; }
+
+        /// <summary>
+        /// Select by full track name. Only possible in master track.
+        /// </summary>
+        public string TrackName { get; set; }
     }
 }

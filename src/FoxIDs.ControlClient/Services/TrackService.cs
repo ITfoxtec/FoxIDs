@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Services
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
         private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
-        private const string logUsageApiUri = "api/{tenant}/{track}/!trackusagelog";
+        private const string logUsageApiUri = "api/{tenant}/{track}/!tracklogusage";
         private const string logApiUri = "api/{tenant}/{track}/!tracklog";
         private const string logSettingApiUri = "api/{tenant}/{track}/!tracklogsetting";
         private const string logStreamsSettingsApiUri = "api/{tenant}/{track}/!tracklogstreamssettings";

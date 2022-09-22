@@ -6,7 +6,6 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class UsageLogRequestViewModel
     {
-
         [Required]
         [Display(Name = "Time scope")]
         public UsageLogTimeScopes TimeScope { get; set; } = UsageLogTimeScopes.ThisMonth;
@@ -17,5 +16,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Usage types")]
         public List<string> IncludeTypes { get; set; } = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests };
+
+        [Display(Name = "Select one track by full track name")]
+        public string TrackName { get; set; }       
     }
 }

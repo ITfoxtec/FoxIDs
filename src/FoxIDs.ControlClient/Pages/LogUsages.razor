@@ -32,9 +32,16 @@
             <option value="@UsageLogSummarizeLevels.Month">Month</option>
         </FInputSelect>
         <FInputCheckboxSelect Items="includeTypeItems" SelectedItems="usageLogRequestForm.Model.IncludeTypes" For="@(() => usageLogRequestForm.Model.IncludeTypes)" />
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">Go</button>
-        </div>
+        @if (IsMasterTrack)
+        {
+            <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
+        }
+        else
+        {
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Go</button>
+            </div>
+        }
     </PageEditForm>
 
     <ul class="list-group">

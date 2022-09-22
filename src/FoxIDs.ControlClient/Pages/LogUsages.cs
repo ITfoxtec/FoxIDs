@@ -32,6 +32,11 @@ namespace FoxIDs.Client.Pages
         [Parameter]
         public string TenantName { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => TrackSelectedLogic.IsTrackSelected && Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+
+
         protected override async Task OnInitializedAsync()
         {
             logsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logs";
@@ -78,6 +83,7 @@ namespace FoxIDs.Client.Pages
                 usageLogRequest.IncludeTokenRequests = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.TokenRequests);
                 usageLogRequest.IncludeControlApiGets = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.ControlApiGets);
                 usageLogRequest.IncludeControlApiUpdates = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.ControlApiUpdates);
+                usageLogRequest.TrackName = usageLogRequestForm.Model.TrackName;
             }
             else 
             {

@@ -18,6 +18,7 @@ namespace FoxIDs.Client.Pages
     public partial class LogSettings
     {
         private string logsHref;
+        private string logUsagesHref;
         private GeneralLogSettingsViewModel generalLogSettings = new GeneralLogSettingsViewModel();
         private string logSreamSettingsListError;
         private List<GeneralLogStreamSettingsViewModel> logSreamSettingsList = new List<GeneralLogStreamSettingsViewModel>();
@@ -37,6 +38,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             logsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logs";
+            logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

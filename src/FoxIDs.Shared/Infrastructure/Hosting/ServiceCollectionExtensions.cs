@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Logic;
 using FoxIDs.Repository;
+using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Logging;
@@ -13,6 +14,8 @@ namespace FoxIDs.Infrastructure.Hosting
     {
         public static IServiceCollection AddSharedLogic(this IServiceCollection services)
         {
+            services.AddTransient<PlanUsageLogic>();
+
             services.AddTransient<ExternalSecretLogic>();
             services.AddTransient<ExternalKeyLogic>();
 
@@ -62,6 +65,9 @@ namespace FoxIDs.Infrastructure.Hosting
 
             var connectionMultiplexer = ConnectionMultiplexer.Connect(settings.RedisCache.ConnectionString);
             services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+
+            services.AddSingleton<OidcDiscoveryHandlerService>();
+            services.AddHostedService<OidcDiscoveryBackgroundService>();
 
             return (services, connectionMultiplexer);
         }

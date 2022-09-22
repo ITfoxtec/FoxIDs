@@ -40,6 +40,8 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"Require {JwtClaimTypes.Subject} claim in access token.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                 }
 
+                logger.SetUserScopeProperty(claims);
+
                 return new JsonResult(ToClaimsResult(claims));
             }
             catch (OAuthRequestException)

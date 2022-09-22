@@ -29,7 +29,27 @@ namespace FoxIDs.UnitTests.Mocks
             throw new NotImplementedException();
         }
 
+        public Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 10) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task CreateAsync<T>(T item) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync<T>(T item) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SaveAsync<T>(T item) where T : MasterDocument
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<T> DeleteAsync<T>(string id) where T : MasterDocument
         {
             throw new NotImplementedException();
         }

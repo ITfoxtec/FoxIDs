@@ -23,7 +23,11 @@ namespace FoxIDs
 
         public static string IdToMasterPartitionId(this string id)
         {
-            if (id.StartsWith("prisk:"))
+            if (id.StartsWith("plan:"))
+            {
+                return Plan.PartitionIdFormat(new MasterDocument.IdKey());
+            }
+            else if (id.StartsWith("prisk:"))
             {
                 return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
             }

@@ -21,6 +21,11 @@ namespace FoxIDs.UnitTests.Mocks
             return Task.FromResult(false);
         }
 
+        public Task<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             throw new NotImplementedException();

@@ -5,20 +5,15 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using AutoMapper;
 
 namespace FoxIDs.Controllers
 {
     public class MRiskPasswordInfoController : MasterApiController
     {
-        private readonly TelemetryScopedLogger logger;
-        private readonly IMapper mapper;
         private readonly IMasterRepository masterRepository;
 
-        public MRiskPasswordInfoController(TelemetryScopedLogger logger, IMapper mapper, IMasterRepository masterRepository) : base(logger)
+        public MRiskPasswordInfoController(TelemetryScopedLogger logger, IMasterRepository masterRepository) : base(logger)
         {
-            this.logger = logger;
-            this.mapper = mapper;
             this.masterRepository = masterRepository;
         }
 

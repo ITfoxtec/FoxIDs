@@ -17,6 +17,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Usage types")]
         public List<string> IncludeTypes { get; set; } = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests };
 
+        [Display(Name = "Select one tenant by full tenant name")]
+        public string TenantName { get; set; } 
+
         [Display(Name = "Select one track by full track name")]
         public string TrackName { get; set; }       
     }

@@ -31,8 +31,13 @@
             <option value="@UsageLogSummarizeLevels.Day">Day</option>
             <option value="@UsageLogSummarizeLevels.Month">Month</option>
         </FInputSelect>
-        <FInputCheckboxSelect Items="includeTypeItems" SelectedItems="usageLogRequestForm.Model.IncludeTypes" For="@(() => usageLogRequestForm.Model.IncludeTypes)" />
-        @if (IsMasterTrack)
+        <FInputCheckboxSelect Items="IncludeTypeItems" SelectedItems="usageLogRequestForm.Model.IncludeTypes" For="@(() => usageLogRequestForm.Model.IncludeTypes)" />
+        @if (IsMasterTenant)
+        {
+            <FInputText @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
+            <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TenantName" For="@(() => usageLogRequestForm.Model.TenantName)" />
+        }
+        else @if (IsMasterTrack)
         {
             <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
         }

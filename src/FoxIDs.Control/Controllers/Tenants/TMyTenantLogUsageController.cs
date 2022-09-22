@@ -4,30 +4,36 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogUsageController : TenantApiController
+    public class TMyTenantLogUsageController : TenantApiController
     {
         private readonly UsageLogLogic usageLogLogic;
 
-        public TTrackLogUsageController(TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
+        public TMyTenantLogUsageController(TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
         {
             this.usageLogLogic = usageLogLogic;
         }
 
         /// <summary>
-        /// Get track usage logs.
+        /// Get my tenant usage logs.
         /// </summary>
         /// <returns>Logs.</returns>
         [ProducesResponseType(typeof(Api.UsageLogResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UsageLogResponse>> GetTrackLogUsage(Api.UsageLogRequest logRequest)
+        public async Task<ActionResult<Api.UsageLogResponse>> GetMyTenantLogUsage(Api.UsageMyTenantLogRequest logRequest)
         {
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
-            var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, RouteBinding.TenantName, RouteBinding.TrackName);
+            if (!logRequest.TrackName.IsNullOrWhiteSpace())
+            {
+                logRequest.TrackName = logRequest.TrackName.ToLower();
+            }
+
+            var logResponse = await usageLogLogic.GetTrackUsageLog(logRequest, RouteBinding.TenantName, logRequest.TrackName);
             return Ok(logResponse);
         }
     }

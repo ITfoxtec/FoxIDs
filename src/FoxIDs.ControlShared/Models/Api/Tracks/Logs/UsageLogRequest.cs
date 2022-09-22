@@ -26,12 +26,5 @@ namespace FoxIDs.Models.Api
         public bool IncludeControlApiGets { get; set; }
 
         public bool IncludeControlApiUpdates { get; set; }
-
-        /// <summary>
-        /// Select by full track name. Only possible in master track.
-        /// </summary>
-        [MaxLength(Constants.Models.Track.NameLength)]
-        [RegularExpression(Constants.Models.Track.NameRegExPattern)]
-        public string TrackName { get; set; }
     }
 }

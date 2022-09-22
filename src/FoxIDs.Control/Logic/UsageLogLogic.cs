@@ -32,15 +32,15 @@ namespace FoxIDs.Logic
             this.tokenCredential = tokenCredential;
         }
 
-        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest)
+        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName)
         {
             var client = new LogsQueryClient(tokenCredential);  
-            var rows = await LoadUsageEventsAsync(client, GetQueryTimeRange(logRequest.TimeScope), logRequest);
+            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope), logRequest);
 
             var items = new List<Api.UsageLogItem>();
-            if(logRequest.IncludeUsers && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
+            if(logRequest.IncludeUsers && logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
             {
-                var users = await GetUserCountAsync(logRequest.TrackName);
+                var users = await GetUserCountAsync(tenantName, trackName);
                 if (users != null)
                 {
                     items.Add(users);
@@ -95,25 +95,13 @@ namespace FoxIDs.Logic
             return new Api.UsageLogResponse { SummarizeLevel = logRequest.SummarizeLevel, Items = SortUsageTypes(items) };
         }
 
-        private async Task<Api.UsageLogItem> GetUserCountAsync(string trackName)
+        private async Task<Api.UsageLogItem> GetUserCountAsync(string tenantName, string trackName)
         {
-            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName };
-            if(Constants.Routes.MasterTrackName.Equals(RouteBinding.TrackName, StringComparison.OrdinalIgnoreCase))
-            {
-                if (!trackName.IsNullOrWhiteSpace())
-                {
-                    idKey.TrackName = trackName;
-                }
-            }
-            else
-            {
-                idKey.TrackName = RouteBinding.TrackName;
-            }
-
-            var usePartitionId = !idKey.TrackName.IsNullOrEmpty();
+            var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
+            var usePartitionId = !idKey.TenantName.IsNullOrEmpty() && !idKey.TrackName.IsNullOrEmpty();
             Expression<Func<User, bool>> whereQuery = usePartitionId ? p => p.DataType.Equals("user") : p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
 
-            var count = await tenantRepository.CountAsync<User>(idKey, whereQuery: whereQuery, usePartitionId: usePartitionId);
+            var count = await tenantRepository.CountAsync<User>(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem
@@ -126,6 +114,16 @@ namespace FoxIDs.Logic
             {
                 return null;
             }
+        }
+
+        private Expression<Func<User, bool>> GetUserCountWhereQuery(Track.IdKey idKey, bool usePartitionId)
+        {
+            if (!usePartitionId && !idKey.TenantName.IsNullOrEmpty())
+            {
+                return p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
+            }
+
+            return p => p.DataType.Equals("user");
         }
 
         private IEnumerable<Api.UsageLogItem> SortUsageTypes(IEnumerable<Api.UsageLogItem> items)
@@ -181,7 +179,7 @@ namespace FoxIDs.Logic
             return new QueryTimeRange(startDate, endDate);
         }
 
-        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest)
+        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest)
         {
             if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
             {
@@ -195,7 +193,7 @@ namespace FoxIDs.Logic
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
-            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(logRequest), where, preOrderSummarizeBy, preSortBy);
+            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy);
             Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
@@ -221,24 +219,17 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string GetWhereDataSlice(Api.UsageLogRequest logRequest)
+        private string GetWhereDataSlice(string tenantName, string trackName)
         {
             var whereDataSlice = new List<string>();
-
-            whereDataSlice.Add($"f_TenantName == '{RouteBinding.TenantName}'");
-
-            if (!Constants.Routes.MasterTrackName.Equals(RouteBinding.TrackName, StringComparison.OrdinalIgnoreCase))
+            if (!tenantName.IsNullOrWhiteSpace())
             {
-                whereDataSlice.Add($"f_TrackName == '{RouteBinding.TrackName}'");
+                whereDataSlice.Add($"f_TenantName == '{tenantName}'");
             }
-            else
+            if (!trackName.IsNullOrWhiteSpace())
             {
-                if (!logRequest.TrackName.IsNullOrWhiteSpace())
-                {
-                    whereDataSlice.Add($"f_TrackName == '{logRequest.TrackName}'");
-                }
+                whereDataSlice.Add($"f_TrackName == '{trackName}'");
             }
-
             return string.Join(" and ", whereDataSlice);
         }
 
@@ -249,7 +240,7 @@ namespace FoxIDs.Logic
 | extend f_TenantName = Properties.f_TenantName
 | extend f_TrackName = Properties.f_TrackName
 | extend f_UsageType = Properties.f_UsageType
-| where {whereDataSlice} | where {where}
+{(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
 | summarize UsageCount = count() by {preOrderSummarizeBy}tostring(f_UsageType)
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }

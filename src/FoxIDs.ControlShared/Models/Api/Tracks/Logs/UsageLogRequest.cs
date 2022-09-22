@@ -17,6 +17,8 @@ namespace FoxIDs.Models.Api
         [Required]
         public UsageLogSummarizeLevels SummarizeLevel { get; set; }
 
+        public bool IncludeUsers { get; set; }
+
         public bool IncludeLogins { get; set; }
 
         public bool IncludeTokenRequests { get; set; }
@@ -28,6 +30,8 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Select by full track name. Only possible in master track.
         /// </summary>
+        [MaxLength(Constants.Models.Track.NameLength)]
+        [RegularExpression(Constants.Models.Track.NameRegExPattern)]
         public string TrackName { get; set; }
     }
 }

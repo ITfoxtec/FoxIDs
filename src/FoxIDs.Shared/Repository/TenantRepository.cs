@@ -33,6 +33,30 @@ namespace FoxIDs.Repository
             return item != null;
         }
 
+        public async Task<int> CountAsync<T>(Track.IdKey idKey = null, Expression<Func<T, bool>> whereQuery = null, bool usePartitionId = true) where T : IDataDocument
+        {
+            var partitionId = usePartitionId ? PartitionIdFormat<T>(idKey) : null;
+            var orderedQueryable = GetQueryAsync<T>(partitionId, usePartitionId: usePartitionId);
+            var query = (whereQuery == null) ? orderedQueryable : orderedQueryable.Where(whereQuery);
+
+            // RequestCharge not supported for count.
+            //double totalRU = 0;
+            try
+            {
+                //var response = await query.ExecuteNextAsync<T>();
+                //totalRU += response.RequestCharge;
+                return await query.CountAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(partitionId, ex);
+            }
+            finally
+            {
+                //logger.ScopeMetric($"CosmosDB RU, tenant - count '{typeof(T)}'.", totalRU);
+            }
+        }
+
         public async Task<T> GetAsync<T>(string id, bool required = true, bool delete = false, TelemetryScopedLogger scopedLogger = null) where T : IDataDocument
         {
             if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
@@ -317,10 +341,11 @@ namespace FoxIDs.Repository
             }
         }
 
-        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1, string continuationToken = null) where T : IDataDocument
+        private IOrderedQueryable<T> GetQueryAsync<T>(string partitionId, int maxItemCount = 1, string continuationToken = null, bool usePartitionId = true) where T : IDataDocument
         {
             var container = GetContainer<T>();
-            return container.GetItemLinqQueryable<T>(requestOptions: new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount }, continuationToken: continuationToken);
+            var queryRequestOptions = usePartitionId ? new QueryRequestOptions { PartitionKey = new PartitionKey(partitionId), MaxItemCount = maxItemCount } : new QueryRequestOptions { MaxItemCount = maxItemCount };
+            return container.GetItemLinqQueryable<T>(requestOptions: queryRequestOptions, continuationToken: continuationToken);
         }
 
         private Container GetContainer<T>() where T : IDataDocument

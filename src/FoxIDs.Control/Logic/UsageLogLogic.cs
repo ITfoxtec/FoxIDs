@@ -10,8 +10,10 @@ using Azure.Monitor.Query.Models;
 using Azure;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
-using FoxIDs.Models.Api;
 using FoxIDs.Infrastructure;
+using FoxIDs.Repository;
+using FoxIDs.Models;
+using System.Linq.Expressions;
 
 namespace FoxIDs.Logic
 {
@@ -19,12 +21,14 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryScopedLogger logger;
+        private readonly ITenantRepository tenantRepository;
         private readonly TokenCredential tokenCredential;
 
-        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, TokenCredential tokenCredential, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UsageLogLogic(FoxIDsControlSettings settings, TelemetryScopedLogger logger, ITenantRepository tenantRepository, TokenCredential tokenCredential, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
+            this.tenantRepository = tenantRepository;
             this.tokenCredential = tokenCredential;
         }
 
@@ -34,39 +38,47 @@ namespace FoxIDs.Logic
             var rows = await LoadUsageEventsAsync(client, GetQueryTimeRange(logRequest.TimeScope), logRequest);
 
             var items = new List<Api.UsageLogItem>();
+            if(logRequest.IncludeUsers && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
+            {
+                var users = await GetUserCountAsync(logRequest.TrackName);
+                if (users != null)
+                {
+                    items.Add(users);
+                }
+            }
             var dayPointer = 0;
             var hourPointer = 0;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
             foreach (var row in rows)
             {
-                if (logRequest.SummarizeLevel != UsageLogSummarizeLevels.Month)
+                if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
                 {
                     var date = GetDate(row);
                     if (date.Day != dayPointer)
                     {
                         dayPointer = date.Day;
                         hourPointer = 0;
-                        var dayItem = new UsageLogItem
+                        var dayItem = new Api.UsageLogItem
                         {
-                            Type = UsageLogTypes.Day,
+                            Type = Api.UsageLogTypes.Day,
                             Value = date.Day
                         };
-                        dayItem.SubItems = itemsPointer = dayItemsPointer = new List<UsageLogItem>();
+                        dayItem.SubItems = itemsPointer = dayItemsPointer = new List<Api.UsageLogItem>();
                         items.Add(dayItem);
                     }
 
-                    if (logRequest.SummarizeLevel == UsageLogSummarizeLevels.Hour)
+                    if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
                     {
                         if (date.Hour != hourPointer)
                         {
                             hourPointer = date.Hour;
-                            var hourItem = new UsageLogItem
+                            var hourItem = new Api.UsageLogItem
                             {
-                                Type = UsageLogTypes.Hour,
+                                Type = Api.UsageLogTypes.Hour,
                                 Value = date.Hour
                             };
-                            hourItem.SubItems = itemsPointer = new List<UsageLogItem>();
+                            hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
                             dayItemsPointer.Add(hourItem);
                         }
                     }
@@ -83,18 +95,51 @@ namespace FoxIDs.Logic
             return new Api.UsageLogResponse { SummarizeLevel = logRequest.SummarizeLevel, Items = SortUsageTypes(items) };
         }
 
-        private IEnumerable<UsageLogItem> SortUsageTypes(IEnumerable<UsageLogItem> items)
+        private async Task<Api.UsageLogItem> GetUserCountAsync(string trackName)
         {
-            return items.Select(i => new UsageLogItem { Type = i.Type, Value = i.Value, SubItems = i.SubItems != null ? SortUsageTypes(i.SubItems) : null }).OrderBy(i => i.Type);
+            var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName };
+            if(Constants.Routes.MasterTrackName.Equals(RouteBinding.TrackName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!trackName.IsNullOrWhiteSpace())
+                {
+                    idKey.TrackName = trackName;
+                }
+            }
+            else
+            {
+                idKey.TrackName = RouteBinding.TrackName;
+            }
+
+            var usePartitionId = !idKey.TrackName.IsNullOrEmpty();
+            Expression<Func<User, bool>> whereQuery = usePartitionId ? p => p.DataType.Equals("user") : p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
+
+            var count = await tenantRepository.CountAsync<User>(idKey, whereQuery: whereQuery, usePartitionId: usePartitionId);
+            if (count > 0)
+            {
+                return new Api.UsageLogItem
+                {
+                    Type = Api.UsageLogTypes.user,
+                    Value = count
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        private UsageLogTypes GetLogType(LogsTableRow row)
+        private IEnumerable<Api.UsageLogItem> SortUsageTypes(IEnumerable<Api.UsageLogItem> items)
         {
-            UsageLogTypes logType;
+            return items.Select(i => new Api.UsageLogItem { Type = i.Type, Value = i.Value, SubItems = i.SubItems != null ? SortUsageTypes(i.SubItems) : null }).OrderBy(i => i.Type);
+        }
+
+        private Api.UsageLogTypes GetLogType(LogsTableRow row)
+        {
+            Api.UsageLogTypes logType;
             var typeValue = row.GetString(Constants.Logs.UsageType);
             if(!Enum.TryParse(typeValue, out logType))
             {
-                throw new Exception($"Value '{typeValue}' cannot be converted to enum type '{nameof(UsageLogTypes)}'.");
+                throw new Exception($"Value '{typeValue}' cannot be converted to enum type '{nameof(Api.UsageLogTypes)}'.");
             }
             return logType;
         }
@@ -124,7 +169,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private QueryTimeRange GetQueryTimeRange(UsageLogTimeScopes timeScope)
+        private QueryTimeRange GetQueryTimeRange(Api.UsageLogTimeScopes timeScope)
         {
             var timePointer = DateTimeOffset.Now;
             if (timeScope == Api.UsageLogTimeScopes.LastMonth)
@@ -147,8 +192,8 @@ namespace FoxIDs.Logic
 
             var where = includeAll ? $"isnotempty(f_UsageType)" : $"{string.Join(" or ", GetIncludes(logRequest).Select(i => $"f_UsageType == '{i}'"))}";
 
-            var preOrderSummarizeBy = logRequest.SummarizeLevel == UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
-            var preSortBy = logRequest.SummarizeLevel == UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc, ";
+            var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
+            var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
             var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(logRequest), where, preOrderSummarizeBy, preSortBy);
             Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
@@ -176,25 +221,25 @@ namespace FoxIDs.Logic
             }
         }
 
-        private string GetWhereDataSlice(UsageLogRequest logRequest)
+        private string GetWhereDataSlice(Api.UsageLogRequest logRequest)
         {
-            var whareDataSlice = new List<string>();
+            var whereDataSlice = new List<string>();
 
-            whareDataSlice.Add($"f_TenantName == '{RouteBinding.TenantName}'");
+            whereDataSlice.Add($"f_TenantName == '{RouteBinding.TenantName}'");
 
-            if (logRequest.TrackName.IsNullOrWhiteSpace())
+            if (!Constants.Routes.MasterTrackName.Equals(RouteBinding.TrackName, StringComparison.OrdinalIgnoreCase))
             {
-                if (!Constants.Routes.MasterTrackName.Equals(RouteBinding.TrackName, StringComparison.OrdinalIgnoreCase))
-                {
-                    whareDataSlice.Add($"f_TrackName == '{RouteBinding.TrackName}'");
-                }
+                whereDataSlice.Add($"f_TrackName == '{RouteBinding.TrackName}'");
             }
             else
             {
-                whareDataSlice.Add($"f_TrackName == '{logRequest.TrackName}'");
+                if (!logRequest.TrackName.IsNullOrWhiteSpace())
+                {
+                    whereDataSlice.Add($"f_TrackName == '{logRequest.TrackName}'");
+                }
             }
 
-            return string.Join(" and ", whareDataSlice);
+            return string.Join(" and ", whereDataSlice);
         }
 
         private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy)
@@ -206,7 +251,7 @@ namespace FoxIDs.Logic
 | extend f_UsageType = Properties.f_UsageType
 | where {whereDataSlice} | where {where}
 | summarize UsageCount = count() by {preOrderSummarizeBy}tostring(f_UsageType)
-| sort by {(preSortBy.IsNullOrEmpty() ? string.Empty : preSortBy)}f_UsageType desc";
+{(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
     }
 }

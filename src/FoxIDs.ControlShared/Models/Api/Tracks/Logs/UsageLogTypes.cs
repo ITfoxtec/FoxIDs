@@ -4,9 +4,10 @@
     {
         Hour = 3,
         Day = 6,
-        Login = 10,
-        TokenRequest = 20,
-        ControlApiGet = 30,
-        ControlApiUpdate = 40
+        user = 10,
+        Login = 20,
+        TokenRequest = 30,
+        ControlApiGet = 40,
+        ControlApiUpdate = 50
     }
 }

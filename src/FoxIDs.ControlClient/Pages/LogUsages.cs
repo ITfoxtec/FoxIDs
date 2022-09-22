@@ -4,6 +4,7 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using System;
@@ -15,7 +16,7 @@ namespace FoxIDs.Client.Pages
 {
     public partial class LogUsages
     {
-        private List<string> includeTypeItems = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private List<string> includeTypeItems = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
 
         private string logLoadError;
         private PageEditForm<UsageLogRequestViewModel> usageLogRequestForm;
@@ -79,6 +80,7 @@ namespace FoxIDs.Client.Pages
             {
                 usageLogRequest.TimeScope = usageLogRequestForm.Model.TimeScope;
                 usageLogRequest.SummarizeLevel = usageLogRequestForm.Model.SummarizeLevel;
+                usageLogRequest.IncludeUsers = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Users);
                 usageLogRequest.IncludeLogins = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Logins);
                 usageLogRequest.IncludeTokenRequests = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.TokenRequests);
                 usageLogRequest.IncludeControlApiGets = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.ControlApiGets);
@@ -89,6 +91,7 @@ namespace FoxIDs.Client.Pages
             {
                 usageLogRequest.TimeScope = UsageLogTimeScopes.ThisMonth;
                 usageLogRequest.SummarizeLevel = UsageLogSummarizeLevels.Month;
+                usageLogRequest.IncludeUsers = true;
                 usageLogRequest.IncludeLogins = true;
                 usageLogRequest.IncludeTokenRequests = true;
             }
@@ -100,9 +103,12 @@ namespace FoxIDs.Client.Pages
         {
             if (usageLogRequestForm.Model.IncludeTypes.Count() <= 0)
             {
+                usageLogRequestForm.Model.IncludeTypes.Add(UsageLogIncludeTypes.Users);
                 usageLogRequestForm.Model.IncludeTypes.Add(UsageLogIncludeTypes.Logins);
                 usageLogRequestForm.Model.IncludeTypes.Add(UsageLogIncludeTypes.TokenRequests);
             }
+
+
 
             usageLogResponse = null;
             await LoadUsageLogAsync();

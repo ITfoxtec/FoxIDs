@@ -8,11 +8,11 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogUsageController : TenantApiController
+    public class MLogUsageController : TenantApiController
     {
         private readonly UsageLogLogic usageLogLogic;
 
-        public TTrackLogUsageController(TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
+        public MLogUsageController(TelemetryScopedLogger logger, UsageLogLogic usageLogLogic) : base(logger)
         {
             this.usageLogLogic = usageLogLogic;
         }
@@ -24,7 +24,7 @@ namespace FoxIDs.Controllers
         [ProducesResponseType(typeof(Api.UsageLogResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UsageLogResponse>> GetTrackLogUsage(Api.UsageLogRequest logRequest)
+        public async Task<ActionResult<Api.UsageLogResponse>> GetLogUsage(Api.UsageLogRequest logRequest)
         {
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 

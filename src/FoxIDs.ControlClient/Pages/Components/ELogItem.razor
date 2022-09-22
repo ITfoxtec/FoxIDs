@@ -8,7 +8,8 @@
         {
             <div class="text-danger"><b>@(Item.Type == LogItemTypes.CriticalError ? "Critical error" : Item.Type.ToString())</b> @Item.Timestamp.TimeToString()</div>
         }
-        else {
+        else
+        {
             <div class="text-warning"><b>@Item.Type.ToString()</b> @Item.Timestamp.TimeToString()</div>
         }
 

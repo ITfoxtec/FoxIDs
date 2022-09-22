@@ -18,7 +18,7 @@ How to guides:
 
 - Connect [AD FS](up-party-howto-saml-2.0-adfs.md)
 - Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
-- Connect [NemLog-in3 (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
+- Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
 
 ## Configuration
 How to configure an external SAML 2.0 Identity Provider (IdP).

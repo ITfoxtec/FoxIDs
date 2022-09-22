@@ -17,8 +17,8 @@
     <div class="modal-body">
         @if (oidcUpParty.Form.Model.IsManual)
         {
-            <div class="mb-3 alert alert-info" role="alert">
-                The OpenID Connect up-party is configured for manual update, which can only be updated through the Control API.
+            <div class="mb-3 alert alert-warning" role="alert">
+                The OpenID Connect up-party is configured with manual update, which can only be updated through the Control API.
             </div>
         }
 
@@ -32,7 +32,9 @@
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            @{ (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern); }
+            @{
+                (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
+            }
             <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
             <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
             <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
@@ -78,8 +80,12 @@
                                 <div class="mr-auto p-2">
                                     @if (!keyInfo.Subject.IsNullOrEmpty())
                                     {
-                                        <strong>@keyInfo.Subject</strong><br />
-                                        <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span><br />
+                                        <strong>@keyInfo.Subject</strong>
+
+                                        <br />
+                                        <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span>
+
+                                        <br />
                                     }
                                     <span>Key id: @keyInfo.KeyId</span><br />
                                     @if (!keyInfo.Thumbprint.IsNullOrEmpty())
@@ -202,7 +208,7 @@
             else if (oidcUpParty.ShowClaimTransformTab)
             {
                 <OAuthClaimTransforms Model="oidcUpParty.Form.Model" />
-            }    
+            }
             else if (oidcUpParty.ShowSessionTab)
             {
                 <UpPartySessionLifetime Model="oidcUpParty.Form.Model" />

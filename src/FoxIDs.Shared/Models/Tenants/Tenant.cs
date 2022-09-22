@@ -39,6 +39,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Plan.NameLength)]
+        [RegularExpression(Constants.Models.Plan.NameRegExPattern)]
+        [JsonProperty(PropertyName = "plan_name")]
+        public string PlanName { get; set; }
+
         [MaxLength(Constants.Models.Tenant.CustomDomainLength)]
         [RegularExpression(Constants.Models.Tenant.CustomDomainRegExPattern, ErrorMessage = "The field {0} must be a valid domain.")]
         [JsonProperty(PropertyName = "custom_domain")]

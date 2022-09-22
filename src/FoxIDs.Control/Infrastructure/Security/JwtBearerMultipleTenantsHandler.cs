@@ -47,8 +47,11 @@ namespace FoxIDs.Infrastructure.Security
                     Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, Uri '{oidcDiscoveryUri}'.");
                     oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
-                }    
-                
+                }
+
+                var logger = Context.RequestServices.GetService<TelemetryScopedLogger>();
+                logger.SetUserScopeProperty(principal.Claims);
+
                 var ticket = new AuthenticationTicket(principal, Scheme.Name);
                 return AuthenticateResult.Success(ticket);
             }

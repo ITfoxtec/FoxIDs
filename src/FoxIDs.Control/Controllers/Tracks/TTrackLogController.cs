@@ -13,6 +13,7 @@ using ITfoxtec.Identity;
 using Azure.Monitor.Query;
 using Azure.Monitor.Query.Models;
 using Azure;
+using FoxIDs.Models.Api;
 
 namespace FoxIDs.Controllers
 {
@@ -51,7 +52,7 @@ namespace FoxIDs.Controllers
             var queryTimeRange = new QueryTimeRange(DateTimeOffset.FromUnixTimeSeconds(logRequest.FromTime), DateTimeOffset.FromUnixTimeSeconds(logRequest.ToTime));
 
             var responseTruncated = false;
-            var items = new List<Api.LogItem>();
+            var items = new List<InternalLogItem>();
             if (logRequest.QueryExceptions)
             {
                 if (await LoadExceptionsAsync(client, items, queryTimeRange, logRequest.Filter))
@@ -86,7 +87,7 @@ namespace FoxIDs.Controllers
                 responseTruncated = true;
             }
 
-            var orderedItems = items.OrderBy(i => i.Timestamp).Take(maxResponseLogItems);
+            var orderedItems = items.OrderBy(i => i.Timestamp).Take(maxResponseLogItems).Select(i => ToApiLogItem(i));
 
             var logResponse = new Api.LogResponse { Items = new List<Api.LogItem>(), ResponseTruncated = responseTruncated };
             foreach (var item in orderedItems)
@@ -158,6 +159,20 @@ namespace FoxIDs.Controllers
             return Ok(logResponse);
         }
 
+        private Api.LogItem ToApiLogItem(InternalLogItem item)
+        {
+            return new Api.LogItem
+            {
+                Type = item.Type,
+                Timestamp = item.Timestamp.HasValue ? item.Timestamp.Value.ToUnixTimeSeconds() : 0,
+                SequenceId = item.SequenceId,
+                OperationId = item.OperationId,
+                Values = item.Values,
+                Details = item.Details,
+                SubItems = item.SubItems
+            };
+        }
+
         private static void HandleSequenceTimestamp(Api.LogItem item, Api.LogItem sequenceItem)
         {
             if (sequenceItem.Timestamp > item.Timestamp)
@@ -186,7 +201,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<bool> LoadExceptionsAsync(LogsQueryClient client, List<Api.LogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadExceptionsAsync(LogsQueryClient client, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : $"| extend RequestId = Properties.RequestId | extend RequestPath = Properties.RequestPath {GetGeneralQueryExtend()}";
             var where = filter.IsNullOrEmpty() ? null : $"| where Details contains '{filter}' or RequestId contains '{filter}' or RequestPath contains '{filter}' or {GetGeneralQueryWhere(filter)}";
@@ -196,7 +211,7 @@ namespace FoxIDs.Controllers
 
             foreach (var row in table.Rows)
             {
-                var item = new Api.LogItem
+                var item = new InternalLogItem
                 {
                     Type = row.GetInt32(Constants.Logs.Results.SeverityLevel) switch
                     {
@@ -217,7 +232,7 @@ namespace FoxIDs.Controllers
             return table.Rows.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadTracesAsync(LogsQueryClient client, List<Api.LogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadTracesAsync(LogsQueryClient client, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = filter.IsNullOrEmpty() ? null : $"| where Message contains '{filter}' or {GetGeneralQueryWhere(filter)}";
@@ -227,7 +242,7 @@ namespace FoxIDs.Controllers
 
             foreach (var row in table.Rows)
             {
-                var item = new Api.LogItem
+                var item = new InternalLogItem
                 {
                     Type = Api.LogItemTypes.Trace,
                     Timestamp = GetTimestamp(row),
@@ -243,17 +258,17 @@ namespace FoxIDs.Controllers
             return table.Rows.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadEventsAsync(LogsQueryClient client, List<Api.LogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadEventsAsync(LogsQueryClient client, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
-            var where = filter.IsNullOrEmpty() ? null : $"| where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
+            var where = $"| where isempty(Properties.f_UsageType){(filter.IsNullOrEmpty() ? String.Empty : $" | where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}")}";
             var eventsQuery = GetQuery("AppEvents", extend, where);
             Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
             var table = response.Value.Table;
 
             foreach (var row in table.Rows)
             {
-                var item = new Api.LogItem
+                var item = new InternalLogItem
                 {
                     Type = Api.LogItemTypes.Event,
                     Timestamp = GetTimestamp(row),
@@ -267,7 +282,7 @@ namespace FoxIDs.Controllers
             return table.Rows.Count() >= maxQueryLogItems;
         }
 
-        private async Task<bool> LoadMetricsAsync(LogsQueryClient client, List<Api.LogItem> items, QueryTimeRange queryTimeRange, string filter)
+        private async Task<bool> LoadMetricsAsync(LogsQueryClient client, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = filter.IsNullOrEmpty() ? null : $"| where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
@@ -277,7 +292,7 @@ namespace FoxIDs.Controllers
 
             foreach (var row in table.Rows)
             {
-                var item = new Api.LogItem
+                var item = new InternalLogItem
                 {
                     Type = Api.LogItemTypes.Metrics,
                     Timestamp = GetTimestamp(row),
@@ -293,6 +308,7 @@ namespace FoxIDs.Controllers
 
         private string GetGeneralQueryExtend() =>
 @"| extend f_DownPartyId = Properties.f_DownPartyId 
+| extend f_UpPartyId = Properties.f_UpPartyId 
 | extend f_SessionId = Properties.f_SessionId 
 | extend f_ExternalSessionId = Properties.f_ExternalSessionId 
 | extend f_UserId = Properties.f_UserId 
@@ -302,6 +318,8 @@ namespace FoxIDs.Controllers
         private string GetGeneralQueryWhere(string filter) =>
 @$"ClientIP contains '{filter}' or 
 f_DownPartyId contains '{filter}' or 
+f_UpPartyId contains '{filter}' or 
+f_SequenceId contains '{filter}' or 
 f_SessionId contains '{filter}' or 
 f_ExternalSessionId contains '{filter}' or 
 f_UserId contains '{filter}' or 
@@ -320,10 +338,10 @@ f_UserAgent contains '{filter}'";
 | order by TimeGenerated";
         }
 
-        private long GetTimestamp(LogsTableRow row)
+        private DateTimeOffset? GetTimestamp(LogsTableRow row)
         {
             var timestamp = row.GetDateTimeOffset(Constants.Logs.Results.TimeGenerated);
-            return timestamp.HasValue ? timestamp.Value.ToUnixTimeSeconds() : 0;
+            return timestamp;
         }
 
         private string GetSequenceId(LogsTableRow row)
@@ -350,7 +368,7 @@ f_UserAgent contains '{filter}'";
             return values;
         }
 
-        private void AddExceptionDetails(LogsTableRow row, Api.LogItem item)
+        private void AddExceptionDetails(LogsTableRow row, InternalLogItem item)
         {
             var details = row.GetString(Constants.Logs.Results.Details);
             if (details != null)
@@ -370,7 +388,7 @@ f_UserAgent contains '{filter}'";
             }
         }
 
-        private void AddAddTraceMessage(LogsTableRow row, Api.LogItem item)
+        private void AddAddTraceMessage(LogsTableRow row, InternalLogItem item)
         {
             var message = row.GetString(Constants.Logs.Results.Message);
             if (message != null)
@@ -402,6 +420,23 @@ f_UserAgent contains '{filter}'";
                     values.Add(cdValue.Key, value);
                 }
             }
+        }
+
+        private class InternalLogItem
+        {
+            public LogItemTypes Type { get; set; }
+
+            public DateTimeOffset? Timestamp { get; set; }
+
+            public string SequenceId { get; set; }
+
+            public string OperationId { get; set; }
+
+            public Dictionary<string, string> Values { get; set; }
+
+            public List<LogItemDetail> Details { get; set; }
+
+            public List<LogItem> SubItems { get; set; }
         }
     }
 }

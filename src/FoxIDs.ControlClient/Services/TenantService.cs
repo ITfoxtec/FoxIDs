@@ -10,6 +10,7 @@ namespace FoxIDs.Client.Services
     {
         private const string apiUri = "api/{tenant}/master/!tenant";
         private const string filterApiUri = "api/{tenant}/master/!filtertenant";
+        private const string logUsageApiUri = "api/{tenant}/master/!tenantlogusage";
 
         public TenantService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -20,5 +21,7 @@ namespace FoxIDs.Client.Services
         public async Task CreateTenantAsync(CreateTenantRequest tenant) => await PostAsync(apiUri, tenant);
         public async Task<Tenant> UpdateTenantAsync(TenantRequest tenant) => await PutResponseAsync<TenantRequest, Tenant>(apiUri, tenant);
         public async Task DeleteTenantAsync(string name) => await DeleteAsync(apiUri, name);
+
+        public async Task<UsageLogResponse> GetUsageLogAsync(UsageTenantLogRequest usageLogRequest) => await GetAsync<UsageTenantLogRequest, UsageLogResponse>(logUsageApiUri, usageLogRequest);
     }
 }

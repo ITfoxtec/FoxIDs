@@ -81,6 +81,7 @@ namespace FoxIDs.Logic
                     return session.SessionId;
                 }
 
+                SetScopeProperty(session, includeSessionId: false);
                 if (!sessionEnabled)
                 {
                     await sessionCookieRepository.DeleteAsync(upParty);
@@ -99,6 +100,10 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"Session up-party created, User id '{session.UserId}', Session id '{session.SessionId}', External Session id '{externalSessionId}'.", GetSessionScopeProperties(session));
 
                 return session.SessionId;
+            }
+            else
+            {
+                logger.SetUserScopeProperty(sessionClaims);
             }
 
             return null;
@@ -124,13 +129,11 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    logger.SetScopeProperty(Constants.Logs.SessionId, session.SessionId);
-                    logger.SetScopeProperty(Constants.Logs.UserId, session.UserId);
-                    logger.SetScopeProperty(Constants.Logs.Email, session.Email);
-                    logger.SetScopeProperty(Constants.Logs.ExternalSessionId, session.ExternalSessionId);
+                    SetScopeProperty(session);
                     return session;
                 }
 
+                SetScopeProperty(session, includeSessionId: false);
                 await sessionCookieRepository.DeleteAsync(upParty);
                 logger.ScopeTrace(() => $"Session deleted up-party, Session id '{session.SessionId}'.");
             }
@@ -159,11 +162,23 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected IDictionary<string, string> GetSessionScopeProperties(SessionUpPartyCookie session)
+        protected IDictionary<string, string> GetSessionScopeProperties(SessionUpPartyCookie session, bool includeSessionId = true)
         {
-            var scopeProperties = GetSessionScopeProperties(session as SessionBaseCookie);
-            scopeProperties.Add("externalSessionId", session.ExternalSessionId);
+            var scopeProperties = GetSessionScopeProperties(session as SessionBaseCookie, includeSessionId: includeSessionId);
+            if (includeSessionId)
+            { 
+                scopeProperties.Add(Constants.Logs.ExternalSessionId, session.ExternalSessionId);
+            }
             return scopeProperties;
+        }
+
+        private void SetScopeProperty(SessionUpPartyCookie session, bool includeSessionId = true)
+        {
+            var scopeProperties = GetSessionScopeProperties(session, includeSessionId: includeSessionId);
+            foreach(var p in scopeProperties)
+            {
+                logger.SetScopeProperty(p.Key, p.Value);
+            }
         }
     }
 }

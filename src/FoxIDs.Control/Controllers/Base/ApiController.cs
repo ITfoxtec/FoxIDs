@@ -2,7 +2,6 @@
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models;
 using FoxIDs.Models.Api;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,6 +12,7 @@ using System.Linq;
 namespace FoxIDs.Controllers
 {
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    [Log]
     [HttpSecurityHeaders]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]

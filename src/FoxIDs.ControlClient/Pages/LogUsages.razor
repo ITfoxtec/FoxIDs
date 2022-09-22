@@ -1,0 +1,120 @@
+﻿@page "/{tenantName}/logusages"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Usage</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@logsHref">Logs</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@logSettingsHref">Settings</a>
+    </li>
+</ul>
+
+<div class="tab-content pt-4">
+    @if (!logLoadError.IsNullOrWhiteSpace())
+    {
+        <div class="alert alert-danger" role="alert">
+            @logLoadError
+        </div>
+    }
+
+    <PageEditForm @ref="usageLogRequestForm" TModel="UsageLogRequestViewModel" OnValidSubmit="OnUsageLogRequestValidSubmitAsync">
+        <FInputSelect @bind-Value="usageLogRequestForm.Model.TimeScope" For="@(() => usageLogRequestForm.Model.TimeScope)">
+            <option value="@UsageLogTimeScopes.ThisMonth">This month</option>
+            <option value="@UsageLogTimeScopes.LastMonth">Last month</option>
+        </FInputSelect>
+        <FInputSelect @bind-Value="usageLogRequestForm.Model.SummarizeLevel" For="@(() => usageLogRequestForm.Model.SummarizeLevel)">
+            <option value="@UsageLogSummarizeLevels.Hour">Hour</option>
+            <option value="@UsageLogSummarizeLevels.Day">Day</option>
+            <option value="@UsageLogSummarizeLevels.Month">Month</option>
+        </FInputSelect>
+        <FInputCheckboxSelect Items="IncludeTypeItems" SelectedItems="usageLogRequestForm.Model.IncludeTypes" For="@(() => usageLogRequestForm.Model.IncludeTypes)" />
+        @if (IsMasterTenant)
+        {
+            <FInputText @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
+            <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TenantName" For="@(() => usageLogRequestForm.Model.TenantName)" />
+        }
+        else @if (IsMasterTrack)
+        {
+            <FInputTextFilter @bind-Value="usageLogRequestForm.Model.TrackName" For="@(() => usageLogRequestForm.Model.TrackName)" />
+        }
+        else
+        {
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Go</button>
+            </div>
+        }
+    </PageEditForm>
+
+    <ul class="list-group">
+        @if (usageLogResponse == null)
+        {
+            <li class="list-group-item"><i>Loading...</i></li>
+        }
+        else 
+        {
+            if(usageLogResponse.Items.Count() <= 0)
+            {
+                <li class="list-group-item"><i>No usage logs found.</i></li>
+            }
+
+            @foreach (var item in usageLogResponse.Items)
+            {
+                <li class="list-group-item">
+                    @if (item.Type == UsageLogTypes.Day)
+                    {
+                        <div>
+                            <div><b>Day: @item.Value</b></div>
+                            <ul class="list-group">
+                                @foreach (var sSubItem in item.SubItems)
+                                {
+                                    <li class="list-group-item">
+                                        @if (sSubItem.Type == UsageLogTypes.Hour)
+                                        {
+                                            <div>
+                                                <div><b>Hour: @sSubItem.Value</b></div>
+                                                <ul class="list-group">
+                                                    @foreach (var oSubItem in sSubItem.SubItems)
+                                                    {
+                                                        <li class="list-group-item">
+                                                            <EUsageLogItem Item="oSubItem" />
+                                                        </li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <EUsageLogItem Item="sSubItem" />
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    else if (item.Type == UsageLogTypes.Hour)
+                    {
+                        <div>
+                            <div><b>Hour: @item.Value</b></div>
+                            <ul class="list-group">
+                                @foreach (var oSubItem in item.SubItems)
+                                {
+                                    <li class="list-group-item">
+                                        <EUsageLogItem Item="oSubItem" />
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+                    else
+                    {
+                        <EUsageLogItem Item="item" />
+                    }
+                </li>
+            }
+        }
+    </ul>
+</div>

@@ -11,10 +11,10 @@ namespace FoxIDs.Models.Config
         public int PlanLifetime { get; set; } = 86400;
 
         /// <summary>
-        /// Time to cache custom domains in seconds (default 24 hours).
+        /// Time to cache tenants in seconds (default 24 hours).
         /// </summary>
         [Required]
-        public int CustomDomainLifetime { get; set; } = 86400;
+        public int TenantLifetime { get; set; } = 86400;
 
         /// <summary>
         /// Time to cache tracks in seconds (default 24 hours).

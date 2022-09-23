@@ -6,6 +6,8 @@ namespace FoxIDs.Models
     {
         public bool HasCustomDomain { get; set; }
 
+        public string PlanName { get; set; }
+
         public string TenantName { get; set; }
 
         public string TrackName { get; set; }
@@ -49,5 +51,7 @@ namespace FoxIDs.Models
         public SendEmail SendEmail { get; set; }
 
         public Logging Logging { get; set; }
+
+        public string AppInsightsKey { get; set; }
     }
 }

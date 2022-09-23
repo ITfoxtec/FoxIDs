@@ -18,16 +18,16 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
-        private readonly MasterTenantLogic masterTenantLogic;
+        private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
-            this.masterTenantLogic = masterTenantLogic;
+            this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
@@ -71,10 +71,20 @@ namespace FoxIDs.Controllers
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
+                if (!mTenant.PlanName.IsNullOrEmpty() && !tenant.CustomDomain.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(mTenant.PlanName);
+                    if (!plan.EnableCustomDomain)
+                    {
+                        throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                    }
+                }
+
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = false;
                 await tenantRepository.UpdateAsync(mTenant);
 
+                await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!invalidateCustomDomainInCache.IsNullOrEmpty())
                 {
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
@@ -120,6 +130,7 @@ namespace FoxIDs.Controllers
                 }
                 var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
 
+                await tenantCacheLogic.InvalidateTenantCacheAsync(RouteBinding.TenantName);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))
                 {
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(mTenant.CustomDomain);

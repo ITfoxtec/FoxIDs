@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System.Linq;
 using System;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Controllers
 {
@@ -18,13 +19,15 @@ namespace FoxIDs.Controllers
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly IMasterRepository masterRepository;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository) : base(logger)
+        public MPlanController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, PlanCacheLogic planCacheLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.masterRepository = masterRepository;
+            this.planCacheLogic = planCacheLogic;
         }
 
         /// <summary>
@@ -103,6 +106,8 @@ namespace FoxIDs.Controllers
                 var mPlan = mapper.Map<Plan>(plan);
                 await masterRepository.UpdateAsync(mPlan);
 
+                await planCacheLogic.InvalidatePlanCacheAsync(plan.Name);
+
                 return Ok(mapper.Map<Api.Plan>(mPlan));
             }
             catch (CosmosDataException ex)
@@ -148,7 +153,7 @@ namespace FoxIDs.Controllers
 
         private async Task<bool> ValidatePlanNotUsedAsync(string planName)
         {
-            (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.PlanName.Equals(planName), maxItemCount: 1);
+            (var tenants, _) = await tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.DataType.Equals("tenant") && t.PlanName.Equals(planName), maxItemCount: 1);
             if (tenants.Count() > 0)
             {
                 try

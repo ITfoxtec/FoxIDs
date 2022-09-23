@@ -56,6 +56,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "cost_per_month")]
         public decimal CostPerMonth { get; set; }
 
+        [JsonProperty(PropertyName = "enable_custom_domain")]
+        public bool EnableCustomDomain { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "users")]
         public PlanItem Users { get; set; }
@@ -73,17 +76,17 @@ namespace FoxIDs.Models
         public PlanItem ControlApiGetRequests { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "control_api_update_req")]
+        [JsonProperty(PropertyName = "control_api_upd_req")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
         [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]
-        [JsonProperty(PropertyName = "app_insights_key")]
+        [JsonProperty(PropertyName = "app_ins_key")]
         public string AppInsightsKey { get; set; }
 
         [MaxLength(Constants.Models.Plan.AppInsightsWorkspaceIdLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsWorkspaceIdRegExPattern)]
-        [JsonProperty(PropertyName = "app_insights_workspace_id")]
+        [JsonProperty(PropertyName = "app_ins_works_id")]
         public string AppInsightsWorkspaceId { get; set; }
 
         public new class IdKey : MasterDocument.IdKey

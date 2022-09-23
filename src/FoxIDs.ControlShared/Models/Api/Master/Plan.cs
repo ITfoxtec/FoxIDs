@@ -53,8 +53,8 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Application Insights key")]
         public string AppInsightsKey { get; set; }
 
-        [MaxLength(Constants.Models.Plan.AppInsightsWorkspaceIdLength)]
-        [RegularExpression(Constants.Models.Plan.AppInsightsWorkspaceIdRegExPattern)]
+        [MaxLength(Constants.Models.Plan.LogAnalyticsWorkspaceIdLength)]
+        [RegularExpression(Constants.Models.Plan.LogAnalyticsWorkspaceIdRegExPattern)]
         [Display(Name = "Application Insights workspace ID")]
         public string AppInsightsWorkspaceId { get; set; }
     }

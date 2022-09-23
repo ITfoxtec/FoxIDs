@@ -133,8 +133,8 @@ namespace FoxIDs
                 public const int FirstLevelThresholdMin = 0;
                 public const int AppInsightsKeyLength = 40;
                 public const string AppInsightsKeyRegExPattern = @"^[A-F0-9\-]*$";
-                public const int AppInsightsWorkspaceIdLength = 40;
-                public const string AppInsightsWorkspaceIdRegExPattern = @"^[A-F0-9\-]*$";
+                public const int LogAnalyticsWorkspaceIdLength = 40;
+                public const string LogAnalyticsWorkspaceIdRegExPattern = @"^[A-F0-9\-]*$";
             }
 
             public static class RiskPassword

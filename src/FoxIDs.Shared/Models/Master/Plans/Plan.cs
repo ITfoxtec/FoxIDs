@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using Newtonsoft.Json;
+using SendGrid.Helpers.Mail;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
@@ -82,12 +83,12 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
         [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]
         [JsonProperty(PropertyName = "app_ins_key")]
-        public string AppInsightsKey { get; set; }
+        public string ApplicationInsightsKey { get; set; }
 
-        [MaxLength(Constants.Models.Plan.AppInsightsWorkspaceIdLength)]
-        [RegularExpression(Constants.Models.Plan.AppInsightsWorkspaceIdRegExPattern)]
-        [JsonProperty(PropertyName = "app_ins_works_id")]
-        public string AppInsightsWorkspaceId { get; set; }
+        [MaxLength(Constants.Models.Plan.LogAnalyticsWorkspaceIdLength)]
+        [RegularExpression(Constants.Models.Plan.LogAnalyticsWorkspaceIdRegExPattern)]
+        [JsonProperty(PropertyName = "log_analy_works_id")]
+        public string LogAnalyticsWorkspaceId { get; set; }
 
         public new class IdKey : MasterDocument.IdKey
         {

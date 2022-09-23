@@ -103,7 +103,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
-                AppInsightsKey = plan?.AppInsightsKey,
+                ApplicationInsightsKey = plan?.ApplicationInsightsKey,
             };
 
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);

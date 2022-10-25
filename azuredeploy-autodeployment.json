@@ -190,17 +190,18 @@
       "name": "[variables('redisName')]",
       "location": "[variables('location')]",
       "properties": {
+        "redisVersion": "6.0",
         "sku": {
           "name": "Standard",
           "family": "C",
           "capacity": "0"
         },
         "enableNonSslPort": false,
+        "minimumTlsVersion": "1.2",
         "redisConfiguration": {
-          "maxclients": "256",
-          "maxmemory-reserved": "2",
-          "maxfragmentationmemory-reserved": "12",
-          "maxmemory-delta": "2"
+          "maxmemory-reserved": "30",
+          "maxfragmentationmemory-reserved": "30",
+          "maxmemory-delta": "30"
         }
       }
     },

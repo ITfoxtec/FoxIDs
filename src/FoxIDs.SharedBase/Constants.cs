@@ -230,7 +230,8 @@ namespace FoxIDs
                 {
                     public const int ScopedStreamLoggersMin = 0;
                     public const int ScopedStreamLoggersMax = 5;
-                    public const int ApplicationInsightsKeyLength = 50;
+                    public const int ApplicationInsightsKeyLength = 50;   
+                    public const int ApplicationInsightsConnectionStringLength = 4096;
                 }
             }
 

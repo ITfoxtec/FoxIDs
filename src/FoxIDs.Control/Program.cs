@@ -1,4 +1,5 @@
 ﻿using Azure.Identity;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -29,9 +30,13 @@ namespace FoxIDs
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey").Value;
+                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString").Value;
+                    if (connectionString.IsNullOrWhiteSpace())
+                    {
+                        connectionString = ReadInstrumentationKey(context);
+                    }
 
-                    if (string.IsNullOrWhiteSpace(instrumentationKey))
+                    if (string.IsNullOrWhiteSpace(connectionString))
                     {
                         return;
                     }
@@ -42,7 +47,14 @@ namespace FoxIDs
                         logging.ClearProviders();
                     }
 
-                    logging.AddApplicationInsights(instrumentationKey);
+                    logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
                 });
+
+        [Obsolete("ApplicationInsights InstrumentationKey is being deprecated. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
+        private static string ReadInstrumentationKey(WebHostBuilderContext context)
+        {
+            var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey").Value;
+            return $"InstrumentationKey={instrumentationKey}";
+        }
     }
 }

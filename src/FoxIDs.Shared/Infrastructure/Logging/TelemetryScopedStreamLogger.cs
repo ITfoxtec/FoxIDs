@@ -113,7 +113,7 @@ namespace FoxIDs.Infrastructure
                 throw new Exception("Not Application Insights scoped stream logger type.");
             }
 
-            var telemetryClient = new TelemetryClient(new TelemetryConfiguration(scopeStreamLogger.ApplicationInsightsSettings.InstrumentationKey));
+            var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = scopeStreamLogger.ApplicationInsightsSettings.ConnectionString });
             return new TelemetryLogger(telemetryClient);
         }
     }

@@ -80,13 +80,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "control_api_upd_req")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
-        [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
-        [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]
-        [JsonProperty(PropertyName = "app_ins_key")]
-        public string ApplicationInsightsKey { get; set; }
+        [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
+        [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
+        [JsonProperty(PropertyName = "app_ins_con_string")]
+        public string ApplicationInsightsConnectionString { get; set; }
 
-        [MaxLength(Constants.Models.Plan.LogAnalyticsWorkspaceIdLength)]
-        [RegularExpression(Constants.Models.Plan.LogAnalyticsWorkspaceIdRegExPattern)]
+        [MaxLength(Constants.Models.Logging.LogAnalyticsWorkspaceIdLength)]
+        [RegularExpression(Constants.Models.Logging.LogAnalyticsWorkspaceIdRegExPattern)]
         [JsonProperty(PropertyName = "log_analy_works_id")]
         public string LogAnalyticsWorkspaceId { get; set; }
 

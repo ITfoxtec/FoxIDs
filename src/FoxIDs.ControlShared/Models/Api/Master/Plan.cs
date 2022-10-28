@@ -47,15 +47,14 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Control API updates per month")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
+        [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
+        [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
+        [Display(Name = "Application insights connection string")]
+        public string ApplicationInsightsConnectionString { get; set; }
 
-        [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
-        [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]
-        [Display(Name = "Application Insights key")]
-        public string AppInsightsKey { get; set; }
-
-        [MaxLength(Constants.Models.Plan.LogAnalyticsWorkspaceIdLength)]
-        [RegularExpression(Constants.Models.Plan.LogAnalyticsWorkspaceIdRegExPattern)]
-        [Display(Name = "Application Insights workspace ID")]
-        public string AppInsightsWorkspaceId { get; set; }
+        [MaxLength(Constants.Models.Logging.LogAnalyticsWorkspaceIdLength)]
+        [RegularExpression(Constants.Models.Logging.LogAnalyticsWorkspaceIdRegExPattern)]
+        [Display(Name = "Log analytics workspace ID")]
+        public string LogAnalyticsWorkspaceId { get; set; }
     }
 }

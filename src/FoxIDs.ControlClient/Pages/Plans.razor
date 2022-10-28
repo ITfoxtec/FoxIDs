@@ -84,9 +84,9 @@
                                 <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost)" />
                             </li>
                         </ul>
-                            
-                        <FInputText @bind-Value="plan.Form.Model.AppInsightsKey" For="@(() => plan.Form.Model.AppInsightsKey)" />
-                        <FInputText @bind-Value="plan.Form.Model.AppInsightsWorkspaceId" For="@(() => plan.Form.Model.AppInsightsWorkspaceId)" />
+
+                        <FInputText @bind-Value="plan.Form.Model.ApplicationInsightsConnectionString" For="@(() => plan.Form.Model.ApplicationInsightsConnectionString)" />
+                        <FInputText @bind-Value="plan.Form.Model.LogAnalyticsWorkspaceId" For="@(() => plan.Form.Model.LogAnalyticsWorkspaceId)" />
                     </div>
                     @if (!plan.CreateMode && plan.DeleteAcknowledge)
                     {

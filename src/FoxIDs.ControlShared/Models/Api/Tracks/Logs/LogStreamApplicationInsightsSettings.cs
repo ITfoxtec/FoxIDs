@@ -9,7 +9,8 @@ namespace FoxIDs.Models.Api
     {
         [Required]
         string connectionString;
-        [MaxLength(Constants.Models.Track.Logging.ApplicationInsightsConnectionStringLength)]
+        [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
+        [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
         [Display(Name = "Connection string")]
         public string ConnectionString
         {
@@ -28,7 +29,7 @@ namespace FoxIDs.Models.Api
         }
 
         [Obsolete("ApplicationInsights InstrumentationKey is being deprecated. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
-        [MaxLength(Constants.Models.Track.Logging.ApplicationInsightsKeyLength)]
+        [MaxLength(Constants.Models.Logging.ApplicationInsightsKeyLength)]
         [Display(Name = "Instrumentation key")]
         public string InstrumentationKey { get; set; }
     }

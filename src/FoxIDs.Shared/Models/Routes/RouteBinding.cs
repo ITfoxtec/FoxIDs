@@ -52,6 +52,6 @@ namespace FoxIDs.Models
 
         public Logging Logging { get; set; }
 
-        public string ApplicationInsightsKey { get; set; }
+        public string ApplicationInsightsConnectionString { get; set; }
     }
 }

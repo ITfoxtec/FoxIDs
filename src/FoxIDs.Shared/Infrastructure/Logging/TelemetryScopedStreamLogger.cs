@@ -1,8 +1,6 @@
 ﻿using FoxIDs.Models;
 using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 
@@ -10,13 +8,6 @@ namespace FoxIDs.Infrastructure
 {
     public class TelemetryScopedStreamLogger
     {
-        private readonly IHttpContextAccessor httpContextAccessor;
-
-        public TelemetryScopedStreamLogger(IHttpContextAccessor httpContextAccessor)
-        {
-            this.httpContextAccessor = httpContextAccessor;
-        }
-
         public void Warning(ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             Warning(scopeStreamLogger, exception, null, properties, metrics);
@@ -80,6 +71,7 @@ namespace FoxIDs.Infrastructure
                     throw new NotSupportedException($"Scoped stream logger type '{scopeStreamLogger.Type}' not supported.");
             }
         }
+
         public void Trace(ScopedStreamLogger scopeStreamLogger, string message, IDictionary<string, string> properties = null)
         {
             switch (scopeStreamLogger.Type)

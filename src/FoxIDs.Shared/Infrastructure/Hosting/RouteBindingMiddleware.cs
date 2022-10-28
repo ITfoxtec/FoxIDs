@@ -8,6 +8,8 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Logic;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -103,10 +105,23 @@ namespace FoxIDs.Infrastructure.Hosting
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
-                ApplicationInsightsConnectionString = plan?.ApplicationInsightsConnectionString,
+                TelemetryClient = GetTelmetryClient(plan?.ApplicationInsightsConnectionString),
+                LogAnalyticsWorkspaceId = plan?.LogAnalyticsWorkspaceId
             };
 
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);
+        }
+
+        private TelemetryClient GetTelmetryClient(string applicationInsightsConnectionString)
+        {
+            if (!applicationInsightsConnectionString.IsNullOrWhiteSpace())
+            {
+                return new TelemetryClient(new TelemetryConfiguration { ConnectionString = applicationInsightsConnectionString });
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private static async Task<Tenant> GetTenantAsync(IServiceProvider requestServices, bool hasCustomDomain, string customDomain, string tenantName)

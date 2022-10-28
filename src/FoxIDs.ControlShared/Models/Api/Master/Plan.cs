@@ -1,10 +1,12 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class Plan : INameValue
+    public class Plan : INameValue, IValidatableObject
     {    
         [Required]
         [MaxLength(Constants.Models.Plan.NameLength)]
@@ -56,5 +58,17 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Logging.LogAnalyticsWorkspaceIdRegExPattern)]
         [Display(Name = "Log analytics workspace ID")]
         public string LogAnalyticsWorkspaceId { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (!ApplicationInsightsConnectionString.IsNullOrEmpty() && LogAnalyticsWorkspaceId.IsNullOrEmpty() || ApplicationInsightsConnectionString.IsNullOrEmpty() && !LogAnalyticsWorkspaceId.IsNullOrEmpty())
+            {
+                results.Add(new ValidationResult($"Both the field {nameof(ApplicationInsightsConnectionString)} and the field {nameof(LogAnalyticsWorkspaceId)} is required if one of them is present.", new[] { nameof(ApplicationInsightsConnectionString), nameof(LogAnalyticsWorkspaceId) }));
+            }
+
+            return results;
+        }
     }
 }

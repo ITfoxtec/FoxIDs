@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.ApplicationInsights;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
@@ -52,6 +53,8 @@ namespace FoxIDs.Models
 
         public Logging Logging { get; set; }
 
-        public string ApplicationInsightsConnectionString { get; set; }
+        public TelemetryClient TelemetryClient { get; set; }
+
+        public string LogAnalyticsWorkspaceId { get; set; }
     }
 }

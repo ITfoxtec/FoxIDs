@@ -179,6 +179,18 @@ namespace FoxIDs.Logic
             return new QueryTimeRange(startDate, endDate);
         }
 
+        private string GetLogAnalyticsWorkspaceId()
+        {
+            if (!string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
+            {
+                return RouteBinding.LogAnalyticsWorkspaceId;
+            }
+            else
+            {
+                return settings.ApplicationInsights.WorkspaceId;
+            }
+        }
+
         private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest)
         {
             if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
@@ -194,7 +206,7 @@ namespace FoxIDs.Logic
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
             var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
         }

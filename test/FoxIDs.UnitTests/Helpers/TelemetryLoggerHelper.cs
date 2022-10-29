@@ -9,7 +9,7 @@ namespace FoxIDs.UnitTests.Helpers
     {
         public static TelemetryScopedStreamLogger ScopedStreamLoggerObject(IHttpContextAccessor httpContextAccessor)
         {
-            var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger(httpContextAccessor);
+            var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger();
             return telemetryScopedStreamLogger;
         }
 
@@ -17,7 +17,7 @@ namespace FoxIDs.UnitTests.Helpers
         {
             var telemetryClient = new TelemetryClient(new TelemetryConfiguration("xxx"));
             var telemetryLogger = new TelemetryLogger(telemetryClient);
-            var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger(httpContextAccessor);
+            var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger();
             var telemetryScopedProperties = new TelemetryScopedProperties();
             var telemetryScopedLogger = new TelemetryScopedLogger(telemetryLogger, telemetryScopedProperties, telemetryScopedStreamLogger, httpContextAccessor);
             return telemetryScopedLogger;

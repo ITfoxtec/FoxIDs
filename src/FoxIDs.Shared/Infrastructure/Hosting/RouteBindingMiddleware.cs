@@ -8,6 +8,8 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Logic;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights;
 
 namespace FoxIDs.Infrastructure.Hosting
 {
@@ -77,10 +79,19 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool hasCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
         {
+            var tenant = await GetTenantAsync(requestServices, hasCustomDomain, customDomain, trackIdKey.TenantName);
             if (hasCustomDomain)
             {
-                var tenantCacheLogic = requestServices.GetService<TenantCacheLogic>();               
-                trackIdKey.TenantName = await tenantCacheLogic.GetTenantNameByCustomDomainAsync(customDomain);
+                trackIdKey.TenantName = tenant.Name;
+            }
+
+            var plan = await GetPlanAsync(requestServices, tenant.PlanName);
+            if (plan != null)
+            {
+                if (hasCustomDomain && !plan.EnableCustomDomain)
+                {
+                    throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                }
             }
 
             var track = await GetTrackAsync(trackIdKey, hasCustomDomain);
@@ -90,12 +101,50 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 HasCustomDomain = hasCustomDomain,
                 RouteUrl = $"{(!hasCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
+                PlanName = plan?.Name,
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
+                TelemetryClient = GetTelmetryClient(plan?.ApplicationInsightsConnectionString),
+                LogAnalyticsWorkspaceId = plan?.LogAnalyticsWorkspaceId
             };
 
             return await PostRouteDataAsync(scopedLogger, requestServices, trackIdKey, track, routeBinding, partyNameAndBinding, acceptUnknownParty);
+        }
+
+        private TelemetryClient GetTelmetryClient(string applicationInsightsConnectionString)
+        {
+            if (!applicationInsightsConnectionString.IsNullOrWhiteSpace())
+            {
+                return new TelemetryClient(new TelemetryConfiguration { ConnectionString = applicationInsightsConnectionString });
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private static async Task<Tenant> GetTenantAsync(IServiceProvider requestServices, bool hasCustomDomain, string customDomain, string tenantName)
+        {
+            var tenantCacheLogic = requestServices.GetService<TenantCacheLogic>();
+            if (hasCustomDomain)
+            {
+                return await tenantCacheLogic.GetTenantByCustomDomainAsync(customDomain);
+            }
+            else
+            {
+                return await tenantCacheLogic.GetTenantAsync(tenantName);
+            }
+        }
+
+        private async Task<Plan> GetPlanAsync(IServiceProvider requestServices, string planName)
+        {
+            if (planName.IsNullOrEmpty())
+            {
+                return null;
+            }
+            var planCacheLogic = requestServices.GetService<PlanCacheLogic>();
+            return await planCacheLogic.GetPlanAsync(planName);
         }
 
         private async Task<Track> GetTrackAsync(Track.IdKey idKey, bool hasCustomDomain)

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -116,7 +117,8 @@ namespace FoxIDs.Client.Pages
         {
             if (generalLogStreamSettings.LogStreamSettings.Type == LogStreamTypes.ApplicationInsights)
             {
-                return $"Application Insights {generalLogStreamSettings.LogStreamSettings.ApplicationInsightsSettings.InstrumentationKey}";
+                var connectionStringSplit = generalLogStreamSettings.LogStreamSettings.ApplicationInsightsSettings.ConnectionString?.Split(';');
+                return $"Application Insights {connectionStringSplit?.FirstOrDefault()}";
             }
             else
             {

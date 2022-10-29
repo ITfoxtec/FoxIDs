@@ -21,6 +21,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<ClaimTransformValidationLogic>();
 
+            services.AddTransient<PlanCacheLogic>();
             services.AddTransient<TenantCacheLogic>();
             services.AddTransient<TrackCacheLogic>();
             services.AddTransient<DownPartyCacheLogic>();

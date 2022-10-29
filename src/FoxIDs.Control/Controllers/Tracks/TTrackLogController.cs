@@ -201,12 +201,24 @@ namespace FoxIDs.Controllers
             }
         }
 
+        private string GetLogAnalyticsWorkspaceId()
+        {
+            if (!string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
+            {
+                return RouteBinding.LogAnalyticsWorkspaceId;
+            }
+            else
+            {
+                return settings.ApplicationInsights.WorkspaceId;
+            }
+        }
+
         private async Task<bool> LoadExceptionsAsync(LogsQueryClient client, List<InternalLogItem> items, QueryTimeRange queryTimeRange, string filter)
         {
             var extend = filter.IsNullOrEmpty() ? null : $"| extend RequestId = Properties.RequestId | extend RequestPath = Properties.RequestPath {GetGeneralQueryExtend()}";
             var where = filter.IsNullOrEmpty() ? null : $"| where Details contains '{filter}' or RequestId contains '{filter}' or RequestPath contains '{filter}' or {GetGeneralQueryWhere(filter)}";
             var exceptionsQuery = GetQuery("AppExceptions", extend, where);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, exceptionsQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), exceptionsQuery, queryTimeRange);
             var table = response.Value.Table;
 
             foreach (var row in table.Rows)
@@ -222,7 +234,7 @@ namespace FoxIDs.Controllers
                     Timestamp = GetTimestamp(row),
                     SequenceId = GetSequenceId(row),
                     OperationId = GetOperationId(row),
-                    Values = GetValues(row, new string[] { Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.ClientIp, Constants.Logs.Results.AppRoleInstance }) 
+                    Values = GetValues(row, new string[] { Constants.Logs.Results.OperationName, Constants.Logs.Results.ClientType, Constants.Logs.Results.ClientIp, Constants.Logs.Results.AppRoleInstance })
                 };
                 AddExceptionDetails(row, item);
                 AddProperties(row, item.Values);
@@ -237,7 +249,7 @@ namespace FoxIDs.Controllers
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = filter.IsNullOrEmpty() ? null : $"| where Message contains '{filter}' or {GetGeneralQueryWhere(filter)}";
             var tracesQuery = GetQuery("AppTraces", extend, where);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, tracesQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), tracesQuery, queryTimeRange);
             var table = response.Value.Table;
 
             foreach (var row in table.Rows)
@@ -263,7 +275,7 @@ namespace FoxIDs.Controllers
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = $"| where isempty(Properties.f_UsageType){(filter.IsNullOrEmpty() ? String.Empty : $" | where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}")}";
             var eventsQuery = GetQuery("AppEvents", extend, where);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, eventsQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
 
             foreach (var row in table.Rows)
@@ -287,7 +299,7 @@ namespace FoxIDs.Controllers
             var extend = filter.IsNullOrEmpty() ? null : GetGeneralQueryExtend();
             var where = filter.IsNullOrEmpty() ? null : $"| where Name contains '{filter}' or {GetGeneralQueryWhere(filter)}";
             var customMetricsQuery = GetQuery("AppMetrics", extend, where);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(settings.ApplicationInsights.WorkspaceId, customMetricsQuery, queryTimeRange);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), customMetricsQuery, queryTimeRange);
             var table = response.Value.Table;
 
             foreach (var row in table.Rows)

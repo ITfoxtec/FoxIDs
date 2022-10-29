@@ -47,7 +47,7 @@
                         <FInputText @bind-Value="plan.Form.Model.Currency" For="@(() => plan.Form.Model.Currency)" />
                         <FInputNumberD @bind-Value="plan.Form.Model.CostPerMonth" For="@(() => plan.Form.Model.CostPerMonth)" />
 
-                        <ul class="list-group">
+                        <ul class="list-group mb-3">
                             <li class="list-group-item">
                                 <Label For="@(() => plan.Form.Model.Users)" class="label-control" />
                                 <FInputNumberL @bind-Value="plan.Form.Model.Users.Included" For="@(() => plan.Form.Model.Users.Included)" />
@@ -84,9 +84,9 @@
                                 <FInputNumberDN @bind-Value="plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost" For="@(() => plan.Form.Model.ControlApiUpdateRequests.SecondLevelCost)" />
                             </li>
                         </ul>
-                            
-                        <FInputText @bind-Value="plan.Form.Model.AppInsightsKey" For="@(() => plan.Form.Model.AppInsightsKey)" />
-                        <FInputText @bind-Value="plan.Form.Model.AppInsightsWorkspaceId" For="@(() => plan.Form.Model.AppInsightsWorkspaceId)" />
+
+                        <FInputText @bind-Value="plan.Form.Model.ApplicationInsightsConnectionString" For="@(() => plan.Form.Model.ApplicationInsightsConnectionString)" />
+                        <FInputText @bind-Value="plan.Form.Model.LogAnalyticsWorkspaceId" For="@(() => plan.Form.Model.LogAnalyticsWorkspaceId)" />
                     </div>
                     @if (!plan.CreateMode && plan.DeleteAcknowledge)
                     {

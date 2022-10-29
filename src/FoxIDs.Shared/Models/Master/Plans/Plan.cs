@@ -1,12 +1,14 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class Plan : MasterDocument
+    public class Plan : MasterDocument, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -56,6 +58,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "cost_per_month")]
         public decimal CostPerMonth { get; set; }
 
+        [JsonProperty(PropertyName = "enable_custom_domain")]
+        public bool EnableCustomDomain { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "users")]
         public PlanItem Users { get; set; }
@@ -73,18 +78,30 @@ namespace FoxIDs.Models
         public PlanItem ControlApiGetRequests { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "control_api_update_req")]
+        [JsonProperty(PropertyName = "control_api_upd_req")]
         public PlanItem ControlApiUpdateRequests { get; set; }
 
-        [MaxLength(Constants.Models.Plan.AppInsightsKeyLength)]
-        [RegularExpression(Constants.Models.Plan.AppInsightsKeyRegExPattern)]
-        [JsonProperty(PropertyName = "app_insights_key")]
-        public string AppInsightsKey { get; set; }
+        [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
+        [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
+        [JsonProperty(PropertyName = "app_ins_con_string")]
+        public string ApplicationInsightsConnectionString { get; set; }
 
-        [MaxLength(Constants.Models.Plan.AppInsightsWorkspaceIdLength)]
-        [RegularExpression(Constants.Models.Plan.AppInsightsWorkspaceIdRegExPattern)]
-        [JsonProperty(PropertyName = "app_insights_workspace_id")]
-        public string AppInsightsWorkspaceId { get; set; }
+        [MaxLength(Constants.Models.Logging.LogAnalyticsWorkspaceIdLength)]
+        [RegularExpression(Constants.Models.Logging.LogAnalyticsWorkspaceIdRegExPattern)]
+        [JsonProperty(PropertyName = "log_analy_works_id")]
+        public string LogAnalyticsWorkspaceId { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+
+            if (!ApplicationInsightsConnectionString.IsNullOrEmpty() && LogAnalyticsWorkspaceId.IsNullOrEmpty() || ApplicationInsightsConnectionString.IsNullOrEmpty() && !LogAnalyticsWorkspaceId.IsNullOrEmpty())
+            {
+                results.Add(new ValidationResult($"Both the field {nameof(ApplicationInsightsConnectionString)} and the field {nameof(LogAnalyticsWorkspaceId)} is required if one of them is present.", new[] { nameof(ApplicationInsightsConnectionString), nameof(LogAnalyticsWorkspaceId) }));
+            }
+
+            return results;
+        }
 
         public new class IdKey : MasterDocument.IdKey
         {

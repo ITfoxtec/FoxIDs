@@ -13,15 +13,15 @@ namespace FoxIDs.Models
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [JsonProperty(PropertyName = "first_level_cost")]
+        [JsonProperty(PropertyName = "first_cost")]
         public decimal FirstLevelCost { get; set; }
 
         [Min(Constants.Models.Plan.FirstLevelThresholdMin)]
-        [JsonProperty(PropertyName = "included_first_level")]
+        [JsonProperty(PropertyName = "first_threshold")]
         public long? FirstLevelThreshold { get; set; }
 
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [JsonProperty(PropertyName = "second_level_cost")]
+        [JsonProperty(PropertyName = "second_cost")]
         public decimal? SecondLevelCost { get; set; }
     }
 }

@@ -131,10 +131,17 @@ namespace FoxIDs
                 public const int CostPerMonthMin = 0;
                 public const int IncludedMin = 0;
                 public const int FirstLevelThresholdMin = 0;
-                public const int AppInsightsKeyLength = 40;
-                public const string AppInsightsKeyRegExPattern = @"^[A-F0-9\-]*$";
-                public const int AppInsightsWorkspaceIdLength = 40;
-                public const string AppInsightsWorkspaceIdRegExPattern = @"^[A-F0-9\-]*$";
+            }
+
+            public static class Logging
+            {
+                public const int ScopedStreamLoggersMin = 0;
+                public const int ScopedStreamLoggersMax = 5;
+                public const int ApplicationInsightsKeyLength = 50;
+                public const string ApplicationInsightsConnectionStringRegExPattern = @"^[\w\-=.:;\/]*$";
+                public const int ApplicationInsightsConnectionStringLength = 4096;
+                public const int LogAnalyticsWorkspaceIdLength = 40;
+                public const string LogAnalyticsWorkspaceIdRegExPattern = @"^[a-f0-9\-]*$";
             }
 
             public static class RiskPassword
@@ -230,7 +237,6 @@ namespace FoxIDs
                 {
                     public const int ScopedStreamLoggersMin = 0;
                     public const int ScopedStreamLoggersMax = 5;
-                    public const int ApplicationInsightsKeyLength = 50;
                 }
             }
 

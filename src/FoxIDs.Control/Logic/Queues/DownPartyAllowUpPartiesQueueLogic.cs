@@ -95,6 +95,10 @@ namespace FoxIDs.Logic
                 Info = remove ? $"Remove up-party '{upParty.Name}' from down-parties allow up-party list" : $"Update up-party '{upParty.Name}' in down-parties allow up-party list",
                 Message = message.ToJson(),
             };
+            if (routeBinding.TelemetryClient != null)
+            {
+                envalope.ApplicationInsightsConnectionString = routeBinding.TelemetryClient.TelemetryConfiguration.ConnectionString;
+            }
             await envalope.ValidateObjectAsync();
 
             var db = redisConnectionMultiplexer.GetDatabase();

@@ -1,5 +1,8 @@
-﻿using FoxIDs.Models.Queue;
+﻿using FoxIDs.Models;
+using FoxIDs.Models.Queue;
 using ITfoxtec.Identity;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StackExchange.Redis;
@@ -97,6 +100,11 @@ namespace FoxIDs.Infrastructure.Queue
                     using (IServiceScope scope = serviceProvider.CreateScope())
                     {
                         var scopedLogger = scope.ServiceProvider.GetRequiredService<TelemetryScopedLogger>();
+                        if (!envelopeObj.ApplicationInsightsConnectionString.IsNullOrEmpty())
+                        {
+                            var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = envelopeObj.ApplicationInsightsConnectionString });
+                            scopedLogger.TelemetryLogger = new TelemetryLogger(telemetryClient);
+                        }
                         scopedLogger.SetScopeProperty(Constants.Logs.TenantName, envelopeObj.TenantName);
                         scopedLogger.SetScopeProperty(Constants.Logs.TrackName, envelopeObj.TrackName);
 

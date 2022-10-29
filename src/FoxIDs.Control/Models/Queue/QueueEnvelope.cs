@@ -25,5 +25,8 @@ namespace FoxIDs.Models.Queue
         [Required]
         [JsonProperty(PropertyName = "m")]
         public string Message { get; set; }
+
+        [JsonProperty(PropertyName = "ac")]
+        public string ApplicationInsightsConnectionString { get; set; }
     }
 }

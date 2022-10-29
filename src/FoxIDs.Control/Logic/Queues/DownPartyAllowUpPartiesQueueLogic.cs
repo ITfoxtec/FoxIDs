@@ -91,7 +91,7 @@ namespace FoxIDs.Logic
             {
                 TenantName = routeBinding.TenantName,
                 TrackName = routeBinding.TrackName,
-                LogicClassType = GetType(),
+                LogicClassTypeFullName = GetType().FullName,
                 Info = remove ? $"Remove up-party '{upParty.Name}' from down-parties allow up-party list" : $"Update up-party '{upParty.Name}' in down-parties allow up-party list",
                 Message = message.ToJson(),
             };

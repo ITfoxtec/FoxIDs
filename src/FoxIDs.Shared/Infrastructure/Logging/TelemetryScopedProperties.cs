@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace FoxIDs.Infrastructure
 {
     public class TelemetryScopedProperties
     {
-        public IDictionary<string, string> Properties { get; private set; } = new Dictionary<string, string>();
+        public ConcurrentDictionary<string, string> Properties { get; private set; } = new ConcurrentDictionary<string, string>();
 
         public void SetScopeProperty(KeyValuePair<string, string> prop)
         {

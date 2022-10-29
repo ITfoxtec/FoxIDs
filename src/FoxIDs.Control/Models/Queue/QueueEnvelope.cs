@@ -15,8 +15,8 @@ namespace FoxIDs.Models.Queue
         public string TrackName { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "l")]
-        public Type LogicClassType { get; set; }
+        [JsonProperty(PropertyName = "f")]
+        public string LogicClassTypeFullName { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "i")]
@@ -26,7 +26,7 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "m")]
         public string Message { get; set; }
 
-        [JsonProperty(PropertyName = "ac")]
+        [JsonProperty(PropertyName = "c")]
         public string ApplicationInsightsConnectionString { get; set; }
     }
 }

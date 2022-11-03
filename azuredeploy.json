@@ -108,14 +108,72 @@
     "redisName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "keyVaultName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "cosmosDbName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
+    "virtualNetworkName": "[toLower(concat(parameters('prefixName'), variables('suffix')))]",
     "location": "[parameters('siteLocation')]"
   },
   "resources": [
     {
+      "type": "Microsoft.Network/virtualNetworks",
+      "apiVersion": "2022-01-01",
+      "name": "[variables('virtualNetworkName')]",
+      "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'default')]"
+      ],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "10.1.0.0/16"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "default",
+            "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'default')]",
+            "properties": {
+              "addressPrefix": "10.1.0.0/24",
+              "serviceEndpoints": [
+                {
+                  "service": "Microsoft.AzureCosmosDB",
+                  "locations": [
+                    "*"
+                  ]
+                },
+                {
+                  "service": "Microsoft.KeyVault",
+                  "locations": [
+                    "*"
+                  ]
+                }
+              ],
+              "delegations": [
+                {
+                  "name": "delegation",
+                  "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'default'), '/delegations/delegation')]",
+                  "properties": {
+                    "serviceName": "Microsoft.Web/serverfarms"
+                  },
+                  "type": "Microsoft.Network/virtualNetworks/subnets/delegations"
+                }
+              ],
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
+          }
+        ],
+        "virtualNetworkPeerings": [],
+        "enableDdosProtection": false
+      }
+    },
+    {
       "type": "Microsoft.DocumentDB/databaseAccounts",
-      "apiVersion": "2015-04-08",
+      "apiVersion": "2022-08-15",
       "name": "[variables('cosmosDbName')]",
       "location": "[variables('location')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'default')]"
+      ],
       "tags": {
         "defaultExperience": "DocumentDB"
       },
@@ -123,8 +181,13 @@
       "properties": {
         "enableAutomaticFailover": false,
         "enableMultipleWriteLocations": false,
-        "isVirtualNetworkFilterEnabled": false,
-        "virtualNetworkRules": [],
+        "isVirtualNetworkFilterEnabled": true,
+        "virtualNetworkRules": [
+          {
+            "id": "[concat(variables('virtualNetworkName'), '/subnets/default')]",
+            "ignoreMissingVNetServiceEndpoint": false
+          }
+        ],
         "databaseAccountOfferType": "Standard",
         "consistencyPolicy": {
           "defaultConsistencyLevel": "Session",
@@ -206,10 +269,11 @@
     },
     {
       "type": "Microsoft.KeyVault/vaults",
-      "apiVersion": "2016-10-01",
+      "apiVersion": "2022-07-01",
       "name": "[variables('keyVaultName')]",
       "location": "[variables('location')]",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('virtualNetworkName'), 'default')]",
         "[resourceId('Microsoft.Web/sites', variables('foxidsSiteName'))]",
         "[resourceId('Microsoft.Web/sites', variables('foxidsControlSiteName'))]"
       ],
@@ -219,6 +283,17 @@
           "name": "[parameters('keyVaultSkuName')]"
         },
         "tenantId": "[subscription().tenantId]",
+        "networkAcls": {
+          "bypass": "None",
+          "defaultAction": "Deny",
+          "ipRules": [],
+          "virtualNetworkRules": [
+            {
+              "id": "[concat(variables('virtualNetworkName'), '/subnets/default')]",
+              "ignoreMissingVnetServiceEndpoint": false
+            }
+          ]
+        },
         "accessPolicies": [
           {
             "tenantId": "[subscription().tenantId]",
@@ -313,7 +388,8 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarmsName'))]",
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
-        "httpsOnly": true
+        "httpsOnly": true,
+        "virtualNetworkSubnetId": "[concat(variables('virtualNetworkName'), '/subnets/default')]"
       }
     },
     {
@@ -340,7 +416,8 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarmsName'))]",
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
-        "httpsOnly": true
+        "httpsOnly": true,
+        "virtualNetworkSubnetId": "[concat(variables('virtualNetworkName'), '/subnets/default')]"
       }
     },
     {
@@ -367,7 +444,8 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarmsName'))]",
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
-        "httpsOnly": true
+        "httpsOnly": true,
+        "virtualNetworkSubnetId": "[concat(variables('virtualNetworkName'), '/subnets/default')]"
       }
     },
     {
@@ -394,7 +472,8 @@
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarmsName'))]",
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('appInsightsName'))).InstrumentationKey]",
-        "httpsOnly": true
+        "httpsOnly": true,
+        "virtualNetworkSubnetId": "[concat(variables('virtualNetworkName'), '/subnets/default')]"
       }
     },
     {

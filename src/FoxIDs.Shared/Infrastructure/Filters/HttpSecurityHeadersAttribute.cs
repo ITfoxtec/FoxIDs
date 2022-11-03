@@ -86,7 +86,7 @@ namespace FoxIDs.Infrastructure.Filters
                         yield return cspImgSrc;
                     }
 
-                    yield return "script-src 'self' 'unsafe-inline' https://az416426.vo.msecnd.net;";
+                    yield return "script-src 'self' 'unsafe-inline' https://js.monitor.azure.com;";
                     yield return "style-src 'self' 'unsafe-inline';";
 
                     yield return "base-uri 'self';";

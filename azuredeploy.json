@@ -829,8 +829,8 @@
         "workspaceCapping": {
           "dailyQuotaGb": -1
         },
-        "publicNetworkAccessForIngestion": "Enabled",
-        "publicNetworkAccessForQuery": "Enabled"
+        "publicNetworkAccessForIngestion": "Disabled",
+        "publicNetworkAccessForQuery": "Disabled"
       }
     },
     {
@@ -853,7 +853,9 @@
         "DisableIpMasking": true,
         "RetentionInDays": 90,
         "WorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]",
-        "IngestionMode": "LogAnalytics"
+        "IngestionMode": "LogAnalytics",
+        "publicNetworkAccessForIngestion": "Disabled",
+        "publicNetworkAccessForQuery": "Disabled"
       }
     },
     {

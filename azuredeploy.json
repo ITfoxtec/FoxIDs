@@ -304,7 +304,7 @@
       "name": "[variables('foxidsDefaultName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
       ],
       "kind": "app",
@@ -324,7 +324,7 @@
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
         "httpsOnly": true,
-        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]"
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
     {
@@ -333,7 +333,7 @@
       "name": "[variables('foxidsControlSiteName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/serverfarms/', variables('foxidsDefaultName'))]"
       ],
       "kind": "app",
@@ -353,7 +353,7 @@
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
         "httpsOnly": true,
-        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]"
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
     {
@@ -362,7 +362,7 @@
       "name": "[concat(variables('foxidsDefaultName'), '/test')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/sites/', variables('foxidsDefaultName'))]"
       ],
       "kind": "app",
@@ -382,7 +382,7 @@
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
         "httpsOnly": true,
-        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]"
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
     {
@@ -391,7 +391,7 @@
       "name": "[concat(variables('foxidsControlSiteName'), '/test')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]",
         "[concat('Microsoft.Web/sites/', variables('foxidsControlSiteName'))]"
       ],
       "kind": "app",
@@ -411,7 +411,7 @@
         "clientAffinityEnabled": false,
         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
         "httpsOnly": true,
-        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app')]"
+        "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
     {
@@ -654,15 +654,6 @@
               "privateLinkServiceNetworkPolicies": "Enabled"
             },
             "type": "Microsoft.Network/virtualNetworks/subnets"
-          },
-          {
-            "name": "subnet-app",
-            "properties": {
-              "addressPrefix": "10.1.2.0/24",
-              "privateEndpointNetworkPolicies": "Disabled",
-              "privateLinkServiceNetworkPolicies": "Enabled"
-            },
-            "type": "Microsoft.Network/virtualNetworks/subnets"
           }
         ]
       }
@@ -690,36 +681,10 @@
             ]
           }
         ],
-        "privateEndpointNetworkPolicies": "Enabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2022-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/subnet-log')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "addressPrefix": "10.1.1.0/24",
-        "privateEndpointNetworkPolicies": "Disabled",
-        "privateLinkServiceNetworkPolicies": "Enabled"
-      }
-    },
-    {
-      "type": "Microsoft.Network/virtualNetworks/subnets",
-      "apiVersion": "2022-01-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/subnet-app')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "addressPrefix": "10.1.2.0/24",
         "delegations": [
           {
             "name": "delegation",
-            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-app'), '/delegations/delegation')]",
+            "id": "[concat(resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data'), '/delegations/delegation')]",
             "properties": {
               "serviceName": "Microsoft.Web/serverfarms"
             },
@@ -730,9 +695,20 @@
         "privateLinkServiceNetworkPolicies": "Enabled"
       }
     },
-
-
-
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2022-01-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/subnet-log')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
+      ],
+      "properties": {
+        "addressPrefix": "10.1.1.0/24",
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
     {
       "type": "microsoft.insights/privatelinkscopes",
       "apiVersion": "2021-07-01-preview",
@@ -770,23 +746,16 @@
         "linkedResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]"
       }
     },
-
-
-
-
-
-
     {
       "type": "Microsoft.Network/privateEndpoints",
       "apiVersion": "2022-01-01",
       "name": "[variables('privateEndpointLog')]",
       "dependsOn": [
         "[resourceId('microsoft.insights/privateLinkScopes', variables('foxidsDefaultName'))]",
-        "[resourceId('microsoft.insights/components', variables('foxidsDefaultName'))]",
-        "[resourceId('microsoft.operationalinsights/workspaces', variables('foxidsDefaultName'))]",
+        "[resourceId('microsoft.insights/privatelinkscopes/scopedresources', variables('foxidsDefaultName'), concat('scoped-', variables('foxidsDefaultName'), '-insights'))]",
+        "[resourceId('microsoft.insights/privatelinkscopes/scopedresources', variables('foxidsDefaultName'), concat('scoped-', variables('foxidsDefaultName'), '-workspaces'))]",
         "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
-        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-log')]",
-        "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]"
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-log')]"
       ],
       "location": "[resourceGroup().location]",
       "properties": {
@@ -871,170 +840,6 @@
       }
     },
     {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/api')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.7"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/diagservices-query')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.11"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/global.handler.control')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.14"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/global.in.ai')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.8"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/live')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.10"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/profiler')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.9"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/snapshot')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.12"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/westeurope.livediagnostics')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.16"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/westeurope-5.in.ai')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.15"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/SOA",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.monitor.azure.com', '/@')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.monitor.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 3600,
-        "soaRecord": {
-          "email": "azureprivatedns-host.microsoft.com",
-          "expireTime": 2419200,
-          "host": "azureprivatedns.net",
-          "minimumTtl": 10,
-          "refreshTime": 3600,
-          "retryTime": 300,
-          "serialNumber": 1
-        }
-      }
-    },
-    {
       "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
       "apiVersion": "2018-09-01",
       "name": "[concat('privatelink.monitor.azure.com', '/link_to_', variables('foxidsDefaultName'))]",
@@ -1059,42 +864,6 @@
         "maxNumberOfRecordSets": 25000,
         "maxNumberOfVirtualNetworkLinks": 1000,
         "maxNumberOfVirtualNetworkLinksWithRegistration": 100
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.oms.opinsights.azure.com', '/6ad70745-ab3b-4def-bde1-25efc17786af')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.oms.opinsights.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.4"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/SOA",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.oms.opinsights.azure.com', '/@')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.oms.opinsights.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 3600,
-        "soaRecord": {
-          "email": "azureprivatedns-host.microsoft.com",
-          "expireTime": 2419200,
-          "host": "azureprivatedns.net",
-          "minimumTtl": 10,
-          "refreshTime": 3600,
-          "retryTime": 300,
-          "serialNumber": 1
-        }
       }
     },
     {
@@ -1125,42 +894,6 @@
       }
     },
     {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.ods.opinsights.azure.com', '/6ad70745-ab3b-4def-bde1-25efc17786af')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.ods.opinsights.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.5"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/SOA",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.ods.opinsights.azure.com', '/@')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.ods.opinsights.azure.com')]"
-      ],
-      "properties": {
-        "ttl": 3600,
-        "soaRecord": {
-          "email": "azureprivatedns-host.microsoft.com",
-          "expireTime": 2419200,
-          "host": "azureprivatedns.net",
-          "minimumTtl": 10,
-          "refreshTime": 3600,
-          "retryTime": 300,
-          "serialNumber": 1
-        }
-      }
-    },
-    {
       "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
       "apiVersion": "2018-09-01",
       "name": "[concat('privatelink.ods.opinsights.azure.com', '/link_to_', variables('foxidsDefaultName'))]",
@@ -1188,42 +921,6 @@
       }
     },
     {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.agentsvc.azure-automation.net', '/6ad70745-ab3b-4def-bde1-25efc17786af')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.agentsvc.azure-automation.net')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.6"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/SOA",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.agentsvc.azure-automation.net', '/@')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.agentsvc.azure-automation.net')]"
-      ],
-      "properties": {
-        "ttl": 3600,
-        "soaRecord": {
-          "email": "azureprivatedns-host.microsoft.com",
-          "expireTime": 2419200,
-          "host": "azureprivatedns.net",
-          "minimumTtl": 10,
-          "refreshTime": 3600,
-          "retryTime": 300,
-          "serialNumber": 1
-        }
-      }
-    },
-    {
       "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
       "apiVersion": "2018-09-01",
       "name": "[concat('privatelink.agentsvc.azure-automation.net', '/link_to_', variables('foxidsDefaultName'))]",
@@ -1248,42 +945,6 @@
         "maxNumberOfRecordSets": 25000,
         "maxNumberOfVirtualNetworkLinks": 1000,
         "maxNumberOfVirtualNetworkLinksWithRegistration": 100
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/A",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.blob.core.windows.net', '/scadvisorcontentpl')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
-      ],
-      "properties": {
-        "ttl": 10,
-        "aRecords": [
-          {
-            "ipv4Address": "10.1.1.13"
-          }
-        ]
-      }
-    },
-    {
-      "type": "Microsoft.Network/privateDnsZones/SOA",
-      "apiVersion": "2018-09-01",
-      "name": "[concat('privatelink.blob.core.windows.net', '/@')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
-      ],
-      "properties": {
-        "ttl": 3600,
-        "soaRecord": {
-          "email": "azureprivatedns-host.microsoft.com",
-          "expireTime": 2419200,
-          "host": "azureprivatedns.net",
-          "minimumTtl": 10,
-          "refreshTime": 3600,
-          "retryTime": 300,
-          "serialNumber": 1
-        }
       }
     },
     {

@@ -2,6 +2,7 @@
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Session;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -88,14 +89,18 @@ namespace FoxIDs.Logic
             }
         }
 
-        protected IDictionary<string, string> GetSessionScopeProperties(SessionBaseCookie session)
+        protected IDictionary<string, string> GetSessionScopeProperties(SessionBaseCookie session, bool includeSessionId = true)
         {
-            return new Dictionary<string, string>
+            var scopeProperties = new Dictionary<string, string>
             {
-                { "sessionId", session.SessionId },
-                { "userId", session.UserId },
-                { "email", session.Email }
+                { Constants.Logs.UserId, session.UserId },
+                { Constants.Logs.Email, session.Email }
             };
+            if (includeSessionId)
+            {
+                scopeProperties.Add(Constants.Logs.SessionId, session.SessionId);
+            }
+            return scopeProperties;
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public enum LogStreamTypes
     {
-        ApplicationInsights
+        ApplicationInsights = 0
     }
 }

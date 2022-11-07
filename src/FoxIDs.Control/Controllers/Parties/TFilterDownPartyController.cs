@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
         /// Filter down-party.
         /// </summary>
         /// <param name="filterName">Filter down-party name.</param>
-        /// <returns>Down-party.</returns>
+        /// <returns>Down-parties.</returns>
         [ProducesResponseType(typeof(HashSet<Api.DownParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.DownParty>>> GetFilterDownParty(string filterName)

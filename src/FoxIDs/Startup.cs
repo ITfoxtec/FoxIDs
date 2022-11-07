@@ -24,10 +24,12 @@ namespace FoxIDs
         {
             services.AddApplicationInsightsTelemetry(options => { options.DeveloperMode = CurrentEnvironment.IsDevelopment(); });
             services.AddApplicationInsightsTelemetryProcessor<TelemetryScopedProcessor>();
+            services.BindConfig<ApplicationInsightsGlobalSettings>(Configuration, "ApplicationInsights");
 
             var settings = services.BindConfig<FoxIDsSettings>(Configuration, nameof(Settings));
             // Also add as Settings
             services.AddSingleton<Settings>(settings);
+            
 
             services.AddInfrastructure(settings, CurrentEnvironment);
             services.AddRepository();

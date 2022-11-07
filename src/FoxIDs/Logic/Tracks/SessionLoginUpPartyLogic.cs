@@ -41,6 +41,10 @@ namespace FoxIDs.Logic
                 await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));
                 logger.ScopeTrace(() => $"Session created, User id '{session.UserId}', Session id '{session.SessionId}'.", GetSessionScopeProperties(session));
             }
+            else
+            {
+                logger.SetUserScopeProperty(claims);
+            }
         }
 
         public async Task<bool> UpdateSessionAsync(LoginUpParty loginUpParty, DownPartySessionLink newDownPartyLink, SessionLoginUpPartyCookie session, IEnumerable<Claim> claims = null)
@@ -63,6 +67,7 @@ namespace FoxIDs.Logic
                 return true;
             }
 
+            SetScopeProperty(session, includeSessionId: false);
             await sessionCookieRepository.DeleteAsync(loginUpParty);
             logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
             return false;
@@ -124,14 +129,13 @@ namespace FoxIDs.Logic
                         return (session, user);
                     }
                 }
-                else
-                {
-                    await sessionCookieRepository.DeleteAsync(loginUpParty);
-                    logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
-                }
+
+                SetScopeProperty(session, includeSessionId: false);
+                await sessionCookieRepository.DeleteAsync(loginUpParty);
+                logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
             }
             else
-            {
+            {                
                 logger.ScopeTrace(() => "Session do not exists.");
             }
 
@@ -151,12 +155,11 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    logger.SetScopeProperty(Constants.Logs.SessionId, session.SessionId);
-                    logger.SetScopeProperty(Constants.Logs.UserId, session.UserId);
-                    logger.SetScopeProperty(Constants.Logs.Email, session.Email);
+                    SetScopeProperty(session);
                     return session;
                 }
 
+                SetScopeProperty(session, includeSessionId: false);
                 await sessionCookieRepository.DeleteAsync(loginUpParty);
                 logger.ScopeTrace(() => $"Session deleted, Session id '{session.SessionId}'.");
             }
@@ -182,6 +185,15 @@ namespace FoxIDs.Logic
             {
                 logger.ScopeTrace(() => "Session do not exists.");
                 return null;
+            }
+        }
+
+        private void SetScopeProperty(SessionLoginUpPartyCookie session, bool includeSessionId = true)
+        {
+            var scopeProperties = GetSessionScopeProperties(session, includeSessionId: includeSessionId);
+            foreach (var p in scopeProperties)
+            {
+                logger.SetScopeProperty(p.Key, p.Value);
             }
         }
     }

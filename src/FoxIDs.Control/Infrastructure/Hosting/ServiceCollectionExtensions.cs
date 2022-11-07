@@ -7,7 +7,6 @@ using FoxIDs.Logic;
 using FoxIDs.Logic.Seed;
 using FoxIDs.MappingProfiles;
 using FoxIDs.Models.Config;
-using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -40,6 +39,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<MasterTenantLogic>();
             services.AddTransient<TrackLogic>();
 
+            services.AddTransient<UsageLogLogic>();            
+
             services.AddTransient<ValidateGenericPartyLogic>();
             services.AddTransient<ValidateLoginPartyLogic>();
             services.AddTransient<ValidateOAuthOidcPartyLogic>();
@@ -64,9 +65,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddSharedInfrastructure(settings);
 
             services.AddScoped<FoxIDsApiRouteTransformer>();
-
-            services.AddSingleton<OidcDiscoveryHandlerService>();
-            services.AddHostedService<OidcDiscoveryBackgroundService>();
 
             services.AddHostedService<BackgroundQueueService>();
 

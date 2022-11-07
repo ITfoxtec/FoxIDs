@@ -2,13 +2,13 @@
 {
     public enum LogItemTypes
     {
-        Sequence,
-        Operation,
-        Warning,
-        Error,
-        CriticalError,
-        Trace,
-        Event,
-        Metrics
+        Sequence = 3,
+        Operation = 6,
+        Warning = 10,
+        Error = 20,
+        CriticalError = 30,
+        Trace = 40,
+        Event = 50,
+        Metrics = 60
     }
 }

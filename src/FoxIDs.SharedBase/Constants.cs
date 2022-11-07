@@ -80,6 +80,8 @@ namespace FoxIDs
             public const string Email = "f_Email";
             public const string Type = "f_Type";
             public const string FailingLoginCount = "f_FailingLoginCount";
+            public const string UsageType = "f_UsageType";
+            public const string UsageTokenType = "f_UsageTokenType";
 
             public static class Results
             {
@@ -115,6 +117,31 @@ namespace FoxIDs
             {
                 public const int IdLength = 10;
                 public const string IdRegExPattern = @"^[\w@]*$";
+            }
+
+            public static class Plan
+            {
+                public const int IdLength = 70;
+                public const int TextLength = 4000;
+                public const string IdRegExPattern = @"^[\w@:\-]*$";
+                public const int NameLength = 30;
+                public const string NameRegExPattern = @"^[\w\-]*$";
+                public const int CurrencyLength = 10;
+                public const string CurrencyRegExPattern = @"^[\w]*$";
+                public const int CostPerMonthMin = 0;
+                public const int IncludedMin = 0;
+                public const int FirstLevelThresholdMin = 0;
+            }
+
+            public static class Logging
+            {
+                public const int ScopedStreamLoggersMin = 0;
+                public const int ScopedStreamLoggersMax = 5;
+                public const int ApplicationInsightsKeyLength = 50;
+                public const string ApplicationInsightsConnectionStringRegExPattern = @"^[\w\-=.:;\/]*$";
+                public const int ApplicationInsightsConnectionStringLength = 4096;
+                public const int LogAnalyticsWorkspaceIdLength = 40;
+                public const string LogAnalyticsWorkspaceIdRegExPattern = @"^[a-f0-9\-]*$";
             }
 
             public static class RiskPassword
@@ -210,7 +237,6 @@ namespace FoxIDs
                 {
                     public const int ScopedStreamLoggersMin = 0;
                     public const int ScopedStreamLoggersMax = 5;
-                    public const int ApplicationInsightsKeyLength = 50;
                 }
             }
 
@@ -583,8 +609,7 @@ namespace FoxIDs
             /// <summary>
             /// Default ID Token claims.
             /// </summary>
-            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(
-                new string[] { JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.SubFormat } ).ToArray();
+            public readonly static string[] IdToken = FoxI.IdentityConstants.DefaultJwtClaims.IdToken.ConcatOnce(new string[] { JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, JwtClaimTypes.SubFormat }).ToArray();
 
             /// <summary>
             /// Default Access Token claims.

@@ -28,7 +28,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Filter up-party.
+        /// Filter user.
         /// </summary>
         /// <param name="filterEmail">Filter user email.</param>
         /// <returns>Users.</returns>
@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, };
+                var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 (var mUsers, _) = filterEmail.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<User>(idKey, whereQuery: u => u.DataType.Equals(dataType) && u.Email.Contains(filterEmail));
                 var aUsers = new HashSet<Api.User>(mUsers.Count());
                 foreach(var mUser in mUsers.OrderBy(t => t.Email))

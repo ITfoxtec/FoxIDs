@@ -1,5 +1,7 @@
 ﻿using FoxIDs.Models.Queue;
 using ITfoxtec.Identity;
+using Microsoft.ApplicationInsights.Extensibility;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StackExchange.Redis;
@@ -97,6 +99,11 @@ namespace FoxIDs.Infrastructure.Queue
                     using (IServiceScope scope = serviceProvider.CreateScope())
                     {
                         var scopedLogger = scope.ServiceProvider.GetRequiredService<TelemetryScopedLogger>();
+                        if (!envelopeObj.ApplicationInsightsConnectionString.IsNullOrEmpty())
+                        {
+                            var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = envelopeObj.ApplicationInsightsConnectionString });
+                            scopedLogger.TelemetryLogger = new TelemetryLogger(telemetryClient);
+                        }
                         scopedLogger.SetScopeProperty(Constants.Logs.TenantName, envelopeObj.TenantName);
                         scopedLogger.SetScopeProperty(Constants.Logs.TrackName, envelopeObj.TrackName);
 
@@ -104,10 +111,11 @@ namespace FoxIDs.Infrastructure.Queue
                         {
                             scopedLogger.Event($"Start to process '{envelopeObj.Info}'.");
                             scopedLogger.ScopeTrace(() => $"Background queue envelope '{envelope}'", traceType: TraceTypes.Message);
-                            var processingService = scope.ServiceProvider.GetRequiredService(envelopeObj.LogicClassType) as IQueueProcessingService;
+
+                            var processingService = scope.ServiceProvider.GetRequiredService(GetTypeFromFullName(envelopeObj.LogicClassTypeFullName)) as IQueueProcessingService;
                             if (processingService == null)
                             {
-                                throw new Exception($"Logic type '{envelopeObj.LogicClassType.Name}' is not of type '{nameof(IQueueProcessingService)}'.");
+                                throw new Exception($"Logic type '{envelopeObj.LogicClassTypeFullName}' is not of type '{nameof(IQueueProcessingService)}'.");
                             }
 
                             await processingService.DoWorkAsync(scopedLogger, envelopeObj.TenantName, envelopeObj.TrackName, envelopeObj.Message, stoppingToken);
@@ -131,6 +139,23 @@ namespace FoxIDs.Infrastructure.Queue
             catch (Exception ex)
             {
                 logger.Error(ex, "Unable do background queue work.");
+            }
+        }
+
+        private Type GetTypeFromFullName(string logicClassTypeFullName)
+        {
+            try
+            {
+                var type = Type.GetType(logicClassTypeFullName);
+                if (type == null)
+                {
+                    throw new Exception($"Type not found.");
+                }
+                return type;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Unable to find type by full name '{logicClassTypeFullName}'.", ex);
             }
         }
     }

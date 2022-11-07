@@ -37,5 +37,13 @@ namespace FoxIDs.Client.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Administrator password")]
         public string AdministratorPassword { get; set; }
+
+        /// <summary>
+        /// Plan (optional).
+        /// </summary>
+        [MaxLength(Constants.Models.Plan.NameLength)]
+        [RegularExpression(Constants.Models.Plan.NameRegExPattern)]
+        [Display(Name = "Plan (optional)")]
+        public string PlanName { get; set; }
     }
 }

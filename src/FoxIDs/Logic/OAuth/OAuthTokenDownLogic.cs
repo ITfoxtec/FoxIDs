@@ -17,15 +17,17 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
+        private readonly PlanUsageLogic planUsageLogic;
         private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
         private readonly SecretHashLogic secretHashLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
+            this.planUsageLogic = planUsageLogic;
             this.jwtDownLogic = jwtDownLogic;
             this.secretHashLogic = secretHashLogic;
             this.claimTransformLogic = claimTransformLogic;
@@ -214,10 +216,13 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"Down, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.SetUserScopeProperty(claims);
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
 
                 tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
+
+                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);

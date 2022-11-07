@@ -76,7 +76,11 @@ namespace FoxIDs.Repository
 
         private string IdToMasterPartitionId<T>() where T : MasterDocument
         {
-            if (typeof(T) == typeof(RiskPassword))
+            if (typeof(T) == typeof(Plan))
+            {
+                return Plan.PartitionIdFormat(new MasterDocument.IdKey());
+            }
+            else if(typeof(T) == typeof(RiskPassword))
             {
                 return RiskPassword.PartitionIdFormat(new MasterDocument.IdKey());
             }
@@ -134,6 +138,81 @@ namespace FoxIDs.Repository
             }
         }
 
+        public async Task<HashSet<T>> GetListAsync<T>(Expression<Func<T, bool>> whereQuery = null, int maxItemCount = 50) where T : MasterDocument
+        {
+            var partitionId = IdToMasterPartitionId<T>();
+            var query = GetQueryAsync<T>(partitionId, maxItemCount: maxItemCount);
+            var setIterator = (whereQuery == null) ? query.ToFeedIterator() : query.Where(whereQuery).ToFeedIterator();
+
+            double totalRU = 0;
+            try
+            {
+                var response = await setIterator.ReadNextAsync();
+                totalRU += response.RequestCharge;
+                var items = response.ToHashSet();
+                await items.ValidateObjectAsync();
+                return items;
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - read list (maxItemCount: {maxItemCount}) by query of type '{typeof(T)}', partitionId '{partitionId}'.", totalRU);
+            }
+        }
+
+        public async Task CreateAsync<T>(T item) where T : MasterDocument
+        {
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            double totalRU = 0;
+            try
+            {
+                var response = await container.CreateItemAsync(item, new PartitionKey(item.PartitionId));
+                totalRU += response.RequestCharge;
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - create type '{typeof(T)}'.", totalRU);
+            }
+        }
+
+        public async Task UpdateAsync<T>(T item) where T : MasterDocument
+        {
+            if (item == null) new ArgumentNullException(nameof(item));
+            if (item.Id.IsNullOrEmpty()) throw new ArgumentNullException(nameof(item.Id), item.GetType().Name);
+
+            item.PartitionId = item.Id.IdToMasterPartitionId();
+            item.SetDataType();
+            await item.ValidateObjectAsync();
+
+            double totalRU = 0;
+            try
+            {
+                var response = await container.ReplaceItemAsync(item, item.Id, new PartitionKey(item.PartitionId));
+                totalRU += response.RequestCharge;
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(item.Id, item.PartitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - update type '{typeof(T)}'.", totalRU);
+            }
+        }
+
         public async Task SaveAsync<T>(T item) where T : MasterDocument
         {
             if (item == null) new ArgumentNullException(nameof(item));
@@ -156,6 +235,29 @@ namespace FoxIDs.Repository
             finally
             {
                 logger.Metric($"CosmosDB RU, @master - save type '{typeof(T)}'.", totalRU);
+            }
+        }
+
+        public async Task<T> DeleteAsync<T>(string id) where T : MasterDocument
+        {
+            if (id.IsNullOrWhiteSpace()) new ArgumentNullException(nameof(id));
+
+            var partitionId = id.IdToMasterPartitionId();
+
+            double totalRU = 0;
+            try
+            {
+                var deleteResponse = await container.DeleteItemAsync<T>(id, new PartitionKey(partitionId));
+                totalRU += deleteResponse.RequestCharge;
+                return deleteResponse;
+            }
+            catch (Exception ex)
+            {
+                throw new CosmosDataException(id, partitionId, ex);
+            }
+            finally
+            {
+                logger.Metric($"CosmosDB RU, @master - delete document id '{id}', partitionId '{partitionId}'.", totalRU);
             }
         }
 

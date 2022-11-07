@@ -95,7 +95,8 @@
     "foxidsControlSiteName": "[toLower(concat(parameters('prefixName'), 'control', variables('suffix')))]",
     "foxidsSiteEndpoint": "[concat('https://', variables('foxidsDefaultName'), '.azurewebsites.net')]",
     "foxidsControlSiteEndpoint": "[concat('https://', variables('foxidsControlSiteName'), '.azurewebsites.net')]",
-    "privateEndpointLog": "[concat(variables('foxidsDefaultName'), '-privateendpoint-log')]"
+    "privateEndpointLog": "[concat(variables('foxidsDefaultName'), '-log')]",
+    "privateEndpointCache": "[concat(variables('foxidsDefaultName'), '-cache')]"
   },
   "resources": [
     {
@@ -200,22 +201,6 @@
           "maxmemory-reserved": "30",
           "maxfragmentationmemory-reserved": "30",
           "maxmemory-delta": "30"
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Cache/Redis/privateEndpointConnections",
-      "apiVersion": "2022-05-01",
-      "name": "[concat(variables('foxidsDefaultName'), '/', variables('foxidsDefaultName'), '-cache')]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]"
-      ],
-      "properties": {
-        "privateEndpoint": {},
-        "privateLinkServiceConnectionState": {
-          "status": "Approved",
-          "description": "Auto-Approved",
-          "actionsRequired": "None"
         }
       }
     },
@@ -866,12 +851,6 @@
             "properties": {
               "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
             }
-          },
-          {
-            "name": "privatelink.redis.cache.windows.net",
-            "properties": {
-              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
-            }
           }
         ]
       }
@@ -1009,6 +988,74 @@
         "virtualNetwork": {
           "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
         }
+      }
+    },
+    {
+      "type": "Microsoft.Cache/Redis/privateEndpointConnections",
+      "apiVersion": "2022-05-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/', variables('foxidsDefaultName'), '-cache')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "privateEndpoint": {},
+        "privateLinkServiceConnectionState": {
+          "status": "Approved",
+          "description": "Auto-Approved",
+          "actionsRequired": "None"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateEndpoints",
+      "apiVersion": "2022-01-01",
+      "name": "[variables('privateEndpointCache')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/Redis/privateEndpointConnections', variables('foxidsDefaultName'), concat(variables('foxidsDefaultName'), '-cache'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-cache')]"
+      ],
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "privateLinkServiceConnections": [
+          {
+            "name": "[variables('privateEndpointCache')]",
+            "properties": {
+              "privateLinkServiceId": "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]",
+              "groupIds": [
+                "redisCache"
+              ],
+              "privateLinkServiceConnectionState": {
+                "status": "Approved",
+                "description": "Auto-Approved",
+                "actionsRequired": "None"
+              }
+            }
+          }
+        ],
+        "customNetworkInterfaceName": "[concat(variables('privateEndpointCache'), '-nic')]",
+        "subnet": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-cache')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+      "apiVersion": "2022-01-01",
+      "name": "[concat(variables('privateEndpointCache'), '/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateEndpoints', variables('privateEndpointCache'))]",
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
+      ],
+      "properties": {
+        "privateDnsZoneConfigs": [
+          {
+            "name": "privatelink.redis.cache.windows.net",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
+            }
+          }
+        ]
       }
     },
     {

@@ -183,21 +183,39 @@
     },
     {
       "type": "Microsoft.Cache/Redis",
-      "apiVersion": "2017-10-01",
+      "apiVersion": "2022-05-01",
       "name": "[variables('foxidsDefaultName')]",
       "location": "[resourceGroup().location]",
       "properties": {
+        "redisVersion": "6.0",
         "sku": {
           "name": "Standard",
           "family": "C",
-          "capacity": "0"
+          "capacity": 0
         },
         "enableNonSslPort": false,
+        "minimumTlsVersion": "1.2",
+        "publicNetworkAccess": "Disabled",
         "redisConfiguration": {
-          "maxclients": "256",
-          "maxmemory-reserved": "2",
-          "maxfragmentationmemory-reserved": "12",
-          "maxmemory-delta": "2"
+          "maxmemory-reserved": "30",
+          "maxfragmentationmemory-reserved": "30",
+          "maxmemory-delta": "30"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Cache/Redis/privateEndpointConnections",
+      "apiVersion": "2022-05-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/', variables('foxidsDefaultName'), '-cache')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Cache/Redis', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "privateEndpoint": {},
+        "privateLinkServiceConnectionState": {
+          "status": "Approved",
+          "description": "Auto-Approved",
+          "actionsRequired": "None"
         }
       }
     },
@@ -654,6 +672,15 @@
               "privateLinkServiceNetworkPolicies": "Enabled"
             },
             "type": "Microsoft.Network/virtualNetworks/subnets"
+          },
+          {
+            "name": "subnet-cache",
+            "properties": {
+              "addressPrefix": "10.1.2.0/24",
+              "privateEndpointNetworkPolicies": "Disabled",
+              "privateLinkServiceNetworkPolicies": "Enabled"
+            },
+            "type": "Microsoft.Network/virtualNetworks/subnets"
           }
         ]
       }
@@ -705,6 +732,20 @@
       ],
       "properties": {
         "addressPrefix": "10.1.1.0/24",
+        "privateEndpointNetworkPolicies": "Disabled",
+        "privateLinkServiceNetworkPolicies": "Enabled"
+      }
+    },
+    {
+      "type": "Microsoft.Network/virtualNetworks/subnets",
+      "apiVersion": "2022-01-01",
+      "name": "[concat(variables('foxidsDefaultName'), '/subnet-cache')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]",
+        "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
+      ],
+      "properties": {
+        "addressPrefix": "10.1.2.0/24",
         "privateEndpointNetworkPolicies": "Disabled",
         "privateLinkServiceNetworkPolicies": "Enabled"
       }
@@ -791,7 +832,8 @@
         "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.oms.opinsights.azure.com')]",
         "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.ods.opinsights.azure.com')]",
         "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.agentsvc.azure-automation.net')]",
-        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]",
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
       ],
       "properties": {
         "privateDnsZoneConfigs": [
@@ -823,6 +865,12 @@
             "name": "privatelink-blob-core-windows-net",
             "properties": {
               "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]"
+            }
+          },
+          {
+            "name": "privatelink.redis.cache.windows.net",
+            "properties": {
+              "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]"
             }
           }
         ]
@@ -954,6 +1002,33 @@
       "location": "global",
       "dependsOn": [
         "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.blob.core.windows.net')]",
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+      ],
+      "properties": {
+        "registrationEnabled": false,
+        "virtualNetwork": {
+          "id": "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones",
+      "apiVersion": "2018-09-01",
+      "name": "privatelink.redis.cache.windows.net",
+      "location": "global",
+      "properties": {
+        "maxNumberOfRecordSets": 25000,
+        "maxNumberOfVirtualNetworkLinks": 1000,
+        "maxNumberOfVirtualNetworkLinksWithRegistration": 100
+      }
+    },
+    {
+      "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+      "apiVersion": "2018-09-01",
+      "name": "[concat('privatelink.redis.cache.windows.net', '/link_to_', variables('foxidsDefaultName'))]",
+      "location": "global",
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/privateDnsZones', 'privatelink.redis.cache.windows.net')]",
         "[resourceId('Microsoft.Network/virtualNetworks', variables('foxidsDefaultName'))]"
       ],
       "properties": {

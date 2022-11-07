@@ -83,7 +83,7 @@ namespace FoxIDs.Infrastructure.Filters
                     yield return "block-all-mixed-content;";
 
                     yield return "default-src 'self';";
-                    yield return $"connect-src 'self' {GetConnectSrc(httpContext)};"; 
+                    yield return $"connect-src 'self'{GetConnectSrc(httpContext)};"; 
 
                     var cspImgSrc = CspImgSrc();
                     if (!cspImgSrc.IsNullOrEmpty())
@@ -120,37 +120,13 @@ namespace FoxIDs.Infrastructure.Filters
 
             private string GetConnectSrc(HttpContext httpContext)
             {
-                var applicationInsightsConnectSrc = GetApplicationInsightsConnectSrc(httpContext);
 #if DEBUG
                 if (env.IsDevelopment())
                 {
-                    return $"{applicationInsightsConnectSrc} {GetDevelopmentConnectSrc()}";
+                    return $" *";
                 }
 #endif
-                return applicationInsightsConnectSrc;
-            }
-
-            private string GetApplicationInsightsConnectSrc(HttpContext httpContext)
-            {
-                var connectSrc = GetIngestionEndpoint(httpContext.GetRouteBinding().TelemetryClient?.TelemetryConfiguration?.ConnectionString);
-
-                if (connectSrc.IsNullOrWhiteSpace())
-                {
-                    var applicationInsightsSettings = serviceProvider.GetService<ApplicationInsightsGlobalSettings>();
-                    connectSrc = GetIngestionEndpoint(applicationInsightsSettings.ConnectionString);
-                }
-
-                if (connectSrc.IsNullOrWhiteSpace())
-                {
-                    connectSrc = "https://dc.services.visualstudio.com/v2/track";
-                }
-
-                return connectSrc;
-            }
-
-            private string GetDevelopmentConnectSrc()
-            {
-                return "wss://localhost:44349/FoxIDs/";
+                return string.Empty;
             }
 
             protected virtual string CspImgSrc()

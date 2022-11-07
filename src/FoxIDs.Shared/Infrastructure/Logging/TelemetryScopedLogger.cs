@@ -11,7 +11,7 @@ namespace FoxIDs.Infrastructure
 {
     public class TelemetryScopedLogger : IDisposable
     {
-        private readonly TelemetryLogger telemetryLogger;
+        private TelemetryLogger telemetryLogger;
         private readonly TelemetryScopedProperties telemetryScopedProperties;
         private readonly TelemetryScopedStreamLogger telemetryScopedStreamLogger;
         private readonly IHttpContextAccessor httpContextAccessor;
@@ -23,6 +23,18 @@ namespace FoxIDs.Infrastructure
             this.telemetryScopedProperties = telemetryScopedProperties;
             this.telemetryScopedStreamLogger = telemetryScopedStreamLogger;
             this.httpContextAccessor = httpContextAccessor;
+        }
+
+        public TelemetryLogger TelemetryLogger
+        {
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(TelemetryLogger));
+                }
+                telemetryLogger = value;
+            }
         }
 
         public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)

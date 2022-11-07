@@ -60,6 +60,10 @@ namespace FoxIDs.Logic
                     {
                         var upParty = await upPartyCacheLogic.GetUpPartyAsync(upPartyLink.Name);
                         upPartyLink.Type = upParty.Type;
+                        upPartyLink.HrdDomains = upParty.HrdDomains;
+                        upPartyLink.HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain;
+                        upPartyLink.HrdDisplayName = upParty.HrdDisplayName;
+                        upPartyLink.HrdLogoUrl = upParty.HrdLogoUrl;
                     }
                     catch (CosmosDataException ex)
                     {

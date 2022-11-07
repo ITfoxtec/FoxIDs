@@ -28,6 +28,7 @@ namespace FoxIDs
             var settings = services.BindConfig<FoxIDsSettings>(Configuration, nameof(Settings));
             // Also add as Settings
             services.AddSingleton<Settings>(settings);
+            
 
             services.AddInfrastructure(settings, CurrentEnvironment);
             services.AddRepository();

@@ -25,7 +25,7 @@ namespace FoxIDs.Infrastructure.Filters
             private List<string> allowIframeOnDomains;
             private readonly IServiceProvider serviceProvider;
 
-            public FoxIDsHttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment env) : base(logger, env)
+            public FoxIDsHttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment env) : base(logger, serviceProvider, env)
             {
                 this.serviceProvider = serviceProvider;
             }
@@ -70,15 +70,15 @@ namespace FoxIDs.Infrastructure.Filters
                 return domains;
             }
 
-            protected override void HeaderXFrameOptions(HttpResponse response)
+            protected override void HeaderXFrameOptions(HttpContext httpContext)
             {
                 if (allowIframeOnDomains != null && allowIframeOnDomains.Count() == 1 && allowIframeOnDomains.Where(d => !d.Contains("*")).Count() == 1)
                 {
-                    response.SetHeader("X-Frame-Options", $"allow-from https://{allowIframeOnDomains.First()}/");
+                    httpContext.Response.SetHeader("X-Frame-Options", $"allow-from https://{allowIframeOnDomains.First()}/");
                 }
                 else
                 {
-                    base.HeaderXFrameOptions(response);
+                    base.HeaderXFrameOptions(httpContext);
                 }
             }
 

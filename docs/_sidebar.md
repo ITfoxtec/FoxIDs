@@ -21,4 +21,5 @@
   - [Languages](language.md)
 - [Deployment](deployment.md)
   - [Reverse proxy](reverse-proxy.md)
+  - [Update](update.md)
 - [FAQ](faq.md)

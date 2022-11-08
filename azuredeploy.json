@@ -293,7 +293,7 @@
       "sku": {
         "name": "[parameters('appServicePlanSize')]",
         "tier": "[parameters('appServicePlanSku')]",
-        "capacity": "1"
+        "capacity": 1
       },
       "properties": {
         "name": "[variables('foxidsDefaultName')]",

@@ -30,8 +30,8 @@ namespace FoxIDs
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString").Value;
-                    if (connectionString.IsNullOrWhiteSpace())
+                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
+                    if (string.IsNullOrWhiteSpace(connectionString))
                     {
                         connectionString = ReadInstrumentationKey(context);
                     }
@@ -53,8 +53,15 @@ namespace FoxIDs
         [Obsolete("ApplicationInsights InstrumentationKey is being deprecated. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
         private static string ReadInstrumentationKey(WebHostBuilderContext context)
         {
-            var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey").Value;
-            return $"InstrumentationKey={instrumentationKey}";
+            var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey")?.Value;
+            if (string.IsNullOrWhiteSpace(instrumentationKey))
+            {
+                return $"InstrumentationKey={instrumentationKey}";
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

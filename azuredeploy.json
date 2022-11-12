@@ -293,7 +293,7 @@
       "sku": {
         "name": "[parameters('appServicePlanSize')]",
         "tier": "[parameters('appServicePlanSku')]",
-        "capacity": "1"
+        "capacity": 1
       },
       "properties": {
         "name": "[variables('foxidsDefaultName')]",
@@ -552,7 +552,8 @@
         "[resourceId('Microsoft.Web/sites/slots/config', variables('foxidsControlSiteName'), 'test', 'appsettings')]",
         "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--CosmosDb--PrimaryKey')]",
         "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--RedisCache--ConnectionString')]",
-        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--Sendgrid--ApiKey')]"
+        "[resourceId('Microsoft.KeyVault/vaults/secrets', variables('foxidsDefaultName'), 'Settings--Sendgrid--ApiKey')]",
+        "[resourceId('Microsoft.Web/sites/slots/sourcecontrols', variables('foxidsDefaultName'), 'test', 'web')]"
       ],
       "properties": {
         "repoUrl": "[parameters('repoURL')]",

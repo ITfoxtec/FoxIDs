@@ -73,6 +73,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\up-party-howto-saml-2.0-pingone.md = docs\up-party-howto-saml-2.0-pingone.md
 		docs\up-party-oidc.md = docs\up-party-oidc.md
 		docs\up-party-saml-2.0.md = docs\up-party-saml-2.0.md
+		docs\update.md = docs\update.md
 		docs\users.md = docs\users.md
 		docs\_sidebar.md = docs\_sidebar.md
 	EndProjectSection

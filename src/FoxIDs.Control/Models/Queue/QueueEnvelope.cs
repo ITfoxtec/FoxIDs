@@ -28,5 +28,8 @@ namespace FoxIDs.Models.Queue
 
         [JsonProperty(PropertyName = "c")]
         public string ApplicationInsightsConnectionString { get; set; }
+
+        [JsonProperty(PropertyName = "l")]
+        public Logging Logging { get; set; }
     }
 }

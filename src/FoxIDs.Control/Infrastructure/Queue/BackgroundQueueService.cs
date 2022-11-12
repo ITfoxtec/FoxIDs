@@ -99,6 +99,10 @@ namespace FoxIDs.Infrastructure.Queue
                     using (IServiceScope scope = serviceProvider.CreateScope())
                     {
                         var scopedLogger = scope.ServiceProvider.GetRequiredService<TelemetryScopedLogger>();
+                        if (envelopeObj.Logging != null)
+                        {
+                            scopedLogger.Logging = envelopeObj.Logging;
+                        }
                         if (!envelopeObj.ApplicationInsightsConnectionString.IsNullOrEmpty())
                         {
                             var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = envelopeObj.ApplicationInsightsConnectionString });

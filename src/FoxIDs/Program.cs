@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Globalization;
 
 namespace FoxIDs
 {
@@ -30,10 +29,10 @@ namespace FoxIDs
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
+                    var connectionString = ReadInstrumentationKey(context);
                     if (string.IsNullOrWhiteSpace(connectionString))
                     {
-                        connectionString = ReadInstrumentationKey(context);
+                        connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
                     }
 
                     if (string.IsNullOrWhiteSpace(connectionString))
@@ -54,7 +53,7 @@ namespace FoxIDs
         private static string ReadInstrumentationKey(WebHostBuilderContext context)
         {
             var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey")?.Value;
-            if (string.IsNullOrWhiteSpace(instrumentationKey))
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 return $"InstrumentationKey={instrumentationKey}";
             }

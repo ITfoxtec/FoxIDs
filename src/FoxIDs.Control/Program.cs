@@ -1,5 +1,4 @@
 ﻿using Azure.Identity;
-using ITfoxtec.Identity;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,10 +29,10 @@ namespace FoxIDs
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
+                    var connectionString = ReadInstrumentationKey(context);
                     if (string.IsNullOrWhiteSpace(connectionString))
                     {
-                        connectionString = ReadInstrumentationKey(context);
+                        connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;
                     }
 
                     if (string.IsNullOrWhiteSpace(connectionString))
@@ -54,7 +53,7 @@ namespace FoxIDs
         private static string ReadInstrumentationKey(WebHostBuilderContext context)
         {
             var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey")?.Value;
-            if (string.IsNullOrWhiteSpace(instrumentationKey))
+            if (!string.IsNullOrWhiteSpace(instrumentationKey))
             {
                 return $"InstrumentationKey={instrumentationKey}";
             }

@@ -114,7 +114,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private TelemetryClient GetTelmetryClient(string applicationInsightsConnectionString)
         {
-            if (!applicationInsightsConnectionString.IsNullOrWhiteSpace())
+            if (!string.IsNullOrWhiteSpace(applicationInsightsConnectionString))
             {
                 return new TelemetryClient(new TelemetryConfiguration { ConnectionString = applicationInsightsConnectionString });
             }
@@ -144,7 +144,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 return null;
             }
             var planCacheLogic = requestServices.GetService<PlanCacheLogic>();
-            return await planCacheLogic.GetPlanAsync(planName);
+            return await planCacheLogic.GetPlanAsync(planName, required: false);
         }
 
         private async Task<Track> GetTrackAsync(Track.IdKey idKey, bool hasCustomDomain)

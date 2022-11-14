@@ -1,6 +1,4 @@
-﻿using ITfoxtec.Identity;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
@@ -8,29 +6,9 @@ namespace FoxIDs.Models.Api
     public class LogStreamApplicationInsightsSettings
     {
         [Required]
-        string connectionString;
         [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
         [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
         [Display(Name = "Connection string")]
-        public string ConnectionString
-        {
-            get
-            {
-                if (connectionString.IsNullOrWhiteSpace() && !InstrumentationKey.IsNullOrWhiteSpace())
-                {
-                    return $"InstrumentationKey={InstrumentationKey}";
-                }
-                return connectionString;
-            }
-            set
-            {
-                connectionString = value;
-            }
-        }
-
-        [Obsolete("ApplicationInsights InstrumentationKey is being deprecated. See https://github.com/microsoft/ApplicationInsights-dotnet/issues/2560 for more details.")]
-        [MaxLength(Constants.Models.Logging.ApplicationInsightsKeyLength)]
-        [Display(Name = "Instrumentation key")]
-        public string InstrumentationKey { get; set; }
+        public string ConnectionString { get; set; }
     }
 }

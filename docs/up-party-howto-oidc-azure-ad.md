@@ -32,18 +32,18 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
  5. Copy the Application (client) ID
  6. Copy the Directory (tenant) ID
  7. Go to the Authentication tab and add the FoxIDs up-party `Front channel logout URL`, click save
- 8. Go to the Certificates & secrets tab and click New client secret and add the secret
- 9. Copy the client secret value
- 10. Go to the Token configuration tab and click Add optional claims. Then select ID (for adding claims to the ID token) and select email, family_name, given_name, ipaddr, preferred_username and click Add twice. 
+ 8. Go to the Certificates & secrets tab and click New client secret and add the secret 
+ 9. Copy the client secret value (not the secret ID)
+ 10. Go to the Token configuration tab and click Add optional claims. Then select ID (for adding claims to the ID token) and select `email`, `family_name`, `given_name`, `ipaddr`, `preferred_username` and click Add twice. 
 
 **3 - Go back to the FoxIDs up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Add the authority, which is `https://login.microsoftonline.com/{Azure AD tenant ID}/v2.0`
- 2. Add the profile and email scopes (possible other or more scopes)
- 3. Add the Azure AD client ID as a custom SP client ID
+ 1. Add the authority, which is `https://login.microsoftonline.com/{Azure AD tenant ID}/v2.0` (e.g., `https://login.microsoftonline.com/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/v2.0`)
+ 2. Add the Azure AD client ID as a custom SP client ID
+ 3. Add the `profile` and `email` scopes (possible other or more scopes)
  4. Add the Azure AD client secret value as the client secret
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD access token to down-parties.  
+ 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., `preferred_username`, `email`, `name`, `given_name`, `family_name`, `oid`, `ipaddr` and possible the `access_token` claim to transfer the Azure AD access token to down-parties.  
  It is possible to see the claims returned from the Azure AD app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the revived JWTs
  7. Click create
 
@@ -66,7 +66,7 @@ The multitenant configuration differs slightly form the single tenant configurat
 
  1. Add the authority `https://login.microsoftonline.com/common/v2.0`
  2. Select edit issuer
- 3. Change the issuer to `https://login.microsoftonline.com/{Azure AD tenant ID}/v2.0`, where you add the Azure AD tenant ID. You can possible add multiple issuers and thereby trust multiple Azure tenants
+ 3. Change the issuer to `https://login.microsoftonline.com/{Azure AD tenant ID}/v2.0` (e.g., `https://login.microsoftonline.com/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/v2.0`), where you add the Azure AD tenant ID. You can possible add multiple issuers and thereby trust multiple Azure tenants
 
 ## Read claims from access token
 
@@ -81,7 +81,7 @@ If you want to read claims from the access token you need to add one more Azure 
 
 1. Select show advanced settings
 2. Select edit issuer
-3. Add the access token issuer `https://sts.windows.net/{Azure AD tenant ID}/`, where you add the Azure AD tenant ID
+3. Add the access token issuer `https://sts.windows.net/{Azure AD tenant ID}/` (e.g., `https://sts.windows.net/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/`), where you add the Azure AD tenant ID
 4. Add the resource app scope as a scope in the FoxIDs up-party client
 5. Read claims from the access token by not selecting to use claims from ID token
 

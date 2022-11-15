@@ -66,7 +66,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, allProperties, metrics);
+                    telemetryScopedStreamLogger.Warning(this, scopedStreamLogger, exception, allProperties, metrics);
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
-                    telemetryScopedStreamLogger.Warning(scopedStreamLogger, exception, message, allProperties, metrics);
+                    telemetryScopedStreamLogger.Warning(this, scopedStreamLogger, exception, message, allProperties, metrics);
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, allProperties, metrics);
+                    telemetryScopedStreamLogger.Error(this, scopedStreamLogger, exception, allProperties, metrics);
                 }
             }
         }
@@ -110,7 +110,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
-                    telemetryScopedStreamLogger.Error(scopedStreamLogger, exception, message, allProperties, metrics);
+                    telemetryScopedStreamLogger.Error(this, scopedStreamLogger, exception, message, allProperties, metrics);
                 }
             }
         }
@@ -125,7 +125,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, allProperties, metrics);
+                    telemetryScopedStreamLogger.CriticalError(this, scopedStreamLogger, exception, allProperties, metrics);
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
-                    telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exception, message, allProperties, metrics);
+                    telemetryScopedStreamLogger.CriticalError(this, scopedStreamLogger, exception, message, allProperties, metrics);
                 }
             }
         }
@@ -154,7 +154,7 @@ namespace FoxIDs.Infrastructure
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogEvent))
                 {
-                    telemetryScopedStreamLogger.Event(scopedStreamLogger, eventName, allProperties, metrics);
+                    telemetryScopedStreamLogger.Event(this, scopedStreamLogger, eventName, allProperties, metrics);
                 }
             }                        
         }
@@ -201,7 +201,7 @@ namespace FoxIDs.Infrastructure
                 {
                     foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogMetric))
                     {
-                        telemetryScopedStreamLogger.Metric(scopedStreamLogger, messageData.Message, messageData.Value, allProperties);
+                        telemetryScopedStreamLogger.Metric(this, scopedStreamLogger, messageData.Message, messageData.Value, allProperties);
                     }
                 }
             }
@@ -266,7 +266,7 @@ namespace FoxIDs.Infrastructure
                                 (m.TraceType == TraceTypes.Message && scopedStreamLogger.LogMessageTrace));
                             if (scopedStreamLoggertraceMessages.Count() > 0)
                             {
-                                telemetryScopedStreamLogger.Trace(scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
+                                telemetryScopedStreamLogger.Trace(this, scopedStreamLogger, scopedStreamLoggertraceMessages.ToJson(), telemetryScopedProperties.Properties);
                             }
                         }
                     }

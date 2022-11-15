@@ -1,7 +1,6 @@
 ﻿using FoxIDs.Models;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
-using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
@@ -9,18 +8,11 @@ namespace FoxIDs.Infrastructure
 {
     public class TelemetryScopedStreamLogger
     {
-        private readonly IServiceProvider serviceProvider;
-
-        public TelemetryScopedStreamLogger(IServiceProvider serviceProvider)
+        public void Warning(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            this.serviceProvider = serviceProvider;
+            Warning(telemetryScopedLogger, scopeStreamLogger, exception, null, properties, metrics);
         }
-
-        public void Warning(ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
-        {
-            Warning(scopeStreamLogger, exception, null, properties, metrics);
-        }
-        public void Warning(ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Warning(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             try
             {
@@ -36,16 +28,15 @@ namespace FoxIDs.Infrastructure
             }
             catch (Exception ex)
             {
-                var telemetryScopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-                telemetryScopedLogger.Warning(ex, "Unable to log warning to scoped stream logger.", logToScopeStream: false);
+                if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(ex, "Unable to log warning to scoped stream logger.", logToScopeStream: false);
             }
         }
 
-        public void Error(ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Error(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            Error(scopeStreamLogger, exception, null, properties, metrics);
+            Error(telemetryScopedLogger, scopeStreamLogger, exception, null, properties, metrics);
         }
-        public void Error(ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Error(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             try
             {
@@ -61,16 +52,15 @@ namespace FoxIDs.Infrastructure
             }
             catch (Exception ex)
             {
-                var telemetryScopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-                telemetryScopedLogger.Warning(ex, "Unable to log error to scoped stream logger.", logToScopeStream: false);
+                if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(ex, "Unable to log error to scoped stream logger.", logToScopeStream: false);
             }
         }
 
-        public void CriticalError(ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void CriticalError(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
-            CriticalError(scopeStreamLogger, exception, null, properties, metrics);
+            CriticalError(telemetryScopedLogger, scopeStreamLogger, exception, null, properties, metrics);
         }
-        public void CriticalError(ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void CriticalError(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, Exception exception, string message, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             try
             {
@@ -87,12 +77,11 @@ namespace FoxIDs.Infrastructure
             }
             catch (Exception ex)
             {
-                var telemetryScopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-                telemetryScopedLogger.Warning(ex, "Unable to log critical error to scoped stream logger.", logToScopeStream: false);
+                if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(ex, "Unable to log critical error to scoped stream logger.", logToScopeStream: false);
             }
         }
 
-        public void Event(ScopedStreamLogger scopeStreamLogger, string eventName, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Event(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, string eventName, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
         {
             try
             {
@@ -109,12 +98,11 @@ namespace FoxIDs.Infrastructure
             }
             catch (Exception ex)
             {
-                var telemetryScopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-                telemetryScopedLogger.Warning(ex, "Unable to log event to scoped stream logger.", logToScopeStream: false);
+                if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(ex, "Unable to log event to scoped stream logger.", logToScopeStream: false);
             }
         }
 
-        public void Trace(ScopedStreamLogger scopeStreamLogger, string message, IDictionary<string, string> properties = null)
+        public void Trace(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, string message, IDictionary<string, string> properties = null)
         {
             try
             {
@@ -130,12 +118,11 @@ namespace FoxIDs.Infrastructure
             }
             catch (Exception ex)
             {
-                var telemetryScopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-                telemetryScopedLogger.Warning(ex, "Unable to log trace to scoped stream logger.", logToScopeStream: false);
+                if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(ex, "Unable to log trace to scoped stream logger.", logToScopeStream: false);
             }
         }
 
-        public void Metric(ScopedStreamLogger scopeStreamLogger, string message, double value, IDictionary<string, string> properties = null)
+        public void Metric(TelemetryScopedLogger telemetryScopedLogger, ScopedStreamLogger scopeStreamLogger, string message, double value, IDictionary<string, string> properties = null)
         {
             try
             {
@@ -151,8 +138,7 @@ namespace FoxIDs.Infrastructure
             }
             catch (Exception ex)
             {
-                var telemetryScopedLogger = serviceProvider.GetService<TelemetryScopedLogger>();
-                telemetryScopedLogger.Warning(ex, "Unable to log metric to scoped stream logger.", logToScopeStream: false);
+                if (telemetryScopedLogger != null) telemetryScopedLogger.Warning(ex, "Unable to log metric to scoped stream logger.", logToScopeStream: false);
             }
         }
 

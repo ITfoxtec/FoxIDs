@@ -35,7 +35,7 @@ namespace FoxIDs.Models
 
         [Required]
         [MaxLength(Constants.Models.Tenant.NameLength)]
-        [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
+        [RegularExpression(Constants.Models.Tenant.NameDbRegExPattern)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
@@ -64,7 +64,7 @@ namespace FoxIDs.Models
         {
             [Required]
             [MaxLength(Constants.Models.Tenant.NameLength)]
-            [RegularExpression(Constants.Models.Tenant.NameRegExPattern)]
+            [RegularExpression(Constants.Models.Tenant.NameDbRegExPattern)]
             public string TenantName { get; set; }
         }
     }

@@ -428,6 +428,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v7.0",
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
@@ -446,6 +447,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v7.0",
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
@@ -467,6 +469,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v7.0",
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
@@ -488,6 +491,7 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v7.0",
         "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",

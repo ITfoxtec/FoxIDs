@@ -24,6 +24,7 @@ namespace FoxIDs.Logic
             tenantName = tenantName ?? RouteBinding.TenantName;
             trackName = trackName ?? RouteBinding.TrackName;
             var externalName = $"{tenantName}-{mTrack.Name}-{Guid.NewGuid()}";
+            externalName = externalName.Replace('_', 'U');
 
             var certificatePolicy = new CertificatePolicy("self", (tenantName, trackName).GetCertificateSubject())
             {

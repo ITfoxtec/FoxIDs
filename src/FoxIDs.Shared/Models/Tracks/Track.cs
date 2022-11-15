@@ -105,7 +105,7 @@ namespace FoxIDs.Models
 
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
-        [RegularExpression(Constants.Models.Track.NameRegExPattern)]
+        [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
@@ -121,7 +121,7 @@ namespace FoxIDs.Models
         {
             [Required]
             [MaxLength(Constants.Models.Track.NameLength)]
-            [RegularExpression(Constants.Models.Track.NameRegExPattern)]
+            [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
             public string TrackName { get; set; }
         }
     }

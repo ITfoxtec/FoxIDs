@@ -56,13 +56,13 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Warning(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.Warning(exception, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
@@ -71,13 +71,13 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Warning(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.Warning(exception, message, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                 {
@@ -86,13 +86,13 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Error(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.Error(exception, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
@@ -100,13 +100,13 @@ namespace FoxIDs.Infrastructure
                 }
             }
         }
-        public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Error(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.Error(exception, message, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogError))
                 {
@@ -115,13 +115,13 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void CriticalError(Exception exception, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.CriticalError(exception, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
@@ -129,13 +129,13 @@ namespace FoxIDs.Infrastructure
                 }
             }
         }
-        public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void CriticalError(Exception exception, string message, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.CriticalError(exception, message, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogCriticalError))
                 {
@@ -144,13 +144,13 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void Event(string eventName, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null)
+        public void Event(string eventName, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, IDictionary<string, double> metrics = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
             var allProperties = ConcatOnceIfProperties(properties);
             telemetryLogger.Event(eventName, allProperties, metrics);
 
-            if (Logging?.ScopedStreamLoggers?.Count > 0)
+            if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
             {
                 foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogEvent))
                 {
@@ -179,7 +179,7 @@ namespace FoxIDs.Infrastructure
             }
         }
 
-        public void ScopeMetric(Action<MetricMessage> metric, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null)
+        public void ScopeMetric(Action<MetricMessage> metric, IDictionary<string, string> scopeProperties = null, IDictionary<string, string> properties = null, bool logToScopeStream = true)
         {
             telemetryScopedProperties.SetScopeProperties(scopeProperties);
 
@@ -197,7 +197,7 @@ namespace FoxIDs.Infrastructure
                     telemetryLogger.Metric(messageData.Message, messageData.Value, allProperties);
                 }
 
-                if (Logging?.ScopedStreamLoggers?.Count > 0)
+                if (logToScopeStream && Logging?.ScopedStreamLoggers?.Count > 0)
                 {
                     foreach (var scopedStreamLogger in Logging.ScopedStreamLoggers.Where(l => l.LogMetric))
                     {

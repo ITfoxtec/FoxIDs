@@ -20,7 +20,6 @@ namespace FoxIDs.Infrastructure.Filters
 
         public class HttpSecurityHeadersActionAttribute : IAsyncActionFilter
         {
-            private const string ingestionEndpointKey = "IngestionEndpoint=";
             protected bool isHtmlContent;
             private readonly TelemetryScopedLogger logger;
             private readonly IWebHostEnvironment env;

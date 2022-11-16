@@ -355,6 +355,14 @@
     {
       "name": "Search",
       "id": 89
+    },
+    {
+      "name": "Logged in",
+      "id": 90
+    },
+    {
+      "name": "You are still logged in!",
+      "id": 91
     }
   ],
   "resources": [
@@ -1499,6 +1507,24 @@
         {
           "culture": "da",
           "value": "Søg"
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Logged in"
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "items": [
+        {
+          "culture": "en",
+          "value": "You are still logged in!"
         }
       ]
     }

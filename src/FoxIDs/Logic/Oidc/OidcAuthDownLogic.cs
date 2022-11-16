@@ -113,6 +113,10 @@ namespace FoxIDs.Logic
             }
             catch (OAuthRequestException ex)
             {
+                if (authenticationRequest.RedirectUri.IsNullOrWhiteSpace())
+                {
+                    throw new EndpointException("Redirect URI in authentication request is empty.", ex);
+                }
                 logger.Error(ex);
                 return await AuthenticationResponseErrorAsync(party, authenticationRequest, ex);
             }
@@ -398,6 +402,5 @@ namespace FoxIDs.Logic
             }
             return await nameValueCollection.ToRedirectResultAsync(redirectUri);
         }
-
     }
 }

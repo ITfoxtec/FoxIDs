@@ -6,9 +6,9 @@ You can also configure the samples in [your one FoxIDs track](#configure-samples
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
-## Sample applications
+The sample Visual Studio solution contain the following down-party and up-party sample applications.
 
-The sample Visual Studio solution contain the following sample applications.
+## Down-party sample applications
 
 ### AspNetCoreOidcAuthorizationCodeSample
 
@@ -26,12 +26,6 @@ Sample application showing login and logout with OpenID Connect (OIDC) using imp
 Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: `https://localhost:44341`
-
-### AspNetCoreSamlIdPSample
-
-Sample application implementing a SAML 2.0 identity provider (IdP) making it possible to configure at sample SAML 2.0 IdP in the FoxIDs track.
-
-Local development domain and port: `https://localhost:44342`
 
 ### AspNetCoreSamlSample
 
@@ -52,6 +46,14 @@ Sample API showing how to secure an API with an access token and how to restrict
 
 Local development domain and port: `https://localhost:44344`
 
+### BlazorBFFAspNetCoreOidcSample
+
+Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow in a Blazor BFF (Backend For Frontend) application with a ASP.NET Core backend.  
+In a BFF architecture the backend handles OIDC, the tokens are never shared with the Blazor client. Instead a session based on an identity cookie secure the application after successfully user authentication.  
+The sample show how to call the [API sample](#aspnetcoreapi1sample) from both the Blazor client and a ASP.NET page securing the call with an access token. 
+
+Local development domain and port: `https://localhost:44348`
+
 ### BlazorOidcPkceSample
 
 Blazor sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.  
@@ -65,6 +67,14 @@ Blazor server sample application showing login and logout with OpenID Connect (O
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Local development domain and port: `https://localhost:44347`
+
+## Up-party sample applications
+
+### AspNetCoreSamlIdPSample
+
+Sample application implementing a SAML 2.0 identity provider (IdP) making it possible to configure at sample SAML 2.0 IdP in the FoxIDs track.
+
+Local development domain and port: `https://localhost:44342`
 
 ### IdentityServerOidcOpSample
 

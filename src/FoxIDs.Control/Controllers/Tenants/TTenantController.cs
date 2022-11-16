@@ -22,16 +22,20 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly IMasterRepository masterRepository;
         private readonly MasterTenantLogic masterTenantLogic;
+        private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.masterRepository = masterRepository;
             this.masterTenantLogic = masterTenantLogic;
+            this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
@@ -78,6 +82,17 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(tenant)) return BadRequest(ModelState);
                 tenant.Name = tenant.Name.ToLower();
                 tenant.AdministratorEmail = tenant.AdministratorEmail?.ToLower();
+
+                (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
+                if (!validPlan) return BadRequest(ModelState);
+
+                if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
+                {
+                    if (!plan.EnableCustomDomain)
+                    {
+                        throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                    }
+                }
 
                 var mTenant = mapper.Map<Tenant>(tenant);
                 await tenantRepository.CreateAsync(mTenant);
@@ -134,10 +149,23 @@ namespace FoxIDs.Controllers
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
+                (var validPlan, var plan) = await ValidatePlanAsync(tenant.Name, nameof(tenant.PlanName), tenant.PlanName);
+                if (!validPlan) return BadRequest(ModelState);
+
+                mTenant.PlanName = tenant.PlanName;
+                
+                if (plan != null && !tenant.CustomDomain.IsNullOrEmpty())
+                {
+                    if (!plan.EnableCustomDomain)
+                    {
+                        throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                    }
+                }
                 mTenant.CustomDomain = tenant.CustomDomain;
                 mTenant.CustomDomainVerified = tenant.CustomDomainVerified;
                 await tenantRepository.UpdateAsync(mTenant);
 
+                await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
                 if (!invalidateCustomDomainInCache.IsNullOrEmpty())
                 {
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(invalidateCustomDomainInCache);
@@ -153,6 +181,34 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.Tenant).Name, tenant.Name);
                 }
                 throw;
+            }
+        }
+
+        private async Task<(bool, Plan)> ValidatePlanAsync(string tenantName, string propertyName, string planName)
+        {
+            if(planName.IsNullOrWhiteSpace())
+            {
+                return (true, null);
+            }
+
+            try
+            {
+                var plan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName));
+                return (true, plan);
+            }
+            catch (CosmosDataException ex)
+            {
+                if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+                    var errorMessage = $"Plan '{planName}' not found and can not be connected to tenant '{tenantName}'.";
+                    logger.Warning(ex, errorMessage);
+                    ModelState.TryAddModelError(propertyName.ToCamelCase(), errorMessage);
+                    return (false, null);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 
@@ -187,6 +243,7 @@ namespace FoxIDs.Controllers
                 }
                 var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
 
+                await tenantCacheLogic.InvalidateTenantCacheAsync(name);
                 if (!string.IsNullOrEmpty(mTenant?.CustomDomain))
                 {
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(mTenant.CustomDomain);

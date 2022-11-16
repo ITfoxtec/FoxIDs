@@ -24,6 +24,13 @@ namespace FoxIDs.Logic
             this.tenantRepository = tenantRepository;
         }
 
+        public async Task InvalidateTenantCacheAsync(string tenantName)
+        {
+            var key = RadisTenantNameKey(tenantName);
+            var db = redisConnectionMultiplexer.GetDatabase();
+            await db.KeyDeleteAsync(key);
+        }
+
         public async Task InvalidateCustomDomainCacheAsync(string customDomain)
         {
             var key = RadisTenantCustomDomainKey(customDomain);
@@ -31,23 +38,42 @@ namespace FoxIDs.Logic
             await db.KeyDeleteAsync(key);
         }
 
-        public async Task<string> GetTenantNameByCustomDomainAsync(string customDomain)
+        public async Task<Tenant> GetTenantAsync(string tenantName, bool required = true)
+        {
+            var key = RadisTenantNameKey(tenantName);
+            var db = redisConnectionMultiplexer.GetDatabase();
+
+            var tenantAsString = (string)await db.StringGetAsync(key);
+            if (!tenantAsString.IsNullOrEmpty())
+            {
+                return tenantAsString.ToObject<Tenant>();
+            }
+
+            var tenant = await tenantRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), required: required);
+            if (tenant != null)
+            {
+                await db.StringSetAsync(key, tenant.ToJson(), TimeSpan.FromSeconds(settings.Cache.TenantLifetime));
+            }
+            return tenant;
+        }
+
+        public async Task<Tenant> GetTenantByCustomDomainAsync(string customDomain)
         {
             var key = RadisTenantCustomDomainKey(customDomain);
             var db = redisConnectionMultiplexer.GetDatabase();
 
-            var tenantName = (string)await db.StringGetAsync(key);
-            if (!tenantName.IsNullOrEmpty())
+            var tenantAsString = (string)await db.StringGetAsync(key);
+            if (!tenantAsString.IsNullOrEmpty())
             {
-                return tenantName;
+                return tenantAsString.ToObject<Tenant>();
             }
 
-            var tenant = await GetTenantByCustomDomainAsync(customDomain);
-            await db.StringSetAsync(key, tenant.Name, TimeSpan.FromSeconds(settings.Cache.CustomDomainLifetime));
-            return tenant.Name;
+            var tenant = await LoadTenantFromDbByCustomDomainAsync(customDomain);
+            await db.StringSetAsync(key, tenant.ToJson(), TimeSpan.FromSeconds(settings.Cache.TenantLifetime));
+            return tenant;
         }
 
-        private async Task<Tenant> GetTenantByCustomDomainAsync(string customDomain)
+        private async Task<Tenant> LoadTenantFromDbByCustomDomainAsync(string customDomain)
         {
             try
             {
@@ -67,6 +93,11 @@ namespace FoxIDs.Logic
             {
                 throw new Exception($"Unknown custom domain '{customDomain}' is not connected to a tenant.", ex);
             }
+        }
+
+        private string RadisTenantNameKey(string tenantName)
+        {
+            return $"tenant_cache_name_{tenantName}";
         }
 
         private string RadisTenantCustomDomainKey(string customDomain)

@@ -21,13 +21,15 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
+        private readonly PlanUsageLogic planUsageLogic;
         private readonly HrdLogic hrdLogic;
 
-        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public LoginUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
+            this.planUsageLogic = planUsageLogic;
             this.hrdLogic = hrdLogic;
         }
 
@@ -167,6 +169,9 @@ namespace FoxIDs.Logic
             }
 
             logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+
+            planUsageLogic.LogLoginEvent();
+
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

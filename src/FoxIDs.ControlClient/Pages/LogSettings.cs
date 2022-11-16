@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ namespace FoxIDs.Client.Pages
     public partial class LogSettings
     {
         private string logsHref;
+        private string logUsagesHref;
         private GeneralLogSettingsViewModel generalLogSettings = new GeneralLogSettingsViewModel();
         private string logSreamSettingsListError;
         private List<GeneralLogStreamSettingsViewModel> logSreamSettingsList = new List<GeneralLogStreamSettingsViewModel>();
@@ -37,6 +39,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             logsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logs";
+            logUsagesHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/logusages";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
@@ -114,7 +117,8 @@ namespace FoxIDs.Client.Pages
         {
             if (generalLogStreamSettings.LogStreamSettings.Type == LogStreamTypes.ApplicationInsights)
             {
-                return $"Application Insights {generalLogStreamSettings.LogStreamSettings.ApplicationInsightsSettings.InstrumentationKey}";
+                var connectionStringSplit = generalLogStreamSettings.LogStreamSettings.ApplicationInsightsSettings.ConnectionString?.Split(';');
+                return $"Application Insights {connectionStringSplit?.FirstOrDefault()}";
             }
             else
             {

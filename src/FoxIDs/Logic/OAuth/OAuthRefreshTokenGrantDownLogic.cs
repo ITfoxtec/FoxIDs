@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             var grant = await GetRefreshTokenGrantAsync(client, refreshToken);
             if (grant == null)
             {
-                throw new OAuthRequestException($"Refresh Token grant not found for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
+                throw new OAuthRequestException($"Refresh Token grant not found for client id '{client.ClientId}' and probably timed out.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
             if (!grant.ClientId.Equals(client.ClientId, StringComparison.InvariantCultureIgnoreCase))
             {

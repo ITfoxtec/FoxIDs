@@ -108,9 +108,6 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddScoped<FoxIDsRouteTransformer>();
             services.AddScoped<ICorsPolicyProvider, CorsPolicyProvider>();
 
-            services.AddSingleton<OidcDiscoveryHandlerService>();
-            services.AddHostedService<OidcDiscoveryBackgroundService>();
-
             if (!env.IsDevelopment())
             {
                 services.AddSingleton<TokenCredential, DefaultAzureCredential>();

@@ -35,7 +35,7 @@ namespace FoxIDs.Infrastructure.Filters
                 var resultContext = await next();
 
                 ActionExecutionInit(resultContext);
-                SetHeaders(resultContext.HttpContext.Response);
+                SetHeaders(resultContext.HttpContext);
             }
 
             protected virtual void ActionExecutionInit(ActionExecutedContext resultContext)
@@ -43,42 +43,42 @@ namespace FoxIDs.Infrastructure.Filters
                 isHtmlContent = resultContext.Result.IsHtmlContent();
             }
 
-            protected virtual void SetHeaders(HttpResponse response)
+            protected virtual void SetHeaders(HttpContext httpContext)
             {
                 logger.ScopeTrace(() => $"Adding http security headers. Is {(isHtmlContent ? string.Empty : "not")} view.");
 
-                response.SetHeader("X-Content-Type-Options", "nosniff");
-                response.SetHeader("Referrer-Policy", "no-referrer");
-                response.SetHeader("X-XSS-Protection", "1; mode=block");
+                httpContext.Response.SetHeader("X-Content-Type-Options", "nosniff");
+                httpContext.Response.SetHeader("Referrer-Policy", "no-referrer");
+                httpContext.Response.SetHeader("X-XSS-Protection", "1; mode=block");
 
                 if (isHtmlContent)
                 {
-                    HeaderXFrameOptions(response);
+                    HeaderXFrameOptions(httpContext);
                 }
 
-                var csp = CreateCsp().ToSpaceList();
+                var csp = CreateCsp(httpContext).ToSpaceList();
                 if (!csp.IsNullOrEmpty())
                 {
-                    response.SetHeader("Content-Security-Policy", csp);
-                    response.SetHeader("X-Content-Security-Policy", csp);
+                    httpContext.Response.SetHeader("Content-Security-Policy", csp);
+                    httpContext.Response.SetHeader("X-Content-Security-Policy", csp);
                 }
 
                 logger.ScopeTrace(() => $"Http security headers added.");
             }       
 
-            protected virtual void HeaderXFrameOptions(HttpResponse response)
+            protected virtual void HeaderXFrameOptions(HttpContext httpContext)
             {
-                response.SetHeader("X-Frame-Options", "deny");
+                httpContext.Response.SetHeader("X-Frame-Options", "deny");
             }
 
-            protected virtual IEnumerable<string> CreateCsp()
+            protected virtual IEnumerable<string> CreateCsp(HttpContext httpContext)
             {
                 if (isHtmlContent)
                 {
                     yield return "block-all-mixed-content;";
 
                     yield return "default-src 'self';";
-                    yield return "connect-src 'self' https://dc.services.visualstudio.com/v2/track;";
+                    yield return $"connect-src 'self'{GetConnectSrc(httpContext)};"; 
 
                     var cspImgSrc = CspImgSrc();
                     if (!cspImgSrc.IsNullOrEmpty())
@@ -86,7 +86,7 @@ namespace FoxIDs.Infrastructure.Filters
                         yield return cspImgSrc;
                     }
 
-                    yield return "script-src 'self' 'unsafe-inline' https://az416426.vo.msecnd.net;";
+                    yield return "script-src 'self' 'unsafe-inline';";
                     yield return "style-src 'self' 'unsafe-inline';";
 
                     yield return "base-uri 'self';";
@@ -111,6 +111,17 @@ namespace FoxIDs.Infrastructure.Filters
                 {
                     yield return "upgrade-insecure-requests;";
                 }
+            }
+
+            private string GetConnectSrc(HttpContext httpContext)
+            {
+#if DEBUG
+                if (env.IsDevelopment())
+                {
+                    return $" *";
+                }
+#endif
+                return string.Empty;
             }
 
             protected virtual string CspImgSrc()

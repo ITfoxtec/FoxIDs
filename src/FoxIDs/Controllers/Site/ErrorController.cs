@@ -100,7 +100,7 @@ namespace FoxIDs.Controllers
 
             if (environment.IsDevelopment())
             {
-                errorViewModel.TechnicalErrors = new List<string>(exception.ToString().Split('\n'));
+                errorViewModel.TechnicalErrors = exception != null ? new List<string>(exception.ToString().Split('\n')) : null;
             }
             else
             {

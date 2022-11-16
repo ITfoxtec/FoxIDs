@@ -29,9 +29,8 @@ namespace FoxIDs
                 .UseStartup<Startup>()
                 .ConfigureLogging((context, logging) =>
                 {
-                    var instrumentationKey = context.Configuration.GetSection("ApplicationInsights:InstrumentationKey").Value;
-
-                    if (string.IsNullOrWhiteSpace(instrumentationKey))
+                    var connectionString = context.Configuration.GetSection("ApplicationInsights:ConnectionString")?.Value;                
+                    if (string.IsNullOrWhiteSpace(connectionString))
                     {
                         return;
                     }
@@ -42,7 +41,7 @@ namespace FoxIDs
                         logging.ClearProviders();
                     }
 
-                    logging.AddApplicationInsights(instrumentationKey);
+                    logging.AddApplicationInsights(configuration => configuration.ConnectionString = connectionString, options => { });
                 });
     }
 }

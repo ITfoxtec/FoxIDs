@@ -12,6 +12,8 @@ namespace FoxIDs.Models.Config
         [Required]
         public ApplicationInsightsSettings ApplicationInsights { get; set; }
 
+        public bool DisableBackgroundQueueService { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

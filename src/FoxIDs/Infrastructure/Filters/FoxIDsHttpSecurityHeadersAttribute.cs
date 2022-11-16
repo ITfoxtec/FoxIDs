@@ -70,15 +70,15 @@ namespace FoxIDs.Infrastructure.Filters
                 return domains;
             }
 
-            protected override void HeaderXFrameOptions(HttpResponse response)
+            protected override void HeaderXFrameOptions(HttpContext httpContext)
             {
                 if (allowIframeOnDomains != null && allowIframeOnDomains.Count() == 1 && allowIframeOnDomains.Where(d => !d.Contains("*")).Count() == 1)
                 {
-                    response.SetHeader("X-Frame-Options", $"allow-from https://{allowIframeOnDomains.First()}/");
+                    httpContext.Response.SetHeader("X-Frame-Options", $"allow-from https://{allowIframeOnDomains.First()}/");
                 }
                 else
                 {
-                    base.HeaderXFrameOptions(response);
+                    base.HeaderXFrameOptions(httpContext);
                 }
             }
 

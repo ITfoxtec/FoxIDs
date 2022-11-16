@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.ApplicationInsights;
+using System.Collections.Generic;
 
 namespace FoxIDs.Models
 {
     public class RouteBinding
     {
         public bool HasCustomDomain { get; set; }
+
+        public string PlanName { get; set; }
 
         public string TenantName { get; set; }
 
@@ -49,5 +52,9 @@ namespace FoxIDs.Models
         public SendEmail SendEmail { get; set; }
 
         public Logging Logging { get; set; }
+
+        public TelemetryClient TelemetryClient { get; set; }
+
+        public string LogAnalyticsWorkspaceId { get; set; }
     }
 }

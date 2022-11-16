@@ -293,7 +293,7 @@
       "sku": {
         "name": "[parameters('appServicePlanSize')]",
         "tier": "[parameters('appServicePlanSku')]",
-        "capacity": "1"
+        "capacity": 1
       },
       "properties": {
         "name": "[variables('foxidsDefaultName')]",
@@ -325,8 +325,8 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "httpsOnly": true,
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "httpsOnly": true
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -354,8 +354,8 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "httpsOnly": true,
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "httpsOnly": true
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -383,8 +383,8 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "httpsOnly": true,
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "httpsOnly": true
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -412,8 +412,8 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "httpsOnly": true,
+        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
+        "httpsOnly": true
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -428,8 +428,8 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
+        "netFrameworkVersion": "v7.0",
+        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
@@ -447,8 +447,8 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
-        "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
+        "netFrameworkVersion": "v7.0",
+        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "MasterSeedEnabled": false,
@@ -469,14 +469,15 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v7.0",
         "PROJECT": "src/FoxIDs/FoxIDs.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
-        "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
-        "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
+        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]"
+        "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]",
+        "Settings:DisableBackgroundQueueService": "true"
       }
     },
     {
@@ -491,15 +492,16 @@
         "[concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))]"
       ],
       "properties": {
+        "netFrameworkVersion": "v7.0",
         "PROJECT": "src/FoxIDs.Control/FoxIDs.Control.csproj",
         "SCM_BUILD_ARGS": "-p:Configuration=Release",
-        "APPINSIGHTS:INSTRUMENTATIONKEY": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
-        "ApplicationInsights:InstrumentationKey": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).InstrumentationKey]",
+        "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:FoxIDsEndpoint": "[variables('foxidsSiteEndpoint')]",
         "Settings:FoxIDsControlEndpoint": "[variables('foxidsControlSiteEndpoint')]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]"
+        "Settings:ApplicationInsights:WorkspaceId": "[reference(concat('microsoft.operationalinsights/workspaces/', variables('foxidsDefaultName'))).customerId]",
+        "Settings:DisableBackgroundQueueService": "true"
       }
     },
     {
@@ -511,7 +513,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsDefaultName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:FoxIDsEndpoint", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:Sendgrid:FromEmail" ]
       }
     },
     {
@@ -523,7 +525,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "APPINSIGHTS:INSTRUMENTATIONKEY", "ApplicationInsights:InstrumentationKey", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId" ]
       }
     },
     {

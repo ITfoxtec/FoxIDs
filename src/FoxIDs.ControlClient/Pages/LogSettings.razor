@@ -3,6 +3,9 @@
 
 <ul class="nav nav-tabs">
     <li class="nav-item">
+        <a class="nav-link" href="@logUsagesHref">Usages</a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="@logsHref">Logs</a>
     </li>
     <li class="nav-item">
@@ -104,7 +107,7 @@
                                     Application Insights log stream
                                 </div>
                                 <div class="modal-body">
-                                    <FInputText @bind-Value="logSreamSettings.Form.Model.ApplicationInsightsSettings.InstrumentationKey" For="@(() => logSreamSettings.Form.Model.ApplicationInsightsSettings.InstrumentationKey)" Focus="true" />                            
+                                    <FInputText @bind-Value="logSreamSettings.Form.Model.ApplicationInsightsSettings.ConnectionString" For="@(() => logSreamSettings.Form.Model.ApplicationInsightsSettings.ConnectionString)" Focus="true" />
 
                                     <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogWarning" For="@(() => logSreamSettings.Form.Model.LogWarning)" TextType="e.d" />
                                     <FInputToggle @bind-Value="logSreamSettings.Form.Model.LogError" For="@(() => logSreamSettings.Form.Model.LogError)" TextType="e.d" />

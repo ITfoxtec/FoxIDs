@@ -1,12 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 { 
     public class LogStreamApplicationInsightsSettings
     {
         [Required]
-        [MaxLength(Constants.Models.Track.Logging.ApplicationInsightsKeyLength)]
-        [Display(Name = "Instrumentation key")]
-        public string InstrumentationKey { get; set; }
+        [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
+        [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
+        [Display(Name = "Connection string")]
+        public string ConnectionString { get; set; }
     }
 }

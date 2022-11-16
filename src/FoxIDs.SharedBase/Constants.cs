@@ -178,9 +178,10 @@ namespace FoxIDs
             public static class Tenant
             {
                 public const int IdLength = 50;
-                public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
+                public const string NameDbRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
                 public const int CustomDomainLength = 200;
                 public const string CustomDomainRegExPattern = @"^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$";
             }
@@ -188,9 +189,10 @@ namespace FoxIDs
             public static class Track
             {
                 public const int IdLength = 80;
-                public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w\-]*$";
+                public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
 
                 public const int KeysMin = 0;
                 public const int KeysMax = 2;

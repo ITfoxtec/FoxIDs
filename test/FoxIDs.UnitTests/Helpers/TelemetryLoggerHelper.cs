@@ -2,12 +2,13 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
+using System;
 
 namespace FoxIDs.UnitTests.Helpers
 {
     public static class TelemetryLoggerHelper
     {
-        public static TelemetryScopedStreamLogger ScopedStreamLoggerObject(IHttpContextAccessor httpContextAccessor)
+        public static TelemetryScopedStreamLogger ScopedStreamLoggerObject()
         {
             var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger();
             return telemetryScopedStreamLogger;

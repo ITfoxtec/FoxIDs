@@ -12,13 +12,13 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.Logging.ApplicationInsightsConnectionStringLength)]
         [RegularExpression(Constants.Models.Logging.ApplicationInsightsConnectionStringRegExPattern)]
         [JsonProperty(PropertyName = "connection_string")]
-        public string ConnectionString 
+        public string ConnectionString
         {
-            get 
+            get
             {
                 if (connectionString.IsNullOrWhiteSpace() && !InstrumentationKey.IsNullOrWhiteSpace())
                 {
-                    return $"InstrumentationKey={InstrumentationKey}";
+                    return InstrumentationKey;
                 }
                 return connectionString;
             }

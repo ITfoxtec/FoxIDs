@@ -43,13 +43,14 @@ namespace FoxIDs.Infrastructure
                 }
             }
 
-            if (item is ExceptionTelemetry exceptionTelemetry)
+            if (item is ExceptionTelemetry exceptionTelemetry && !exceptionTelemetry.Properties.ContainsKey("handled"))
             {
                 if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
                 {
                     var routeBinding = httpContextAccessor.HttpContext.GetRouteBinding();
                     if(routeBinding?.Logging?.ScopedStreamLoggers?.Count() > 0)
                     {
+                        var telemetryScopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
                         var telemetryScopedStreamLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedStreamLogger>();
                         var telemetryScopedProperties = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedProperties>();
 
@@ -57,21 +58,21 @@ namespace FoxIDs.Infrastructure
                         {
                             foreach (var scopedStreamLogger in routeBinding.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                             {
-                                telemetryScopedStreamLogger.Warning(scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
+                                telemetryScopedStreamLogger.Warning(telemetryScopedLogger, scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
                             }
                         }
                         if (exceptionTelemetry.SeverityLevel == SeverityLevel.Error)
                         {
                             foreach (var scopedStreamLogger in routeBinding.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                             {
-                                telemetryScopedStreamLogger.Error(scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
+                                telemetryScopedStreamLogger.Error(telemetryScopedLogger, scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
                             }
                         }
                         if (exceptionTelemetry.SeverityLevel == SeverityLevel.Critical)
                         {
                             foreach (var scopedStreamLogger in routeBinding.Logging.ScopedStreamLoggers.Where(l => l.LogWarning))
                             {
-                                telemetryScopedStreamLogger.CriticalError(scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
+                                telemetryScopedStreamLogger.CriticalError(telemetryScopedLogger, scopedStreamLogger, exceptionTelemetry.Exception, telemetryScopedProperties.Properties);
                             }
                         }
                     }

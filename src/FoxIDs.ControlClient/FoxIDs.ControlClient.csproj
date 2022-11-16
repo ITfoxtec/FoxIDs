@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<RazorLangVersion>3.0</RazorLangVersion>
-		<Version>1.0.7.4</Version>
+		<TargetFramework>net7.0</TargetFramework>
+		<Version>1.0.7.10</Version>
 		<RootNamespace>FoxIDs.Client</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -14,8 +13,8 @@
     <PackageReference Include="Blazored.Toast" Version="3.2.2" />
     <PackageReference Include="BlazorInputFile" Version="0.2.0" />
     <PackageReference Include="ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect" Version="1.6.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.10" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.0" PrivateAssets="all" />
     <PackageReference Include="Tewr.Blazor.FileReader" Version="3.3.1.21360" />
   </ItemGroup>
 

@@ -24,7 +24,7 @@ namespace FoxIDs.Controllers
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(TelemetryScopedLogger logger, FoxIDsControlSettings settings, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.settings = settings;

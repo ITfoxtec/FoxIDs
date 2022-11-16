@@ -25,7 +25,7 @@ namespace FoxIDs.Infrastructure.Filters
             private List<string> allowIframeOnDomains;
             private readonly IServiceProvider serviceProvider;
 
-            public FoxIDsHttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment env) : base(logger, serviceProvider, env)
+            public FoxIDsHttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment env) : base(logger, env)
             {
                 this.serviceProvider = serviceProvider;
             }

@@ -8,6 +8,7 @@ using StackExchange.Redis;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using FoxIDs.Models.Config;
 
 namespace FoxIDs.Infrastructure.Queue
 {
@@ -15,13 +16,15 @@ namespace FoxIDs.Infrastructure.Queue
     {
         public const string QueueKey = "background_queue_service";
         public const string QueueEventKey = "background_queue_service_event";
+        private readonly FoxIDsControlSettings settings;
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private bool isStopped;
 
-        public BackgroundQueueService(TelemetryLogger logger, IServiceProvider serviceProvider, IConnectionMultiplexer redisConnectionMultiplexer)
+        public BackgroundQueueService(FoxIDsControlSettings settings, TelemetryLogger logger, IServiceProvider serviceProvider, IConnectionMultiplexer redisConnectionMultiplexer)
         {
+            this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
@@ -29,24 +32,31 @@ namespace FoxIDs.Infrastructure.Queue
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            if (!stoppingToken.IsCancellationRequested)
+            if (!settings.DisableBackgroundQueueService)
             {
-                await ReadMessageAndDoWorkAsync(stoppingToken);
-                
-                var sub = redisConnectionMultiplexer.GetSubscriber();
-                var channel = await sub.SubscribeAsync(QueueEventKey);
-                channel.OnMessage(async channelMessage =>
+                if (!stoppingToken.IsCancellationRequested)
                 {
                     await ReadMessageAndDoWorkAsync(stoppingToken);
-                });
+
+                    var sub = redisConnectionMultiplexer.GetSubscriber();
+                    var channel = await sub.SubscribeAsync(QueueEventKey);
+                    channel.OnMessage(async channelMessage =>
+                    {
+                        await ReadMessageAndDoWorkAsync(stoppingToken);
+                    });
+                }
+
+                await Task.Delay(Timeout.Infinite, stoppingToken);
+
+                if (!isStopped)
+                {
+                    var sub = redisConnectionMultiplexer.GetSubscriber();
+                    await sub.UnsubscribeAsync(QueueKey);
+                    isStopped = true;
+                }
             }
-
-            await Task.Delay(Timeout.Infinite, stoppingToken);
-
-            if (!isStopped)
+            else
             {
-                var sub = redisConnectionMultiplexer.GetSubscriber();
-                await sub.UnsubscribeAsync(QueueKey);
                 isStopped = true;
             }
         }

@@ -1,10 +1,8 @@
-﻿using FoxIDs.Models.Config;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
@@ -26,13 +24,11 @@ namespace FoxIDs.Infrastructure.Filters
             protected bool isHtmlContent;
             private readonly TelemetryScopedLogger logger;
             private readonly IWebHostEnvironment env;
-            private readonly IServiceProvider serviceProvider;
 
-            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IServiceProvider serviceProvider, IWebHostEnvironment env)
+            public HttpSecurityHeadersActionAttribute(TelemetryScopedLogger logger, IWebHostEnvironment env)
             {
                 this.logger = logger;
                 this.env = env;
-                this.serviceProvider = serviceProvider;
             }
 
             public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

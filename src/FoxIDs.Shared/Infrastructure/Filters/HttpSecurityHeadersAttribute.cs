@@ -144,24 +144,6 @@ namespace FoxIDs.Infrastructure.Filters
             {
                 return "frame-ancestors 'none';";
             }
-
-            private string GetIngestionEndpoint(string connectionString)
-            {
-                if (connectionString.IsNullOrEmpty())
-                {
-                    return connectionString;
-                }
-
-                var conSplit = connectionString.Split(';');
-                foreach (var item in conSplit)
-                {
-                    if (item.StartsWith(ingestionEndpointKey, StringComparison.OrdinalIgnoreCase))
-                    {
-                        return item.Substring(ingestionEndpointKey.Length);
-                    }
-                }
-                return null;
-            }
         }
     }
 }

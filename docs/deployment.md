@@ -26,7 +26,8 @@ FoxIDs supports sending emails with SendGrid and SMTP as [email provider](email)
 ### First login and admin users
 After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
 
-> The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)
+> The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)  
+> *Please wait a few minutes before logging in after the deployment is complete to allow the initial seed to finish.*
 
 ![FoxIDs Control Client - Master tenant](images/master-tenant2.png)
 

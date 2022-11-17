@@ -27,10 +27,16 @@ The Azure deployment include:
 
 - Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
 - FoxIDs is deployed to the two App Services test slots from the `master` branch with Kudu. When the branch is updated an automatically deployment update is initiated with webhooks. Deployment updates is automatically promoted from the test slots to the production slots. In a production environment It is recommended to chanting the production promotion to manually initiated.
-- Key vault. Secrets are placed in Key vault.
-- Cosmos DB.
-- Redis cache.
-- Application Insights.
+- Key Vault. Certificates and secrets are saved and handled in Key Vault.
+- Cosmos DB. Contain all data including tenants, tracks and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
+- Redis cache. Holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks.
+- Application Insights and Log Analytics workspace. Logs are send to Application Insights and queries in Log Analytics workspace.
+- VLAN with subnets.
+  - Subnet for App services, Cosmos DB and Key Vault. 
+  - Subnet with Private Link to Redis.
+  - Subnet with Azure Monitor Private Link Scope (AMPLS) to Application Insights and Log Analytics workspace. To see logs in the Azure Portal, change the setting to accept public networks.
+
+> There is only Internet access to App services, every thing else is encapsulated.
 
 ### Send emails with Sendgrid
 FoxIDs relay on Sendgrid to send emails to the users for account verification and password reset.  
@@ -44,6 +50,7 @@ A Sendgrid from email address and API Key can at a later time be configure per t
 After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
 
 > The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)
+> *Please wait a few minutes before logging in after the deployment is complete to allow the initial seed to finish.*
 
 ![FoxIDs Control Client - Master tenant](docs/images/master-tenant2.png)
 

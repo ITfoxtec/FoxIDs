@@ -19,7 +19,9 @@ Deployment or as a service:
 
 ## Deployment
 
-Deploy FoxIDs in your Azure tenant. 
+Deploy FoxIDs in your Azure tenant. FoxIDs is deployed in a resource group e.g., named `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
+
+> Please see more [deployment details](https://www.foxids.com/docs/deployment)
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
@@ -38,6 +40,9 @@ The Azure deployment include:
 
 > There is only Internet access to App services, every thing else is encapsulated.
 
+### Send emails with Sendgrid or SMTP
+FoxIDs supports sending emails with SendGrid and SMTP as [email provider](https://www.foxids.com/docs/email).
+
 ### Send emails with Sendgrid
 FoxIDs relay on Sendgrid to send emails to the users for account verification and password reset.  
 You can optionally configure a Sendgrid from email address and Sendgrid API key in the Azure deployment configuration. You can either [create Sendgrid in Azure](https://docs.microsoft.com/en-us/azure/sendgrid-dotnet-how-to-send-email) or directly on [Sendgrid](https://Sendgrid.com), there are more free emails in an Azure manage Sendgrid.
@@ -54,30 +59,9 @@ After successfully deployment open [FoxIDs Control Client](control.md#foxids-con
 
 ![FoxIDs Control Client - Master tenant](docs/images/master-tenant2.png)
 
-> Create your one admin users with a valid email address and grant the users the admin role 'foxids:tenant.admin'.
+Create more admin users with a valid email addresses and grant the users the admin `role` with the value `foxids:tenant.admin`.
 
 ![FoxIDs Control Client - Master tenant admin user](docs/images/master-tenant-admin-user.png)
-
-#### Troubleshooting deployent errors
-
-**Key Vault soft deleted**
-If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
-In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
-
-The solution is to delete (purge) the old Key Vault, which will release the name.
-
-### Seed
-
-#### Upload risk passwords
-
-You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
-
-![FoxIDs Control Client - Upload risk passwrods](docs/images/upload-risk-passwords.png)
-
-Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
-
-> Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.  
-> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 20000 RU/s) temporarily.
 
 #### Add sample configuration to a track
 

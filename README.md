@@ -15,22 +15,33 @@ Deployment or as a service:
 
 > For [Getting started](https://www.foxids.com/docs/getting-started) guide and more documentation please see the [documentation](https://www.foxids.com/docs).
 
-> FoxIDs is .NET 6.0 and the FoxIDs Control Client is Blazor .NET 6.0.
+> FoxIDs is .NET 7.0 and the FoxIDs Control Client is Blazor .NET 7.0.
 
 ## Deployment
 
-Deploy FoxIDs in your Azure tenant. 
+Deploy FoxIDs in your Azure tenant. FoxIDs is deployed in a resource group e.g., named `FoxIDs` where you need to be `Owner` or `Contributor` and `User Access Administrator` on either subscription level or resource group level.
+
+> Please see more [deployment details](https://www.foxids.com/docs/deployment)
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FITfoxtec%2FFoxIDs%2Fmaster%2Fazuredeploy.json)
 
 The Azure deployment include:
 
 - Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
-- FoxIDs is deployed to the two App Services test slots from the `master` branch with Kudu. When the branch is updated an automatically deployment update is initiated with webhooks. Deployment updates is automatically promoted from the test slots to the production slots. In a production environment It is recommended to chanting the production promotion to manually initiated.
-- Key vault. Secrets are placed in Key vault.
-- Cosmos DB.
-- Redis cache.
-- Application Insights.
+- FoxIDs is deployed to the two App Services test slots from the `master` branch with Kudu. [Updates](https://www.foxids.com/docs/update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
+- Key Vault. Certificates and secrets are saved and handled in Key Vault.
+- Cosmos DB. Contain all data including tenants, tracks and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
+- Redis cache. Holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks.
+- Application Insights and Log Analytics workspace. Logs are send to Application Insights and queries in Log Analytics workspace.
+- VLAN with subnets.
+  - Subnet for App services, Cosmos DB and Key Vault. 
+  - Subnet with Private Link to Redis.
+  - Subnet with Azure Monitor Private Link Scope (AMPLS) to Application Insights and Log Analytics workspace. To see logs in the Azure Portal, change the setting to accept public networks.
+
+> There is only Internet access to App services, every thing else is encapsulated.
+
+### Send emails with Sendgrid or SMTP
+FoxIDs supports sending emails with SendGrid and SMTP as [email provider](https://www.foxids.com/docs/email).
 
 ### Send emails with Sendgrid
 FoxIDs relay on Sendgrid to send emails to the users for account verification and password reset.  
@@ -44,33 +55,13 @@ A Sendgrid from email address and API Key can at a later time be configure per t
 After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
 
 > The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)
+> *Please wait a few minutes before logging in after the deployment is complete to allow the initial seed to finish.*
 
 ![FoxIDs Control Client - Master tenant](docs/images/master-tenant2.png)
 
-> Create your one admin users with a valid email address and grant the users the admin role 'foxids:tenant.admin'.
+Create more admin users with a valid email addresses and grant the users the admin `role` with the value `foxids:tenant.admin`.
 
 ![FoxIDs Control Client - Master tenant admin user](docs/images/master-tenant-admin-user.png)
-
-#### Troubleshooting deployent errors
-
-**Key Vault soft deleted**
-If you have deleted a previous deployment the Key Vault is only soft deleted and sill exist with the same name for some months. 
-In this case you can experience getting a 'ConflictError' with the error message 'Exist soft deleted vault with the same name.'.
-
-The solution is to delete (purge) the old Key Vault, which will release the name.
-
-### Seed
-
-#### Upload risk passwords
-
-You can upload risk passwrods in FoxIDs Control Client master tenant on the Rrisk Passwords tap. 
-
-![FoxIDs Control Client - Upload risk passwrods](docs/images/upload-risk-passwords.png)
-
-Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
-
-> Be aware that it takes some time to upload all risk passwords. This step can be omitted and postponed to later.  
-> The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 20000 RU/s) temporarily.
 
 #### Add sample configuration to a track
 

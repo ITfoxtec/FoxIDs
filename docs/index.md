@@ -16,7 +16,7 @@ FoxIDs support Cloud and Private Cloud deployment:
 [FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland.
 - You are free to [deploy](deployment.md) FoxIDs as your own private cloud in a Microsoft Azure tenant.
 
-> FoxIDs is build on .NET 6.0 and the FoxIDs Control Client is Blazor.
+> FoxIDs is build on .NET 7.0 and the FoxIDs Control Client is Blazor.
 
 ## Free and Open Source
 

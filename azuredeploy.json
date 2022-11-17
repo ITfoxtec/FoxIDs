@@ -325,8 +325,6 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "httpsOnly": true,
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -354,8 +352,6 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "httpsOnly": true,
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -383,8 +379,6 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "httpsOnly": true,
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -412,8 +406,6 @@
         "reserved": false,
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('foxidsDefaultName'))]",
         "clientAffinityEnabled": false,
-        "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
-        "httpsOnly": true,
         "virtualNetworkSubnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('foxidsDefaultName'), 'subnet-data')]"
       }
     },
@@ -476,8 +468,7 @@
         "ApplicationInsights:ConnectionString": "[reference(concat('microsoft.insights/components/', variables('foxidsDefaultName'))).ConnectionString]",
         "Settings:CosmosDb:EndpointUri": "[reference(concat('Microsoft.DocumentDb/databaseAccounts/', variables('foxidsDefaultName'))).documentEndpoint]",
         "Settings:KeyVault:EndpointUri": "[reference(concat('Microsoft.KeyVault/vaults/', variables('foxidsDefaultName'))).vaultUri]",
-        "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]",
-        "Settings:DisableBackgroundQueueService": "true"
+        "Settings:Sendgrid:FromEmail": "[parameters('sendgridFromEmail')]"
       }
     },
     {
@@ -525,7 +516,7 @@
         "[resourceId('Microsoft.Web/sites/config', variables('foxidsControlSiteName'), 'appsettings')]"
       ],
       "properties": {
-        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId" ]
+        "appSettingNames": [ "PROJECT", "SCM_BUILD_ARGS", "ApplicationInsights:ConnectionString", "Settings:FoxIDsEndpoint", "Settings:FoxIDsControlEndpoint", "MasterSeedEnabled", "Settings:CosmosDb:EndpointUri", "Settings:KeyVault:EndpointUri", "Settings:ApplicationInsights:WorkspaceId", "Settings:DisableBackgroundQueueService" ]
       }
     },
     {

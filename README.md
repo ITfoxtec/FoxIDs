@@ -15,7 +15,7 @@ Deployment or as a service:
 
 > For [Getting started](https://www.foxids.com/docs/getting-started) guide and more documentation please see the [documentation](https://www.foxids.com/docs).
 
-> FoxIDs is .NET 6.0 and the FoxIDs Control Client is Blazor .NET 6.0.
+> FoxIDs is .NET 7.0 and the FoxIDs Control Client is Blazor .NET 7.0.
 
 ## Deployment
 

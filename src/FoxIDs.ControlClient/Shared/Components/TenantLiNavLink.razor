@@ -3,21 +3,21 @@
 @inject NavigationManager NavigationManager
 
 <li class="@liCssClass">
-    <a class="nav-link" href="@tenantHref">@ChildContent</a>
+    <a class="nav-link" href="@targetHref">@ChildContent</a>
 </li>
 
 @code {
     private const string liCssClassDefault = "nav-item";
     private string liCssClass = liCssClassDefault;
     private bool isActive = false;
-    private string tenantHref;
-    private string tenantAlternativHref;
+    private string targetHref;
+    private List<string> activeHrefList = new List<string>();
 
     [Parameter]
     public string Href { get; set; }
 
     [Parameter]
-    public string Tag { get; set; }
+    public string SubPages { get; set; }
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
@@ -25,10 +25,19 @@
     protected override async Task OnInitializedAsync()
     {
         NavigationManager.LocationChanged += LocationChanged;
-        tenantHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Href}";
-        if(!Tag.IsNullOrEmpty())
+        targetHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Href}";
+        activeHrefList.Add(targetHref);
+        if (!SubPages.IsNullOrEmpty())
         {
-            tenantAlternativHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{Tag}";
+            var subPagesList = SubPages.Split(',');
+            if (subPagesList.Count() > 0)
+            {
+                foreach(var subPage in subPagesList)
+                {
+                    var subPageHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/{subPage}";
+                    activeHrefList.Add(subPageHref);
+                } 
+            }
         }
         UpdateLiCssClass(NavigationManager.Uri);
         base.OnInitialized();
@@ -36,7 +45,7 @@
 
     private void UpdateLiCssClass(string currentLocation)
     {
-        var newIsActive = currentLocation.Contains(tenantHref, StringComparison.OrdinalIgnoreCase) || (!tenantAlternativHref.IsNullOrEmpty() && currentLocation.Contains(tenantAlternativHref, StringComparison.OrdinalIgnoreCase));
+        var newIsActive = activeHrefList.Where(h => currentLocation.Contains(h, StringComparison.OrdinalIgnoreCase)).Any();
         if (isActive != newIsActive)
         {
             isActive = newIsActive;

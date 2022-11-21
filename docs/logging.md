@@ -1,6 +1,9 @@
 # Logging
 
-FoxIDs default log errors and events including the time and the client IP address. The logs are sent to the Application Insights which is part of the FoxIDs cloud instance.
+FoxIDs default log errors and events including the time and the client IP address. The logs are sent to Application Insights which is part of the FoxIDs cloud instance.
+
+
+- Logs
 
 Logs can be searched in [FoxIDs Control Client and API](control.md).
 

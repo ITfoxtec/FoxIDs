@@ -73,7 +73,6 @@ namespace FoxIDs.Logic
                     throw new InvalidOperationException("RouteBinding is null in Track cache.");
                 }
                 tenantName = routeBinding.TenantName;
-                trackName = routeBinding.TrackName;
             }
 
             return new Track.IdKey

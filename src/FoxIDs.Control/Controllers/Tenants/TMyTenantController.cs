@@ -20,15 +20,17 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
+        private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TMyTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
+            this.trackCacheLogic = trackCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
 
@@ -120,13 +122,15 @@ namespace FoxIDs.Controllers
                 (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
-                    await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name });
+                    var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name };
+                    await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                     await tenantRepository.DeleteAsync<Track>(mTrack.Id);
 
                     if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
                     {
                         await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
+                    await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
                 var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(RouteBinding.TenantName));
 

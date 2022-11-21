@@ -76,6 +76,8 @@ namespace FoxIDs.Controllers
                 var mPlan = mapper.Map<Plan>(plan);
                 await masterRepository.CreateAsync(mPlan);
 
+                await planCacheLogic.InvalidatePlanCacheAsync(plan.Name);
+
                 return Created(mapper.Map<Api.Plan>(mPlan));
             }
             catch (CosmosDataException ex)
@@ -137,6 +139,8 @@ namespace FoxIDs.Controllers
                 if (!await ValidatePlanNotUsedAsync(name)) return BadRequest(ModelState);
 
                 await masterRepository.DeleteAsync<Plan>(await Plan.IdFormatAsync(name));
+
+                await planCacheLogic.InvalidatePlanCacheAsync(name);
 
                 return NoContent();
             }

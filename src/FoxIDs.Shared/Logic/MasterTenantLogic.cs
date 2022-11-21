@@ -16,12 +16,16 @@ namespace FoxIDs.Logic
         private readonly ITenantRepository tenantRepository;
         private readonly BaseAccountLogic accountLogic;
         private readonly TrackLogic trackLogic;
+        private readonly UpPartyCacheLogic upPartyCacheLogic;
+        private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public MasterTenantLogic(ITenantRepository tenantRepository, BaseAccountLogic accountLogic, TrackLogic trackLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.accountLogic = accountLogic;
             this.trackLogic = trackLogic;
+            this.upPartyCacheLogic = upPartyCacheLogic;
+            this.downPartyCacheLogic = downPartyCacheLogic;
         }
 
         public async Task CreateMasterTrackDocumentAsync(string tenantName)
@@ -65,9 +69,13 @@ namespace FoxIDs.Logic
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.DefaultLogin.Name });
+            var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.DefaultLogin.Name };
+            await mLoginUpParty.SetIdAsync(partyIdKey);
 
             await tenantRepository.CreateAsync(mLoginUpParty);
+
+            await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
+
             return mLoginUpParty;
         }
 
@@ -82,9 +90,13 @@ namespace FoxIDs.Logic
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = Constants.DefaultLogin.Name });
+            var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = trackName, PartyName = Constants.DefaultLogin.Name };
+            await mLoginUpParty.SetIdAsync(partyIdKey);
 
             await tenantRepository.CreateAsync(mLoginUpParty);
+
+            await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
+
             return mLoginUpParty;
         }
 
@@ -100,7 +112,8 @@ namespace FoxIDs.Logic
             {
                 Name = Constants.ControlApi.ResourceName
             };
-            await mControlApiResourceDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlApi.ResourceName });
+            var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlApi.ResourceName };
+            await mControlApiResourceDownParty.SetIdAsync(partyIdKey);
            
             var scopes = new List<string> { Constants.ControlApi.Scope.Tenant };
             if (includeMasterTenantScope)
@@ -113,6 +126,8 @@ namespace FoxIDs.Logic
             };
 
             await tenantRepository.CreateAsync(mControlApiResourceDownParty);
+
+            await downPartyCacheLogic.InvalidateDownPartyCacheAsync(partyIdKey);
         }
 
         public async Task CreateMasterControlClientDocmentAsync(string tenantName, string controlClientBaseUri, LoginUpParty loginUpParty, bool includeMasterTenantScope = false)
@@ -121,7 +136,8 @@ namespace FoxIDs.Logic
             {
                 Name = Constants.ControlClient.ClientId
             };
-            await mControlClientDownParty.SetIdAsync(new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlClient.ClientId });
+            var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlClient.ClientId };
+            await mControlClientDownParty.SetIdAsync(partyIdKey);
             mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
             mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
 
@@ -149,6 +165,8 @@ namespace FoxIDs.Logic
             };
             
             await tenantRepository.CreateAsync(mControlClientDownParty);
+
+            await downPartyCacheLogic.InvalidateDownPartyCacheAsync(partyIdKey);
         }
 
         private List<string> GetControlClientAllowCorsOrigins(string controlClientBaseUri)

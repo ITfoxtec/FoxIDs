@@ -12,7 +12,7 @@
   - [Certificates](certificates.md)
   - [Logging](logging.md)
   - [Email provider](email.md)
-  - [Standard support](standard-support.md)
+  - [Supported standards](standard-support.md)
 - [Development](development.md)
   - [Samples](samples.md)
 - [Customization](customization.md)

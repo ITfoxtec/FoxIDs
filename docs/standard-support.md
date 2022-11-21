@@ -1,4 +1,4 @@
-# Standard support
+# Supported standards
 
 - All tokens are JSON Web Token (JWT)
   - [RFC 7519](https://tools.ietf.org/html/rfc7519)

@@ -13,6 +13,7 @@
   - [Logging](logging.md)
   - [Email provider](email.md)
   - [Supported standards](standard-support.md)
+  - [Plans](plan.md)
 - [Development](development.md)
   - [Samples](samples.md)
 - [Customization](customization.md)

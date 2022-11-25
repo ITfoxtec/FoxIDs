@@ -3,6 +3,9 @@
 FoxIDs is an open source Identity Services (IDS) supporting [login](https://www.foxids.com/docs/login), [OAuth 2.0](https://www.foxids.com/docs/oauth-2.0), [OpenID Connect 1.0](https://www.foxids.com/docs/oidc), [SAML 2.0](https://www.foxids.com/docs/saml-2.0) and convention between [OpenID Connect and SAML 2.0](https://www.foxids.com/docs/parties).  
 FoxIDs handles multi-factor authentication (MFA) / two-factor authentication (2FA) with support for two-factor authenticator app.
 
+FoxIDs is designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g. a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone with the need.  
+Separation is ensured at the tenant level and in each tenant separated by tracks. The tracks in a tenant segmentate environments, e.g. test, QA and production and e.g. trusts to external or internal IdPs.
+
 FoxIDs consist of two services:
 
 - Identity service called FoxIDs handling user login and all other security traffic.

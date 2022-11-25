@@ -2,13 +2,16 @@
 
 FoxIDs can at the same time work as an authentication platform and a security broker where FoxIDs support converting between [OpenID Connect 1.0 and SAML 2.0](parties.md).
 
+> FoxIDs version 1.x, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
 
-> FoxIDs version 1.0, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
+FoxIDs is designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g. a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone with the need.  
+Separation is ensured at the tenant level and in each tenant separated by tracks. The tracks in a tenant segmentate environments, e.g. test, QA and production and e.g. trusts to external or internal IdPs.
 
 FoxIDs consist of two services:
 
 - The identity service which in short is called FoxIDs. The service handles user login and all other security traffic.
 - The UI configuration client and API is called FoxIDs Control. FoxIDs Control is used to configure FoxIDs in a user interface ([FoxIDs Control Client](control.md#foxids-control-client)) or by calling an API ([FoxIDs Control API](control.md#foxids-control-api)).
+
 
 FoxIDs support Cloud and Private Cloud deployment:
 

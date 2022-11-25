@@ -1,6 +1,6 @@
 # Plans
 
-FoxIDs is a cloud applications designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g. a single company or deployed as a shared cloud container and used by multiple organisation, companies or everyone with the need.
+FoxIDs is a cloud application designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g., a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone with the need.
 
 Plan is for a shared cloud deployment like on [FoxIDs.com](https://foxids.com) to be able to calculate payments in an external system.
 

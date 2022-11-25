@@ -23,4 +23,5 @@
 - [Deployment](deployment.md)
   - [Reverse proxy](reverse-proxy.md)
   - [Update](update.md)
+  - [Monitoring](monitoring.md)
 - [FAQ](faq.md)

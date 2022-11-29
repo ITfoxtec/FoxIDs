@@ -8,14 +8,27 @@ You can also configure the samples in [your one FoxIDs track](#configure-samples
 
 The sample Visual Studio solution contain the following down-party and up-party sample applications.
 
-## Down-party sample applications
+## Down-party OpenId Connect sample applications
+
+### AspNetCoreOidcAuthCodeAllUpPartiesSample
+
+Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
+Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+
+The possible up-parties is configured in the down-party as allowed up-parties. There can be configured one to many allowed up-parties. 
+All the configured up-parties is selected with a star indited of an up-party name.
+
+Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and all other up-parties.
+
+Local development domain and port: `https://localhost:44349`
+
 
 ### AspNetCoreOidcAuthorizationCodeSample
 
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
+Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: `https://localhost:44340`
 
@@ -23,7 +36,7 @@ Local development domain and port: `https://localhost:44340`
 
 Sample application showing login and logout with OpenID Connect (OIDC) using implicit flow as a service provider.
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
+Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: `https://localhost:44341`
 
@@ -31,7 +44,7 @@ Local development domain and port: `https://localhost:44341`
 
 Sample application showing login and logout with SAML 2.0 as a relying party.
 
-Support login/(logout) with FoxIDs login page, [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
+Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
 Local development domain and port: `https://localhost:44343`
 
@@ -39,12 +52,6 @@ Local development domain and port: `https://localhost:44343`
 
 Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant.  
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
-
-### AspNetCoreApi1Sample
-
-Sample API showing how to secure an API with an access token and how to restrict access by a scope.
-
-Local development domain and port: `https://localhost:44344`
 
 ### BlazorBFFAspNetCoreOidcSample
 
@@ -67,6 +74,24 @@ Blazor server sample application showing login and logout with OpenID Connect (O
 Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Local development domain and port: `https://localhost:44347`
+
+## Down-party OAuth 2.0 sample applications
+
+### AspNetCoreApi1Sample
+
+Sample API showing how to secure an API with an access token and how to restrict access by a scope.
+
+Local development domain and port: `https://localhost:44344`
+
+### AspNetCoreApiOAuthTwoIdPsSample
+
+Sample API showing how to create an API which can accept access tokens from two different IdPs. Each IdP - API relation can be configured with individual resource ID and scopes.
+
+This scenario occurs most often in a transitional period moving from one IdP to another IdP. Having APIs with dual IdP support the clients can be moved from one IdP to another IdP independent of the APIs.
+
+The sample API can be called by changing comment out code in the [NetCoreClientGrantConsoleSample](#netcoreclientgrantconsolesample).
+
+Local development domain and port: `https://localhost:44350`
 
 ## Up-party sample applications
 

@@ -1233,7 +1233,7 @@
         },
         {
           "culture": "da",
-          "value": "Registrer to-faktor godkendelse med din egen ønskede app. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre."
+          "value": "Registrer to-faktor godkendelse med den app du ønsker. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre."
         }
       ]
     },
@@ -1285,7 +1285,7 @@
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en gyldig kode eller benyt din genoprettelses-kode"
+          "value": "Indtast venligst en gyldig kode eller benyt din genoprettelseskode"
         }
       ]
     },
@@ -1311,7 +1311,7 @@
         },
         {
           "culture": "da",
-          "value": "Kode fra godkendelses-app eller en gendannelseskode"
+          "value": "Kode fra godkendelses app eller din genoprettelseskode"
         }
       ]
     },
@@ -1363,7 +1363,7 @@
         },
         {
           "culture": "da",
-          "value": "Du er igang med at registrere en to-faktor (2FA) godkendelses-app, men din e-mailadresse og konto er endnu ikke blevet bekræftet.<br /><br />Et nyt bekræftelses-link er blevet sendt til din e-mailadresse."
+          "value": "Du er igang med at registrere en to-faktor (2FA) godkendelses app, men din e-mailadresse og konto er endnu ikke blevet bekræftet.<br /><br />Et nyt bekræftelses link er blevet sendt til din e-mailadresse."
         }
       ]
     },
@@ -1441,7 +1441,7 @@
         },
         {
           "culture": "da",
-          "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor (2FA) godkendelseskoder, så er genoprettelseskoden den ENESTE adgang til din konto."
+          "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor (2FA) koder, så er genoprettelseskoden den ENESTE adgang til din konto."
         }
       ]
     },
@@ -1454,7 +1454,7 @@
         },
         {
           "culture": "da",
-          "value": "Jeg har gemt min genoprettelses kode"
+          "value": "Jeg har gemt min genoprettelseskode"
         }
       ]
     },

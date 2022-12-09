@@ -1246,7 +1246,7 @@
         },
         {
           "culture": "da",
-          "value": "Eller, benyt manuel setup key (valgfrit)"
+          "value": "Eller benyt manuel setup key (valgfrit)"
         }
       ]
     },
@@ -1259,7 +1259,7 @@
         },
         {
           "culture": "da",
-          "value": "Indtast derefter koden fra godkendelses-app'en"
+          "value": "Indtast derefter koden fra din godkendelses app"
         }
       ]
     },

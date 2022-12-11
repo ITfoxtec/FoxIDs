@@ -51,7 +51,7 @@ In some cases, it can be an advantage to place external connections in a separat
 
 ![FoxIDs structure](images/structure.svg)
 
-**FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users and unlimited up-parties and down-parties in a track.**
+> **FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users and unlimited up-parties and down-parties in a track.**
 
 ### Separation
 The structure is used to separate the different tenants, tracks and [parties](parties.md). 

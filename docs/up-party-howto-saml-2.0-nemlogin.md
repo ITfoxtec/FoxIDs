@@ -7,10 +7,9 @@ FoxIDs can be connected to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-
 NemLog-in (currently called NemLog-in3) is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
 
 NemLog-in test and production environment:  
-- The [NemLog-in dev portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/), where you can find documentation and the NemLog-in IdP-metadata for test and production.
+- The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/), where you can find documentation and the NemLog-in IdP-metadata for test and production.
+- The [NemLog-in development portal - test page](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can the NemLog-in IdP-metadata for test and FOCES2 / OCES3 test certificates.
 - The [NemLog-in adminstration protal](https://administration.nemlog-in.dk/) where you configure IT-systems
-- Download [test FOCES certificate](https://tu.nemlog-in.dk/media/fvshwrp0/serviceprovider.p12) with password: `Test1234`  
-- Download [test NemLog-in IdP-metadata](https://tu.nemlog-in.dk/media/konm1nal/oio_saml_3_integrationstest-idp-metadata-xml.txt)  
 
 > A sample showing the NemLog-in integrations is configured in the FoxIDs `test-corp` with the up-party name `nemlogin_oidc`. The configuration uses a separate track where the NemLog-in integrations is configured and converted from SAMl 2.0 to OpenId Connect.  
 > You can test NemLog-in login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC NemLog-in Log in` or by clicking `Log in` and then `Danish NemLog-in`.

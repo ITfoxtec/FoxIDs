@@ -30,7 +30,7 @@ namespace FoxIDs.Models.Api
         public decimal CostPerMonth { get; set; }
 
         [Required]
-        [Display(Name = "Users")]
+        [Display(Name = "Total users")]
         public PlanItem Users { get; set; }
 
         [Required]

@@ -1,14 +1,17 @@
-**FoxIDs is a free and open source Identity Services (IDS) supporting: [login](login.md), [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
+**FoxIDs is a free and open-source Identity Services (IDS) supporting: [login](login.md), [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
 
 FoxIDs can at the same time work as an authentication platform and a security broker where FoxIDs support converting between [OpenID Connect 1.0 and SAML 2.0](parties.md).
 
+> FoxIDs version 1.x, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
 
-> FoxIDs version 1.0, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
+FoxIDs is designed as a container with multi-tenant support. FoxIDs can be deployed and use by e.g. a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone with the need.  
+Separation is ensured at the tenant level and in each tenant separated by tracks. The tracks in a tenant segmentate environments, e.g. test, QA and production and e.g. trusts to external or internal IdPs.
 
 FoxIDs consist of two services:
 
 - The identity service which in short is called FoxIDs. The service handles user login and all other security traffic.
 - The UI configuration client and API is called FoxIDs Control. FoxIDs Control is used to configure FoxIDs in a user interface ([FoxIDs Control Client](control.md#foxids-control-client)) or by calling an API ([FoxIDs Control API](control.md#foxids-control-api)).
+
 
 FoxIDs support Cloud and Private Cloud deployment:
 
@@ -20,7 +23,7 @@ FoxIDs support Cloud and Private Cloud deployment:
 
 ## Free and Open Source
 
-FoxIDs is free and open source, see the [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
+FoxIDs is free and open-source, see the [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
 The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license only restricts reselling FoxIDs as a IDaaS to third parties, without a supplementary agreement.
 You are free to use FoxIDs as a IDaaS for you own products.
 
@@ -48,7 +51,7 @@ In some cases, it can be an advantage to place external connections in a separat
 
 ![FoxIDs structure](images/structure.svg)
 
-**FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users and unlimited up-parties and down-parties in a track.**
+> **FoxIDs support unlimited tenants. Unlimited tracks in a tenant. Unlimited users and unlimited up-parties and down-parties in a track.**
 
 ### Separation
 The structure is used to separate the different tenants, tracks and [parties](parties.md). 

@@ -9,11 +9,15 @@ namespace FoxIDs.Logic
     {
         private readonly ITenantRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
+        private readonly TrackCacheLogic trackCacheLogic;
+        private readonly UpPartyCacheLogic upPartyCacheLogic;
 
-        public TrackLogic(ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLogic(ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, TrackCacheLogic trackCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.tenantRepository = tenantRepository;
             this.externalKeyLogic = externalKeyLogic;
+            this.trackCacheLogic = trackCacheLogic;
+            this.upPartyCacheLogic = upPartyCacheLogic;
         }
 
         public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null, string trackName = null)
@@ -25,6 +29,8 @@ namespace FoxIDs.Logic
             };
 
             await tenantRepository.CreateAsync(mTrack);
+
+            await trackCacheLogic.InvalidateTrackCacheAsync(trackName ?? RouteBinding.TrackName, tenantName ?? RouteBinding.TenantName);
         }
 
         public async Task CreateLoginDocumentAsync(Track mTrack)
@@ -38,9 +44,12 @@ namespace FoxIDs.Logic
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };
-            await mLoginUpParty.SetIdAsync(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = Constants.DefaultLogin.Name });
+            var partyIdKey = new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = mTrack.Name, PartyName = Constants.DefaultLogin.Name };
+            await mLoginUpParty.SetIdAsync(partyIdKey);
 
             await tenantRepository.CreateAsync(mLoginUpParty);
+
+            await upPartyCacheLogic.InvalidateUpPartyCacheAsync(partyIdKey);
         }
     }
 }

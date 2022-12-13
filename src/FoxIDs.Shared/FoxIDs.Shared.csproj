@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>1.0.9</Version>
+		<Version>1.1.1</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -22,6 +22,7 @@
 	<ItemGroup>
 		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.14.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
 		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.15.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
+		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.31.2\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -47,10 +47,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\FoxIDs.Shared\FoxIDs.Shared.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<Content Update="Views\Login\LoggedIn.cshtml">
-			<Pack>$(IncludeRazorContentInPack)</Pack>
-		</Content>
-	</ItemGroup>
+	
 </Project>

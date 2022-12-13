@@ -7,12 +7,12 @@ namespace FoxIDs.Models.Api
     {
         [Required]
         [Min(Constants.Models.Plan.IncludedMin)]
-        [Display(Name = "Included requests")]
+        [Display(Name = "Included")]
         public long Included { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "First level cost per request")] 
+        [Display(Name = "First level cost per instance")] 
         public decimal FirstLevelCost { get; set; }
 
         [Min(Constants.Models.Plan.FirstLevelThresholdMin)]
@@ -20,7 +20,7 @@ namespace FoxIDs.Models.Api
         public long? FirstLevelThreshold { get; set; }
 
         [Min(Constants.Models.Plan.CostPerMonthMin)]
-        [Display(Name = "Second level cost per request")]
+        [Display(Name = "Second level cost per instance")]
         public decimal? SecondLevelCost { get; set; }
     }
 }

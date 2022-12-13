@@ -13,6 +13,7 @@ using FoxIDs.Infrastructure.Filters;
 using System;
 using ITfoxtec.Identity;
 
+
 namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
@@ -26,9 +27,10 @@ namespace FoxIDs.Controllers
         private readonly MasterTenantLogic masterTenantLogic;
         private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
+        private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -37,6 +39,7 @@ namespace FoxIDs.Controllers
             this.masterTenantLogic = masterTenantLogic;
             this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
+            this.trackCacheLogic = trackCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
 
@@ -96,6 +99,12 @@ namespace FoxIDs.Controllers
 
                 var mTenant = mapper.Map<Tenant>(tenant);
                 await tenantRepository.CreateAsync(mTenant);
+
+                await tenantCacheLogic.InvalidateTenantCacheAsync(tenant.Name);
+                if (!string.IsNullOrEmpty(tenant.CustomDomain))
+                {
+                    await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
+                }
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
@@ -233,13 +242,15 @@ namespace FoxIDs.Controllers
                 (var mTracks, _) = await tenantRepository.GetListAsync<Track>(new Track.IdKey { TenantName = name }, whereQuery: p => p.DataType.Equals("track"));
                 foreach(var mTrack in mTracks)
                 {
-                    await tenantRepository.DeleteListAsync<DefaultElement>(new Track.IdKey { TenantName = name, TrackName = mTrack.Name });
+                    var trackIdKey = new Track.IdKey { TenantName = name, TrackName = mTrack.Name };
+                    await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                     await tenantRepository.DeleteAsync<Track>(mTrack.Id);
 
                     if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
                     {
                         await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }
+                    await trackCacheLogic.InvalidateTrackCacheAsync(trackIdKey);
                 }
                 var mTenant = await tenantRepository.DeleteAsync<Tenant>(await Tenant.IdFormatAsync(name));
 

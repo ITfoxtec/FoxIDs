@@ -11,7 +11,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Custom domain")]
         public string CustomDomain { get; set; }
 
-        [Display(Name = "Custom domain is verified")]
+        [Display(Name = "Custom domain is verified (read only)")]
         public bool CustomDomainVerified { get; set; }
     }
 }

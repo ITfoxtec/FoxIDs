@@ -88,35 +88,35 @@
                         <ul class="navbar-nav">
                             @if (RouteBindingLogic.IsMasterTenant)
                             {
-                                <TenantLiNavLink href="tenants">
+                                <TenantLiNavLink Href="tenants">
                                     Tenants
                                 </TenantLiNavLink>
                             }
-                            <TenantLiNavLink href="downparties" tag="upparties">
+                            <TenantLiNavLink Href="downparties" SubPages="upparties">
                                 Parties
                             </TenantLiNavLink>
-                            <TenantLiNavLink href="users">
+                            <TenantLiNavLink Href="users">
                                 Users
                             </TenantLiNavLink>
-                            <TenantLiNavLink href="certificates">
+                            <TenantLiNavLink Href="certificates">
                                 Certificates
                             </TenantLiNavLink>
-                            <TenantLiNavLink href="logusages">
+                            <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
                                 Logs
                             </TenantLiNavLink>
-                            <TenantLiNavLink href="texts">
+                            <TenantLiNavLink Href="texts">
                                 Text
                             </TenantLiNavLink>
                             @if (RouteBindingLogic.IsMasterTenant)
                             {
-                                <TenantLiNavLink href="plans">
+                                <TenantLiNavLink Href="plans">
                                     Plans
                                 </TenantLiNavLink>
-                                <TenantLiNavLink href="riskpasswords">
+                                <TenantLiNavLink Href="riskpasswords">
                                     Risk Passwords
                                 </TenantLiNavLink>
                             }
-                            <TenantLiNavLink href="tracksettings">
+                            <TenantLiNavLink Href="tracksettings" SubPages="tenantsettings,mailsettings,claimmappings">
                                 Settings
                             </TenantLiNavLink>
                         </ul>

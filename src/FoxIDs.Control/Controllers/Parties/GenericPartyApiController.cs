@@ -70,6 +70,20 @@ namespace FoxIDs.Controllers
 
                 await tenantRepository.CreateAsync(mParty);
 
+                if (mParty is UpParty)
+                {
+                    await upPartyCacheLogic.InvalidateUpPartyCacheAsync(party.Name);
+                    await downPartyAllowUpPartiesQueueLogic.UpdateUpParty(null, mParty as UpParty);
+                }
+                else if (mParty is DownParty)
+                {
+                    await downPartyCacheLogic.InvalidateDownPartyCacheAsync(party.Name);
+                }
+                else
+                {
+                    throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
+                }
+
                 return Created(mapper.Map<AParty>(mParty));
             }
             catch (CosmosDataException ex)

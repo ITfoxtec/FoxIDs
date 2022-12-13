@@ -12,7 +12,7 @@ The only different is how you get access to the tenant, from there on the rest i
 You can create more [admin users](control.md#create-administrator-users) in your one new tenants `master` track.
 
 #### FoxIDs Private Cloud
-FoxIDs is [open source](index.md#free-and-open-source) and you are free to deploy FoxIDs as your own private cloud in a Microsoft Azure tenant.
+FoxIDs is [open-source](index.md#free-and-open-source) and you are free to deploy FoxIDs as your own private cloud in a Microsoft Azure tenant.
 
 1. [Deploy](deployment.md) FoxIDs in a Microsoft Azure tenant.
 2. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant in [FoxIDs Control Client](control.md#foxids-control-client).  

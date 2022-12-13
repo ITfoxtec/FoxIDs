@@ -2,12 +2,14 @@
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Azure.Core;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RSAKeyVaultProvider;
 using UrlCombineLib;
@@ -17,13 +19,15 @@ namespace FoxIDs.Logic
     public class TrackKeyLogic : LogicSequenceBase
     {
         private readonly FoxIDsSettings settings;
+        private readonly TelemetryScopedLogger logger;
         private readonly TokenCredential tokenCredential;
         private readonly ITenantRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TrackKeyLogic(FoxIDsSettings settings, TokenCredential tokenCredential, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackKeyLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, TokenCredential tokenCredential, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
+            this.logger = logger;
             this.tokenCredential = tokenCredential;
             this.tenantRepository = tenantRepository;
             this.externalKeyLogic = externalKeyLogic;
@@ -67,25 +71,32 @@ namespace FoxIDs.Logic
 
         public Saml2X509Certificate GetSecondarySaml2X509Certificate(RouteTrackKey trackKey)
         {
-            if (trackKey.SecondaryKey == null || trackKey.SecondaryKey.Key == null)
+            try
             {
-                return null;
+                if (trackKey.SecondaryKey != null && trackKey.SecondaryKey.Key != null)
+                {
+                    ValidateSecondaryTrackKey(trackKey);
+
+                    switch (trackKey.Type)
+                    {
+                        case TrackKeyType.Contained:
+                            return trackKey.SecondaryKey.Key.ToSaml2X509Certificate(true);
+
+                        case TrackKeyType.KeyVaultRenewSelfSigned:
+                            return new Saml2X509Certificate(trackKey.SecondaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
+
+                        case TrackKeyType.KeyVaultUpload:
+                        default:
+                            throw new NotSupportedException($"Track secondary key type '{trackKey.Type}' not supported.");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Warning(ex);
             }
 
-            ValidateSecondaryTrackKey(trackKey);
-
-            switch (trackKey.Type)
-            {
-                case TrackKeyType.Contained:
-                    return trackKey.SecondaryKey.Key.ToSaml2X509Certificate(true);
-
-                case TrackKeyType.KeyVaultRenewSelfSigned:
-                    return new Saml2X509Certificate(trackKey.SecondaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
-
-                case TrackKeyType.KeyVaultUpload:
-                default:
-                    throw new NotSupportedException($"Track secondary key type '{trackKey.Type}' not supported.");
-            }
+            return null;
         }
 
         private RSA GetPrimaryRSAKeyVault(RouteTrackKey trackKey)

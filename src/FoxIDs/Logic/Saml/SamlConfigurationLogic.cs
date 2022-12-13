@@ -10,13 +10,11 @@ namespace FoxIDs.Logic
 {
     public class Saml2ConfigurationLogic : LogicSequenceBase
     {
-        private readonly TelemetryScopedLogger logger;
         private readonly TrackKeyLogic trackKeyLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
 
-        public Saml2ConfigurationLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public Saml2ConfigurationLogic(TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;
             this.trackIssuerLogic = trackIssuerLogic;
         }

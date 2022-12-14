@@ -151,6 +151,9 @@
             }
             else if (samlDownParty.ShowClaimTransformTab)
             {
+                <div class="mb-3 alert alert-info" role="alert">
+                    If you create a new claim the claim is local unless you add the claim to the 'Issue claims' list.
+                </div>
                 <SamlClaimTransforms Model="samlDownParty.Form.Model" />
             }
         </div>

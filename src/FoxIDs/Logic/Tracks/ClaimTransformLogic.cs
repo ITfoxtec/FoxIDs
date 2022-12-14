@@ -84,7 +84,7 @@ namespace FoxIDs.Logic
                     break;
                 case ClaimTransformActions.Replace:
                 case ClaimTransformActions.ReplaceIfNot:
-                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.Ordinal));
                     outputClaims.Add(newClaim);
                     break;
                 default:
@@ -105,7 +105,7 @@ namespace FoxIDs.Logic
                         break;
                     case ClaimTransformActions.Replace:
                     case ClaimTransformActions.ReplaceIfNot:
-                        outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                        outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.Ordinal));
                         outputClaims.AddRange(newClaims);
                         break;
                     default:
@@ -127,7 +127,7 @@ namespace FoxIDs.Logic
                 var newClaims = new List<Claim>();
                 foreach (var claim in claims)
                 {
-                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.Ordinal))
                     {
                         newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
                     }
@@ -144,7 +144,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase));
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal));
             }
         }
 
@@ -155,9 +155,9 @@ namespace FoxIDs.Logic
                 var newClaims = new List<Claim>();
                 foreach (var claim in claims)
                 {
-                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.Ordinal))
                     {
-                        if (claim.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase))
+                        if (claim.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal))
                         {
                             newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                         }
@@ -175,7 +175,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase) && c.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase));
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && c.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal));
             }
         }
 
@@ -189,7 +189,7 @@ namespace FoxIDs.Logic
                 var claimIn = claimTransform.ClaimsIn.Single();
                 foreach (var claim in claims)
                 {
-                    if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                    if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                     {
                         var match = regex.Match(claim.Value);
                         if (match.Success)
@@ -210,7 +210,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase) && regex.Match(c.Value).Success);
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && regex.Match(c.Value).Success);
             }
         }
 
@@ -220,7 +220,7 @@ namespace FoxIDs.Logic
             var claimIn = claimTransform.ClaimsIn.Single();
             foreach (var claim in claims)
             {
-                if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                 {
                     newClaims.Add(new Claim(claimTransform.ClaimOut, claim.Value));
                 }
@@ -232,7 +232,7 @@ namespace FoxIDs.Logic
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
-                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase)).Count() > 0))
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
                 {
                     AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }                
@@ -246,7 +246,7 @@ namespace FoxIDs.Logic
             var claimIn = claimTransform.ClaimsIn.Single();
             foreach (var claim in claims)
             {
-                if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                 {
                     var match = regex.Match(claim.Value);
                     if (match.Success && match.Groups.ContainsKey("map"))
@@ -262,7 +262,7 @@ namespace FoxIDs.Logic
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
-                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase)).Count() > 0))
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
                 {
                     AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }
@@ -277,7 +277,7 @@ namespace FoxIDs.Logic
             int i = 0;
             foreach (var claimIn in claimTransform.ClaimsIn)
             {
-                var value = claims.Where(c => c.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault();
+                var value = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal)).Select(c => c.Value).FirstOrDefault();
                 if(value != null)
                 {
                     addTransformationClaim = true;

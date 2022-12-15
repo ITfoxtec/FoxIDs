@@ -56,7 +56,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
-        [Display(Name = "Accept claims (use * to accept all claims)")]
+        [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
 
         /// <summary>

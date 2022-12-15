@@ -8,7 +8,7 @@
 - [FoxIDs Control](control.md)
 - Topics
   - [Users](users.md)
-  - [Claim transform](claim-transform.md)
+  - [Claims & Claim transforms](claim.md)
   - [Certificates](certificates.md)
   - [Logging](logging.md)
   - [Email provider](email.md)

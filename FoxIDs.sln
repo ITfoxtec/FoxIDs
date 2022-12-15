@@ -39,6 +39,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 	ProjectSection(SolutionItems) = preProject
 		docs\certificates.md = docs\certificates.md
 		docs\claim-transform.md = docs\claim-transform.md
+		docs\claim.md = docs\claim.md
 		docs\control.md = docs\control.md
 		docs\custom-domain.md = docs\custom-domain.md
 		docs\customization.md = docs\customization.md

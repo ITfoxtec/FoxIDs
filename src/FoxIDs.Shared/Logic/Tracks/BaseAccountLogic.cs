@@ -107,7 +107,7 @@ namespace FoxIDs.Logic
             var charCounts = password.GroupBy(c => c).Select(g => g.Count());
             if(charCounts.Any(c => c >= maxCharRepeate))
             {
-                throw new PasswordComplexityException($"Password char repeat does not comply with complexity, user '{email}'.");
+                throw new PasswordComplexityException($"Password char repeat does not comply with complexity requirements, user '{email}'.");
             }
         }
 
@@ -120,7 +120,7 @@ namespace FoxIDs.Logic
             if (Regex.IsMatch(password, @"\W")) matchCount++;
             if (matchCount < 3)
             {
-                throw new PasswordComplexityException($"Password char dissimilarity does not comply with complexity, user '{email}'.");
+                throw new PasswordComplexityException($"Password char dissimilarity does not comply with complexity requirements, user '{email}'.");
             }
         }
 
@@ -131,7 +131,7 @@ namespace FoxIDs.Logic
             {
                 if (es.Length > 3 && password.Contains(es, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordEmailTextComplexityException($"Password contains e-mail text that does not comply with complexity, user '{email}'.");
+                    throw new PasswordEmailTextComplexityException($"Password contains parts of the e-mail which does not comply with complexity requirements, user '{email}'.");
                 }
             }
         }
@@ -144,7 +144,7 @@ namespace FoxIDs.Logic
             {
                 if (us.Length > 3 && password.Contains(us, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordUrlTextComplexityException($"Password contains URL text that does not comply with complexity, user '{email}'.");
+                    throw new PasswordUrlTextComplexityException($"Password contains parts of the URL which does not comply with complexity requirements, user '{email}'.");
                 }
             }
         }

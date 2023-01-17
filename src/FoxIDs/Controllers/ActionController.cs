@@ -18,19 +18,25 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
+        private readonly LoginPageLogic loginPageLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
+            this.loginPageLogic = loginPageLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
         }
+
+
+
+
 
         public async Task<IActionResult> Confirmation()
         {

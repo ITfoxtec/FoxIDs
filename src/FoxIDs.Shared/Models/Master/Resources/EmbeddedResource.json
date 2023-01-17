@@ -305,11 +305,11 @@
       "id": 76
     },
     {
-      "name": "Confirmation required",
+      "name": "Email confirmation",
       "id": 77
     },
     {
-      "name": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address.",
+      "name": "Please verify your email address with the confirmation code sent to your email.",
       "id": 78
     },
     {
@@ -1346,11 +1346,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirmation required"
+          "value": "Email confirmation"
         },
         {
           "culture": "da",
-          "value": "Bekræftelse påkrævet"
+          "value": "E-mailbekræftelse"
         }
       ]
     },
@@ -1359,11 +1359,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "You are about to register a two-factor authentication (2FA) app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
+          "value": "Please verify your email address with the confirmation code sent to your email."
         },
         {
           "culture": "da",
-          "value": "Du er igang med at registrere en to-faktor (2FA) godkendelses app, men din e-mailadresse og konto er endnu ikke blevet bekræftet.<br /><br />Et nyt bekræftelses link er blevet sendt til din e-mailadresse."
+          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode, der sendes til din e-mail."
         }
       ]
     },

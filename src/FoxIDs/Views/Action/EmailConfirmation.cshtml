@@ -1,0 +1,36 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model EmailConfirmationViewModel
+
+@{
+    ViewData["Title"] = Localizer["Email confirmation"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container">
+    <div class="col-md page-content">
+        <form method="post">
+            <div class="info-message">
+                @Localizer["Please verify your email address with the confirmation code sent to your email."]
+            </div>
+            <div class="form-group active-group">
+                <input asp-for="ConfirmationCode" class="form-control input-control" autofocus />
+                <label asp-for="ConfirmationCode" class="label-control"></label>
+                <span asp-validation-for="ConfirmationCode"></span>
+            </div>
+            <div class="form-group button-group">
+                <input type="submit" value="@Localizer["Confirm email"]" class="btn btn-primary" />
+                @if (Model.EnableCancelLogin)
+                {
+                    <a href="../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                }
+                <a href="@Constants.Endpoints.EmailConfirmation/_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new email confirmation code"]</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

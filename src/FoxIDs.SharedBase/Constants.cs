@@ -250,6 +250,7 @@ namespace FoxIDs
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
+                public const int EmailConfirmationCodeLength = 10;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
                 public const int TwoFactorAppCodeLength = 50;
             }
@@ -526,6 +527,7 @@ namespace FoxIDs
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
             public const string ForgotPassword = "forgotpassword";
+            public const string EmailConfirmation = "emailconfirmation";
             public const string RegisterTwoFactor = "regtwofactor";
             public const string TwoFactor = "twofactor";
 

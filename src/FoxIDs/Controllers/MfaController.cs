@@ -4,12 +4,14 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FoxIDs.Controllers
 {
@@ -53,8 +55,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    await accountActionLogic.SendConfirmationEmailAsync(sequenceData.Email);
-                    return GetEmailNotConfirmedView();
+                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor registration.");
                 }
 
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -79,8 +80,6 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Start two factor registration failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-
-        private IActionResult GetEmailNotConfirmedView() => View("EmailNotConfirmed");
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -167,9 +166,9 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
-                var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                 var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppSecretExternalName, sequenceData.TwoFactorAppRecoveryCode);
-                return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+                var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
             }
             catch (Exception ex)
             {
@@ -191,8 +190,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    await accountActionLogic.SendConfirmationEmailAsync(sequenceData.Email);
-                    return GetEmailNotConfirmedView();
+                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor login.");
                 }
 
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -267,9 +265,9 @@ namespace FoxIDs.Controllers
                     {
                         await accountTwoFactorLogic.ValidateTwoFactorByExternalSecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecretExternalName, registerTwoFactor.AppCode);
 
-                        var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                         var user = await userAccountLogic.GetUserAsync(sequenceData.Email);
-                        return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+                        var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
+                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
                     }
                     catch (InvalidAppCodeException acex)
                     {

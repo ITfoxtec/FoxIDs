@@ -295,8 +295,6 @@ namespace FoxIDs.Controllers
             }
         }
 
-
-
         private LoginRequest GetLoginRequest(LoginUpSequenceData sequenceData)
         {
             return new LoginRequest
@@ -362,7 +360,7 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+            (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
             var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData));
             if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
             {
@@ -375,9 +373,7 @@ namespace FoxIDs.Controllers
             }
 
             return null;
-        }
-
-        private DownPartySessionLink GetDownPartyLink(UpParty upParty, LoginUpSequenceData sequenceData) => upParty.DisableSingleLogout ? null : sequenceData.DownPartyLink;
+        }        
 
         private bool ValidSessionUpAgainstSequence(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
         {
@@ -441,52 +437,7 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var user = await userAccountLogic.ValidateUser(sequenceData.Email, login.Password);
-
-                    if(user.ConfirmAccount && !user.EmailVerified)
-                    {
-                        await accountActionLogic.SendConfirmationEmailAsync(user);
-                    }
-
-                    var session = await sessionLogic.GetSessionAsync(loginUpParty);
-                    if (session != null && user.UserId != session.UserId)
-                    {
-                        logger.ScopeTrace(() => "Authenticated user and session user do not match.");
-                        // TODO invalid user login
-                        throw new NotImplementedException("Authenticated user and session user do not match.");
-                    }
-
-                    if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
-                    {
-                        logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
-                        // TODO invalid user login
-                        throw new NotImplementedException("Authenticated user and requested user do not match.");
-                    }
-
-                    var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
-                    var requereMfa = loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData);
-                    if (requereMfa)
-                    {
-                        sequenceData.Email = user.Email;
-                        sequenceData.EmailVerified = user.EmailVerified;
-                        sequenceData.AuthMethods = authMethods;
-                        if (user.TwoFactorAppSecretExternalName.IsNullOrEmpty())
-                        {
-                            sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
-                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
-                        }
-                        else
-                        {
-                            sequenceData.TwoFactorAppSecretExternalName = user.TwoFactorAppSecretExternalName;
-                            sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.Validate;
-                            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.TwoFactor, includeSequence: true).ToRedirectResult();
-                        }
-                    }
-                    else
-                    {
-                        return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods, session: session);
-                    }
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (ChangePasswordException cpex)
                 {
@@ -712,7 +663,7 @@ namespace FoxIDs.Controllers
                     throw new InvalidOperationException("Create user not enabled.");
                 }
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
                     return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
@@ -760,7 +711,7 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Create user post.");
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
                 {
                     return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
@@ -781,8 +732,7 @@ namespace FoxIDs.Controllers
                     var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
                     if (user != null)
                     {
-                        var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
-                        return await loginPageLogic.LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, authMethods);
+                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                     }
                 }
                 catch (UserExistsException uex)
@@ -845,7 +795,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData));
+                (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
                 _ = ValidSessionUpAgainstSequence(sequenceData, session);
 
                 logger.ScopeTrace(() => "Show change password dialog.");
@@ -903,23 +853,7 @@ namespace FoxIDs.Controllers
                         await accountActionLogic.SendConfirmationEmailAsync(user);
                     }
 
-                    var session = await sessionLogic.GetSessionAsync(loginUpParty);
-                    if (session != null && user.UserId != session.UserId)
-                    {
-                        logger.ScopeTrace(() => "Authenticated user and session user do not match.");
-                        // TODO invalid user login
-                        throw new NotImplementedException("Authenticated user and session user do not match.");
-                    }
-
-                    if (!sequenceData.UserId.IsNullOrEmpty() && user.UserId != sequenceData.UserId)
-                    {
-                        logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
-                        // TODO invalid user login
-                        throw new NotImplementedException("Authenticated user and requested user do not match.");
-                    }
-
-                    var authMethods = new[] { IdentityConstants.AuthenticationMethodReferenceValues.Pwd };
-                    return await loginPageLogic.LoginResponseAsync(loginUpParty, GetDownPartyLink(loginUpParty, sequenceData), user, authMethods, session: session);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
                 }
                 catch (UserObservationPeriodException uoex)
                 {

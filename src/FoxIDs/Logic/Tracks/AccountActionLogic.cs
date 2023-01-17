@@ -39,12 +39,12 @@ namespace FoxIDs.Logic
             this.sendEmailLogic = sendEmailLogic;
         }
 
-        public async Task SendConfirmationEmailAsync(string email)
-        {
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, required: false);
-            await SendConfirmationEmailAsync(user);
-        }
+        //public async Task SendConfirmationEmailAsync(string email)
+        //{
+        //    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+        //    var user = await tenantRepository.GetAsync<User>(id, required: false);
+        //    await SendConfirmationEmailAsync(user);
+        //}
 
         public async Task SendConfirmationEmailAsync(User user)
         {

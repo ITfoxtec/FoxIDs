@@ -12,6 +12,7 @@ namespace FoxIDs.Logic
 {
     public class AccountTwoFactorLogic : LogicSequenceBase
     {
+        private const string failingTwoFactorCounterName = "twofactor";
         private const int secretAndRecoveryCodeLength = 30;
         private const string secretName = "2fa";  
 
@@ -19,13 +20,17 @@ namespace FoxIDs.Logic
         protected readonly ITenantRepository tenantRepository;
         private readonly ExternalSecretLogic externalSecretLogic;
         protected readonly SecretHashLogic secretHashLogic;
+        private readonly AccountLogic accountLogic;
+        private readonly FailingLoginLogic failingLoginLogic;
 
-        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountTwoFactorLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ExternalSecretLogic externalSecretLogic, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.externalSecretLogic = externalSecretLogic;
             this.secretHashLogic = secretHashLogic;
+            this.accountLogic = accountLogic;
+            this.failingLoginLogic = failingLoginLogic;
         }
 
         public async Task<TwoFactorSetupInfo> GenerateSetupCodeAsync(string twoFactorAppName, string email)
@@ -44,11 +49,20 @@ namespace FoxIDs.Logic
         
         public async Task ValidateTwoFactorBySecretAsync(string email, string secret, string appCode)
         {
+            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, failingTwoFactorCounterName);
+
             var twoFactor = new TwoFactorAuthenticator();
             bool isValid = await Task.FromResult(twoFactor.ValidateTwoFactorPIN(secret, appCode, false));
 
-            if (!isValid)
+            if (isValid)
             {
+                await failingLoginLogic.ResetFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                logger.ScopeTrace(() => $"User '{email}' two-factor app code is valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingTwoFactorCount), triggerEvent: true);
+            }
+            else 
+            {
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                logger.ScopeTrace(() => $"Failing two-factor count increased for user '{email}', two-factor app code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidAppCodeException($"Invalid two-factor app code, user '{email}'.");
             }
         }
@@ -73,9 +87,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"Set two-factor app secret user '{email}', Route '{RouteBinding?.Route}'.");
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, required: false);
-
+            var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
             {
                 throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to set two-factor app secret.");
@@ -103,9 +115,9 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"Validating two-factor app recovery code user '{email}', Route '{RouteBinding?.Route}'.");
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id, required: false);
+            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, failingTwoFactorCounterName);
 
+            var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
             {
                 throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to validate two-factor app recovery code.");
@@ -113,16 +125,19 @@ namespace FoxIDs.Logic
 
             if (user.TwoFactorAppRecoveryCode == null)
             {
-                throw new UserNotExistsException($"User '{user.Email}' do not have a two-factor app recovery code, trying to validate two-factor app recovery code.");
+                throw new InvalidOperationException($"User '{user.Email}' do not have a two-factor app recovery code, trying to validate two-factor app recovery code.");
             }
 
             if (await secretHashLogic.ValidateSecretAsync(user.TwoFactorAppRecoveryCode, twoFactorAppRecoveryCode))
             {
-                logger.ScopeTrace(() => $"User '{email}' two-factor app recovery code is valid.", triggerEvent: true);
+                await failingLoginLogic.ResetFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                logger.ScopeTrace(() => $"User '{email}' two-factor app recovery code is valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingTwoFactorCount), triggerEvent: true);
                 return user;
             }
             else
             {
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                logger.ScopeTrace(() => $"Failing two-factor count increased for user '{email}', two-factor app recovery code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidRecoveryCodeException($"Two-factor app recovery code invalid, user '{email}'.");
             }
         }

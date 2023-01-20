@@ -112,6 +112,11 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => pcex.Message);
                     ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Wrong email confirmation code"]);
                 }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
 
                 return viewResponse();
             }
@@ -120,7 +125,6 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Confirming email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-
 
         public async Task<IActionResult> ForgotPassword()
         {

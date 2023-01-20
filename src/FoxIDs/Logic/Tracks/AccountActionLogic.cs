@@ -30,10 +30,11 @@ namespace FoxIDs.Logic
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
         private readonly SecretHashLogic secretHashLogic;
+        private readonly AccountLogic accountLogic;
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SequenceLogic sequenceLogic, IConnectionMultiplexer redisConnectionMultiplexer, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SequenceLogic sequenceLogic, IConnectionMultiplexer redisConnectionMultiplexer, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -42,6 +43,7 @@ namespace FoxIDs.Logic
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
             this.secretHashLogic = secretHashLogic;
+            this.accountLogic = accountLogic;
             this.failingLoginLogic = failingLoginLogic;
             this.sendEmailLogic = sendEmailLogic;
         }
@@ -68,8 +70,11 @@ namespace FoxIDs.Logic
             await secretHashLogic.AddSecretHashAsync(confirmationCodeObj, confirmationCode);
             await redisDb.StringSetAsync(redisKey, confirmationCodeObj.ToJson(), TimeSpan.FromSeconds(settings.EmailConfirmationCodeLifetime));
 
-            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-            var user = await tenantRepository.GetAsync<User>(id);
+            var user = await accountLogic.GetUserAsync(email);
+            if (user == null || user.DisableAccount)
+            {
+                throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to send email confirmation code.");
+            }
 
             var emailSubject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email Confirmation"]}";
             var emailBody = localizer["<p>Your{0}email confirmation code: {1}</p>", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", confirmationCode];
@@ -92,14 +97,18 @@ namespace FoxIDs.Logic
                 {
                     await failingLoginLogic.ResetFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
                     await db.KeyDeleteAsync(key);
-                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-                    var user = await tenantRepository.GetAsync<User>(id);
+
+                    var user = await accountLogic.GetUserAsync(email);
+                    if (user == null || user.DisableAccount)
+                    {
+                        throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to do email confirmation.");
+                    }
                     logger.ScopeTrace(() => $"User email '{user.Email}' confirmed for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
                     return user;
                 }
                 else
                 {
-                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
                     logger.ScopeTrace(() => $"Failing confirmation count increased for user '{email}', confirmation code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
                     throw new InvalidConfirmationCodeException($"Invalid confirmation code, user '{email}'.");
                 }
@@ -118,8 +127,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-                var user = await tenantRepository.GetAsync<User>(id, required: false);
+                var user = await accountLogic.GetUserAsync(email);
                 if (user == null || user.DisableAccount)
                 {
                     throw new ResetPasswordException($"User with email '{email}' is not verified.");
@@ -154,8 +162,7 @@ namespace FoxIDs.Logic
                     var sequenceData = await sequenceLogic.GetSequenceDataAsync<ResetPasswordSequenceData>(remove: false);
                     logger.ScopeTrace(() => $"Verify reset password email '{sequenceData.Email}'.");
 
-                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
-                    var user = await tenantRepository.GetAsync<User>(id, required: false);
+                    var user = await accountLogic.GetUserAsync(sequenceData.Email);
                     if (user == null || user.DisableAccount)
                     {
                         throw new ResetPasswordException($"User with email '{sequenceData.Email}' do not exists or is disabled.");

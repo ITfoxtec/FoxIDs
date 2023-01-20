@@ -13,6 +13,11 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Track.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
+        [Display(Name = "Track display name (e.g. company name or system name)")]
+        public string DisplayName { get; set; }
+
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
         public int SequenceLifetime { get; set; } = 900;
 

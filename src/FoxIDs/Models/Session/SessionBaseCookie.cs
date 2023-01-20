@@ -11,13 +11,13 @@ namespace FoxIDs.Models.Session
         public IEnumerable<string> AuthMethods => Claims?.Where(c => c.Claim == JwtClaimTypes.Amr)?.SelectMany(c => c.Values);
 
         [JsonIgnore]
-        public string SessionId => Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.SessionId);
+        public string SessionId => Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId);
 
         [JsonIgnore]
-        public string UserId => Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.Subject);
+        public string UserId => Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Subject);
 
         [JsonIgnore]
-        public string Email => Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.Email);
+        public string Email => Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Email);
 
         [JsonProperty(PropertyName = "c")]
         public IEnumerable<ClaimAndValues> Claims { get; set; }

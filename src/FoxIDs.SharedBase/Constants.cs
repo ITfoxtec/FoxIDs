@@ -193,6 +193,8 @@ namespace FoxIDs
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
+                public const int DisplayNameLength = 100;
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+]*$";
 
                 public const int KeysMin = 0;
                 public const int KeysMax = 2;
@@ -250,7 +252,7 @@ namespace FoxIDs
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
-                public const int EmailConfirmationCodeLength = 10;
+                public const int EmailConfirmationCodeLength = 8;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
                 public const int TwoFactorAppCodeLength = 50;
             }

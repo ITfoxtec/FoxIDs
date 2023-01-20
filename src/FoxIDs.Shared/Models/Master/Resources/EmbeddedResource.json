@@ -213,23 +213,23 @@
       "id": 53
     },
     {
-      "name": "Please confirm your email address",
+      "name": "Email confirmation",
       "id": 54
     },
     {
-      "name": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>",
+      "name": "<p>Your{0}email confirmation code: {1}</p>",
       "id": 55
     },
     {
-      "name": "Confirmation",
+      "name": "Please enter a confirmation code",
       "id": 56
     },
     {
-      "name": "Your email address and account have been confirmation.",
+      "name": "Please use the new confirmation code just sent to your email",
       "id": 57
     },
     {
-      "name": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before.",
+      "name": "Wrong email confirmation code",
       "id": 58
     },
     {
@@ -309,7 +309,7 @@
       "id": 77
     },
     {
-      "name": "Please verify your email address with the confirmation code sent to your email.",
+      "name": "Send new email confirmation code.",
       "id": 78
     },
     {
@@ -363,6 +363,22 @@
     {
       "name": "You are still logged in!",
       "id": 91
+    },
+    {
+      "name": "Please verify your email address with the confirmation code sent to your email.",
+      "id": 92
+    },
+    {
+      "name": "A confirmation code has just been sent to your email. Please verify your email address with the confirmation code.",
+      "id": 93
+    },
+    {
+      "name": "A new confirmation code has been sent to your email. Please verify your email address with the confirmation code.",
+      "id": 94
+    },
+    {
+      "name": "Confirmation code",
+      "id": 95
     }
   ],
   "resources": [
@@ -1047,11 +1063,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please confirm your email address"
+          "value": "Email confirmation"
         },
         {
           "culture": "da",
-          "value": "Bekræft venligst din e-mailadresse"
+          "value": "E-mail bekræftelse"
         }
       ]
     },
@@ -1060,11 +1076,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>"
+          "value": "<p>Your{0}email confirmation code: {1}</p>"
         },
         {
           "culture": "da",
-          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Bekræft venligst din e-mailadresse</h2><p style='margin-bottom:30px'>Ved at klikke <a href='{0}'>her</a>, bekræfter du din e-mailadresse.</p>"
+          "value": "<p>Din{0}e-mailbekræftelseskode: {1}</p>"
         }
       ]
     },
@@ -1073,11 +1089,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirmation"
+          "value": "Please enter a confirmation code"
         },
         {
           "culture": "da",
-          "value": "Bekræft"
+          "value": "Indtast venligst en bekræftelseskode"
         }
       ]
     },
@@ -1086,11 +1102,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your email address and account have been confirmation."
+          "value": "Please use the new confirmation code just sent to your email"
         },
         {
           "culture": "da",
-          "value": "Din e-mailadresse og konto er blevet bekræftet."
+          "value": "Brug venligst den nye bekræftelseskode, der lige er sendt til din e-mail"
         }
       ]
     },
@@ -1099,11 +1115,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before."
+          "value": "Wrong email confirmation code"
         },
         {
           "culture": "da",
-          "value": "Bekræftelse e-mailadresse og konto blev ikke gennemført. Måske er linket til bekræftelse for gammelt eller, det har været brugt før."
+          "value": "Forkert e-mailbekræftelseskode"
         }
       ]
     },
@@ -1359,11 +1375,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please verify your email address with the confirmation code sent to your email."
+          "value": "Send new email confirmation code"
         },
         {
           "culture": "da",
-          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode, der sendes til din e-mail."
+          "value": "Send ny e-mailbekræftelseskode"
         }
       ]
     },
@@ -1525,6 +1541,58 @@
         {
           "culture": "en",
           "value": "You are still logged in!"
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please verify your email address with the confirmation code sent to your email."
+        },
+        {
+          "culture": "da",
+          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode, der sendes til din e-mail."
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."
+        },
+        {
+          "culture": "da",
+          "value": "En bekræftelseskode er netop blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden."
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."
+        },
+        {
+          "culture": "da",
+          "value": "En ny bekræftelseskode er blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden."
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirmation code"
+        },
+        {
+          "culture": "da",
+          "value": "Bekræftelseskode"
         }
       ]
     }

@@ -2,8 +2,10 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
@@ -20,15 +22,18 @@ namespace FoxIDs.Logic
 {
     public class AccountActionLogic : LogicSequenceBase
     {
+        private const string failingEmailConfirmationCounterName = "emailconfirmation";
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;
         private readonly SequenceLogic sequenceLogic;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
+        private readonly SecretHashLogic secretHashLogic;
+        private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SequenceLogic sequenceLogic, IConnectionMultiplexer redisConnectionMultiplexer, IStringLocalizer localizer, ITenantRepository tenantRepository, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, SequenceLogic sequenceLogic, IConnectionMultiplexer redisConnectionMultiplexer, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -36,95 +41,74 @@ namespace FoxIDs.Logic
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
+            this.secretHashLogic = secretHashLogic;
+            this.failingLoginLogic = failingLoginLogic;
             this.sendEmailLogic = sendEmailLogic;
         }
 
-        //public async Task SendConfirmationEmailAsync(string email)
-        //{
-        //    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
-        //    var user = await tenantRepository.GetAsync<User>(id, required: false);
-        //    await SendConfirmationEmailAsync(user);
-        //}
-
-        public async Task SendConfirmationEmailAsync(User user)
+        public async Task<EmailConfirmationCodeSendStatus> SendEmailConfirmationCodeAsync(string email, bool forceNewCode)
         {
-            logger.ScopeTrace(() => $"Send confirmation email to '{user.Email}' for user id '{user.UserId}'.");
-            if (user == null || user.DisableAccount)
-            {
-                throw new ConfirmationException($"User with email '{user.Email}' do not exists or is disabled.");
-            }
-            if (user.EmailVerified)
-            {
-                logger.ScopeTrace(() => $"User is confirmed, email '{user.Email}' and id '{user.UserId}'.");
-                return;
-            }
-
             var db = redisConnectionMultiplexer.GetDatabase();
-            var key = ConfirmationEmailWaitPeriodRadisKey(user.Email);
-            if (await db.KeyExistsAsync(key))
+            var key = EmailConfirmationCodeRadisKey(email);
+            if (!forceNewCode && await db.KeyExistsAsync(key))
             {
-                logger.ScopeTrace(() => $"User confirmation wait period, email '{user.Email}' and id '{user.UserId}'.");
-                return;
+                return EmailConfirmationCodeSendStatus.UseExistingCode;
             }
             else
             {
-                await db.StringSetAsync(key, true, TimeSpan.FromSeconds(settings.ConfirmationEmailWaitPeriod));
+                await SaveAndSendEmailConfirmationCode(db, key, email);
+                return forceNewCode ? EmailConfirmationCodeSendStatus.ForceNewCode : EmailConfirmationCodeSendStatus.NewCode;
             }
-
-            (var separateSequenceString, var separateSequence) = await sequenceLogic.StartSeparateSequenceAsync(accountAction: true, currentSequence: Sequence, requireeUiUpPartyId: true);
-            await sequenceLogic.SaveSequenceDataAsync(new ConfirmationSequenceData
-            {
-                Email = user.Email
-            }, separateSequence);
-
-            var confirmationUrl = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), $"({RouteBinding.UpParty.Name})/action/confirmation/_{separateSequenceString}");
-            await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)),
-                localizer["Please confirm your email address"], 
-                localizer["<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>", confirmationUrl]);
-
-            logger.ScopeTrace(() => $"Confirmation send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
         }
 
-        public async Task<bool> VerifyConfirmationAsync()
+        private async Task SaveAndSendEmailConfirmationCode(IDatabase redisDb, string redisKey, string email)
         {
-            try
+            var confirmationCode = RandomGenerator.GenerateCode(Constants.Models.User.EmailConfirmationCodeLength);
+            var confirmationCodeObj = new EmailConfirmationCode();
+            await secretHashLogic.AddSecretHashAsync(confirmationCodeObj, confirmationCode);
+            await redisDb.StringSetAsync(redisKey, confirmationCodeObj.ToJson(), TimeSpan.FromSeconds(settings.EmailConfirmationCodeLifetime));
+
+            var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+            var user = await tenantRepository.GetAsync<User>(id);
+
+            var emailSubject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email Confirmation"]}";
+            var emailBody = localizer["<p>Your{0}email confirmation code: {1}</p>", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", confirmationCode];
+            await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)), emailSubject, emailBody, fromName: RouteBinding.DisplayName);
+
+            logger.ScopeTrace(() => $"Confirmation email send to '{user.Email}' for user id '{user.UserId}'.", triggerEvent: true);
+        }
+
+        public async Task<User> VerifyEmailConfirmationCodeAsync(string email, string code)
+        {
+            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
+
+            var db = redisConnectionMultiplexer.GetDatabase();
+            var key = EmailConfirmationCodeRadisKey(email);
+            var confirmationCodeValue = (string)await db.StringGetAsync(key);
+            if (!confirmationCodeValue.IsNullOrEmpty())
             {
-                try
+                var confirmationCode = confirmationCodeValue.ToObject<EmailConfirmationCode>();
+                if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code))
                 {
-                    var sequenceData = await sequenceLogic.GetSequenceDataAsync<ConfirmationSequenceData>(remove: true);
-                    logger.ScopeTrace(() => $"Verify confirmation email '{sequenceData.Email}'.");
-
-                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = sequenceData.Email });
-                    var user = await tenantRepository.GetAsync<User>(id, required: false);
-                    if (user == null || user.DisableAccount)
-                    {
-                        throw new ConfirmationException($"User with email '{sequenceData.Email}' do not exists or is disabled.");
-                    }
-
-                    var db = redisConnectionMultiplexer.GetDatabase();
-                    await db.KeyDeleteAsync(ConfirmationEmailWaitPeriodRadisKey(user.Email));
-
-                    if (!user.EmailVerified)
-                    {
-                        user.EmailVerified = true;
-                        await tenantRepository.SaveAsync(user);
-                        logger.ScopeTrace(() => $"User confirmation with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
-                    }
-                    else
-                    {
-                        logger.ScopeTrace(() => $"User re-confirmation with email '{user.Email}' and id '{user.UserId}'.", triggerEvent: true);
-                    }
-                    return true;
+                    await failingLoginLogic.ResetFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
+                    await db.KeyDeleteAsync(key);
+                    var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
+                    var user = await tenantRepository.GetAsync<User>(id);
+                    logger.ScopeTrace(() => $"User email '{user.Email}' confirmed for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
+                    return user;
                 }
-                catch (SequenceException sexc)
+                else
                 {
-                    throw new ConfirmationException("Unable to read confirmation sequence data. Maybe the link have been used before.", sexc);
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
+                    logger.ScopeTrace(() => $"Failing confirmation count increased for user '{email}', confirmation code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
+                    throw new InvalidConfirmationCodeException($"Invalid confirmation code, user '{email}'.");
                 }
             }
-            catch (ConfirmationException ex)
+            else
             {
-                logger.Error(ex);
-                return false;
+                logger.ScopeTrace(() => $"There is not a email confirmation code to compare with, user '{email}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
+                await SaveAndSendEmailConfirmationCode(db, key, email);
+                throw new EmailConfirmationCodeNotExistsException("Email confirmation code not found."); 
             }
         }
 
@@ -208,18 +192,18 @@ namespace FoxIDs.Logic
 
         private string GetDisplayName(User user)
         {
-            var displayName = user.Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.Name);
+            var displayName = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.Name);
             if (displayName.IsNullOrWhiteSpace())
             {
                 var nameList = new List<string>();
 
-                var givenName = user.Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.GivenName);
+                var givenName = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.GivenName);
                 if (!givenName.IsNullOrWhiteSpace()) nameList.Add(givenName);
 
-                var middleName = user.Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.MiddleName);
+                var middleName = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.MiddleName);
                 if (!middleName.IsNullOrWhiteSpace()) nameList.Add(middleName);
 
-                var familyName = user.Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.FamilyName);
+                var familyName = user.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.FamilyName);
                 if (!familyName.IsNullOrWhiteSpace()) nameList.Add(familyName);
 
                 displayName = string.Join(" ", nameList);
@@ -234,9 +218,9 @@ namespace FoxIDs.Logic
             return WebEncoders.Base64UrlEncode(bytes);
         }
 
-        private string ConfirmationEmailWaitPeriodRadisKey(string email)
+        private string EmailConfirmationCodeRadisKey(string email)
         {
-            return $"confirmation_email_wait_period_{RouteBinding.TenantNameDotTrackName}_{email}";
-        }
+            return $"email_confirmation_code_{RouteBinding.TenantNameDotTrackName}_{email}";
+        }      
     }
 }

@@ -11,8 +11,20 @@
 <div class="row page-container">
     <div class="col-md page-content">
         <form method="post">
+            <input type="hidden" asp-for="CodeSendStatus" autocomplete="off" />
             <div class="info-message">
-                @Localizer["Please verify your email address with the confirmation code sent to your email."]
+                @if (Model.CodeSendStatus == EmailConfirmationCodeSendStatus.NewCode) 
+                {
+                    @Localizer["A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."]
+                }
+                else if (Model.CodeSendStatus == EmailConfirmationCodeSendStatus.ForceNewCode)
+                {
+                    @Localizer["A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."]
+                }
+                else 
+                {
+                    @Localizer["Please verify your email address with the confirmation code sent to your email."]
+                }
             </div>
             <div class="form-group active-group">
                 <input asp-for="ConfirmationCode" class="form-control input-control" autofocus />

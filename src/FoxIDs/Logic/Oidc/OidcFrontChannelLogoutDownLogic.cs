@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
                 Issuer = trackIssuerLogic.GetIssuer(),
-                SessionId = sequenceData.Claims.FindFirstValue(c => c.Claim == JwtClaimTypes.SessionId)
+                SessionId = sequenceData.Claims.FindFirstOrDefaultValue(c => c.Claim == JwtClaimTypes.SessionId)
             };
             var nameValueCollection = frontChannelLogoutRequest.ToDictionary();
 

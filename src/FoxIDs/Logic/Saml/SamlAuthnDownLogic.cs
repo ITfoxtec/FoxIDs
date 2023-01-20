@@ -245,8 +245,8 @@ namespace FoxIDs.Logic
                 var tokenIssueTime = DateTimeOffset.UtcNow;
                 var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(samlClaimsDownLogic.GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
 
-                var authnContext = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationMethod);
-                var authenticationInstant = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationInstant);
+                var authnContext = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.AuthenticationMethod);
+                var authenticationInstant = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.AuthenticationInstant);
                 var authenticationStatement = saml2AuthnResponse.CreateAuthenticationStatement(authnContext, DateTime.Parse(authenticationInstant));
 
                 var subjectConfirmation = saml2AuthnResponse.CreateSubjectConfirmation(tokenIssueTime, party.SubjectConfirmationLifetime);

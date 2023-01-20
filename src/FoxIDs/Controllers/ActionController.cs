@@ -4,6 +4,7 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
@@ -19,50 +20,107 @@ namespace FoxIDs.Controllers
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
         private readonly LoginPageLogic loginPageLogic;
+        private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
             this.loginPageLogic = loginPageLogic;
+            this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
         }
 
 
-
-
-
-        public async Task<IActionResult> Confirmation()
+        public async Task<IActionResult> EmailConfirmation(bool newCode = false)
         {
             try
             {
-                logger.ScopeTrace(() => "Start confirmation verification.");
+                logger.ScopeTrace(() => "Start email confirmation.");
 
-                var verified = await accountActionLogic.VerifyConfirmationAsync();
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
 
-                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
-                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
+                var codeSendStatus = await accountActionLogic.SendEmailConfirmationCodeAsync(sequenceData.Email, newCode);
 
-                return View(new ConfirmationViewModel
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                return View(new EmailConfirmationViewModel
                 {
-                    Title = uiLoginUpParty.Title,
-                    IconUrl = uiLoginUpParty.IconUrl,
-                    Css = uiLoginUpParty.Css,
-                    Verified = verified
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    CodeSendStatus = codeSendStatus
                 });
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Confirmation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Email confirmation failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmailConfirmation(EmailConfirmationViewModel emailConfirmation)
+        {
+            try
+            {
+                logger.ScopeTrace(() => "Confirming email.");
+
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
+
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                Func<IActionResult> viewResponse = () =>
+                {
+                    emailConfirmation.SequenceString = SequenceString;
+                    emailConfirmation.Title = loginUpParty.Title;
+                    emailConfirmation.IconUrl = loginUpParty.IconUrl;
+                    emailConfirmation.Css = loginUpParty.Css;
+                    return View(emailConfirmation);
+                };
+
+                if (!ModelState.IsValid)
+                {
+                    return viewResponse();
+                }
+
+                try
+                {
+                    var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.Email, emailConfirmation.ConfirmationCode);
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaStep);
+                }
+                catch (EmailConfirmationCodeNotExistsException cneex)
+                {
+                    logger.ScopeTrace(() => cneex.Message);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your email"]);
+                }
+                catch (InvalidConfirmationCodeException pcex)
+                {
+                    logger.ScopeTrace(() => pcex.Message);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Wrong email confirmation code"]);
+                }
+
+                return viewResponse();
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Confirming email failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
 
         public async Task<IActionResult> ForgotPassword()
         {

@@ -27,7 +27,7 @@ namespace FoxIDs.Infrastructure.Localization
 
         private LocalizedString GetString(string name, params object[] arguments)
         {
-            var culture = httpContextAccessor.HttpContext.Features.Get<IRequestCultureFeature>()?.RequestCulture?.UICulture ?? new CultureInfo("en");
+            var culture = httpContextAccessor.HttpContext.GetCulture();
 
             var value = localizationLogic.GetValue(name, culture.Name);
 #if DEBUG

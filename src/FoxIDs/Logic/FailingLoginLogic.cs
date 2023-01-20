@@ -19,27 +19,27 @@ namespace FoxIDs.Logic
             this.redisConnectionMultiplexer = redisConnectionMultiplexer;
         }
 
-        public async Task<long> IncreaseFailingLoginCountAsync(string email)
+        public async Task<long> IncreaseFailingLoginCountAsync(string email, string counterName = "login")
         {
-            var key = FailingLoginCountRadisKey(email);
+            var key = FailingLoginCountRadisKey(email, counterName);
             var db = redisConnectionMultiplexer.GetDatabase();
             var loginCount = await db.StringIncrementAsync(key);
             await db.KeyExpireAsync(key, TimeSpan.FromSeconds(RouteBinding.FailingLoginCountLifetime));
             return loginCount;
         }
 
-        public async Task ResetFailingLoginCountAsync(string email)
+        public async Task ResetFailingLoginCountAsync(string email, string counterName = "login")
         {
             var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(FailingLoginCountRadisKey(email));
+            await db.KeyDeleteAsync(FailingLoginCountRadisKey(email, counterName));
         }
 
-        public async Task<long> VerifyFailingLoginCountAsync(string email)
+        public async Task<long> VerifyFailingLoginCountAsync(string email, string counterName = "login")
         {
-            var key = FailingLoginCountRadisKey(email);
+            var key = FailingLoginCountRadisKey(email, counterName);
             var db = redisConnectionMultiplexer.GetDatabase();
 
-            if (await db.KeyExistsAsync(FailingLoginLockedRadisKey(email)))
+            if (await db.KeyExistsAsync(FailingLoginLockedRadisKey(email, counterName)))
             {
                 logger.ScopeTrace(() => $"User '{email}' locked by observation period.", triggerEvent: true);
                 throw new UserObservationPeriodException($"User '{email}' locked by observation period.");
@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             var failingLoginCount = (long?)await db.StringGetAsync(key);
             if (failingLoginCount.HasValue && failingLoginCount.Value >= RouteBinding.MaxFailingLogins)
             {
-                await db.StringSetAsync(FailingLoginLockedRadisKey(email), true, TimeSpan.FromSeconds(RouteBinding.FailingLoginObservationPeriod));
+                await db.StringSetAsync(FailingLoginLockedRadisKey(email, counterName), true, TimeSpan.FromSeconds(RouteBinding.FailingLoginObservationPeriod));
                 await db.KeyDeleteAsync(key);
 
                 logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount.Value), triggerEvent: true);
@@ -61,14 +61,14 @@ namespace FoxIDs.Logic
             failingLoginCount > 0 ? new Dictionary<string, string> { { Constants.Logs.FailingLoginCount, Convert.ToString(failingLoginCount) } } : null;
 
 
-        private string FailingLoginCountRadisKey(string email)
+        private string FailingLoginCountRadisKey(string email, string counterName)
         {
-            return $"failing_login_count_{RouteBinding.TenantNameDotTrackName}_{email}";
+            return $"failing_{counterName}_count_{RouteBinding.TenantNameDotTrackName}_{email}";
         }
 
-        private string FailingLoginLockedRadisKey(string email)
+        private string FailingLoginLockedRadisKey(string email, string counterName)
         {
-            return $"failing_login_locked_{RouteBinding.TenantNameDotTrackName}_{email}";
+            return $"failing_{counterName}_locked_{RouteBinding.TenantNameDotTrackName}_{email}";
         }
     }
 }

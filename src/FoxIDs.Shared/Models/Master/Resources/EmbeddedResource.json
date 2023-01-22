@@ -384,10 +384,6 @@
     {
       "name": "Confirm email",
       "id": 96
-    },
-    {
-      "name": "Send new email confirmation code",
-      "id": 97
     }
   ],
   "resources": [
@@ -1615,15 +1611,6 @@
         {
           "culture": "da",
           "value": "Bekræft e-mail"
-        }
-      ]
-    },
-    {
-      "id": 97,
-      "items": [
-        {
-          "culture": "en",
-          "value": "Send new email confirmation code"
         }
       ]
     }

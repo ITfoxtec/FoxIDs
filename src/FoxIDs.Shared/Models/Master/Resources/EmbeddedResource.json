@@ -1,7 +1,8 @@
 {
   "supported_cultures": [
     "en",
-    "da"
+    "da",
+    "de"
   ],
   "names": [
     {
@@ -221,15 +222,15 @@
       "id": 55
     },
     {
-      "name": "Please enter a confirmation code",
+      "name": "Please enter a confirmation code.",
       "id": 56
     },
     {
-      "name": "Please use the new confirmation code just sent to your email",
+      "name": "Please use the new confirmation code just sent to your email.",
       "id": 57
     },
     {
-      "name": "Wrong email confirmation code",
+      "name": "Invalid confirmation code, please try one more time.",
       "id": 58
     },
     {
@@ -379,6 +380,14 @@
     {
       "name": "Confirmation code",
       "id": 95
+    },
+    {
+      "name": "Confirm email",
+      "id": 96
+    },
+    {
+      "name": "Send new email confirmation code",
+      "id": 97
     }
   ],
   "resources": [
@@ -1089,11 +1098,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter a confirmation code"
+          "value": "Please enter a confirmation code."
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en bekræftelseskode"
+          "value": "Indtast venligst en bekræftelseskode."
         }
       ]
     },
@@ -1102,11 +1111,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use the new confirmation code just sent to your email"
+          "value": "Please use the new confirmation code just sent to your email."
         },
         {
           "culture": "da",
-          "value": "Brug venligst den nye bekræftelseskode, der lige er sendt til din e-mail"
+          "value": "Brug venligst den nye bekræftelseskode, der lige er sendt til din e-mail."
         }
       ]
     },
@@ -1115,11 +1124,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Wrong email confirmation code"
+          "value": "Invalid confirmation code, please try one more time."
         },
         {
           "culture": "da",
-          "value": "Forkert e-mailbekræftelseskode"
+          "value": "Ugyldig bekræftelseskode, prøv venligst igen."
         }
       ]
     },
@@ -1593,6 +1602,28 @@
         {
           "culture": "da",
           "value": "Bekræftelseskode"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirm email"
+        },
+        {
+          "culture": "da",
+          "value": "Bekræft e-mail"
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Send new email confirmation code"
         }
       ]
     }

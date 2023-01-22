@@ -12,7 +12,6 @@ namespace FoxIDs.Logic
 {
     public class AccountTwoFactorLogic : LogicSequenceBase
     {
-        private const string failingTwoFactorCounterName = "twofactor";
         private const int secretAndRecoveryCodeLength = 30;
         private const string secretName = "2fa";  
 
@@ -49,19 +48,19 @@ namespace FoxIDs.Logic
         
         public async Task ValidateTwoFactorBySecretAsync(string email, string secret, string appCode)
         {
-            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, failingTwoFactorCounterName);
+            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var twoFactor = new TwoFactorAuthenticator();
             bool isValid = await Task.FromResult(twoFactor.ValidateTwoFactorPIN(secret, appCode, false));
 
             if (isValid)
             {
-                await failingLoginLogic.ResetFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                await failingLoginLogic.ResetFailingLoginCountAsync(email);
                 logger.ScopeTrace(() => $"User '{email}' two-factor app code is valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingTwoFactorCount), triggerEvent: true);
             }
             else 
             {
-                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
                 logger.ScopeTrace(() => $"Failing two-factor count increased for user '{email}', two-factor app code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidAppCodeException($"Invalid two-factor app code, user '{email}'.");
             }
@@ -115,7 +114,7 @@ namespace FoxIDs.Logic
         {
             logger.ScopeTrace(() => $"Validating two-factor app recovery code user '{email}', Route '{RouteBinding?.Route}'.");
 
-            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, failingTwoFactorCounterName);
+            var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
@@ -130,13 +129,13 @@ namespace FoxIDs.Logic
 
             if (await secretHashLogic.ValidateSecretAsync(user.TwoFactorAppRecoveryCode, twoFactorAppRecoveryCode))
             {
-                await failingLoginLogic.ResetFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                await failingLoginLogic.ResetFailingLoginCountAsync(email);
                 logger.ScopeTrace(() => $"User '{email}' two-factor app recovery code is valid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingTwoFactorCount), triggerEvent: true);
                 return user;
             }
             else
             {
-                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, failingTwoFactorCounterName);
+                var increasedTwoFactorCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
                 logger.ScopeTrace(() => $"Failing two-factor count increased for user '{email}', two-factor app recovery code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedTwoFactorCount), triggerEvent: true);
                 throw new InvalidRecoveryCodeException($"Two-factor app recovery code invalid, user '{email}'.");
             }

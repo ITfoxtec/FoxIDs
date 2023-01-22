@@ -12,8 +12,8 @@ namespace FoxIDs.Models.ViewModels
 
         [Display(Name = "Confirmation code")]
         [Required]
-        [MinLength(Constants.Models.User.EmailConfirmationCodeLength, ErrorMessage = "Please enter a confirmation code")]
-        [MaxLength(Constants.Models.User.EmailConfirmationCodeLength, ErrorMessage = "Please enter a confirmation code")]
+        [MinLength(Constants.Models.User.EmailConfirmationCodeLength, ErrorMessage = "Please enter a confirmation code.")]
+        [MaxLength(Constants.Models.User.EmailConfirmationCodeLength, ErrorMessage = "Please enter a confirmation code.")]
         public string ConfirmationCode { get; set; }
 
         public EmailConfirmationCodeSendStatus CodeSendStatus { get; set; }

@@ -22,7 +22,6 @@ namespace FoxIDs.Logic
 {
     public class AccountActionLogic : LogicSequenceBase
     {
-        private const string failingEmailConfirmationCounterName = "emailconfirmation";
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;
         private readonly SequenceLogic sequenceLogic;
@@ -85,7 +84,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> VerifyEmailConfirmationCodeAsync(string email, string code)
         {
-            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
+            var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var db = redisConnectionMultiplexer.GetDatabase();
             var key = EmailConfirmationCodeRadisKey(email);
@@ -95,7 +94,7 @@ namespace FoxIDs.Logic
                 var confirmationCode = confirmationCodeValue.ToObject<EmailConfirmationCode>();
                 if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code))
                 {
-                    await failingLoginLogic.ResetFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
+                    await failingLoginLogic.ResetFailingLoginCountAsync(email);
                     await db.KeyDeleteAsync(key);
 
                     var user = await accountLogic.GetUserAsync(email);
@@ -108,7 +107,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email, failingEmailConfirmationCounterName);
+                    var increasedfailingConfirmationCount = await failingLoginLogic.IncreaseFailingLoginCountAsync(email);
                     logger.ScopeTrace(() => $"Failing confirmation count increased for user '{email}', confirmation code invalid.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(increasedfailingConfirmationCount), triggerEvent: true);
                     throw new InvalidConfirmationCodeException($"Invalid confirmation code, user '{email}'.");
                 }

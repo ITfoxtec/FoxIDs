@@ -105,12 +105,12 @@ namespace FoxIDs.Controllers
                 catch (EmailConfirmationCodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
-                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your email"]);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your email."]);
                 }
                 catch (InvalidConfirmationCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Wrong email confirmation code"]);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
                 }
                 catch (UserObservationPeriodException uoex)
                 {

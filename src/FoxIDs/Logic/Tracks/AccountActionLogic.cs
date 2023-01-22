@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
 
         private async Task SaveAndSendEmailConfirmationCode(IDatabase redisDb, string redisKey, string email)
         {
-            var confirmationCode = RandomGenerator.GenerateCode(Constants.Models.User.EmailConfirmationCodeLength);
+            var confirmationCode = RandomGenerator.GenerateCode(Constants.Models.User.EmailConfirmationCodeLength).ToUpper();
             var confirmationCodeObj = new EmailConfirmationCode();
             await secretHashLogic.AddSecretHashAsync(confirmationCodeObj, confirmationCode);
             await redisDb.StringSetAsync(redisKey, confirmationCodeObj.ToJson(), TimeSpan.FromSeconds(settings.EmailConfirmationCodeLifetime));
@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
             if (!confirmationCodeValue.IsNullOrEmpty())
             {
                 var confirmationCode = confirmationCodeValue.ToObject<EmailConfirmationCode>();
-                if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code))
+                if (await secretHashLogic.ValidateSecretAsync(confirmationCode, code.ToUpper()))
                 {
                     await failingLoginLogic.ResetFailingLoginCountAsync(email);
                     await db.KeyDeleteAsync(key);
@@ -101,6 +101,11 @@ namespace FoxIDs.Logic
                     if (user == null || user.DisableAccount)
                     {
                         throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to do email confirmation.");
+                    }
+                    if (!user.EmailVerified)
+                    {
+                        user.EmailVerified = true;
+                        await tenantRepository.SaveAsync(user);
                     }
                     logger.ScopeTrace(() => $"User email '{user.Email}' confirmed for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
                     return user;

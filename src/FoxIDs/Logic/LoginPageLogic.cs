@@ -81,6 +81,12 @@ namespace FoxIDs.Logic
             }
             else if (fromStep <= LoginResponseSequenceSteps.FromMfaStep && GetRequereMfa(user, loginUpParty, sequenceData))
             {
+                if (!user.EmailVerified)
+                {
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.ActionController, Constants.Endpoints.EmailConfirmation, includeSequence: true).ToRedirectResult();
+                }
+
                 if (user.TwoFactorAppSecretExternalName.IsNullOrEmpty())
                 {
                     sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;

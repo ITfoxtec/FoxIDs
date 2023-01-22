@@ -306,11 +306,11 @@
       "id": 76
     },
     {
-      "name": "Email confirmation",
+      "name": "Confirm email",
       "id": 77
     },
     {
-      "name": "Send new email confirmation code.",
+      "name": "Send new email confirmation code",
       "id": 78
     },
     {
@@ -380,10 +380,6 @@
     {
       "name": "Confirmation code",
       "id": 95
-    },
-    {
-      "name": "Confirm email",
-      "id": 96
     }
   ],
   "resources": [
@@ -1367,11 +1363,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Email confirmation"
+          "value": "Confirm email"
         },
         {
           "culture": "da",
-          "value": "E-mailbekræftelse"
+          "value": "Bekræft e-mail"
         }
       ]
     },
@@ -1558,7 +1554,7 @@
         },
         {
           "culture": "da",
-          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode, der sendes til din e-mail."
+          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode der er sendt til din e-mail."
         }
       ]
     },
@@ -1598,19 +1594,6 @@
         {
           "culture": "da",
           "value": "Bekræftelseskode"
-        }
-      ]
-    },
-    {
-      "id": 96,
-      "items": [
-        {
-          "culture": "en",
-          "value": "Confirm email"
-        },
-        {
-          "culture": "da",
-          "value": "Bekræft e-mail"
         }
       ]
     }

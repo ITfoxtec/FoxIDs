@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
                 throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to send email confirmation code.");
             }
 
-            var emailSubject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email Confirmation"]}";
+            var emailSubject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email confirmation"]}";
             var emailBody = localizer["<p>Your{0}email confirmation code: {1}</p>", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", confirmationCode];
             await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)), emailSubject, emailBody, fromName: RouteBinding.DisplayName);
 

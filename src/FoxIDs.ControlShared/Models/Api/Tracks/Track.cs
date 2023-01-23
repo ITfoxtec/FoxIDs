@@ -15,7 +15,6 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Track.DisplayNameLength)]
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
-        [Display(Name = "Track display name (e.g. company name or system name)")]
         public string DisplayName { get; set; }
 
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours

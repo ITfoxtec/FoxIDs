@@ -194,7 +194,7 @@ namespace FoxIDs
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
                 public const int DisplayNameLength = 100;
-                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+]*$";
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
 
                 public const int KeysMin = 0;
                 public const int KeysMax = 2;

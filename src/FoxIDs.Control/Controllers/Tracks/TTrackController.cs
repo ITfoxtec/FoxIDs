@@ -105,6 +105,7 @@ namespace FoxIDs.Controllers
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
                 var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
+                mTrack.DisplayName = track.DisplayName;
                 mTrack.SequenceLifetime = track.SequenceLifetime;
                 mTrack.MaxFailingLogins = track.MaxFailingLogins;
                 mTrack.FailingLoginCountLifetime = track.FailingLoginCountLifetime;

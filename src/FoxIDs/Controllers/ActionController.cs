@@ -22,10 +22,9 @@ namespace FoxIDs.Controllers
         private readonly LoginPageLogic loginPageLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
-        private readonly AccountLogic userAccountLogic;
         private readonly AccountActionLogic accountActionLogic;
 
-        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic) : base(logger)
+        public ActionController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountActionLogic accountActionLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -33,10 +32,8 @@ namespace FoxIDs.Controllers
             this.loginPageLogic = loginPageLogic;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
-            this.userAccountLogic = userAccountLogic;
             this.accountActionLogic = accountActionLogic;
         }
-
 
         public async Task<IActionResult> EmailConfirmation(bool newCode = false)
         {
@@ -59,7 +56,8 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
-                    CodeSendStatus = codeSendStatus
+                    ConfirmationCodeSendStatus = codeSendStatus,
+                    Email = sequenceData.Email
                 });
             }
             catch (Exception ex)
@@ -102,15 +100,15 @@ namespace FoxIDs.Controllers
                     var user = await accountActionLogic.VerifyEmailConfirmationCodeAsync(sequenceData.Email, emailConfirmation.ConfirmationCode);
                     return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, fromStep: LoginResponseSequenceSteps.FromMfaStep);
                 }
-                catch (EmailConfirmationCodeNotExistsException cneex)
+                catch (CodeNotExistsException cneex)
                 {
                     logger.ScopeTrace(() => cneex.Message);
                     ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Please use the new confirmation code just sent to your email."]);
                 }
-                catch (InvalidConfirmationCodeException pcex)
+                catch (InvalidCodeException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Invalid confirmation code, please try one more time."]);
+                    ModelState.AddModelError(nameof(emailConfirmation.ConfirmationCode), localizer["Invalid email confirmation code, please try one more time."]);
                 }
                 catch (UserObservationPeriodException uoex)
                 {
@@ -126,95 +124,48 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public async Task<IActionResult> ForgotPassword()
-        {
-            try
-            {
-                logger.ScopeTrace(() => "Start forgot password.");
-
-                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
-                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                if (uiLoginUpParty.DisableResetPassword)
-                {
-                    throw new InvalidOperationException("Reset password not enabled.");
-                }
-
-                return View(new ForgotPasswordViewModel
-                {
-                    SequenceString = SequenceString,
-                    Title = uiLoginUpParty.Title,
-                    IconUrl = uiLoginUpParty.IconUrl,
-                    Css = uiLoginUpParty.Css,
-                    Receipt = false
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Forgot password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel forgotPassword)
-        {
-            try
-            {
-                logger.ScopeTrace(() => "Forgot password receipt.");
-
-                await accountActionLogic.SendResetPasswordEmailAsync(forgotPassword.Email);
-
-                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
-                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                if (uiLoginUpParty.DisableResetPassword)
-                {
-                    throw new InvalidOperationException("Reset password not enabled.");
-                }
-
-                return View(new ForgotPasswordViewModel
-                {
-                    Title = uiLoginUpParty.Title,
-                    IconUrl = uiLoginUpParty.IconUrl,
-                    Css = uiLoginUpParty.Css,
-                    Receipt = true
-                });
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Forgot password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
-        }
-
-        public async Task<IActionResult> ResetPassword()
+        public async Task<IActionResult> ResetPassword(bool newCode = false)
         {
             try
             {
                 logger.ScopeTrace(() => "Start reset password.");
 
-                (var verified, _) = await accountActionLogic.VerifyResetPasswordAsync();
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
 
-                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
-                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                if (uiLoginUpParty.DisableResetPassword)
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                if (loginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
                 }
 
+                var confirmationCodeSendStatus = ConfirmationCodeSendStatus.UseExistingCode;
+                try
+                {
+                    confirmationCodeSendStatus = await accountActionLogic.SendResetPasswordCodeAsync(sequenceData.Email, newCode);
+                }
+                catch (UserNotExistsException uex)
+                {
+                    // log warning if reset password is requested for an unknown email address.
+                    logger.Warning(uex);
+                }
+
                 return View(new ResetPasswordViewModel
                 {
-                    Title = uiLoginUpParty.Title,
-                    IconUrl = uiLoginUpParty.IconUrl,
-                    Css = uiLoginUpParty.Css,
-                    Verified = verified,
-                    Receipt = false
+                    SequenceString = SequenceString,
+                    Title = loginUpParty.Title,
+                    IconUrl = loginUpParty.IconUrl,
+                    Css = loginUpParty.Css,
+                    ConfirmationCodeSendStatus = confirmationCodeSendStatus,
+                    Email = sequenceData.Email
                 });
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Reset password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Password reset failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -226,37 +177,51 @@ namespace FoxIDs.Controllers
             {
                 logger.ScopeTrace(() => "Resetting password.");
 
-                (var verified, var user) = await accountActionLogic.VerifyResetPasswordAsync();
+                var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
+                loginPageLogic.CheckUpParty(sequenceData);
 
-                var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(Sequence.UiUpPartyId);
-                securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                if (uiLoginUpParty.DisableResetPassword)
+                var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
+                securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
+                securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
+
+                if (loginUpParty.DisableResetPassword)
                 {
                     throw new InvalidOperationException("Reset password not enabled.");
                 }
 
-                Func<bool, IActionResult> viewResponse = (receipt) =>
+                Func<IActionResult> viewResponse = () =>
                 {
-                    resetPassword.Title = uiLoginUpParty.Title;
-                    resetPassword.IconUrl = uiLoginUpParty.IconUrl;
-                    resetPassword.Css = uiLoginUpParty.Css;
-                    resetPassword.Verified = verified;
-                    resetPassword.Receipt = receipt;
+                    resetPassword.SequenceString = SequenceString;
+                    resetPassword.Title = loginUpParty.Title;
+                    resetPassword.IconUrl = loginUpParty.IconUrl;
+                    resetPassword.Css = loginUpParty.Css;
                     return View(resetPassword);
                 };
 
                 if (!ModelState.IsValid)
                 {
-                    return viewResponse(false);
+                    return viewResponse();
                 }
 
                 try
                 {
-                    await userAccountLogic.SetPasswordUser(user, resetPassword.NewPassword);
-
-                    await accountActionLogic.RemoveResetPasswordSequenceDataAsync();
-                    return viewResponse(true);
+                    var user = await accountActionLogic.VerifyResetPasswordCodeAndSetPasswordAsync(sequenceData.Email, resetPassword.ConfirmationCode, resetPassword.NewPassword);                    
+                    return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+                }
+                catch (CodeNotExistsException cneex)
+                {
+                    logger.ScopeTrace(() => cneex.Message);
+                    ModelState.AddModelError(nameof(resetPassword.ConfirmationCode), localizer["Please use the new reset password confirmation code just sent to your email."]);
+                }
+                catch (InvalidCodeException pcex)
+                {
+                    logger.ScopeTrace(() => pcex.Message);
+                    ModelState.AddModelError(nameof(resetPassword.ConfirmationCode), localizer["Invalid reset password confirmation code, please try one more time."]);
+                }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                 }
                 catch (PasswordLengthException plex)
                 {
@@ -286,11 +251,11 @@ namespace FoxIDs.Controllers
                     ModelState.AddModelError(nameof(resetPassword.NewPassword), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
-                return viewResponse(false);
+                return viewResponse();
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Resetting password failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Password reset failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

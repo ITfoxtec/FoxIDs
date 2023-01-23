@@ -52,7 +52,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<(string sequenceString, Sequence sequence)> StartSeparateSequenceAsync(bool? accountAction = null, Sequence currentSequence = null, bool requireeUiUpPartyId = false)
+        public async Task<(string sequenceString, Sequence sequence)> StartSeparateSequenceAsync(bool? accountAction = null, Sequence currentSequence = null)
         {
             try
             {
@@ -71,10 +71,6 @@ namespace FoxIDs.Logic
                 if(currentSequence?.UiUpPartyId.IsNullOrEmpty() == false)
                 {
                     sequence.UiUpPartyId = currentSequence.UiUpPartyId;
-                }
-                else if (requireeUiUpPartyId)
-                {
-                    throw new Exception("Required UiUpPartyId is null or empty.");
                 }
 
                 var sequenceString = await CreateSequenceStringAsync(sequence);

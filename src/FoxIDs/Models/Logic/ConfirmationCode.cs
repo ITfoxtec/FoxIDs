@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models
 {
-    public class EmailConfirmationCode: ISecretHash
+    public class ConfirmationCode: ISecretHash
     {
         [Required]
         [MaxLength(Constants.Models.SecretHash.HashAlgorithmLength)]

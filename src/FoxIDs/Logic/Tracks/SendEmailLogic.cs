@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
+using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using SendGrid;
@@ -27,7 +28,7 @@ namespace FoxIDs.Logic
             this.httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task SendEmailAsync(MailAddress toEmail, string subject, string body, string fromName = null)
+        public async Task SendEmailAsync(MailAddress toEmail, EmailContent emailContent, string fromName = null)
         {
             if (toEmail == null) throw new ArgumentNullException(nameof(toEmail));
 
@@ -38,12 +39,12 @@ namespace FoxIDs.Logic
                 if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
-                    await SendEmailWithSendgridAsync(emailSettings, toEmail, subject, GetBodyHtml(body), fromName);
+                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body), fromName);
                 }
                 else if (!emailSettings.SmtpHost.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with SMTP using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
-                    await SendEmailWithSmtpAsync(emailSettings, toEmail, subject, GetBodyHtml(body), fromName);
+                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body), fromName);
                 }
                 else
                 {

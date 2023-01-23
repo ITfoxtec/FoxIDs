@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.ViewModels
 {
-    public enum EmailConfirmationCodeSendStatus
+    public enum ConfirmationCodeSendStatus
     {
         UseExistingCode,
         NewCode,

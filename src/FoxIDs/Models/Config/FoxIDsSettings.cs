@@ -50,10 +50,10 @@ namespace FoxIDs.Models.Config
         public int AccountActionSequenceLifetime { get; set; }
 
         /// <summary>
-        /// Email confirmation code lifetime in seconds.
+        /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]
-        public int EmailConfirmationCodeLifetime { get; set; }
+        public int ConfirmationCodeLifetime { get; set; }
 
         /// <summary>
         /// Up-party update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.

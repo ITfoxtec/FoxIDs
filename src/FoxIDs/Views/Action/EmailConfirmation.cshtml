@@ -11,13 +11,13 @@
 <div class="row page-container">
     <div class="col-md page-content">
         <form method="post">
-            <input type="hidden" asp-for="CodeSendStatus" autocomplete="off" />
+            <input type="hidden" asp-for="ConfirmationCodeSendStatus" autocomplete="off" />
             <div class="info-message">
-                @if (Model.CodeSendStatus == EmailConfirmationCodeSendStatus.NewCode) 
+                @if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.NewCode) 
                 {
                     @Localizer["A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."]
                 }
-                else if (Model.CodeSendStatus == EmailConfirmationCodeSendStatus.ForceNewCode)
+                else if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.ForceNewCode)
                 {
                     @Localizer["A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."]
                 }
@@ -26,6 +26,14 @@
                     @Localizer["Please verify your email address with the confirmation code sent to your email."]
                 }
             </div>
+            <input type="hidden" asp-for="Email" autocomplete="off" />
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group active">
+                <input asp-for="Email" id="showEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
+                <label asp-for="Email" id="showEmail" class="label-control"></label>
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div asp-validation-summary="ModelOnly"></div>
             <div class="form-group active-group">
                 <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />
                 <label asp-for="ConfirmationCode" class="label-control"></label>

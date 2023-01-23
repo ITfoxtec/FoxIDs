@@ -4,6 +4,7 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.ViewModels;
 using FoxIDs.Repository;
@@ -22,11 +23,10 @@ namespace FoxIDs.Controllers
         private readonly LoginPageLogic loginPageLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
-        private readonly AccountLogic userAccountLogic;
-        private readonly AccountActionLogic accountActionLogic;
+        private readonly AccountLogic accountLogic;
         private readonly AccountTwoFactorLogic accountTwoFactorLogic;
 
-        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic userAccountLogic, AccountActionLogic accountActionLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
+        public MfaController(TelemetryScopedLogger logger, IStringLocalizer localizer, ITenantRepository tenantRepository, LoginPageLogic loginPageLogic, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, AccountLogic accountLogic, AccountTwoFactorLogic accountTwoFactorLogic) : base(logger)
         {
             this.logger = logger;
             this.localizer = localizer;
@@ -34,8 +34,7 @@ namespace FoxIDs.Controllers
             this.loginPageLogic = loginPageLogic;
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
-            this.userAccountLogic = userAccountLogic;
-            this.accountActionLogic = accountActionLogic;
+            this.accountLogic = accountLogic;
             this.accountTwoFactorLogic = accountTwoFactorLogic;
         }
 
@@ -53,8 +52,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    await accountActionLogic.SendConfirmationEmailAsync(sequenceData.Email);
-                    return GetEmailNotConfirmedView();
+                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor registration.");
                 }
 
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -79,8 +77,6 @@ namespace FoxIDs.Controllers
                 throw new EndpointException($"Start two factor registration failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
-
-        private IActionResult GetEmailNotConfirmedView() => View("EmailNotConfirmed");
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -135,6 +131,11 @@ namespace FoxIDs.Controllers
                     logger.ScopeTrace(() => acex.Message, triggerEvent: true);
                     ModelState.AddModelError(nameof(RegisterTwoFactorViewModel.AppCode), localizer["Invalid code, please try to register the two-factor app one more time."]);
                 }
+                catch (UserObservationPeriodException uoex)
+                {
+                    logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                    ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                }
 
                 return viewError();               
             }
@@ -167,9 +168,9 @@ namespace FoxIDs.Controllers
 
                 logger.ScopeTrace(() => "Two factor recovery code post.");
 
-                var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
                 var user = await accountTwoFactorLogic.SetTwoFactorAppSecretUser(sequenceData.Email, sequenceData.TwoFactorAppNewSecret, sequenceData.TwoFactorAppSecretExternalName, sequenceData.TwoFactorAppRecoveryCode);
-                return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+                var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
+                return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
             }
             catch (Exception ex)
             {
@@ -191,8 +192,7 @@ namespace FoxIDs.Controllers
                 }
                 if (!sequenceData.EmailVerified)
                 {
-                    await accountActionLogic.SendConfirmationEmailAsync(sequenceData.Email);
-                    return GetEmailNotConfirmedView();
+                    throw new InvalidOperationException($"Users email '{sequenceData.Email}' not verified, required in two factor login.");
                 }
 
                 var loginUpParty = await tenantRepository.GetAsync<LoginUpParty>(sequenceData.UpPartyId);
@@ -258,8 +258,14 @@ namespace FoxIDs.Controllers
                     {
                         logger.ScopeTrace(() => rcex.Message, triggerEvent: true);
                         ModelState.AddModelError(string.Empty, localizer["Invalid recovery code, please try one more time."]);
-                        return viewError();
                     }
+                    catch (UserObservationPeriodException uoex)
+                    {
+                        logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
+                    }
+
+                    return viewError();
                 }
                 else
                 {
@@ -267,14 +273,19 @@ namespace FoxIDs.Controllers
                     {
                         await accountTwoFactorLogic.ValidateTwoFactorByExternalSecretAsync(sequenceData.Email, sequenceData.TwoFactorAppSecretExternalName, registerTwoFactor.AppCode);
 
+                        var user = await accountLogic.GetUserAsync(sequenceData.Email);
                         var authMethods = sequenceData.AuthMethods.ConcatOnce(new[] { IdentityConstants.AuthenticationMethodReferenceValues.Otp, IdentityConstants.AuthenticationMethodReferenceValues.Mfa });
-                        var user = await userAccountLogic.GetUserAsync(sequenceData.Email);
-                        return await loginPageLogic.LoginResponseAsync(loginUpParty, sequenceData.DownPartyLink, user, authMethods);
+                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user, authMethods: authMethods, fromStep: LoginResponseSequenceSteps.FromLoginResponseStep);
                     }
                     catch (InvalidAppCodeException acex)
                     {
                         logger.ScopeTrace(() => acex.Message, triggerEvent: true);
                         ModelState.AddModelError(nameof(TwoFactorViewModel.AppCode), localizer["Invalid code, please try one more time."]);
+                    }
+                    catch (UserObservationPeriodException uoex)
+                    {
+                        logger.ScopeTrace(() => uoex.Message, triggerEvent: true);
+                        ModelState.AddModelError(string.Empty, localizer["Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."]);
                     }
 
                     return viewError();

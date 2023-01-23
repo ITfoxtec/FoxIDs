@@ -31,6 +31,7 @@
                     </div>
                 }
                 <FFieldText @bind-Value="trackSettingsForm.Model.FormattedName" For="@(() => trackSettingsForm.Model.Name)" />
+                <FInputText @bind-Value="trackSettingsForm.Model.DisplayName" For="@(() => trackSettingsForm.Model.DisplayName)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" Focus="true" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.MaxFailingLogins" For="@(() => trackSettingsForm.Model.MaxFailingLogins)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginCountLifetime" For="@(() => trackSettingsForm.Model.FailingLoginCountLifetime)" />

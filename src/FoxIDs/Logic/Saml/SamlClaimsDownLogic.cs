@@ -17,23 +17,23 @@ namespace FoxIDs.Logic
 
         public string GetSessionIndex(IEnumerable<Claim> claims)
         {
-            return claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex); 
+            return claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex); 
         }
 
         public Saml2NameIdentifier GetNameId(IEnumerable<Claim> claims)
         {
-            var nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.NameIdentifier);
+            var nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.NameIdentifier);
             if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Upn);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Upn);
             }
             else if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Email);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Email);
             }
             else if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Name);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Name);
             }
 
             if (nameIdValue.IsNullOrEmpty())
@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
 
         private Uri GetNameIdFormat(IEnumerable<Claim> claims)
         {
-            var nameIdFormat = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.NameIdFormat);
+            var nameIdFormat = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.NameIdFormat);
             if (!nameIdFormat.IsNullOrEmpty())
             {
                 return new Uri(nameIdFormat);

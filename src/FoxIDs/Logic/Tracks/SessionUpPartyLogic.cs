@@ -50,7 +50,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"User id '{session.UserId}' session up-party exists, Enabled '{sessionEnabled}', Valid '{sessionValid}', Session id '{session.SessionId}', Route '{RouteBinding.Route}'.");
                 if (sessionEnabled && sessionValid)
                 {
-                    var userId = sessionClaims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+                    var userId = sessionClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
                     {
                         logger.ScopeTrace(() => "Authenticated user and requested user do not match.");

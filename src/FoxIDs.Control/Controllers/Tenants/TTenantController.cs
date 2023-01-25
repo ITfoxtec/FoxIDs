@@ -125,7 +125,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (Exception delEx)
                 {
-                    logger.Warning(delEx, "Create tenant delete, try to deleate incorrectly created tenant.");
+                    logger.Warning(delEx, "Create tenant delete, try to delete incorrectly created tenant.");
                 }
                 ModelState.TryAddModelError(nameof(tenant.AdministratorPassword), aex.Message);
                 return BadRequest(ModelState, aex);
@@ -138,7 +138,7 @@ namespace FoxIDs.Controllers
                 }
                 catch (Exception delEx)
                 {
-                    logger.Warning(delEx, "Create tenant delete, try to deleate incorrectly created tenant.");
+                    logger.Warning(delEx, "Create tenant delete, try to delete incorrectly created tenant.");
                 }
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {

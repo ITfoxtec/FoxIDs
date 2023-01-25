@@ -135,6 +135,7 @@ namespace FoxIDs.Controllers
         {
             errorViewModel.ErrorTitle = localizer["Initializing certificate in Key Vault"];
             errorViewModel.Error = localizer["The certificate will soon be ready. Please try again in a little while."];
+            errorViewModel.ShowRetry = true;
             return View(errorViewModel);
         }
 

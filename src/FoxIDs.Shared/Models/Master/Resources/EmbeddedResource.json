@@ -380,6 +380,14 @@
     {
       "name": "Confirmation code",
       "id": 95
+    },
+    {
+      "name": "Try again",
+      "id": 96
+    },
+    {
+      "name": "Please try again in a little while.",
+      "id": 97
     }
   ],
   "resources": [
@@ -1594,6 +1602,32 @@
         {
           "culture": "da",
           "value": "Bekræftelseskode"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Try again"
+        },
+        {
+          "culture": "da",
+          "value": "Prøv igen"
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please try again in a little while."
+        },
+        {
+          "culture": "da",
+          "value": "Prøv venligst igen om lidt."
         }
       ]
     }

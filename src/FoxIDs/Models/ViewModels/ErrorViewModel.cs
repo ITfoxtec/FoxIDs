@@ -17,5 +17,7 @@ namespace FoxIDs.Models.ViewModels
 
         public bool ShowErrorTitle => !ErrorTitle.IsNullOrWhiteSpace();
         public bool ShowError => !Error.IsNullOrWhiteSpace();
+
+        public bool ShowRetry { get; set; }
     }
 }

@@ -38,3 +38,13 @@ else
         }
     }
 </p>
+
+@if (Model.ShowError)
+{
+    <div>
+        <p>
+            <strong>@Localizer["Please try again in a little while."]</strong>
+        </p>
+        <button class="btn btn-primary" onClick="document.location.reload(true)">@Localizer["Try again"]</button>
+    </div>
+}

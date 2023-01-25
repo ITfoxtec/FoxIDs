@@ -108,7 +108,7 @@ namespace FoxIDs.Controllers
 
                 await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
-                await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ConfirmAdministratorAccount);
+                await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
@@ -119,11 +119,27 @@ namespace FoxIDs.Controllers
             }
             catch (AccountException aex)
             {
+                try
+                {
+                    await DeleteTenant(tenant.Name);
+                }
+                catch (Exception delEx)
+                {
+                    logger.Warning(delEx, "Create tenant delete, try to deleate incorrectly created tenant.");
+                }
                 ModelState.TryAddModelError(nameof(tenant.AdministratorPassword), aex.Message);
                 return BadRequest(ModelState, aex);
             }
             catch (CosmosDataException ex)
             {
+                try
+                {
+                    await DeleteTenant(tenant.Name);
+                }
+                catch (Exception delEx)
+                {
+                    logger.Warning(delEx, "Create tenant delete, try to deleate incorrectly created tenant.");
+                }
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");

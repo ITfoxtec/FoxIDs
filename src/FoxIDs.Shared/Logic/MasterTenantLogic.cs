@@ -100,10 +100,10 @@ namespace FoxIDs.Logic
             return mLoginUpParty;
         }
 
-        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool confirmAccount)
+        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount)
         {
             var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Role.TenantAdmin) };
-            await accountLogic.CreateUser(email, password, changePassword: true, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: false, confirmAccount: confirmAccount);
+            await accountLogic.CreateUser(email, password, changePassword: changePassword, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, confirmAccount: confirmAccount);
         }
 
         public async Task CreateMasterFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)

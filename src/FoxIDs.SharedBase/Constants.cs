@@ -301,7 +301,7 @@ namespace FoxIDs
             public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;
-                public const int AllowUpPartyNamesMax = 50;
+                public const int AllowUpPartyNamesMax = 200;
             }
 
             public static class OAuthDownParty

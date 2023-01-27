@@ -10,12 +10,14 @@ namespace FoxIDs
     /// </summary>
     public static class HtmActionExtensions
     {
+        private const string title = "FoxIDs";
+
         /// <summary>
         /// Converts a Dictionary&lt;string, string&gt; to a HTML Post ContentResult.
         /// </summary>
         public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url)
         {
-            return items.ToHtmlPostPage(url, title: string.Empty).ToContentResultAsync();
+            return items.ToHtmlPostPage(url, title: title).ToContentResultAsync();
         }
 
         /// <summary>
@@ -23,7 +25,7 @@ namespace FoxIDs
         /// </summary>
         public static ContentResult ToRedirectResult(this string url)
         {
-            return url.HtmRedirectActionPage(title: string.Empty).ToContentResult();
+            return url.HtmRedirectActionPage(title: title).ToContentResult();
         }
 
         /// <summary>
@@ -31,7 +33,7 @@ namespace FoxIDs
         /// </summary>
         public static Task<ContentResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url)
         {
-            return items.ToHtmlGetPage(url, title: string.Empty).ToContentResultAsync();
+            return items.ToHtmlGetPage(url, title: title).ToContentResultAsync();
         }
 
         /// <summary>
@@ -39,7 +41,7 @@ namespace FoxIDs
         /// </summary>
         public static Task<ContentResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url)
         {
-            return items.ToHtmlFragmentPage(url, title: string.Empty).ToContentResultAsync();
+            return items.ToHtmlFragmentPage(url, title: title).ToContentResultAsync();
         }
 
         /// <summary>

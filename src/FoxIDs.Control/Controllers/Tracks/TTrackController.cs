@@ -83,7 +83,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Track).Name}' by name '{track.Name}'.");
-                    return Conflict(typeof(Api.Track).Name, track.Name);
+                    return Conflict(typeof(Api.Track).Name, track.Name, nameof(track.Name));
                 }
                 throw;
             }
@@ -125,7 +125,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Track).Name}' by name '{track.Name}'.");
-                    return NotFound(typeof(Api.Track).Name, track.Name);
+                    return NotFound(typeof(Api.Track).Name, track.Name, nameof(track.Name));
                 }
                 throw;
             }

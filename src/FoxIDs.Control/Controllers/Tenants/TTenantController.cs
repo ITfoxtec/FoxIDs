@@ -132,18 +132,21 @@ namespace FoxIDs.Controllers
             }
             catch (CosmosDataException ex)
             {
-                try
-                {
-                    await DeleteTenant(tenant.Name);
-                }
-                catch (Exception delEx)
-                {
-                    logger.Warning(delEx, "Create tenant delete, try to delete incorrectly created tenant.");
-                }
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
-                    return Conflict(typeof(Api.Tenant).Name, tenant.Name);
+                    return Conflict(typeof(Api.Tenant).Name, tenant.Name, nameof(tenant.Name));
+                }
+                else
+                {
+                    try
+                    {
+                        await DeleteTenant(tenant.Name);
+                    }
+                    catch (Exception delEx)
+                    {
+                        logger.Warning(delEx, "Create tenant delete, try to delete incorrectly created tenant.");
+                    }
                 }
                 throw;
             }
@@ -203,7 +206,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.Tenant).Name}' by name '{tenant.Name}'.");
-                    return NotFound(typeof(Api.Tenant).Name, tenant.Name);
+                    return NotFound(typeof(Api.Tenant).Name, tenant.Name, nameof(tenant.Name));
                 }
                 throw;
             }

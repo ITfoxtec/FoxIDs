@@ -79,7 +79,7 @@ namespace FoxIDs.Controllers
             try
             {
                 var errors = modelState.Values.SelectMany(v => v.Errors.Select(e => $"{e.ErrorMessage}{(e.Exception != null ? $", {e.Exception}" : string.Empty)}"));
-                throw new Exception($"Bad request. {string.Join("; ", errors)}", innerEx);
+                throw new Exception(string.Join("; ", errors), innerEx);
             }
             catch (Exception ex)
             {

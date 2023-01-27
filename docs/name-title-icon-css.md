@@ -1,16 +1,26 @@
-# Title, Icon and CSS
+# Name, browser title, browser icon and CSS
 
-The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different browser title, icon and CSS.
+## Display name
+
+A display name for you organisation, company or system can be configured on each track. When FoxIDs send an email to a user the email text is customized by adding the display name.
+
+The name is configured in the track settings in [FoxIDs Control Client](control.md#foxids-control-client).
+
+1. Select Settings
+2. Add the name in the Track display name field
+3. Click Update
+
+## Add browser title, browser icon and CSS
+
+The FoxIDs user interface can be customized per [up-party login](login). This means that a single FoxIDs track can support multiple user interface designs with different browser titles, browser icons and CSS.
 
 > FoxIDs use Bootstrap 4.6 and Flexbox CSS.
-
-## Add Title, Icon and CSS
 
 Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
 
  1. Select show advanced settings
- 4. Add the bowser title text
- 4. Add the bowser icon URL from an external site, supported image formats: ico, png, gif, jpeg and webp
+ 4. Add the browser title text
+ 4. Add the browser icon URL from an external site, supported image formats: ico, png, gif, jpeg and webp
  2. Add the CSS to the CSS field, if necessary drag the field bigger
  5. Click Update
 

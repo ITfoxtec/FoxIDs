@@ -17,7 +17,7 @@
 - [Development](development.md)
   - [Samples](samples.md)
 - [Customization](customization.md)
-  - [Title, Icon and CSS](title-icon-css.md)
+  - [Name, title, Icon and CSS](name-title-icon-css.md)
   - [Custom domain](custom-domain.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)

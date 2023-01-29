@@ -64,6 +64,7 @@ namespace FoxIDs.Logic
         {
             return string.Format(
 @"<!DOCTYPE html>
+<html>
   <head lang=""{0}"">
     <meta name=""viewport"" content=""width=device-width, initial-scale=1.0""/>
     <meta http-equiv=""Content-Type"" content=""text/html; charset=UTF-8"" />
@@ -89,7 +90,7 @@ namespace FoxIDs.Logic
       }}
     </style>
   </head>
-  <body><div>{1}</div></body>
+  <body>{1}</body>
 </html>", httpContextAccessor.HttpContext.GetCultureParentName(), body);
         }
 

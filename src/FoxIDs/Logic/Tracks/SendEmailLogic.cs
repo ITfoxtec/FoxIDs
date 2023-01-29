@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
@@ -38,12 +39,12 @@ namespace FoxIDs.Logic
 
                 if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
                 {
-                    logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
+                    logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings.");
                     await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body), fromName);
                 }
                 else if (!emailSettings.SmtpHost.IsNullOrWhiteSpace())
                 {
-                    logger.ScopeTrace(() => $"Send email with SMTP using {(RouteBinding.SendEmail == null ? "default" : "track")} settings .");
+                    logger.ScopeTrace(() => $"Send email with SMTP using {(RouteBinding.SendEmail == null ? "default" : "track")} settings.");
                     await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body), fromName);
                 }
                 else
@@ -88,12 +89,14 @@ namespace FoxIDs.Logic
       }}
     </style>
   </head>
-  <body>{1}</body>
+  <body><div>{1}</div></body>
 </html>", httpContextAccessor.HttpContext.GetCultureParentName(), body);
         }
 
         private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body, string fromName)
         {
+            Debug.WriteLine($"HTML: '{body}'");
+
             var mail = new SendGridMessage();
             mail.From = fromName.IsNullOrWhiteSpace() ? new EmailAddress(emailSettings.FromEmail) : new EmailAddress(emailSettings.FromEmail, fromName);
             mail.AddTo(toEmail.Address, toEmail.DisplayName);

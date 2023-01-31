@@ -72,14 +72,14 @@ namespace FoxIDs.Logic
             return samlConfig;
         }
 
-        public async Task<FoxIDsSaml2Configuration> GetSamlDownConfigAsync(SamlDownParty party, bool includeSigningCertificate = false, bool includeSignatureValidationCertificates = true)
+        public async Task<FoxIDsSaml2Configuration> GetSamlDownConfigAsync(SamlDownParty party, bool includeSigningCertificate = false, bool includeSignatureValidationCertificates = true, bool includeEncryptionCertificates = false)
         {
             var samlConfig = new FoxIDsSaml2Configuration();
             samlConfig.Issuer = !string.IsNullOrEmpty(party?.IdPIssuer) ? party.IdPIssuer : trackIssuerLogic.GetIssuer();
 
             if (party != null)
             {
-                if (party.Keys?.Count > 0 && includeSignatureValidationCertificates)
+                if (includeSignatureValidationCertificates && party.Keys?.Count > 0)
                 {
                     var partyCertificates = party.Keys.ToSaml2X509Certificates();
                     foreach (var partyCertificate in partyCertificates)
@@ -93,6 +93,11 @@ namespace FoxIDs.Logic
                             samlConfig.InvalidSignatureValidationCertificates.Add(partyCertificate);
                         }
                     }
+                }
+
+                if (includeEncryptionCertificates && party.EncryptAuthnResponse && party.EncryptionKey != null)
+                {
+                    samlConfig.EncryptionCertificate = party.EncryptionKey.ToSaml2X509Certificate();
                 }
             }
 

@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Logic

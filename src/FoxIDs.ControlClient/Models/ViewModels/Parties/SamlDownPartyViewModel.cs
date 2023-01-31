@@ -5,6 +5,7 @@ using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity.Saml2.Schemas;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
+using Newtonsoft.Json;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -88,7 +89,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) URL")]
-        public List<string> AcsUrls { get; set; } 
+        public List<string> AcsUrls { get; set; }
+
+        [Display(Name = "Encrypt authn response")]
+        public bool EncryptAuthnResponse { get; set; }
 
         [Display(Name = "Logout request binding")]
         public SamlBindingTypes LogoutRequestBinding { get; set; } = SamlBindingTypes.Post;
@@ -108,6 +112,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "Optional one or more signature validation certificates")]
         public List<JwtWithCertificateInfo> Keys { get; set; }
+
+        [Display(Name = "Optional encryption certificate")]
+        public JwtWithCertificateInfo EncryptionKey { get; set; }
 
         [Display(Name = "Sign metadata")]
         public bool SignMetadata { get; set; }

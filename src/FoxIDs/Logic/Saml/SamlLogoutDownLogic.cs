@@ -186,7 +186,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
 
-            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
             return await LogoutResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, status, sessionIndex);
         }
@@ -282,7 +282,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding, IEnumerable<Claim> claims)
         {
-            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true);
 
             claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
 

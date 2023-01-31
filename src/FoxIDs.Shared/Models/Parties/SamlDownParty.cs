@@ -62,6 +62,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "acs_urls")]
         public List<string> AcsUrls { get; set; }
 
+        [JsonProperty(PropertyName = "encrypt_authn_response")]
+        public bool EncryptAuthnResponse { get; set; }
+
         [ValidateComplexType]
         [JsonProperty(PropertyName = "logout_binding")]
         public SamlBinding LogoutBinding { get; set; }
@@ -77,6 +80,9 @@ namespace FoxIDs.Models
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
+
+        [JsonProperty(PropertyName = "encryption_key")]
+        public JsonWebKey EncryptionKey { get; set; }
 
         [JsonProperty(PropertyName = "sign_metadata")]
         public bool SignMetadata { get; set; }

@@ -13,6 +13,7 @@ using System.Net.Mail;
 using System.Net.Mime;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace FoxIDs.Logic
 {
@@ -91,7 +92,7 @@ namespace FoxIDs.Logic
     </style>
   </head>
   <body>{1}</body>
-</html>", httpContextAccessor.HttpContext.GetCultureParentName(), body);
+</html>", httpContextAccessor.HttpContext.GetCultureParentName(), HttpUtility.HtmlEncode(body));
         }
 
         private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body, string fromName)

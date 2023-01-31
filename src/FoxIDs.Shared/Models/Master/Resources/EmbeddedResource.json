@@ -210,7 +210,7 @@
       "id": 52
     },
     {
-      "name": "<p>Your{0}reset password confirmation code: {1}</p>",
+      "name": "Your{0}reset password confirmation code: {1}",
       "id": 53
     },
     {
@@ -218,7 +218,7 @@
       "id": 54
     },
     {
-      "name": "<p>Your{0}email confirmation code: {1}</p>",
+      "name": "Your{0}email confirmation code: {1}",
       "id": 55
     },
     {
@@ -1059,11 +1059,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "<p>Your{0}reset password confirmation code: {1}</p>"
+          "value": "Your{0}reset password confirmation code: {1}"
         },
         {
           "culture": "da",
-          "value": "<p>Din{0}nulstil kodeords bekræftelseskode: {1}</p>"
+          "value": "Din{0}nulstil kodeords bekræftelseskode: {1}"
         }
       ]
     },
@@ -1085,11 +1085,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "<p>Your{0}email confirmation code: {1}</p>"
+          "value": "Your{0}email confirmation code: {1}"
         },
         {
           "culture": "da",
-          "value": "<p>Din{0}e-mailbekræftelseskode: {1}</p>"
+          "value": "Din{0}e-mailbekræftelseskode: {1}"
         }
       ]
     },

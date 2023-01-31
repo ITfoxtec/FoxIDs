@@ -55,13 +55,10 @@ namespace FoxIDs.Logic
 
         private Func<string, EmailContent> GetEmailConfirmationCodeEmailContent()
         {
-            return (code) =>
+            return (code) => new EmailContent
             {
-                return new EmailContent
-                {
-                    Subject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email confirmation"]}",
-                    Body = localizer["<p>Your{0}email confirmation code: {1}</p>", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
-                };
+                Subject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email confirmation"]}",
+                Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
             };
         }
 
@@ -83,7 +80,7 @@ namespace FoxIDs.Logic
             return (code) => new EmailContent
             {
                 Subject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Reset password"]}",
-                Body = localizer["<p>Your{0}reset password confirmation code: {1}</p>", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
+                Body = localizer["Your{0}reset password confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
             };
         }
 

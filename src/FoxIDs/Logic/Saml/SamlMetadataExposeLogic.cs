@@ -131,6 +131,12 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
             };
 
+            if (party?.MetadataIncludeEncryptionCertificates == true)
+            {
+                entityDescriptor.IdPSsoDescriptor.EncryptionCertificates = trackCertificates;
+                entityDescriptor.IdPSsoDescriptor.SetDefaultEncryptionMethods();
+            }
+
             if (party?.MetadataNameIdFormats?.Count > 0)
             {
                 entityDescriptor.IdPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));

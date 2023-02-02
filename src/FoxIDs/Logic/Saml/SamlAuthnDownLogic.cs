@@ -255,6 +255,13 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2AuthnResponse);
+            var actionResult = await GetAuthnResponseActionResult(binding);
+            if (samlConfig.EncryptionCertificate != null)
+            {
+                // Re-bind to log unencrypted XML.
+                saml2AuthnResponse.Config.EncryptionCertificate = null;
+                binding.Bind(saml2AuthnResponse);
+            }
             logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"ACS URL '{acsUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Authn response.", triggerEvent: true);
@@ -268,6 +275,11 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
+            return actionResult;
+        }
+
+        private static async Task<IActionResult> GetAuthnResponseActionResult<T>(Saml2Binding<T> binding)
+        {
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

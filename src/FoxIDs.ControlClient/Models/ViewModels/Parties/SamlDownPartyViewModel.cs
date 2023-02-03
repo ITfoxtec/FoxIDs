@@ -94,6 +94,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Encrypt authn response")]
         public bool EncryptAuthnResponse { get; set; }
 
+        [Display(Name = "Optional NameId format (otherwise set dynamically)")]
+        public string NameIdFormat { get; set; }
+
         [Display(Name = "Logout request binding")]
         public SamlBindingTypes LogoutRequestBinding { get; set; } = SamlBindingTypes.Post;
 
@@ -115,6 +118,9 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Display(Name = "Optional encryption certificate")]
         public JwtWithCertificateInfo EncryptionKey { get; set; }
+        
+        [Display(Name = "Add logout response location URL in metadata")]
+        public bool MetadataAddLogoutResponseLocation { get; set; }
 
         [Display(Name = "Sign metadata")]
         public bool SignMetadata { get; set; }

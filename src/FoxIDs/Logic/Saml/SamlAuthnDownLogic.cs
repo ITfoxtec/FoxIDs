@@ -240,7 +240,7 @@ namespace FoxIDs.Logic
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);
 
-                saml2AuthnResponse.NameId = samlClaimsDownLogic.GetNameId(claims);
+                saml2AuthnResponse.NameId = samlClaimsDownLogic.GetNameId(claims, party.NameIdFormat);
 
                 var tokenIssueTime = DateTimeOffset.UtcNow;
                 var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(samlClaimsDownLogic.GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);

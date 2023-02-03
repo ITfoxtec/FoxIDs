@@ -81,6 +81,8 @@ namespace FoxIDs.Models.Api
 
         public bool EncryptAuthnResponse { get; set; }
 
+        public string NameIdFormat { get; set; }
+
         public SamlBindingTypes? LogoutRequestBinding { get; set; } 
 
         public SamlBindingTypes? LogoutResponseBinding { get; set; } 
@@ -95,6 +97,8 @@ namespace FoxIDs.Models.Api
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
         public JwtWithCertificateInfo EncryptionKey { get; set; }
+
+        public bool MetadataAddLogoutResponseLocation { get; set; }
 
         public bool SignMetadata { get; set; }
 

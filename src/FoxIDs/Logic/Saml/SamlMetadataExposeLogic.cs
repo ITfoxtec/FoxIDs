@@ -15,6 +15,7 @@ using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System.Linq;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FoxIDs.Logic
 {
@@ -128,7 +129,7 @@ namespace FoxIDs.Logic
             };
             entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination, ResponseLocation = party.MetadataAddLogoutResponseLocation ? logoutDestination : null },
             };
 
             if (party?.MetadataIncludeEncryptionCertificates == true)

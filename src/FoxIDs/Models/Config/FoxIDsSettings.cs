@@ -38,12 +38,6 @@ namespace FoxIDs.Models.Config
         public int SamlTokenAddNotBeforeTime { get; set; }
 
         /// <summary>
-        /// Exposed SAML 2.0 metadata lifetime.
-        /// </summary>
-        [Required]
-        public int SamlMetadataLifetime { get; set; }
-
-        /// <summary>
         /// Account action sequence lifetime in seconds.
         /// </summary>
         [Required]

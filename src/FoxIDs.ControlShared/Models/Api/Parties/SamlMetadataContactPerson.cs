@@ -22,6 +22,7 @@ namespace FoxIDs.Models.Api
         /// Optional string element that specifies the name of the company for the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "Company")]
         public string Company { get; set; }
 
         /// <summary>
@@ -29,6 +30,7 @@ namespace FoxIDs.Models.Api
         /// Optional string element that specifies the given (first) name of the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "Given name")]
         public string GivenName { get; set; }
 
         /// <summary>
@@ -36,6 +38,7 @@ namespace FoxIDs.Models.Api
         /// Optional string element that specifies the surname of the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "Surname")]
         public string Surname { get; set; }
 
         /// <summary>
@@ -44,6 +47,7 @@ namespace FoxIDs.Models.Api
         /// contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "Email address")]
         public string EmailAddress { get; set; }
 
         /// <summary>
@@ -51,6 +55,7 @@ namespace FoxIDs.Models.Api
         /// Optional string element specifying a telephone number of the contact person.
         /// </summary>
         [MaxLength(Constants.Models.Claim.ValueLength)]
+        [Display(Name = "Telephone number")]
         public string TelephoneNumber { get; set; }
     }
 }

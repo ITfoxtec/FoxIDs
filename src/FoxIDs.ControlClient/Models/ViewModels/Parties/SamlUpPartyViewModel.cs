@@ -155,6 +155,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Optional Authn context class references")]
         public List<string> AuthnContextClassReferences { get; set; } = new List<string>();
 
+        [Display(Name = "Add logout response location URL in metadata")]
+        public bool MetadataAddLogoutResponseLocation { get; set; }
+
         [Display(Name = "Sign metadata")]
         public bool SignMetadata { get; set; }
 

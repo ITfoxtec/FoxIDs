@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
             };
             entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination },
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination, ResponseLocation = party?.MetadataAddLogoutResponseLocation == true ? singleLogoutDestination : null },
             };
 
             if (party?.MetadataIncludeEncryptionCertificates == true)
@@ -121,7 +121,6 @@ namespace FoxIDs.Logic
             entityDescriptor.IdPSsoDescriptor = new IdPSsoDescriptor
             {
                 SigningCertificates = trackCertificates,
-                //EncryptionCertificates = trackCertificates,
                 SingleSignOnServices = new SingleSignOnService[]
                 {
                     new SingleSignOnService { Binding = ToSamleBindingUri(party?.AuthnBinding?.RequestBinding), Location = authnDestination },
@@ -129,7 +128,7 @@ namespace FoxIDs.Logic
             };
             entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination, ResponseLocation = party.MetadataAddLogoutResponseLocation ? logoutDestination : null },
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination, ResponseLocation = party?.MetadataAddLogoutResponseLocation == true ? logoutDestination : null },
             };
 
             if (party?.MetadataIncludeEncryptionCertificates == true)

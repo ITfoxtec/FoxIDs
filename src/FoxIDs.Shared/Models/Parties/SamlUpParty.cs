@@ -99,6 +99,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_context_class_refs")]
         public List<string> AuthnContextClassReferences { get; set; }
 
+        [JsonProperty(PropertyName = "metadata_add_logout_response_location")]
+        public bool MetadataAddLogoutResponseLocation { get; set; }
+
         [JsonProperty(PropertyName = "sign_metadata")]
         public bool SignMetadata { get; set; }
 

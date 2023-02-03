@@ -117,6 +117,8 @@ namespace FoxIDs.Models.Api
 
         public List<string> AuthnContextClassReferences { get; set; }
 
+        public bool MetadataAddLogoutResponseLocation { get; set; }
+
         public bool SignMetadata { get; set; }
 
         public bool MetadataIncludeEncryptionCertificates { get; set; }

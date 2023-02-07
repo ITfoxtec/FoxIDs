@@ -258,7 +258,7 @@ h4 {
     text-align: left;
 }
 
-.list-group-stripes > .list-group-item:nth-child(odd) {
+.list-group-stripes > .list-group-item:nth-child(even) {
     background-color: #f8f9fa;
 }
 

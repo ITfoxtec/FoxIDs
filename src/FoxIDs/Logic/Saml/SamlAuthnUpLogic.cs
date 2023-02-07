@@ -278,11 +278,19 @@ namespace FoxIDs.Logic
             }
             catch (SamlRequestException ex)
             {
+                if (sequenceData == null)
+                {
+                    throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.", ex);
+                }
                 logger.Error(ex);
                 return await AuthnResponseDownAsync(sequenceData, ex.Status);
             }
             catch (Exception ex)
             {
+                if (sequenceData == null)
+                {
+                    throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.", ex);
+                }
                 logger.Error(ex);
                 return await AuthnResponseDownAsync(sequenceData, Saml2StatusCodes.Responder);
             }
@@ -362,11 +370,6 @@ namespace FoxIDs.Logic
                 if (status == Saml2StatusCodes.Success)
                 {
                     planUsageLogic.LogLoginEvent();
-                }
-
-                if (sequenceData == null)
-                {
-                    throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.");
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

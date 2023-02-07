@@ -13,6 +13,7 @@ How to guides:
 - Connect [AD FS](up-party-howto-saml-2.0-adfs.md)
 - Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
 - Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#up-party---connect-to-context-handler)
 
 ## Down-party
 
@@ -21,6 +22,7 @@ Configure your application as a [down-party SAML 2.0](down-party-saml-2.0.md).
 How to guides:
 
 - Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#down-party---connect-to-context-handler)
 
 ## Claim mappings
 Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md).

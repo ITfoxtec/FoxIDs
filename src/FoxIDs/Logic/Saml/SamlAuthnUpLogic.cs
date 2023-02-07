@@ -195,10 +195,18 @@ namespace FoxIDs.Logic
                 }
             }
 
-            if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
+            SamlUpSequenceData sequenceData = null;
+            try
+            {
+                if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
 
-            await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+                await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Invalid RelayState '{binding.RelayState}' returned from the IdP.");
+            }
 
             try
             {
@@ -354,6 +362,11 @@ namespace FoxIDs.Logic
                 if (status == Saml2StatusCodes.Success)
                 {
                     planUsageLogic.LogLoginEvent();
+                }
+
+                if (sequenceData == null)
+                {
+                    throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.");
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

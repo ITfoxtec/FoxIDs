@@ -85,3 +85,39 @@ Is translated into one claims with JSON values:
         "c": [ { "urn:dk:kombit:KLE": "25.*" }, { "urn:dk:kombit:sensitivity": "3" } ]
         "p": [ "urn:dk:kombit:system_xyz:view_case" ]
     }
+
+## Using JSON privilege claim
+The [down-party](parties.md#down-party) application receive the privilege claim with the privilege serialized as a JSON string.  
+The following example show how to deserialize the JSON claim to an object in ASP.NET Core using `Newtonsoft.Json`.
+
+Create privilege group class
+
+    public class DkPrivilegeGroup
+    {
+        [JsonProperty(PropertyName = "cvr")]
+        public string CvrNumber { get; set; }
+
+        [JsonProperty(PropertyName = "P")]
+        public string ProductionUnit { get; set; }
+
+        [JsonProperty(PropertyName = "se")]
+        public string SeNumber { get; set; }
+
+        [JsonProperty(PropertyName = "cpr")]
+        public string CprNumber { get; set; }
+
+        [JsonProperty(PropertyName = "c")]
+        public Dictionary<string, string> Constraint { get; set; }
+
+        [JsonProperty(PropertyName = "p")]
+        public List<string> Privilege { get; set; }
+    }
+
+and deserialize the claim in e.g., a controller
+
+    var privileges = User.Claims.Where(c => c.Type == "privilege")
+        .Select(c => JsonConvert.DeserializeObject<DkPrivilegeGroup>(c.Value)).ToList();
+    foreach(var privilege in privileges)
+    {
+        // TODO handle access based on the privilege
+    }

@@ -87,7 +87,7 @@ Is translated into one claims with JSON values:
     }
 
 ## Using JSON privilege claim
-The [down-party](parties.md#down-party) application receive the privilege claim with the privilege serialized as a JSON string.  
+The [down-party](parties.md#down-party) application receives the privilege claim with the privilege serialized as a JSON string.  
 The following example show how to deserialize the JSON claim to an object in ASP.NET Core using `Newtonsoft.Json`.
 
 Create privilege group class

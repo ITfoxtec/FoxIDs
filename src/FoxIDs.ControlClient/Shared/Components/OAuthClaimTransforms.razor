@@ -36,6 +36,11 @@
                             case ClaimTransformTypes.Concatenate:
                                 <div class="p-0 alert alert-light font-weight-bold small" role="alert">Concatenate</div>
                                 break;
+                            
+                            case ClaimTransformTypes.DkPrivilege:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">DK privilege</div>
+                                break;
+
                             default:
                                 throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
                         }
@@ -176,6 +181,12 @@
                                     </div>
                                     <FInputText @bind-Value="claimTransform.Transformation" For="@(() => claimTransform.Transformation)" LabelText="Concatenate format string" />
                                     break;
+
+                                case ClaimTransformTypes.DkPrivilege:
+                                    <div class="p-0 alert alert-light font-italic small" role="alert"><a target="_blank" href="https://www.foxids.com/docs/claim-transform-dk-privilege">Transform DK privilege base64-decoded XML</a> claim into a list of new claims, one claim for each PrivilegeGroup XML element. The PrivilegeGroup XML element is transformed into a JSON object and serialized as a string.</div>
+                                    <FInputText @bind-Value="claimTransformClaimIn.ClaimIn" For="@(() => claimTransformClaimIn.ClaimIn)" />
+                                    break;
+
                                 default:
                                     throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
                             }
@@ -220,6 +231,7 @@
             <h6 class="dropdown-header">Actions: Add/Replace</h6>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Constant))">Constant</button>
             <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.Concatenate))">Concatenate</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddClaimTransform(ClaimTransformTypes.DkPrivilege))">DK XML privilege to JSON</button>
         </div>
     </div>
 </div>
@@ -238,26 +250,36 @@
             case ClaimTransformTypes.Map:
             case ClaimTransformTypes.RegexMap:
                 Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
-                {
-                    ShowDetails = true,
-                    Type = claimTransformType
-                });
+                    {
+                        ShowDetails = true,
+                        Type = claimTransformType
+                    });
                 break;
             case ClaimTransformTypes.Constant:
                 Model.ClaimTransforms.Add(new OAuthClaimTransformViewModel
-                {
-                    ShowDetails = true,
-                    Type = claimTransformType
-                });
+                    {
+                        ShowDetails = true,
+                        Type = claimTransformType
+                    });
                 break;
             case ClaimTransformTypes.Concatenate:
                 Model.ClaimTransforms.Add(new OAuthClaimTransformViewModel
-                {
-                    ClaimsIn = new List<string> { string.Empty },
-                    ShowDetails = true,
-                    Type = claimTransformType
-                });
+                    {
+                        ClaimsIn = new List<string> { string.Empty },
+                        ShowDetails = true,
+                        Type = claimTransformType
+                    });
                 break;
+            case ClaimTransformTypes.DkPrivilege:
+                Model.ClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
+                    {
+                        ClaimIn = "privileges_intermediate",
+                        ClaimOut = "privilege",
+                        ShowDetails = true,
+                        Type = claimTransformType
+                    });
+                break;
+
             default:
                 throw new NotSupportedException("claim transform type not supported.");
         }

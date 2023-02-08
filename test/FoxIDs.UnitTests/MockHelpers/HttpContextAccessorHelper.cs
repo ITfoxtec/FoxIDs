@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using System;
 using System.Collections.Generic;
 
 namespace FoxIDs.UnitTests.MockHelpers
@@ -36,6 +37,9 @@ namespace FoxIDs.UnitTests.MockHelpers
             var mockResponseCookies = new Mock<IResponseCookies>();
             mockHttpResponse.Setup(r => r.Cookies).Returns(mockResponseCookies.Object);
             mockResponseCookies.Setup(rc => rc.Append(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CookieOptions>())).Callback((string key, string value, CookieOptions options) => cookies[key] = value);
+
+            var mockIServiceProvider = new Mock<IServiceProvider>();
+            mockHttpContext.Setup(c => c.RequestServices).Returns(mockIServiceProvider.Object);
 
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             mockHttpContextAccessor.Setup(ca => ca.HttpContext).Returns(mockHttpContext.Object);

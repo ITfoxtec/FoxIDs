@@ -56,6 +56,7 @@ namespace FoxIDs.Models.Api
                         break;
 
                     case ClaimTransformTypes.Map:
+                    case ClaimTransformTypes.DkPrivilege:
                         ValidateMapClaimAddReplace(results);
                         break;
 

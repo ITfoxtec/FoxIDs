@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -189,8 +190,8 @@ namespace FoxIDs.UnitTests
 
         [Theory]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Anders", "Test name", 1, 1)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 1, 1)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "anders", "some name", 1, 2)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 0, 0)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "Anders", "some name", 1, 2)]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Peter", "Test name", 0, 0)]
         [InlineData(new[] { "do-not-exist" }, JwtClaimTypes.Name, "Anders", "Test name", 0, 0)]
         public async Task TransformMatch_AddClaim(string[] claimIn, string claimOut, string transformation, string transformationExtension, int withValueCount, int count)
@@ -212,8 +213,9 @@ namespace FoxIDs.UnitTests
 
         [Theory]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Anders", "Test name", 1, 1)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 1, 1)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "anders", "some name", 1, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 0, 0)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "Anders", "some name", 1, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "anders", "some name", 0, 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Peter", "Test name", 0, 0)]
         [InlineData(new[] { "do-not-exist" }, JwtClaimTypes.Name, "Anders", "Test name", 0, 0)]
         public async Task TransformMatch_ReplaceClaim(string[] claimIn, string claimOut, string transformation, string transformationExtension, int withValueCount, int count)
@@ -236,8 +238,8 @@ namespace FoxIDs.UnitTests
 
         [Theory]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Anders", "Test name", 0, 0)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 0, 0)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "anders", "some name", 0, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 1, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "Anders", "some name", 0, 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Peter", "Test name", 1, 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "Peter", "Test name", 1, 2)]
         [InlineData(new[] { "do-not-exist" }, JwtClaimTypes.Name, "Anders", "Test name", 1, 1)]
@@ -261,8 +263,9 @@ namespace FoxIDs.UnitTests
 
         [Theory]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Anders", "Test name", 0, 0)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 0, 0)]
-        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "anders", "some name", 0, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "anders", "Test name", 1, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "Anders", "some name", 0, 1)]
+        [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "anders", "some name", 1, 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.Name, "Peter", "Test name", 1, 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName }, JwtClaimTypes.GivenName, "Peter", "Test name", 1, 1)]
         [InlineData(new[] { "do-not-exist" }, JwtClaimTypes.Name, "Anders", "Test name", 1, 1)]
@@ -287,7 +290,7 @@ namespace FoxIDs.UnitTests
         [Theory]
         [InlineData(JwtClaimTypes.Name, "Anders", 0)]
         [InlineData(JwtClaimTypes.GivenName, "Anders", 0)]
-        [InlineData(JwtClaimTypes.GivenName, "anders", 0)]
+        [InlineData(JwtClaimTypes.GivenName, "anders", 1)]
         [InlineData(JwtClaimTypes.GivenName, "Peter", 1)]
         [InlineData("do-not-exist", "Anders", 0)]
         public async Task TransformMatch_RemoveClaim(string claimOut, string transformation, int count)
@@ -698,12 +701,112 @@ namespace FoxIDs.UnitTests
             await Assert.ThrowsAsync<NotSupportedException>(async () => await claimTransformation.ValidateObjectAsync());
         }
 
+        [Theory]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate" }, "http://schemas.foxids.com/identity/claims/privilege", true, 2, false, true)]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate2" }, "http://schemas.foxids.com/identity/claims/privilege", false, 0, false, true)]
+        [InlineData(new[] { "privileges_intermediate" }, "privilege", true, 2, false, false)]
+        [InlineData(new[] { "privileges_intermediate2" }, "privilege", false, 0, false, false)]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate" }, "http://schemas.foxids.com/identity/claims/privilege", true, 1, true, true)]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate2" }, "http://schemas.foxids.com/identity/claims/privilege", false, 0, true, true)]
+        [InlineData(new[] { "privileges_intermediate" }, "privilege", true, 1, true, false)]
+        [InlineData(new[] { "privileges_intermediate2" }, "privilege", false, 0, true, false)]
+        public async Task TransformDkPrivilegeSaml_AddClaim(string[] claimIn, string claimOut, bool hasResult, int count, bool withConstraints, bool isSaml)
+        {
+            var claims = GetDkPrivilegeTestClaims(false, withConstraints, isSaml);
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
+            {
+                Type = ClaimTransformTypes.DkPrivilege,
+                ClaimsIn = claimIn.ToList(),
+                ClaimOut = claimOut
+            } };
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            if (hasResult)
+            {
+                var results = GetDkPrivilegeTestJson(withConstraints);
+                foreach(var result in results)
+                {
+                    Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == result).Count() == 1);
+                }
+            }
+            Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
+        }
+
+        [Theory]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate" }, "http://schemas.foxids.com/identity/claims/privilege", true, 2, false, true)]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate2" }, "http://schemas.foxids.com/identity/claims/privilege", false, 1, false, true)]
+        [InlineData(new[] { "privileges_intermediate" }, "privilege", true, 2, false, false)]
+        [InlineData(new[] { "privileges_intermediate2" }, "privilege", false, 1, false, false)]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate" }, "http://schemas.foxids.com/identity/claims/privilege", true, 1, true, true)]
+        [InlineData(new[] { "https://data.gov.dk/model/core/eid/privilegesIntermediate2" }, "http://schemas.foxids.com/identity/claims/privilege", false, 1, true, true)]
+        [InlineData(new[] { "privileges_intermediate" }, "privilege", true, 1, true, false)]
+        [InlineData(new[] { "privileges_intermediate2" }, "privilege", false, 1, true, false)]
+        public async Task TransformDkPrivilegeSaml_ReplaceClaim(string[] claimIn, string claimOut, bool hasResult, int count, bool withConstraints, bool isSaml)
+        {
+            var claims = GetDkPrivilegeTestClaims(true, withConstraints, isSaml);
+            var claimTransformations = new List<ClaimTransform> { new OAuthClaimTransform
+            {
+                Type = ClaimTransformTypes.DkPrivilege,
+                 Action = ClaimTransformActions.Replace,
+                ClaimsIn = claimIn.ToList(),
+                ClaimOut = claimOut
+            } };
+            var claimTransformLogic = ClaimTransformLogicInstance();
+            var claimsResult = await claimTransformLogic.Transform(claimTransformations, claims);
+            if (hasResult)
+            {
+                var results = GetDkPrivilegeTestJson(withConstraints);
+                foreach (var result in results)
+                {
+                    Assert.True(claimsResult.Where(c => c.Type == claimOut && c.Value == result).Count() == 1);
+                }
+            }
+            Assert.True(claimsResult.Where(c => c.Type == claimOut).Count() == count);
+        }
+
         private IEnumerable<Claim> GetTestClaims()
         {
             yield return new Claim(JwtClaimTypes.Subject, "up-party-name|12345");
             yield return new Claim(JwtClaimTypes.GivenName, "Anders");
             yield return new Claim(JwtClaimTypes.FamilyName, "Andersen");
             yield return new Claim(JwtClaimTypes.Email, "andersen@abc.com");
+        }
+
+        private IEnumerable<Claim> GetDkPrivilegeTestClaims(bool withJsonReult, bool withConstraints, bool isSaml)
+        {
+            foreach (var claim in GetTestClaims())
+            {
+                yield return claim;
+            }
+            if(!withConstraints)
+            {
+                // model 2
+                yield return new Claim(isSaml ? "https://data.gov.dk/model/core/eid/privilegesIntermediate" : "privileges_intermediate", "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGJwcDpQcml2aWxlZ2VMaXN0IHhtbG5zOmJwcD0iaHR0cDovL2RpZ3N0LmRrL29pb3NhbWwvYmFzaWNfcHJpdmlsZWdlX3Byb2ZpbGUiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiID4KPFByaXZpbGVnZUdyb3VwIFNjb3BlPSJ1cm46ZGs6Z292OnNhbWw6Y3ZyTnVtYmVySWRlbnRpZmllcjoxMjM0NTY3OCI+CjxQcml2aWxlZ2U+dXJuOmRrOnNvbWVfZG9tYWluOm15UHJpdmlsZWdlMUE8L1ByaXZpbGVnZT4KPFByaXZpbGVnZT51cm46ZGs6c29tZV9kb21haW46bXlQcml2aWxlZ2UxQjwvUHJpdmlsZWdlPgo8L1ByaXZpbGVnZUdyb3VwPgo8UHJpdmlsZWdlR3JvdXAgU2NvcGU9InVybjpkazpnb3Y6c2FtbDpzZU51bWJlcklkZW50aWZpZXI6MjczODQyMjMiPgo8UHJpdmlsZWdlPnVybjpkazpzb21lX2RvbWFpbjpteVByaXZpbGVnZTFDPC9Qcml2aWxlZ2U+CjxQcml2aWxlZ2U+dXJuOmRrOnNvbWVfZG9tYWluOm15UHJpdmlsZWdlMUQ8L1ByaXZpbGVnZT4KPC9Qcml2aWxlZ2VHcm91cD4KPC9icHA6UHJpdmlsZWdlTGlzdD4=");
+            }
+            else
+            {
+                // model 3
+                yield return new Claim(isSaml ? "https://data.gov.dk/model/core/eid/privilegesIntermediate" : "privileges_intermediate", "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPGJwcDpQcml2aWxlZ2VMaXN0IHhtbG5zOmJwcD0iaHR0cDovL2RpZ3N0LmRrL29pb3NhbWwvYmFzaWNfcHJpdmlsZWdlX3Byb2ZpbGUiIHhtbG5zOnhzaT0iaHR0cDovL3d3dy53My5vcmcvMjAwMS9YTUxTY2hlbWEtaW5zdGFuY2UiID4KPFByaXZpbGVnZUdyb3VwIFNjb3BlPSJ1cm46ZGs6Z292OnNhbWw6Y3ZyTnVtYmVySWRlbnRpZmllcjoxMjM0NTY3OCI+CjxDb25zdHJhaW50IE5hbWU9InVybjpkazprb21iaXQ6S0xFIj4yNS4qPC9Db25zdHJhaW50Pgo8Q29uc3RyYWludCBOYW1lPSJ1cm46ZGs6a29tYml0OnNlbnNpdGl2aXR5Ij4zPC9Db25zdHJhaW50Pgo8UHJpdmlsZWdlPnVybjpkazprb21iaXQ6c3lzdGVtX3h5ejp2aWV3X2Nhc2U8L1ByaXZpbGVnZT4KPC9Qcml2aWxlZ2VHcm91cD4KPC9icHA6UHJpdmlsZWdlTGlzdD4=");
+            }
+            if (withJsonReult)
+            {
+                yield return new Claim(isSaml ? "http://schemas.foxids.com/identity/claims/privilege" : "privilege", "{\"cvr\":\"12345678\",\"p\":[\"urn:dk:some_domain:myPrivilege1A\",\"urn:dk:some_domain:myPrivilege1B\"]}");
+            }
+        }
+
+        private IEnumerable<string> GetDkPrivilegeTestJson(bool withConstraints)
+        {
+            if (!withConstraints)
+            {
+                // model 2
+                yield return "{\"cvr\":\"12345678\",\"p\":[\"urn:dk:some_domain:myPrivilege1A\",\"urn:dk:some_domain:myPrivilege1B\"]}";
+                yield return "{\"se\":\"27384223\",\"p\":[\"urn:dk:some_domain:myPrivilege1C\",\"urn:dk:some_domain:myPrivilege1D\"]}";
+            }
+            else
+            {
+                // model 3
+                yield return "{\"cvr\":\"12345678\",\"c\":{\"urn:dk:kombit:KLE\":\"25.*\",\"urn:dk:kombit:sensitivity\":\"3\"},\"p\":[\"urn:dk:kombit:system_xyz:view_case\"]}";
+            }
         }
 
         private ClaimTransformLogic ClaimTransformLogicInstance()

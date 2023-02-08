@@ -8,6 +8,7 @@
         RegexMatch = 25,
         Map = 30,
         RegexMap = 35,
-        Concatenate = 40
+        Concatenate = 40,
+        DkPrivilege = 1010
     }
 }

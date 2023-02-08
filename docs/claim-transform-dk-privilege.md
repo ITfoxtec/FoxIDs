@@ -9,8 +9,6 @@ Supported privilege standard:
 - FoxIDs support both to read the base64-encoded privilege string from the standard claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` and a custom defined claim.
 
 ## Configuring DK privilege - claim transforms
-//TODO
-
 The DK privilege can both be configured in a SAML 2.0 up-party and down-party and furthermore in a OpenID Connect up-party and down-party.
 
 DK privilege claim transforms in [FoxIDs Control Client](control.md#foxids-control-client):
@@ -18,6 +16,7 @@ DK privilege claim transforms in [FoxIDs Control Client](control.md#foxids-contr
 - SAML 2.0 up-party and down-party default read the standard claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` and issues transformed claims in `http://schemas.foxids.com/identity/claims/privilege`.
 - OpenID Connect up-party and down-party default read the claim `privileges_intermediate` and issues transformed claims in `privilege`.
 
+> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you use a [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect down-party](down-party-oidc.md).
 
 ## Model 2
 The DK privilege claim is transformed into a list of claims, one claim for each group. The XML PrivilegeGroup element is transformed into a JSON object and serialized as a string.

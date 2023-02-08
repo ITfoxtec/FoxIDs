@@ -1,14 +1,17 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2.Claims;
+using ITfoxtec.Identity.Saml2;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace FoxIDs.Logic
 {
@@ -61,6 +64,9 @@ namespace FoxIDs.Logic
                             break;
                         case ClaimTransformTypes.Concatenate:
                             ConcatenateTransformation(outputClaims, claimTransform);
+                            break;
+                        case ClaimTransformTypes.DkPrivilege:
+                            DkPrivilegeTransformation(outputClaims, claimTransform);
                             break;
                         default:
                             throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
@@ -294,6 +300,82 @@ namespace FoxIDs.Logic
                 var transformationValue = string.Format(claimTransform.Transformation, values);
                 newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
             }
+            AddOrReplaceClaims(claims, claimTransform, newClaims);
+        }
+
+        private void DkPrivilegeTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        {
+            var newClaims = new List<Claim>();
+            var claimIn = claimTransform.ClaimsIn.Single();
+            foreach (var claim in claims)
+            {
+                if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
+                {
+                    var privilegesAsString = Encoding.UTF8.GetString(Convert.FromBase64String(claim.Value));
+                    logger.ScopeTrace(() => $"Transform claims, DK privilege base64-decoded XML '{privilegesAsString}'", traceType: TraceTypes.Claim);
+                    var privilegesXmlDocument = privilegesAsString.ToXmlDocument();
+
+                    var privilegeGroupXmlNodes = privilegesXmlDocument.DocumentElement.SelectNodes("PrivilegeGroup");
+                    foreach (XmlNode privilegeGroupXmlNode in privilegeGroupXmlNodes)
+                    {
+                        var dkPrivilegeGroupResult = new DkPrivilegeGroup();
+
+                        var scope = privilegeGroupXmlNode.Attributes["Scope"]?.Value;
+                        if (string.IsNullOrWhiteSpace(scope) || !scope.Contains(':')) 
+                        {
+                            throw new Exception("DK privilege, invalid / empty XML PrivilegeGroup scope.");
+                        }
+                        var scopeDataSplitIndex = scope.LastIndexOf(':');
+                        var scopeNamespace = scope.Substring(0, scopeDataSplitIndex);
+                        var scopeData = scope.Substring(scopeDataSplitIndex + 1);
+                        switch (scopeNamespace)
+                        {
+                            case "urn:dk:gov:saml:cvrNumberIdentifier":
+                                dkPrivilegeGroupResult.CvrNumber = scopeData;
+                                break;
+                            case "urn:dk:gov:saml:productionUnitIdentifier":
+                                dkPrivilegeGroupResult.ProductionUnit = scopeData;
+                                break;
+                            case "urn:dk:gov:saml:seNumberIdentifier":
+                                dkPrivilegeGroupResult.SeNumber = scopeData;
+                                break;
+                            case "urn:dk:gov:saml:cprNumberIdentifier":
+                                dkPrivilegeGroupResult.CprNumber = scopeData;
+                                break;
+                            default:
+                                throw new NotSupportedException($"DK privilege, scope namespace '{scopeNamespace}' not supported.");
+                        }
+
+                        var constraintXmlNodes = privilegeGroupXmlNode.SelectNodes("Constraint");
+                        if (constraintXmlNodes != null && constraintXmlNodes.Count > 0)
+                        {
+                            dkPrivilegeGroupResult.Constraint = new Dictionary<string, string>();
+                            foreach (XmlNode constraintXmlNode in constraintXmlNodes)
+                            {
+                                var constraintName = constraintXmlNode.Attributes["Name"]?.Value;
+                                if (string.IsNullOrWhiteSpace(constraintName))
+                                {
+                                    throw new Exception("DK privilege, invalid / empty XML Constraint name.");
+                                }
+                                dkPrivilegeGroupResult.Constraint.Add(constraintName, constraintXmlNode.InnerText);
+                            }
+                        }
+
+                        var privilegeXmlNodes = privilegeGroupXmlNode.SelectNodes("Privilege");
+                        if (privilegeXmlNodes == null || privilegeXmlNodes.Count < 1)
+                        {
+                            throw new Exception("DK privilege, invalid / empty XML Privilege.");
+                        }
+                        foreach(XmlNode privilegeXmlNode in privilegeXmlNodes)
+                        {
+                            dkPrivilegeGroupResult.Privilege.Add(privilegeXmlNode.InnerText);
+                        }
+
+                        newClaims.Add(new Claim(claimTransform.ClaimOut, dkPrivilegeGroupResult.ToJson()));
+                    }                    
+                }
+            }
+
             AddOrReplaceClaims(claims, claimTransform, newClaims);
         }
     }

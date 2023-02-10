@@ -17,6 +17,7 @@ Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-
 How to guides:
 
 - Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#down-party---connect-to-context-handler)
 
 ## Require multi-factor authentication (MFA)
 The SAML 2.0 Relying Party (RP) can require multi-factor authentication by specifying the `urn:foxids:mfa` value in the `RequestedAuthnContext.AuthnContextClassRef` property.

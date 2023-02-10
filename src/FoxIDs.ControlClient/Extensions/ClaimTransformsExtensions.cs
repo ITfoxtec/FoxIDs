@@ -20,6 +20,7 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
+                    case ClaimTransformTypes.DkPrivilege:
                         newClaimTransforms.Add(new OAuthClaimTransformClaimInViewModel
                         {
                             Type = claimTransform.Type,
@@ -56,6 +57,7 @@ namespace FoxIDs.Client
                     case ClaimTransformTypes.RegexMatch:
                     case ClaimTransformTypes.Map:
                     case ClaimTransformTypes.RegexMap:
+                    case ClaimTransformTypes.DkPrivilege:
                         newClaimTransforms.Add(new SamlClaimTransformClaimInViewModel
                         {
                             Type = claimTransform.Type,

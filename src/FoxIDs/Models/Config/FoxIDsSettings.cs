@@ -38,22 +38,16 @@ namespace FoxIDs.Models.Config
         public int SamlTokenAddNotBeforeTime { get; set; }
 
         /// <summary>
-        /// Exposed SAML 2.0 metadata lifetime.
-        /// </summary>
-        [Required]
-        public int SamlMetadataLifetime { get; set; }
-
-        /// <summary>
         /// Account action sequence lifetime in seconds.
         /// </summary>
         [Required]
         public int AccountActionSequenceLifetime { get; set; }
 
         /// <summary>
-        /// Confirmation email wait period in seconds.
+        /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]
-        public int ConfirmationEmailWaitPeriod { get; set; }
+        public int ConfirmationCodeLifetime { get; set; }
 
         /// <summary>
         /// Up-party update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.

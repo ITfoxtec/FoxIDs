@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
 
         protected async Task ValidatePasswordPolicy(string email, string password)
         {
-            CheckPasswordLength(email, password);
+            CheckPasswordLength(password);
 
             if (RouteBinding.CheckPasswordComplexity)
             {
@@ -79,27 +79,27 @@ namespace FoxIDs.Logic
 
             if (RouteBinding.CheckPasswordRisk)
             {
-                await CheckPasswordRisk(email, password);
+                await CheckPasswordRisk(password);
             }
         }
 
-        private void CheckPasswordLength(string email, string password)
+        private void CheckPasswordLength(string password)
         {
             if (password.Length < RouteBinding.PasswordLength)
             {
-                throw new PasswordLengthException($"Password is to short, user '{email}'.");
+                throw new PasswordLengthException("Password is to short.");
             }
         }
 
         private void CheckPasswordComplexity(string email, string password)
         {
-            CheckPasswordComplexityCharRepeat(email, password);
-            CheckPasswordComplexityCharDissimilarity(email, password);
+            CheckPasswordComplexityCharRepeat(password);
+            CheckPasswordComplexityCharDissimilarity(password);
             CheckPasswordComplexityContainsEmail(email, password);
-            CheckPasswordComplexityContainsUrl(email, password);
+            CheckPasswordComplexityContainsUrl(password);
         }
 
-        private void CheckPasswordComplexityCharRepeat(string email, string password)
+        private void CheckPasswordComplexityCharRepeat(string password)
         {
             var maxCharRepeate = password.Length  / 2;
             maxCharRepeate = maxCharRepeate < 3 ? 3 : maxCharRepeate;
@@ -107,11 +107,11 @@ namespace FoxIDs.Logic
             var charCounts = password.GroupBy(c => c).Select(g => g.Count());
             if(charCounts.Any(c => c >= maxCharRepeate))
             {
-                throw new PasswordComplexityException($"Password char repeat does not comply with complexity, user '{email}'.");
+                throw new PasswordComplexityException("Password char repeat does not comply with complexity requirements.");
             }
         }
 
-        private void CheckPasswordComplexityCharDissimilarity(string email, string password)
+        private void CheckPasswordComplexityCharDissimilarity(string password)
         {
             var matchCount = 0;
             if (Regex.IsMatch(password, @"[a-z]")) matchCount++;
@@ -120,7 +120,7 @@ namespace FoxIDs.Logic
             if (Regex.IsMatch(password, @"\W")) matchCount++;
             if (matchCount < 3)
             {
-                throw new PasswordComplexityException($"Password char dissimilarity does not comply with complexity, user '{email}'.");
+                throw new PasswordComplexityException("Password char dissimilarity does not comply with complexity requirements.");
             }
         }
 
@@ -131,12 +131,12 @@ namespace FoxIDs.Logic
             {
                 if (es.Length > 3 && password.Contains(es, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordEmailTextComplexityException($"Password contains e-mail text that does not comply with complexity, user '{email}'.");
+                    throw new PasswordEmailTextComplexityException($"Password contains parts of the e-mail '{email}' which does not comply with complexity requirements.");
                 }
             }
         }
 
-        private void CheckPasswordComplexityContainsUrl(string email, string password)
+        private void CheckPasswordComplexityContainsUrl(string password)
         {
             var url = $"{HttpContext.GetHost(false)}{HttpContext.Request.Path.Value}";
             var urlSplit = url.Substring(0, url.LastIndexOf('/')).Split(':', '/', '(', ')', '.', '-', '_');
@@ -144,17 +144,17 @@ namespace FoxIDs.Logic
             {
                 if (us.Length > 3 && password.Contains(us, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new PasswordUrlTextComplexityException($"Password contains URL text that does not comply with complexity, user '{email}'.");
+                    throw new PasswordUrlTextComplexityException("Password contains parts of the URL which does not comply with complexity requirements.");
                 }
             }
         }
 
-        private async Task CheckPasswordRisk(string email, string password)
+        private async Task CheckPasswordRisk(string password)
         {
             var passwordSha1Hash = password.Sha1Hash();
             if (await masterRepository.ExistsAsync<RiskPassword>(await RiskPassword.IdFormatAsync(new RiskPassword.IdKey { PasswordSha1Hash = passwordSha1Hash })))
             {
-                throw new PasswordRiskException($"Password has appeared in a data breach and is at risk, user '{email}'.");
+                throw new PasswordRiskException("Password has appeared in a data breach and is at risk.");
             }
         }
     }

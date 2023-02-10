@@ -137,6 +137,7 @@ namespace FoxIDs.Logic
                                 break;
 
                             case ClaimTransformTypes.Map:
+                            case ClaimTransformTypes.DkPrivilege:
                                 claimTransform.Transformation = null;
                                 claimTransform.TransformationExtension = null;
                                 break;

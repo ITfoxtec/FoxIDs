@@ -22,6 +22,11 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string FormattedName { get; set; }
 
+        [MaxLength(Constants.Models.Track.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
+        [Display(Name = "Track display name (e.g. company name or system name)")]
+        public string DisplayName { get; set; }
+
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] 
         [Display(Name = "Sequence lifetime")]
         public int SequenceLifetime { get; set; }

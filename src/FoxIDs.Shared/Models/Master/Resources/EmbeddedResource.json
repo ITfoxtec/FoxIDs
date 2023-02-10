@@ -1,7 +1,8 @@
 {
   "supported_cultures": [
     "en",
-    "da"
+    "da",
+    "de"
   ],
   "names": [
     {
@@ -181,23 +182,23 @@
       "id": 45
     },
     {
-      "name": "To reset your password, please provide your email.",
+      "name": "A reset password confirmation code has just been sent to your email. Please use the confirmation code to reset your password.",
       "id": 46
     },
     {
-      "name": "Send reset email",
+      "name": "A new reset password confirmation code has been sent to your email. Please use the confirmation code to reset your password.",
       "id": 47
     },
     {
-      "name": "Your password reset request",
+      "name": "Please use the new reset password confirmation code just sent to your email.",
       "id": 48
     },
     {
-      "name": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Your password reset request</h2><p style='margin-bottom:30px'>Click on this <a href='{0}'>link</a> to reset your password.</p>",
+      "name": "Invalid reset password confirmation code, please try one more time.",
       "id": 49
     },
     {
-      "name": "If an account associated with that email exists, an email with a password reset link has been sent.",
+      "name": "Please reset your password with the confirmation code sent to your email.",
       "id": 50
     },
     {
@@ -205,31 +206,31 @@
       "id": 51
     },
     {
-      "name": "Your new password is saved.",
+      "name": "Please enter a reset password confirmation code.",
       "id": 52
     },
     {
-      "name": "The reset password did not succeed. Maybe the reset password link was too old or have been used before.",
+      "name": "Your{0}reset password confirmation code: {1}",
       "id": 53
     },
     {
-      "name": "Please confirm your email address",
+      "name": "Email confirmation",
       "id": 54
     },
     {
-      "name": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>",
+      "name": "Your{0}email confirmation code: {1}",
       "id": 55
     },
     {
-      "name": "Confirmation",
+      "name": "Please enter a email confirmation code.",
       "id": 56
     },
     {
-      "name": "Your email address and account have been confirmation.",
+      "name": "Please use the new confirmation code just sent to your email.",
       "id": 57
     },
     {
-      "name": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before.",
+      "name": "Invalid email confirmation code, please try one more time.",
       "id": 58
     },
     {
@@ -305,11 +306,11 @@
       "id": 76
     },
     {
-      "name": "Confirmation required",
+      "name": "Confirm email",
       "id": 77
     },
     {
-      "name": "You are about to register a two-factor authentication app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address.",
+      "name": "Send new email confirmation code",
       "id": 78
     },
     {
@@ -363,6 +364,30 @@
     {
       "name": "You are still logged in!",
       "id": 91
+    },
+    {
+      "name": "Please verify your email address with the confirmation code sent to your email.",
+      "id": 92
+    },
+    {
+      "name": "A confirmation code has just been sent to your email. Please verify your email address with the confirmation code.",
+      "id": 93
+    },
+    {
+      "name": "A new confirmation code has been sent to your email. Please verify your email address with the confirmation code.",
+      "id": 94
+    },
+    {
+      "name": "Confirmation code",
+      "id": 95
+    },
+    {
+      "name": "Try again",
+      "id": 96
+    },
+    {
+      "name": "Please try again in a little while.",
+      "id": 97
     }
   ],
   "resources": [
@@ -943,11 +968,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "To reset your password, please provide your email."
+          "value": "A reset password confirmation code has just been sent to your email. Please use the confirmation code to reset your password."
         },
         {
           "culture": "da",
-          "value": "For at nulstille dit kodeord, venligst indtast din e-mailadresse."
+          "value": "En nulstil kodeords bekræftelseskode er netop blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden."
         }
       ]
     },
@@ -956,11 +981,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Send reset email"
+          "value": "A new reset password confirmation code has been sent to your email. Please use the confirmation code to reset your password."
         },
         {
           "culture": "da",
-          "value": "Send nulstil e-mail"
+          "value": "En ny nulstil kodeords bekræftelseskode er blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden."
         }
       ]
     },
@@ -969,11 +994,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your password reset request"
+          "value": "Please use the new reset password confirmation code just sent to your email."
         },
         {
           "culture": "da",
-          "value": "Anmodning om at nulstille dit kodeord"
+          "value": "Brug venligst den nye nulstil kodeords bekræftelseskode, der lige er sendt til din e-mail."
         }
       ]
     },
@@ -982,11 +1007,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Your password reset request</h2><p style='margin-bottom:30px'>Click on this <a href='{0}'>link</a> to reset your password.</p>"
+          "value": "Invalid reset password confirmation code, please try one more time."
         },
         {
           "culture": "da",
-          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Forspørgelse for at nulstille dit kodeord</h2><p style='margin-bottom:30px'>Klik på dette <a href='{0}'>link</a> for at nulstille kodeordet.</p>"
+          "value": "Ugyldig nulstil kodeords bekræftelseskode, prøv venligst igen."
         }
       ]
     },
@@ -995,11 +1020,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "If an account associated with that email exists, an email with a password reset link has been sent."
+          "value": "Please reset your password with the confirmation code sent to your email."
         },
         {
           "culture": "da",
-          "value": "Hvis der er en e-mail forbundet med kontoen, så er der sendt en e-mail med et nulstillings-link til denne."
+          "value": "Nulstil venligst dit kodeord med den bekræftelseskode der er sendt til din e-mail."
         }
       ]
     },
@@ -1021,11 +1046,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your new password is saved."
+          "value": "Please enter a reset password confirmation code."
         },
         {
           "culture": "da",
-          "value": "Det nye kodeord er blevet gemt."
+          "value": "Indtast venligst en nulstil kodeords bekræftelseskode."
         }
       ]
     },
@@ -1034,11 +1059,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "The reset password did not succeed. Maybe the reset password link was too old or have been used before."
+          "value": "Your{0}reset password confirmation code: {1}"
         },
         {
           "culture": "da",
-          "value": "Nulstilling af kodeord blev ikke gennemført. Måske er linket til nulstilling af kodeord for gammelt, eller det har været anvendt før."
+          "value": "Din{0}nulstil kodeords bekræftelseskode: {1}"
         }
       ]
     },
@@ -1047,11 +1072,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please confirm your email address"
+          "value": "Email confirmation"
         },
         {
           "culture": "da",
-          "value": "Bekræft venligst din e-mailadresse"
+          "value": "E-mail bekræftelse"
         }
       ]
     },
@@ -1060,11 +1085,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Please confirm your email address</h2><p style='margin-bottom:30px'>By clicking on this <a href='{0}'>link</a>, you are confirming your email address.</p>"
+          "value": "Your{0}email confirmation code: {1}"
         },
         {
           "culture": "da",
-          "value": "<h2 style='margin-bottom:30px;font-weight:300;line-height:1.5;font-size:24px'>Bekræft venligst din e-mailadresse</h2><p style='margin-bottom:30px'>Ved at klikke <a href='{0}'>her</a>, bekræfter du din e-mailadresse.</p>"
+          "value": "Din{0}e-mailbekræftelseskode: {1}"
         }
       ]
     },
@@ -1073,11 +1098,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirmation"
+          "value": "Please enter a mail confirmation code."
         },
         {
           "culture": "da",
-          "value": "Bekræft"
+          "value": "Indtast venligst en e-mailbekræftelseskode."
         }
       ]
     },
@@ -1086,11 +1111,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your email address and account have been confirmation."
+          "value": "Please use the new confirmation code just sent to your email."
         },
         {
           "culture": "da",
-          "value": "Din e-mailadresse og konto er blevet bekræftet."
+          "value": "Brug venligst den nye bekræftelseskode, der lige er sendt til din e-mail."
         }
       ]
     },
@@ -1099,11 +1124,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "The email address and account confirmation did not succeed. Maybe the confirmation link was too old or have been used before."
+          "value": "Invalid email confirmation code, please try one more time."
         },
         {
           "culture": "da",
-          "value": "Bekræftelse e-mailadresse og konto blev ikke gennemført. Måske er linket til bekræftelse for gammelt eller, det har været brugt før."
+          "value": "Ugyldig e-mailbekræftelseskode, prøv venligst igen."
         }
       ]
     },
@@ -1272,7 +1297,7 @@
         },
         {
           "culture": "da",
-          "value": "Venligst indtast en gyldig kode"
+          "value": "Indtast venligst en gyldig kode"
         }
       ]
     },
@@ -1346,11 +1371,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirmation required"
+          "value": "Confirm email"
         },
         {
           "culture": "da",
-          "value": "Bekræftelse påkrævet"
+          "value": "Bekræft e-mail"
         }
       ]
     },
@@ -1359,11 +1384,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "You are about to register a two-factor authentication (2FA) app but your email address and account has not been confirmed.<br /><br />A new confirmation link has been sent to your email address."
+          "value": "Send new email confirmation code"
         },
         {
           "culture": "da",
-          "value": "Du er igang med at registrere en to-faktor (2FA) godkendelses app, men din e-mailadresse og konto er endnu ikke blevet bekræftet.<br /><br />Et nyt bekræftelses link er blevet sendt til din e-mailadresse."
+          "value": "Send ny e-mailbekræftelseskode"
         }
       ]
     },
@@ -1525,6 +1550,84 @@
         {
           "culture": "en",
           "value": "You are still logged in!"
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please verify your email address with the confirmation code sent to your email."
+        },
+        {
+          "culture": "da",
+          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode der er sendt til din e-mail."
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."
+        },
+        {
+          "culture": "da",
+          "value": "En bekræftelseskode er netop blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden."
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "items": [
+        {
+          "culture": "en",
+          "value": "A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."
+        },
+        {
+          "culture": "da",
+          "value": "En ny bekræftelseskode er blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden."
+        }
+      ]
+    },
+    {
+      "id": 95,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Confirmation code"
+        },
+        {
+          "culture": "da",
+          "value": "Bekræftelseskode"
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Try again"
+        },
+        {
+          "culture": "da",
+          "value": "Prøv igen"
+        }
+      ]
+    },
+    {
+      "id": 97,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Please try again in a little while."
+        },
+        {
+          "culture": "da",
+          "value": "Prøv venligst igen om lidt."
         }
       ]
     }

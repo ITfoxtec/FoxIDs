@@ -21,9 +21,15 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Track.PasswordLengthMax)]
         [DataType(DataType.Password)]
         public string AdministratorPassword { get; set; }
+        
+        /// <summary>
+        /// True if the administrator account password should be changed on first login.
+        /// </summary>
+        [Display(Name = "Change administrator password")]
+        public bool ChangeAdministratorPassword { get; set; }
 
         /// <summary>
-        /// True if the administrator account should be confirmed.
+        /// True if the administrator account email should be confirmed.
         /// </summary>
         [Display(Name = "Confirm administrator account")]
         public bool ConfirmAdministratorAccount { get; set; }

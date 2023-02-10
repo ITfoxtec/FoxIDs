@@ -15,6 +15,7 @@ using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System.Linq;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FoxIDs.Logic
 {
@@ -46,12 +47,12 @@ namespace FoxIDs.Logic
             var singleLogoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlSingleLogout));
 
             var entityDescriptor = new EntityDescriptor(samlConfig, signMetadata);
-            if (party != null)
-            {
-                entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
-            }
 
             var trackCertificates = GetTrackCertificates();
+            if (party != null)
+            {
+                entityDescriptor.ValidUntil = GetMaxCertificateLifetimeInDays(trackCertificates);
+            }
             entityDescriptor.SPSsoDescriptor = new SPSsoDescriptor
             {
                 //AuthnRequestsSigned = true,
@@ -64,7 +65,7 @@ namespace FoxIDs.Logic
             };
             entityDescriptor.SPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination },
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.ResponseBinding), Location = singleLogoutDestination, ResponseLocation = party?.MetadataAddLogoutResponseLocation == true ? singleLogoutDestination : null },
             };
 
             if (party?.MetadataIncludeEncryptionCertificates == true)
@@ -111,16 +112,15 @@ namespace FoxIDs.Logic
             var logoutDestination = new Uri(UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.SamlController, Constants.Endpoints.SamlLogout));
 
             var entityDescriptor = new EntityDescriptor(samlConfig, signMetadata);
-            if (party != null)
-            {
-                entityDescriptor.ValidUntil = new TimeSpan(0, 0, settings.SamlMetadataLifetime).Days;
-            }
 
             var trackCertificates = GetTrackCertificates();
+            if (party != null)
+            {
+                entityDescriptor.ValidUntil = GetMaxCertificateLifetimeInDays(trackCertificates);
+            }
             entityDescriptor.IdPSsoDescriptor = new IdPSsoDescriptor
             {
                 SigningCertificates = trackCertificates,
-                //EncryptionCertificates = trackCertificates,
                 SingleSignOnServices = new SingleSignOnService[]
                 {
                     new SingleSignOnService { Binding = ToSamleBindingUri(party?.AuthnBinding?.RequestBinding), Location = authnDestination },
@@ -128,8 +128,14 @@ namespace FoxIDs.Logic
             };
             entityDescriptor.IdPSsoDescriptor.SingleLogoutServices = new SingleLogoutService[]
             {
-                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination },
+                new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination, ResponseLocation = party?.MetadataAddLogoutResponseLocation == true ? logoutDestination : null },
             };
+
+            if (party?.MetadataIncludeEncryptionCertificates == true)
+            {
+                entityDescriptor.IdPSsoDescriptor.EncryptionCertificates = trackCertificates;
+                entityDescriptor.IdPSsoDescriptor.SetDefaultEncryptionMethods();
+            }
 
             if (party?.MetadataNameIdFormats?.Count > 0)
             {
@@ -144,10 +150,31 @@ namespace FoxIDs.Logic
             return new Saml2Metadata(entityDescriptor).CreateMetadata().ToActionResult();
         }
 
+        private int? GetMaxCertificateLifetimeInDays(List<X509Certificate2> trackCertificates)
+        {
+            var nowLocal = DateTimeOffset.UtcNow.LocalDateTime;
+            var days = 0;
+            foreach (var cert in trackCertificates) 
+            {
+                var tempDays = Convert.ToInt32((cert.NotAfter - nowLocal).TotalDays);
+                if (tempDays > days)
+                {
+                    days = tempDays;
+                }
+            }
+            if(days > 0)
+            {
+                days = days - 1;
+            }
+            return days > 0 ? days : null;
+        }
+
         private List<X509Certificate2> GetTrackCertificates()
         {
-            var trackCertificates = new List<X509Certificate2>();
-            trackCertificates.Add(RouteBinding.Key.PrimaryKey.Key.ToX509Certificate());
+            var trackCertificates = new List<X509Certificate2>
+            {
+                RouteBinding.Key.PrimaryKey.Key.ToX509Certificate()
+            };
             if (RouteBinding.Key.SecondaryKey != null)
             {
                 trackCertificates.Add(RouteBinding.Key.SecondaryKey.Key.ToX509Certificate());

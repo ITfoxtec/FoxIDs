@@ -71,6 +71,22 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 }
 
+                if (afterMap.EncryptionKey != null)
+                {
+                    generalSamlDownParty.EncryptionKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = afterMap.EncryptionKey.CertificateInfo.Subject,
+                        ValidFrom = afterMap.EncryptionKey.CertificateInfo.ValidFrom,
+                        ValidTo = afterMap.EncryptionKey.CertificateInfo.ValidTo,
+                        Thumbprint = afterMap.EncryptionKey.CertificateInfo.Thumbprint,
+                        Key = afterMap.EncryptionKey
+                    };
+                }
+                else
+                {
+                    generalSamlDownParty.EncryptionKeyInfo = null;
+                }                
+
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -85,6 +101,56 @@ namespace FoxIDs.Client.Pages.Components
                 model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
             }
         }
+
+        private async Task OnSamlDownPartyEncryptionCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
+        {
+            generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.EncryptionKey));
+            foreach (var file in files)
+            {
+                if (file.Size > GeneralSamlDownPartyViewModel.CertificateMaxFileSize)
+                {
+                    generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.EncryptionKey), $"That's too big. Max size: {GeneralSamlDownPartyViewModel.CertificateMaxFileSize} bytes.");
+                    return;
+                }
+
+                generalSamlDownParty.EncryptionCertificateFileStatus = "Loading...";
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.Data.CopyToAsync(memoryStream);
+
+                    try
+                    {
+                        var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
+                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+
+                        generalSamlDownParty.EncryptionKeyInfo = new KeyInfoViewModel
+                        {
+                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
+                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwtWithCertificateInfo
+                        };
+                        generalSamlDownParty.Form.Model.EncryptionKey = jwtWithCertificateInfo;
+                    }
+                    catch (Exception ex)
+                    {
+                        generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Keys), ex.Message);
+                    }
+                }
+
+                generalSamlDownParty.EncryptionCertificateFileStatus = GeneralSamlDownPartyViewModel.DefaultCertificateFileStatus;
+                break;
+            }
+        }
+
+        private void RemoveSamlDownPartyEncryptionCertificate(GeneralSamlDownPartyViewModel generalSamlDownParty, KeyInfoViewModel keyInfo)
+        {
+            generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.EncryptionKey));
+            generalSamlDownParty.Form.Model.EncryptionKey = null;
+        }
+
 
         private async Task OnSamlDownPartyCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
         {
@@ -160,6 +226,11 @@ namespace FoxIDs.Client.Pages.Components
                             claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
                         }
                     }
+                }
+
+                if(!generalSamlDownParty.Form.Model.EncryptAuthnResponse)
+                {
+                    generalSamlDownParty.Form.Model.EncryptionKey = null;
                 }
 
                 var samlDownParty = generalSamlDownParty.Form.Model.Map<SamlDownParty>(afterMap =>

@@ -17,6 +17,8 @@ namespace FoxIDs.Models
         [EnumMember(Value = "reg_ex_map")]
         RegexMap = 35,
         [EnumMember(Value = "Concatenate")]
-        Concatenate = 40
+        Concatenate = 40,
+        [EnumMember(Value = "dk_privilege")]
+        DkPrivilege = 1010
     }
 }

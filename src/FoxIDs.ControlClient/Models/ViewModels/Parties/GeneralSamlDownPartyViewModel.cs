@@ -18,9 +18,11 @@ namespace FoxIDs.Client.Models.ViewModels
         public PageEditForm<SamlDownPartyViewModel> Form { get; set; }
 
         public SelectUpParty<SamlDownPartyViewModel> SelectAllowUpPartyName { get; set; }
+        
+        public KeyInfoViewModel EncryptionKeyInfo { get; set; }
+        public string EncryptionCertificateFileStatus { get; set; } = DefaultCertificateFileStatus;
 
         public List<KeyInfoViewModel> KeyInfoList { get; set; } = new List<KeyInfoViewModel>();
-
         public string CertificateFileStatus { get; set; } = DefaultCertificateFileStatus;
 
         public bool ShowSamlTab { get; set; } = true;

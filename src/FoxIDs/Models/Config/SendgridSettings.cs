@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace FoxIDs.Models.Config
+﻿namespace FoxIDs.Models.Config
 {
     public class SendgridSettings
     {

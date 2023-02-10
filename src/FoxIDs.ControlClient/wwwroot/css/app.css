@@ -243,15 +243,23 @@ h4 {
     margin-top: 15px;
 }
 
+.list-group-item {
+    background-color: inherit;
+}
+
 .list-group-item.active, .list-group-item:active {
     color: inherit;
-    background-color: #fff;
+    background-color: inherit;
     border-color: #df8935;
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
 }
 
 .list-group-item .btn-link {
     text-align: left;
+}
+
+.list-group-stripes > .list-group-item:nth-child(even) {
+    background-color: #f8f9fa;
 }
 
 .card-body.active, .card-body:active {

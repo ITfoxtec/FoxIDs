@@ -2,10 +2,12 @@
 using FoxIDs.Infrastructure.Filters;
 using FoxIDs.Models;
 using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Linq;
 
@@ -48,7 +50,7 @@ namespace FoxIDs.Controllers
             return new CreatedResult(uriBuilder.Uri, value);
         }
 
-        public virtual NotFoundObjectResult NotFound(string typeName, string name)
+        public virtual NotFoundObjectResult NotFound(string typeName, string name, string fieldName = null)
         {
             try
             {
@@ -57,11 +59,15 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 logger.Warning(ex);
+                if (!fieldName.IsNullOrWhiteSpace())
+                {
+                    Response.Headers["field"] = fieldName;
+                }
                 return base.NotFound(ex.Message);
             }
         }
 
-        public virtual ConflictObjectResult Conflict(string typeName, string name)
+        public virtual ConflictObjectResult Conflict(string typeName, string name, string fieldName = null)
         {
             try
             {
@@ -70,6 +76,10 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 logger.Warning(ex);
+                if (!fieldName.IsNullOrWhiteSpace())
+                {
+                    Response.Headers["field"] = fieldName;
+                }
                 return base.Conflict(ex.Message);
             }
         }
@@ -79,11 +89,15 @@ namespace FoxIDs.Controllers
             try
             {
                 var errors = modelState.Values.SelectMany(v => v.Errors.Select(e => $"{e.ErrorMessage}{(e.Exception != null ? $", {e.Exception}" : string.Empty)}"));
-                throw new Exception($"Bad request. {string.Join("; ", errors)}", innerEx);
+                throw new Exception(string.Join("; ", errors), innerEx);
             }
             catch (Exception ex)
             {
                 logger.Warning(ex);
+                if (modelState.Keys.Count() == 1)
+                {
+                    Response.Headers["field"] = modelState.Keys.First();
+                }
                 return base.BadRequest(ex.Message);
             }
         }

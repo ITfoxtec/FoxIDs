@@ -203,7 +203,7 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => "Up, Successful OIDC Authentication response.", triggerEvent: true);
                 logger.ScopeTrace(() => $"Up, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                var externalSessionId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.SessionId);
+                var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
                 claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
@@ -444,11 +444,11 @@ namespace FoxIDs.Logic
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
 
-            var subject = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+            var subject = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
 
             if (subject.IsNullOrEmpty())
             {
-                subject = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Email);
+                subject = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
             }
 
             if (!subject.IsNullOrEmpty())
@@ -472,7 +472,7 @@ namespace FoxIDs.Logic
                 }
 
                 var claimsPrincipal = await jwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);
-                var nonce = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.Nonce);
+                var nonce = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
                 {
                     throw new OAuthRequestException($"{party.Name}|Id token nonce do not match.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
@@ -480,7 +480,7 @@ namespace FoxIDs.Logic
 
                 if (authorizationEndpoint && !accessToken.IsNullOrEmpty())
                 {
-                    var atHash = claimsPrincipal.Claims.FindFirstValue(c => c.Type == JwtClaimTypes.AtHash);
+                    var atHash = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.AtHash);
                     string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
                     if (atHash != await accessToken.LeftMostBase64urlEncodedHashAsync(algorithm))
                     {

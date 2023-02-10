@@ -8,7 +8,7 @@
 - [FoxIDs Control](control.md)
 - Topics
   - [Users](users.md)
-  - [Claim transform](claim-transform.md)
+  - [Claims & Claim transforms](claim.md)
   - [Certificates](certificates.md)
   - [Logging](logging.md)
   - [Email provider](email.md)
@@ -17,7 +17,7 @@
 - [Development](development.md)
   - [Samples](samples.md)
 - [Customization](customization.md)
-  - [Title, Icon and CSS](title-icon-css.md)
+  - [Name, title, Icon and CSS](name-title-icon-css.md)
   - [Custom domain](custom-domain.md)
   - [Languages](language.md)
 - [Deployment](deployment.md)

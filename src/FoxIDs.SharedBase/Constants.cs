@@ -193,6 +193,8 @@ namespace FoxIDs
                 public const int NameLength = 30;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
+                public const int DisplayNameLength = 100;
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
 
                 public const int KeysMin = 0;
                 public const int KeysMax = 2;
@@ -250,6 +252,7 @@ namespace FoxIDs
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 100;
                 public const int EmailLength = 60;
+                public const int ConfirmationCodeLength = 8;
                 public const string EmailRegExPattern = @"^[\w:\-.+@]*$";
                 public const int TwoFactorAppCodeLength = 50;
             }
@@ -298,7 +301,7 @@ namespace FoxIDs
             public static class DownParty
             {
                 public const int AllowUpPartyNamesMin = 0;
-                public const int AllowUpPartyNamesMax = 50;
+                public const int AllowUpPartyNamesMax = 200;
             }
 
             public static class OAuthDownParty
@@ -525,7 +528,8 @@ namespace FoxIDs
             public const string CancelLogin = "cancellogin";
             public const string CreateUser = "createuser";
             public const string ChangePassword = "changepassword";
-            public const string ForgotPassword = "forgotpassword";
+            public const string ResetPassword = "resetpassword";
+            public const string EmailConfirmation = "emailconfirmation";
             public const string RegisterTwoFactor = "regtwofactor";
             public const string TwoFactor = "twofactor";
 

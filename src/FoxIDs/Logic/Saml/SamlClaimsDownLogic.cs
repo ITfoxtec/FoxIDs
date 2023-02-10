@@ -17,23 +17,23 @@ namespace FoxIDs.Logic
 
         public string GetSessionIndex(IEnumerable<Claim> claims)
         {
-            return claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex); 
+            return claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex); 
         }
 
-        public Saml2NameIdentifier GetNameId(IEnumerable<Claim> claims)
+        public Saml2NameIdentifier GetNameId(IEnumerable<Claim> claims, string overwriteNameIdFormat = null)
         {
-            var nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.NameIdentifier);
+            var nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.NameIdentifier);
             if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Upn);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Upn);
             }
             else if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Email);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Email);
             }
             else if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Name);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Name);
             }
 
             if (nameIdValue.IsNullOrEmpty())
@@ -42,7 +42,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                var nameIdFormat = GetNameIdFormat(claims);
+                var nameIdFormat = GetNameIdFormat(claims, overwriteNameIdFormat);
                 if (nameIdFormat != null)
                 {
                     return new Saml2NameIdentifier(nameIdValue, nameIdFormat);
@@ -54,16 +54,23 @@ namespace FoxIDs.Logic
             }
         }
 
-        private Uri GetNameIdFormat(IEnumerable<Claim> claims)
+        private Uri GetNameIdFormat(IEnumerable<Claim> claims, string overwriteNameIdFormat)
         {
-            var nameIdFormat = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.NameIdFormat);
-            if (!nameIdFormat.IsNullOrEmpty())
+            if (!overwriteNameIdFormat.IsNullOrWhiteSpace())
             {
-                return new Uri(nameIdFormat);
+                return new Uri(overwriteNameIdFormat);
             }
             else
             {
-                return null;
+                var nameIdFormat = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.NameIdFormat);
+                if (!nameIdFormat.IsNullOrWhiteSpace())
+                {
+                    return new Uri(nameIdFormat);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

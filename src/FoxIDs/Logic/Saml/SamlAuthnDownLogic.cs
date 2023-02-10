@@ -199,7 +199,7 @@ namespace FoxIDs.Logic
 
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 
-            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, true);
+            var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
             var claims = jwtClaims != null ? await claimsDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
             return await AuthnResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
@@ -240,13 +240,13 @@ namespace FoxIDs.Logic
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);
 
-                saml2AuthnResponse.NameId = samlClaimsDownLogic.GetNameId(claims);
+                saml2AuthnResponse.NameId = samlClaimsDownLogic.GetNameId(claims, party.NameIdFormat);
 
                 var tokenIssueTime = DateTimeOffset.UtcNow;
                 var tokenDescriptor = saml2AuthnResponse.CreateTokenDescriptor(samlClaimsDownLogic.GetSubjectClaims(party, claims), party.Issuer, tokenIssueTime, party.IssuedTokenLifetime);
 
-                var authnContext = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationMethod);
-                var authenticationInstant = claims.FindFirstValue(c => c.Type == ClaimTypes.AuthenticationInstant);
+                var authnContext = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.AuthenticationMethod);
+                var authenticationInstant = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.AuthenticationInstant);
                 var authenticationStatement = saml2AuthnResponse.CreateAuthenticationStatement(authnContext, DateTime.Parse(authenticationInstant));
 
                 var subjectConfirmation = saml2AuthnResponse.CreateSubjectConfirmation(tokenIssueTime, party.SubjectConfirmationLifetime);
@@ -255,6 +255,13 @@ namespace FoxIDs.Logic
             }
 
             binding.Bind(saml2AuthnResponse);
+            var actionResult = await GetAuthnResponseActionResult(binding);
+            if (samlConfig.EncryptionCertificate != null)
+            {
+                // Re-bind to log unencrypted XML.
+                saml2AuthnResponse.Config.EncryptionCertificate = null;
+                binding.Bind(saml2AuthnResponse);
+            }
             logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"ACS URL '{acsUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Authn response.", triggerEvent: true);
@@ -268,6 +275,11 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
+            return actionResult;
+        }
+
+        private static async Task<IActionResult> GetAuthnResponseActionResult<T>(Saml2Binding<T> binding)
+        {
             if (binding is Saml2Binding<Saml2RedirectBinding>)
             {
                 return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();

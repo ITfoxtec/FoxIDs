@@ -195,10 +195,18 @@ namespace FoxIDs.Logic
                 }
             }
 
-            if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
+            SamlUpSequenceData sequenceData = null;
+            try
+            {
+                if (binding.RelayState.IsNullOrEmpty()) throw new ArgumentNullException(nameof(binding.RelayState), binding.GetTypeName());
 
-            await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+                await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Invalid RelayState '{binding.RelayState}' returned from the IdP.");
+            }
 
             try
             {
@@ -239,7 +247,7 @@ namespace FoxIDs.Logic
                 }
                 logger.ScopeTrace(() => $"Up, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-                var externalSessionId = claims.FindFirstValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
+                var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
                 claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
@@ -270,11 +278,19 @@ namespace FoxIDs.Logic
             }
             catch (SamlRequestException ex)
             {
+                if (sequenceData == null)
+                {
+                    throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.", ex);
+                }
                 logger.Error(ex);
                 return await AuthnResponseDownAsync(sequenceData, ex.Status);
             }
             catch (Exception ex)
             {
+                if (sequenceData == null)
+                {
+                    throw new StopSequenceException("SequenceData is null. Probably caused by invalid RelayState returned from the IdP.", ex);
+                }
                 logger.Error(ex);
                 return await AuthnResponseDownAsync(sequenceData, Saml2StatusCodes.Responder);
             }
@@ -317,17 +333,17 @@ namespace FoxIDs.Logic
             
             if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Upn);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Upn);
             }
             
             if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Email);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Email);
             }
             
             if (nameIdValue.IsNullOrEmpty())
             {
-                nameIdValue = claims.FindFirstValue(c => c.Type == ClaimTypes.Name);
+                nameIdValue = claims.FindFirstOrDefaultValue(c => c.Type == ClaimTypes.Name);
             }
 
             if (!nameIdValue.IsNullOrEmpty())

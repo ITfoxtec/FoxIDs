@@ -113,7 +113,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by track name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
-                    return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id));
+                    return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id), nameof(trackResourceItem.Id));
                 }
                 throw;
             }

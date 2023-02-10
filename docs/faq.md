@@ -1,7 +1,7 @@
 # FAQ
 
 ##### Only the `sub`, `sid`, `acr` and `amr` claims are pass through. I get more claims from the up-party by using log claims trace. What am I doing wrong?
-By default an up-party should pass through all claims to the down-party if Accept Claims has a `*`.
+By default an up-party should pass through all claims to the down-party if Forward Claims has a `*`.
 ![Up-party default pass through all claims to the down-party](images/faq-pass-through-all-claims-up-party.png)
 You can also make the down-party (OpenID Connect client) add all claims in the access token issued to the application (not default).  
 Navigating to the down-party then click Show advanced settings and add a `*` in the Issue claims field. Optionally also include all claims in the issued ID token.

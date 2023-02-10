@@ -16,7 +16,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<string> Scopes { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
-        [Display(Name = "Accept claims (use * to accept all claims)")]
+        [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
 
         [Required]

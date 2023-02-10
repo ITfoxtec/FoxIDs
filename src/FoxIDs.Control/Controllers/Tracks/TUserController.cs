@@ -102,7 +102,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create '{typeof(Api.User).Name}' by email '{createUserRequest.Email}'.");
-                    return Conflict(typeof(Api.User).Name, createUserRequest.Email );
+                    return Conflict(typeof(Api.User).Name, createUserRequest.Email, nameof(createUserRequest.Email));
                 }
                 throw;
             }
@@ -157,7 +157,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
                     logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserRequest).Name}' by email '{user.Email}'.");
-                    return NotFound(typeof(Api.UserRequest).Name, user.Email);
+                    return NotFound(typeof(Api.UserRequest).Name, user.Email, nameof(user.Email));
                 }
                 throw;
             }

@@ -217,13 +217,13 @@ namespace FoxIDs.Infrastructure
 
         public void SetUserScopeProperty(IEnumerable<Claim> claims)
         {
-            var userId = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Subject);
+            var userId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
             if (!userId.IsNullOrWhiteSpace())
             {
                 SetScopeProperty(Constants.Logs.UserId, userId);
             }
 
-            var email = claims.FindFirstValue(c => c.Type == JwtClaimTypes.Email);
+            var email = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Email);
             if (!email.IsNullOrWhiteSpace())
             {
                 SetScopeProperty(Constants.Logs.Email, email);

@@ -127,8 +127,8 @@ namespace FoxIDs.Logic
 
         private UpPartyLink GetUpPartyFromIdToken(IEnumerable<Claim> idTokenClaims)
         {
-            var upPartyName = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
-            var upPartyTypeValue = idTokenClaims.FindFirstValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
+            var upPartyName = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpParty);
+            var upPartyTypeValue = idTokenClaims.FindFirstOrDefaultValue(c => c.Type == Constants.JwtClaimTypes.UpPartyType);
             if (!upPartyName.IsNullOrWhiteSpace() && !upPartyTypeValue.IsNullOrWhiteSpace() && Enum.TryParse(upPartyTypeValue, true, out PartyTypes upPartyType))
             {
                 return new UpPartyLink { Name = upPartyName, Type = upPartyType };

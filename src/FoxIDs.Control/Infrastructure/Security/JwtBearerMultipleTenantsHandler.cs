@@ -12,6 +12,7 @@ using UrlCombineLib;
 using ITfoxtec.Identity.Tokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
+using System.Linq;
 
 namespace FoxIDs.Infrastructure.Security
 {
@@ -36,6 +37,19 @@ namespace FoxIDs.Infrastructure.Security
                 var oidcDiscoveryHandler = Context.RequestServices.GetService<OidcDiscoveryHandlerService>();
                 var oidcDiscovery = await oidcDiscoveryHandler.GetOidcDiscoveryAsync(oidcDiscoveryUri);
                 var oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri);
+
+                if(oidcDiscoveryKeySet.Keys?.Count() < 1)
+                {
+                    try
+                    {
+                        throw new Exception($"OIDC discovery keys is empty, reload keys, Uri '{oidcDiscoveryUri}'.");
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.LogWarning(ex, ex.Message);
+                        oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
+                    }
+                }
 
                 ClaimsPrincipal principal;
                 try

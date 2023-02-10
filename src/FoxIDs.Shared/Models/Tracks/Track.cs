@@ -102,6 +102,11 @@ namespace FoxIDs.Models
         [ValidateComplexType]
         [JsonProperty(PropertyName = "logging")]
         public Logging Logging { get; set; } 
+        
+        [MaxLength(Constants.Models.Track.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "display_name")]
+        public string DisplayName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]

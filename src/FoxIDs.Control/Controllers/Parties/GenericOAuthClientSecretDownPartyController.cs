@@ -88,7 +88,7 @@ namespace FoxIDs.Controllers
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
                     logger.Warning(ex, $"Conflict, Create secret on client '{typeof(TParty).Name}' by name '{secretRequest.PartyName}'.");
-                    return Conflict(typeof(TParty).Name, secretRequest.PartyName);
+                    return Conflict(typeof(TParty).Name, secretRequest.PartyName, nameof(secretRequest.PartyName));
                 }
                 throw;
             }

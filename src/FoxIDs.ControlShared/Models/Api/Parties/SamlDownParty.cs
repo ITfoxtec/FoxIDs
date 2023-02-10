@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Schemas;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -78,6 +79,10 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         public List<string> AcsUrls { get; set; }
 
+        public bool EncryptAuthnResponse { get; set; }
+
+        public string NameIdFormat { get; set; }
+
         public SamlBindingTypes? LogoutRequestBinding { get; set; } 
 
         public SamlBindingTypes? LogoutResponseBinding { get; set; } 
@@ -91,7 +96,13 @@ namespace FoxIDs.Models.Api
         [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
+        public JwtWithCertificateInfo EncryptionKey { get; set; }
+
+        public bool MetadataAddLogoutResponseLocation { get; set; }
+
         public bool SignMetadata { get; set; }
+
+        public bool MetadataIncludeEncryptionCertificates { get; set; }
 
         [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> MetadataNameIdFormats { get; set; }

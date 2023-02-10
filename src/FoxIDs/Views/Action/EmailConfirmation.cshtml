@@ -1,0 +1,56 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+@model EmailConfirmationViewModel
+
+@{
+    ViewData["Title"] = Localizer["Email confirmation"];
+}
+
+<h1 class="heading">@ViewData["Title"]</h1>
+
+<div class="row page-container">
+    <div class="col-md page-content">
+        <form method="post">
+            <input type="hidden" asp-for="ConfirmationCodeSendStatus" autocomplete="off" />
+            <div class="info-message">
+                @if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.NewCode) 
+                {
+                    @Localizer["A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."]
+                }
+                else if (Model.ConfirmationCodeSendStatus == ConfirmationCodeSendStatus.ForceNewCode)
+                {
+                    @Localizer["A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."]
+                }
+                else 
+                {
+                    @Localizer["Please verify your email address with the confirmation code sent to your email."]
+                }
+            </div>
+            <input type="hidden" asp-for="Email" autocomplete="off" />
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group active">
+                <input asp-for="Email" id="showEmail" disabled autocomplete="off" class="form-control input-control bg-light" />
+                <label asp-for="Email" id="showEmail" class="label-control"></label>
+                <span asp-validation-for="Email"></span>
+            </div>
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group active-group">
+                <input asp-for="ConfirmationCode" autocomplete="off" class="form-control input-control" autofocus />
+                <label asp-for="ConfirmationCode" class="label-control"></label>
+                <span asp-validation-for="ConfirmationCode"></span>
+            </div>
+            <div class="form-group button-group">
+                <input type="submit" value="@Localizer["Confirm email"]" class="btn btn-primary" />
+                @if (Model.EnableCancelLogin)
+                {
+                    <a href="../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                }
+                <a href="_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new email confirmation code"]</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

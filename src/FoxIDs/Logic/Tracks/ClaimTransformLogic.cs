@@ -1,14 +1,17 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using FoxIDs.Models.Logic;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2.Claims;
+using ITfoxtec.Identity.Saml2;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace FoxIDs.Logic
 {
@@ -62,6 +65,9 @@ namespace FoxIDs.Logic
                         case ClaimTransformTypes.Concatenate:
                             ConcatenateTransformation(outputClaims, claimTransform);
                             break;
+                        case ClaimTransformTypes.DkPrivilege:
+                            DkPrivilegeTransformation(outputClaims, claimTransform);
+                            break;
                         default:
                             throw new NotSupportedException($"Claim transform type '{claimTransform.Type}' not supported.");
                     }
@@ -84,7 +90,7 @@ namespace FoxIDs.Logic
                     break;
                 case ClaimTransformActions.Replace:
                 case ClaimTransformActions.ReplaceIfNot:
-                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                    outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.Ordinal));
                     outputClaims.Add(newClaim);
                     break;
                 default:
@@ -105,7 +111,7 @@ namespace FoxIDs.Logic
                         break;
                     case ClaimTransformActions.Replace:
                     case ClaimTransformActions.ReplaceIfNot:
-                        outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.OrdinalIgnoreCase));
+                        outputClaims.RemoveAll(c => claimTransform.ClaimOut.Equals(c.Type, StringComparison.Ordinal));
                         outputClaims.AddRange(newClaims);
                         break;
                     default:
@@ -127,7 +133,7 @@ namespace FoxIDs.Logic
                 var newClaims = new List<Claim>();
                 foreach (var claim in claims)
                 {
-                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.Ordinal))
                     {
                         newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.Transformation));
                     }
@@ -144,7 +150,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase));
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal));
             }
         }
 
@@ -155,9 +161,9 @@ namespace FoxIDs.Logic
                 var newClaims = new List<Claim>();
                 foreach (var claim in claims)
                 {
-                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.OrdinalIgnoreCase))
+                    if (claim.Type.Equals(claimTransform.ClaimsIn.Single(), StringComparison.Ordinal))
                     {
-                        if (claim.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase))
+                        if (claim.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal))
                         {
                             newClaims.Add(new Claim(claimTransform.ClaimOut, claimTransform.TransformationExtension));
                         }
@@ -175,7 +181,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase) && c.Value.Equals(claimTransform.Transformation, StringComparison.OrdinalIgnoreCase));
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && c.Value.Equals(claimTransform.Transformation, StringComparison.Ordinal));
             }
         }
 
@@ -189,7 +195,7 @@ namespace FoxIDs.Logic
                 var claimIn = claimTransform.ClaimsIn.Single();
                 foreach (var claim in claims)
                 {
-                    if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                    if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                     {
                         var match = regex.Match(claim.Value);
                         if (match.Success)
@@ -210,7 +216,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase) && regex.Match(c.Value).Success);
+                claims.RemoveAll(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal) && regex.Match(c.Value).Success);
             }
         }
 
@@ -220,7 +226,7 @@ namespace FoxIDs.Logic
             var claimIn = claimTransform.ClaimsIn.Single();
             foreach (var claim in claims)
             {
-                if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                 {
                     newClaims.Add(new Claim(claimTransform.ClaimOut, claim.Value));
                 }
@@ -232,7 +238,7 @@ namespace FoxIDs.Logic
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
-                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase)).Count() > 0))
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
                 {
                     AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }                
@@ -246,7 +252,7 @@ namespace FoxIDs.Logic
             var claimIn = claimTransform.ClaimsIn.Single();
             foreach (var claim in claims)
             {
-                if (claim.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase))
+                if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
                 {
                     var match = regex.Match(claim.Value);
                     if (match.Success && match.Groups.ContainsKey("map"))
@@ -262,7 +268,7 @@ namespace FoxIDs.Logic
             }
             else if (claimTransform.Action == ClaimTransformActions.AddIfNotOut)
             {
-                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.OrdinalIgnoreCase)).Count() > 0))
+                if (!(claims.Where(c => c.Type.Equals(claimTransform.ClaimOut, StringComparison.Ordinal)).Count() > 0))
                 {
                     AddOrReplaceClaims(claims, claimTransform, newClaims);
                 }
@@ -277,7 +283,7 @@ namespace FoxIDs.Logic
             int i = 0;
             foreach (var claimIn in claimTransform.ClaimsIn)
             {
-                var value = claims.Where(c => c.Type.Equals(claimIn, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).FirstOrDefault();
+                var value = claims.Where(c => c.Type.Equals(claimIn, StringComparison.Ordinal)).Select(c => c.Value).FirstOrDefault();
                 if(value != null)
                 {
                     addTransformationClaim = true;
@@ -294,6 +300,82 @@ namespace FoxIDs.Logic
                 var transformationValue = string.Format(claimTransform.Transformation, values);
                 newClaims.Add(new Claim(claimTransform.ClaimOut, transformationValue));
             }
+            AddOrReplaceClaims(claims, claimTransform, newClaims);
+        }
+
+        private void DkPrivilegeTransformation(List<Claim> claims, ClaimTransform claimTransform)
+        {
+            var newClaims = new List<Claim>();
+            var claimIn = claimTransform.ClaimsIn.Single();
+            foreach (var claim in claims)
+            {
+                if (claim.Type.Equals(claimIn, StringComparison.Ordinal))
+                {
+                    var privilegesAsString = Encoding.UTF8.GetString(Convert.FromBase64String(claim.Value));
+                    logger.ScopeTrace(() => $"Transform claims, DK privilege base64-decoded XML '{privilegesAsString}'", traceType: TraceTypes.Claim);
+                    var privilegesXmlDocument = privilegesAsString.ToXmlDocument();
+
+                    var privilegeGroupXmlNodes = privilegesXmlDocument.DocumentElement.SelectNodes("PrivilegeGroup");
+                    foreach (XmlNode privilegeGroupXmlNode in privilegeGroupXmlNodes)
+                    {
+                        var dkPrivilegeGroupResult = new DkPrivilegeGroup();
+
+                        var scope = privilegeGroupXmlNode.Attributes["Scope"]?.Value;
+                        if (string.IsNullOrWhiteSpace(scope) || !scope.Contains(':')) 
+                        {
+                            throw new Exception("DK privilege, invalid / empty XML PrivilegeGroup scope.");
+                        }
+                        var scopeDataSplitIndex = scope.LastIndexOf(':');
+                        var scopeNamespace = scope.Substring(0, scopeDataSplitIndex);
+                        var scopeData = scope.Substring(scopeDataSplitIndex + 1);
+                        switch (scopeNamespace)
+                        {
+                            case "urn:dk:gov:saml:cvrNumberIdentifier":
+                                dkPrivilegeGroupResult.CvrNumber = scopeData;
+                                break;
+                            case "urn:dk:gov:saml:productionUnitIdentifier":
+                                dkPrivilegeGroupResult.ProductionUnit = scopeData;
+                                break;
+                            case "urn:dk:gov:saml:seNumberIdentifier":
+                                dkPrivilegeGroupResult.SeNumber = scopeData;
+                                break;
+                            case "urn:dk:gov:saml:cprNumberIdentifier":
+                                dkPrivilegeGroupResult.CprNumber = scopeData;
+                                break;
+                            default:
+                                throw new NotSupportedException($"DK privilege, scope namespace '{scopeNamespace}' not supported.");
+                        }
+
+                        var constraintXmlNodes = privilegeGroupXmlNode.SelectNodes("Constraint");
+                        if (constraintXmlNodes != null && constraintXmlNodes.Count > 0)
+                        {
+                            dkPrivilegeGroupResult.Constraint = new Dictionary<string, string>();
+                            foreach (XmlNode constraintXmlNode in constraintXmlNodes)
+                            {
+                                var constraintName = constraintXmlNode.Attributes["Name"]?.Value;
+                                if (string.IsNullOrWhiteSpace(constraintName))
+                                {
+                                    throw new Exception("DK privilege, invalid / empty XML Constraint name.");
+                                }
+                                dkPrivilegeGroupResult.Constraint.Add(constraintName, constraintXmlNode.InnerText);
+                            }
+                        }
+
+                        var privilegeXmlNodes = privilegeGroupXmlNode.SelectNodes("Privilege");
+                        if (privilegeXmlNodes == null || privilegeXmlNodes.Count < 1)
+                        {
+                            throw new Exception("DK privilege, invalid / empty XML Privilege.");
+                        }
+                        foreach(XmlNode privilegeXmlNode in privilegeXmlNodes)
+                        {
+                            dkPrivilegeGroupResult.Privilege.Add(privilegeXmlNode.InnerText);
+                        }
+
+                        newClaims.Add(new Claim(claimTransform.ClaimOut, dkPrivilegeGroupResult.ToJson()));
+                    }                    
+                }
+            }
+
             AddOrReplaceClaims(claims, claimTransform, newClaims);
         }
     }

@@ -1,17 +1,207 @@
 # Up-party and down-party - Connect to Context Handler with SAML 2.0
-
-// TODO
-
 FoxIDs can be connected to Context Handler (Danish IdP) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and [SAML 2.0 down-party](down-party-saml-2.0.md). Where Context Handler is either a SAML 2.0 Identity Provider (IdP) or Relying Party (RP) and FoxIDs is acting as an SAML 2.0 Relying Party / Identity Provider.
 
-FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+Context Handler is a Danish Identity Provider (IdP) connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
 
+NemLog-in test and production environment:  
+- The [Context Handler get started](https://digitaliseringskataloget.dk/l%C3%B8sninger/adgangsstyring-brugere).
+- The [Context Handler administration portal](https://serviceplatformen.dk/administration/) 
+- The Context Handler [test application with NSIS](https://spwithnsis.eksterntest-stoettesystemerne.dk ) and [test application with out NSIS](https://spwithoutnsis.eksterntest-stoettesystemerne.dk)
+- The [current/old Context Handler test application](https://demo-brugervendtsystem.kombit.dk/test) 
 
-## Up-party - Connect to Context Handler
+## Consider separate track
 
-*Context Handler is a SAML 2.0 Identity Provider (IdP)*
+Context Handler requires the Relying Party (RP) and Identity Provider (IdP) to use different OSES certificates. Therefore, consider connecting Context Handler in separate tracks where the OCES certificates can be configured without affecting any other configurations.
 
+Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect FoxIDs with OpenID Connect](up-party-howto-oidc-foxids.md) guide. The track with a up-party connected to Context Handler is called the parallel FoxIDs track in the guide.
 
-## Down-party - Connect to Context Handler
+## Certificate
 
-*A FoxIDs down-party is a SAML 2.0 Identity Provider (IdP) and trusted by Context Handler*
+Context Handler requires all requests (authn and logout) to be signed with OCES certificates. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
+
+A OCES certificate is valid for three years thereafter it manually has to be updated.
+
+Add the `.P12` OCES certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+1. Select (or create) the track to be used for Context Handler as Relying Party (RP) or Identity Provider (IdP)
+2. Select the Certificates tab
+3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
+4. Then click on the primary certificate, then write the password and upload the `.P12` OCES certificate 
+
+![Add OCES certificate](images/howto-saml-nemlogin3-certificate.png)
+
+It is subsequently possible to add a secondary certificate and to swap between the primary and secondary certificates.
+
+## Configuring Context Handler as Identity Provider (IdP)
+
+*FoxIDs up-party is a SAML 2.0 Relying Party (RP) and trust Context Handler as an Identity Provider (IdP).*
+
+> You need to [configure the OCES certificate](#certificate) before following this configuration.
+
+The FoxIDs up-party is configured in the Context Handler administrator portal as an user system (DK: brugervendt system).
+
+**1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+1. Select the Parties tab and then the Up-parties
+2. Click Create up-party and then SMAL 2.0
+3. Add the name
+4. Add the Context Handler IdP metadata in the Metadata URL field
+5. Click Create
+6. Change Logout response binding to Redirect
+
+> Currently Context Handler has an error where it do logout with a post binding. Therefor, after successfully configuration you need to change the Logout response binding back to post in order to make logout work.
+
+![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-read-metadata.png)
+
+7. Select show advanced settings
+8. Configure a custom SP issuer, the issuer is required to start with `https://saml.`
+    - The issuer in this example `https://saml.localdev.foxids.com/test-corp/contexthandler-test/`
+9. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+10. Select to add logout response location URL in metadata
+11. Select to include the encryption certificate in metadata
+12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
+
+![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-nameidformat.png)
+
+13. Add an attribute consuming service in metadata and add the service name.
+14. Add all the claims you wan to receive as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
+
+The following claims is most often used:
+
+  - Current/old Context Handler
+     - `dk:gov:saml:attribute:AssuranceLevel`
+     - `dk:gov:saml:attribute:CvrNumberIdentifier`
+     - (FamilyName) `urn:oid:2.5.4.4`
+     - `dk:gov:saml:attribute:Privileges_intermediate`
+
+  - New NSIS Context Handler
+     - `https://data.gov.dk/concept/core/nsis/loa`
+     - `https://data.gov.dk/model/core/eid/professional/cvr`
+     - `https://data.gov.dk/model/core/eid/email`
+     - `https://data.gov.dk/model/core/eid/firstName`
+     - `https://data.gov.dk/model/core/eid/lastName`
+     - `https://data.gov.dk/model/core/eid/privilegesIntermediate`
+
+![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-attributes.png)
+
+15. Add at least one technical contact person
+16. Click Update
+17. Go to the top of the SAML 2.0 up-party
+18. Download the SAML 2.0 up-party SP-metadata, in this case https://localhost:44330/testcorp/test-contexthandler-rp/(ch-rp)/saml/spmetadata. 
+19. The SP-metadata file is used to configure the Context Handler user system (DK: brugervendt system).
+ 
+**2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
+
+1. Select IT-systems (DK: IT-systemer) 
+2. Click Add IT-system (DK: Tilslut it-system)
+3. Fill out the fields and select user system (DK: Brugervendt system)
+4. Add the SAML 2.0 up-party SP-metadata in the user system (DK: Brugervendt system) tab.
+5. Fill out the rest and click Save (DK: Gem)
+
+ **3 - Add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens.  
+Furthermore, it makes the tokens readable.
+
+1. Set the privilege claim depending of the Context Handler version. 
+2. Remove the original privilege claim from the claims pipeline.
+
+![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-context-handler-up-privilege-claim-tf.png)
+
+ **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+ FoxIDs internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML 2 or OIOSAML 3 defined set of SAML 2.0 claims where JWT mappings need to be added.
+
+ 1. Go to Settings tab and Claim mappings
+ 2. Add mappings for all the claims configured in step 1.13, you can create you own short JWT claim names if no standard name exist
+ 3. Click update
+
+You are done. The SAML 2.0 up-party can now be used as an up-party for down-parties in the track.
+
+> A down-party will only issue added claims.  
+> Therefor, remember to add the JWT claims to OpenID Connect down-parties or use the `*` notation.
+
+See [Consider separate track](#consider-separate-track) on how to connect the Context Handler track.
+
+## Configuring Context Handler as Relying Party (RP)
+
+*FoxIDs down-party is a SAML 2.0 Identity Provider (IdP) and trusted by Context Handler as an Relying Party (RP).*
+
+> You need to [configure the OCES certificate](#certificate) before following this configuration.
+
+The FoxIDs down-party is configured in the Context Handler administrator portal as an Identity Provider.
+
+**1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+1. Select the Parties tab and then the Up-parties
+2. Click Create up-party and then SMAL 2.0
+3. Add the name
+4. Add the Context Handler IdP metadata in the Metadata URL field
+5. Click Create
+6. Change Logout response binding to Redirect
+
+> Currently Context Handler has an error where it do logout with a post binding. Therefor, after successfully configuration you need to change the Logout response binding back to post in order to make logout work.
+
+![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-read-metadata.png)
+
+7. Select show advanced settings
+8. Configure a custom SP issuer, the issuer is required to start with `https://saml.`
+    - The issuer in this example `https://saml.localdev.foxids.com/test-corp/contexthandler-test/`
+9. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+10. Select to add logout response location URL in metadata
+11. Select to include the encryption certificate in metadata
+12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
+
+![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-nameidformat.png)
+
+13. Add an attribute consuming service in metadata and add the service name.
+14. Add all the claims you wan to receive as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
+
+The following claims is most often used:
+
+  - Current/old Context Handler
+     - `dk:gov:saml:attribute:AssuranceLevel`
+     - `dk:gov:saml:attribute:CvrNumberIdentifier`
+     - (FamilyName) `urn:oid:2.5.4.4`
+     - `dk:gov:saml:attribute:Privileges_intermediate`
+
+  - New NSIS Context Handler
+     - `https://data.gov.dk/concept/core/nsis/loa`
+     - `https://data.gov.dk/model/core/eid/professional/cvr`
+     - `https://data.gov.dk/model/core/eid/email`
+     - `https://data.gov.dk/model/core/eid/firstName`
+     - `https://data.gov.dk/model/core/eid/lastName`
+     - `https://data.gov.dk/model/core/eid/privilegesIntermediate`
+
+![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-attributes.png)
+
+15. Add at least one technical contact person
+16. Click Update
+17. Go to the top of the SAML 2.0 up-party
+18. Download the SAML 2.0 up-party SP-metadata, in this case https://localhost:44330/testcorp/test-contexthandler-rp/(ch-rp)/saml/spmetadata. 
+19. The SP-metadata file is used to configure the Context Handler user system (DK: brugervendt system).
+ 
+**2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
+
+1. Select IT-systems (DK: IT-systemer) 
+2. Click Add IT-system (DK: Tilslut it-system)
+3. Fill out the fields and select user system (DK: Brugervendt system)
+4. Add the SAML 2.0 up-party SP-metadata in the user system (DK: Brugervendt system) tab.
+5. Fill out the rest and click Save (DK: Gem)
+
+ **3 - Add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens.  
+Furthermore, it makes the tokens readable.
+
+1. Set the privilege claim depending of the Context Handler version. 
+2. Remove the original privilege claim from the claims pipeline.
+
+![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-context-handler-up-privilege-claim-tf.png)
+
+ **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+ FoxIDs internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML 2 or OIOSAML 3 defined set of SAML 2.0 claims where JWT mappings need to be added.
+
+ 1. Go to Settings tab and Claim mappings
+ 2. Add mappings for all the claims configured in step 1.13, you can create you own short JWT claim names if no standard name exist
+ 3. Click update

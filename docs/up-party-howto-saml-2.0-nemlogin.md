@@ -9,7 +9,7 @@ NemLog-in (currently called NemLog-in3) is a Danish Identity Provider (IdP) whic
 NemLog-in test and production environment:  
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/), where you can find documentation and the NemLog-in IdP-metadata for test and production.
 - The [NemLog-in development portal - test page](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can the NemLog-in IdP-metadata for test and FOCES2 / OCES3 test certificates.
-- The [NemLog-in adminstration protal](https://administration.nemlog-in.dk/) where you configure IT-systems
+- The [NemLog-in administration portal](https://administration.nemlog-in.dk/) where you configure IT-systems
 
 > A sample showing the NemLog-in integrations is configured in the FoxIDs `test-corp` with the up-party name `nemlogin_oidc`. The configuration uses a separate track where the NemLog-in integrations is configured and converted from SAMl 2.0 to OpenId Connect.  
 > You can test NemLog-in login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC NemLog-in Log in` or by clicking `Log in` and then `Danish NemLog-in`.
@@ -31,7 +31,7 @@ Add the `.P12` OCES certificate in [FoxIDs Control Client](control.md#foxids-con
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
 
-![Add OCES certificate](images/howto-saml-nemlogin3-certificate-container-type.png)
+![Change container type](images/howto-saml-nemlogin3-certificate-container-type.png)
 
 4. Then click on the primary certificate, then write the password and upload the `.P12` OCES certificate 
 
@@ -105,7 +105,19 @@ It is subsequently possible to add a secondary certificate and to swap between t
 4. Click the button Save the technical details
 5. Click Provision to integrationtest and then click Apply for integration test
 
- **3 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3 - Optionally - add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+
+*Optionally, if you are using the privilege claim.*
+
+FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens.  
+Furthermore, it makes the tokens readable.
+
+1. Set the privilege claim depending of the Context Handler version. 
+2. Remove the original privilege claim from the claims pipeline.
+
+![NemLog-in SAML 2.0 up-party privilege claim transformation](images/howto-saml-nemlogin3-up-privilege-claim-tf.png)
+
+ **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  FoxIDs internally converts SAML 2.0 clams to JWT claims. NemLog-in / OIOSAML 3 defines a set of SAML 2.0 claims where JWT mappings need to be added.
 

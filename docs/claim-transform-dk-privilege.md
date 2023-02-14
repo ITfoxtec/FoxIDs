@@ -38,7 +38,7 @@ DK privilege base64-decoded sample:
             <Privilege>urn:dk:some_domain:myPrivilege1A</Privilege>
             <Privilege>urn:dk:some_domain:myPrivilege1B</Privilege>
         </PrivilegeGroup>
-            <PrivilegeGroup Scope="urn:dk:gov:saml:seNumberIdentifier:27384223">
+        <PrivilegeGroup Scope="urn:dk:gov:saml:seNumberIdentifier:27384223">
             <Privilege>urn:dk:some_domain:myPrivilege1C</Privilege>
             <Privilege>urn:dk:some_domain:myPrivilege1D</Privilege>
         </PrivilegeGroup>

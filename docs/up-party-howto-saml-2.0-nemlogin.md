@@ -24,7 +24,7 @@ Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect 
 
 NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
 
-A OCES certificate is valid for three years thereafter it manually has to be updated.
+An OCES certificate is valid for three years. After that, it must be updated manually.
 
 Add the `.P12` OCES certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) the track to be used for NemLog-in
@@ -130,7 +130,7 @@ Furthermore, it makes the tokens readable.
 You are done. The SAML 2.0 up-party can now be used as an up-party for down-parties in the track.
 
 > A down-party will only issue added claims.  
-> Therefor, remember to add the JWT claims to OpenID Connect down-parties.
+> Therefore, remember to add the JWT claims to OpenID Connect down-parties.
 
 See [Consider separate track](#consider-separate-track) on how to connect the NemLog-in track.
 

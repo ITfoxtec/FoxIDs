@@ -5,7 +5,7 @@ FoxIDs support claim transforms of DK privilege used in Danish IdPs like [NemLog
 Supported privilege standard: 
 
 - [OIO Basic Privilege Profile, Version 1.2](https://digst.dk/media/20999/oiosaml-basic-privilege-profile-1_2.pdf)
-- FoxIDs support PrivilegeGroup elements defined in [model 2](#model-2) (scoping and delegation) and [model 3](#model-3) (scoping, delegation and constraint).
+- FoxIDs support `PrivilegeGroup` elements defined in [model 2](#model-2) (scoping and delegation) and [model 3](#model-3) (scoping, delegation and constraint).
 - FoxIDs support both to read the base64-encoded privilege string from the standard claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` and a custom defined claim.
 
 ## Configuring DK privilege - claim transforms
@@ -21,7 +21,7 @@ DK privilege claim transforms in [FoxIDs Control Client](control.md#foxids-contr
 ## Model 2
 The DK privilege claim is transformed into a list of claims, one claim for each group. The XML PrivilegeGroup element is transformed into a JSON object and serialized as a string.
 
-There are 4 possible scopes are translated into a property with a shorter name:
+The 4 possible scopes are translated into a properties with a short name:
 - `Scope="urn:dk:gov:saml:cvrNumberIdentifier:<cvr_number>"` become `"cvr": "<cvr_number>"`
 - `Scope="urn:dk:gov:saml:productionUnitIdentifier:<p_number>"` become `"p": "<p_number>"`
 - `Scope="urn:dk:gov:saml:seNumberIdentifier:<se_number>"` become `"se": "<se_number>"`
@@ -86,9 +86,9 @@ Is translated into one claims with JSON values:
         "p": [ "urn:dk:kombit:system_xyz:view_case" ]
     }
 
-## Using JSON privilege claim
+## Using JSON privilege claim in an application
 The [down-party](parties.md#down-party) application receives the privilege claim with the privilege serialized as a JSON string.  
-The following example show how to deserialize the JSON claim to an object in ASP.NET Core using `Newtonsoft.Json`.
+The following C# code example show how to deserialize the JSON claim to an object in ASP.NET Core application using `Newtonsoft.Json`.
 
 Create privilege group class
 

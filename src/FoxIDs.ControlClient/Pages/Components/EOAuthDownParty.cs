@@ -61,7 +61,7 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     generalOAuthDownParty.EnableClientTab = true;
                     afterMap.Client.ExistingSecrets = oauthDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
-                    var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(generalOAuthDownParty.Name, StringComparison.Ordinal));
+                    var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(afterMap.Name, StringComparison.Ordinal));
                     if (defaultResourceScopeIndex > -1)
                     {
                         afterMap.Client.DefaultResourceScope = true;

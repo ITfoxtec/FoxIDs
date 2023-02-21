@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
             var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
             {
-                throw new UserNotExistsException($"User '{user.Email}' do not exist or is disabled, trying to send {logText} confirmation code.");
+                throw new UserNotExistsException($"User '{email}' do not exist or is disabled, trying to send {logText} confirmation code.");
             }
 
             await sendEmailLogic.SendEmailAsync(new MailAddress(user.Email, GetDisplayName(user)), emailContent(confirmationCode), fromName: RouteBinding.DisplayName);

@@ -8,7 +8,7 @@ namespace FoxIDs.Models.Logic
         [JsonProperty(PropertyName = "cvr")]
         public string CvrNumber { get; set; }
 
-        [JsonProperty(PropertyName = "P")]
+        [JsonProperty(PropertyName = "pu")]
         public string ProductionUnit { get; set; }
 
         [JsonProperty(PropertyName = "se")]

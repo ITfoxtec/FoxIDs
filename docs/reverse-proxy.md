@@ -1,11 +1,11 @@
 # Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a reverse proxy. 
 
+The [custom primary domains](deployment.md#custom-primary-domains) is exposed through the reverse proxy alongside optionally [custom domains](custom-domain.md).  
+
 The FoxIDs service support [custom domains](custom-domain.md) which is handled with domain rewrite through the reverse proxy.
 
 > FoxIDs only support [custom domains](custom-domain.md) if it is behind a reverse proxy and the access is restricted by the `X-FoxIDs-Secret` HTTP header or the `Settings:TrustProxyHeaders` setting is set to `true` in the FoxIDs App Service configuration.
-
-The [custom primary domains](deployment.md#custom-primary-domains) is exposed through the reverse proxy alongside optionally [custom domains](custom-domain.md).  
 
 ## Restrict access
 Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
@@ -31,8 +31,8 @@ FoxIDs service support reading the [custom domain](custom-domain.md) (host name)
 
  > The host header is only read if access is restricted by the `X-FoxIDs-Secret` HTTP header.
 
-## Tested reverse proxies
-FoxIDs is tested with the following reverse proxies.
+## Supported and tested reverse proxies
+FoxIDs generally support all reverse proxies. The following reverse proxies is tested to work with FoxIDs.
  
 ### Azure Front Door
 Azure Front Door can be configured as a reverse proxy with close to the default setup. Azure Front Door rewrite domains by default. 
@@ -41,7 +41,7 @@ The `X-FoxIDs-Secret` HTTP header can optionally be added but is required to sup
 > Do NOT enable caching. The `Accept-Language` header is not forwarded if caching is enabled. The header is required by FoxIDs to support cultures.
 
 ### Cloudflare
-Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). The `X-FoxIDs-Secret` HTTP header should can be added.
+Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). The `X-FoxIDs-Secret` HTTP header should be added.
 
 ### IIS ARR Proxy
 Internet Information Services (IIS) Application Request Routing (ARR) Proxy require a Windows server. ARR Proxy rewrite domains with a rewrite rule. 

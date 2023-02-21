@@ -47,11 +47,9 @@ The solution is to delete (purge) the old Key Vault, which will release the name
 
 ## Upload risk passwords
 
-You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
+You can increment the password security level by uploading risk passwords. 
 
-You can upload risk passwords with the FoxIDs seed tool. The seed tool is a console application. 
-
-> The seed tool code can be [downloaded](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.SeedTool) and need to be compiled to run.
+You can upload risk passwords with the FoxIDs seed tool console application. The seed tool code is [downloaded](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.SeedTool) and need to be compiled and [configured](#configure-the-seed-tool) to run.
 
 Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwned.com/passwords](https://haveibeenpwned.com/Passwords).
 
@@ -59,6 +57,8 @@ Download the `SHA-1` pwned passwords `ordered by prevalence` from [haveibeenpwne
 
 The risk passwords are uploaded as bulk which has a higher consumption. Please make sure to adjust the Cosmos DB provisioned throughput (e.g. to 20000 RU/s or higher) temporarily. 
 The throughput can be adjusted in Azure Cosmos DB --> Data Explorer --> Scale & Settings.
+
+You can read the number of risk passwords uploaded to FoxIDs in [FoxIDs Control Client](control.md#foxids-control-client) master tenant on the Risk Passwords tap. And you can test if a password is okay or has appeared in breaches.
 
 ### Configure the seed tool
 
@@ -74,9 +74,9 @@ Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#fo
 4. Remember the client secret.
 5. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:master`.
 6. Click show advanced settings. 
-7. In the issue claims section. Add a claim with the name `role` and the value `foxids:tenant.admin`. This will granted the client the administrator role. 
+7. In the issue claims section. Add a claim with the name `role` and the value `foxids:tenant.admin`. This will grant the client the administrator role. 
 
-The seed tool client is thereby granted access to update to the master tenant.
+The seed tool client is thereby granted access to update the master tenant.
 
 ![FoxIDs Control Client - seed tool client](images/upload-risk-passwords-seed-client.png)
 
@@ -105,20 +105,20 @@ It is possible to run the sample applications after they are configured in a Fox
 
 ## Custom primary domains
 
-The FoxIDs service and FoxIDs Control sites primary domains can be customized. 
+The FoxIDs service and FoxIDs Control sites primary domains can be customized. The new primary custom domains can be configured on the App Services or by using a [reverse proxy](reverse-proxy.md)
 
 > Important: change the primary domain before adding tenants.
 
-- FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://auth.somedomain.com`  
-- FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com` or `https://foxidscontrol.somedomain.com`
+- FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://id.somedomain.com`  
+- FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com` or `https://idcontrol.somedomain.com`
 
 The FoxIDs site support one primary domain and multiple [custom domains](custom-domain.md) which are connected to tenants, where the FoxIDs Control site only support one primary domain.
 
 Configure new primary custom domains:
 
-1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Parties` tab and under `Down-parties` select click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
+1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Parties` tab and `Down-parties` tap then click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
 
-   - Add the FoxIDs Control sites new primary custom domain to the `Allow CORS origins` list without a trailing slash.
+   - Add the FoxIDs Control sites new primary custom domain URL to the `Allow CORS origins` list without a trailing slash.
    - Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.
 
    > If you have added tenants before changing the primary domain, the `OpenID Connect - foxids_control_client` configuration have to be done in each tenant.
@@ -129,16 +129,12 @@ Depending on the reverse proxy your are using you might be required to also conf
    - If configured on App Services: add the custom primary domains in Azure portal on the FoxIDs App Service and the FoxIDs Control App Service production slot under the `Custom domains` tab by clicking the `Add custom domain` link.
    - If configured on reverse proxy: the custom primary domains are exposed through the [reverse proxy](reverse-proxy.md).
 
-3) Then configure the FoxIDs service sites new primary custom domains in the FoxIDs App Service under the `Configuration` tab and `Applications settings` sub tab: 
-
-   - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
-
-4) And configure the FoxIDs service and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
+3) Then configure the FoxIDs service and FoxIDs Control sites new primary custom domains in the FoxIDs Control App Service under the `Configuration` tab and `Applications settings` sub tab: 
 
    - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
    - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
 
-> You can create a `main` tenant and add the custom primary domain used on the FoxIDs service as a [custom domain](custom-domain.md) to remove the tenant element from the URL.
+> Yo can achieve a shorter and prettier URL where the tenant element is removed from the URL. By creating a `main` tenant where the custom primary domain used on the FoxIDs service is set as a [custom domain](custom-domain.md).
 
 ## Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a [reverse proxy](reverse-proxy.md). 

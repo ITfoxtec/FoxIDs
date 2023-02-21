@@ -6,7 +6,7 @@ Where Context Handler is either a SAML 2.0 [Identity Provider (IdP)](#configurin
 
 Context Handler is a Danish Identity Provider (IdP) connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support both OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
 
-Context Handler test and production environment:  
+Context Handler documentation and configuration:
 - The [Context Handler get started](https://digitaliseringskataloget.dk/l%C3%B8sninger/adgangsstyring-brugere).
 - The [Context Handler administration portal](https://serviceplatformen.dk/administration/) 
 - The Context Handler [test application with NSIS](https://spwithnsis.eksterntest-stoettesystemerne.dk ) and [test application with out NSIS](https://spwithoutnsis.eksterntest-stoettesystemerne.dk)

@@ -11,7 +11,16 @@ The FoxIDs service support [custom domains](custom-domain.md) which is handled w
 Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  
 The access restriction is activated by adding a secret with the name `Settings--ProxySecret` in Key Vault.
 
+1. Grant your IP address access through the Key Vault firewall
+![Configure reverse proxy secret - firewall](images/configure-reverse-proxy-secret-firewall.png)
+
+2. Grant your user List and Set permissions in Access policies.
+![Configure reverse proxy secret - permissions](images/configure-reverse-proxy-secret-permissions.png)
+
+3. Add the `Settings--ProxySecret` secret
 ![Configure reverse proxy secret](images/configure-reverse-proxy-secret.png)
+
+4. After successfully configuration, remove you IP address and permissions.
 
 > The sites needs to be restarted to read the secret.
 

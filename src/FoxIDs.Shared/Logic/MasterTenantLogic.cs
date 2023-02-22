@@ -66,6 +66,7 @@ namespace FoxIDs.Logic
                 EnableCreateUser = false,
                 EnableCancelLogin = false,
                 SessionLifetime = 0,
+                SessionAbsoluteLifetime = 0,
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };

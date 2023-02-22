@@ -49,6 +49,8 @@ The `X-FoxIDs-Secret` HTTP header can optionally be added but is required to sup
 
 > Do NOT enable caching. The `Accept-Language` header is not forwarded if caching is enabled. The header is required by FoxIDs to support cultures.
 
+Disable Session affinity and Health probes. Furthermore, Load balancing is not applicable.
+
 ### Cloudflare
 Cloudflare can be configured as a reverse proxy. But Cloudflare require a Enterprise plan to rewrite domains (host headers). The `X-FoxIDs-Secret` HTTP header should be added.
 

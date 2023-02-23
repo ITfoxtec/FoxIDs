@@ -144,6 +144,16 @@ as a [custom domain](custom-domain.md).
 ## Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a [reverse proxy](reverse-proxy.md). 
 
+## Enable test slots for testing
+Both the FoxIDs App Service and FoxIDs Control App service contain a test slots use for [updating](update.md) the sites without downtime.
+
+It is possible to do preliminary test in the test slots against the production data or create a new dataset for testing. 
+
+Configuration to enable test with production data:
+- In Key Vault. Grant the FoxIDs App Service and FoxIDs Control App service test slots access to call Key Vault with the same rights as the FoxIDs App Service and FoxIDs Control App service existing rights.
+- In Log Analytics workspace. Grant the FoxIDs App Service and FoxIDs Control App service test slots read access.
+- You can optionally add the two test slots behind a [reverse proxy](reverse-proxy.md) or restrict access otherwise
+
 ## Specify default page
 
 An alternative default page can be configured for the FoxIDs site using the `Settings:WebsiteUrl` setting. If configured a full URL is required like e.g., `https://www.foxidsxxxx.com`.

@@ -242,7 +242,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenantName '{trackIdKey.TenantName}', trackName '{trackIdKey.TrackName}' and upPartyName '{upPartyGroup.Value}'.", ex);
+                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', track '{trackIdKey.TrackName}' and up-party '{upPartyGroup.Value}' combination.", ex);
             }
         }
 
@@ -254,7 +254,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenantName '{trackIdKey.TenantName}', trackName '{trackIdKey.TrackName}' and downPartyName '{downPartyGroup.Value}'.", ex);
+                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', track '{trackIdKey.TrackName}' and down-party '{downPartyGroup.Value}' combination.", ex);
             }
         }
 

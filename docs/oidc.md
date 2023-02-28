@@ -19,8 +19,6 @@ How to guides:
 - Connect [Signicat](up-party-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
 
-up-party-howto-oidc-nets-eid-broker
-
 ## Down-party
 
 Configure your application as a [down-party OpenID Connect](down-party-oidc.md).

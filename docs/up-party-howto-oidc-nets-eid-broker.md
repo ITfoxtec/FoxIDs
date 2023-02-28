@@ -15,11 +15,13 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
 
 **Create an OpenID Connect up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Add the name
- 2. Add the Nets eID Broker demo authority in the Authority field
- 3. In the scopes list add `mitid` (to support MitID) and optionally `nemid` (to support the old NemID)
- 4. Add the Nets eID Broker demo secret in the Client secret field
- 5. Click create
+1. Add the name
+2. Add the Nets eID Broker demo authority `https://pp.netseidbroker.dk/op` in the Authority field
+3. In the scopes list add `mitid` (to support MitID) and optionally `nemid` (to support the old NemID)
+4. Add the Nets eID Broker demo secret `rnlguc7CM/wmGSti4KCgCkWBQnfslYr0lMDZeIFsCJweROTROy2ajEigEaPQFl76Py6AVWnhYofl/0oiSAgdtg==` in the Client secret field
+5. Select show advanced settings
+6. Add the Signicat Express client id `0a775a87-878c-4b83-abe3-ee29c720c3e7` in the Optional customer SP client ID field
+7. Click create
 
 That's it, you are done. 
 

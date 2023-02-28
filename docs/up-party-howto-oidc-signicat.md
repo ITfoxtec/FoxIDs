@@ -30,7 +30,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  4. In the scopes list add `profile`
  5. Add the Signicat Express secret in the Client secret field
  6. Select show advanced settings
- 7. Add the Signicat Express client id the Optional customer SP client ID field
+ 7. Add the Signicat Express client id in the Optional customer SP client ID field
  8. Click create
 
  **3 - Go back to [Signicat Express dashbord](https://dashboard-test.signicat.io/dashboard)**

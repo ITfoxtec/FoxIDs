@@ -23,13 +23,13 @@ namespace FoxIDs.Models.Api
         public string AdministratorPassword { get; set; }
         
         /// <summary>
-        /// True if the administrator account password should be changed on first login.
+        /// True if the administrator account password should be changed on first login. Default true.
         /// </summary>
         [Display(Name = "Change administrator password")]
         public bool ChangeAdministratorPassword { get; set; }
 
         /// <summary>
-        /// True if the administrator account email should be confirmed.
+        /// True if the administrator account email should be confirmed. Default true.
         /// </summary>
         [Display(Name = "Confirm administrator account")]
         public bool ConfirmAdministratorAccount { get; set; }

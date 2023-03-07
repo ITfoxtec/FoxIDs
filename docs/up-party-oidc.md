@@ -12,6 +12,8 @@ How to guides:
 - Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
+- Connect [Signicat](up-party-howto-oidc-signicat.md)
+- Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 

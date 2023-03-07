@@ -24,12 +24,6 @@ namespace FoxIDs.Client.Models.ViewModels
         public string AdministratorEmail { get; set; }
 
         /// <summary>
-        /// True if the administrator account should be confirmed.
-        /// </summary>
-        [Display(Name = "Confirm administrator account")]
-        public bool ConfirmAdministratorAccount { get; set; }
-
-        /// <summary>
         /// Administrator password.
         /// </summary>
         [Required]
@@ -37,6 +31,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "Administrator password")]
         public string AdministratorPassword { get; set; }
+
+        /// <summary>
+        /// True if the administrator account password should be changed on first login. Default true.
+        /// </summary>
+        [Display(Name = "Change administrator password")]
+        public bool ChangeAdministratorPassword { get; set; } = true;
+
+        /// <summary>
+        /// True if the administrator account should be confirmed. Default true.
+        /// </summary>
+        [Display(Name = "Confirm administrator account")]
+        public bool ConfirmAdministratorAccount { get; set; } = true;
 
         /// <summary>
         /// Plan (optional).

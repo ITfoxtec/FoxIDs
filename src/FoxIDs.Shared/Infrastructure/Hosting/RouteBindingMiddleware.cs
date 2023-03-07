@@ -163,17 +163,17 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         if (hasCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase))
                         {
-                            throw new RouteCreationException($"Invalid tenant and track name '{idKey.TenantName}'. The URL for a custom domain has to be without the tenant element.", ex);
+                            throw new RouteCreationException($"Invalid tenant and track '{idKey.TenantName}'. The URL for a custom domain has to be without the tenant element.", ex);
                         }
-                        throw new RouteCreationException($"Invalid tenant name '{idKey.TenantName}' and track name '{idKey.TrackName}'.", ex);
+                        throw new RouteCreationException($"Invalid tenant '{idKey.TenantName}' and track '{idKey.TrackName}'.", ex);
                     }
                 }
 
                 if (hasCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase)) 
                 {
-                    throw new RouteCreationException($"Error loading tenant and track name '{idKey.TenantName}'.", ex);
+                    throw new RouteCreationException($"Error loading tenant and track '{idKey.TenantName}'.", ex);
                 }
-                throw new RouteCreationException($"Error loading tenant name '{idKey.TenantName}' and track name '{idKey.TrackName}'.", ex);
+                throw new RouteCreationException($"Error loading tenant '{idKey.TenantName}' and track '{idKey.TrackName}'.", ex);
             }
         }
     }

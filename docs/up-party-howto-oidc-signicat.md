@@ -7,7 +7,7 @@ FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticati
 You can create a [free account](https://www.signicat.com/sign-up/express-api-onboarding) on [Signicat Express](https://developer.signicat.com/express/docs/) and get access to the [dashbord](https://dashboard-test.signicat.io/dashboard). 
 Her you have access to the test environment.
 
-This guide describes how to connect a FoxIDs up-party to Signicat Express.
+This guide describes how to connect a FoxIDs up-party to the Signicat Express test environment.
 
 ## Configuring Signicat as OpenID Provider (OP)
 

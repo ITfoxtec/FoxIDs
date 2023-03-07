@@ -42,23 +42,24 @@ namespace FoxIDs.Repository
 
         private TMessage Get()
         {
-            if (RouteBindingDoNotExists()) return null;
-            CheckRouteBinding();
+            var routeBinding = GetRouteBinding();
+            if (RouteBindingDoNotExists(routeBinding)) return null;
+            CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Get track cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Get track cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
             {
                 try
                 {
-                    var envelope = CookieEnvelope<TMessage>.FromCookieString(CreateProtector(), cookie);
+                    var envelope = CookieEnvelope<TMessage>.FromCookieString(CreateProtector(routeBinding), cookie);
                     return envelope.Message;
                 }
                 catch (CryptographicException ex)
                 {
                     logger.Warning(ex, $"Unable to unprotect track cookie '{typeof(TMessage).Name}', deleting cookie.");
-                    DeleteByName(CookieName());
+                    DeleteByName(routeBinding, CookieName());
                     return null;
                 }
                 catch (Exception ex)
@@ -74,10 +75,11 @@ namespace FoxIDs.Repository
 
         private void Save(TMessage message)
         {
-            CheckRouteBinding();
+            var routeBinding = GetRouteBinding();
+            CheckRouteBinding(routeBinding);
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace(() => $"Save track cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Save track cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             var cookieOptions = new CookieOptions
             {
@@ -85,7 +87,7 @@ namespace FoxIDs.Repository
                 HttpOnly = true,
                 SameSite = message.SameSite,
                 IsEssential = true,
-                Path = GetPath(),
+                Path = GetPath(routeBinding),
             };
 
             httpContextAccessor.HttpContext.Response.Cookies.Append(
@@ -93,37 +95,38 @@ namespace FoxIDs.Repository
                 new CookieEnvelope<TMessage>
                 {
                     Message = message,
-                }.ToCookieString(CreateProtector()),
+                }.ToCookieString(CreateProtector(routeBinding)),
                 cookieOptions);
         }
 
         private void Delete()
         {
-            if (RouteBindingDoNotExists()) return;
-            CheckRouteBinding();
+            var routeBinding = GetRouteBinding();
+            if (RouteBindingDoNotExists(routeBinding)) return;
+            CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Delete track cookie '{typeof(TMessage).Name}', route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete track cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
-            DeleteByName(CookieName());
+            DeleteByName(routeBinding, CookieName());
         }
 
-        private void CheckRouteBinding()
+        private void CheckRouteBinding(RouteBinding routeBinding)
         {
-            if (RouteBinding == null) new ArgumentNullException(nameof(RouteBinding));
-            if (RouteBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TenantName), RouteBinding.GetTypeName());
-            if (RouteBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(RouteBinding.TrackName), RouteBinding.GetTypeName());
+            if (routeBinding == null) new ArgumentNullException(nameof(routeBinding));
+            if (routeBinding.TenantName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(routeBinding.TenantName), routeBinding.GetTypeName());
+            if (routeBinding.TrackName.IsNullOrEmpty()) throw new ArgumentNullException(nameof(routeBinding.TrackName), routeBinding.GetTypeName());
         }
 
-        private bool RouteBindingDoNotExists()
+        private bool RouteBindingDoNotExists(RouteBinding routeBinding)
         {
-            if (RouteBinding == null) return true;
-            if (RouteBinding.TenantName.IsNullOrEmpty()) return true;
-            if (RouteBinding.TrackName.IsNullOrEmpty()) return true;
+            if (routeBinding == null) return true;
+            if (routeBinding.TenantName.IsNullOrEmpty()) return true;
+            if (routeBinding.TrackName.IsNullOrEmpty()) return true;
 
             return false;
         }
 
-        private void DeleteByName(string name)
+        private void DeleteByName(RouteBinding routeBinding, string name)
         {
             httpContextAccessor.HttpContext.Response.Cookies.Append(
                 name,
@@ -135,18 +138,18 @@ namespace FoxIDs.Repository
                     HttpOnly = true,
                     SameSite = new TMessage().SameSite,
                     IsEssential = true,
-                    Path = GetPath(),
+                    Path = GetPath(routeBinding),
                 });
         }
 
-        private string GetPath()
+        private string GetPath(RouteBinding routeBinding)
         {
-            return $"/{RouteBinding.TenantName}/{RouteBinding.TrackName}";
+            return $"{(!routeBinding.HasCustomDomain ? $"/{routeBinding.TenantName}" : string.Empty)}/{routeBinding.TrackName}";
         }
 
-        private IDataProtector CreateProtector()
+        private IDataProtector CreateProtector(RouteBinding routeBinding)
         {
-            return dataProtection.CreateProtector(new[] { RouteBinding.TenantName, RouteBinding.TrackName });
+            return dataProtection.CreateProtector(new[] { routeBinding.TenantName, routeBinding.TrackName });
         }
 
         private string CookieName()
@@ -154,6 +157,6 @@ namespace FoxIDs.Repository
             return typeof(TMessage).Name.ToLower();
         }
 
-        private RouteBinding RouteBinding => httpContextAccessor.HttpContext.GetRouteBinding();
+        private RouteBinding GetRouteBinding() => httpContextAccessor.HttpContext.GetRouteBinding();
     }
 }

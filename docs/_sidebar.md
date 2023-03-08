@@ -2,6 +2,7 @@
 - [Getting Started](getting-started.md)
 - [Parties](parties.md)
   - [Login & HRD & 2FA/MFA](login.md)
+  - [How to connect IdP](up-party-howto.md)
   - [OpenID Connect](oidc.md)
   - [OAuth 2.0](oauth-2.0.md)
   - [SAML 2.0](saml-2.0.md)

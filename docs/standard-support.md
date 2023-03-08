@@ -16,5 +16,5 @@
   - [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf)
 - OAuth 2.0 limited to down-party [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4)
   - [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)
-- One-Time Password (OPT) supported by MFA
+- Two-factor authentication (2FA) with One-Time Password (OPT)
   - [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238)

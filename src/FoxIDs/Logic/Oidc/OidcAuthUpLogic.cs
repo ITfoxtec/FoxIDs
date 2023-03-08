@@ -447,6 +447,16 @@ namespace FoxIDs.Logic
                     }
                 }
 
+                var accessTokenClaims = claims.Where(c => c.Type == Constants.JwtClaimTypes.AccessToken).Select(c => c.Value);
+                if (accessTokenClaims.Count() > 0)
+                {
+                    claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AccessToken).ToList();
+                    foreach (var accessTokenClaim in accessTokenClaims)
+                    {
+                        claims.Add(new Claim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessTokenClaim}"));
+                    }
+                }
+
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
 
@@ -544,7 +554,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var userInfoResponse = result.ToObject<Dictionary<string, string>>();
-                    logger.ScopeTrace(() => $"Up, Token response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"Up, UserInfo response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
                     var claims = userInfoResponse.Select(c => new Claim(c.Key, c.Value)).ToList();
                     if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))

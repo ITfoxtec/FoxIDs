@@ -39,8 +39,17 @@ namespace FoxIDs.Controllers
                     false => new X509Certificate2(WebEncoders.Base64UrlDecode(certificateAndPassword.EncodeCertificate), certificateAndPassword.Password, keyStorageFlags: X509KeyStorageFlags.MachineKeySet | X509KeyStorageFlags.PersistKeySet | X509KeyStorageFlags.Exportable),
                 };
 
+                if (!certificate.HasPrivateKey)
+                {
+                    throw new ValidationException("Unable to read the certificates private key. E.g, try to convert the certificate and save the certificate with 'TripleDES-SHA1'.");
+                }
+
                 var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);
                 return Ok(mapper.Map<Api.JwtWithCertificateInfo>(jwt));
+            }
+            catch (ValidationException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

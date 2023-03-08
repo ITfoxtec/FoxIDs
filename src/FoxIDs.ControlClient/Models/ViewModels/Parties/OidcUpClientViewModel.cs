@@ -37,6 +37,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Token URL")]
         public string TokenUrl { get; set; }
 
+        [MaxLength(Constants.Models.OAuthUpParty.Client.UserInfoUrlLength)]
+        [Display(Name = "UserInfo URL")]
+        public string UserInfoUrl { get; set; }
+
         [MaxLength(Constants.Models.OAuthUpParty.Client.EndSessionUrlLength)]
         [Display(Name = "End session URL")]
         public string EndSessionUrl { get; set; }
@@ -54,7 +58,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Use PKCE")]
         public bool EnablePkce { get; set; } = true;
 
-        [Display(Name = "Use claims from ID token instead of access token")]
+        [Display(Name = "Read claims from the UserInfo Endpoint instead of the access token or ID token")]
+        public bool UseUserInfoClaims { get; set; }
+
+        [Display(Name = "Read claims from the ID token instead of the access token")]
         public bool UseIdTokenClaims { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

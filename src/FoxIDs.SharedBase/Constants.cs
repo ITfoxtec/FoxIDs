@@ -407,7 +407,8 @@ namespace FoxIDs
                     public const int RedirectUrisMin = 1;
                     public const int RedirectUrisMax = 40;
                     public const int AuthorizeUrlLength = 500;
-                    public const int TokenUrlLength = 500;
+                    public const int TokenUrlLength = 500;  
+                    public const int UserInfoUrlLength = 500;
                     public const int EndSessionUrlLength = 500;
                 }
             }

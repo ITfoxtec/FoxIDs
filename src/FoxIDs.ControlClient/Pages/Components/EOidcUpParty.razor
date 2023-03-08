@@ -186,11 +186,16 @@
                     {
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.UserInfoUrl" For="@(() => oidcUpParty.Form.Model.Client.UserInfoUrl)" />
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
                     }
                     @if (UpParty.ShowAdvanced)
                     {
-                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseUserInfoClaims" For="@(() => oidcUpParty.Form.Model.Client.UseUserInfoClaims)" TextType="y.n" />
+                        if (!oidcUpParty.Form.Model.Client.UseUserInfoClaims)
+                        {
+                            <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
+                        }
                     }
                     <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" DynamicFirstRow="true" />
                     @if (UpParty.ShowAdvanced)

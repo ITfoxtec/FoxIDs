@@ -45,6 +45,11 @@ namespace FoxIDs.Logic
                 isValid = isValidRmResult;
             }
 
+            if (party.Client.UseUserInfoClaims && party.Client.UseIdTokenClaims)
+            {
+                party.Client.UseIdTokenClaims = false;
+            }
+
             return isValid;
         }
 

@@ -315,7 +315,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.JwtTypeLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                if(Constants.EmbeddedJwtToken.JwtTokenClaims.Contains(claim.Type))
+                if(Constants.EmbeddedJwtToken.JwtTokenClaims.Any(claim.Type.Contains))
                 {
                     if (claim.Value?.Length > Constants.EmbeddedJwtToken.ValueLength)
                     {

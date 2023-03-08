@@ -22,7 +22,7 @@ namespace FoxIDs.Models
         {
             var results = new List<ValidationResult>();
 
-            if (Constants.EmbeddedJwtToken.JwtTokenClaims.Contains(Claim))
+            if (Constants.EmbeddedJwtToken.JwtTokenClaims.Any(Claim.Contains))
             {
                 if (Claim.Length > Constants.EmbeddedJwtToken.ValueLength)
                 {

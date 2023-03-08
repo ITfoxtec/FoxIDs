@@ -39,7 +39,11 @@ namespace FoxIDs.Logic
             {
                 party.Client.ResponseType = $"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}";
                 party.Client.EnablePkce = false;
-            }            
+            }
+            if (!oidcDiscovery.UserInfoEndpoint.IsNullOrEmpty())
+            {
+                party.Client.UserInfoUrl = oidcDiscovery.UserInfoEndpoint;
+            }
             if (!oidcDiscovery.EndSessionEndpoint.IsNullOrEmpty())
             {
                 party.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;

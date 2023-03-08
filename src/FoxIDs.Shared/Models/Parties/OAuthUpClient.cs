@@ -46,6 +46,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "token_url")]
         public string TokenUrl { get; set; }
 
+        [MaxLength(Constants.Models.OAuthUpParty.Client.UserInfoUrlLength)]
+        [JsonProperty(PropertyName = "userinfo_url")]
+        public string UserInfoUrl { get; set; }
+
         [MaxLength(Constants.Models.OAuthUpParty.Client.EndSessionUrlLength)]
         [JsonProperty(PropertyName = "end_session_url")]
         public string EndSessionUrl { get; set; }
@@ -63,7 +67,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_pkce")]
         public bool EnablePkce { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        [JsonProperty(PropertyName = "use_userinfo_claims")]
+        public bool UseUserInfoClaims { get; set; }
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
             if (Claims?.Where(c => c == "*").Count() > 1)

@@ -47,6 +47,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             return trackLinkUpParty.Map<TrackLinkUpPartyViewModel>(afterMap =>
             {
+                afterMap.EnableSingleLogout = !trackLinkUpParty.DisableSingleLogout;
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -80,6 +81,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 var trackLinkUpParty = generalTrackLinkUpParty.Form.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
                 {
+                    afterMap.DisableSingleLogout = !generalTrackLinkUpParty.Form.Model.EnableSingleLogout;
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
                         int order = 1;

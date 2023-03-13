@@ -38,6 +38,33 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
+
+        /// <summary>
+        /// Default 10 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionLifetimeMin, Constants.Models.UpParty.SessionLifetimeMax)]
+        public int SessionLifetime { get; set; } = 36000;
+
+        /// <summary>
+        /// Default 24 hours.
+        /// </summary>
+        [Range(Constants.Models.UpParty.SessionAbsoluteLifetimeMin, Constants.Models.UpParty.SessionAbsoluteLifetimeMax)]
+        public int SessionAbsoluteLifetime { get; set; } = 86400;
+
+        /// <summary>
+        /// Default 0 minutes.
+        /// </summary>
+        [Range(Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMin, Constants.Models.UpParty.PersistentAbsoluteSessionLifetimeMax)]
+        public int PersistentSessionAbsoluteLifetime { get; set; } = 0;
+
+        /// <summary>
+        /// Default false.
+        /// </summary>
+        public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
+
+        [Display(Name = "Single logout")]
+        public bool EnableSingleLogout { get; set; } = true;
+
         /// <summary>
         /// Home realm discovery (HRD) domains.
         /// </summary>

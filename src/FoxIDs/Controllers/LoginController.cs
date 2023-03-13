@@ -168,7 +168,7 @@ namespace FoxIDs.Controllers
                 case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
                 case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkUpLogic>().LinkRequestAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
+                    return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
                 default:
                     throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
             }

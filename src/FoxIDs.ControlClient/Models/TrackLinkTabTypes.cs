@@ -3,6 +3,7 @@
     public enum TrackLinkTabTypes
     {
         TrackLink,
+        Session,
         ClaimsTransform,
         Hrd
     }

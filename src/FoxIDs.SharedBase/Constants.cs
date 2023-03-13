@@ -561,8 +561,8 @@ namespace FoxIDs
             public const string SamlIdPMetadata = "idpmetadata";
             public const string SamlSPMetadata = "spmetadata";
 
-            public const string LinkRequest = "linkrequest";
-            public const string LinkResponse = "linkresponse";
+            public const string AuthRequest = "authrequest";
+            public const string AuthResponse = "authresponse";
 
             public static class UpJump
             {

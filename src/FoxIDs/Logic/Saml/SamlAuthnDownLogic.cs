@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
                         case PartyTypes.Saml2:
                             return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
                         case PartyTypes.TrackLink:
-                            return await serviceProvider.GetService<TrackLinkUpLogic>().LinkRequestAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
 
                         default:
                             throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");

@@ -389,7 +389,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, status, jwtClaims);
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkDownLogic>().LinkResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims);
+                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims);
                     default:
                         throw new NotSupportedException();
                 }

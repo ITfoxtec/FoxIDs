@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class TrackLinkDownLogic : LogicSequenceBase
+    public class TrackLinkAuthDownLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
@@ -26,7 +26,7 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimsDownLogic claimsDownLogic;
 
-        public TrackLinkDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ClaimsDownLogic claimsDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, ClaimTransformLogic claimTransformLogic, ClaimsDownLogic claimsDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -36,9 +36,9 @@ namespace FoxIDs.Logic
             this.claimsDownLogic = claimsDownLogic;
         }
 
-        public async Task<IActionResult> LinkRequestAsync(string partyId)
+        public async Task<IActionResult> AuthRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link Request.");
+            logger.ScopeTrace(() => "Down, Track link auth request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequest(party, keySequenceData));
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkUpLogic>().LinkRequestAsync(toUpParty, GetLoginRequest(party, keySequenceData));
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequest(party, keySequenceData));
 
                     default:
                         throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
@@ -93,28 +93,35 @@ namespace FoxIDs.Logic
             };
         }
 
-        public async Task<IActionResult> LinkResponseAsync(string partyId, List<Claim> claims, string error = null, string errorDescription = null)
+        public async Task<IActionResult> AuthResponseAsync(string partyId, List<Claim> claims, string error = null, string errorDescription = null)
         {
-            logger.ScopeTrace(() => "Down, Track link response.");
+            logger.ScopeTrace(() => "Down, Track link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
-            sequenceData.Claims = claims.ToClaimAndValues();
-            sequenceData.Error = error;
-            sequenceData.ErrorDescription = errorDescription;
-            await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);
 
-            if (!error.IsNullOrEmpty())
+            if (error.IsNullOrEmpty())
             {
                 logger.ScopeTrace(() => $"Down, Track link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 logger.ScopeTrace(() => $"Down, Track link output / Up, Track link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
+
+                var clientClaims = claimsDownLogic.GetClientJwtClaims(party.Claims);
+                if (clientClaims?.Count() > 0)
+                {
+                    claims.AddRange(clientClaims);
+                }
             }
 
-            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.LinkResponse, includeKeySequence: true).ToRedirectResult();
+            sequenceData.Claims = claims.ToClaimAndValues();
+            sequenceData.Error = error;
+            sequenceData.ErrorDescription = errorDescription;
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);
+
+            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.AuthResponse, includeKeySequence: true).ToRedirectResult();
         }
     }
 }

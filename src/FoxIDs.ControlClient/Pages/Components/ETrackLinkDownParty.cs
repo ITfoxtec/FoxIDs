@@ -59,13 +59,12 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (trackLinkDownParty.CreateMode)
             {
-   
+                model.Claims = new List<OAuthDownClaim>
+                {
+                    new OAuthDownClaim { Claim = "*" }
+                };
             }
         }
-
-        //private void OnTrackLinkDownPartyClientTabChange(GeneralTrackLinkDownPartyViewModel trackLinkDownParty, bool enableTab) => trackLinkDownParty.Form.Model.Client = enableTab ? new TrackLinkDownClientViewModel() : null;
-
-        //private void OnTrackLinkDownPartyResourceTabChange(GeneralTrackLinkDownPartyViewModel trackLinkDownParty, bool enableTab) => trackLinkDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
 
         private void AddTrackLinkClaim(MouseEventArgs e, List<OAuthDownClaim> claims)
         {

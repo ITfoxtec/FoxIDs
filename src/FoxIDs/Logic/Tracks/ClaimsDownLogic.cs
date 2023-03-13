@@ -58,6 +58,12 @@ namespace FoxIDs.Logic
             return filterClaimTypes;
         }
 
+        public List<Claim> GetClientJwtClaims(IEnumerable<OAuthDownClaim> claims)
+        {
+            claims = claims?.Where(c => c.Values?.Count() > 0);
+            return claims?.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
+        }
+
         public Task<List<Claim>> FromJwtToSamlClaimsAsync(IEnumerable<Claim> jwtClaims)
         {
             try

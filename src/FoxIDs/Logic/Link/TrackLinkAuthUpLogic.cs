@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class TrackLinkUpLogic : LogicSequenceBase
+    public class TrackLinkAuthUpLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
 
-        public TrackLinkUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -40,9 +40,9 @@ namespace FoxIDs.Logic
             this.claimValidationLogic = claimValidationLogic;
         }
 
-        public async Task<IActionResult> LinkRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
+        public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => "Up, Track link request.");
+            logger.ScopeTrace(() => "Up, Track link auth request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -63,12 +63,12 @@ namespace FoxIDs.Logic
                 Acr = loginRequest.Acr,
             }, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.LinkRequest, includeKeySequence: true).ToRedirectResult();
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.AuthRequest, includeKeySequence: true).ToRedirectResult();
         }
 
-        public async Task<IActionResult> LinkResponseAsync(string partyId)
+        public async Task<IActionResult> AuthResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link response.");
+            logger.ScopeTrace(() => "Down, Track link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 
@@ -125,7 +125,7 @@ namespace FoxIDs.Logic
                     var claimsLogic = serviceProvider.GetService<ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, SamlConvertLogic.ErrorToSamlStatus(keySequenceData.Error), claims != null ? await claimsLogic.FromJwtToSamlClaimsAsync(claims) : null);
                 case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkDownLogic>().LinkResponseAsync(sequenceData.DownPartyLink.Id, claims, keySequenceData.Error, keySequenceData.ErrorDescription);
+                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims, keySequenceData.Error, keySequenceData.ErrorDescription);
 
                 default:
                     throw new NotSupportedException();

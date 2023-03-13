@@ -604,7 +604,7 @@ namespace FoxIDs.Logic
                         var claimsLogic = serviceProvider.GetService<ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
                         return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, SamlConvertLogic.ErrorToSamlStatus(error), claims != null ? await claimsLogic.FromJwtToSamlClaimsAsync(claims) : null);
                     case PartyTypes.TrackLink:
-                        return await serviceProvider.GetService<TrackLinkDownLogic>().LinkResponseAsync(sequenceData.DownPartyLink.Id, claims, error, errorDescription);                        
+                        return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims, error, errorDescription);                        
 
                     default:
                         throw new NotSupportedException();

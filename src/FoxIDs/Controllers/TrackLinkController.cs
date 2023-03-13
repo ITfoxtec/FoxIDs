@@ -21,29 +21,29 @@ namespace FoxIDs.Controllers
         }
 
         [Sequence(SequenceAction.Start)]
-        public async Task<IActionResult> LinkRequest()
+        public async Task<IActionResult> AuthRequest()
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link request, Down party name '{RouteBinding.DownParty.Name}'");
-                return await serviceProvider.GetService<TrackLinkDownLogic>().LinkRequestAsync(RouteBinding.DownParty.Id);
+                logger.ScopeTrace(() => $"Track link auth request, Down party name '{RouteBinding.DownParty.Name}'");
+                return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthRequestAsync(RouteBinding.DownParty.Id);
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Track link request failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Track link auth request failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        public async Task<IActionResult> LinkResponse()
+        public async Task<IActionResult> AuthResponse()
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link response, Up party name '{RouteBinding.UpParty.Name}'");
-                return await serviceProvider.GetService<TrackLinkUpLogic>().LinkResponseAsync(RouteBinding.UpParty.Id);
+                logger.ScopeTrace(() => $"Track link auth response, Up party name '{RouteBinding.UpParty.Name}'");
+                return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponseAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Track link response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Track link auth response failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

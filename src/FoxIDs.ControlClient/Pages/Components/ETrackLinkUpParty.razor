@@ -55,6 +55,16 @@
                 }
             </li>
             <li class="nav-item">
+                @if (trackLinkUpParty.ShowSessionTab)
+                {
+                    <a class="nav-link active">Logout session</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Session))">Logout session</button>
+                }
+            </li>
+            <li class="nav-item">
                 @if (trackLinkUpParty.ShowHrdTab)
                 {
                     <a class="nav-link active">Home Realm Discovery</a>
@@ -72,7 +82,10 @@
                 <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
                 <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
                 <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" />
-                <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Claims" For="@(() => trackLinkUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
+                @if (trackLinkUpParty.ShowAdvanced)
+                {
+                    <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Claims" For="@(() => trackLinkUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
+                }
             }
             else if (trackLinkUpParty.ShowClaimTransformTab)
             {
@@ -80,6 +93,10 @@
                     If you create a new claim the claim is local unless you add the claim to the 'Forward claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
                 </div>
                 <OAuthClaimTransforms Model="trackLinkUpParty.Form.Model" />
+            }
+            else if (trackLinkUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="trackLinkUpParty.Form.Model" />
             }
             else if (trackLinkUpParty.ShowHrdTab)
             {

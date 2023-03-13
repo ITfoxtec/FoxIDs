@@ -152,16 +152,25 @@ namespace FoxIDs.Client.Pages.Components
                 case TrackLinkTabTypes.TrackLink:
                     upParty.ShowTrackLinkTab = true;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
                     break;
                 case TrackLinkTabTypes.ClaimsTransform:
                     upParty.ShowTrackLinkTab = false;
                     upParty.ShowClaimTransformTab = true;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case TrackLinkTabTypes.Session:
+                    upParty.ShowTrackLinkTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = true;
                     upParty.ShowHrdTab = false;
                     break;
                 case TrackLinkTabTypes.Hrd:
                     upParty.ShowTrackLinkTab = false;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = true;
                     break;
                 default:

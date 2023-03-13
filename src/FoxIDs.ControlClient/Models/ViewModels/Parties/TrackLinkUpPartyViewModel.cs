@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class TrackLinkUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartyHrd
+    public class TrackLinkUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

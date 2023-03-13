@@ -86,8 +86,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlLogoutUpLogic>();
             services.AddTransient<SamlLogoutDownLogic>();
 
-            services.AddTransient<TrackLinkUpLogic>();
-            services.AddTransient<TrackLinkDownLogic>();
+            services.AddTransient<TrackLinkAuthUpLogic>();
+            services.AddTransient<TrackLinkAuthDownLogic>();
             
 
             return services;

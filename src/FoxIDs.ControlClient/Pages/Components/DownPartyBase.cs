@@ -87,6 +87,23 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        public void ShowTrackLinkTab(GeneralTrackLinkDownPartyViewModel downParty, TrackLinkTabTypes trackLinkTabTypes)
+        {
+            switch (trackLinkTabTypes)
+            {
+                case TrackLinkTabTypes.TrackLink:
+                    downParty.ShowTrackLinkTab = true;
+                    downParty.ShowClaimTransformTab = false;
+                    break;
+                case TrackLinkTabTypes.ClaimsTransform:
+                    downParty.ShowTrackLinkTab = false;
+                    downParty.ShowClaimTransformTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         public void AddAllowUpPartyName((IAllowUpPartyNames model, string upPartyName) arg)
         {
             if (!arg.model.AllowUpPartyNames.Where(p => p.Equals(arg.upPartyName, StringComparison.OrdinalIgnoreCase)).Any())

@@ -44,6 +44,12 @@ namespace FoxIDs.Models.Config
         public int AccountActionSequenceLifetime { get; set; }
 
         /// <summary>
+        /// Key sequence lifetime in seconds.
+        /// </summary>
+        [Required]
+        public int KeySequenceLifetime { get; set; } = 30;
+
+        /// <summary>
         /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]

@@ -33,10 +33,10 @@ namespace FoxIDs.Logic
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
-        private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
+        private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -47,7 +47,7 @@ namespace FoxIDs.Logic
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
-            this.claimsDownLogic = claimsDownLogic;
+            this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
 
@@ -258,7 +258,7 @@ namespace FoxIDs.Logic
                 return await singleLogoutDownLogic.HandleSingleLogoutAsync(sequenceData);
             }
             
-            var claims = await claimsDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
+            var claims = await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
 
             switch (party.LogoutBinding.RequestBinding)
             {

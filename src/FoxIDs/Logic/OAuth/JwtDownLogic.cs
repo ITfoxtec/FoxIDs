@@ -17,15 +17,15 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly TrackKeyLogic trackKeyLogic;
         private readonly TrackIssuerLogic trackIssuerLogic;
-        private readonly ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic;
+        private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public JwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public JwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;
             this.trackIssuerLogic = trackIssuerLogic;
-            this.claimsDownLogic = claimsDownLogic;
+            this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
         }
 
@@ -37,9 +37,9 @@ namespace FoxIDs.Logic
             }
 
             var onlyIdToken = !responseTypes.Contains(IdentityConstants.ResponseTypes.Code) && !responseTypes.Contains(IdentityConstants.ResponseTypes.Token);
-            var idTokenClaims = new List<Claim>(await claimsDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeIdTokenClaims: true, includeAccessTokenClaims: onlyIdToken));
+            var idTokenClaims = new List<Claim>(await claimsOAuthDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeIdTokenClaims: true, includeAccessTokenClaims: onlyIdToken));
 
-            var clientClaims = claimsDownLogic.GetClientJwtClaims(client, onlyIdTokenClaims: true);
+            var clientClaims = claimsOAuthDownLogic.GetClientJwtClaims(client, onlyIdTokenClaims: true);
             if(clientClaims?.Count() > 0)
             {
                 idTokenClaims.AddRange(clientClaims);
@@ -73,9 +73,9 @@ namespace FoxIDs.Logic
 
             (var audiences, var audienceScopes) = await oauthResourceScopeDownLogic.GetValidResourceAsync(client, selectedScopes);
 
-            accessTokenClaims.AddRange(await claimsDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeAccessTokenClaims: true));
+            accessTokenClaims.AddRange(await claimsOAuthDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeAccessTokenClaims: true));
 
-            var clientClaims = claimsDownLogic.GetClientJwtClaims(client);
+            var clientClaims = claimsOAuthDownLogic.GetClientJwtClaims(client);
             if (clientClaims?.Count() > 0)
             {
                 accessTokenClaims.AddRange(clientClaims);

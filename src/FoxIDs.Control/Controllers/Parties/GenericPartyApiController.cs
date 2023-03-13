@@ -57,16 +57,16 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<AParty>> Post(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync, Func<AParty, MParty, ValueTask<bool>> modelActionAsync)
+        protected async Task<ActionResult<AParty>> Post(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> modelActionAsync = null)
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party) || !validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || !await apiModelActionAsync(party)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(party) || !validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null &&!await apiModelActionAsync(party))) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
                 if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
-                if (!(await modelActionAsync(party, mParty))) return BadRequest(ModelState);
+                if (modelActionAsync != null && !await modelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 await tenantRepository.CreateAsync(mParty);
 
@@ -97,16 +97,16 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync, Func<AParty, MParty, ValueTask<bool>> modelActionAsync)
+        protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> modelActionAsync = null)
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party) || !validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || !await apiModelActionAsync(party)) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(party) || !validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
                 if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
-                if (!(await modelActionAsync(party, mParty))) return BadRequest(ModelState);
+                if (modelActionAsync != null && !await modelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 if(party is Api.OidcDownParty)
                 {

@@ -12,50 +12,92 @@ using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Logic
 {
-    public class ClaimsDownLogic : LogicSequenceBase 
+    public class ClaimsOAuthDownLogic<TClient, TScope, TClaim> : ClaimsDownLogic where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
 
-        public ClaimsDownLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ClaimsOAuthDownLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(logger, httpContextAccessor)
         {
             this.logger = logger;
         }
 
-        public Task<List<Claim>> FilterJwtClaimsAsync(List<string> filterClaimTypes, IEnumerable<Claim> claims)
+        public Task<List<Claim>> FilterJwtClaimsAsync(TClient client, IEnumerable<Claim> jwtClaims, IEnumerable<string> selectedScopes, bool includeIdTokenClaims = false, bool includeAccessTokenClaims = false)
         {
-            if (claims == null)
+            if (!includeIdTokenClaims && !includeAccessTokenClaims)
             {
-                return Task.FromResult(new List<Claim>(claims));
+                throw new ArgumentException($"{nameof(includeIdTokenClaims)} and {nameof(includeAccessTokenClaims)} can not be false at the same time.");
             }
 
-            var acceptAllClaims = filterClaimTypes.Where(c => c == "*").Count() > 0;
-            if (acceptAllClaims)
+            if (jwtClaims == null)
             {
-                return Task.FromResult(TruncateJwtClaimValues(claims));
+                return Task.FromResult(new List<Claim>(jwtClaims));
             }
-            else
-            {
-                var filteredClaims = claims.Where(c => filterClaimTypes.Contains(c.Type));
-                return Task.FromResult(TruncateJwtClaimValues(filteredClaims));
-            }
+
+            var filterClaimTypes = GetFilterJwtClaimTypes(client, selectedScopes, includeIdTokenClaims, includeAccessTokenClaims);
+            return FilterJwtClaimsAsync(filterClaimTypes, jwtClaims);
         }
 
-        public List<string> GetFilterClaimTypes(IEnumerable<OAuthDownClaim> filterClaims, List<string> filterClaimTypes = null)
+        private List<string> GetFilterJwtClaimTypes(TClient client, IEnumerable<string> selectedScopes, bool includeIdTokenClaims, bool includeAccessTokenClaims)
         {
-            filterClaimTypes = filterClaimTypes ?? new List<string>();
-
-            var acceptAllClaims = filterClaims?.Where(c => c.Claim == "*")?.Count() > 0;
-            if (acceptAllClaims)
+            if(includeIdTokenClaims && !(client is OidcDownClient))
             {
-                filterClaimTypes.Add("*");
+                throw new InvalidOperationException("Include ID Token claims only possible for OIDC Down Client.");
             }
-            else
+
+            var filterClaimTypes = new List<string>();
+
+            if (includeIdTokenClaims)
             {
-                filterClaimTypes = filterClaimTypes.ConcatOnce(filterClaims?.Select(c => c.Claim));
-                filterClaimTypes = filterClaimTypes.ConcatOnce(Constants.DefaultClaims.AccessToken);
+                var acceptAllIdTokenClaims = client.Claims?.Cast<OidcDownClaim>()?.Where(c => c.Claim == "*" && c.InIdToken)?.Count() > 0;
+                if (acceptAllIdTokenClaims)
+                {
+                    filterClaimTypes.Add("*");
+                    return filterClaimTypes;
+                }
+
+                filterClaimTypes = filterClaimTypes.ConcatOnce(client.Claims?.Cast<OidcDownClaim>().Where(c => c.InIdToken).Select(c => c.Claim));
+                filterClaimTypes = filterClaimTypes.ConcatOnce(Constants.DefaultClaims.IdToken);
+            }
+            if (includeAccessTokenClaims)
+            {
+                GetFilterClaimTypes(client.Claims?.Cast<OAuthDownClaim>(), filterClaimTypes);
+            }
+
+            if (selectedScopes?.Count() > 0)
+            {
+                if (includeIdTokenClaims)
+                {
+                    var idTokenVoluntaryClaims = (client as OidcDownClient).Scopes?.Where(s => s.VoluntaryClaims != null && selectedScopes.Any(ss => ss == s.Scope)).SelectMany(s => s.VoluntaryClaims).Where(c => c.InIdToken).Select(c => c.Claim).ToList();
+                    filterClaimTypes = filterClaimTypes.ConcatOnce(idTokenVoluntaryClaims);
+                }
+                if(includeAccessTokenClaims)
+                {
+                    if(client is OidcDownClient)
+                    {
+                        var accessTokenVoluntaryClaims = (client as OidcDownClient).Scopes?.Where(s => s.VoluntaryClaims != null && selectedScopes.Any(ss => ss == s.Scope)).SelectMany(s => s.VoluntaryClaims).Select(c => c.Claim).ToList();
+                        filterClaimTypes = filterClaimTypes.ConcatOnce(accessTokenVoluntaryClaims);
+                    }
+                    else
+                    {
+                        var accessTokenVoluntaryClaims = client.Scopes?.Where(s => s.VoluntaryClaims != null && selectedScopes.Any(ss => ss == s.Scope)).SelectMany(s => s.VoluntaryClaims).Select(c => c.Claim).ToList();
+                        filterClaimTypes = filterClaimTypes.ConcatOnce(accessTokenVoluntaryClaims);
+                    }
+                }
             }
 
             return filterClaimTypes;
+        }
+
+        public List<Claim> GetClientJwtClaims(TClient client, bool onlyIdTokenClaims = false)
+        {
+            var claims = client.Claims?.Where(c => c.Values?.Count() > 0);
+
+            if (onlyIdTokenClaims)
+            {
+                claims = claims?.Cast<OidcDownClaim>().Where(c => c.InIdToken).Cast<TClaim>();
+            }
+
+            return claims?.SelectMany(item => item.Values.Select(value => new Claim(item.Claim, value))).ToList();
         }
 
         public Task<List<Claim>> FromJwtToSamlClaimsAsync(IEnumerable<Claim> jwtClaims)

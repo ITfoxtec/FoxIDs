@@ -105,7 +105,7 @@ namespace FoxIDs.Client.Pages
             {
                 await TrackService.SaveTrackLogSettingAsync(generalLogSettings.Form.Model);
                 generalLogSettings.Edit = false;
-                toastService.ShowSuccess("Log settings updated.", "SUCCESS");
+                toastService.ShowSuccess("Log settings updated.");
             }
             catch (Exception ex)
             {
@@ -214,11 +214,11 @@ namespace FoxIDs.Client.Pages
             updatedgeneralLogStreamSettings.LogStreamSettings = generalLogStreamSettings.Form.Model;
             if (generalLogStreamSettings.CreateMode)
             {
-                toastService.ShowSuccess("Log stream settings created.", "SUCCESS");
+                toastService.ShowSuccess("Log stream settings created.");
             }
             else
             {
-                toastService.ShowSuccess("Log stream settings updated.", "SUCCESS");
+                toastService.ShowSuccess("Log stream settings updated.");
             }
             generalLogStreamSettings.Edit = false;
         }

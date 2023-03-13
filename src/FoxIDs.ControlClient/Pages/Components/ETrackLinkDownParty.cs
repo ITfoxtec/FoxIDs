@@ -118,11 +118,11 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalTrackLinkDownParty.CreateMode)
                 {
                     generalTrackLinkDownParty.CreateMode = false;
-                    toastService.ShowSuccess("Track link down-party created.", "SUCCESS");
+                    toastService.ShowSuccess("Track link down-party created.");
                 }
                 else
                 {
-                    toastService.ShowSuccess("Track link down-party updated.", "SUCCESS");
+                    toastService.ShowSuccess("Track link down-party updated.");
                 }
                 generalTrackLinkDownParty.Name = generalTrackLinkDownParty.Form.Model.Name;
             }

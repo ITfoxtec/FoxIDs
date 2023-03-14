@@ -18,5 +18,12 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }
+
+        [MaxLength(200)]
+        [JsonProperty(PropertyName = "si")]
+        public string SessionId { get; set; }
+
+        [JsonProperty(PropertyName = "lc")]
+        public bool RequireLogoutConsent { get; set; }
     }
 }

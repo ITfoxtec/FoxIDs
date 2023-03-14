@@ -19,6 +19,7 @@ using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
 using FoxIDs.Logic.Tracks;
+using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FoxIDs.Logic
 {
@@ -111,21 +112,23 @@ namespace FoxIDs.Logic
                     RelayState = binding.RelayState
                 });
 
-                var toUpPartie = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
-                logger.ScopeTrace(() => $"Request, Up type '{toUpPartie.Type}'.");
-                switch (toUpPartie.Type)
+                var toUpParty = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
+                logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+                switch (toUpParty.Type)
                 {
                     case PartyTypes.Login:
-                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(toUpPartie, GetLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpPartie, GetLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpPartie, GetSamlLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest(party, saml2LogoutRequest));
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
 
                     default:
-                        throw new NotSupportedException($"Party type '{toUpPartie.Type}' not supported.");
+                        throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
                 }
             }
             catch (SamlRequestException ex)

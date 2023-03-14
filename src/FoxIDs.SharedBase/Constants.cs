@@ -561,8 +561,10 @@ namespace FoxIDs
             public const string SamlIdPMetadata = "idpmetadata";
             public const string SamlSPMetadata = "spmetadata";
 
-            public const string AuthRequest = "authrequest";
-            public const string AuthResponse = "authresponse";
+            public const string TrackLinkAuthRequest = "authrequest";
+            public const string TrackLinkAuthResponse = "authresponse";
+            public const string TrackLinkLogoutDownRequest = "logoutdownrequest";
+            public const string TrackLinkLogoutUpResponse = "logoutupresponse";
 
             public static class UpJump
             {
@@ -571,7 +573,9 @@ namespace FoxIDs
 
                 public const string AuthnRequest = "authnrequest";
                 public const string LogoutRequest = "logoutrequest";
-                public const string SingleLogoutRequestJump = "singlelogoutrequestjump";                
+                public const string SingleLogoutRequestJump = "singlelogoutrequestjump";
+
+                public const string TrackLinkLogoutUpRequest = "logoutuprequestjump";
             }
         }
 

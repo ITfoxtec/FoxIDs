@@ -88,7 +88,8 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<TrackLinkAuthUpLogic>();
             services.AddTransient<TrackLinkAuthDownLogic>();
-            
+            services.AddTransient<TrackLinkRpInitiatedLogoutUpLogic>();
+            services.AddTransient<TrackLinkRpInitiatedLogoutDownLogic>();
 
             return services;
         }

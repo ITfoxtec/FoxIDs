@@ -91,25 +91,27 @@ namespace FoxIDs.Logic
                 State = rpInitiatedLogoutRequest.State,
             });
 
-            var toUpPartie = await GetToUpPartyAsync(idTokenClaims);
-            logger.ScopeTrace(() => $"Request, Up type '{toUpPartie.Type}'.");
-            switch (toUpPartie.Type)
+            var toUpParty = await GetToUpPartyAsync(idTokenClaims);
+            logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+            switch (toUpParty.Type)
             {
                 case PartyTypes.Login:
-                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(toUpPartie, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
+                    return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpPartie, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
+                    return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
                 case PartyTypes.Saml2:
                     if (!validIdToken)
                     {
                         throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up-party.") { RouteBinding = RouteBinding };
                     }
-                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpPartie, GetSamlLogoutRequest( party, sessionId, idTokenClaims));
+                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest( party, sessionId, idTokenClaims));
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
 
                 default:
-                    throw new NotSupportedException($"Party type '{toUpPartie.Type}' not supported.");
+                    throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
             }
         }
 

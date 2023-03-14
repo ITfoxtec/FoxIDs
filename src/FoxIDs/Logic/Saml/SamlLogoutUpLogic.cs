@@ -314,6 +314,15 @@ namespace FoxIDs.Logic
                         }
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id, status, sequenceData.SessionId);
+                    case PartyTypes.TrackLink:
+                        if (status == Saml2StatusCodes.Success)
+                        {
+                            return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id);
+                        }
+                        else
+                        {
+                            throw new StopSequenceException($"SAML up Logout failed, Status '{status}', Name '{RouteBinding.UpParty.Name}'.");
+                        }
 
                     default:
                         throw new NotSupportedException();

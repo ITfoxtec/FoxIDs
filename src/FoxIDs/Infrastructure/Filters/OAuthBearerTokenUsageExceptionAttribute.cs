@@ -7,6 +7,7 @@ using System;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
+using System.Web;
 
 namespace FoxIDs.Infrastructure.Filters
 {
@@ -49,12 +50,12 @@ namespace FoxIDs.Infrastructure.Filters
 
             private void OAuthRequestExceptionToBearerTokenUsageError(ExceptionContext context, OAuthRequestException oAuthRequestException)
             {
-                var headerValues = new List<string> { IdentityConstants.TokenTypes.Bearer, oAuthRequestException.Error };
-                if(!oAuthRequestException.ErrorDescription.IsNullOrWhiteSpace())
+                var headerValues = new List<string> { IdentityConstants.TokenTypes.Bearer, $"error {oAuthRequestException.Error}" };
+                if (!oAuthRequestException.ErrorDescription.IsNullOrWhiteSpace())
                 {
-                    headerValues.Add(oAuthRequestException.ErrorDescription);
+                    headerValues.Add($"error_description {oAuthRequestException.ErrorDescription}");
                 }
-                context.HttpContext.Response.Headers.Add(HeaderNames.WWWAuthenticate, new StringValues(headerValues.ToArray())); 
+                context.HttpContext.Response.Headers[HeaderNames.WWWAuthenticate] = new StringValues(headerValues.ToArray()); 
                 context.Result = new UnauthorizedResult();
             }
         }

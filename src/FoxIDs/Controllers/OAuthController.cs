@@ -157,6 +157,7 @@ namespace FoxIDs.Controllers
                 logger.ScopeTrace(() => $"UserInfo request, Down type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
+                    case PartyTypes.OAuth2:
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().UserInfoRequestAsync(RouteBinding.DownParty.Id);
                     default:

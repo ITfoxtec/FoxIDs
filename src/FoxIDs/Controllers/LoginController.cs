@@ -385,7 +385,7 @@ namespace FoxIDs.Controllers
 
             if (!sequenceData.UserId.IsNullOrWhiteSpace() && !session.UserId.Equals(sequenceData.UserId, StringComparison.OrdinalIgnoreCase))
             {
-                logger.ScopeTrace(() => "Session user and requested user do not match.");
+                logger.ScopeTrace(() => $"Session user '{session.UserId}' and requested user '{sequenceData.UserId}' do not match.");
                 return false;
             }
 

@@ -565,6 +565,8 @@ namespace FoxIDs
             public const string TrackLinkAuthResponse = "authresponse";
             public const string TrackLinkRpLogoutRequest = "rplogoutrequest";
             public const string TrackLinkRpLogoutResponse = "rplogoutresponse";
+            public const string TrackLinkIdPLogoutRequest = "idplogoutrequest";
+            public const string TrackLinkIdPLogoutResponse = "idplogoutresponse";
 
             public static class UpJump
             {
@@ -575,7 +577,7 @@ namespace FoxIDs
                 public const string LogoutRequest = "logoutrequest";
                 public const string SingleLogoutRequestJump = "singlelogoutrequestjump";
 
-                public const string TrackLinkRpLogoutRequest = "rplogoutrequestjump";
+                public const string TrackLinkRpLogoutRequestJump = "rplogoutrequestjump";
             }
         }
 

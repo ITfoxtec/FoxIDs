@@ -16,6 +16,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "ku")]
         public bool KeyUsed { get; set; }
 
+        [JsonProperty(PropertyName = "dss")]
+        public string DownPartySequenceString { get; set; }
+
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }
 

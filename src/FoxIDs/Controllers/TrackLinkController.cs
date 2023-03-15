@@ -65,12 +65,25 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link IdP initiated logout, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Track link IdP initiated logout request, Up type '{RouteBinding.UpParty.Type}'");
                 return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutUpLogic>().LogoutRequestAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Track link IdP initiated logout failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Track link IdP initiated logout request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        public async Task<IActionResult> IdPLogoutResponse()
+        {
+            try
+            {
+                logger.ScopeTrace(() => $"Track link IdP initiated logout response, Up type '{RouteBinding.UpParty.Type}'");
+                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutDownLogic>().LogoutResponseAsync(RouteBinding.UpParty.Id);
+            }
+            catch (Exception ex)
+            {
+                throw new EndpointException($"Track link IdP initiated response logout failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -113,20 +126,6 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Track link RP initiated logout request failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
-            }
-        }
-
-        [Sequence]
-        public async Task<IActionResult> IdPLogoutDone()
-        {
-            try
-            {
-                logger.ScopeTrace(() => $"Track link IdP initiated Logout Done, Down type '{RouteBinding.DownParty.Type}'");
-                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutDownLogic>().LogoutDoneAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new EndpointException($"Track link IdP initiated Logout Done failed for client id '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
     }

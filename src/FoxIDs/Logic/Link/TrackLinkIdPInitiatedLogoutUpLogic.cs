@@ -1,12 +1,18 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
+using FoxIDs.Models.Session;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
+using ITfoxtec.Identity.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -14,135 +20,68 @@ namespace FoxIDs.Logic
     public class TrackLinkIdPInitiatedLogoutUpLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
+        private readonly HrdLogic hrdLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public TrackLinkIdPInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkIdPInitiatedLogoutUpLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.trackIssuerLogic = trackIssuerLogic;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
+            this.hrdLogic = hrdLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
-        }
-
-        public async Task<IActionResult> LogoutRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
-        {
-            logger.ScopeTrace(() => "Up, Track link RP initiated logout request redirect.");
-            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
-
-            await logoutRequest.ValidateObjectAsync();
-
-            var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
-
-            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData
-            {
-                KeyName = partyLink.Name,
-                DownPartyLink = logoutRequest.DownPartyLink,
-                UpPartyId = partyId,
-                SessionId = logoutRequest.SessionId,
-                RequireLogoutConsent = logoutRequest.RequireLogoutConsent
-            });
-
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkLogoutUpRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, Track link RP initiated logout request.");
-            var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
-            if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
-            {
-                throw new Exception("Invalid up-party id.");
-            }
-            logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
-
-            var party = await tenantRepository.GetAsync<TrackLinkUpParty>(oidcUpSequenceData.UpPartyId);
-
-            var session = await sessionUpPartyLogic.GetSessionAsync(party);
-            if (session == null)
-            {
-                return await SingleLogoutDone(party.Id);
-            }
-            else
-            {
-                _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
-                oidcUpSequenceData.SessionId = session.ExternalSessionId;
-            }
-
-            await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, setKeyValidUntil: true);
-
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult();
-        }
-
-        public async Task<IActionResult> SingleLogoutDone(string partyId)
-        {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: true);
-            if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
-            {
-                throw new Exception("Invalid up-party id.");
-            }
-            return await LogoutResponseDownAsync(sequenceData);
-        }
-
-        public async Task<IActionResult> LogoutResponseAsync(string partyId)
-        {
-            logger.ScopeTrace(() => "Down, Track link RP initiated logout response.");
-            logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
+            logger.ScopeTrace(() => "Up, Track link IdP initiated logout request.");
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToDownTrackName);
-            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkDownSequenceData>(keySequence, party.ToDownTrackName);
+            var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkDownSequenceData>(keySequence, party.ToDownTrackName, remove: false);
             if (party.ToDownPartyName != keySequenceData.KeyName)
             {
                 throw new Exception($"Incorrect down-party name '{keySequenceData.KeyName}', expected down-party name '{party.ToDownPartyName}'.");
             }
 
-            await sequenceLogic.ValidateAndSetSequenceAsync(keySequenceData.UpPartySequenceString);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: party.DisableSingleLogout);
-
+            await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
+            var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
 
             if (party.DisableSingleLogout)
             {
-                return await LogoutResponseDownAsync(sequenceData);
+                return await LogoutRequestAsync(party, keySequenceString);
             }
             else
             {
-                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, sequenceData.DownPartyLink, sequenceData.SessionDownPartyLinks, sequenceData.SessionClaims);
+                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims);
+
                 if (doSingleLogout)
                 {
                     return await singleLogoutDownLogic.StartSingleLogoutAsync(singleLogoutSequenceData);
                 }
                 else
                 {
-                    await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
-                    return await LogoutResponseDownAsync(sequenceData);
+                    return await LogoutRequestAsync(party, keySequenceString);
                 }
             }
         }
 
-        public async Task<IActionResult> LogoutResponseDownAsync(TrackLinkUpSequenceData sequenceData)
-        {
-            switch (sequenceData.DownPartyLink.Type)
-            {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
-                case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id, sessionIndex: sequenceData.SessionId);
-                case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id);
 
-                default:
-                    throw new NotSupportedException();
-            }
+        public async Task<IActionResult> LogoutRequestAsync(TrackLinkUpParty party, string keySequenceString)
+        {
+            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData { KeyName = party.Name, DownPartySequenceString = keySequenceString }, setKeyValidUntil: true);
+
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkIdPLogoutResponse, includeKeySequence: true).ToRedirectResult();
         }
     }
 }

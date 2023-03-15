@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Sequences
         public string UpPartySequenceString { get; set; }
 
         [JsonProperty(PropertyName = "c")]
-        public List<ClaimAndValues> Claims { get; set; }
+        public IEnumerable<ClaimAndValues> Claims { get; set; }
 
         [JsonProperty(PropertyName = "e")]
         public string Error { get; set; }

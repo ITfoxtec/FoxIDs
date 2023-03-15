@@ -72,6 +72,7 @@ namespace FoxIDs.Logic
             else
             {
                 _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);
+                oidcUpSequenceData.SessionId = session.ExternalSessionId;
             }
 
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, setKeyValidUntil: true);

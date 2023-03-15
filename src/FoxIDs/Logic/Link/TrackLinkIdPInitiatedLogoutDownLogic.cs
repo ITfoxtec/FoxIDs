@@ -5,34 +5,40 @@ using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
+using ITfoxtec.Identity.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class TrackLinkRpInitiatedLogoutDownLogic : LogicSequenceBase
+    public class TrackLinkIdPInitiatedLogoutDownLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
 
-        public TrackLinkRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkIdPInitiatedLogoutDownLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.trackIssuerLogic = trackIssuerLogic;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
         }
 
-        public async Task<IActionResult> LogoutRequestAsync(string partyId)
+        public async Task<IActionResult> LogoutRequestAsync(string partyId, SingleLogoutSequenceData sequenceData)
         {
-            logger.ScopeTrace(() => "Down, Track link RP initiated logout request.");
+            logger.ScopeTrace(() => "Down, Track link IdP initiated logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 

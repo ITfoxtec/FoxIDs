@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class TrackLinkRpInitiatedLogoutUpLogic : LogicSequenceBase
+    public class TrackLinkIdPInitiatedLogoutUpLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public TrackLinkRpInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkIdPInitiatedLogoutUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkRpLogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkLogoutUpRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)

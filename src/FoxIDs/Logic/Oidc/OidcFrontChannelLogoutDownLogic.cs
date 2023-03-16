@@ -93,7 +93,7 @@ namespace FoxIDs.Logic
 
         private string GetFrontChannelLogoutDoneUrl(SingleLogoutSequenceData sequenceData, TParty firstParty)
         {
-            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true);
+            return HttpContext.GetDownPartyUrl(firstParty.Name, sequenceData.UpPartyName, Constants.Routes.OAuthController, Constants.Endpoints.FrontChannelLogoutDone, includeSequence: true, firstParty.PartyBindingPattern);
         }
 
         public Task<IActionResult> LogoutDoneAsync()

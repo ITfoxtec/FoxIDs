@@ -31,13 +31,27 @@
         {
             <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         }
+        @if (oauthDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
+        }
+
         <div class="mb-3 alert alert-info" role="alert">
             @if (oauthDownParty.EnableClientTab || (!oauthDownParty.EnableClientTab && !oauthDownParty.EnableResourceTab))
             {
-                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true);
+                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
                 <div>Client Authority and OIDC Discovery<br /><i>You can selecting all up-parties with '*'. Or you can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i></div>                 
                 <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
+            }
+            
+            @if (DownParty.ShowAdvanced)
+            {
+                <FInputSelect @bind-Value="oauthDownParty.Form.Model.PartyBindingPattern" For="@(() => oauthDownParty.Form.Model.PartyBindingPattern)">
+                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
+                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
+                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
+                </FInputSelect>
             }
 
             @if (oauthDownParty.EnableClientTab && oauthDownParty.EnableResourceTab)

@@ -14,6 +14,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Up-party name (client ID)")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        [Display(Name = "Your notes")]
+        public string Note { get; set; }
+
         public bool IsManual { get; set; }
 
         public bool AutomaticStopped { get; set; }

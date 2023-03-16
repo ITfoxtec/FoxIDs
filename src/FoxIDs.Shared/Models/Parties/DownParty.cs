@@ -34,6 +34,9 @@ namespace FoxIDs.Models
             return await IdFormatAsync(idKey);
         }
 
+        [JsonProperty(PropertyName = "party_binding_pattern")]
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax)]
         [JsonProperty(PropertyName = "allow_up_parties")]
         public List<UpPartyLink> AllowUpParties { get; set; }

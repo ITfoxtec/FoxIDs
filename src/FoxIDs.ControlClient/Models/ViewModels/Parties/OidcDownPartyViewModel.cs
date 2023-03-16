@@ -37,6 +37,12 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        [Display(Name = "URL party binding pattern")]
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        /// <summary>
         /// Allow CORS origins.
         /// </summary>
         [ValidateComplexType]

@@ -33,6 +33,11 @@ namespace FoxIDs.Models.Api
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        /// <summary>
         /// Allow CORS origins.
         /// </summary>
         [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]

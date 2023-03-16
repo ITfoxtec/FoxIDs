@@ -55,6 +55,11 @@ namespace FoxIDs.Models.Api
         public string SignatureAlgorithm { get; set; } = Saml2SecurityAlgorithms.RsaSha256Signature;
 
         /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
+
+        /// <summary>
         /// Default None.
         /// </summary>
         [Required]

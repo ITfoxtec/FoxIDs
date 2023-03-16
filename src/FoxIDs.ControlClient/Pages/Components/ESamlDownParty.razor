@@ -23,6 +23,11 @@
         {
             <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
         }
+        @if (samlDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="samlDownParty.Form.Model.Note" For="@(() => samlDownParty.Form.Model.Note)" />
+        }
+
         <div class="mb-3 alert alert-info" role="alert">
             <i>SAML 2.0 Metadata selecting all up-parties with '*'. You can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i>
             @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern); }

@@ -13,6 +13,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Down-party name (client ID / resource name)")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        [Display(Name = "Your notes")]
+        public string Note { get; set; }
+
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow up-party names (client IDs)")]

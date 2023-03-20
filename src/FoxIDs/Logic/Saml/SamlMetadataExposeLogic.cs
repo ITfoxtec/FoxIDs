@@ -131,6 +131,9 @@ namespace FoxIDs.Logic
                 new SingleLogoutService { Binding = ToSamleBindingUri(party?.LogoutBinding?.RequestBinding), Location = logoutDestination, ResponseLocation = party?.MetadataAddLogoutResponseLocation == true ? logoutDestination : null },
             };
 
+            entityDescriptor.IdPSsoDescriptor.WantAuthnRequestsSigned = party.RequireAuthnRequestsSigned;
+            Need change in ITfoxtec Identity SAML 2.0 to require signed auth requests...
+
             if (party?.MetadataIncludeEncryptionCertificates == true)
             {
                 entityDescriptor.IdPSsoDescriptor.EncryptionCertificates = trackCertificates;

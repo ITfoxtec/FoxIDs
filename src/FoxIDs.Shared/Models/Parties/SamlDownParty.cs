@@ -92,6 +92,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_add_logout_response_location")]
         public bool MetadataAddLogoutResponseLocation { get; set; }
 
+        [JsonProperty(PropertyName = "require_authn_requests_signed")]
+        public bool RequireAuthnRequestsSigned { get; set; }
+
         [JsonProperty(PropertyName = "sign_metadata")]
         public bool SignMetadata { get; set; }
 
@@ -117,6 +120,10 @@ namespace FoxIDs.Models
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
                 results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
+            }
+            if(RequireAuthnRequestsSigned && !(Keys?.Count() > 0))
+            {
+                results.Add(new ValidationResult($"At least one key (signature validation certificate) in the field {nameof(Keys)} is required because want authn requests signed is enabled.", new[] { nameof(Keys), nameof(RequireAuthnRequestsSigned) }));
             }
             return results;
         }

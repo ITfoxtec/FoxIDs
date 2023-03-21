@@ -9,10 +9,7 @@
         <div>
             OpenID Connect
         </div>
-        @if (oidcUpParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (oidcUpParty.Form.Model.IsManual)
@@ -247,10 +244,7 @@
         </div>
     }
     <div class="modal-footer">
-        @if (oidcUpParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!UpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>

@@ -1,18 +1,11 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
-using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
-using FoxIDs.Models.Session;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
-using ITfoxtec.Identity.Messages;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -20,19 +13,15 @@ namespace FoxIDs.Logic
     public class TrackLinkIdPInitiatedLogoutUpLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly TrackIssuerLogic trackIssuerLogic;
-        private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SequenceLogic sequenceLogic;
         private readonly SessionUpPartyLogic sessionUpPartyLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public TrackLinkIdPInitiatedLogoutUpLogic(TelemetryScopedLogger logger, TrackIssuerLogic trackIssuerLogic, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackLinkIdPInitiatedLogoutUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SessionUpPartyLogic sessionUpPartyLogic, HrdLogic hrdLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.trackIssuerLogic = trackIssuerLogic;
-            this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
             this.sequenceLogic = sequenceLogic;
             this.sessionUpPartyLogic = sessionUpPartyLogic;
@@ -54,12 +43,21 @@ namespace FoxIDs.Logic
                 throw new Exception($"Incorrect down-party name '{keySequenceData.KeyName}', expected down-party name '{party.ToDownPartyName}'.");
             }
 
+            var sequenceData = new TrackLinkUpSequenceData 
+            {
+                KeyName = party.Name,
+                DownPartySequenceString = keySequenceString,
+                ExternalInitiatedSingleLogout = true,
+                UpPartyId = party.Id
+            };
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
 
             if (party.DisableSingleLogout)
             {
-                return await LogoutRequestAsync(party, keySequenceString);
+                return await LogoutResponseAsync(party, sequenceData);
             }
             else
             {
@@ -71,15 +69,20 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    return await LogoutRequestAsync(party, keySequenceString);
+                    return await LogoutResponseAsync(party, sequenceData);
                 }
             }
         }
 
-
-        public async Task<IActionResult> LogoutRequestAsync(TrackLinkUpParty party, string keySequenceString)
+        public async Task<IActionResult> LogoutResponseAsync(string partyId, TrackLinkUpSequenceData sequenceData)
         {
-            await sequenceLogic.SaveSequenceDataAsync(new TrackLinkUpSequenceData { KeyName = party.Name, DownPartySequenceString = keySequenceString }, setKeyValidUntil: true);
+            var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
+            return await LogoutResponseAsync(party, sequenceData);
+        }
+
+        public async Task<IActionResult> LogoutResponseAsync(TrackLinkUpParty party, TrackLinkUpSequenceData sequenceData)
+        {
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);
 
             return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkIdPLogoutResponse, includeKeySequence: true).ToRedirectResult();
         }

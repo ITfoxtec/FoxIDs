@@ -44,10 +44,12 @@ namespace FoxIDs.Logic
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToUpTrackName);
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName);
-            if (party.ToUpTrackName != keySequenceData.KeyName)
+            if (party.ToUpPartyName != keySequenceData.KeyName)
             {
-                throw new Exception($"Incorrect up-party name '{keySequenceData.KeyName}', expected up-party name '{party.ToUpTrackName}'.");
+                throw new Exception($"Incorrect up-party name '{keySequenceData.KeyName}', expected up-party name '{party.ToUpPartyName}'.");
             }
+
+            await sequenceLogic.ValidateAndSetSequenceAsync(keySequenceData.DownPartySequenceString);
 
             return await singleLogoutDownLogic.HandleSingleLogoutAsync();
         }

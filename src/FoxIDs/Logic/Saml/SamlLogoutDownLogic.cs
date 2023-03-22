@@ -12,14 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using ITfoxtec.Identity.Saml2.Claims;
-using System.Linq;
 using FoxIDs.Models.Logic;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
 using FoxIDs.Logic.Tracks;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FoxIDs.Logic
 {
@@ -151,23 +148,12 @@ namespace FoxIDs.Logic
 
         private LogoutRequest GetSamlLogoutRequest(SamlDownParty party, Saml2LogoutRequest saml2LogoutRequest)
         {
-            var samlClaims = new List<Claim>();
-            if (saml2LogoutRequest.NameId != null)
-            {
-                samlClaims.AddClaim(Saml2ClaimTypes.NameId, saml2LogoutRequest.NameId.Value);
-
-                if (saml2LogoutRequest.NameId.Format != null)
-                {
-                    samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, saml2LogoutRequest.NameId.Format.OriginalString);
-                }
-            }
             return new LogoutRequest
             {
                 DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.SingleLogoutUrl), Id = party.Id, Type = party.Type },
                 SessionId = saml2LogoutRequest.SessionIndex,
                 RequireLogoutConsent = false,
-                PostLogoutRedirect = true,
-                Claims = samlClaims,
+                PostLogoutRedirect = true
             };
         }
 

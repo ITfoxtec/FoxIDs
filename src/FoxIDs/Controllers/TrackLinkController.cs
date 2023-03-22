@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link IdP initiated logout request, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Track link IdP initiated logout request, Up party name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutUpLogic>().LogoutRequestAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
@@ -78,12 +78,12 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link IdP initiated logout response, Up type '{RouteBinding.UpParty.Type}'");
-                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutDownLogic>().LogoutResponseAsync(RouteBinding.UpParty.Id);
+                logger.ScopeTrace(() => $"Track link IdP initiated logout response, Down party name '{RouteBinding.DownParty.Name}'");
+                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutDownLogic>().LogoutResponseAsync(RouteBinding.DownParty.Id);
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Track link IdP initiated response logout failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Track link IdP initiated response logout failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
@@ -92,7 +92,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link single Logout done, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Track link single Logout done, Up party name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().SingleLogoutDone(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)

@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Security.Claims;
-using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Models.Logic;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
@@ -106,7 +105,7 @@ namespace FoxIDs.Logic
                     {
                         throw new OAuthRequestException($"ID Token hint is required for SAML 2.0 Up-party.") { RouteBinding = RouteBinding };
                     }
-                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest( party, sessionId, idTokenClaims));
+                    return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest(party, sessionId));
                 case PartyTypes.TrackLink:
                     return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, sessionId, validIdToken, postLogoutRedirectUri));
 
@@ -151,29 +150,14 @@ namespace FoxIDs.Logic
             return logoutRequest;
         }
 
-        private LogoutRequest GetSamlLogoutRequest(TParty party, string sessionId, IEnumerable<Claim> idTokenClaims)
+        private LogoutRequest GetSamlLogoutRequest(TParty party, string sessionId)
         {
-            var samlClaims = new List<Claim>();
-            var nameIdClaim = idTokenClaims.FirstOrDefault(c => c.Type == JwtClaimTypes.Subject);
-            if(nameIdClaim == null)
-            {
-                throw new OAuthRequestException($"Require '{JwtClaimTypes.Subject}' claim in ID Token hint.") { RouteBinding = RouteBinding };
-            }
-            samlClaims.AddClaim(Saml2ClaimTypes.NameId, nameIdClaim.Value);
-
-            var subFormatClaim = idTokenClaims.FirstOrDefault(c => c.Type == Constants.JwtClaimTypes.SubFormat);
-            if (subFormatClaim != null)
-            {
-                samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, subFormatClaim.Value);
-            }
-
             return new LogoutRequest
             {
                 DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type },
                 SessionId = sessionId,
                 RequireLogoutConsent = false,
-                PostLogoutRedirect = true,
-                Claims = samlClaims,
+                PostLogoutRedirect = true
             };
         }
 

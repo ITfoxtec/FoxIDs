@@ -82,12 +82,20 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutDone(string partyId)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: true);
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>();
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid up-party id.");
             }
-            return await LogoutResponseDownAsync(sequenceData);
+            if (!sequenceData.ExternalInitiatedSingleLogout)
+            {
+                await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
+                return await LogoutResponseDownAsync(sequenceData);
+            }
+            else
+            {
+                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutUpLogic>().LogoutResponseAsync(sequenceData.UpPartyId, sequenceData);                
+            }
         }
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId)

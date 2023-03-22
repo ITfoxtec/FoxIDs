@@ -61,8 +61,7 @@ namespace FoxIDs.Logic
                 UpPartyId = partyId,
                 SessionId = logoutRequest.SessionId,
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent,
-                PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
-                Claims = logoutRequest.Claims.ToClaimAndValues()
+                PostLogoutRedirect = logoutRequest.PostLogoutRedirect
             });
 
             return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();

@@ -17,10 +17,7 @@
                 <FInputToggle @bind-Value="oidcDownParty.EnableResourceTab" OnValidChange="@(v => OnOidcDownPartyResourceTabChange(oidcDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
             </div>
         </div>
-        @if (oidcDownParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (oidcDownParty.CreateMode)
@@ -367,10 +364,7 @@
         </div>
     }
     <div class="modal-footer">
-        @if (oidcDownParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!DownParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>

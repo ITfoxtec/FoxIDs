@@ -9,10 +9,7 @@
         <div>
             Login
         </div>
-        @if (loginUpParty.ShowLoginTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (loginUpParty.CreateMode)
@@ -25,6 +22,10 @@
         else
         {
             <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+        }
+        @if (loginUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="loginUpParty.Form.Model.Note" For="@(() => loginUpParty.Form.Model.Note)" />
         }
 
         <ul class="nav nav-tabs">

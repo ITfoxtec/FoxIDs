@@ -17,10 +17,7 @@
                 <FInputToggle @bind-Value="oidcDownParty.EnableResourceTab" OnValidChange="@(v => OnOidcDownPartyResourceTabChange(oidcDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
             </div>
         </div>
-        @if (oidcDownParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (oidcDownParty.CreateMode)
@@ -31,11 +28,15 @@
         {
             <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
         }
+        @if (oidcDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oidcDownParty.Form.Model.Note" For="@(() => oidcDownParty.Form.Model.Note)" />
+        }
 
         <div class="mb-3 alert alert-info" role="alert">
             @if (oidcDownParty.EnableClientTab || (!oidcDownParty.EnableClientTab && !oidcDownParty.EnableResourceTab))
             {
-                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true);
+                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
                 <div>Client Authority and OIDC Discovery<br /><i>Example for a up-party with the name 'login' as the target.</i></div>                 
                 <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
@@ -54,6 +55,15 @@
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
             }
         </div>
+
+        @if (DownParty.ShowAdvanced)
+        {
+            <FInputSelect @bind-Value="oidcDownParty.Form.Model.PartyBindingPattern" For="@(() => oidcDownParty.Form.Model.PartyBindingPattern)">
+                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
+            </FInputSelect>
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -354,10 +364,7 @@
         </div>
     }
     <div class="modal-footer">
-        @if (oidcDownParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!DownParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>

@@ -4,6 +4,7 @@ using FoxIDs.Client.Models;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
@@ -117,15 +118,17 @@ namespace FoxIDs.Client.Pages.Components
             arg.model.AllowUpPartyNames.Remove(arg.upPartyName);
         }
 
-        public (string, string) GetAuthorityAndOIDCDiscovery(string partyName, bool addUpParty)
+        public (string, string) GetAuthorityAndOIDCDiscovery(string partyName, bool addUpParty, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
         {
-            var authority = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}{(addUpParty ? $"(*)" : String.Empty)}/";
+            var partyBinding = (partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower()).ToDownPartyBinding(addUpParty, partyBindingPattern);
+            var authority = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/";
             return (authority, authority + IdentityConstants.OidcDiscovery.Path);
         }
 
-        public string GetSamlMetadata(string partyName)
+        public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
-            return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{(partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower())}(*)/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";
+            var partyBinding = (partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower()).ToDownPartyBinding(true, partyBindingPattern);
+            return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";
         }
 
         public async Task DownPartyCancelAsync(GeneralDownPartyViewModel downParty)

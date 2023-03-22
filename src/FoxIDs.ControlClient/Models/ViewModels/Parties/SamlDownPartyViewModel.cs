@@ -17,6 +17,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Down-party name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        [Display(Name = "Your notes")]
+        public string Note { get; set; }
+
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow up-party names")]
@@ -58,6 +62,12 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SamlParty.SignatureAlgorithmLength)]
         [Display(Name = "Signature algorithm")]
         public string SignatureAlgorithm { get; set; } = Saml2SecurityAlgorithms.RsaSha256Signature;
+
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        [Display(Name = "URL party binding pattern")]
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>
         /// Default None.

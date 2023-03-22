@@ -9,12 +9,9 @@
         <div class="d-flex">
             SAML 2.0
         </div>
-        @if (samlUpParty.ShowSamlTab)
-        {
-            <div class="d-flex">
-                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-            </div>
-        }
+        <div class="d-flex">
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        </div>
     </div>
     <div class="modal-body">
         @if (samlUpParty.CreateMode)
@@ -25,6 +22,11 @@
         {
             <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
         }
+        @if (samlUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
+        }
+
         <div class="mb-3 alert alert-info" role="alert">
             @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern); }
             <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>

@@ -31,8 +31,9 @@ namespace FoxIDs.Logic
             this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
 
-        public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
+        public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlAndTrackLinkLogoutInIframe)
         {
+            logger.ScopeTrace(() => "Down, OIDC Front Channel logout request.");
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
                 Issuer = trackIssuerLogic.GetIssuer(),
@@ -77,10 +78,10 @@ namespace FoxIDs.Logic
                 throw new InvalidOperationException("Unable to complete front channel logout. Please close the browser to logout.");
             }
 
-            if (doSamlLogoutInIframe)
+            if (doSamlAndTrackLinkLogoutInIframe)
             {
                 securityHeaderLogic.AddFrameSrcAllowAll();
-                // Start SAML logout
+                // Start SAML and Track link logout
                 partyLogoutUrls.Add(GetFrontChannelLogoutDoneUrl(sequenceData, firstParty));
             }
             else

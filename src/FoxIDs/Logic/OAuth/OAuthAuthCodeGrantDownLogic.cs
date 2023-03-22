@@ -15,13 +15,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic;
+        private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OAuthAuthCodeGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAuthCodeGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.claimsDownLogic = claimsDownLogic;
+            this.claimsOAuthDownLogic = claimsOAuthDownLogic;
         }
 
         public async Task<string> CreateAuthCodeGrantAsync(TClient client, List<Claim> claims, string redirectUri, string scope, string nonce, string codeChallenge, string codeChallengeMethod)
@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             if (!client.AuthorizationCodeLifetime.HasValue)
                 throw new EndpointException("Client AuthorizationCodeLifetime not configured.") { RouteBinding = RouteBinding };
 
-            var grantClaims = await claimsDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
+            var grantClaims = await claimsOAuthDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var code = RandomGenerator.Generate(64);
             var grant = new AuthCodeTtlGrant

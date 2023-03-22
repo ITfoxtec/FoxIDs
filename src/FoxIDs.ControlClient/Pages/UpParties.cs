@@ -90,13 +90,17 @@ namespace FoxIDs.Client.Pages
                 {
                     upParties.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
-                if (dp.Type == PartyTypes.Oidc)
+                else if (dp.Type == PartyTypes.Oidc)
                 {
                     upParties.Add(new GeneralOidcUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
                     upParties.Add(new GeneralSamlUpPartyViewModel(dp));
+                }
+                else if (dp.Type == PartyTypes.TrackLink)
+                {
+                    upParties.Add(new GeneralTrackLinkUpPartyViewModel(dp));
                 }
             }
         }
@@ -123,6 +127,13 @@ namespace FoxIDs.Client.Pages
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
                 upParties.Add(samlUpParty);
+            }
+            else if (type == PartyTypes.TrackLink)
+            {
+                var trackLinkUpParty = new GeneralTrackLinkUpPartyViewModel();
+                trackLinkUpParty.CreateMode = true;
+                trackLinkUpParty.Edit = true;
+                upParties.Add(trackLinkUpParty);
             }
         }
 
@@ -156,6 +167,10 @@ namespace FoxIDs.Client.Pages
             else if (upParty.Type == PartyTypes.Saml2)
             {
                 return $"SAML 2.0 - {upParty.Name}";
+            }
+            else if (upParty.Type == PartyTypes.TrackLink)
+            {
+                return $"Track link - {upParty.Name}";
             }
             throw new NotSupportedException();
         }

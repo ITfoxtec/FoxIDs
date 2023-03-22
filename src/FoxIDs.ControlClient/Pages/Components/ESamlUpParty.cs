@@ -12,7 +12,6 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
 using BlazorInputFile;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Components;
 using Tewr.Blazor.FileReader;
 using System.Text;
@@ -295,13 +294,13 @@ namespace FoxIDs.Client.Pages.Components
                     var samlUpPartyResult = await UpPartyService.CreateSamlUpPartyAsync(samlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     generalSamlUpParty.CreateMode = false;
-                    toastService.ShowSuccess("SAML 2.0 Up-party created.", "SUCCESS");
+                    toastService.ShowSuccess("SAML 2.0 up-party created.");
                 }
                 else
                 {
                     var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
-                    toastService.ShowSuccess("SAML 2.0 Up-party updated.", "SUCCESS");
+                    toastService.ShowSuccess("SAML 2.0 up-party updated.");
                 }
                 generalSamlUpParty.Name = generalSamlUpParty.Form.Model.Name;
             }

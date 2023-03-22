@@ -114,7 +114,7 @@ namespace FoxIDs.Logic
         {
             if (!sequenceString.IsNullOrWhiteSpace())
             {
-                sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(ValidateSequenceAsync));
+                sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(TryReadSequenceAsync));
 
                 try
                 {
@@ -131,10 +131,10 @@ namespace FoxIDs.Logic
             return Task.FromResult<Sequence>(null);
         }
 
-        public async Task ValidateSequenceAsync(string sequenceString, bool setValid = false)
+        public async Task ValidateAndSetSequenceAsync(string sequenceString, bool setValid = false)
         {
             if (sequenceString.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(sequenceString));
-            sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(ValidateSequenceAsync));
+            sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(ValidateAndSetSequenceAsync));
 
             try
             {
@@ -159,8 +159,36 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<T> SaveSequenceDataAsync<T>(T data, Sequence sequence = null) where T : ISequenceData
+        public async Task<Sequence> ValidateSequenceAsync(string sequenceString, string trackName = null)
         {
+            if (sequenceString.IsNullOrWhiteSpace()) throw new ArgumentNullException(nameof(sequenceString));
+            sequenceString.ValidateMaxLength(Constants.Sequence.MaxLength, nameof(sequenceString), nameof(ValidateAndSetSequenceAsync));
+
+            try
+            {
+                var sequence = await Task.FromResult(CreateProtector(trackName).Unprotect(sequenceString).ToObject<Sequence>());
+                CheckTimeout(sequence);
+
+                logger.ScopeTrace(() => $"Sequence is validated, id '{sequence.Id}'.");
+                return sequence;
+            }
+            catch (SequenceException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                throw new SequenceException("Invalid sequence.", ex);
+            }
+        }
+
+        public async Task<T> SaveSequenceDataAsync<T>(T data, Sequence sequence = null, string trackName = null, bool setKeyValidUntil = false) where T : ISequenceData
+        {
+            if (setKeyValidUntil && data is ISequenceKey keyData)
+            {
+                keyData.KeyValidUntil = DateTimeOffset.UtcNow.AddSeconds(settings.KeySequenceLifetime).ToUnixTimeSeconds();
+            }
+
             await data.ValidateObjectAsync();
 
             sequence = sequence ?? HttpContext.GetSequence();
@@ -169,19 +197,19 @@ namespace FoxIDs.Logic
             {
                 AbsoluteExpiration = absoluteExpiration
             };
-            await distributedCache.SetStringAsync(DataKey(typeof(T), sequence), data.ToJson(), options);
+            await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
 
             return data;
         }
 
-        public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false) where T : ISequenceData
+        public async Task<T> GetSequenceDataAsync<T>(bool remove = true, bool allowNull = false, Sequence sequence = null, string trackName = null) where T : ISequenceData
         {
-            var sequence = HttpContext.GetSequence(allowNull);
+            sequence = sequence ?? HttpContext.GetSequence(allowNull);
             if(allowNull && sequence == null)
             {
                 return default;
             }
-            var key = DataKey(typeof(T), sequence);
+            var key = DataKey(typeof(T), sequence, trackName);
             var data = await distributedCache.GetStringAsync(key);
             if(data == null)
             {
@@ -203,6 +231,27 @@ namespace FoxIDs.Logic
             return data.ToObject<T>();
         }
 
+        public async Task<T> ValidateKeySequenceDataAsync<T>(Sequence sequence, string trackName, bool remove = true) where T : ISequenceKey
+        {
+            var keySequenceData = await GetSequenceDataAsync<T>(remove: remove, sequence: sequence, trackName: trackName);
+
+            if (keySequenceData.KeyUsed)
+            {
+                throw new SequenceException($"Key sequence is used, id '{sequence.Id}'.");
+            }
+            if (!(keySequenceData.KeyValidUntil > 0) || DateTimeOffset.FromUnixTimeSeconds(keySequenceData.KeyValidUntil) < DateTimeOffset.UtcNow)
+            {
+                throw new SequenceException($"Key sequence timeout, id '{sequence.Id}'.");
+            }
+
+            if (!remove)
+            {
+                keySequenceData.KeyUsed = true;
+                await SaveSequenceDataAsync(keySequenceData, sequence: sequence, trackName: trackName);
+            }
+            return keySequenceData;
+        }
+
         public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData
         {
             var sequence = HttpContext.GetSequence();
@@ -215,16 +264,16 @@ namespace FoxIDs.Logic
             return Task.FromResult(CreateProtector().Protect(sequence.ToJson()));
         }
 
-        private string DataKey(Type type, Sequence sequence)
+        private string DataKey(Type type, Sequence sequence, string trackName = null)
         {
             var routeBinding = HttpContext.GetRouteBinding();
-            return $"{routeBinding.TenantName}.{routeBinding.TrackName}.seq.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
+            return $"{routeBinding.TenantName}.{trackName ?? routeBinding.TrackName}.seq.{type.Name.ToLower()}.{sequence.Id}.{sequence.CreateTime}";
         }
 
-        private IDataProtector CreateProtector()
+        private IDataProtector CreateProtector(string trackName = null)
         {
             var routeBinding = HttpContext.GetRouteBinding();
-            return dataProtectionProvider.CreateProtector(new[] { routeBinding.TenantName, routeBinding.TrackName, typeof(SequenceLogic).Name });
+            return dataProtectionProvider.CreateProtector(new[] { routeBinding.TenantName, trackName ?? routeBinding.TrackName, typeof(SequenceLogic).Name });
         }
 
         private void CheckTimeout(Sequence sequence) 

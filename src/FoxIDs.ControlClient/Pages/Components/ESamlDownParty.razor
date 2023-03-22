@@ -9,10 +9,7 @@
         <div>
             SAML 2.0
         </div>
-        @if (samlDownParty.ShowSamlTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (samlDownParty.CreateMode)

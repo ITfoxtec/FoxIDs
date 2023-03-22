@@ -9,12 +9,9 @@
         <div class="d-flex">
             SAML 2.0
         </div>
-        @if (samlUpParty.ShowSamlTab)
-        {
-            <div class="d-flex">
-                <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-            </div>
-        }
+        <div class="d-flex">
+            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        </div>
     </div>
     <div class="modal-body">
         @if (samlUpParty.CreateMode)

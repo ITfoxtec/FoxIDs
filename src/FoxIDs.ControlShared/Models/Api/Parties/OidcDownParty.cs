@@ -11,6 +11,9 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        public string Note { get; set; }
+
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
@@ -31,6 +34,11 @@ namespace FoxIDs.Models.Api
         /// </summary>
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>
         /// Allow CORS origins.

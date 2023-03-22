@@ -11,6 +11,9 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        public string Note { get; set; }
+
         /// <summary>
         /// Default false.
         /// </summary>

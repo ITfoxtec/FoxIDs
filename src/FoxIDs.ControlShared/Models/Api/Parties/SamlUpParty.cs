@@ -2,6 +2,7 @@
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,6 +17,9 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        public string Note { get; set; }
 
         [Required]
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;

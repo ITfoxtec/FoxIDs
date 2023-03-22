@@ -53,9 +53,15 @@ namespace FoxIDs.Logic
                     var userId = sessionClaims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject);
                     if (!session.UserId.IsNullOrEmpty() && session.UserId != userId)
                     {
-                        logger.ScopeTrace(() => "Authenticated user and requested user do not match.");
-                        // TODO invalid user login
-                        throw new NotImplementedException("Authenticated user and requested user do not match.");
+                        try
+                        {
+                            throw new Exception($"Existing session user '{session.UserId}' and authenticated user '{userId}' do not match, causing an session update including new session ID.");
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Warning(ex);
+                        }
+                        updateAction(session);
                     }
 
                     if (session.ExternalSessionId != externalSessionId)

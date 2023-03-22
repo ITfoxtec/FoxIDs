@@ -9,10 +9,7 @@
         <div>
             OpenID Connect
         </div>
-        @if (oidcUpParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (oidcUpParty.Form.Model.IsManual)
@@ -29,6 +26,10 @@
         else
         {
             <FFieldText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
+        }
+        @if (oidcUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
         }
 
         <div class="mb-3 alert alert-info" role="alert">
@@ -186,11 +187,16 @@
                     {
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
+                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.UserInfoUrl" For="@(() => oidcUpParty.Form.Model.Client.UserInfoUrl)" />
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
                     }
                     @if (UpParty.ShowAdvanced)
                     {
-                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseUserInfoClaims" For="@(() => oidcUpParty.Form.Model.Client.UseUserInfoClaims)" TextType="y.n" />
+                        if (!oidcUpParty.Form.Model.Client.UseUserInfoClaims)
+                        {
+                            <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
+                        }
                     }
                     <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" DynamicFirstRow="true" />
                     @if (UpParty.ShowAdvanced)
@@ -238,10 +244,7 @@
         </div>
     }
     <div class="modal-footer">
-        @if (oidcUpParty.ShowClientTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!UpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>

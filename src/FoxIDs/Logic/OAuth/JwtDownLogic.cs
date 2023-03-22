@@ -99,9 +99,11 @@ namespace FoxIDs.Logic
 
         public async Task<ClaimsPrincipal> ValidatePartyClientTokenAsync(TClient client, string token, bool validateLifetime = true)
         {
-            var issuerSigningKeys = new List<JsonWebKey>();
-            issuerSigningKeys.Add(RouteBinding.Key.PrimaryKey.Key);
-            if(RouteBinding.Key.SecondaryKey != null)
+            var issuerSigningKeys = new List<JsonWebKey>
+            {
+                RouteBinding.Key.PrimaryKey.Key
+            };
+            if (RouteBinding.Key.SecondaryKey != null)
             {
                 issuerSigningKeys.Add(RouteBinding.Key.SecondaryKey.Key);
             }
@@ -120,8 +122,10 @@ namespace FoxIDs.Logic
 
         public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, bool validateAudience = false, bool validateLifetime = true)
         {
-            var issuerSigningKeys = new List<JsonWebKey>();
-            issuerSigningKeys.Add(RouteBinding.Key.PrimaryKey.Key);
+            var issuerSigningKeys = new List<JsonWebKey>
+            {
+                RouteBinding.Key.PrimaryKey.Key
+            };
             if (RouteBinding.Key.SecondaryKey != null)
             {
                 issuerSigningKeys.Add(RouteBinding.Key.SecondaryKey.Key);

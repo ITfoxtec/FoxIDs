@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
                     {
                         if (user.UserId != session.UserId)
                         {
-                            throw new Exception("Session user id and the Users user id do not match, this should not be able to occur.");
+                            throw new Exception($"Session user id '{session.UserId}' and the loaded Users user id '{user.UserId}' do not match, this should not be able to occur.");
                         }
 
                         AddDownPartyLink(session, newDownPartyLink);

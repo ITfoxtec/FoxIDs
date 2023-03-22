@@ -9,10 +9,7 @@
         <div>
             SAML 2.0
         </div>
-        @if (samlDownParty.ShowSamlTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (samlDownParty.CreateMode)
@@ -23,11 +20,25 @@
         {
             <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
         }
+        @if (samlDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="samlDownParty.Form.Model.Note" For="@(() => samlDownParty.Form.Model.Note)" />
+        }
+
         <div class="mb-3 alert alert-info" role="alert">
             <i>SAML 2.0 Metadata selecting all up-parties with '*'. You can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i>
-            @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name); }
+            @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern); }
             <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
         </div>
+
+        @if (DownParty.ShowAdvanced)
+        {
+            <FInputSelect @bind-Value="samlDownParty.Form.Model.PartyBindingPattern" For="@(() => samlDownParty.Form.Model.PartyBindingPattern)">
+                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
+            </FInputSelect>
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">

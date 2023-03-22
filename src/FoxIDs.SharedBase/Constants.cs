@@ -294,6 +294,7 @@ namespace FoxIDs
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 110;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const int NoteLength = 200;
 
                 public const string NameAndGuidIdRegExPattern = @"^[\w\-]*$";
             }
@@ -407,7 +408,8 @@ namespace FoxIDs
                     public const int RedirectUrisMin = 1;
                     public const int RedirectUrisMax = 40;
                     public const int AuthorizeUrlLength = 500;
-                    public const int TokenUrlLength = 500;
+                    public const int TokenUrlLength = 500;  
+                    public const int UserInfoUrlLength = 500;
                     public const int EndSessionUrlLength = 500;
                 }
             }

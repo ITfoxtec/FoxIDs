@@ -13,6 +13,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Down-party name (client ID / resource name)")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        [Display(Name = "Your notes")]
+        public string Note { get; set; }
+
         [ValidateComplexType]
         [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow up-party names (client IDs)")]
@@ -35,6 +39,12 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
+
+        /// <summary>
+        /// URL party binding pattern.
+        /// </summary>
+        [Display(Name = "URL party binding pattern")]
+        public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>
         /// Allow CORS origins.

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -314,7 +315,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.JwtTypeLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                if(Constants.EmbeddedJwtToken.JwtTokenClaims.Contains(claim.Type))
+                if(Constants.EmbeddedJwtToken.JwtTokenClaims.Any(claim.Type.Contains))
                 {
                     if (claim.Value?.Length > Constants.EmbeddedJwtToken.ValueLength)
                     {
@@ -405,7 +406,7 @@ namespace FoxIDs.Logic
                     {
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                         var tokenResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
-                        logger.ScopeTrace(() => $"Up, Unexpected status code response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"Up, Unexpected status code token response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         try
                         {
                             tokenResponseUnexpectedStatus.Validate(true);
@@ -432,7 +433,11 @@ namespace FoxIDs.Logic
             var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
             if (!accessToken.IsNullOrWhiteSpace())
             {
-                if (!party.Client.UseIdTokenClaims)
+                if (party.Client.UseUserInfoClaims)
+                {
+                    claims = await UserInforRequestAsync(party.Client, accessToken);
+                }
+                else if (!party.Client.UseIdTokenClaims)
                 {
                     var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
                     claims = await ValidateAccessTokenAsync(party, sequenceData, accessToken);
@@ -441,6 +446,17 @@ namespace FoxIDs.Logic
                         claims.Add(sessionIdClaim);
                     }
                 }
+
+                var accessTokenClaims = claims.Where(c => c.Type == Constants.JwtClaimTypes.AccessToken).Select(c => c.Value);
+                if (accessTokenClaims.Count() > 0)
+                {
+                    claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AccessToken).ToList();
+                    foreach (var accessTokenClaim in accessTokenClaims)
+                    {
+                        claims.Add(new Claim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessTokenClaim}"));
+                    }
+                }
+
                 claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessToken}");
             }
 
@@ -521,6 +537,78 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 throw new OAuthRequestException($"{party.Name}|Access token not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+            }
+        }
+
+        private async Task<List<Claim>> UserInforRequestAsync(TClient client, string accessToken)
+        {
+            ValidateClientUserInfoSupport(client);
+            logger.ScopeTrace(() => $"Up, OIDC UserInfo request URL '{client.UserInfoUrl}'.", traceType: TraceTypes.Message);
+    
+            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
+
+            using var response = await httpClient.GetAsync(client.UserInfoUrl);
+            switch (response.StatusCode)
+            {
+                case HttpStatusCode.OK:
+                    var result = await response.Content.ReadAsStringAsync();
+                    var userInfoResponse = result.ToObject<Dictionary<string, string>>();
+                    logger.ScopeTrace(() => $"Up, UserInfo response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+
+                    var claims = userInfoResponse.Select(c => new Claim(c.Key, c.Value)).ToList();
+                    if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
+                    {
+                        throw new OAuthRequestException($"Require {JwtClaimTypes.Subject} claim from userinfo endpoint.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    }
+                    return claims;
+
+                case HttpStatusCode.BadRequest:
+                    var resultBadRequest = await response.Content.ReadAsStringAsync();
+                    var userInfoResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
+                    logger.ScopeTrace(() => $"Up, Bad userinfo response '{userInfoResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    try
+                    {
+                        userInfoResponseBadRequest.Validate(true);
+                    }
+                    catch (ResponseErrorException rex)
+                    {
+                        throw new OAuthRequestException($"External {rex.Message}") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    }
+                    throw new EndpointException($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.") { RouteBinding = RouteBinding };
+
+                default:
+                    try
+                    {
+                        var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
+                        var userInfoResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
+                        logger.ScopeTrace(() => $"Up, Unexpected status code userinfo response '{userInfoResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        try
+                        {
+                            userInfoResponseUnexpectedStatus.Validate(true);
+                        }
+                        catch (ResponseErrorException rex)
+                        {
+                            throw new OAuthRequestException($"External {rex.Message}") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                        }
+                    }
+                    catch (OAuthRequestException)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}", ex) { RouteBinding = RouteBinding };
+                    }
+                    throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}") { RouteBinding = RouteBinding };
+            }
+        }
+
+        private void ValidateClientUserInfoSupport(TClient client)
+        {
+            if (client.UserInfoUrl.IsNullOrEmpty())
+            {
+                throw new EndpointException("Userinfo endpoint not configured.") { RouteBinding = RouteBinding };
             }
         }
 

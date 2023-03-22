@@ -28,7 +28,7 @@ namespace FoxIDs.Controllers.Client
             {
                 FoxIDsEndpoint = settings.FoxIDsEndpoint,
                 Version = version.ToString(2),
-                FullVersion = version.ToString(3)
+                FullVersion = version.ToString(4)
             });
         }
     }

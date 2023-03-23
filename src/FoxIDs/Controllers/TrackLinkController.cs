@@ -61,29 +61,43 @@ namespace FoxIDs.Controllers
         }
 
         [Sequence(SequenceAction.Start)]
-        public async Task<IActionResult> IdPLogoutRequest()
+        public async Task<IActionResult> FrontChannelLogout()
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link IdP initiated logout request, Up party name '{RouteBinding.UpParty.Name}'");
-                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutUpLogic>().LogoutRequestAsync(RouteBinding.UpParty.Id);
+                logger.ScopeTrace(() => $"Track link front channel logout request, Up party name '{RouteBinding.UpParty.Name}'");
+                return await serviceProvider.GetService<TrackLinkFrontChannelLogoutUpLogic>().FrontChannelLogoutAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Track link IdP initiated logout request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Track link front channel logout request failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 
-        public async Task<IActionResult> IdPLogoutResponse()
+        //public async Task<IActionResult> FrontChannelLogoutResponse()
+        //{
+        //    try
+        //    {
+        //        logger.ScopeTrace(() => $"Track link front channel logout response, Down party name '{RouteBinding.DownParty.Name}'");
+        //        return await serviceProvider.GetService<TrackLinkFrontChannelLogoutDownLogic>().LogoutResponseAsync(RouteBinding.DownParty.Id);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw new EndpointException($"Track link IdP initiated response logout failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
+        //    }
+        //}
+
+        [Sequence]
+        public async Task<IActionResult> FrontChannelLogoutDone()
         {
             try
             {
-                logger.ScopeTrace(() => $"Track link IdP initiated logout response, Down party name '{RouteBinding.DownParty.Name}'");
-                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutDownLogic>().LogoutResponseAsync(RouteBinding.DownParty.Id);
+                logger.ScopeTrace(() => $"Track link front channel logout Done, Down type '{RouteBinding.DownParty.Name}'");
+                return await serviceProvider.GetService<TrackLinkFrontChannelLogoutDownLogic>().LogoutDoneAsync();
             }
             catch (Exception ex)
             {
-                throw new EndpointException($"Track link IdP initiated response logout failed, Name '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
+                throw new EndpointException($"Track link front channel logout Done failed for client id '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
         }
 

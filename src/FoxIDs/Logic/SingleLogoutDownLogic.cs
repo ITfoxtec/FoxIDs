@@ -78,15 +78,22 @@ namespace FoxIDs.Logic
             }
 
             var samlDownPartyId = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Saml2).Select(p => p.Id).FirstOrDefault();
-            var trackLinkDownPartyId = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.TrackLink).Select(p => p.Id).FirstOrDefault();
+            var doSamlLogoutInIframe = sequenceData.HostedInIframe && samlDownPartyId != null;
 
             var oidcDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.Oidc).Select(p => p.Id);
             if (oidcDownPartyIds.Count() > 0)
             {
                 sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Type != PartyTypes.Oidc);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                var doSamlAndTrackLinkLogoutInIframe = sequenceData.HostedInIframe && (samlDownPartyId != null || trackLinkDownPartyId != null);
-                return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutRequestAsync(oidcDownPartyIds, sequenceData, sequenceData.HostedInIframe, doSamlAndTrackLinkLogoutInIframe);
+                return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutRequestAsync(oidcDownPartyIds, sequenceData, sequenceData.HostedInIframe, doSamlLogoutInIframe);
+            }
+
+            var trackLinkDownPartyIds = sequenceData.DownPartyLinks.Where(p => p.Type == PartyTypes.TrackLink).Select(p => p.Id);
+            if (trackLinkDownPartyIds.Count() > 0)
+            {
+                sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Type != PartyTypes.TrackLink);
+                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                return await serviceProvider.GetService<TrackLinkFrontChannelLogoutDownLogic>().LogoutRequestAsync(trackLinkDownPartyIds, sequenceData, sequenceData.HostedInIframe, doSamlLogoutInIframe);
             }
 
             if (samlDownPartyId != null)
@@ -94,13 +101,6 @@ namespace FoxIDs.Logic
                 sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Id != samlDownPartyId);
                 await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 return await serviceProvider.GetService<SamlLogoutDownLogic>().SingleLogoutRequestAsync(samlDownPartyId, sequenceData);
-            }
-
-            if (trackLinkDownPartyId != null)
-            {
-                sequenceData.DownPartyLinks = sequenceData.DownPartyLinks.Where(p => p.Id != trackLinkDownPartyId);
-                await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutDownLogic>().LogoutRequestAsync(trackLinkDownPartyId, sequenceData);
             }
 
             await sequenceLogic.RemoveSequenceDataAsync<SingleLogoutSequenceData>();

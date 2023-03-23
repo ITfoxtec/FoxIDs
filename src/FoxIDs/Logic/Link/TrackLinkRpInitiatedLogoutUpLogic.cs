@@ -82,20 +82,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutDone(string partyId)
         {
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>();
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: true);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
                 throw new Exception("Invalid up-party id.");
             }
-            if (!sequenceData.ExternalInitiatedSingleLogout)
-            {
-                await sequenceLogic.RemoveSequenceDataAsync<TrackLinkUpSequenceData>();
-                return await LogoutResponseDownAsync(sequenceData);
-            }
-            else
-            {
-                return await serviceProvider.GetService<TrackLinkIdPInitiatedLogoutUpLogic>().LogoutResponseAsync(sequenceData.UpPartyId, sequenceData);                
-            }
+            return await LogoutResponseDownAsync(sequenceData);
         }
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId)
@@ -137,19 +129,27 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutResponseDownAsync(TrackLinkUpSequenceData sequenceData)
         {
-            switch (sequenceData.DownPartyLink.Type)
+            try
             {
-                case PartyTypes.OAuth2:
-                    throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
-                case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id, sessionIndex: sequenceData.SessionId);
-                case PartyTypes.TrackLink:
-                    return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id);
+                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                switch (sequenceData.DownPartyLink.Type)
+                {
+                    case PartyTypes.OAuth2:
+                        throw new NotImplementedException();
+                    case PartyTypes.Oidc:
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionResponseAsync(sequenceData.DownPartyLink.Id);
+                    case PartyTypes.Saml2:
+                        return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id, sessionIndex: sequenceData.SessionId);
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutDownLogic>().LogoutResponseAsync(sequenceData.DownPartyLink.Id);
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new StopSequenceException("Falling logout response down", ex);
             }
         }
     }

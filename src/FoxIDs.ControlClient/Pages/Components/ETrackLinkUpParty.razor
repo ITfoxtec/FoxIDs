@@ -9,10 +9,7 @@
         <div>
             Track link
         </div>
-        @if (trackLinkUpParty.ShowTrackLinkTab)
-        {
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
-        }
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
     </div>
     <div class="modal-body">
         @if (trackLinkUpParty.CreateMode)
@@ -26,6 +23,7 @@
 
         @if (trackLinkUpParty.ShowAdvanced)
         {
+            <FInputText @bind-Value="trackLinkUpParty.Form.Model.Note" For="@(() => trackLinkUpParty.Form.Model.Note)" />
             <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.EnableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
         }
 

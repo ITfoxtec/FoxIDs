@@ -12,6 +12,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Up-party name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.NoteLength)]
+        [Display(Name = "Your notes")]
+        public string Note { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]

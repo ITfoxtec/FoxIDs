@@ -24,7 +24,7 @@ FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/o
 
 How to guides:
 
-- Connect [FoxIDs](howto-oidc-foxids.md) 
+- Connect two FoxIDs tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 

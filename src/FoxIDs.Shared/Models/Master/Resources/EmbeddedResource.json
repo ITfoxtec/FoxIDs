@@ -388,6 +388,10 @@
     {
       "name": "Please try again in a little while.",
       "id": 97
+    },
+    {
+      "name": "Select where to log in",
+      "id": 98
     }
   ],
   "resources": [
@@ -1628,6 +1632,19 @@
         {
           "culture": "da",
           "value": "Prøv venligst igen om lidt."
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Select where to log in"
+        },
+        {
+          "culture": "da",
+          "value": "Vælg hvor du vil logge ind"
         }
       ]
     }

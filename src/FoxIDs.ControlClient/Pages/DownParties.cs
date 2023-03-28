@@ -99,6 +99,10 @@ namespace FoxIDs.Client.Pages
                 {
                     downParties.Add(new GeneralSamlDownPartyViewModel(dp));
                 }
+                else if (dp.Type == PartyTypes.TrackLink)
+                {
+                    downParties.Add(new GeneralTrackLinkDownPartyViewModel(dp));
+                }
             }
         }
 
@@ -129,6 +133,13 @@ namespace FoxIDs.Client.Pages
                 samlDownParty.CreateMode = true;
                 samlDownParty.Edit = true;
                 downParties.Add(samlDownParty); 
+            }
+            else if (type == PartyTypes.TrackLink)
+            {
+                var trackLinkDownParty = new GeneralTrackLinkDownPartyViewModel();
+                trackLinkDownParty.CreateMode = true;
+                trackLinkDownParty.Edit = true;
+                downParties.Add(trackLinkDownParty); 
             }
         }
 
@@ -162,7 +173,12 @@ namespace FoxIDs.Client.Pages
             else if (downParty.Type == PartyTypes.Saml2)
             {
                 return $"SAML 2.0 - {downParty.Name}";
+            } 
+            else if (downParty.Type == PartyTypes.TrackLink)
+            {
+                return $"Track link - {downParty.Name}";
             }
+
             throw new NotSupportedException();
         }
     }

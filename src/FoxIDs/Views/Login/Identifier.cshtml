@@ -36,9 +36,19 @@
         @if (Model.UpPatries?.Count() > 0)
         {
             <form id="form-filter">
-                <hr class="dividing-line">
+                @if (Model.ShowEmailSelection)
+                {
+                    <hr class="dividing-line">
+                }
                 <div class="info-message info-message-filter">
-                    @Localizer["OR select where to log in"]
+                    @if (Model.ShowEmailSelection)
+                    {
+                        @Localizer["OR select where to log in"]
+                    }
+                    else
+                    {
+                        @Localizer["Select where to log in"]
+                    }
                 </div>
                 @if (Model.UpPatries.Count() > 10)
                 {

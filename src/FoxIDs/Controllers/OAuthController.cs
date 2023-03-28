@@ -217,8 +217,6 @@ namespace FoxIDs.Controllers
             {
                 throw new EndpointException($"Front Channel Logout Done failed for client id '{RouteBinding.DownParty.Name}'.", ex) { RouteBinding = RouteBinding };
             }
-        }
-        
-
+        }       
     }
 }

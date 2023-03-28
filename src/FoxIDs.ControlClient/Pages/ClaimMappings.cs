@@ -91,7 +91,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await TrackService.SaveTrackClaimMappingAsync(trackClaimMappingForm.Model.ClaimMappings);
-                toastService.ShowSuccess("Claim mappings updated.", "SUCCESS");
+                toastService.ShowSuccess("Claim mappings updated.");
             }
             catch (Exception ex)
             {

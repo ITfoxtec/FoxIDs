@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
-using FoxIDs.Infrastructure;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.Saml2;
 

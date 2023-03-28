@@ -48,7 +48,11 @@ namespace FoxIDs
 
         public void Configure(IApplicationBuilder app)
         {
-            if (!CurrentEnvironment.IsDevelopment())
+            if (CurrentEnvironment.IsDevelopment())
+            {
+                app.UseWebAssemblyDebugging();
+            }
+            else
             {
                 app.UseHsts();
             }

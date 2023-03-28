@@ -16,13 +16,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic;
+        private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
 
-        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsDownLogic<TClient, TScope, TClaim> claimsDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthRefreshTokenGrantDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.claimsDownLogic = claimsDownLogic;
+            this.claimsOAuthDownLogic = claimsOAuthDownLogic;
         }
 
         public async Task<string> CreateRefreshTokenGrantAsync(TClient client, List<Claim> claims, string scope)
@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
 
             CheckeConfiguration(client);
 
-            var grantClaims = await claimsDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
+            var grantClaims = await claimsOAuthDownLogic.FilterJwtClaimsAsync(client, claims, scope?.ToSpaceList(), includeIdTokenClaims: true, includeAccessTokenClaims: true);
 
             var refreshToken = CreateRefreshToken(client);
             await CreateGrantInternal(client, grantClaims.ToClaimAndValues(), scope, refreshToken);

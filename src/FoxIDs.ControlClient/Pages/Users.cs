@@ -179,13 +179,13 @@ namespace FoxIDs.Client.Pages
                     var userResult = await UserService.CreateUserAsync(generalUser.Form.Model.Map<CreateUserRequest>(afterMap: afterMap => afterMap.DisableAccount = !generalUser.Form.Model.AccountStatus));
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
                     generalUser.CreateMode = false;
-                    toastService.ShowSuccess("User created.", "SUCCESS");
+                    toastService.ShowSuccess("User created.");
                 }
                 else
                 {
                     var userResult = await UserService.UpdateUserAsync(generalUser.Form.Model.Map<UserRequest>(afterMap: afterMap => afterMap.DisableAccount = !generalUser.Form.Model.AccountStatus));
                     generalUser.Form.UpdateModel(ToViewModel(userResult));
-                    toastService.ShowSuccess("User updated.", "SUCCESS");
+                    toastService.ShowSuccess("User updated.");
                 }
 
                 generalUser.Email = generalUser.Form.Model.Email;

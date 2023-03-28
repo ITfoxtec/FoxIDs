@@ -174,7 +174,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     routeBinding.DownParty = await GetDownPartyAsync(trackIdKey, partyNameBindingMatch.Groups["downparty"], acceptUnknownParty);
 
-                    if (routeBinding.DownParty?.AllowUpParties?.Count() >= 1)
+                    if (routeBinding.DownParty?.AllowUpParties?.Count() >= Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin)
                     {
                         //TODO can be deleted when data is updated everywhere, delete after summer 2023
                         var allowUpParties = routeBinding.DownParty.AllowUpParties.OrderBy(p => p.Type).ThenBy(p => p.Name);
@@ -260,9 +260,9 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private List<UpPartyLink> GetAllowedToUpPartyIds(TelemetryScopedLogger scopedLogger, Group toUpPartyGroup, string downPartyId, IEnumerable<UpPartyLink> allowUpParties)
         {
-            if (toUpPartyGroup.Captures.Count > 4)
+            if (toUpPartyGroup.Captures.Count > Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax)
             {
-                throw new ArgumentException($"More then 4 to up-party for down-party '{downPartyId}'.");
+                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to up-party for down-party '{downPartyId}'.");
             }
 
             var toUpParties = new List<UpPartyLink>();

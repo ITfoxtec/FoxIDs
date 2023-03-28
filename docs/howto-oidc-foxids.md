@@ -1,7 +1,9 @@
 # Interconnect FoxIDs with OpenID Connect
 
 FoxIDs can be connected to another FoxIDs with OpenID Connect and thereby authenticating end users in another FoxIDs track or an external Identity Provider (IdP) configured as an up-party.  
-FoxIDs tracks can be interconnect in the same FoxIDs tenant or in different FoxIDs tenants. Interconnect can also be configured between FoxIDs tracks in different FoxIDs deployments.
+FoxIDs tracks can be interconnect in the same FoxIDs tenant or in different FoxIDs tenants. Interconnections can also be configured between FoxIDs tracks in different FoxIDs deployments.
+
+> You can easy connect two tracks in the same tenant with a [track link](howto-tracklink-foxids.md).
 
 The integration between two FoxIDs tracks support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session is invalidated on logout.
 

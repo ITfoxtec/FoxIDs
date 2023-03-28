@@ -22,6 +22,10 @@ There can be configured a maximum of 10 secrets per client.
 
 FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
 
+How to guides:
+
+- Connect two FoxIDs tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
+
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
 ## Require multi-factor authentication (MFA)

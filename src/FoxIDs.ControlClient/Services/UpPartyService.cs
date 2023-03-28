@@ -13,6 +13,7 @@ namespace FoxIDs.Client.Services
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcupparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
         private const string samlReadMetadataApiUri = "api/{tenant}/{track}/!samluppartyreadmetadata";
+        private const string trackLinkApiUri = "api/{tenant}/{track}/!tracklinkupparty";
 
         public UpPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -35,5 +36,10 @@ namespace FoxIDs.Client.Services
         public async Task DeleteSamlUpPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
 
         public async Task<SamlUpParty> ReadSamlUpPartyMetadataAsync(SamlReadMetadataRequest metadata) => await PostResponseAsync<SamlReadMetadataRequest, SamlUpParty>(samlReadMetadataApiUri, metadata);
+
+        public async Task<TrackLinkUpParty> GetTrackLinkUpPartyAsync(string name) => await GetAsync<TrackLinkUpParty>(trackLinkApiUri, name);
+        public async Task<TrackLinkUpParty> CreateTrackLinkUpPartyAsync(TrackLinkUpParty party) => await PostResponseAsync<TrackLinkUpParty, TrackLinkUpParty>(trackLinkApiUri, party);
+        public async Task<TrackLinkUpParty> UpdateTrackLinkUpPartyAsync(TrackLinkUpParty party) => await PutResponseAsync<TrackLinkUpParty, TrackLinkUpParty>(trackLinkApiUri, party);
+        public async Task DeleteTrackLinkUpPartyAsync(string name) => await DeleteAsync(trackLinkApiUri, name);
     }
 }

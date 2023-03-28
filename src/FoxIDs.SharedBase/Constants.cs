@@ -40,12 +40,15 @@ namespace FoxIDs
             public const string OAuthUpJumpController = "oauthupjump";
             public const string SamlUpJumpController = "samlupjump";
 
+            public const string TrackLinkController = "tracklink";
+
             public const string RouteControllerKey = "controller";
             public const string RouteActionKey = "action";
             public const string RouteBindingKey = "binding";
             public const string RouteBindingCustomDomainHeader = "domainheader";
 
             public const string SequenceStringKey = Sequence.String;
+            public const string KeySequenceKey = "ks";
 
             public const string PreApikey = "!";
             public const string MasterApiName = "@master";
@@ -360,6 +363,13 @@ namespace FoxIDs
                 }
             }
 
+            public static class TrackLinkDownParty
+            {
+                public const int SelectedUpPartiesMin = 1;
+                public const int SelectedUpPartiesMax = 4;
+                public const string SelectedUpPartiesNameRegExPattern = @"^[\*\w\-]*$";
+            }
+
             public static class UpParty
             {
                 public const int SessionLifetimeMin = 0; // 0 minutes
@@ -552,6 +562,11 @@ namespace FoxIDs
             public const string SamlIdPMetadata = "idpmetadata";
             public const string SamlSPMetadata = "spmetadata";
 
+            public const string TrackLinkAuthRequest = "authrequest";
+            public const string TrackLinkAuthResponse = "authresponse";
+            public const string TrackLinkRpLogoutRequest = "rplogoutrequest";
+            public const string TrackLinkRpLogoutResponse = "rplogoutresponse";
+
             public static class UpJump
             {
                 public const string AuthenticationRequest = "authenticationrequest";
@@ -559,7 +574,9 @@ namespace FoxIDs
 
                 public const string AuthnRequest = "authnrequest";
                 public const string LogoutRequest = "logoutrequest";
-                public const string SingleLogoutRequestJump = "singlelogoutrequestjump";                
+                public const string SingleLogoutRequestJump = "singlelogoutrequestjump";
+
+                public const string TrackLinkRpLogoutRequestJump = "rplogoutrequestjump";
             }
         }
 

@@ -150,7 +150,7 @@ namespace FoxIDs.Client.Pages
                 {
                     throw new NotImplementedException("Mail provider not implemented.");
                 }
-                toastService.ShowSuccess("Mail settings updated.", "SUCCESS");
+                toastService.ShowSuccess("Mail settings updated.");
             }
             catch (Exception ex)
             {

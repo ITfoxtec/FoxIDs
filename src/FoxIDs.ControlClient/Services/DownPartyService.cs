@@ -14,6 +14,7 @@ namespace FoxIDs.Client.Services
         private const string oauthApiUri = "api/{tenant}/{track}/!oauthdownparty";
         private const string oauthclientsecretApiUri = "api/{tenant}/{track}/!oauthclientsecretdownparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samldownparty";
+        private const string trackLinkApiUri = "api/{tenant}/{track}/!tracklinkdownparty";
 
         public DownPartyService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -42,5 +43,10 @@ namespace FoxIDs.Client.Services
         public async Task<SamlDownParty> CreateSamlDownPartyAsync(SamlDownParty party) => await PostResponseAsync<SamlDownParty, SamlDownParty>(samlApiUri, party);
         public async Task<SamlDownParty> UpdateSamlDownPartyAsync(SamlDownParty party) => await PutResponseAsync<SamlDownParty, SamlDownParty>(samlApiUri, party);
         public async Task DeleteSamlDownPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
+
+        public async Task<TrackLinkDownParty> GetTrackLinkDownPartyAsync(string name) => await GetAsync<TrackLinkDownParty>(trackLinkApiUri, name);
+        public async Task<TrackLinkDownParty> CreateTrackLinkDownPartyAsync(TrackLinkDownParty party) => await PostResponseAsync<TrackLinkDownParty, TrackLinkDownParty>(trackLinkApiUri, party);
+        public async Task<TrackLinkDownParty> UpdateTrackLinkDownPartyAsync(TrackLinkDownParty party) => await PutResponseAsync<TrackLinkDownParty, TrackLinkDownParty>(trackLinkApiUri, party);
+        public async Task DeleteTrackLinkDownPartyAsync(string name) => await DeleteAsync(trackLinkApiUri, name);
     }
 }

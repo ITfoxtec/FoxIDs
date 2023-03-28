@@ -148,13 +148,13 @@ namespace FoxIDs.Client.Pages.Components
                     var oidcUpPartyResult = await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult));
                     generalOidcUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect Up-party created.", "SUCCESS");
+                    toastService.ShowSuccess("OpenID Connect up-party created.");
                 }
                 else
                 {
                     var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult));
-                    toastService.ShowSuccess("OpenID Connect Up-party updated.", "SUCCESS");
+                    toastService.ShowSuccess("OpenID Connect up-party updated.");
                 }
 
                 generalOidcUpParty.Name = generalOidcUpParty.Form.Model.Name;

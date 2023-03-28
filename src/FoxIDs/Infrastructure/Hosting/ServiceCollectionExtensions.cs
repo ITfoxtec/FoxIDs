@@ -6,7 +6,6 @@ using FoxIDs.Logic.Tracks;
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
@@ -43,7 +42,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SendEmailLogic>();
             services.AddTransient<HrdLogic>();
             services.AddTransient<SessionLoginUpPartyLogic>();
-            services.AddTransient<SessionUpPartyLogic>();            
+            services.AddTransient<SessionUpPartyLogic>();
             services.AddTransient<ClaimTransformLogic>();         
 
             services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
@@ -72,8 +71,11 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<OidcFrontChannelLogoutUpLogic<OidcUpParty, OidcUpClient>>();            
             services.AddTransient<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
-            services.AddTransient<ClaimsDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
-            services.AddTransient<ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+            services.AddTransient<ClaimsDownLogic>();
+            services.AddTransient<ClaimValidationLogic>();
+            services.AddTransient<ClaimsOAuthDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
+            services.AddTransient<ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
+
             services.AddTransient<SamlClaimsDownLogic>();
             services.AddTransient<Saml2ConfigurationLogic>();
             services.AddTransient<SamlMetadataExposeLogic>();
@@ -83,6 +85,13 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<SamlAuthnDownLogic>();
             services.AddTransient<SamlLogoutUpLogic>();
             services.AddTransient<SamlLogoutDownLogic>();
+
+            services.AddTransient<TrackLinkAuthUpLogic>();
+            services.AddTransient<TrackLinkAuthDownLogic>();
+            services.AddTransient<TrackLinkRpInitiatedLogoutUpLogic>();
+            services.AddTransient<TrackLinkRpInitiatedLogoutDownLogic>();
+            services.AddTransient<TrackLinkFrontChannelLogoutUpLogic>();
+            services.AddTransient<TrackLinkFrontChannelLogoutDownLogic>();
 
             return services;
         }

@@ -95,7 +95,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var myTenant = await MyTenantService.UpdateTenantAsync(tenantSettingsForm.Model.Map<MyTenantRequest>());
-                toastService.ShowSuccess("Tenant settings updated.", "SUCCESS");
+                toastService.ShowSuccess("Tenant settings updated.");
                 savedCustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomainVerified = myTenant.CustomDomainVerified;

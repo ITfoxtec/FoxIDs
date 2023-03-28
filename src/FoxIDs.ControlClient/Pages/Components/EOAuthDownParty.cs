@@ -238,11 +238,11 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalOAuthDownParty.CreateMode)
                 {
                     generalOAuthDownParty.CreateMode = false;
-                    toastService.ShowSuccess("OAuth Down-party created.", "SUCCESS");
+                    toastService.ShowSuccess("OAuth down-party created.");
                 }
                 else
                 {
-                    toastService.ShowSuccess("OAuth Down-party updated.", "SUCCESS");
+                    toastService.ShowSuccess("OAuth down-party updated.");
                 }
                 generalOAuthDownParty.Name = generalOAuthDownParty.Form.Model.Name;
             }

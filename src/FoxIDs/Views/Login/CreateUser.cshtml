@@ -15,125 +15,38 @@
         </editForm>
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-@*            @foreach(var element in Model.Elements)
-            {
-                if (element is EmailAndPasswordDElement EmailAndPasswordDElement)
-                {
-                    <div class="form-group active-group">
-                        <input asp-for="@element.DField1" name="element.DField1" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="@element.DField1" class="label-control"></label>
-                        <span asp-validation-for="@element.DField1"></span>
-                    </div>
-                    <div class="form-group active-group">
-                        <input asp-for="@element.DField2" autocomplete="new-password" class="form-control input-control" />
-                        <label asp-for="@element.DField2" class="label-control"></label>
-                        <span asp-validation-for="@element.DField2"></span>
-                    </div>
-                    <div class="form-group active-group">
-                        <input asp-for="@element.DField3" autocomplete="new-password" class="form-control input-control" />
-                        <label asp-for="@element.DField3" class="label-control"></label>
-                        <span asp-validation-for="@element.DField3"></span>
-                    </div>
-                }
-            }*@
-
             @for(var i = 0; i < Model.Elements.Count(); i++)
             {
                 if (Model.Elements[i] is EmailAndPasswordDElement)
                 {
                     <div class="form-group active-group">
-                        @*   <input asp-for="@Model.Elements[i].DField1" autocomplete="username" class="form-control input-control" autofocus />
-                        <label asp-for="@Model.Elements[i].DField1" class="label-control"></label>
-                        <span asp-validation-for="@Model.Elements[i].DField1"></span>*@
-                    @*    <input autocomplete="username" class="form-control input-control" autofocus="" type="text" id="Elements_0__DField1" name="Elements[0].DField1" value="">
-                        <label class="label-control" for="Elements_0__DField1">DField1</label>
-                        <span class="field-validation-valid" data-valmsg-for="Elements[0].DField1" data-valmsg-replace="true"></span>*@
-
                         @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: true)
-
-                         @*@dynamicElementLogic.GetEmailControl($"Elements[{i}].DField1", Model.Elements[0].DField1, isRequired: true)*@
-
-                      @*  <input autocomplete="username" class="form-control input-control" autofocus="" type="email" data-val="true" data-val-email="@Localizer["Not a valid email address."]" data-val-maxlength="@Localizer["The {0} fields maximum length is '{1}'.", Localizer["Email"], 60]" data-val-maxlength-max="60" data-val-required="@Localizer["The {0} field is required.", Localizer["Email"]]" id="Elements_0__DField1" maxlength="60" name="Elements[0].DField1" value="@Model.Elements[0].DField1">
-                        <label class="label-control" for="Elements[0].DField1">@Localizer["Email"]</label>
-                        <span class="field-validation-valid" data-valmsg-for="Elements[0].DField1" data-valmsg-replace="true"></span>*@
                     </div>
                     <div class="form-group active-group">
                         @Html.GetPasswordControl($"Elements[{i}].DField2", Model.Elements[i].DField2, isRequired: true)
-                        @*       <input asp-for="@Model.Elements[i].DField2" autocomplete="new-password" class="form-control input-control" />
-                        <label asp-for="@Model.Elements[i].DField2" class="label-control"></label>
-                        <span asp-validation-for="@Model.Elements[i].DField2"></span>*@
                     </div>
                     <div class="form-group active-group">
                         @Html.GetConfirmPasswordControl($"Elements[{i}].DField3", Model.Elements[i].DField3, $"Elements[{i}].DField2", isRequired: true)
-                        @*   <input asp-for="@Model.Elements[i].DField3" autocomplete="new-password" class="form-control input-control" />
-                        <label asp-for="@Model.Elements[i].DField3" class="label-control"></label>
-                        <span asp-validation-for="@Model.Elements[i].DField3"></span>*@
                     </div>
                 }
                 else if (Model.Elements[i] is NameDElement)
                 {
                     <div class="form-group active-group">
                         @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1)
-              @*          <input asp-for="@Model.Elements[i].DField1" autocomplete="name" class="form-control input-control" />
-                        <label asp-for="@Model.Elements[i].DField1" class="label-control"></label>
-                        <span asp-validation-for="@Model.Elements[i].DField1"></span>*@
                     </div>
                 }
                 else if (Model.Elements[i] is GivenNameDElement)
                 {
                     <div class="form-group active-group">
                         @Html.GetGivenNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1)
-             @*           <input asp-for="@Model.Elements[i].DField1" autocomplete="given-name" class="form-control input-control" />
-                        <label asp-for="@Model.Elements[i].DField1" class="label-control"></label>
-                        <span asp-validation-for="@Model.Elements[i].DField1"></span>*@
                     </div>
                 }
                 else if (Model.Elements[i] is FamilyNameDElement)
                 {
                     <div class="form-group active-group">
-                        @Html.GetFamilyNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1)
-               @*         <input asp-for="@Model.Elements[i].DField1" autocomplete="family-name" class="form-control input-control" />
-                        <label asp-for="@Model.Elements[i].DField1" class="label-control"></label>
-                        <span asp-validation-for="@Model.Elements[i].DField1"></span>*@
                     </div>
                 }
             }
-
-@*                <div class="form-group active-group">
-                    <input asp-for="@Model.Elements[i].FieldValue" autocomplete="username" class="form-control input-control" autofocus />
-                    <label asp-for="@Model.Elements[i].FieldValue" class="label-control"></label>
-                    <span asp-validation-for="@Model.Elements[i].FieldValue"></span>
-                </div>*@
-
-                
-
-
-@*
-            <div class="form-group active-group">
-                <input asp-for="Email" autocomplete="username" class="form-control input-control" autofocus />
-                <label asp-for="Email" class="label-control"></label>
-                <span asp-validation-for="Email"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="Password" autocomplete="new-password" class="form-control input-control" />
-                <label asp-for="Password" class="label-control"></label>
-                <span asp-validation-for="Password"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="ConfirmPassword" autocomplete="new-password" class="form-control input-control" />
-                <label asp-for="ConfirmPassword" class="label-control"></label>
-                <span asp-validation-for="ConfirmPassword"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="GivenName" autocomplete="given-name" class="form-control input-control" />
-                <label asp-for="GivenName" class="label-control"></label>
-                <span asp-validation-for="GivenName"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="FamilyName" autocomplete="family-name" class="form-control input-control" />
-                <label asp-for="FamilyName" class="label-control"></label>
-                <span asp-validation-for="FamilyName"></span>
-            </div>*@
             <div class="form-group button-group">
                 <div>
                     <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />

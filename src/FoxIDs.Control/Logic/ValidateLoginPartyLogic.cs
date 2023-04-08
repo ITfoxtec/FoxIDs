@@ -8,8 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using FoxIDs.Models;
-using System;
-using FoxIDs.Models.Api;
 
 namespace FoxIDs.Logic
 {

@@ -4,6 +4,7 @@
     {
         Login,
         ClaimsTransform,
+        CreateUser,
         Session,
         Hrd
     }

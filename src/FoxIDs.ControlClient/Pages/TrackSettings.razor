@@ -33,12 +33,20 @@
                 <FFieldText @bind-Value="trackSettingsForm.Model.FormattedName" For="@(() => trackSettingsForm.Model.Name)" />
                 <FInputText @bind-Value="trackSettingsForm.Model.DisplayName" For="@(() => trackSettingsForm.Model.DisplayName)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" Focus="true" />
+
+                <div class="mr-auto">
+                    <h4 class="pt-5 pb-3">User & login settings</h4>
+                </div>
                 <FInputNumber @bind-Value="trackSettingsForm.Model.MaxFailingLogins" For="@(() => trackSettingsForm.Model.MaxFailingLogins)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginCountLifetime" For="@(() => trackSettingsForm.Model.FailingLoginCountLifetime)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.FailingLoginObservationPeriod" For="@(() => trackSettingsForm.Model.FailingLoginObservationPeriod)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.PasswordLength" For="@(() => trackSettingsForm.Model.PasswordLength)" />
                 <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordComplexity" For="@(() => trackSettingsForm.Model.CheckPasswordComplexity)" />
                 <FInputToggleN @bind-Value="trackSettingsForm.Model.CheckPasswordRisk" For="@(() => trackSettingsForm.Model.CheckPasswordRisk)" />
+
+                <div class="mr-auto">
+                    <h4 class="pt-5 pb-3">Iframe settings</h4>
+                </div>
                 @{var includeAllowIframeOnDomainsLabel = trackSettingsForm.Model.AllowIframeOnDomains?.Count > 0;}
                 <div class="form-group active-group active">
                     <Label For="@(() => trackSettingsForm.Model.AllowIframeOnDomains)" class="label-control" />

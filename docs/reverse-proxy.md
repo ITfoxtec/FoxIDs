@@ -53,7 +53,7 @@ Configuration:
 - In the Networking section of the App Services. Enable access restriction to only allow traffic from Azure Front Door
 - Optionally add a Front Door endpoint for both the FoxIDs App Service and the FoxIDs Control App Service test slots
 - Restrict access to the App Services test slots
-- Add the `Settings:TrustProxyHeaders` setting with the value `true` in the FoxIDs App Service (optionally also the test slot) configuration to support [custom domains](custom-domain.md)
+- Add the `Settings:TrustProxyHeaders` setting with the value `true` and select Deployment slot setting in the FoxIDs App Service configuration to support [custom domains](custom-domain.md) (optionally also add the setting in the test slot)
 - Disable Session affinity
 - Optionally configure WAF policies
 

@@ -58,5 +58,8 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.LoginUpParty.CssStyleLength)]
         [JsonProperty(PropertyName = "css")]
         public string Css { get; set; }
+
+        [JsonProperty(PropertyName = "create_user")]
+        public CreateUser CreateUser { get; set; }
     }
 }

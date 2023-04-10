@@ -162,7 +162,7 @@
       "id": 40
     },
     {
-      "name": "A user with the email already exists.",
+      "name": "Select where to log in",
       "id": 41
     },
     {
@@ -390,7 +390,7 @@
       "id": 97
     },
     {
-      "name": "Select where to log in",
+      "name": "Full name",
       "id": 98
     }
   ],
@@ -907,11 +907,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "A user with the email already exists."
+          "value": "Select where to log in"
         },
         {
           "culture": "da",
-          "value": "Der eksisterer allerede en bruger med samme e-mail."
+          "value": "Vælg hvor du vil logge ind"
         }
       ]
     },
@@ -1640,11 +1640,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Select where to log in"
+          "value": "Full name"
         },
         {
           "culture": "da",
-          "value": "Vælg hvor du vil logge ind"
+          "value": "Fulde navn"
         }
       ]
     }

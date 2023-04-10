@@ -1,7 +1,7 @@
 ﻿@inherits UpPartyBase
 
 @{
-    var loginUpParty = UpParty as GeneralLoginUpPartyViewModel; ;
+    var loginUpParty = UpParty as GeneralLoginUpPartyViewModel;
 }
 
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="LoginUpPartyViewModelAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
@@ -50,6 +50,17 @@
                 }
             </li>
             <li class="nav-item">
+                @if (loginUpParty.ShowCreateUserTab)
+                {
+                    <a class="nav-link active">Create user</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create user</button>
+                }
+            </li>
+
+            <li class="nav-item">
                 @if (loginUpParty.ShowSessionTab)
                 {
                     <a class="nav-link active">User session</a>
@@ -95,6 +106,13 @@
             else if (loginUpParty.ShowClaimTransformTab)
             {
                 <OAuthClaimTransforms Model="loginUpParty.Form.Model" />
+            }
+            else if (loginUpParty.ShowCreateUserTab)
+            {
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.ConfirmAccount" For="@(() => loginUpParty.Form.Model.CreateUser.ConfirmAccount)" TextType="y.n" />
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.CreateUser.RequireMultiFactor" For="@(() => loginUpParty.Form.Model.CreateUser.RequireMultiFactor)" TextType="y.n" />
+                <DynamicElements Model="loginUpParty.Form.Model.CreateUser" />
+                <OAuthClaimTransforms Model="loginUpParty.Form.Model.CreateUser" />
             }
             else if (loginUpParty.ShowSessionTab)
             {

@@ -260,6 +260,14 @@ namespace FoxIDs
                 public const int TwoFactorAppCodeLength = 50;
             }
 
+            public static class DynamicElements
+            {
+                public const int ElementsMin = 0;
+                public const int ElementsMax = 20;
+                public const int ElementsOrderMin = 0;
+                public const int ElementsOrderMax = 100;
+            }
+
             public static class Claim
             {
                 public const int JwtTypeLength = 80;

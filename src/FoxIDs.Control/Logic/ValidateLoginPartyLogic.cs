@@ -63,22 +63,24 @@ namespace FoxIDs.Logic
                 {
                     party.CreateUser = null;
                 }
-
-                if (party.CreateUser.Elements?.Any() != true)
+                else
                 {
-                    ValidateApiModelCreateUserElements(modelState, party.CreateUser.Elements);
-                }
+                    if (!ValidateApiModelCreateUserElements(modelState, party.CreateUser.Elements))
+                    {
+                        isValid = false;
+                    }
 
-                if (party.CreateUser.ClaimTransforms?.Any() != true)
-                {
-                    ValidateApiModelCreateUserClaimTransforms(modelState, party.CreateUser.ClaimTransforms);
+                    if (!ValidateApiModelCreateUserClaimTransforms(modelState, party.CreateUser.ClaimTransforms))
+                    {
+                        isValid = false;
+                    }
                 }
             }
 
             return isValid;
         }
 
-        public bool ValidateApiModelCreateUserElements(ModelStateDictionary modelState, List<Api.CreateUserElement> createUserElements) 
+        public bool ValidateApiModelCreateUserElements(ModelStateDictionary modelState, List<Api.DynamicElement> createUserElements) 
         {
             var isValid = true;
             try
@@ -91,9 +93,15 @@ namespace FoxIDs.Logic
                         throw new ValidationException($"Duplicated create user dynamic element order number '{duplicatedOrderNumber}'");
                     }
 
-                    if (createUserElements.Where(e => e.Type == Api.CreateUserElementTypes.EmailAndPassword).Count() != 1)
+                    if (createUserElements.Where(e => e.Type == Api.DynamicElementTypes.EmailAndPassword).Count() != 1)
                     {
                         throw new ValidationException("Exactly one create user dynamic element of type EmailAndPassword is required.");
+                    }
+
+                    var duplicatedElementType = createUserElements.GroupBy(ct => ct.Type).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                    if (duplicatedElementType > 0)
+                    {
+                        throw new ValidationException($"Duplicated create user dynamic element type '{duplicatedElementType}'");
                     }
                 }
             }

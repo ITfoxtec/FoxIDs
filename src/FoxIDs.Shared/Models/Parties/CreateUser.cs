@@ -9,15 +9,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "confirm_account")]
         public bool ConfirmAccount { get; set; }
 
-        [JsonProperty(PropertyName = "change_password")]
-        public bool ChangePassword { get; set; }
+        [JsonProperty(PropertyName = "require_multi_factor")]
+        public bool RequireMultiFactor { get; set; }
 
-        [JsonProperty(PropertyName = "require_two_factor")]
-        public bool RequireTwoFactor { get; set; }
-
-        [Length(Constants.Models.CreateUser.ElementsMin, Constants.Models.CreateUser.ElementsMax)]
+        [Length(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [JsonProperty(PropertyName = "elements")]
-        public List<CreateUserElement> Elements { get; set; }
+        public List<DynamicElement> Elements { get; set; }
 
         /// <summary>
         /// Create user claim transforms, run after user creation.

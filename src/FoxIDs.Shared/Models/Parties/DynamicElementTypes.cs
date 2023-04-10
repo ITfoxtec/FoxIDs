@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum CreateUserElementTypes
+    public enum DynamicElementTypes
     {
         [EnumMember(Value = "email_password")]
         EmailAndPassword = 10,

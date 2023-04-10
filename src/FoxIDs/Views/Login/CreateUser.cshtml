@@ -32,18 +32,19 @@
                 else if (Model.Elements[i] is NameDElement)
                 {
                     <div class="form-group active-group">
-                        @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1)
+                        @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
                     </div>
                 }
                 else if (Model.Elements[i] is GivenNameDElement)
                 {
                     <div class="form-group active-group">
-                        @Html.GetGivenNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1)
+                        @Html.GetGivenNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
                     </div>
                 }
                 else if (Model.Elements[i] is FamilyNameDElement)
                 {
                     <div class="form-group active-group">
+                        @Html.GetFamilyNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
                     </div>
                 }
             }

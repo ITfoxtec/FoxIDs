@@ -128,5 +128,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
+
+        public CreateUserViewModel CreateUser { get; set; } = new CreateUserViewModel();
     }
 }

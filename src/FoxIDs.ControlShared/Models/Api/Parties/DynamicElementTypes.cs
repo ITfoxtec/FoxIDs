@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum CreateUserElementTypes
+    public enum DynamicElementTypes
     {
         EmailAndPassword = 10,
 

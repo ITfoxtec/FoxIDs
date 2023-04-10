@@ -69,6 +69,9 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
                 .ReverseMap();
 
+            CreateMap<DynamicElement, Api.DynamicElement>()
+                .ReverseMap();
+
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 
@@ -129,6 +132,9 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+
+            CreateMap<CreateUser, Api.CreateUser>()
+                .ReverseMap();
 
             CreateMap<OidcUpParty, Api.OidcUpParty>()
                 .ReverseMap()

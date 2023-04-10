@@ -4,6 +4,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Linq;
+using Microsoft.IdentityModel.Abstractions;
 
 namespace FoxIDs
 {
@@ -27,7 +30,7 @@ namespace FoxIDs
 
         public static IHtmlContent GetNameControl(this IHtmlHelper html, string name, string value, int maxlength = 150, bool isRequired = false)
         {
-            return html.GetControl("text", name, html.GetLocalizerValue("Name"), value, maxlength, autocomplete: "name", isRequired: isRequired);
+            return html.GetControl("text", name, html.GetLocalizerValue("Full name"), value, maxlength, autocomplete: "name", isRequired: isRequired);
         }
 
         public static IHtmlContent GetGivenNameControl(this IHtmlHelper html, string name, string value, int maxlength = 80, bool isRequired = false)
@@ -42,12 +45,28 @@ namespace FoxIDs
 
         private static IHtmlContent GetControl(this IHtmlHelper html, string type, string name, string displayName, string value, int maxlength, string validation = null, string autocomplete = null, bool isRequired = false)
         {
+            (var hasError, var errorMessage) = GetError(html, name);
+
             var id = name.Replace('.', '_').Replace('[', '_').Replace(']', '_');
             var content = new HtmlContentBuilder();
-            content.AppendHtml($"<input{(autocomplete.IsNullOrEmpty() ? string.Empty : $" autocomplete=\"{autocomplete}\"")} class=\"form-control input-control\" autofocus=\"\" type=\"{type}\" data-val=\"true\"{(validation.IsNullOrEmpty() ? string.Empty : $" {validation}")} data-val-maxlength=\"{html.GetErrorAttributeLocalizerMessage<MaxLengthAttribute>(displayName, maxlength)}\" data-val-maxlength-max=\"{maxlength}\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(displayName)}\"" : string.Empty)} id=\"{id}\" maxlength=\"{maxlength}\" name=\"{name}\" value=\"{value}\">");
+            content.AppendHtml($"<input{(autocomplete.IsNullOrEmpty() ? string.Empty : $" autocomplete=\"{autocomplete}\"")} class=\"form-control input-control{(hasError ? " input-validation-error" : string.Empty)}\" autofocus=\"\" type=\"{type}\" data-val=\"true\"{(validation.IsNullOrEmpty() ? string.Empty : $" {validation}")} data-val-maxlength=\"{html.GetErrorAttributeLocalizerMessage<MaxLengthAttribute>(displayName, maxlength)}\" data-val-maxlength-max=\"{maxlength}\"{(isRequired ? $" data-val-required=\"{html.GetErrorAttributeLocalizerMessage<RequiredAttribute>(displayName)}\"" : string.Empty)} id=\"{id}\" maxlength=\"{maxlength}\" name=\"{name}\" value=\"{value}\">");
             content.AppendHtml($"<label class=\"label-control\" for=\"{name}\">{displayName}</label>");
-            content.AppendHtml($"<span class=\"field-validation-valid\" data-valmsg-for=\"{name}\" data-valmsg-replace=\"true\"></span>");
+            content.AppendHtml($"<span class=\"{(hasError ? "field-validation-error" : "field-validation-valid")}\" data-valmsg-for=\"{name}\" data-valmsg-replace=\"true\">{errorMessage}</span>");
             return content;
+        }
+
+        private static (bool hasError, string errorMessage) GetError(IHtmlHelper html, string name)
+        {
+            if (!html.ViewData.ModelState.IsValid && html.ViewData.ModelState[name]?.ValidationState == ModelValidationState.Invalid)
+            {
+                var error = html.ViewData.ModelState[name].Errors.FirstOrDefault();
+                if (error != null && !error.ErrorMessage.IsNullOrEmpty())
+                {
+                    return (true, error.ErrorMessage);
+                }
+            }
+
+            return (false, string.Empty);
         }
 
         private static string GetLocalizerValue(this IHtmlHelper html, string name)

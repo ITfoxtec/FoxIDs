@@ -3,26 +3,25 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace FoxIDs.Models
+namespace FoxIDs.Models.Api
 {
-    public class CreateUserElement : IValidatableObject
+    public class DynamicElement : IValidatableObject
     {
         [Required]
-        public CreateUserElementTypes Type { get; set; }
+        public DynamicElementTypes Type { get; set; }
 
         [Required]
-        [Range(Constants.Models.CreateUser.ElementsOrderMin, Constants.Models.CreateUser.ElementsOrderMax)]
-        [JsonProperty(PropertyName = "order")]
-        public int Order { get; set; }     
+        [Range(Constants.Models.DynamicElements.ElementsOrderMin, Constants.Models.DynamicElements.ElementsOrderMax)]
+        public int Order { get; set; }
 
-        [JsonProperty(PropertyName = "required")]
+        [Display(Name = "Field is required")]
         public bool Required { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
 
-            if (!Required && (Type == CreateUserElementTypes.EmailAndPassword))
+            if (!Required && (Type == DynamicElementTypes.EmailAndPassword))
             {
                 results.Add(new ValidationResult($"The field {nameof(Required)} must be true for dynamic element type '{Type}'.", new[] { nameof(Required) }));
             }

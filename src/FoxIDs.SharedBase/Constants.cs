@@ -260,7 +260,7 @@ namespace FoxIDs
                 public const int TwoFactorAppCodeLength = 50;
             }
 
-            public static class CreateUser
+            public static class DynamicElements
             {
                 public const int ElementsMin = 0;
                 public const int ElementsMax = 20;

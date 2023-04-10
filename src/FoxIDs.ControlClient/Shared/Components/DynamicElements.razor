@@ -1,0 +1,144 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => Model.Elements)" class="label-control" />
+    <ul class="list-group">
+        @foreach (var element in Model.Elements)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-9">
+                        @switch (element.Type)
+                        {
+                            case DynamicElementTypes.EmailAndPassword:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Email and password</div>
+                                break;
+
+                            case DynamicElementTypes.Name:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Full name</div>
+                                break;
+
+                            case DynamicElementTypes.GivenName:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Given name</div>
+                                break;
+
+                            case DynamicElementTypes.FamilyName:
+                                <div class="p-0 alert alert-light font-weight-bold small" role="alert">Family name</div>
+                                break;
+
+                            default:
+                                throw new NotSupportedException($"Dynamic element type '{element.Type}' not supported.");
+                        }
+                    </div>
+                    <div class="col-2">
+                        @if (Model.Elements.IndexOf(element) > 0)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Move up" @onclick="@(() => MoveUp(element))"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-top" aria-hidden="true"></span></button>
+                        }
+                        @if (Model.Elements.IndexOf(element) < Model.Elements.Count() - 1)
+                        {
+                            <button type="button" class="btn btn-link p-0" title="Move down" @onclick="@(() => MoveDown(element))"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-link p-0 disabled"><span class="oi oi-caret-bottom" aria-hidden="true"></span></button>
+                        }
+                    </div>
+                    @if (!element.IsStaticRequired)
+                    {
+                        <div class="col-1 text-right">
+                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveElement(element))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                        </div>
+                    }
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        @if (element.IsStaticRequired)
+                        {
+                            <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" Disabled="true" TextType="y.n" />
+                        }
+                        else
+                        {
+                            <FInputToggle @bind-Value="element.Required" For="@(() => element.Required)" TextType="y.n" />
+                        }
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model.Elements)" />
+    <div class="btn-group" role="group">
+        <button id="btnGroupCreateDownParty" type="button" class="btn btn-link btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="oi oi-plus" aria-hidden="true"></span> Add dynamic element
+        </button>
+        <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.Name))">Full name (name claim)</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.GivenName))">Given name (given_name claim)</button>
+            <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => AddElement(DynamicElementTypes.FamilyName))">Family name (family_name claim)</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public IDynamicElementsViewModel Model { get; set; }
+
+    private void AddElement(DynamicElementTypes dynamicElementTypes)
+    {
+        switch (dynamicElementTypes)
+        {
+            case DynamicElementTypes.EmailAndPassword:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        IsStaticRequired = true,
+                        Type = DynamicElementTypes.EmailAndPassword,
+                        Required = true
+                    });
+                break;
+            case DynamicElementTypes.Name:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.Name
+                    });
+                break;
+            case DynamicElementTypes.GivenName:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.GivenName
+                    });
+                break;
+            case DynamicElementTypes.FamilyName:
+                Model.Elements.Add(new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.FamilyName
+                    });
+                break;
+
+            default:
+                throw new NotSupportedException("Dynamic element type not supported.");
+        }
+    }
+
+    private void RemoveElement(DynamicElementViewModel element)
+    {
+        Model.Elements.Remove(element);
+    }
+
+    private void MoveUp(DynamicElementViewModel element)
+    {
+        var index = Model.Elements.IndexOf(element);
+        Model.Elements.RemoveAt(index);
+        Model.Elements.Insert(--index, element);
+        StateHasChanged();
+    }
+
+    private void MoveDown(DynamicElementViewModel element)
+    {
+        var index = Model.Elements.IndexOf(element);
+        Model.Elements.RemoveAt(index);
+        Model.Elements.Insert(++index, element);
+        StateHasChanged();
+    }
+}

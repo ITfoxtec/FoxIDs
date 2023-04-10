@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System;
 using FoxIDs.Logic;
-using System.Linq;
 
 namespace FoxIDs.Controllers
 {
@@ -101,7 +100,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party) || !validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
+               if (!await ModelState.TryValidateObjectAsync(party) || !validateGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
                 if (!(party is Api.IDownParty downParty ? await validateGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);

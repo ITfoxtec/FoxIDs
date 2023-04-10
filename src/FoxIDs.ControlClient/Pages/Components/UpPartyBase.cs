@@ -53,24 +53,35 @@ namespace FoxIDs.Client.Pages.Components
                 case LoginTabTypes.Login:
                     upParty.ShowLoginTab = true;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.ClaimsTransform:
                     upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = true;
+                    upParty.ShowCreateUserTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case LoginTabTypes.CreateUser:
+                    upParty.ShowLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = true;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.Session:
                     upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = true;
                     upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.Hrd:
                     upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = true;
                     break;

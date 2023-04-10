@@ -11,7 +11,6 @@ using FoxIDs.Models.Sequences;
 using System.Linq;
 using FoxIDs.Models.Session;
 using ITfoxtec.Identity.Util;
-using System.Collections;
 using FoxIDs.Models.Logic;
 
 namespace FoxIDs.Logic
@@ -178,10 +177,18 @@ namespace FoxIDs.Logic
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
-            logger.ScopeTrace(() => $"Up, OIDC created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"Up, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"Up, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return transformedClaims;
+        }
+
+        public async Task<List<Claim>> GetCreateUserTransformedClaimsAsync(LoginUpParty party, List<Claim> claims)
+        {
+            logger.ScopeTrace(() => $"Up, Create user created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            var transformedClaims = await claimTransformLogic.Transform(party.CreateUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            logger.ScopeTrace(() => $"Up, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return transformedClaims;
         }
     }

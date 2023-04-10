@@ -19,7 +19,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Confirm account")]
+        [Display(Name = "User must confirm account")]
         public bool ConfirmAccount { get; set; }
 
         [Display(Name = "Email verified")]

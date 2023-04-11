@@ -15,7 +15,7 @@ namespace FoxIDs.SeedTool.SeedLogic
     public class RiskPasswordSeedLogic
     {
         private const int riskPasswordMoreThenBreachesCount = 100;
-        private const int uploadRiskPasswordBlokSize = 1000;
+        private const int uploadRiskPasswordBlockSize = 1000;
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
@@ -46,7 +46,7 @@ namespace FoxIDs.SeedTool.SeedLogic
                     if (breachesCount >= riskPasswordMoreThenBreachesCount)
                     {
                         riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
-                        if (riskPasswords.Count >= uploadRiskPasswordBlokSize)
+                        if (riskPasswords.Count >= uploadRiskPasswordBlockSize)
                         {
                             totalCount += riskPasswords.Count;
                             await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);

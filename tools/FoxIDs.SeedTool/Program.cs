@@ -46,11 +46,9 @@ namespace FoxIDs.SeedTool
                 Console.WriteLine($"Error: {ex}");
             }
 
-#if !DEBUG
             Console.WriteLine(string.Empty);
             Console.WriteLine("Click any key to end...");
             Console.ReadKey();
-#endif
         }
     }
 }

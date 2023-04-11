@@ -24,14 +24,14 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get the first 10000 risk password. Can be used query risk passwords before deleting them.
+        /// Get the first 1000 risk password. Can be used query risk passwords before deleting them.
         /// </summary>
         /// <returns>Risk passwords.</returns>
         [ProducesResponseType(typeof(HashSet<Api.RiskPassword>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.RiskPassword>>> GetRiskPasswordFirst()
         {
-            var mRiskPasswords = await masterRepository.GetListAsync<RiskPassword>(maxItemCount: 10000);
+            var mRiskPasswords = await masterRepository.GetListAsync<RiskPassword>(maxItemCount: 1000);
             if (mRiskPasswords?.Count > 0) 
             {
                 return Ok(mapper.Map<HashSet<Api.RiskPassword>>(mRiskPasswords));

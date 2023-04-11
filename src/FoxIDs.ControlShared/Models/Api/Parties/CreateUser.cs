@@ -13,7 +13,7 @@ namespace FoxIDs.Models.Api
         public bool RequireMultiFactor { get; set; }
 
         [Length(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
-        [Display(Name = "Dynamic elements executed in order")]
+        [Display(Name = "Dynamic elements shown in order")]
         public List<DynamicElement> Elements { get; set; }
 
         /// <summary>

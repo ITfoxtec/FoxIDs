@@ -1,12 +1,10 @@
 ﻿using FoxIDs.Models;
 using ITfoxtec.Identity;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs
 {

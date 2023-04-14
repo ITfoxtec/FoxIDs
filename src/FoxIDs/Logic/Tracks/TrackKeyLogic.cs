@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RSAKeyVaultProvider;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {

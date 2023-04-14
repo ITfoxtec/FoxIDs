@@ -30,7 +30,7 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
 
  ## CSS examples
 
- Change background and add logo text. It is also possible to add a logo image.
+ Change background and add logo text. 
 
     body {
         background: #7c8391;
@@ -48,6 +48,16 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
 
 ![Configure background and add logo with CSS](images/configure-login-css-backbround-logo.png)    
 
+It is also possible to use a logo image.
+
+    .brand-content-text {
+        display: none;
+    }
+
+    .brand-content-icon:before {
+       content:url('https://some-external-site.com/logo.png');
+    }
+
 Add a background image from an external site.
 
     body {
@@ -60,6 +70,51 @@ Add a background image from an external site.
     }
 
 ![Configure background image](images/configure-login-css-backbround-image.png)   
+
+Change button and link color, in this example CSS to green.
+
+    label {
+        color: #a4c700 !important;
+    }
+
+    .input:focus {
+        outline: none !important;
+        border:1px solid #a4c700;
+        box-shadow: 0 0 10px #a4c700;
+      }
+
+    .btn-link, .btn-link:hover, a, a:hover {
+        color: #a4c700;
+    }
+
+    .btn-primary.disabled, .btn-primary:disabled {
+        color: #fff;
+        background-color: #afc44f;
+        border-color: #afc44f;
+    }
+
+    .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:focus, .btn-primary:active {
+        background-color: #a4c700;
+        border-color: #a4c700;
+    }
+
+    .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+        background-color: #7c9600;
+        border-color: #7c9600;
+    }
+
+    .btn-link:not(:disabled):not(.disabled):active, .btn-link:not(:disabled):not(.disabled).active, .show>.btn-link.dropdown-toggle {
+        color: #a4c700;
+    }
+
+    .btn:focus, .form-control:focus {
+        border-color: #a4c700;
+        box-shadow: 0 0 0 .2rem rgba(64,78,0,.25);
+    }
+
+    .btn-primary:not(:disabled):not(.disabled).active:focus, .btn-primary:not(:disabled):not(.disabled):active:focus, .show>.btn-primary.dropdown-toggle:focus {
+        box-shadow: 0 0 0 .2rem rgba(64,78,0,.25);
+    }
 
  Add information to the login box.
 

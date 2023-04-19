@@ -308,15 +308,27 @@ namespace FoxIDs.Repository
                     concurrentTasks.Add(bulkContainer.UpsertItemAsync(item, partitionKey)
                         .ContinueWith(async (responseTask) =>
                         {
-                            if (responseTask.Exception != null)
+                            if (!responseTask.IsCompletedSuccessfully)
                             {
-                                logger.Error(responseTask.Exception);
+                                var innerException = responseTask.Exception.Flatten()?.InnerExceptions?.FirstOrDefault();
+                                if (innerException != null)
+                                {
+                                    throw new CosmosDataException(partitionId, innerException);
+                                }
+                                else
+                                {
+                                    throw new CosmosDataException(partitionId);
+                                }
                             }
                             totalRU += (await responseTask).RequestCharge;
                         }));
                 }
 
                 await Task.WhenAll(concurrentTasks);
+            }
+            catch (CosmosDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {
@@ -346,15 +358,27 @@ namespace FoxIDs.Repository
                     concurrentTasks.Add(bulkContainer.DeleteItemAsync<T>(id, partitionKey)
                         .ContinueWith(async (responseTask) =>
                         {
-                            if (responseTask.Exception != null)
+                            if (!responseTask.IsCompletedSuccessfully)
                             {
-                                logger.Error(responseTask.Exception);
+                                var innerException = responseTask.Exception.Flatten()?.InnerExceptions?.FirstOrDefault();
+                                if (innerException != null)
+                                {
+                                    throw new CosmosDataException(partitionId, innerException);
+                                }
+                                else
+                                {
+                                    throw new CosmosDataException(partitionId);
+                                }
                             }
                             totalRU += (await responseTask).RequestCharge;
                         }));
                 }
 
                 await Task.WhenAll(concurrentTasks);
+            }
+            catch (CosmosDataException)
+            {
+                throw;
             }
             catch (Exception ex)
             {

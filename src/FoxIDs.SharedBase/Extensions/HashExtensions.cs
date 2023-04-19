@@ -8,7 +8,7 @@ namespace FoxIDs
     {
         public static string Sha1Hash(this string password)
         {
-            using (var sha1Provider = new SHA1CryptoServiceProvider())
+            using (var sha1Provider = SHA1.Create())
             {
                 var hash = sha1Provider.ComputeHash(Encoding.UTF8.GetBytes(password));
                 return string.Concat(hash.Select(b => b.ToString("X2")));

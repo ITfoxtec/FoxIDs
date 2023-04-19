@@ -161,13 +161,13 @@ namespace FoxIDs.Client.Pages
                     var planResult = await PlanService.CreatePlanAsync(generalPlan.Form.Model);
                     generalPlan.Form.UpdateModel(planResult);
                     generalPlan.CreateMode = false;
-                    toastService.ShowSuccess("Plan created.", "SUCCESS");
+                    toastService.ShowSuccess("Plan created.");
                 }
                 else
                 {
                     var planResult = await PlanService.UpdatePlanAsync(generalPlan.Form.Model);
                     generalPlan.Form.UpdateModel(planResult);
-                    toastService.ShowSuccess("Plan updated.", "SUCCESS");
+                    toastService.ShowSuccess("Plan updated.");
                 }
 
                 generalPlan.Name = generalPlan.Form.Model.Name;

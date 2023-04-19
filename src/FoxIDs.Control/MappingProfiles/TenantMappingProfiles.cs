@@ -69,6 +69,9 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Action, opt => opt.MapFrom(s => MapAction(s)))
                 .ReverseMap();
 
+            CreateMap<DynamicElement, Api.DynamicElement>()
+                .ReverseMap();
+
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 
@@ -130,6 +133,9 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<CreateUser, Api.CreateUser>()
+                .ReverseMap();
+
             CreateMap<OidcUpParty, Api.OidcUpParty>()
                 .ReverseMap()
                 .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
@@ -162,6 +168,12 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.MetadataNameIdFormats, opt => opt.MapFrom(s => s.MetadataNameIdFormats.OrderBy(f => f)))
                 .ForMember(d => d.MetadataAttributeConsumingServices, opt => opt.MapFrom(s => s.MetadataAttributeConsumingServices.OrderBy(a => a.ServiceName.Name)))
                 .ForMember(d => d.MetadataContactPersons, opt => opt.MapFrom(s => s.MetadataContactPersons.OrderBy(c => c.ContactType)));
+
+            CreateMap<TrackLinkUpParty, Api.TrackLinkUpParty>()
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
         }
 
         private void DownPartyMapping()
@@ -230,6 +242,14 @@ namespace FoxIDs.MappingProfiles
                     RequestBinding = s.LogoutRequestBinding.HasValue ? (SamlBindingTypes)s.LogoutRequestBinding.Value : SamlBindingTypes.Post,
                     ResponseBinding = s.LogoutResponseBinding.HasValue ? (SamlBindingTypes)s.LogoutResponseBinding.Value : SamlBindingTypes.Post,
                 }));
+
+            CreateMap<TrackLinkDownParty, Api.TrackLinkDownParty>()
+                .ForMember(d => d.AllowUpPartyNames, opt => opt.MapFrom(s => s.AllowUpParties.Select(aup => aup.Name)))
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => DownParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()))
+                .ForMember(d => d.ClaimTransforms, opt => opt.MapFrom(s => OrderClaimTransforms(s.ClaimTransforms)))
+                .ForMember(d => d.AllowUpParties, opt => opt.MapFrom(s => s.AllowUpPartyNames.Select(n => new UpPartyLink { Name = n.ToLower() })));      
         }
 
         private List<T> OrderClaimTransforms<T>(List<T> claimTransforms) where T : Api.ClaimTransform

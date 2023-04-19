@@ -10,33 +10,44 @@
 
 <div class="row page-container">
     <div class="col-md page-content">
+        <editForm model>
+
+        </editForm>
         <form method="post">
             <div asp-validation-summary="ModelOnly"></div>
-            <div class="form-group active-group">
-                <input asp-for="Email" autocomplete="username" class="form-control input-control" autofocus />
-                <label asp-for="Email" class="label-control"></label>
-                <span asp-validation-for="Email"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="Password" autocomplete="new-password" class="form-control input-control" />
-                <label asp-for="Password" class="label-control"></label>
-                <span asp-validation-for="Password"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="ConfirmPassword" autocomplete="new-password" class="form-control input-control" />
-                <label asp-for="ConfirmPassword" class="label-control"></label>
-                <span asp-validation-for="ConfirmPassword"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="GivenName" autocomplete="given-name" class="form-control input-control" />
-                <label asp-for="GivenName" class="label-control"></label>
-                <span asp-validation-for="GivenName"></span>
-            </div>
-            <div class="form-group active-group">
-                <input asp-for="FamilyName" autocomplete="family-name" class="form-control input-control" />
-                <label asp-for="FamilyName" class="label-control"></label>
-                <span asp-validation-for="FamilyName"></span>
-            </div>
+            @for(var i = 0; i < Model.Elements.Count(); i++)
+            {
+                if (Model.Elements[i] is EmailAndPasswordDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetEmailControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: true)
+                    </div>
+                    <div class="form-group active-group">
+                        @Html.GetPasswordControl($"Elements[{i}].DField2", Model.Elements[i].DField2, isRequired: true)
+                    </div>
+                    <div class="form-group active-group">
+                        @Html.GetConfirmPasswordControl($"Elements[{i}].DField3", Model.Elements[i].DField3, $"Elements[{i}].DField2", isRequired: true)
+                    </div>
+                }
+                else if (Model.Elements[i] is NameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is GivenNameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetGivenNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+                else if (Model.Elements[i] is FamilyNameDElement)
+                {
+                    <div class="form-group active-group">
+                        @Html.GetFamilyNameControl($"Elements[{i}].DField1", Model.Elements[i].DField1, isRequired: Model.Elements[i].Required)
+                    </div>
+                }
+            }
             <div class="form-group button-group">
                 <div>
                     <input type="submit" value="@Localizer["Create"]" class="btn btn-primary" />

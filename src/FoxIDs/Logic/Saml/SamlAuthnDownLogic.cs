@@ -18,7 +18,6 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
 using FoxIDs.Models.Session;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Logic
 {
@@ -32,10 +31,10 @@ namespace FoxIDs.Logic
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
-        private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
+        private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
 
-        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlAuthnDownLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -45,7 +44,7 @@ namespace FoxIDs.Logic
             this.securityHeaderLogic = securityHeaderLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
-            this.claimsDownLogic = claimsDownLogic;
+            this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
         }
 
@@ -117,6 +116,8 @@ namespace FoxIDs.Logic
                             return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
                         case PartyTypes.Saml2:
                             return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
+                        case PartyTypes.TrackLink:
+                            return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
 
                         default:
                             throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
@@ -201,7 +202,7 @@ namespace FoxIDs.Logic
 
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true, includeEncryptionCertificates: true);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlDownSequenceData>(false);
-            var claims = jwtClaims != null ? await claimsDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
+            var claims = jwtClaims != null ? await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(jwtClaims) : null;
             return await AuthnResponseAsync(party, samlConfig, sequenceData.Id, sequenceData.RelayState, sequenceData.AcsResponseUrl, status, claims);
         }
 

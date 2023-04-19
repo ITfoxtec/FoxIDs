@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             {
                 if (await tenantRepository.ExistsAsync<User>(await User.IdFormatAsync(userIdKey)))
                 {
-                    throw new UserExistsException($"User '{email}' already exists.");
+                    throw new UserExistsException($"User '{email}' already exists.") { Email = email };
                 }
                 await ValidatePasswordPolicy(email, password);
             }

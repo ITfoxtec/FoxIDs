@@ -85,10 +85,11 @@ namespace FoxIDs.Logic
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
-                        //sessionHrdUpParty.
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(autoSelectedUpParty, loginRequest, hrdLoginUpPartyName: loginName);
                     default:
                         throw new NotSupportedException($"Party type '{autoSelectedUpParty.Type}' not supported.");
                 }
@@ -181,6 +182,8 @@ namespace FoxIDs.Logic
                 case PartyTypes.Saml2:
                     claims.AddClaim(Constants.JwtClaimTypes.SubFormat, NameIdentifierFormats.Persistent.OriginalString);
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.DownPartyLink.Id, jwtClaims: claims);
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequenceData.DownPartyLink.Id, claims);
 
                 default:
                     throw new NotSupportedException();

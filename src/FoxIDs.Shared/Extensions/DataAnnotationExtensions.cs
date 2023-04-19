@@ -53,7 +53,7 @@ namespace FoxIDs
             }
         }
 
-        public static Task<(bool, List<ValidationResult>)> ValidateObjectResultsAsync(this object data)
+        public static Task<(bool isValid, List<ValidationResult> results)> ValidateObjectResultsAsync(this object data)
         {
             var results = new List<ValidationResult>();
             var isValid = TryValidateObjectRecursive(data, results);

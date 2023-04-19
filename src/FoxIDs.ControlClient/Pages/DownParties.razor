@@ -14,6 +14,8 @@
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.Resource))">OAuth 2.0 - Resource (API)</button>
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.ClientCredentialsGrant))">OAuth 2.0 - Client Credentials Grant</button>
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Saml2))">SAML 2.0</button>
+                <div class="dropdown-divider"></div>
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.TrackLink))">Track link</button>
             </div>
         </div>
     </div>
@@ -56,6 +58,10 @@
                     else if (downParty.Type == PartyTypes.Saml2)
                     {
                         <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                    }
+                    else if (downParty.Type == PartyTypes.TrackLink)
+                    {
+                        <ETrackLinkDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
                     }
                 }
                 else

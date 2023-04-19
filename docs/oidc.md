@@ -12,7 +12,8 @@ Configure [up-party OpenID Connect](up-party-oidc.md) which trust an external Op
 
 How to guides:
 
-- Connect [FoxIDs](up-party-howto-oidc-foxids.md) 
+- Connect two FoxIDs tracks in a tenant with a [track link](howto-tracklink-foxids.md)
+- Connect two FoxIDs tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
 - Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)

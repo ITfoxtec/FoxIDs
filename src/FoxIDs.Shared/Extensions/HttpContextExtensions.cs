@@ -3,7 +3,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs
 {
@@ -31,16 +31,16 @@ namespace FoxIDs
             return AddSlash($"{context.Request.Scheme}://{context.Request.Host.ToUriComponent()}/", addTrailingSlash);
         }
 
-        public static string GetHostWithTenantAndTrack(this HttpContext context)
+        public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null)
         {
             var routeBinding = context.GetRouteBinding();
             if (!routeBinding.HasCustomDomain)
             {
-                return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, routeBinding.TrackName);
+                return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
             }
             else
             {
-                return UrlCombine.Combine(context.GetHost(), routeBinding.TrackName);
+                return UrlCombine.Combine(context.GetHost(), trackName ?? routeBinding.TrackName);
             }
         }
 

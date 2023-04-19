@@ -12,8 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Security.Claims;
-using ITfoxtec.Identity.Saml2.Claims;
-using System.Linq;
 using FoxIDs.Models.Logic;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using FoxIDs.Models.Sequences;
@@ -33,10 +31,10 @@ namespace FoxIDs.Logic
         private readonly Saml2ConfigurationLogic saml2ConfigurationLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly SamlClaimsDownLogic samlClaimsDownLogic;
-        private readonly ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic;
+        private readonly ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic;
         private readonly SingleLogoutDownLogic singleLogoutDownLogic;
 
-        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, Saml2ConfigurationLogic saml2ConfigurationLogic, ClaimTransformLogic claimTransformLogic, SamlClaimsDownLogic samlClaimsDownLogic, ClaimsOAuthDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim> claimsOAuthDownLogic, SingleLogoutDownLogic singleLogoutDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -47,7 +45,7 @@ namespace FoxIDs.Logic
             this.saml2ConfigurationLogic = saml2ConfigurationLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.samlClaimsDownLogic = samlClaimsDownLogic;
-            this.claimsDownLogic = claimsDownLogic;
+            this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.singleLogoutDownLogic = singleLogoutDownLogic;
         }
 
@@ -111,21 +109,23 @@ namespace FoxIDs.Logic
                     RelayState = binding.RelayState
                 });
 
-                var toUpPartie = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
-                logger.ScopeTrace(() => $"Request, Up type '{toUpPartie.Type}'.");
-                switch (toUpPartie.Type)
+                var toUpParty = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
+                logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+                switch (toUpParty.Type)
                 {
                     case PartyTypes.Login:
-                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(toUpPartie, GetLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<LogoutUpLogic>().LogoutRedirect(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.OAuth2:
                         throw new NotImplementedException();
                     case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpPartie, GetLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestRedirectAsync(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpPartie, GetSamlLogoutRequest(party, saml2LogoutRequest));
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetSamlLogoutRequest(party, saml2LogoutRequest));
+                    case PartyTypes.TrackLink:
+                        return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
 
                     default:
-                        throw new NotSupportedException($"Party type '{toUpPartie.Type}' not supported.");
+                        throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
                 }
             }
             catch (SamlRequestException ex)
@@ -148,23 +148,12 @@ namespace FoxIDs.Logic
 
         private LogoutRequest GetSamlLogoutRequest(SamlDownParty party, Saml2LogoutRequest saml2LogoutRequest)
         {
-            var samlClaims = new List<Claim>();
-            if (saml2LogoutRequest.NameId != null)
-            {
-                samlClaims.AddClaim(Saml2ClaimTypes.NameId, saml2LogoutRequest.NameId.Value);
-
-                if (saml2LogoutRequest.NameId.Format != null)
-                {
-                    samlClaims.AddClaim(Saml2ClaimTypes.NameIdFormat, saml2LogoutRequest.NameId.Format.OriginalString);
-                }
-            }
             return new LogoutRequest
             {
                 DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.SingleLogoutUrl), Id = party.Id, Type = party.Type },
                 SessionId = saml2LogoutRequest.SessionIndex,
                 RequireLogoutConsent = false,
-                PostLogoutRedirect = true,
-                Claims = samlClaims,
+                PostLogoutRedirect = true
             };
         }
 
@@ -258,7 +247,7 @@ namespace FoxIDs.Logic
                 return await singleLogoutDownLogic.HandleSingleLogoutAsync(sequenceData);
             }
             
-            var claims = await claimsDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
+            var claims = await claimsOAuthDownLogic.FromJwtToSamlClaimsAsync(sequenceData.Claims.ToClaimList());
 
             switch (party.LogoutBinding.RequestBinding)
             {

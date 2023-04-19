@@ -1,7 +1,5 @@
 ﻿using FoxIDs.Models.Session;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Claims;
 
 namespace FoxIDs.Models.Logic
 {
@@ -14,8 +12,6 @@ namespace FoxIDs.Models.Logic
          
         public bool RequireLogoutConsent { get; set; }
 
-        public bool PostLogoutRedirect { get; set; }
-
-        public List<Claim> Claims { get; set; }
+        public bool PostLogoutRedirect { get; set; }        
     }
 }

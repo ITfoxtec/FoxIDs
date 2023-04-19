@@ -63,6 +63,36 @@ namespace FoxIDs.Client.Pages.Components
             {
                 model.TwoFactorAppName = TenantName;
             }
+            if(model.CreateUser.Elements?.Any() != true)
+            {
+                model.CreateUser.Elements = new List<DynamicElementViewModel>
+                {
+                    new DynamicElementViewModel
+                    {
+                        IsStaticRequired = true,
+                        Type = DynamicElementTypes.EmailAndPassword,
+                        Required = true
+                    },
+                    new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.GivenName
+                    },
+                    new DynamicElementViewModel
+                    {
+                        Type = DynamicElementTypes.FamilyName
+                    }
+                };
+            }
+            else
+            {
+                foreach(var element in model.CreateUser.Elements)
+                {
+                    if (element.Type == DynamicElementTypes.EmailAndPassword)
+                    {
+                        element.IsStaticRequired = true;
+                    }
+                }
+            }
         }
 
         private async Task OnEditLoginUpPartyValidSubmitAsync(GeneralLoginUpPartyViewModel generalLoginUpParty, EditContext editContext)
@@ -95,10 +125,29 @@ namespace FoxIDs.Client.Pages.Components
                                 claimTransform.Order = order++;
                             }
                         }
+                        if (afterMap.CreateUser != null)
+                        {
+                            if (afterMap.CreateUser.Elements?.Count() > 0)
+                            {
+                                int order = 1;
+                                foreach (var element in afterMap.CreateUser.Elements)
+                                {
+                                    element.Order = order++;
+                                }
+                            }
+                            if (afterMap.CreateUser.ClaimTransforms?.Count() > 0)
+                            {
+                                int order = 1;
+                                foreach (var claimTransform in afterMap.CreateUser.ClaimTransforms)
+                                {
+                                    claimTransform.Order = order++;
+                                }
+                            }
+                        }                        
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
                     generalLoginUpParty.CreateMode = false;
-                    toastService.ShowSuccess("Login Up-party created.", "SUCCESS");
+                    toastService.ShowSuccess("Login up-party created.");
                 }
                 else
                 {
@@ -115,9 +164,28 @@ namespace FoxIDs.Client.Pages.Components
                                 claimTransform.Order = order++;
                             }
                         }
+                        if (afterMap.CreateUser != null)
+                        {
+                            if (afterMap.CreateUser.Elements?.Count() > 0)
+                            {
+                                int order = 1;
+                                foreach (var element in afterMap.CreateUser.Elements)
+                                {
+                                    element.Order = order++;
+                                }
+                            }
+                            if (afterMap.CreateUser.ClaimTransforms?.Count() > 0)
+                            {
+                                int order = 1;
+                                foreach (var claimTransform in afterMap.CreateUser.ClaimTransforms)
+                                {
+                                    claimTransform.Order = order++;
+                                }
+                            }
+                        }
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
-                    toastService.ShowSuccess("Login Up-party updated.", "SUCCESS");
+                    toastService.ShowSuccess("Login up-party updated.");
                 }
                 generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;             
             }

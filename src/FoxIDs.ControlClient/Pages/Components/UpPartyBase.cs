@@ -53,24 +53,35 @@ namespace FoxIDs.Client.Pages.Components
                 case LoginTabTypes.Login:
                     upParty.ShowLoginTab = true;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.ClaimsTransform:
                     upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = true;
+                    upParty.ShowCreateUserTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case LoginTabTypes.CreateUser:
+                    upParty.ShowLoginTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = true;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.Session:
                     upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = true;
                     upParty.ShowHrdTab = false;
                     break;
                 case LoginTabTypes.Hrd:
                     upParty.ShowLoginTab = false;
                     upParty.ShowClaimTransformTab = false;
+                    upParty.ShowCreateUserTab = false;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = true;
                     break;
@@ -136,6 +147,39 @@ namespace FoxIDs.Client.Pages.Components
                     break;
                 case SamlTabTypes.Hrd:
                     upParty.ShowSamlTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = true;
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        public void ShowTrackLinkTab(GeneralTrackLinkUpPartyViewModel upParty, TrackLinkTabTypes trackLinkTabTypes)
+        {
+            switch (trackLinkTabTypes)
+            {
+                case TrackLinkTabTypes.TrackLink:
+                    upParty.ShowTrackLinkTab = true;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case TrackLinkTabTypes.ClaimsTransform:
+                    upParty.ShowTrackLinkTab = false;
+                    upParty.ShowClaimTransformTab = true;
+                    upParty.ShowSessionTab = false;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case TrackLinkTabTypes.Session:
+                    upParty.ShowTrackLinkTab = false;
+                    upParty.ShowClaimTransformTab = false;
+                    upParty.ShowSessionTab = true;
+                    upParty.ShowHrdTab = false;
+                    break;
+                case TrackLinkTabTypes.Hrd:
+                    upParty.ShowTrackLinkTab = false;
                     upParty.ShowClaimTransformTab = false;
                     upParty.ShowSessionTab = false;
                     upParty.ShowHrdTab = true;

@@ -1,0 +1,139 @@
+﻿@inherits DownPartyBase
+
+@{
+    var trackLinkDownParty = DownParty as GeneralTrackLinkDownPartyViewModel;
+}
+
+<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(m => TrackLinkDownPartyViewModelAfterInit(trackLinkDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
+    <div class="modal-header">
+        <div>
+            Track link
+        </div>
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+    </div>
+    <div class="modal-body">
+        @if (trackLinkDownParty.CreateMode)
+        {
+            <FInputText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" Focus="true" />
+        }
+        else
+        {
+            <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
+        }
+
+        @if (trackLinkDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="trackLinkDownParty.Form.Model.Note" For="@(() => trackLinkDownParty.Form.Model.Note)" />
+        }
+
+
+        <div class="mb-3 alert alert-info" role="alert">
+            <div>Please add a corresponding up-party track link in the track you want to connect to.</div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                @if (trackLinkDownParty.ShowTrackLinkTab)
+                {
+                    <a class="nav-link active">Track link</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkDownParty, TrackLinkTabTypes.TrackLink))">Track link</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (trackLinkDownParty.ShowClaimTransformTab)
+                {
+                    <a class="nav-link active">Claim transform</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkDownParty, TrackLinkTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+            @if (trackLinkDownParty.ShowTrackLinkTab)
+            {
+                <FInputText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
+                <FInputText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
+
+                <SelectUpParty @ref="trackLinkDownParty.SelectAllowUpPartyName" EditDownPartyForm="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
+
+                @if (DownParty.ShowAdvanced)
+                {
+                    <div class="form-group active-group active">
+                        <Label For="@(() => trackLinkDownParty.Form.Model.Claims)" class="label-control" />
+                        @if (trackLinkDownParty.Form.Model.Claims.Count() <= 0)
+                        {
+                            <div class="card">
+                                <div class="card-body px-3 py-2">
+                                </div>
+                            </div>
+                        }
+                        <ul class="list-group">
+                            @foreach (var claimAndValues in trackLinkDownParty.Form.Model.Claims)
+                            {
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-11">
+                                            <FInputText @bind-Value="claimAndValues.Claim" For="@(() => claimAndValues.Claim)" />
+                                            @if (claimAndValues.Claim?.Contains('*') != true)
+                                            {
+                                                <div class="active-group active @(claimAndValues.Values?.Count() > 0 ? "pb-0 mb-0" : "p-0 m-0")">
+                                                    <FInputTextList @bind-ValueList="claimAndValues.Values" For="@(() => claimAndValues.Values)" AddOneMoreName="Value" DynamicFirstRow="true" IncludeActiveFormGroup="false" />
+                                                    @if (claimAndValues.Values?.Count() > 0)
+                                                    {
+                                                        <Label For="@(() => claimAndValues.Values)" class="label-control" />
+                                                    }
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="col-1 text-right">
+                                            <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(e => RemoveTrackLinkClaim(e, trackLinkDownParty.Form.Model.Claims, claimAndValues))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+                        </ul>
+                        <ValidationMessage For="@(() => trackLinkDownParty.Form.Model.Claims)" />
+                        <button type="button" class="btn btn-link btn-xs" @onclick="@(e => AddTrackLinkClaim(e, trackLinkDownParty.Form.Model.Claims))"><span class="oi oi-plus" aria-hidden="true"></span> Add Claims</button>
+                    </div>
+                }
+            }
+            else if (trackLinkDownParty.ShowClaimTransformTab)
+            {
+                <div class="mb-3 alert alert-info" role="alert">
+                    If you create a new claim the claim is local unless you add the claim to the 'Issue claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
+                </div>
+                <OAuthClaimTransforms Model="trackLinkDownParty.Form.Model" />
+            }
+        </div>
+    </div>
+    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    {
+        <div class="modal-footer">
+            <div class="alert alert-danger" role="alert">
+                <div>
+                    You are about to delete Track link Down-party "@DownParty.Name", are you sure?
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteTrackLinkDownPartyAsync(trackLinkDownParty))">Yes delete</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => DownParty.DeleteAcknowledge = false)">No</button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="modal-footer">
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        @if (!DownParty.CreateMode)
+        {
+            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
+        }
+        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
+    </div>
+</PageEditForm>

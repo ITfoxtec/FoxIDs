@@ -13,13 +13,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Email")]
         public string Email { get; set; }
 
-        [Display(Name = "Confirm account")]
+        [Display(Name = "User must confirm account")]
         public bool ConfirmAccount { get; set; }
 
         [Display(Name = "Email verified")]
         public bool EmailVerified { get; set; }
 
-        [Display(Name = "Change password")]
+        [Display(Name = "User must change password")]
         public bool ChangePassword { get; set; }
 
         [Required]

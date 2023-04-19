@@ -86,7 +86,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await TrackService.UpdateTrackAsync(trackSettingsForm.Model.Map<Track>());
-                toastService.ShowSuccess("Track settings updated.", "SUCCESS");
+                toastService.ShowSuccess("Track settings updated.");
             }
             catch (Exception ex)
             {

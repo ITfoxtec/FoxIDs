@@ -1,0 +1,129 @@
+﻿@inherits UpPartyBase
+
+@{
+    var trackLinkUpParty = UpParty as GeneralTrackLinkUpPartyViewModel;
+}
+
+<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(m => TrackLinkUpPartyViewModelAfterInit(trackLinkUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
+    <div class="modal-header">
+        <div>
+            Track link
+        </div>
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+    </div>
+    <div class="modal-body">
+        @if (trackLinkUpParty.CreateMode)
+        {
+            <FInputText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" Focus="true" />
+        }
+        else
+        {
+            <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
+        }
+
+        @if (trackLinkUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="trackLinkUpParty.Form.Model.Note" For="@(() => trackLinkUpParty.Form.Model.Note)" />
+            <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.EnableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+        }
+
+        <div class="mb-3 alert alert-info" role="alert">
+            <div>Please add a corresponding down-party track link in the track you want to connect to.</div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                @if (trackLinkUpParty.ShowTrackLinkTab)
+                {
+                    <a class="nav-link active">Track link</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.TrackLink))">Track link</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (trackLinkUpParty.ShowClaimTransformTab)
+                {
+                    <a class="nav-link active">Claim transform</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (trackLinkUpParty.ShowSessionTab)
+                {
+                    <a class="nav-link active">Logout session</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Session))">Logout session</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (trackLinkUpParty.ShowHrdTab)
+                {
+                    <a class="nav-link active">Home Realm Discovery</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.Hrd))">Home Realm Discovery</button>
+                }
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+            @if (trackLinkUpParty.ShowTrackLinkTab)
+            {
+                <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
+                <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
+                <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" />
+                @if (trackLinkUpParty.ShowAdvanced)
+                {
+                    <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.Claims" For="@(() => trackLinkUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
+                }
+            }
+            else if (trackLinkUpParty.ShowClaimTransformTab)
+            {
+                <div class="mb-3 alert alert-info" role="alert">
+                    If you create a new claim the claim is local unless you add the claim to the 'Forward claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
+                </div>
+                <OAuthClaimTransforms Model="trackLinkUpParty.Form.Model" />
+            }
+            else if (trackLinkUpParty.ShowSessionTab)
+            {
+                <UpPartySessionLifetime Model="trackLinkUpParty.Form.Model" />
+            }
+            else if (trackLinkUpParty.ShowHrdTab)
+            {
+                <UpPartyHrd Model="trackLinkUpParty.Form.Model" />
+            }
+        </div>
+    </div>
+    @if (!UpParty.CreateMode && UpParty.DeleteAcknowledge)
+    {
+        <div class="modal-footer">
+            <div class="alert alert-danger" role="alert">
+                <div>
+                    You are about to delete Track link Up-party "@UpParty.Name", are you sure?
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteTrackLinkUpPartyAsync(trackLinkUpParty))">Yes delete</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => UpParty.DeleteAcknowledge = false)">No</button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="modal-footer">
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        @if (!UpParty.CreateMode)
+        {
+            <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
+        }
+        <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
+    </div>
+</PageEditForm>

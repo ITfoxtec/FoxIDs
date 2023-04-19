@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs.Logic

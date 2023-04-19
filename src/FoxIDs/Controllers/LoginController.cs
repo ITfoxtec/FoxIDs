@@ -167,6 +167,8 @@ namespace FoxIDs.Controllers
                     return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
                 case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestRedirectAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(selectedUpParty, GetLoginRequest(sequenceData), hrdLoginUpPartyName: sequenceData.UpPartyId.PartyIdToName());
                 default:
                     throw new NotSupportedException($"Party type '{selectedUpParty.Type}' not supported.");
             }
@@ -660,6 +662,7 @@ namespace FoxIDs.Controllers
                 {
                     throw new InvalidOperationException("Create user not enabled.");
                 }
+                PopulateCreateUserDefault(loginUpParty);
 
                 (var session, _) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
                 if (session != null)
@@ -668,7 +671,14 @@ namespace FoxIDs.Controllers
                 }
 
                 logger.ScopeTrace(() => "Show create user dialog.");
-                return View(nameof(CreateUser), new CreateUserViewModel { SequenceString = SequenceString, Title = loginUpParty.Title, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                return View(nameof(CreateUser), new CreateUserViewModel 
+                {
+                    SequenceString = SequenceString, 
+                    Title = loginUpParty.Title, 
+                    IconUrl = loginUpParty.IconUrl, 
+                    Css = loginUpParty.Css,
+                    Elements = ToElementsViewModel(loginUpParty.CreateUser.Elements).ToList()
+                });
 
             }
             catch (Exception ex)
@@ -691,7 +701,9 @@ namespace FoxIDs.Controllers
                 if (!loginUpParty.EnableCreateUser)
                 {
                     throw new InvalidOperationException("Create user not enabled.");
-                }
+                }                
+                PopulateCreateUserDefault(loginUpParty);
+                createUser.Elements = ToElementsViewModel(loginUpParty.CreateUser.Elements, createUser.Elements).ToList();
 
                 Func<IActionResult> viewError = () =>
                 {
@@ -702,6 +714,8 @@ namespace FoxIDs.Controllers
                     return View(nameof(CreateUser), createUser);
                 };
 
+                ModelState.Clear();
+                (var email, var password, var emailPasswordI) = await ValidateCreateUserViewModelElements(createUser.Elements);
                 if (!ModelState.IsValid)
                 {
                     return viewError();
@@ -718,52 +732,60 @@ namespace FoxIDs.Controllers
                 try
                 {
                     var claims = new List<Claim>();
-                    if (!createUser.GivenName.IsNullOrWhiteSpace())
+                    var nameDElament = createUser.Elements.Where(e => e is NameDElement).FirstOrDefault() as NameDElement;
+                    if (!string.IsNullOrWhiteSpace(nameDElament?.DField1))
                     {
-                        claims.AddClaim(JwtClaimTypes.GivenName, createUser.GivenName);
+                        claims.AddClaim(JwtClaimTypes.Name, nameDElament.DField1);
                     }
-                    if (!createUser.FamilyName.IsNullOrWhiteSpace())
+                    var givenNameDElament = createUser.Elements.Where(e => e is GivenNameDElement).FirstOrDefault() as GivenNameDElement;
+                    if (!string.IsNullOrWhiteSpace(givenNameDElament?.DField1))
                     {
-                        claims.AddClaim(JwtClaimTypes.FamilyName, createUser.FamilyName);
+                        claims.AddClaim(JwtClaimTypes.GivenName, givenNameDElament.DField1);
                     }
+                    var familyNameDElament = createUser.Elements.Where(e => e is FamilyNameDElement).FirstOrDefault() as FamilyNameDElement;
+                    if (!string.IsNullOrWhiteSpace(familyNameDElament?.DField1))
+                    {
+                        claims.AddClaim(JwtClaimTypes.FamilyName, familyNameDElament.DField1);
+                    }
+                    claims = await loginPageLogic.GetCreateUserTransformedClaimsAsync(loginUpParty, claims);
 
-                    var user = await userAccountLogic.CreateUser(createUser.Email, createUser.Password, claims: claims);
+                    var user = await userAccountLogic.CreateUser(email, password, claims: claims, confirmAccount: loginUpParty.CreateUser.ConfirmAccount, requireMultiFactor: loginUpParty.CreateUser.RequireMultiFactor);
                     if (user != null)
                     {
-                        return await loginPageLogic.LoginResponseSequenceAsync(sequenceData, loginUpParty, user);
+                        return await CreateUserStartLogin(sequenceData, loginUpParty, user.Email);
                     }
                 }
                 catch (UserExistsException uex)
                 {
                     logger.ScopeTrace(() => uex.Message, triggerEvent: true);
-                    ModelState.AddModelError(nameof(createUser.Email), localizer["A user with the email already exists."]);
+                    return await CreateUserStartLogin(sequenceData, loginUpParty, uex.Email);
                 }
                 catch (PasswordLengthException plex)
                 {
                     logger.ScopeTrace(() => plex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), RouteBinding.CheckPasswordComplexity ?
+                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", RouteBinding.CheckPasswordComplexity ?
                         localizer["Please use {0} characters or more with a mix of letters, numbers and symbols.", RouteBinding.PasswordLength] :
                         localizer["Please use {0} characters or more.", RouteBinding.PasswordLength]);
                 }
                 catch (PasswordComplexityException pcex)
                 {
                     logger.ScopeTrace(() => pcex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please use a mix of letters, numbers and symbols"]);
+                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please use a mix of letters, numbers and symbols"]);
                 }
                 catch (PasswordEmailTextComplexityException pecex)
                 {
                     logger.ScopeTrace(() => pecex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use the email or parts of it."]);
+                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please do not use the email or parts of it."]);
                 }
                 catch (PasswordUrlTextComplexityException pucex)
                 {
                     logger.ScopeTrace(() => pucex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), localizer["Please do not use parts of the URL."]);
+                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["Please do not use parts of the URL."]);
                 }
                 catch (PasswordRiskException prex)
                 {
                     logger.ScopeTrace(() => prex.Message);
-                    ModelState.AddModelError(nameof(createUser.Password), localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
+                    ModelState.AddModelError($"Elements[{emailPasswordI}].{nameof(DynamicElementBase.DField2)}", localizer["The password has previously appeared in a data breach. Please choose a more secure alternative."]);
                 }
 
                 return viewError();
@@ -771,6 +793,109 @@ namespace FoxIDs.Controllers
             catch (Exception ex)
             {
                 throw new EndpointException($"Create user failed, Name '{RouteBinding.UpParty.Name}'.", ex) { RouteBinding = RouteBinding };
+            }
+        }
+
+        private async Task<(string email, string password, int emailPasswordI)> ValidateCreateUserViewModelElements(List<DynamicElementBase> elements)
+        {
+            var email = string.Empty;
+            var password = string.Empty;
+            var emailPasswordI = 0;
+            var i = 0;
+            foreach (var element in elements)
+            {
+                var elementValidation = await element.ValidateObjectResultsAsync();
+                if (!elementValidation.isValid)
+                {
+                    foreach (var result in elementValidation.results)
+                    {
+                        ModelState.AddModelError($"Elements[{i}].{result.MemberNames.First()}", result.ErrorMessage);
+                    }
+                }
+                if (element is EmailAndPasswordDElement)
+                {
+                    emailPasswordI = i;
+                    email = element.DField1;
+                    password = element.DField2;
+                    element.DField2 = null;
+                    element.DField3 = null;
+                }
+                i++;
+            }
+            return (email, password, emailPasswordI);
+        } 
+
+        private async Task<IActionResult> CreateUserStartLogin(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, string email)
+        {
+            sequenceData.Email = email;
+            sequenceData.DoLoginIdentifierStep = false;
+            await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
+        }
+
+        private void PopulateCreateUserDefault(LoginUpParty loginUpParty)
+        {
+            if (loginUpParty.CreateUser == null || loginUpParty.CreateUser.Elements?.Any() != true)
+            {
+                loginUpParty.CreateUser = new CreateUser
+                {
+                    ConfirmAccount = false,
+                    RequireMultiFactor = false,
+                    Elements = new List<DynamicElement>
+                    {
+                        new DynamicElement
+                        {
+                            Type = DynamicElementTypes.EmailAndPassword,
+                            Order = 0,
+                            Required = true
+                        },
+                        new DynamicElement
+                        {
+                            Type = DynamicElementTypes.GivenName,
+                            Order = 1,
+                            Required = false
+                        },
+                        new DynamicElement
+                        {
+                            Type = DynamicElementTypes.FamilyName,
+                            Order = 2,
+                            Required = false
+                        }
+                    }
+                };               
+            }
+        }
+
+        private IEnumerable<DynamicElementBase> ToElementsViewModel(List<DynamicElement> elements, List<DynamicElementBase> valueElements = null)
+        {
+            bool hasEmailAndPasswordDElement = false;
+            var i = 0;
+            foreach(var element in elements)
+            {
+                var valueElement = valueElements?.Count() > i ? valueElements[i] : null;
+                switch (element.Type)
+                {
+                    case DynamicElementTypes.EmailAndPassword:
+                        hasEmailAndPasswordDElement = true;
+                        yield return new EmailAndPasswordDElement { DField1 = valueElement?.DField1, DField2 = valueElement?.DField2, DField3 = valueElement?.DField3, Required = true };
+                        break;
+                    case DynamicElementTypes.Name:
+                        yield return new NameDElement { DField1 = valueElement?.DField1, Required = element.Required };
+                        break;
+                    case DynamicElementTypes.GivenName:
+                        yield return new GivenNameDElement { DField1 = valueElement?.DField1, Required = element.Required };
+                        break;
+                    case DynamicElementTypes.FamilyName:
+                        yield return new FamilyNameDElement { DField1 = valueElement?.DField1, Required = element.Required };
+                        break;
+                    default:
+                        throw new NotImplementedException();
+                }
+                i++;
+            }
+            if(!hasEmailAndPasswordDElement)
+            {
+                throw new Exception("The EmailAndPasswordDElement is required.");
             }
         }
 

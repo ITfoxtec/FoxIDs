@@ -43,7 +43,7 @@ namespace FoxIDs.Infrastructure.Filters
                 else if (!context.HttpContext.Items.ContainsKey(Constants.Sequence.Start) && !context.HttpContext.Items.ContainsKey(Constants.Sequence.Valid))
                 {
                     var sequenceString = context.HttpContext.GetRouteSequenceString();
-                    await sequenceLogic.ValidateSequenceAsync(sequenceString, true);
+                    await sequenceLogic.ValidateAndSetSequenceAsync(sequenceString, true);
                 }
 
                 await next();

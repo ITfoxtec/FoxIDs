@@ -162,7 +162,7 @@
       "id": 40
     },
     {
-      "name": "A user with the email already exists.",
+      "name": "Select where to log in",
       "id": 41
     },
     {
@@ -388,6 +388,10 @@
     {
       "name": "Please try again in a little while.",
       "id": 97
+    },
+    {
+      "name": "Full name",
+      "id": 98
     }
   ],
   "resources": [
@@ -903,11 +907,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "A user with the email already exists."
+          "value": "Select where to log in"
         },
         {
           "culture": "da",
-          "value": "Der eksisterer allerede en bruger med samme e-mail."
+          "value": "Vælg hvor du vil logge ind"
         }
       ]
     },
@@ -1628,6 +1632,19 @@
         {
           "culture": "da",
           "value": "Prøv venligst igen om lidt."
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Full name"
+        },
+        {
+          "culture": "da",
+          "value": "Fulde navn"
         }
       ]
     }

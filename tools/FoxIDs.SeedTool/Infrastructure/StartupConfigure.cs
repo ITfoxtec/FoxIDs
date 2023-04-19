@@ -10,7 +10,7 @@ using FoxIDs.SeedTool.SeedLogic;
 using System;
 using System.Net.Http;
 using System.IO;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity.Helpers;
 
 namespace FoxIDs.SeedTool.Infrastructure

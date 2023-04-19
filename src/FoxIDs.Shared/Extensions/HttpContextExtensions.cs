@@ -3,7 +3,7 @@ using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs
 {

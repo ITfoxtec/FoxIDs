@@ -40,17 +40,15 @@ namespace FoxIDs.SeedTool
                         Console.WriteLine("Canceled");
                         break;
                 }
-
-#if !DEBUG
-                Console.WriteLine(string.Empty);
-                Console.WriteLine("Click any key to end...");
-                Console.ReadKey();
-#endif
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.ToString()}");
+                Console.WriteLine($"Error: {ex}");
             }
+
+            Console.WriteLine(string.Empty);
+            Console.WriteLine("Click any key to end...");
+            Console.ReadKey();
         }
     }
 }

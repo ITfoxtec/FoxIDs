@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            sequenceData.Claims = claims.ToClaimAndValues();
+            sequenceData.Claims = claims?.ToClaimAndValues();
             sequenceData.Error = error;
             sequenceData.ErrorDescription = errorDescription;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);

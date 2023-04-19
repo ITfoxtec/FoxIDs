@@ -8,14 +8,15 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.SeedTool.SeedLogic
 {
     public class RiskPasswordSeedLogic
     {
-        private const int riskPasswordMoreThenBreachesCount = 100;
-        private const int uploadRiskPasswordBlokSize = 10000;
+        private const int maxRiskPasswordToUpload = 500000;
+        private const int riskPasswordMoreThenBreachesCount = 1000;
+        private const int uploadRiskPasswordBlockSize = 1000;
         private readonly SeedSettings settings;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly AccessLogic accessLogic;
@@ -32,38 +33,76 @@ namespace FoxIDs.SeedTool.SeedLogic
 
         public async Task SeedAsync()
         {
-            Console.WriteLine("Uploading risk passwords");
-            var totalCount = 0;
+            Console.Write("Uploading risk passwords");
+            var addCount = 0;
+            var readCount = 0;
             var riskPasswords = new List<RiskPasswordApiModel>();            
             using (var streamReader = File.OpenText(settings.PwnedPasswordsPath))
             {
-                var i = 0;
                 while (streamReader.Peek() >= 0)
                 {
-                    i++;
                     var split = streamReader.ReadLine().Split(':');
                     var breachesCount = Convert.ToInt32(split[1]);
+                    readCount++;
                     if (breachesCount >= riskPasswordMoreThenBreachesCount)
                     {
-                        riskPasswords.Add(new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
-                        if (riskPasswords.Count >= uploadRiskPasswordBlokSize)
+                        var index = riskPasswords.FindLastIndex(p => p.Count >= breachesCount);
+                        if (index < maxRiskPasswordToUpload)
                         {
-                            totalCount += riskPasswords.Count;
-                            await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
-                            Console.WriteLine($"Risk passwords uploaded '{totalCount}'");
-                            riskPasswords = new List<RiskPasswordApiModel>();
+                            if (riskPasswords.Where(p => p.PasswordSha1Hash == split[0]).Any())
+                            {
+                                Console.WriteLine($"{Environment.NewLine}Risk password SHA1 hash '{split[0]}' already read.");
+                            } 
+                            else
+                            {
+                                riskPasswords.Insert(index + 1, new RiskPasswordApiModel { PasswordSha1Hash = split[0], Count = breachesCount });
+                                addCount++;
+                                if (addCount % 1000 == 0)
+                                {
+                                    Console.Write($"{Environment.NewLine}Risk passwords read '{readCount}'");
+                                }
+                                else if (addCount % 100 == 0)
+                                {
+                                    Console.Write(".");
+                                }
+                            }
+                        }
+
+                        if (riskPasswords.Count() > maxRiskPasswordToUpload)
+                        {
+                            riskPasswords.RemoveAt(riskPasswords.Count() - 1);
                         }
                     }
                 }
             }
 
-            if (riskPasswords.Count > 0)
-            {
-                Console.WriteLine("Uploading the last risk passwords");
-                await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswords);
-            }
+            Console.WriteLine($"{Environment.NewLine}Risk passwords total read '{readCount}', total ready for upload '{riskPasswords.Count()}'");
+            await UploadAsync(riskPasswords);
+            Console.WriteLine("All risk passwords uploaded");
+        }
 
-            Console.WriteLine($"All '{totalCount}' risk passwords uploaded");
+        private async Task UploadAsync(List<RiskPasswordApiModel> riskPasswords)
+        {
+            var totalCount = 0;
+            var riskPasswordsBlock = new List<RiskPasswordApiModel>();
+            foreach(var riskPassword in riskPasswords)
+            {
+                riskPasswordsBlock.Add(riskPassword);
+                if (riskPasswordsBlock.Count >= uploadRiskPasswordBlockSize)
+                {
+                    totalCount += riskPasswordsBlock.Count;
+                    await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswordsBlock);
+                    Console.WriteLine($"Risk passwords uploaded '{totalCount}'");
+                    riskPasswordsBlock = new List<RiskPasswordApiModel>();
+                }
+            }            
+
+            if (riskPasswordsBlock.Count > 0)
+            {
+                totalCount += riskPasswordsBlock.Count;
+                Console.WriteLine($"Uploading the last risk passwords '{totalCount}'");
+                await SavePasswordsRiskListAsync(await accessLogic.GetAccessTokenAsync(), riskPasswordsBlock);
+            }
         }
 
         public async Task DeleteAllAsync()

@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>1.0.15.1</Version>
+		<Version>1.0.15.3</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -38,7 +38,6 @@
 		<PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.4" />
 		<PackageReference Include="SendGrid" Version="9.28.1" />
-		<PackageReference Include="UrlCombine" Version="2.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

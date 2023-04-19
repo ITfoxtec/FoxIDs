@@ -1,6 +1,5 @@
-﻿using FoxIDs.Models.Config;
-using System.ComponentModel.DataAnnotations;
-using UrlCombineLib;
+﻿using System.ComponentModel.DataAnnotations;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.SeedTool.Model
 {

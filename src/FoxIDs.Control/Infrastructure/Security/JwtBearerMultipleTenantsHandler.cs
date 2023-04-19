@@ -8,7 +8,7 @@ using System;
 using System.Security.Authentication;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity.Tokens;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;

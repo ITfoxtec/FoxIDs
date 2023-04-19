@@ -6,7 +6,7 @@ using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Threading.Tasks;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity.Models;
 using System.Collections.Generic;
 using System;

@@ -59,12 +59,12 @@ You can select to require two-factor authentication for all users authenticating
 ### Configure user session
 The user sessions lifetime can be changed. The default lifetime is 10 hours. 
 The user session is a sliding session, where the lifetime is extended every time, an application makes a login request until the absolute session lifetime is reached.  
-It is possible to configure an absolute session lifetime in the advanced settings.
+It is possible to configure an absolute session lifetime as well.
 
 The user session can be changed to a persistent session which is preserved when the browser is closed and reopened.  
 The user session become a persistent session if either the persistent session lifetime is configured to be grater, then 0. Or the persistent session lifetime unlimited setting is set to on.
 
-> Click `show advanced settings` to see all session settings.
+> Click the `User session` tag to see all session settings.
 
 ![Configure Login](images/configure-login-session.png)
 

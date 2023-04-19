@@ -33,6 +33,7 @@ namespace FoxIDs.MappingProfiles
                 .ReverseMap();
 
             CreateMap<RiskPassword, Api.RiskPassword>()
+                .ForMember(d => d.PasswordSha1Hash, opt => opt.MapFrom(s => s.Id.Substring(s.Id.LastIndexOf(':') + 1)))
                 .ReverseMap();
         }
     }

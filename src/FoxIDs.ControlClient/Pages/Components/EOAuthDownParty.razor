@@ -42,15 +42,6 @@
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
             }
             
-            @if (DownParty.ShowAdvanced)
-            {
-                <FInputSelect @bind-Value="oauthDownParty.Form.Model.PartyBindingPattern" For="@(() => oauthDownParty.Form.Model.PartyBindingPattern)">
-                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
-                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
-                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
-                </FInputSelect>
-            }
-
             @if (oauthDownParty.EnableClientTab && oauthDownParty.EnableResourceTab)
             {
                 <hr />
@@ -64,6 +55,15 @@
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
             }
         </div>
+
+        @if (DownParty.ShowAdvanced)
+        {
+            <FInputSelect @bind-Value="oauthDownParty.Form.Model.PartyBindingPattern" For="@(() => oauthDownParty.Form.Model.PartyBindingPattern)">
+                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
+            </FInputSelect>
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">

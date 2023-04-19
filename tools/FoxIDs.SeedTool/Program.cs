@@ -21,6 +21,7 @@ namespace FoxIDs.SeedTool
 
                 Console.WriteLine("Select seed action");
                 Console.WriteLine("P: Upload risk passwords");
+                Console.WriteLine("A: Delete all risk passwords");
 
                 var key = Console.ReadKey();
                 Console.WriteLine(string.Empty);
@@ -31,22 +32,23 @@ namespace FoxIDs.SeedTool
                     case 'p':
                         await serviceProvider.GetService<RiskPasswordSeedLogic>().SeedAsync();
                         break;
+                    case 'a':
+                        await serviceProvider.GetService<RiskPasswordSeedLogic>().DeleteAllAsync();
+                        break;
 
                     default:
                         Console.WriteLine("Canceled");
                         break;
                 }
-
-#if !DEBUG
-                Console.WriteLine(string.Empty);
-                Console.WriteLine("Click any key to end...");
-                Console.ReadKey();
-#endif
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.ToString()}");
+                Console.WriteLine($"Error: {ex}");
             }
+
+            Console.WriteLine(string.Empty);
+            Console.WriteLine("Click any key to end...");
+            Console.ReadKey();
         }
     }
 }

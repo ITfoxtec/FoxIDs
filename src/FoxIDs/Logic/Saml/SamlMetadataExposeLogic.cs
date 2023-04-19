@@ -10,12 +10,11 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using UrlCombineLib;
+using ITfoxtec.Identity.Util;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System.Linq;
-using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
 
 namespace FoxIDs.Logic
 {

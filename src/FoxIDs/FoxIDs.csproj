@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>1.0.15.1</Version>
+		<Version>1.0.15.3</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -38,7 +38,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.4" />
 		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
 		<PackageReference Include="RSAKeyVaultProvider" Version="2.1.1" />
-		<PackageReference Include="UrlCombine" Version="2.0.0" />
 		<PackageReference Include="System.Runtime.InteropServices" Version="4.3.0" />
 		<PackageReference Include="System.Security.Cryptography.Xml" Version="7.0.1" />
 		<PackageReference Include="System.ServiceModel.Security" Version="4.10.2" />

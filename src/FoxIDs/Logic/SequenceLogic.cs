@@ -139,9 +139,9 @@ namespace FoxIDs.Logic
             try
             {
                 var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
-                CheckTimeout(sequence);
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
+                CheckTimeout(sequence);
                 if (setValid)
                 {
                     HttpContext.Items[Constants.Sequence.Valid] = true;
@@ -343,9 +343,9 @@ namespace FoxIDs.Logic
                 await distributedCache.RemoveAsync(key);
 
                 var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
-                CheckTimeout(sequence);
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
+                CheckTimeout(sequence);
 
                 logger.ScopeTrace(() => $"Sequence is validated from external id, sequence id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.ExternalSequenceId, externalId }, { Constants.Logs.AccountAction, sequence.AccountAction == true ? "true" : "false" } });
             }

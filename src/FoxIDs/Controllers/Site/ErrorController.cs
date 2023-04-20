@@ -18,6 +18,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
+using System.Threading;
 
 namespace FoxIDs.Controllers
 {
@@ -66,7 +67,7 @@ namespace FoxIDs.Controllers
                 var sequenceException = FindException<SequenceException>(exception);
                 if (sequenceException != null)
                 {
-                    var handleSequenceExceptionResult = await HandleSequenceExceptionAsync(sequence, sequenceException is SequenceTimeoutException);
+                    var handleSequenceExceptionResult = await HandleSequenceExceptionAsync(sequence, sequenceException);
                     if (handleSequenceExceptionResult != null)
                     {
                         return handleSequenceExceptionResult;
@@ -133,7 +134,7 @@ namespace FoxIDs.Controllers
             return null;
         }
 
-        private async Task<IActionResult> HandleSequenceExceptionAsync(Sequence sequence, bool isTimeout)
+        private async Task<IActionResult> HandleSequenceExceptionAsync(Sequence sequence, SequenceException sequenceException)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<DownLinkSequenceData>(sequence: sequence, allowNull: true, remove: false);
             if (sequenceData == null)
@@ -145,13 +146,36 @@ namespace FoxIDs.Controllers
             {
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
-                case PartyTypes.Oidc:
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.Id, isTimeout ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled);
+                case PartyTypes.Oidc:                    
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(
+                        sequenceData.Id,
+                        sequenceException is SequenceTimeoutException ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled,
+                        GetSequenceExceptionErrorDescription(sequenceException));
                 case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.Id, status: Saml2StatusCodes.Responder);
 
                 default:
                     throw new NotSupportedException($"Party type '{sequenceData.Type}' not supported.");
+            }
+        }
+
+        private string GetSequenceExceptionErrorDescription(SequenceException sequenceException)
+        {
+            if (sequenceException is SequenceTimeoutException sequenceTimeoutException)
+            {
+                var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
+                if (sequenceTimeoutException.AccountAction == true)
+                {
+                    return $"The task should be completed within {timeout.TotalDays} days.";
+                }
+                else
+                {
+                    return $"It should take a maximum of {timeout.TotalMinutes} minutes from start to finish.";
+                }
+            }
+            else
+            {
+                return "User has navigated back in the browser.";
             }
         }
 

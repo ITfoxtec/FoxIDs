@@ -15,6 +15,9 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using System.Threading.Tasks;
 using FoxIDs.Models;
+using FoxIDs.Models.Sequences;
+using Microsoft.Extensions.DependencyInjection;
+using ITfoxtec.Identity.Saml2.Schemas;
 
 namespace FoxIDs.Controllers
 {
@@ -25,15 +28,17 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IWebHostEnvironment environment;
         private readonly IStringLocalizer localizer;
+        private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
         private readonly ITenantRepository tenantRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
+        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
         {
             this.logger = logger;
             this.environment = environment;
             this.localizer = localizer;
+            this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
             this.tenantRepository = tenantRepository;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -55,28 +60,17 @@ namespace FoxIDs.Controllers
                 return HandleOAuthTokenException(exception);
             }
 
-            if (RouteBinding != null && !exceptionHandlerPathFeature.Path.IsNullOrEmpty())
+            var sequence = await ReadAndUseSequence(errorViewModel, exceptionHandlerPathFeature);
+            if (sequence != null)
             {
-                try
+                var sequenceException = FindException<SequenceException>(exception);
+                if (sequenceException != null)
                 {
-                    var sequenceStartIndex = exceptionHandlerPathFeature.Path.IndexOf('_') + 1;
-                    if (exceptionHandlerPathFeature.Path.Length > sequenceStartIndex)
+                    var handleSequenceExceptionResult = await HandleSequenceExceptionAsync(sequence, sequenceException is SequenceTimeoutException);
+                    if (handleSequenceExceptionResult != null)
                     {
-                        var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
-                        if (sequence != null)
-                        {
-                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
-                            securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                            securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                            errorViewModel.Title = uiLoginUpParty.Title;
-                            errorViewModel.IconUrl = uiLoginUpParty.IconUrl;
-                            errorViewModel.Css = uiLoginUpParty.Css;
-                        }
+                        return handleSequenceExceptionResult;
                     }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
                 }
             }
 
@@ -107,6 +101,58 @@ namespace FoxIDs.Controllers
                 errorViewModel.TechnicalErrors = exception.GetAllMessages();
             }
             return View(errorViewModel);
+        }
+
+        private async Task<Sequence> ReadAndUseSequence(ErrorViewModel errorViewModel, IExceptionHandlerPathFeature exceptionHandlerPathFeature)
+        {
+            if (RouteBinding != null && !exceptionHandlerPathFeature.Path.IsNullOrEmpty())
+            {
+                try
+                {
+                    var sequenceStartIndex = exceptionHandlerPathFeature.Path.IndexOf('_') + 1;
+                    if (exceptionHandlerPathFeature.Path.Length > sequenceStartIndex)
+                    {
+                        var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
+                        if (sequence != null)
+                        {
+                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
+                            securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                            securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
+                            errorViewModel.Title = uiLoginUpParty.Title;
+                            errorViewModel.IconUrl = uiLoginUpParty.IconUrl;
+                            errorViewModel.Css = uiLoginUpParty.Css;
+                            return sequence;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                }
+            }
+            return null;
+        }
+
+        private async Task<IActionResult> HandleSequenceExceptionAsync(Sequence sequence, bool isTimeout)
+        {
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<DownLinkSequenceData>(sequence: sequence, allowNull: true, remove: false);
+            if (sequenceData == null)
+            {
+                return null;
+            }
+
+            switch (sequenceData.Type)
+            {
+                case PartyTypes.OAuth2:
+                    throw new NotImplementedException();
+                case PartyTypes.Oidc:
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequenceData.Id, isTimeout ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled);
+                case PartyTypes.Saml2:
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.Id, status: Saml2StatusCodes.Responder);
+
+                default:
+                    throw new NotSupportedException($"Party type '{sequenceData.Type}' not supported.");
+            }
         }
 
         private IActionResult HandleSequenceTimeoutException(ErrorViewModel errorViewModel, SequenceTimeoutException sequenceTimeoutException)

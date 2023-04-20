@@ -27,10 +27,7 @@
         {
             <FFieldText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
-        @if (oidcUpParty.ShowAdvanced)
-        {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
-        }
+        <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
 
         <div class="mb-3 alert alert-info" role="alert">
             @{

@@ -50,6 +50,12 @@ namespace FoxIDs.Models.Config
         public int KeySequenceLifetime { get; set; } = 30;
 
         /// <summary>
+        /// Add grace lifetime to the sequence lifetime used by down link sequence data and External sequence ID to achieve graceful error handling. Default 30 minutes.
+        /// </summary>
+        [Required]
+        public int SequenceGraceLifetime { get; set; } = 1800; // 30 minutes
+
+        /// <summary>
         /// Confirmation code lifetime in seconds, send in email.
         /// </summary>
         [Required]

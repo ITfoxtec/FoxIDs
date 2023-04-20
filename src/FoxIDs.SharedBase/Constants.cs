@@ -600,10 +600,14 @@ namespace FoxIDs
             public static class ResponseErrors
             {
                 /// <summary>
-                /// Login canceled by user.
+                /// Login canceled.
                 /// </summary>
                 public const string LoginCanceled = "login_canceled";
 
+                /// <summary>
+                /// Login timeout.
+                /// </summary>
+                public const string LoginTimeout = "login_timeout";
             }
         }
 

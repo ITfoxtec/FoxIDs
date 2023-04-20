@@ -21,9 +21,10 @@
             <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
         }
 
+        <FInputText @bind-Value="trackLinkUpParty.Form.Model.Note" For="@(() => trackLinkUpParty.Form.Model.Note)" />
+
         @if (trackLinkUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="trackLinkUpParty.Form.Model.Note" For="@(() => trackLinkUpParty.Form.Model.Note)" />
             <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.EnableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
         }
 

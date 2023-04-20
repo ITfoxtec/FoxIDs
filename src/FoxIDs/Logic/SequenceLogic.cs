@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                     AccountAction = accountAction
                 };
 
-                if(currentSequence?.Culture?.IsNullOrEmpty() == false)
+                if (currentSequence?.Culture?.IsNullOrEmpty() == false)
                 {
                     sequence.Culture = currentSequence.Culture;
                 }
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                 var sequenceString = await CreateSequenceStringAsync(sequence);
 
                 logger.ScopeTrace(() => $"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.AccountAction, accountAction == true ? "true" : "false" } });
-                return (sequenceString: sequenceString, sequence: sequence);
+                return (sequenceString, sequence);
             }
             catch (Exception ex)
             {
@@ -198,6 +198,13 @@ namespace FoxIDs.Logic
                 AbsoluteExpiration = absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
+            if (data is UpSequenceData upSequenceData)
+            {
+                await distributedCache.SetStringAsync(DataKey(typeof(DownLinkSequenceData), sequence, trackName), new DownLinkSequenceData { Id = upSequenceData.DownPartyLink.Id, Type = upSequenceData.DownPartyLink.Type }.ToJson(), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpiration = absoluteExpiration.AddSeconds(settings.SequenceGraceLifetime)
+                });
+            }
 
             return data;
         }
@@ -223,12 +230,12 @@ namespace FoxIDs.Logic
                 }
             }
 
-            if(remove)
+            var sequenceData = data.ToObject<T>();
+            if (remove)
             {
-                await distributedCache.RemoveAsync(key);
+                await RemoveSequenceDataInternalAsync(key, sequence, sequenceData);
             }
-
-            return data.ToObject<T>();
+            return sequenceData;
         }
 
         public async Task<T> ValidateKeySequenceDataAsync<T>(Sequence sequence, string trackName, bool remove = true) where T : ISequenceKey
@@ -252,11 +259,20 @@ namespace FoxIDs.Logic
             return keySequenceData;
         }
 
-        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData
+        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData, new()
         {
             var sequence = HttpContext.GetSequence();
             var key = DataKey(typeof(T), sequence);
+            await RemoveSequenceDataInternalAsync(key, sequence, new T());
+        }
+
+        private async Task RemoveSequenceDataInternalAsync<T>(string key, Sequence sequence, T data) where T : ISequenceData
+        {
             await distributedCache.RemoveAsync(key);
+            if (data is IDownSequenceData)
+            {
+                await distributedCache.RemoveAsync(DataKey(typeof(DownLinkSequenceData), sequence));
+            }
         }
 
         private Task<string> CreateSequenceStringAsync(Sequence sequence)
@@ -303,7 +319,7 @@ namespace FoxIDs.Logic
             var sequenceString = HttpContext.GetSequenceString();
 
             var externalId = RandomGenerator.Generate(50);
-            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
+            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime).AddSeconds(settings.SequenceGraceLifetime);
             var options = new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = absoluteExpiration

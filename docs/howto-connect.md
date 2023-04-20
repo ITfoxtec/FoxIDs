@@ -36,5 +36,5 @@ How to guides:
 - Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
 - Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#up-party---connect-to-context-handler)
 
-## Up-party - How to connect relying party (RP)
+## Down-party - How to connect relying party (RP)
 // TODO

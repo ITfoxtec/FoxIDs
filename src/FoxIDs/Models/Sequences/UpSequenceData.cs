@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class UpSequenceData : ISequenceData, IValidatableObject
+    public abstract class UpSequenceData : ISequenceData, IValidatableObject
     {
         [JsonProperty(PropertyName = "es")]
         public bool ExternalInitiatedSingleLogout { get; set; } = false;

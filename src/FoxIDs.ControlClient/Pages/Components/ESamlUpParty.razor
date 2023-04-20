@@ -22,10 +22,7 @@
         {
             <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
         }
-        @if (samlUpParty.ShowAdvanced)
-        {
-            <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
-        }
+        <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
 
         <div class="mb-3 alert alert-info" role="alert">
             @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern); }

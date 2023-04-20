@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class SamlDownSequenceData : ISequenceData
+    public class SamlDownSequenceData : ISequenceData, IDownSequenceData
     {
         [Required]
         [JsonProperty(PropertyName = "i")]

@@ -195,14 +195,14 @@ namespace FoxIDs.Logic
             var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpiration = absoluteExpiration
+                AbsoluteExpiration = data is IDownSequenceData ? absoluteExpiration.AddSeconds(settings.SequenceGracePeriod) : absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
             if (data is UpSequenceData upSequenceData)
             {
                 await distributedCache.SetStringAsync(DataKey(typeof(DownLinkSequenceData), sequence, trackName), new DownLinkSequenceData { Id = upSequenceData.DownPartyLink.Id, Type = upSequenceData.DownPartyLink.Type }.ToJson(), new DistributedCacheEntryOptions
                 {
-                    AbsoluteExpiration = absoluteExpiration.AddSeconds(settings.SequenceGraceLifetime)
+                    AbsoluteExpiration = absoluteExpiration.AddSeconds(settings.SequenceGracePeriod)
                 });
             }
 
@@ -319,7 +319,7 @@ namespace FoxIDs.Logic
             var sequenceString = HttpContext.GetSequenceString();
 
             var externalId = RandomGenerator.Generate(50);
-            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime).AddSeconds(settings.SequenceGraceLifetime);
+            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime).AddSeconds(settings.SequenceGracePeriod);
             var options = new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = absoluteExpiration

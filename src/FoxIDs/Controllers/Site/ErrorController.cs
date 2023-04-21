@@ -60,13 +60,13 @@ namespace FoxIDs.Controllers
                 return HandleOAuthTokenException(exception);
             }
 
+            var sequenceException = FindException<SequenceException>(exception);
             var sequence = await ReadAndUseSequence(errorViewModel, exceptionHandlerPathFeature);
             if (sequence != null)
             {
-                var sequenceException = FindException<SequenceException>(exception);
                 if (sequenceException != null)
                 {
-                    var handleSequenceExceptionResult = await HandleSequenceExceptionAsync(sequence, sequenceException);
+                    var handleSequenceExceptionResult = await HandleGracefulSequenceExceptionAsync(sequence, sequenceException);
                     if (handleSequenceExceptionResult != null)
                     {
                         return handleSequenceExceptionResult;
@@ -74,10 +74,9 @@ namespace FoxIDs.Controllers
                 }
             }
 
-            var sequenceTimeoutException = FindException<SequenceTimeoutException>(exception);
-            if (sequenceTimeoutException != null)
+            if (sequenceException != null)
             {
-                return HandleSequenceTimeoutException(errorViewModel, sequenceTimeoutException);
+                return HandleSequenceException(errorViewModel, sequenceException);
             }
 
             var routeCreationException = FindException<RouteCreationException>(exception);
@@ -133,7 +132,7 @@ namespace FoxIDs.Controllers
             return null;
         }
 
-        private async Task<IActionResult> HandleSequenceExceptionAsync(Sequence sequence, SequenceException sequenceException)
+        private async Task<IActionResult> HandleGracefulSequenceExceptionAsync(Sequence sequence, SequenceException sequenceException)
         {
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<DownLinkSequenceData>(sequence: sequence, allowNull: true, remove: false);
             if (sequenceData == null)
@@ -169,7 +168,7 @@ namespace FoxIDs.Controllers
                 }
                 else
                 {
-                    return $"It should take a maximum of {timeout.TotalMinutes} minutes from start to finish.";
+                    return $"The sequence must be completed within {timeout.TotalMinutes} minutes.";
                 }
             }
             else
@@ -178,17 +177,24 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private IActionResult HandleSequenceTimeoutException(ErrorViewModel errorViewModel, SequenceTimeoutException sequenceTimeoutException)
+        private IActionResult HandleSequenceException(ErrorViewModel errorViewModel, SequenceException sequenceException)
         {
-            var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
             errorViewModel.ErrorTitle = localizer["Timeout"];
-            if (sequenceTimeoutException.AccountAction == true)
+            if (sequenceException is SequenceTimeoutException sequenceTimeoutException)
             {
-                errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
+                var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
+                if (sequenceTimeoutException.AccountAction == true)
+                {
+                    errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
+                }
+                else
+                {
+                    errorViewModel.Error = string.Format(localizer["The sequence must be completed within {0} minutes. Please try again."], timeout.TotalMinutes);
+                }
             }
             else
             {
-                errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
+                errorViewModel.Error = string.Format(localizer["The sequence must be completed within a shorter time period. Please try again."]);
             }
 
             return View(errorViewModel);

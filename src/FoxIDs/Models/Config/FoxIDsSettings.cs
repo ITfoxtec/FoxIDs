@@ -44,16 +44,16 @@ namespace FoxIDs.Models.Config
         public int AccountActionSequenceLifetime { get; set; }
 
         /// <summary>
-        /// Key sequence lifetime in seconds.
+        /// Key sequence lifetime in seconds. Default 30 seconds.
         /// </summary>
         [Required]
         public int KeySequenceLifetime { get; set; } = 30;
 
         /// <summary>
-        /// Add grace lifetime to the sequence lifetime used by down link sequence data and External sequence ID to achieve graceful error handling. Default 30 minutes.
+        /// Add a grace period to the sequence lifetime. Used in down and down link sequence data and external sequence ID to achieve graceful error handling. Default 10 minutes.
         /// </summary>
         [Required]
-        public int SequenceGraceLifetime { get; set; } = 1800; // 30 minutes
+        public int SequenceGracePeriod { get; set; } = 600; 
 
         /// <summary>
         /// Confirmation code lifetime in seconds, send in email.

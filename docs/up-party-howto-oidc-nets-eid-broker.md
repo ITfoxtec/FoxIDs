@@ -22,11 +22,12 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
 1. Add the name
 2. Add the Nets eID Broker demo authority `https://pp.netseidbroker.dk/op` in the Authority field
 3. In the scopes list add `mitid` (to support MitID) and optionally `nemid` (to support the old NemID)
-4. Add the Nets eID Broker demo secret `rnlguc7CM/wmGSti4KCgCkWBQnfslYr0lMDZeIFsCJweROTROy2ajEigEaPQFl76Py6AVWnhYofl/0oiSAgdtg==` in the Client secret field
-5. Select show advanced settings
-6. Add the Nets eID Broker demo client id `0a775a87-878c-4b83-abe3-ee29c720c3e7` in the Optional customer SP client ID field
-7. Select to read claims from the UserInfo Endpoint instead of the access token or ID token
-8. Click create
+4. Select show advanced settings
+5. Optionally add an additionally parameter with the name `idp_values` and e.g. the value `mitid` to show the MitID IdP or e.g. the value `mitid_erhverv` to show the MitID Erhverv IdP.
+6. Add the Nets eID Broker demo secret `rnlguc7CM/wmGSti4KCgCkWBQnfslYr0lMDZeIFsCJweROTROy2ajEigEaPQFl76Py6AVWnhYofl/0oiSAgdtg==` in the Client secret field
+7. Add the Nets eID Broker demo client id `0a775a87-878c-4b83-abe3-ee29c720c3e7` in the Optional customer SP client ID field
+8. Select to read claims from the UserInfo Endpoint instead of the access token or ID token
+9. Click create
 
 That's it, you are done. 
 
@@ -67,11 +68,12 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
 2. Add the Nets eID Broker demo authority `https://netseidbroker.dk/op` in the Authority field
 3. Copy the two URLs: `Redirect URL` and `Post logout redirect URL`
 4. In the scopes list add `mitid` (to support MitID) and optionally other scopes like e.g, `nemid.pid` to request the NemID PID and/or `ssn` to request the CPR number
-5. Add the Nets eID Broker secret in the Client secret field
-6. Select show advanced settings
-7. Add the Nets eID Broker client id in the Optional customer SP client ID field
-8. Select to read claims from the UserInfo Endpoint instead of the access token or ID token
-9. Click create
+5. Select show advanced settings
+6. Optionally add an additionally parameter with the name `idp_values` and e.g. the value `mitid` to show the MitID IdP or e.g. the value `mitid_erhverv` to show the MitID Erhverv IdP.
+7. Add the Nets eID Broker secret in the Client secret field
+8. Add the Nets eID Broker client id in the Optional customer SP client ID field
+9. Select to read claims from the UserInfo Endpoint instead of the access token or ID token
+10. Click create
 
  **3 - Go back to [Nets eID Broker admin portal](https://netseidbroker.dk/admin)**
 

@@ -171,6 +171,10 @@
                         <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
                     }
                     <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Scopes" For="@(() => oidcUpParty.Form.Model.Client.Scopes)" DynamicFirstRow="true" />
+                    @if (UpParty.ShowAdvanced)
+                    {
+                        <OAuthAdditionalParameters Model="oidcUpParty.Form.Model.Client" />
+                    }
                     <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
                         <option value="@IdentityConstants.ResponseTypes.Code">@IdentityConstants.ResponseTypes.Code</option>
                         <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")</option>

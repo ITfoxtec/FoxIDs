@@ -1,0 +1,47 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => Model.AdditionalParameters)" class="label-control" />
+    @if (Model.AdditionalParameters.Count() <= 0)
+    {
+        <div class="card">
+            <div class="card-body px-3 py-2">
+            </div>
+        </div>
+    }
+    <ul class="list-group">
+        @foreach (var additionalParameter in Model.AdditionalParameters)
+        {
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="additionalParameter.Name" For="@(() => additionalParameter.Name)" />
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveAdditionalParameter(additionalParameter))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="additionalParameter.Value" For="@(() => additionalParameter.Value)" />
+                    </div>
+                </div>
+            </li>
+        }
+    </ul>
+    <ValidationMessage For="@(() => Model.AdditionalParameters)" />
+    <button type="button" class="btn btn-link btn-xs" @onclick="@(() => AddAdditionalParameter())"><span class="oi oi-plus" aria-hidden="true"></span> Add additional parameter</button>
+</div>
+
+@code {
+    [Parameter]
+    public IClientAdditionalParameters Model { get; set; }
+
+    private void AddAdditionalParameter()
+    {
+        Model.AdditionalParameters.Add(new OAuthAdditionalParameter());
+    }
+
+    private void RemoveAdditionalParameter(OAuthAdditionalParameter additionalParameter)
+    {
+        Model.AdditionalParameters.Remove(additionalParameter);
+    }
+}

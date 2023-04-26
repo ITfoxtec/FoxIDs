@@ -72,6 +72,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<DynamicElement, Api.DynamicElement>()
                 .ReverseMap();
 
+            CreateMap<OAuthAdditionalParameter, Api.OAuthAdditionalParameter>()
+                .ReverseMap();
+
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 

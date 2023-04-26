@@ -1,11 +1,12 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcUpClientViewModel : IValidatableObject
+    public class OidcUpClientViewModel : IClientAdditionalParameters, IValidatableObject
     {
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [Display(Name = "Optional custom SP client ID (default the party name)")]
@@ -18,6 +19,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
+
+        [Length(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [Display(Name = "Additional parameters")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; } = new List<OAuthAdditionalParameter>();
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]

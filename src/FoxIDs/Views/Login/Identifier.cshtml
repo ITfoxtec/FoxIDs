@@ -69,8 +69,11 @@
                             @if (!upParty.LogoUrl.IsNullOrEmpty())
                             {
                                     <img src="@upParty.LogoUrl" class="img-item-filter" alt="@upParty.DisplayName">
-                            }                                
-                            @upParty.DisplayName
+                            }
+                            @if (!upParty.DisplayName.IsNullOrEmpty())
+                            {
+                                <span class="text-item-filter">@upParty.DisplayName</span>
+                            }
                         </a>                                
                     }
                 </div>

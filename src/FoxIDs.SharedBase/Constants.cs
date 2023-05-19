@@ -405,7 +405,7 @@ namespace FoxIDs
                 public const int IssuerLength = 300;
                 public const int KeysApiMin = 0;
                 public const int KeysMin = 1;
-                public const int KeysMax = 10;
+                public const int KeysMax = 10;   
                 public const int OidcDiscoveryUpdateRateMin = 14400; // 4 hours
                 public const int OidcDiscoveryUpdateRateMax = 5184000; // 60 days
 
@@ -419,6 +419,13 @@ namespace FoxIDs
                     public const int ScopesMax = 100;
                     public const int ClaimsMin = 0;
                     public const int ClaimsMax = 100;
+
+                    public const int AdditionalParametersMin = 0;
+                    public const int AdditionalParametersMax = 10;
+                    public const int AdditionalParameterNameLength = 50;
+                    public const string AdditionalParameterNameRegExPattern = @"^[\w:\-/.]*$";
+                    public const int AdditionalParameterValueLength = 250;
+                    public const string AdditionalParameterValueRegExPattern = @"^[\w:\-/.\[\]\{\} ""']*$";
 
                     public const int ResponseModeLength = 30;
                     public const int ResponseTypeLength = 30;
@@ -600,10 +607,14 @@ namespace FoxIDs
             public static class ResponseErrors
             {
                 /// <summary>
-                /// Login canceled by user.
+                /// Login canceled.
                 /// </summary>
                 public const string LoginCanceled = "login_canceled";
 
+                /// <summary>
+                /// Login timeout.
+                /// </summary>
+                public const string LoginTimeout = "login_timeout";
             }
         }
 

@@ -148,6 +148,15 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
+            if (party.Client.AdditionalParameters?.Count() > 0)
+            {
+                foreach(var additionalParameter in party.Client.AdditionalParameters)
+                {
+                    nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                }
+                logger.ScopeTrace(() => $"Up, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+            }
+
             if (party.Client.EnablePkce)
             {
                 var codeChallengeRequest = new CodeChallengeSecret

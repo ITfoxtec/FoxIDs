@@ -10,7 +10,7 @@ NemLog-in (currently called NemLog-in3) is a Danish Identity Provider (IdP) whic
 
 NemLog-in documentation and configuration:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation
-  - [test](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can find the NemLog-in IdP-metadata for test and FOCES2 / OCES3 test certificates
+  - [test](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can find the NemLog-in IdP-metadata for test and OCES3 test certificates
   - [production](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/produktionsmiljo/), where you can find the NemLog-in IdP-metadata for production
 - The [NemLog-in administration portal](https://administration.nemlog-in.dk/) where you configure IT-systems
 - Test environment
@@ -23,32 +23,32 @@ NemLog-in documentation and configuration:
 
 ## Consider separate track
 
-NemLog-in requires the Relying Party (RP) to use a OSES certificate and a high level of logging. Therefore, consider connecting NemLog-in in a separate track where the OCES certificate and log level can be configured without affecting any other configuration.
+NemLog-in requires the Relying Party (RP) to use a OSES certificate and a high level of logging. Therefore, consider connecting NemLog-in in a separate track where the OCES3 certificate and log level can be configured without affecting any other configuration.
 
 Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect FoxIDs with OpenID Connect](howto-oidc-foxids.md) guide. The track with a up-party connected to NemLog-in is called the parallel FoxIDs track in the guide.
 
 ## Certificate
 
-NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
+NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES3 certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
 
-An OCES certificate is valid for three years. After that, it must be updated manually.
+An OCES3 certificate is valid for three years. After that, it must be updated manually.
 
-Add the `.P12` OCES certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) the track to be used for NemLog-in
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
 
 ![Change container type](images/howto-saml-nemlogin3-certificate-container-type.png)
 
-4. Then click on the primary certificate, then write the password and upload the `.P12` OCES certificate 
+4. Then click on the primary certificate, then write the password and upload the `.P12` OCES3 certificate 
 
-![Add OCES certificate](images/howto-saml-nemlogin3-certificate.png)
+![Add OCES3 certificate](images/howto-saml-nemlogin3-certificate.png)
 
 It is subsequently possible to add a secondary certificate and to swap between the primary and secondary certificates.
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
 
-> You need to [configure the OCES certificate](#certificate) before following this configuration.
+> You need to [configure the OCES3 certificate](#certificate) before following this configuration.
 
 **1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 

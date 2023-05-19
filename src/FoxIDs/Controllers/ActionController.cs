@@ -56,6 +56,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = codeSendStatus,
                     Email = sequenceData.Email
                 });
@@ -87,6 +88,7 @@ namespace FoxIDs.Controllers
                     emailConfirmation.Title = loginUpParty.Title;
                     emailConfirmation.IconUrl = loginUpParty.IconUrl;
                     emailConfirmation.Css = loginUpParty.Css;
+                    emailConfirmation.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(emailConfirmation);
                 };
 
@@ -159,6 +161,7 @@ namespace FoxIDs.Controllers
                     Title = loginUpParty.Title,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = confirmationCodeSendStatus,
                     Email = sequenceData.Email
                 });
@@ -195,6 +198,7 @@ namespace FoxIDs.Controllers
                     resetPassword.Title = loginUpParty.Title;
                     resetPassword.IconUrl = loginUpParty.IconUrl;
                     resetPassword.Css = loginUpParty.Css;
+                    resetPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(resetPassword);
                 };
 

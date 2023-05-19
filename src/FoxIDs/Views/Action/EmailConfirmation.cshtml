@@ -43,9 +43,9 @@
                 <input type="submit" value="@Localizer["Confirm email"]" class="btn btn-primary" />
                 @if (Model.EnableCancelLogin)
                 {
-                    <a href="../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
+                    <a href="../../@Constants.Routes.LoginController/@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
                 }
-                <a href="_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new email confirmation code"]</a>
+                <a href="_@Model.SequenceString?newcode=true" class="btn btn-link float-right forgot-password">@Localizer["Send new confirmation code"]</a>
             </div>
         </form>
     </div>

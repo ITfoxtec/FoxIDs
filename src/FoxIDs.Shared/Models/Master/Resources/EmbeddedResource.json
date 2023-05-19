@@ -310,7 +310,7 @@
       "id": 77
     },
     {
-      "name": "Send new email confirmation code",
+      "name": "Send new confirmation code",
       "id": 78
     },
     {
@@ -400,6 +400,10 @@
     {
       "name": "The sequence must be completed within a shorter time period. Please try again.",
       "id": 100
+    },
+    {
+      "name": "Log in with your existing password",
+      "id": 101
     }
   ],
   "resources": [
@@ -1396,11 +1400,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Send new email confirmation code"
+          "value": "Send new confirmation code"
         },
         {
           "culture": "da",
-          "value": "Send ny e-mailbekræftelseskode"
+          "value": "Send ny bekræftelseskode"
         }
       ]
     },
@@ -1679,6 +1683,19 @@
         {
           "culture": "da",
           "value": "Sekvensen skal gennemføres indenfor en kortere tidsperiode. Prøv venligst igen."
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Log in with your existing password"
+        },
+        {
+          "culture": "da",
+          "value": "Log ind med dit eksisterende kodeord"
         }
       ]
     }

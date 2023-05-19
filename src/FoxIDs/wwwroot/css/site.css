@@ -71,9 +71,9 @@ code {
 
 @media (min-width: 576px) {
     .page-content {
-        -ms-flex: 0 0 85%;
-        flex: 0 0 85%;
-        max-width: 85%;
+        -ms-flex: 0 0 92%;
+        flex: 0 0 92%;
+        max-width: 92%;
     }
 }
 

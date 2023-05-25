@@ -2,14 +2,9 @@
 using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
-using ITfoxtec.Identity;
-using ITfoxtec.Identity.Saml2.Schemas;
-using ITfoxtec.Identity.Saml2.Schemas.Metadata;
 using Microsoft.AspNetCore.Http;
 using StackExchange.Redis;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic

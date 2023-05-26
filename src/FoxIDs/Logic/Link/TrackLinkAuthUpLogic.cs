@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                 Acr = loginRequest.Acr,
             }, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthRequest, includeKeySequence: true).ToRedirectResult();
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> AuthResponseAsync(string partyId)

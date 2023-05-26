@@ -89,7 +89,7 @@ namespace FoxIDs.Logic
                 securityHeaderLogic.AddFrameSrcUrls(partyLogoutUrls);
             }
             string redirectUrl = hostedInIframe ? null : GetFrontChannelLogoutDoneUrl(sequenceData, firstParty);
-            return partyLogoutUrls.ToHtmIframePage(redirectUrl, "FoxIDs").ToContentResult();
+            return partyLogoutUrls.ToHtmIframePage(redirectUrl, RouteBinding.DisplayName ?? "FoxIDs").ToContentResult();
         }
 
         private string GetFrontChannelLogoutDoneUrl(SingleLogoutSequenceData sequenceData, TParty firstParty)

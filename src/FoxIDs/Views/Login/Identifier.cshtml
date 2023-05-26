@@ -25,11 +25,14 @@
                     {
                         <a href="@Constants.Endpoints.CancelLogin/_@Model.SequenceString" class="btn btn-light">@Localizer["Cancel"]</a>
                     }
-                    @if (Model.EnableCreateUser)
-                    {
-                        <a href="@Constants.Endpoints.CreateUser/_@Model.SequenceString" class="btn btn-link float-right create-user">@Localizer["Create user"]</a>
-                    }
                 </div>
+                @if (Model.EnableCreateUser)
+                {
+                    <div class="form-group create-user-group">
+                        @Localizer["Don't have an account?"]
+                        <a href="@Constants.Endpoints.CreateUser/_@Model.SequenceString" class="link create-user">@Localizer["Create user"]</a>
+                    </div>
+                }
             </form>
         }
 

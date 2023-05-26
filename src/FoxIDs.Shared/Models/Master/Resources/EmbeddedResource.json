@@ -50,7 +50,7 @@
       "id": 11
     },
     {
-      "name": "CreateUser",
+      "name": "Don't have an account?",
       "id": 12
     },
     {
@@ -555,11 +555,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "CreateUser"
+          "value": "Don't have an account?"
         },
         {
           "culture": "da",
-          "value": "OpretBruger"
+          "value": "Har du ikke en konto?"
         }
       ]
     },

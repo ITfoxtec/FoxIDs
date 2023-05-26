@@ -60,7 +60,7 @@ namespace FoxIDs.Logic
                 DoLoginIdentifierStep = loginRequest.EmailHint.IsNullOrWhiteSpace()
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> LoginRedirectAsync(LoginRequest loginRequest)
@@ -110,7 +110,7 @@ namespace FoxIDs.Logic
                     DoLoginIdentifierStep = !(autoSelectedUpParty != null && autoSelectedUpParty.Name == loginName && !loginRequest.EmailHint.IsNullOrWhiteSpace())
                 });
 
-                return HttpContext.GetUpPartyUrl(loginName, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
+                return HttpContext.GetUpPartyUrl(loginName, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
             }
         }
 

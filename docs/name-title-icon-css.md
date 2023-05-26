@@ -7,7 +7,7 @@ A display name for you organisation, company or system can be configured on each
 The name is configured in the track settings in [FoxIDs Control Client](control.md#foxids-control-client).
 
 1. Select Settings
-2. Add the name in the Track display name field
+2. Add the name in the Display name field
 3. Click Update
 
 ## Add browser title, browser icon and CSS
@@ -40,7 +40,7 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
         visibility: hidden;
     }
 
-    .brand-content-text:before {
+    .brand-content-text::before {
         color: #6ad54a;
         content: "Test logo";
         visibility: visible;
@@ -54,7 +54,7 @@ It is also possible to use a logo image.
         display: none;
     }
 
-    .brand-content-icon:before {
+    .brand-content-icon::before {
        content:url('https://some-external-site.com/logo.png');
     }
 
@@ -118,7 +118,7 @@ Change button and link color, in this example CSS to green.
 
  Add information to the login box.
 
-    div.page-content:before {
+    div.page-content::before {
       font-weight: bold;
       font-style: italic;
       content: "Login with test user 'test1@foxids.com' or 'test2@foxids.com' and password 'TestAccess!'";

@@ -54,25 +54,18 @@ namespace FoxIDs.Controllers
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
-        public async Task<IActionResult> Login(bool edit)
+        public async Task<IActionResult> Login()
         {
             try
             {
                 logger.ScopeTrace(() => "Start login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                if (edit)
+                if (!sequenceData.DoLoginIdentifierStep)
                 {
                     sequenceData.DoLoginIdentifierStep = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 }
-                if (sequenceData.DoLoginIdentifierStep || edit)
-                {
-                    return await IdentifierInternalAsync();
-                }
-                else 
-                {
-                    return await PasswordInternalAsync();
-                }
+                return await IdentifierInternalAsync();
             }
             catch (EndpointException)
             {
@@ -195,7 +188,7 @@ namespace FoxIDs.Controllers
                 return base.View("Identifier", new IdentifierViewModel
                 {
                     SequenceString = SequenceString,
-                    Title = loginUpParty.Title,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
@@ -263,15 +256,18 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    var identifier = new IdentifierViewModel { Email = login.Email };
-                    identifier.SequenceString = SequenceString;
-                    identifier.Title = loginUpParty.Title;
-                    identifier.IconUrl = loginUpParty.IconUrl;
-                    identifier.Css = loginUpParty.Css;
-                    identifier.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    identifier.EnableCreateUser = loginUpParty.EnableCreateUser;
-                    identifier.ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData);
-                    identifier.UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData);
+                    var identifier = new IdentifierViewModel
+                    {
+                        Email = login.Email,
+                        SequenceString = SequenceString,
+                        Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                        IconUrl = loginUpParty.IconUrl,
+                        Css = loginUpParty.Css,
+                        EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                        EnableCreateUser = loginUpParty.EnableCreateUser,
+                        ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
+                        UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
+                    };
                     return View("Identifier", identifier);
                 };
 
@@ -368,11 +364,12 @@ namespace FoxIDs.Controllers
             return View("Password", new PasswordViewModel
             {
                 SequenceString = SequenceString,
-                Title = loginUpParty.Title,
+                Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                 IconUrl = loginUpParty.IconUrl,
                 Css = loginUpParty.Css,
                 EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 EnableResetPassword = !loginUpParty.DisableResetPassword,
+                EnableCreateUser = loginUpParty.EnableCreateUser,
                 Email = sequenceData.Email,
             });
         }
@@ -435,14 +432,18 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    var password = new PasswordViewModel { Password = login.Password };
-                    password.SequenceString = SequenceString;
-                    password.Title = loginUpParty.Title;
-                    password.IconUrl = loginUpParty.IconUrl;
-                    password.Css = loginUpParty.Css;
-                    password.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    password.EnableResetPassword = !loginUpParty.DisableResetPassword;
-                    password.Email = sequenceData.Email;
+                    var password = new PasswordViewModel
+                    {
+                        Password = login.Password,
+                        SequenceString = SequenceString,
+                        Title = loginUpParty.Title ?? RouteBinding.DisplayName,
+                        IconUrl = loginUpParty.IconUrl,
+                        Css = loginUpParty.Css,
+                        EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                        EnableResetPassword = !loginUpParty.DisableResetPassword,
+                        EnableCreateUser = loginUpParty.EnableCreateUser,
+                        Email = sequenceData.Email
+                    };
                     return View("Password", password);
                 };
 
@@ -531,7 +532,7 @@ namespace FoxIDs.Controllers
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))
                 {
                     logger.ScopeTrace(() => "Show logout consent dialog.");
-                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, Title = loginUpParty.Title, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    return View(nameof(Logout), new LogoutViewModel { SequenceString = SequenceString, Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
                 }
                 else
                 {
@@ -561,7 +562,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     logout.SequenceString = SequenceString;
-                    logout.Title = loginUpParty.Title;
+                    logout.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     logout.IconUrl = loginUpParty.IconUrl;
                     logout.Css = loginUpParty.Css;
                     return View(nameof(Logout), logout);
@@ -634,7 +635,7 @@ namespace FoxIDs.Controllers
                 else
                 {
                     logger.ScopeTrace(() => "Show logged in dialog.");
-                    return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                    return View("LoggedIn", new LoggedInViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
                 }
             }
             else
@@ -662,7 +663,7 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
                 logger.ScopeTrace(() => "Show logged out dialog.");
-                return View("loggedOut", new LoggedOutViewModel { Title = loginUpParty.Title, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
+                return View("loggedOut", new LoggedOutViewModel { Title = loginUpParty.Title ?? RouteBinding.DisplayName, IconUrl = loginUpParty.IconUrl, Css = loginUpParty.Css });
             }
         }
 
@@ -693,7 +694,7 @@ namespace FoxIDs.Controllers
                 return View(nameof(CreateUser), new CreateUserViewModel 
                 {
                     SequenceString = SequenceString, 
-                    Title = loginUpParty.Title, 
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName, 
                     IconUrl = loginUpParty.IconUrl, 
                     Css = loginUpParty.Css,
                     Elements = ToElementsViewModel(loginUpParty.CreateUser.Elements).ToList()
@@ -727,7 +728,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     createUser.SequenceString = SequenceString;
-                    createUser.Title = loginUpParty.Title;
+                    createUser.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     createUser.IconUrl = loginUpParty.IconUrl;
                     createUser.Css = loginUpParty.Css;
                     return View(nameof(CreateUser), createUser);
@@ -849,7 +850,7 @@ namespace FoxIDs.Controllers
             sequenceData.Email = email;
             sequenceData.DoLoginIdentifierStep = false;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.LoginController, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         private void PopulateCreateUserDefault(LoginUpParty loginUpParty)
@@ -944,7 +945,7 @@ namespace FoxIDs.Controllers
                 return View(nameof(ChangePassword), new ChangePasswordViewModel
                 {
                     SequenceString = SequenceString,
-                    Title = loginUpParty.Title,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
@@ -972,7 +973,7 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewError = () =>
                 {
                     changePassword.SequenceString = SequenceString;
-                    changePassword.Title = loginUpParty.Title;
+                    changePassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     changePassword.IconUrl = loginUpParty.IconUrl;
                     changePassword.Css = loginUpParty.Css;
                     changePassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;

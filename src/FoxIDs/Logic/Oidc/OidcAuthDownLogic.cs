@@ -278,11 +278,11 @@ namespace FoxIDs.Logic
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
-                    return await nameValueCollection.ToHtmlPostContentResultAsync(sequenceData.RedirectUri);
+                    return await nameValueCollection.ToHtmlPostContentResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
                 case IdentityConstants.ResponseModes.Query:
-                    return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
+                    return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
                 case IdentityConstants.ResponseModes.Fragment:
-                    return await nameValueCollection.ToFragmentResultAsync(sequenceData.RedirectUri);
+                    return await nameValueCollection.ToFragmentResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
 
                 default:
                     throw new NotSupportedException();
@@ -402,7 +402,7 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            return await nameValueCollection.ToRedirectResultAsync(redirectUri);
+            return await nameValueCollection.ToRedirectResultAsync(redirectUri, RouteBinding.DisplayName);
         }
     }
 }

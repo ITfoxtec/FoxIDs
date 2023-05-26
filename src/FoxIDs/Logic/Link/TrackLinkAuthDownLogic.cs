@@ -121,7 +121,7 @@ namespace FoxIDs.Logic
             sequenceData.ErrorDescription = errorDescription;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthResponse, includeKeySequence: true).ToRedirectResult();
+            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkAuthResponse, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
     }
 }

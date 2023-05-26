@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
@@ -173,7 +173,7 @@ namespace FoxIDs.Logic
 
             logger.ScopeTrace(() => $"Up, Authentication request URL '{party.Client.AuthorizeUrl}'.");
             logger.ScopeTrace(() => "Up, Sending OIDC Authentication request.", triggerEvent: true);
-            return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl);            
+            return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl, RouteBinding.DisplayName);            
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)

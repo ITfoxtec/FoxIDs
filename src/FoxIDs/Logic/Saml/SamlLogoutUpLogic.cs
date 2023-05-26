@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.LogoutRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
@@ -396,7 +396,7 @@ namespace FoxIDs.Logic
 
                 if (binding is Saml2Binding<Saml2PostBinding>)
                 {
-                    return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.UpJump.SingleLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.UpJump.SingleLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
                 }
                 else
                 {

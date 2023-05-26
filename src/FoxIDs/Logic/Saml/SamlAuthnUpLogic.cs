@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
                 LoginEmailHint = loginRequest.EmailHint
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.SamlUpJumpController, Constants.Endpoints.UpJump.AuthnRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)

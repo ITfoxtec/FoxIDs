@@ -214,7 +214,7 @@ namespace FoxIDs
                 public const int ResourcesMin = 0;
                 public const int ResourcesMax = 5000;
                 public const int SequenceLifetimeMin = 30;
-                public const int SequenceLifetimeMax = 10800;
+                public const int SequenceLifetimeMax = 18000;
 
                 public const int MaxFailingLoginsMin = 2;
                 public const int MaxFailingLoginsMax = 20;

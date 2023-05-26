@@ -88,7 +88,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
             await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutResponse, includeKeySequence: true).ToRedirectResult();
+            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutResponse, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
     }
 }

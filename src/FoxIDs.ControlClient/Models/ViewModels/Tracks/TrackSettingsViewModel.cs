@@ -24,7 +24,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [MaxLength(Constants.Models.Track.DisplayNameLength)]
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
-        [Display(Name = "Track display name (e.g. company name or system name)")]
+        [Display(Name = "Display name (e.g. company name or system name)")]
         public string DisplayName { get; set; }
 
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] 
@@ -41,7 +41,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
         [Display(Name = "Failing login observation period")]
-        public int FailingLoginObservationPeriod { get; set; } = 900;
+        public int FailingLoginObservationPeriod { get; set; } = 3600;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [Display(Name = "Password min length")]

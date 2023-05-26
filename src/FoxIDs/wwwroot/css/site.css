@@ -20,7 +20,6 @@ body {
 a {
     color: #df8935;
 }
-
     a:hover {
         color: #d87513;
     }
@@ -224,6 +223,17 @@ code {
 
     .active-group.group-filter {
         margin: 5px 0px;
+    }
+
+.base-for-overlap {
+    position: relative;
+}
+    .base-for-overlap > .overlap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
     }
 
 .heading {

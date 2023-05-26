@@ -50,7 +50,7 @@
       "id": 11
     },
     {
-      "name": "CreateUser",
+      "name": "Log in with your existing password",
       "id": 12
     },
     {
@@ -400,10 +400,6 @@
     {
       "name": "The sequence must be completed within a shorter time period. Please try again.",
       "id": 100
-    },
-    {
-      "name": "Log in with your existing password",
-      "id": 101
     }
   ],
   "resources": [
@@ -555,11 +551,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "CreateUser"
+          "value": "Log in with your existing password"
         },
         {
           "culture": "da",
-          "value": "OpretBruger"
+          "value": "Log ind med dit eksisterende kodeord"
         }
       ]
     },
@@ -1683,19 +1679,6 @@
         {
           "culture": "da",
           "value": "Sekvensen skal gennemføres indenfor en kortere tidsperiode. Prøv venligst igen."
-        }
-      ]
-    },
-    {
-      "id": 101,
-      "items": [
-        {
-          "culture": "en",
-          "value": "Log in with your existing password"
-        },
-        {
-          "culture": "da",
-          "value": "Log ind med dit eksisterende kodeord"
         }
       ]
     }

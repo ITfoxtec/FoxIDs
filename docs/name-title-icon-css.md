@@ -40,7 +40,7 @@ Find the up-party login in [FoxIDs Control Client](control.md#foxids-control-cli
         visibility: hidden;
     }
 
-    .brand-content-text:before {
+    .brand-content-text::before {
         color: #6ad54a;
         content: "Test logo";
         visibility: visible;
@@ -54,7 +54,7 @@ It is also possible to use a logo image.
         display: none;
     }
 
-    .brand-content-icon:before {
+    .brand-content-icon::before {
        content:url('https://some-external-site.com/logo.png');
     }
 
@@ -118,7 +118,7 @@ Change button and link color, in this example CSS to green.
 
  Add information to the login box.
 
-    div.page-content:before {
+    div.page-content::before {
       font-weight: bold;
       font-style: italic;
       content: "Login with test user 'test1@foxids.com' or 'test2@foxids.com' and password 'TestAccess!'";

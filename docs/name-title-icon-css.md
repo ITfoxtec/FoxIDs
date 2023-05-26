@@ -7,7 +7,7 @@ A display name for you organisation, company or system can be configured on each
 The name is configured in the track settings in [FoxIDs Control Client](control.md#foxids-control-client).
 
 1. Select Settings
-2. Add the name in the Track display name field
+2. Add the name in the Display name field
 3. Click Update
 
 ## Add browser title, browser icon and CSS

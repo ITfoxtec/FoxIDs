@@ -56,7 +56,7 @@ namespace FoxIDs.Logic
                 PostLogoutRedirect = logoutRequest.PostLogoutRedirect,
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.EndSessionRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -113,7 +113,7 @@ namespace FoxIDs.Logic
             var nameValueCollection = rpInitiatedLogoutRequest.ToDictionary();
             logger.ScopeTrace(() => $"Up, End session request URL '{party.Client.EndSessionUrl}'.");
             logger.ScopeTrace(() => "Up, Sending OIDC End session request.", triggerEvent: true);
-            return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl);
+            return await nameValueCollection.ToRedirectResultAsync(party.Client.EndSessionUrl, RouteBinding.DisplayName);
         }
 
         private void ValidatePartyLogoutSupport(OidcUpParty party)

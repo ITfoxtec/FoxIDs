@@ -92,7 +92,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool RequireTwoFactor { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.TitleLength)]
-        [Display(Name = "Browser Title (default FoxIDs)")]
+        [Display(Name = "Browser Title (otherwise Settings -> Display name or default FoxIDs)")]
         public string Title { get; set; }
 
         [MaxLength(Constants.Models.LoginUpParty.IconUrlLength)]

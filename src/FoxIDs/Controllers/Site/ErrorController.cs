@@ -117,7 +117,7 @@ namespace FoxIDs.Controllers
                             var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
                             securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
                             securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                            errorViewModel.Title = uiLoginUpParty.Title;
+                            errorViewModel.Title = uiLoginUpParty.Title ?? RouteBinding.DisplayName;
                             errorViewModel.IconUrl = uiLoginUpParty.IconUrl;
                             errorViewModel.Css = uiLoginUpParty.Css;
                             return sequence;

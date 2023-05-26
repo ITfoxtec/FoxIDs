@@ -373,6 +373,7 @@ namespace FoxIDs.Controllers
                 Css = loginUpParty.Css,
                 EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 EnableResetPassword = !loginUpParty.DisableResetPassword,
+                EnableCreateUser = loginUpParty.EnableCreateUser,
                 Email = sequenceData.Email,
             });
         }
@@ -435,14 +436,18 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    var password = new PasswordViewModel { Password = login.Password };
-                    password.SequenceString = SequenceString;
-                    password.Title = loginUpParty.Title;
-                    password.IconUrl = loginUpParty.IconUrl;
-                    password.Css = loginUpParty.Css;
-                    password.EnableCancelLogin = loginUpParty.EnableCancelLogin;
-                    password.EnableResetPassword = !loginUpParty.DisableResetPassword;
-                    password.Email = sequenceData.Email;
+                    var password = new PasswordViewModel
+                    {
+                        Password = login.Password,
+                        SequenceString = SequenceString,
+                        Title = loginUpParty.Title,
+                        IconUrl = loginUpParty.IconUrl,
+                        Css = loginUpParty.Css,
+                        EnableCancelLogin = loginUpParty.EnableCancelLogin,
+                        EnableResetPassword = !loginUpParty.DisableResetPassword,
+                        EnableCreateUser = loginUpParty.EnableCreateUser,
+                        Email = sequenceData.Email
+                    };
                     return View("Password", password);
                 };
 

@@ -34,6 +34,7 @@ namespace FoxIDs.Logic
 
         public async Task<TwoFactorSetupInfo> GenerateSetupCodeAsync(string twoFactorAppName, string email)
         {
+            email = email?.ToLowerInvariant();
             var twoFactor = new TwoFactorAuthenticator();
             var secret = RandomGenerator.Generate(secretAndRecoveryCodeLength);
             var setupInfo = await Task.FromResult(twoFactor.GenerateSetupCode(twoFactorAppName, email, secret, false, 3));
@@ -48,6 +49,7 @@ namespace FoxIDs.Logic
         
         public async Task ValidateTwoFactorBySecretAsync(string email, string secret, string appCode)
         {
+            email = email?.ToLowerInvariant();
             var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
             var twoFactor = new TwoFactorAuthenticator();
@@ -68,6 +70,7 @@ namespace FoxIDs.Logic
 
         public async Task ValidateTwoFactorByExternalSecretAsync(string email, string secretExternalName, string appCode)
         {
+            email = email?.ToLowerInvariant();
             var secret = await externalSecretLogic.GetExternalSecretAsync(secretExternalName);
             if (secret.IsNullOrWhiteSpace())
             {
@@ -84,6 +87,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> SetTwoFactorAppSecretUser(string email, string newSecret, string secretExternalName, string twoFactorAppRecoveryCode)
         {
+            email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Set two-factor app secret user '{email}', Route '{RouteBinding?.Route}'.");
 
             var user = await accountLogic.GetUserAsync(email);
@@ -112,6 +116,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> ValidateTwoFactorAppRecoveryCodeUser(string email, string twoFactorAppRecoveryCode)
         {
+            email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Validating two-factor app recovery code user '{email}', Route '{RouteBinding?.Route}'.");
 
             var failingTwoFactorCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);

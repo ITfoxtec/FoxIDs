@@ -43,11 +43,13 @@ namespace FoxIDs.Logic
 
         public Task<ConfirmationCodeSendStatus> SendEmailConfirmationCodeAsync(string email, bool forceNewCode)
         {
+            email = email?.ToLowerInvariant();
             return SendEmailCodeAsync(GetEmailConfirmationCodeEmailContent(), EmailConfirmationCodeRedisKeyElement, email, forceNewCode, "email");
         }
 
         public Task<User> VerifyEmailConfirmationCodeAsync(string email, string code)
         {
+            email = email?.ToLowerInvariant();
             return VerifyEmailCodeAsync(GetEmailConfirmationCodeEmailContent(), EmailConfirmationCodeRedisKeyElement, null, email, code, "email");
         }
 
@@ -64,11 +66,13 @@ namespace FoxIDs.Logic
 
         public Task<ConfirmationCodeSendStatus> SendResetPasswordCodeAsync(string email, bool forceNewCode)
         {
+            email = email?.ToLowerInvariant();
             return SendEmailCodeAsync(GetResetPasswordCodeEmailContent(), ResetPasswordCodeRedisKeyElement, email, forceNewCode, "reset password");
         }
 
         public Task<User> VerifyResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword)
         {
+            email = email?.ToLowerInvariant();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
             return VerifyEmailCodeAsync(GetResetPasswordCodeEmailContent(), ResetPasswordCodeRedisKeyElement, onSuccess, email, code, "reset password");
         }

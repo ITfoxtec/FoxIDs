@@ -54,25 +54,18 @@ namespace FoxIDs.Controllers
             this.oauthRefreshTokenGrantLogic = oauthRefreshTokenGrantLogic;
         }
 
-        public async Task<IActionResult> Login(bool edit)
+        public async Task<IActionResult> Login()
         {
             try
             {
                 logger.ScopeTrace(() => "Start login.");
                 var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>(remove: false);
-                if (edit)
+                if (!sequenceData.DoLoginIdentifierStep)
                 {
                     sequenceData.DoLoginIdentifierStep = true;
                     await sequenceLogic.SaveSequenceDataAsync(sequenceData);
                 }
-                if (sequenceData.DoLoginIdentifierStep || edit)
-                {
-                    return await IdentifierInternalAsync();
-                }
-                else 
-                {
-                    return await PasswordInternalAsync();
-                }
+                return await IdentifierInternalAsync();
             }
             catch (EndpointException)
             {

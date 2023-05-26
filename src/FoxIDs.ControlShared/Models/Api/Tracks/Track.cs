@@ -17,8 +17,8 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
         public string DisplayName { get; set; }
 
-        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
-        public int SequenceLifetime { get; set; } = 900;
+        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours
+        public int SequenceLifetime { get; set; } = 7200;
 
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]
         public int MaxFailingLogins { get; set; } = 5;
@@ -27,7 +27,7 @@ namespace FoxIDs.Models.Api
         public int FailingLoginCountLifetime { get; set; } = 36000;
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
-        public int FailingLoginObservationPeriod { get; set; } = 900;
+        public int FailingLoginObservationPeriod { get; set; } = 3600;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         public int PasswordLength { get; set; } = 6;

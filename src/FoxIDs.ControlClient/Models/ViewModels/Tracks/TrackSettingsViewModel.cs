@@ -41,7 +41,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Range(Constants.Models.Track.FailingLoginObservationPeriodMin, Constants.Models.Track.FailingLoginObservationPeriodMax)]
         [Display(Name = "Failing login observation period")]
-        public int FailingLoginObservationPeriod { get; set; } = 900;
+        public int FailingLoginObservationPeriod { get; set; } = 3600;
 
         [Range(Constants.Models.Track.PasswordLengthMin, Constants.Models.Track.PasswordLengthMax)]
         [Display(Name = "Password min length")]

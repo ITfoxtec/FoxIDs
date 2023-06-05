@@ -398,12 +398,20 @@
       "id": 99
     },
     {
-      "name": "The sequence must be completed within a shorter time period. Please try again.",
+      "name": "It is not possible to go back in the browser at this point. Please try again.",
       "id": 100
     },
     {
       "name": "Log in with your existing password",
       "id": 101
+    },
+    {
+      "name": "{0}Reset password",
+      "id": 102
+    },
+    {
+      "name": "{0}Email confirmation",
+      "id": 103
     }
   ],
   "resources": [
@@ -1678,11 +1686,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "The sequence must be completed within a shorter time period. Please try again."
+          "value": "It is not possible to go back in the browser at this point. Please try again."
         },
         {
           "culture": "da",
-          "value": "Sekvensen skal gennemføres indenfor en kortere tidsperiode. Prøv venligst igen."
+          "value": "Det er ikke muligt at gå tilbage i browseren på dette sted. Prøv venligst igen."
         }
       ]
     },
@@ -1696,6 +1704,32 @@
         {
           "culture": "da",
           "value": "Log ind med dit eksisterende kodeord"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0}Reset password"
+        },
+        {
+          "culture": "da",
+          "value": "{0}Nulstil kodeord"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0}Email confirmation"
+        },
+        {
+          "culture": "da",
+          "value": "{0}E-mail bekræftelse"
         }
       ]
     }

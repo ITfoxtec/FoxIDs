@@ -66,17 +66,21 @@ namespace FoxIDs.Controllers
             {
                 if (sequenceException != null)
                 {
-                    var handleSequenceExceptionResult = await HandleGracefulSequenceExceptionAsync(sequence, sequenceException);
-                    if (handleSequenceExceptionResult != null)
+                    var handleGracefulSequenceExceptionResult = await HandleGracefulSequenceExceptionAsync(sequence, sequenceException);
+                    if (handleGracefulSequenceExceptionResult != null)
                     {
-                        return handleSequenceExceptionResult;
+                        return handleGracefulSequenceExceptionResult;
                     }
                 }
             }
 
             if (sequenceException != null)
             {
-                return HandleSequenceException(errorViewModel, sequenceException);
+                var handleSequenceExceptionResult = HandleSequenceException(errorViewModel, sequenceException);
+                if (handleSequenceExceptionResult != null)
+                {
+                    return handleSequenceExceptionResult;
+                }
             }
 
             var routeCreationException = FindException<RouteCreationException>(exception);
@@ -134,6 +138,11 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> HandleGracefulSequenceExceptionAsync(Sequence sequence, SequenceException sequenceException)
         {
+            if (!(sequenceException is SequenceTimeoutException || sequenceException is SequenceBrowserBackException))
+            {
+                return null;
+            }
+
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<DownLinkSequenceData>(sequence: sequence, allowNull: true, remove: false);
             if (sequenceData == null)
             {
@@ -171,17 +180,19 @@ namespace FoxIDs.Controllers
                     return $"The sequence must be completed within {timeout.TotalMinutes} minutes.";
                 }
             }
-            else
+            else if (sequenceException is SequenceBrowserBackException)
             {
-                return "User has navigated back in the browser.";
+                return "It is not possible to go back in the browser at this point.";
             }
+
+            throw new InvalidOperationException("Derived SequenceException type not supported.");
         }
 
         private IActionResult HandleSequenceException(ErrorViewModel errorViewModel, SequenceException sequenceException)
         {
-            errorViewModel.ErrorTitle = localizer["Timeout"];
             if (sequenceException is SequenceTimeoutException sequenceTimeoutException)
             {
+                errorViewModel.ErrorTitle = localizer["Timeout"];
                 var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
                 if (sequenceTimeoutException.AccountAction == true)
                 {
@@ -191,13 +202,15 @@ namespace FoxIDs.Controllers
                 {
                     errorViewModel.Error = string.Format(localizer["The sequence must be completed within {0} minutes. Please try again."], timeout.TotalMinutes);
                 }
+                return View(errorViewModel);
             }
-            else
+            else if (sequenceException is SequenceBrowserBackException)
             {
-                errorViewModel.Error = string.Format(localizer["The sequence must be completed within a shorter time period. Please try again."]);
+                errorViewModel.Error = string.Format(localizer["It is not possible to go back in the browser at this point. Please try again."]);
+                return View(errorViewModel);
             }
 
-            return View(errorViewModel);
+            return null;
         }
 
         private IActionResult HandleRouteCreationException(ErrorViewModel errorViewModel, RouteCreationException routeCreationException)

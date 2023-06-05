@@ -226,7 +226,7 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    throw new SequenceException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
+                    throw new SequenceBrowserBackException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
                 }
             }
 
@@ -248,7 +248,7 @@ namespace FoxIDs.Logic
             }
             if (!(keySequenceData.KeyValidUntil > 0) || DateTimeOffset.FromUnixTimeSeconds(keySequenceData.KeyValidUntil) < DateTimeOffset.UtcNow)
             {
-                throw new SequenceException($"Key sequence timeout, id '{sequence.Id}'.");
+                throw new SequenceTimeoutException($"Key sequence timeout, id '{sequence.Id}'.");
             }
 
             if (!remove)
@@ -338,7 +338,7 @@ namespace FoxIDs.Logic
                 var sequenceString = await distributedCache.GetStringAsync(key);
                 if (sequenceString == null)
                 {
-                    throw new SequenceException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
+                    throw new SequenceBrowserBackException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
                 }
                 await distributedCache.RemoveAsync(key);
 

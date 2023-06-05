@@ -59,7 +59,7 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
-                Subject = {localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
+                Subject = localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
                 Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
             };
         }

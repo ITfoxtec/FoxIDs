@@ -100,9 +100,6 @@ namespace FoxIDs.Logic
             body = HttpUtility.HtmlEncode(body);
             body = body.Replace("&lt;", "<");
             body = body.Replace("&gt;", ">");
-            //body = body.Replace("&lt;", "<");
-            //body = body.Replace("&lt;", "<");
-
             return body;
         }
 

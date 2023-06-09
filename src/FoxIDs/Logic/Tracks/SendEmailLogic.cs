@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
 
         private string GetBodyHtml(string body)
         {
-            return string.Format(
+            var bodyHtml = string.Format(
 @"<!DOCTYPE html>
 <html>
   <head lang=""{0}"">
@@ -72,7 +72,6 @@ namespace FoxIDs.Logic
     <meta name=""x-apple-disable-message-reformatting"">
     <title></title>
     <style type=""text/css"">
-
       body {{
         margin: 0;
         padding: 0;
@@ -92,7 +91,19 @@ namespace FoxIDs.Logic
     </style>
   </head>
   <body>{1}</body>
-</html>", httpContextAccessor.HttpContext.GetCultureParentName(), HttpUtility.HtmlEncode(body));
+</html>", httpContextAccessor.HttpContext.GetCultureParentName(), BodyHtmlEncode(body)); 
+            return bodyHtml;
+        }
+
+        private string BodyHtmlEncode(string body)
+        {
+            body = HttpUtility.HtmlEncode(body);
+            body = body.Replace("&lt;", "<");
+            body = body.Replace("&gt;", ">");
+            //body = body.Replace("&lt;", "<");
+            //body = body.Replace("&lt;", "<");
+
+            return body;
         }
 
         private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body, string fromName)

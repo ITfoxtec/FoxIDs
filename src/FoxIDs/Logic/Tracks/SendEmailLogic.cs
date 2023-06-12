@@ -37,16 +37,20 @@ namespace FoxIDs.Logic
             try
             {
                 var emailSettings = GetSettings();
+                if (emailSettings.FromName.IsNullOrEmpty() && !fromName.IsNullOrWhiteSpace())
+                {
+                    emailSettings.FromName = fromName;
+                }
 
                 if (!emailSettings.SendgridApiKey.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with Sendgrid using {(RouteBinding.SendEmail == null ? "default" : "track")} settings.");
-                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body), fromName);
+                    await SendEmailWithSendgridAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body));
                 }
                 else if (!emailSettings.SmtpHost.IsNullOrWhiteSpace())
                 {
                     logger.ScopeTrace(() => $"Send email with SMTP using {(RouteBinding.SendEmail == null ? "default" : "track")} settings.");
-                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body), fromName);
+                    await SendEmailWithSmtpAsync(emailSettings, toEmail, emailContent.Subject, GetBodyHtml(emailContent.Body));
                 }
                 else
                 {
@@ -103,12 +107,12 @@ namespace FoxIDs.Logic
             return body;
         }
 
-        private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body, string fromName)
+        private async Task SendEmailWithSendgridAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body)
         {
             Debug.WriteLine($"HTML: '{body}'");
 
             var mail = new SendGridMessage();
-            mail.From = fromName.IsNullOrWhiteSpace() ? new EmailAddress(emailSettings.FromEmail) : new EmailAddress(emailSettings.FromEmail, fromName);
+            mail.From = emailSettings.FromName.IsNullOrWhiteSpace() ? new EmailAddress(emailSettings.FromEmail) : new EmailAddress(emailSettings.FromEmail, emailSettings.FromName);
             mail.AddTo(toEmail.Address, toEmail.DisplayName);
             mail.Subject = subject;
             mail.AddContent(MediaTypeNames.Text.Html, body);
@@ -127,12 +131,12 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task SendEmailWithSmtpAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body, string fromName)
+        private async Task SendEmailWithSmtpAsync(SendEmail emailSettings, MailAddress toEmail, string subject, string body)
         {
             try
             {
                 var mail = new MailMessage();
-                mail.From = fromName.IsNullOrWhiteSpace() ? new MailAddress(emailSettings.FromEmail) : new MailAddress(emailSettings.FromEmail, fromName);
+                mail.From = emailSettings.FromName.IsNullOrWhiteSpace() ? new MailAddress(emailSettings.FromEmail) : new MailAddress(emailSettings.FromEmail, emailSettings.FromName);
                 mail.To.Add(new MailAddress(toEmail.Address, toEmail.DisplayName, Encoding.UTF8));
                 mail.Subject = subject;
                 mail.SubjectEncoding = Encoding.UTF8;
@@ -165,6 +169,7 @@ namespace FoxIDs.Logic
             {
                 return new SendEmail
                 {
+                    FromName = settings.Sendgrid.FromName,
                     FromEmail = settings.Sendgrid.FromEmail,
                     SendgridApiKey = settings.Sendgrid.ApiKey
                 };
@@ -175,6 +180,7 @@ namespace FoxIDs.Logic
             {
                 return new SendEmail
                 {
+                    FromName =settings.Smtp.FromName,
                     FromEmail = settings.Smtp.FromEmail,
                     SmtpHost = settings.Smtp.Host,
                     SmtpPort = settings.Smtp.Port,

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -10,6 +11,14 @@ namespace FoxIDs.Client.Models.ViewModels
         [RegularExpression(Constants.Models.User.EmailRegExPattern)]
         [Display(Name = "Send emails from email address")]
         public string FromEmail { get; set; }
+
+        /// <summary>
+        /// From name (name associated to the email address).
+        /// </summary>
+        [MaxLength(Constants.Models.Track.SendEmail.FromNameLength)]
+        [JsonProperty(PropertyName = "from_name")]
+        [Display(Name = "Optional From name associated to the from email address")]
+        public string FromName { get; set; }
 
         [Display(Name = "Select mail provider")]
         public MailProviders MailProvider { get; set; }        

@@ -52,6 +52,7 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Party Client not configured.");
             }
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();

@@ -53,6 +53,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
 
             switch (party.AuthnBinding.RequestBinding)
             {

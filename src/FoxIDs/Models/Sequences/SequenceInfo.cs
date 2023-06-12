@@ -2,20 +2,18 @@
 
 namespace FoxIDs.Models.Sequences
 {
-    public class Sequence
+    public class SequenceInfo
     {
-        public string Id { get; set; }
-
-        public long CreateTime { get; set; }
-
-        public bool? AccountAction { get; set; }
-
+        [JsonProperty(PropertyName = "c")]
         public string Culture { get; set; }
 
+        [JsonProperty(PropertyName = "d")]
         public string DownPartyId { get; set; }
 
+        [JsonProperty(PropertyName = "y")]
         public PartyTypes DownPartyType { get; set; }
 
+        [JsonProperty(PropertyName = "u")]
         public string UiUpPartyId { get; set; }
     }
 }

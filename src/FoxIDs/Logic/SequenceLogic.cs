@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity;
@@ -97,6 +98,19 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"Sequence culture added, id '{sequence.Id}', culture '{culture}'.");
             }
         }
+        public async Task SetDownPartyAsync(string downPartyId, PartyTypes downPartyType)
+        {
+            if (!downPartyId.IsNullOrEmpty())
+            {
+                var sequence = HttpContext.GetSequence();
+                sequence.DownPartyId = downPartyId;
+                sequence.DownPartyType = downPartyType;
+                HttpContext.Items[Constants.Sequence.Object] = sequence;
+                HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
+
+                logger.ScopeTrace(() => $"Sequence down-party added, id '{sequence.Id}', downPartyId '{downPartyId}', downPartyType '{downPartyType}'.");
+            }
+        }
         public async Task SetUiUpPartyIdAsync(string uiUpPartyId)
         {
             if(!uiUpPartyId.IsNullOrEmpty())
@@ -106,7 +120,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace(() => $"Sequence culture added, id '{sequence.Id}', UiUpPartyId '{uiUpPartyId}'.");
+                logger.ScopeTrace(() => $"Sequence UI up-party added, id '{sequence.Id}', uiUpPartyId '{uiUpPartyId}'.");
             }
         }
 
@@ -118,7 +132,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
+                    var sequence = Unprotect(sequenceString);
                     if (sequence != null)
                     {
                         logger.SetScopeProperty(Constants.Logs.SequenceId, sequence.Id);
@@ -138,7 +152,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
+                var sequence = await Task.FromResult(Unprotect(sequenceString));
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
                 CheckTimeout(sequence);
@@ -166,7 +180,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var sequence = await Task.FromResult(CreateProtector(trackName).Unprotect(sequenceString).ToObject<Sequence>());
+                var sequence = await Task.FromResult(Unprotect(sequenceString, trackName));
                 CheckTimeout(sequence);
 
                 logger.ScopeTrace(() => $"Sequence is validated, id '{sequence.Id}'.");
@@ -198,13 +212,15 @@ namespace FoxIDs.Logic
                 AbsoluteExpiration = data is IDownSequenceData ? absoluteExpiration.AddSeconds(settings.SequenceGracePeriod) : absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
-            if (data is UpSequenceData upSequenceData)
-            {
-                await distributedCache.SetStringAsync(DataKey(typeof(DownLinkSequenceData), sequence, trackName), new DownLinkSequenceData { Id = upSequenceData.DownPartyLink.Id, Type = upSequenceData.DownPartyLink.Type }.ToJson(), new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpiration = absoluteExpiration.AddSeconds(settings.SequenceGracePeriod)
-                });
-            }
+            //if (data is UpSequenceData upSequenceData && upSequenceData.DownPartyLink != null)
+            //{
+            //    await SetDownPartyAsync(upSequenceData.DownPartyLink.Id, upSequenceData.DownPartyLink.Type);
+
+            //    //await distributedCache.SetStringAsync(DataKey(typeof(DownLinkSequenceData), sequence, trackName), new DownLinkSequenceData { Id = upSequenceData.DownPartyLink.Id, Type = upSequenceData.DownPartyLink.Type }.ToJson(), new DistributedCacheEntryOptions
+            //    //{
+            //    //    AbsoluteExpiration = absoluteExpiration.AddSeconds(settings.SequenceGracePeriod)
+            //    //});
+            //}
 
             return data;
         }
@@ -269,15 +285,15 @@ namespace FoxIDs.Logic
         private async Task RemoveSequenceDataInternalAsync<T>(string key, Sequence sequence, T data) where T : ISequenceData
         {
             await distributedCache.RemoveAsync(key);
-            if (data is IDownSequenceData)
-            {
-                await distributedCache.RemoveAsync(DataKey(typeof(DownLinkSequenceData), sequence));
-            }
+            //if (data is IDownSequenceData)
+            //{
+            //    await distributedCache.RemoveAsync(DataKey(typeof(DownLinkSequenceData), sequence));
+            //}
         }
 
         private Task<string> CreateSequenceStringAsync(Sequence sequence)
         {
-            return Task.FromResult(CreateProtector().Protect(sequence.ToJson()));
+            return Task.FromResult(Protect(sequence));
         }
 
         private string DataKey(Type type, Sequence sequence, string trackName = null)
@@ -342,7 +358,7 @@ namespace FoxIDs.Logic
                 }
                 await distributedCache.RemoveAsync(key);
 
-                var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
+                var sequence = await Task.FromResult(Unprotect(sequenceString));
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
                 CheckTimeout(sequence);
@@ -363,6 +379,30 @@ namespace FoxIDs.Logic
         {
             var routeBinding = HttpContext.GetRouteBinding();
             return $"{routeBinding.TenantName}.{routeBinding.TrackName}.seqext.{externalId}";
+        }
+
+        private string Protect(Sequence sequence)
+        {
+            var sp = CreateProtector().Protect(new SequenceProtected { Id = sequence.Id, CreateTime = sequence.CreateTime, AccountAction = sequence.AccountAction }.ToJson());
+            var si = new SequenceInfo { Culture = sequence.Culture, DownPartyId = sequence.DownPartyId, DownPartyType = sequence.DownPartyType, UiUpPartyId = sequence.UiUpPartyId }.ToJson().Base64UrlEncode();
+            return sp; // $"{sp}___{si}";
+        }
+
+        private Sequence Unprotect(string sequenceString, string trackName = null)
+        {
+            var split = sequenceString.Split("___");
+            var sp = CreateProtector(trackName).Unprotect(split[0]).ToObject<SequenceProtected>();
+            var sequence = new Sequence { Id = sp.Id, CreateTime = sp.CreateTime, AccountAction = sp.AccountAction };
+            if (split.Length > 1)
+            {
+                var si = split[1].Base64UrlDecode().ToObject<SequenceInfo>();
+                sequence.Culture = si.Culture;
+                sequence.DownPartyId = si.DownPartyId;
+                sequence.DownPartyType = si.DownPartyType;
+                sequence.UiUpPartyId = si.UiUpPartyId;
+            }
+
+            return Sequence;
         }
     }
 }

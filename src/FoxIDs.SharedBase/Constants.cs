@@ -234,6 +234,7 @@ namespace FoxIDs
 
                 public static class SendEmail
                 {
+                    public const int FromNameLength = 100;
                     public const int SendgridApiKeyLength = 200;
                     public const int SmtpHostLength = 100;
                     public const int SmtpPortLength = 10;

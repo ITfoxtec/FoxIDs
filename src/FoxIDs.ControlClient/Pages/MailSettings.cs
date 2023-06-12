@@ -100,6 +100,7 @@ namespace FoxIDs.Client.Pages
                     mailSettingsForm.Model.SmtpPassword = null;
                     await TrackService.UpdateTrackSendEmailAsync(new SendEmail
                     {
+                        FromName = mailSettingsForm.Model.FromName,
                         FromEmail = mailSettingsForm.Model.FromEmail,
                         SendgridApiKey = mailSettingsForm.Model.SendgridApiKey
                     });
@@ -134,6 +135,7 @@ namespace FoxIDs.Client.Pages
                         mailSettingsForm.Model.SendgridApiKey = null;
                         await TrackService.UpdateTrackSendEmailAsync(new SendEmail
                         {
+                            FromName = mailSettingsForm.Model.FromName,
                             FromEmail = mailSettingsForm.Model.FromEmail,
                             SmtpHost = mailSettingsForm.Model.SmtpHost,
                             SmtpPort = mailSettingsForm.Model.SmtpPort,

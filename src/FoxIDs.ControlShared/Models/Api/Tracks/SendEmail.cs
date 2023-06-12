@@ -16,6 +16,13 @@ namespace FoxIDs.Models.Api
         public string FromEmail { get; set; }
 
         /// <summary>
+        /// From name (name associated to the email address).
+        /// </summary>
+        [MaxLength(Constants.Models.Track.SendEmail.FromNameLength)]
+        [JsonProperty(PropertyName = "from_name")]
+        public string FromName { get; set; }
+
+        /// <summary>
         /// Sendgrid API key.
         /// </summary>
         [MaxLength(Constants.Models.Track.SendEmail.SendgridApiKeyLength)]

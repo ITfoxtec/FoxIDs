@@ -10,11 +10,17 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "t")]
         public long CreateTime { get; set; }
 
+        [JsonProperty(PropertyName = "a")]
+        public bool? AccountAction { get; set; }
+
         [JsonProperty(PropertyName = "c")]
         public string Culture { get; set; }
 
-        [JsonProperty(PropertyName = "a")]
-        public bool? AccountAction { get; set; }
+        [JsonProperty(PropertyName = "d")]
+        public string DownPartyId { get; set; }
+
+        [JsonProperty(PropertyName = "y")]
+        public PartyTypes DownPartyType { get; set; }
 
         [JsonProperty(PropertyName = "u")]
         public string UiUpPartyId { get; set; }

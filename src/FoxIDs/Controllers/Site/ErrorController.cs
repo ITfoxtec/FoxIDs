@@ -143,26 +143,25 @@ namespace FoxIDs.Controllers
                 return null;
             }
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<DownLinkSequenceData>(sequence: sequence, allowNull: true, remove: false);
-            if (sequenceData == null)
+            if(sequence.DownPartyId.IsNullOrEmpty())
             {
                 return null;
             }
 
-            switch (sequenceData.Type)
+            switch (sequence.DownPartyType)
             {
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:                    
                     return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(
-                        sequenceData.Id,
+                        sequence.DownPartyId,
                         sequenceException is SequenceTimeoutException ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled,
                         GetSequenceExceptionErrorDescription(sequenceException));
                 case PartyTypes.Saml2:
-                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequenceData.Id, status: Saml2StatusCodes.Responder);
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequence.DownPartyId, status: Saml2StatusCodes.Responder);
 
                 default:
-                    throw new NotSupportedException($"Party type '{sequenceData.Type}' not supported.");
+                    throw new NotSupportedException($"Down-party type '{sequence.DownPartyType}' not supported.");
             }
         }
 

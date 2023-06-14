@@ -55,6 +55,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
 
             switch (party.LogoutBinding.RequestBinding)
             {

@@ -18,7 +18,6 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FoxIDs.Controllers
 {

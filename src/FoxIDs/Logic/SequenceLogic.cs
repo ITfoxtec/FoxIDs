@@ -10,6 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FoxIDs.Logic
 {
@@ -367,7 +368,19 @@ namespace FoxIDs.Logic
             var sequenceString = CreateProtector().Protect(sequence.ToJson());
 
             var divideIndex = sequenceString.Length < 255 ? sequenceString.Length / 2 : 250;
+            divideIndex = NotDivideNextToUnderline(sequenceString, divideIndex);
             return $"{sequenceString.Substring(0, divideIndex)}/{sequenceString.Substring(divideIndex, sequenceString.Length - divideIndex)}";
+        }
+
+        private int NotDivideNextToUnderline(string sequenceString, int divideIndex)
+        {
+            if (sequenceString[divideIndex + 1] == '_')
+            {
+                divideIndex--;
+                return NotDivideNextToUnderline(sequenceString, divideIndex);
+            }
+
+            return divideIndex;
         }
 
         private Sequence Unprotect(string sequenceString, string trackName = null)

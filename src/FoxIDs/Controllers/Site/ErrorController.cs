@@ -18,6 +18,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using Microsoft.Extensions.DependencyInjection;
 using ITfoxtec.Identity.Saml2.Schemas;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FoxIDs.Controllers
 {
@@ -112,7 +113,7 @@ namespace FoxIDs.Controllers
             {
                 try
                 {
-                    var sequenceStartIndex = exceptionHandlerPathFeature.Path.IndexOf('_') + 1;
+                    var sequenceStartIndex = exceptionHandlerPathFeature.Path.LastIndexOf("/_") + 2;
                     if (exceptionHandlerPathFeature.Path.Length > sequenceStartIndex)
                     {
                         var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
@@ -153,16 +154,24 @@ namespace FoxIDs.Controllers
                 case PartyTypes.OAuth2:
                     throw new NotImplementedException();
                 case PartyTypes.Oidc:                    
-                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(
-                        sequence.DownPartyId,
-                        sequenceException is SequenceTimeoutException ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled,
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequence.DownPartyId,
+                        GetSequenceExceptionError(sequenceException),
                         GetSequenceExceptionErrorDescription(sequenceException));
                 case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequence.DownPartyId, status: Saml2StatusCodes.Responder);
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequence.DownPartyId, null, 
+                        GetSequenceExceptionError(sequenceException),
+                        GetSequenceExceptionErrorDescription(sequenceException));
 
                 default:
                     throw new NotSupportedException($"Down-party type '{sequence.DownPartyType}' not supported.");
             }
+        }
+
+        private string GetSequenceExceptionError(SequenceException sequenceException) 
+        {
+            return sequenceException is SequenceTimeoutException ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled;
         }
 
         private string GetSequenceExceptionErrorDescription(SequenceException sequenceException)

@@ -35,6 +35,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, Track link RP initiated logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToUpTrackName);

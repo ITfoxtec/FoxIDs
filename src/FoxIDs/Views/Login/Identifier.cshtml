@@ -68,7 +68,7 @@
                 <div class="list-filter">
                     @foreach (var upParty in Model.UpPatries)
                     {
-                        <a up-party-name="@upParty.Name" class="list-item-filter btn btn-light" href="@nameof(FoxIDs.Controllers.LoginController.LoginUpParty).ToLower()/_@Model.SequenceString?name=@upParty.Name">
+                        <a up-party-name="@upParty.Name" class="list-item-filter btn btn-light" href="../@nameof(FoxIDs.Controllers.LoginController.LoginUpParty).ToLower()/_@Model.SequenceString?name=@upParty.Name">
                             @if (!upParty.LogoUrl.IsNullOrEmpty())
                             {
                                     <img src="@upParty.LogoUrl" class="img-item-filter" alt="@upParty.DisplayName">

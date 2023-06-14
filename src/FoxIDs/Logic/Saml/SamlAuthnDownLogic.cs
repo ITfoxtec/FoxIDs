@@ -268,7 +268,6 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"ACS URL '{acsUrl}'.");
             logger.ScopeTrace(() => "Down, SAML Authn response.", triggerEvent: true);
 
-            await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
             if (party.RestrictFormAction)
             {
                 securityHeaderLogic.AddFormAction(acsUrl);

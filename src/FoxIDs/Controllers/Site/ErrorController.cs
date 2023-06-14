@@ -143,12 +143,6 @@ namespace FoxIDs.Controllers
                 return null;
             }
 
-            //var sequenceData = await sequenceLogic.GetSequenceDataAsync<DownLinkSequenceData>(sequence: sequence, allowNull: true, remove: false);
-            //if (sequenceData == null)
-            //{
-            //    return null;
-            //}
-
             if(sequence.DownPartyId.IsNullOrEmpty())
             {
                 return null;

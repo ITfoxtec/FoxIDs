@@ -212,16 +212,6 @@ namespace FoxIDs.Logic
                 AbsoluteExpiration = data is IDownSequenceData ? absoluteExpiration.AddSeconds(settings.SequenceGracePeriod) : absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
-            //if (data is UpSequenceData upSequenceData && upSequenceData.DownPartyLink != null)
-            //{
-            //    await SetDownPartyAsync(upSequenceData.DownPartyLink.Id, upSequenceData.DownPartyLink.Type);
-
-            //    //await distributedCache.SetStringAsync(DataKey(typeof(DownLinkSequenceData), sequence, trackName), new DownLinkSequenceData { Id = upSequenceData.DownPartyLink.Id, Type = upSequenceData.DownPartyLink.Type }.ToJson(), new DistributedCacheEntryOptions
-            //    //{
-            //    //    AbsoluteExpiration = absoluteExpiration.AddSeconds(settings.SequenceGracePeriod)
-            //    //});
-            //}
-
             return data;
         }
 
@@ -249,7 +239,7 @@ namespace FoxIDs.Logic
             var sequenceData = data.ToObject<T>();
             if (remove)
             {
-                await RemoveSequenceDataInternalAsync(key, sequence, sequenceData);
+                await distributedCache.RemoveAsync(key);
             }
             return sequenceData;
         }
@@ -279,16 +269,7 @@ namespace FoxIDs.Logic
         {
             var sequence = HttpContext.GetSequence();
             var key = DataKey(typeof(T), sequence);
-            await RemoveSequenceDataInternalAsync(key, sequence, new T());
-        }
-
-        private async Task RemoveSequenceDataInternalAsync<T>(string key, Sequence sequence, T data) where T : ISequenceData
-        {
             await distributedCache.RemoveAsync(key);
-            //if (data is IDownSequenceData)
-            //{
-            //    await distributedCache.RemoveAsync(DataKey(typeof(DownLinkSequenceData), sequence));
-            //}
         }
 
         private Task<string> CreateSequenceStringAsync(Sequence sequence)
@@ -383,26 +364,16 @@ namespace FoxIDs.Logic
 
         private string Protect(Sequence sequence)
         {
-            var sp = CreateProtector().Protect(new SequenceProtected { Id = sequence.Id, CreateTime = sequence.CreateTime, AccountAction = sequence.AccountAction }.ToJson());
-            var si = new SequenceInfo { Culture = sequence.Culture, DownPartyId = sequence.DownPartyId, DownPartyType = sequence.DownPartyType, UiUpPartyId = sequence.UiUpPartyId }.ToJson().Base64UrlEncode();
-            return sp; // $"{sp}___{si}";
+            var sequenceString = CreateProtector().Protect(sequence.ToJson());
+
+            var divideIndex = sequenceString.Length < 255 ? sequenceString.Length / 2 : 250;
+            return $"{sequenceString.Substring(0, divideIndex)}/{sequenceString.Substring(divideIndex, sequenceString.Length - divideIndex)}";
         }
 
         private Sequence Unprotect(string sequenceString, string trackName = null)
         {
-            var split = sequenceString.Split("___");
-            var sp = CreateProtector(trackName).Unprotect(split[0]).ToObject<SequenceProtected>();
-            var sequence = new Sequence { Id = sp.Id, CreateTime = sp.CreateTime, AccountAction = sp.AccountAction };
-            if (split.Length > 1)
-            {
-                var si = split[1].Base64UrlDecode().ToObject<SequenceInfo>();
-                sequence.Culture = si.Culture;
-                sequence.DownPartyId = si.DownPartyId;
-                sequence.DownPartyType = si.DownPartyType;
-                sequence.UiUpPartyId = si.UiUpPartyId;
-            }
-
-            return Sequence;
+            sequenceString = sequenceString.Remove(sequenceString.IndexOf('/'), 1);
+            return CreateProtector(trackName).Unprotect(sequenceString).ToObject<Sequence>();
         }
     }
 }

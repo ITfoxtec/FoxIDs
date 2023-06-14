@@ -266,7 +266,6 @@ namespace FoxIDs.Logic
             var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
-            await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
 
             if (party.RestrictFormAction)
             {
@@ -368,7 +367,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
             return await AuthenticationResponseErrorAsync(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }

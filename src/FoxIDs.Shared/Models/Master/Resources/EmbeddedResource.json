@@ -814,7 +814,7 @@
         },
         {
           "culture": "da",
-          "value": "Bekræft nyt kodeord"
+          "value": "Gentag nyt kodeord"
         }
       ]
     },
@@ -853,7 +853,7 @@
         },
         {
           "culture": "da",
-          "value": "'Bekræft nyt kodeord' og 'Nyt kodeord' er ikke ens."
+          "value": "'Gentag nyt kodeord' og 'Nyt kodeord' er ikke ens."
         }
       ]
     },

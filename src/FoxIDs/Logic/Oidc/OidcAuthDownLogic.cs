@@ -52,6 +52,7 @@ namespace FoxIDs.Logic
                 throw new NotSupportedException("Party Client not configured.");
             }
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
             var queryDictionary = HttpContext.Request.Query.ToDictionary();
             var authenticationRequest = queryDictionary.ToObject<AuthenticationRequest>();
@@ -265,7 +266,6 @@ namespace FoxIDs.Logic
             var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
 
             var responseMode = GetResponseMode(sequenceData.ResponseMode, sequenceData.ResponseType);
-            await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
 
             if (party.RestrictFormAction)
             {
@@ -278,11 +278,11 @@ namespace FoxIDs.Logic
             switch (responseMode)
             {
                 case IdentityConstants.ResponseModes.FormPost:
-                    return await nameValueCollection.ToHtmlPostContentResultAsync(sequenceData.RedirectUri);
+                    return await nameValueCollection.ToHtmlPostContentResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
                 case IdentityConstants.ResponseModes.Query:
-                    return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
+                    return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
                 case IdentityConstants.ResponseModes.Fragment:
-                    return await nameValueCollection.ToFragmentResultAsync(sequenceData.RedirectUri);
+                    return await nameValueCollection.ToFragmentResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
 
                 default:
                     throw new NotSupportedException();
@@ -367,7 +367,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>();
+            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
             return await AuthenticationResponseErrorAsync(sequenceData.RestrictFormAction, sequenceData.RedirectUri, sequenceData.State, error, errorDescription);
         }
@@ -402,7 +402,7 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            return await nameValueCollection.ToRedirectResultAsync(redirectUri);
+            return await nameValueCollection.ToRedirectResultAsync(redirectUri, RouteBinding.DisplayName);
         }
     }
 }

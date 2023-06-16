@@ -20,6 +20,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
 
+        [Length(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [Display(Name = "Additional parameters")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
+
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
         [Display(Name = "Response mode")]

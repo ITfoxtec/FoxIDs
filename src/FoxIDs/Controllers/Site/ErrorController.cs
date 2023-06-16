@@ -15,6 +15,9 @@ using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
 using System.Threading.Tasks;
 using FoxIDs.Models;
+using FoxIDs.Models.Sequences;
+using Microsoft.Extensions.DependencyInjection;
+using ITfoxtec.Identity.Saml2.Schemas;
 
 namespace FoxIDs.Controllers
 {
@@ -25,15 +28,17 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IWebHostEnvironment environment;
         private readonly IStringLocalizer localizer;
+        private readonly IServiceProvider serviceProvider;
         private readonly SequenceLogic sequenceLogic;
         private readonly ITenantRepository tenantRepository;
         private readonly SecurityHeaderLogic securityHeaderLogic;
 
-        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
+        public ErrorController(TelemetryScopedLogger logger, IWebHostEnvironment environment, IStringLocalizer localizer, IServiceProvider serviceProvider, SequenceLogic sequenceLogic, ITenantRepository tenantRepository, SecurityHeaderLogic securityHeaderLogic) : base(logger, false)
         {
             this.logger = logger;
             this.environment = environment;
             this.localizer = localizer;
+            this.serviceProvider = serviceProvider;
             this.sequenceLogic = sequenceLogic;
             this.tenantRepository = tenantRepository;
             this.securityHeaderLogic = securityHeaderLogic;
@@ -55,35 +60,27 @@ namespace FoxIDs.Controllers
                 return HandleOAuthTokenException(exception);
             }
 
-            if (RouteBinding != null && !exceptionHandlerPathFeature.Path.IsNullOrEmpty())
+            var sequenceException = FindException<SequenceException>(exception);
+            var sequence = await ReadAndUseSequence(errorViewModel, exceptionHandlerPathFeature);
+            if (sequence != null)
             {
-                try
+                if (sequenceException != null)
                 {
-                    var sequenceStartIndex = exceptionHandlerPathFeature.Path.IndexOf('_') + 1;
-                    if (exceptionHandlerPathFeature.Path.Length > sequenceStartIndex)
+                    var handleGracefulSequenceExceptionResult = await HandleGracefulSequenceExceptionAsync(sequence, sequenceException);
+                    if (handleGracefulSequenceExceptionResult != null)
                     {
-                        var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
-                        if (sequence != null)
-                        {
-                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
-                            securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
-                            securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
-                            errorViewModel.Title = uiLoginUpParty.Title;
-                            errorViewModel.IconUrl = uiLoginUpParty.IconUrl;
-                            errorViewModel.Css = uiLoginUpParty.Css;
-                        }
+                        return handleGracefulSequenceExceptionResult;
                     }
-                }
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
                 }
             }
 
-            var sequenceTimeoutException = FindException<SequenceTimeoutException>(exception);
-            if (sequenceTimeoutException != null)
+            if (sequenceException != null)
             {
-                return HandleSequenceTimeoutException(errorViewModel, sequenceTimeoutException);
+                var handleSequenceExceptionResult = HandleSequenceException(errorViewModel, sequenceException);
+                if (handleSequenceExceptionResult != null)
+                {
+                    return handleSequenceExceptionResult;
+                }
             }
 
             var routeCreationException = FindException<RouteCreationException>(exception);
@@ -109,20 +106,118 @@ namespace FoxIDs.Controllers
             return View(errorViewModel);
         }
 
-        private IActionResult HandleSequenceTimeoutException(ErrorViewModel errorViewModel, SequenceTimeoutException sequenceTimeoutException)
+        private async Task<Sequence> ReadAndUseSequence(ErrorViewModel errorViewModel, IExceptionHandlerPathFeature exceptionHandlerPathFeature)
         {
-            var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
-            errorViewModel.ErrorTitle = localizer["Timeout"];
-            if (sequenceTimeoutException.AccountAction == true)
+            if (RouteBinding != null && !exceptionHandlerPathFeature.Path.IsNullOrEmpty())
             {
-                errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
+                try
+                {
+                    var sequenceStartIndex = exceptionHandlerPathFeature.Path.LastIndexOf("/_") + 2;
+                    if (exceptionHandlerPathFeature.Path.Length > sequenceStartIndex)
+                    {
+                        var sequence = await sequenceLogic.TryReadSequenceAsync(exceptionHandlerPathFeature.Path.Substring(sequenceStartIndex));
+                        if (sequence != null)
+                        {
+                            var uiLoginUpParty = await tenantRepository.GetAsync<UiLoginUpPartyData>(!sequence.UiUpPartyId.IsNullOrEmpty() ? sequence.UiUpPartyId : await UpParty.IdFormatAsync(RouteBinding, Constants.DefaultLogin.Name));
+                            securityHeaderLogic.AddImgSrc(uiLoginUpParty.IconUrl);
+                            securityHeaderLogic.AddImgSrcFromCss(uiLoginUpParty.Css);
+                            errorViewModel.Title = uiLoginUpParty.Title ?? RouteBinding.DisplayName;
+                            errorViewModel.IconUrl = uiLoginUpParty.IconUrl;
+                            errorViewModel.Css = uiLoginUpParty.Css;
+                            return sequence;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex);
+                }
             }
-            else
+            return null;
+        }
+
+        private async Task<IActionResult> HandleGracefulSequenceExceptionAsync(Sequence sequence, SequenceException sequenceException)
+        {
+            if (!(sequenceException is SequenceTimeoutException || sequenceException is SequenceBrowserBackException))
             {
-                errorViewModel.Error = string.Format(localizer["It should take a maximum of {0} minutes from start to finish. Please try again."], timeout.TotalMinutes);
+                return null;
             }
 
-            return View(errorViewModel);
+            if(sequence.DownPartyId.IsNullOrEmpty())
+            {
+                return null;
+            }
+
+            switch (sequence.DownPartyType)
+            {
+                case PartyTypes.OAuth2:
+                    throw new NotImplementedException();
+                case PartyTypes.Oidc:                    
+                    return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationResponseErrorAsync(sequence.DownPartyId,
+                        GetSequenceExceptionError(sequenceException),
+                        GetSequenceExceptionErrorDescription(sequenceException));
+                case PartyTypes.Saml2:
+                    return await serviceProvider.GetService<SamlAuthnDownLogic>().AuthnResponseAsync(sequence.DownPartyId, status: Saml2StatusCodes.Responder);
+                case PartyTypes.TrackLink:
+                    return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthResponseAsync(sequence.DownPartyId, null, 
+                        GetSequenceExceptionError(sequenceException),
+                        GetSequenceExceptionErrorDescription(sequenceException));
+
+                default:
+                    throw new NotSupportedException($"Down-party type '{sequence.DownPartyType}' not supported.");
+            }
+        }
+
+        private string GetSequenceExceptionError(SequenceException sequenceException) 
+        {
+            return sequenceException is SequenceTimeoutException ? Constants.OAuth.ResponseErrors.LoginTimeout : Constants.OAuth.ResponseErrors.LoginCanceled;
+        }
+
+        private string GetSequenceExceptionErrorDescription(SequenceException sequenceException)
+        {
+            if (sequenceException is SequenceTimeoutException sequenceTimeoutException)
+            {
+                var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
+                if (sequenceTimeoutException.AccountAction == true)
+                {
+                    return $"The task should be completed within {timeout.TotalDays} days.";
+                }
+                else
+                {
+                    return $"The sequence must be completed within {timeout.TotalMinutes} minutes.";
+                }
+            }
+            else if (sequenceException is SequenceBrowserBackException)
+            {
+                return "It is not possible to go back in the browser at this point.";
+            }
+
+            throw new InvalidOperationException("Derived SequenceException type not supported.");
+        }
+
+        private IActionResult HandleSequenceException(ErrorViewModel errorViewModel, SequenceException sequenceException)
+        {
+            if (sequenceException is SequenceTimeoutException sequenceTimeoutException)
+            {
+                errorViewModel.ErrorTitle = localizer["Timeout"];
+                var timeout = new TimeSpan(0, 0, sequenceTimeoutException.SequenceLifetime);
+                if (sequenceTimeoutException.AccountAction == true)
+                {
+                    errorViewModel.Error = string.Format(localizer["The task should be completed within {0} days. Please try again."], timeout.TotalDays);
+                }
+                else
+                {
+                    errorViewModel.Error = string.Format(localizer["The sequence must be completed within {0} minutes. Please try again."], timeout.TotalMinutes);
+                }
+                return View(errorViewModel);
+            }
+            else if (sequenceException is SequenceBrowserBackException)
+            {
+                errorViewModel.Error = string.Format(localizer["It is not possible to go back in the browser at this point. Please try again."]);
+                return View(errorViewModel);
+            }
+
+            return null;
         }
 
         private IActionResult HandleRouteCreationException(ErrorViewModel errorViewModel, RouteCreationException routeCreationException)

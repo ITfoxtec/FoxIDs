@@ -23,6 +23,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "scopes")]
         public List<string> Scopes { get; set; }
 
+        [Length(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [JsonProperty(PropertyName = "additional_parameter")]
+        public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
+
         [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class OidcDownSequenceData : ISequenceData
+    public class OidcDownSequenceData : ISequenceData, IDownSequenceData
     {
         [MaxLength(50)]
         [JsonProperty(PropertyName = "rt")]

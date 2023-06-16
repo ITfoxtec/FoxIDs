@@ -35,6 +35,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "Down, Track link RP initiated logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
             var keySequenceString = HttpContext.Request.Query[Constants.Routes.KeySequenceKey];
             var keySequence = await sequenceLogic.ValidateSequenceAsync(keySequenceString, trackName: party.ToUpTrackName);
@@ -88,7 +89,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkDownSequenceData>(remove: false);
             await sequenceLogic.SaveSequenceDataAsync(sequenceData, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutResponse, includeKeySequence: true).ToRedirectResult();
+            return HttpContext.GetTrackUpPartyUrl(party.ToUpTrackName, party.ToUpPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutResponse, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
     }
 }

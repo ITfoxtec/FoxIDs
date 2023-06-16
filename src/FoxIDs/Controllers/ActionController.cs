@@ -53,9 +53,10 @@ namespace FoxIDs.Controllers
                 return View(new EmailConfirmationViewModel
                 {
                     SequenceString = SequenceString,
-                    Title = loginUpParty.Title,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = codeSendStatus,
                     Email = sequenceData.Email
                 });
@@ -84,9 +85,10 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewResponse = () =>
                 {
                     emailConfirmation.SequenceString = SequenceString;
-                    emailConfirmation.Title = loginUpParty.Title;
+                    emailConfirmation.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     emailConfirmation.IconUrl = loginUpParty.IconUrl;
                     emailConfirmation.Css = loginUpParty.Css;
+                    emailConfirmation.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(emailConfirmation);
                 };
 
@@ -156,9 +158,10 @@ namespace FoxIDs.Controllers
                 return View(new ResetPasswordViewModel
                 {
                     SequenceString = SequenceString,
-                    Title = loginUpParty.Title,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
+                    EnableCancelLogin = loginUpParty.EnableCancelLogin,
                     ConfirmationCodeSendStatus = confirmationCodeSendStatus,
                     Email = sequenceData.Email
                 });
@@ -192,9 +195,10 @@ namespace FoxIDs.Controllers
                 Func<IActionResult> viewResponse = () =>
                 {
                     resetPassword.SequenceString = SequenceString;
-                    resetPassword.Title = loginUpParty.Title;
+                    resetPassword.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     resetPassword.IconUrl = loginUpParty.IconUrl;
                     resetPassword.Css = loginUpParty.Css;
+                    resetPassword.EnableCancelLogin = loginUpParty.EnableCancelLogin;
                     return View(resetPassword);
                 };
 

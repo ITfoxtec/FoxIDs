@@ -50,7 +50,7 @@
       "id": 11
     },
     {
-      "name": "CreateUser",
+      "name": "Don't have an account?",
       "id": 12
     },
     {
@@ -110,7 +110,7 @@
       "id": 27
     },
     {
-      "name": "It should take a maximum of {0} minutes from start to finish. Please try again.",
+      "name": "The sequence must be completed within {0} minutes. Please try again.",
       "id": 28
     },
     {
@@ -310,7 +310,7 @@
       "id": 77
     },
     {
-      "name": "Send new email confirmation code",
+      "name": "Send new confirmation code",
       "id": 78
     },
     {
@@ -392,6 +392,26 @@
     {
       "name": "Full name",
       "id": 98
+    },
+    {
+      "name": "The task should be completed within {0} days. Please try again.",
+      "id": 99
+    },
+    {
+      "name": "It is not possible to go back in the browser at this point. Please try again.",
+      "id": 100
+    },
+    {
+      "name": "Log in with your existing password",
+      "id": 101
+    },
+    {
+      "name": "{0}Reset password",
+      "id": 102
+    },
+    {
+      "name": "{0}Email confirmation",
+      "id": 103
     }
   ],
   "resources": [
@@ -543,11 +563,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "CreateUser"
+          "value": "Don't have an account?"
         },
         {
           "culture": "da",
-          "value": "OpretBruger"
+          "value": "Har du ikke en konto?"
         }
       ]
     },
@@ -738,11 +758,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "It should take a maximum of {0} minutes from start to finish. Please try again."
+          "value": "The sequence must be completed within {0} minutes. Please try again."
         },
         {
           "culture": "da",
-          "value": "Det må højst tage {0} minutter fra start til slut. Prøv venligst igen."
+          "value": "Sekvensen skal gennemføres indenfor {0} minutter. Prøv venligst igen."
         }
       ]
     },
@@ -794,7 +814,7 @@
         },
         {
           "culture": "da",
-          "value": "Bekræft nyt kodeord"
+          "value": "Gentag nyt kodeord"
         }
       ]
     },
@@ -833,7 +853,7 @@
         },
         {
           "culture": "da",
-          "value": "'Bekræft nyt kodeord' og 'Nyt kodeord' er ikke ens."
+          "value": "'Gentag nyt kodeord' og 'Nyt kodeord' er ikke ens."
         }
       ]
     },
@@ -1388,11 +1408,11 @@
       "items": [
         {
           "culture": "en",
-          "value": "Send new email confirmation code"
+          "value": "Send new confirmation code"
         },
         {
           "culture": "da",
-          "value": "Send ny e-mailbekræftelseskode"
+          "value": "Send ny bekræftelseskode"
         }
       ]
     },
@@ -1645,6 +1665,71 @@
         {
           "culture": "da",
           "value": "Fulde navn"
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "items": [
+        {
+          "culture": "en",
+          "value": "The task should be completed within {0} days. Please try again."
+        },
+        {
+          "culture": "da",
+          "value": "Opgaven skal gennemføres indenfor {0} dage. Prøv venligst igen."
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "items": [
+        {
+          "culture": "en",
+          "value": "It is not possible to go back in the browser at this point. Please try again."
+        },
+        {
+          "culture": "da",
+          "value": "Det er ikke muligt at gå tilbage i browseren på dette sted. Prøv venligst igen."
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Log in with your existing password"
+        },
+        {
+          "culture": "da",
+          "value": "Log ind med dit eksisterende kodeord"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0}Reset password"
+        },
+        {
+          "culture": "da",
+          "value": "{0}Nulstil kodeord"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "items": [
+        {
+          "culture": "en",
+          "value": "{0}Email confirmation"
+        },
+        {
+          "culture": "da",
+          "value": "{0}E-mail bekræftelse"
         }
       ]
     }

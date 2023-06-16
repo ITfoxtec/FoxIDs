@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Models.Sequences
 {
-    public class TrackLinkDownSequenceData : ISequenceKey
+    public class TrackLinkDownSequenceData : ISequenceKey, IDownSequenceData
     {
         [JsonIgnore]
         public string KeyName 

@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
 
                 return View(new RegisterTwoFactorViewModel
                 {
-                    Title = loginUpParty.Title,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     QrCodeSetupImageUrl = twoFactorSetupInfo.QrCodeSetupImageUrl,
@@ -96,7 +96,7 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    registerTwoFactor.Title = loginUpParty.Title;
+                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
                     return View(registerTwoFactor);
@@ -119,7 +119,7 @@ namespace FoxIDs.Controllers
 
                     return View(nameof(RecCodeTwoFactor), new RecoveryCodeTwoFactorViewModel
                     {
-                        Title = loginUpParty.Title,
+                        Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                         IconUrl = loginUpParty.IconUrl,
                         Css = loginUpParty.Css,
                         SequenceString = SequenceString,
@@ -201,7 +201,7 @@ namespace FoxIDs.Controllers
 
                 return View(new TwoFactorViewModel
                 {
-                    Title = loginUpParty.Title,
+                    Title = loginUpParty.Title ?? RouteBinding.DisplayName,
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                 });
@@ -230,7 +230,7 @@ namespace FoxIDs.Controllers
 
                 Func<IActionResult> viewError = () =>
                 {
-                    registerTwoFactor.Title = loginUpParty.Title;
+                    registerTwoFactor.Title = loginUpParty.Title ?? RouteBinding.DisplayName;
                     registerTwoFactor.IconUrl = loginUpParty.IconUrl;
                     registerTwoFactor.Css = loginUpParty.Css;
                     return View(registerTwoFactor);
@@ -252,7 +252,7 @@ namespace FoxIDs.Controllers
 
                         sequenceData.TwoFactorAppState = TwoFactorAppSequenceStates.DoRegistration;
                         await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult();
+                        return HttpContext.GetUpPartyUrl(loginUpParty.Name, Constants.Routes.MfaController, Constants.Endpoints.RegisterTwoFactor, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
                     }
                     catch (InvalidRecoveryCodeException rcex)
                     {

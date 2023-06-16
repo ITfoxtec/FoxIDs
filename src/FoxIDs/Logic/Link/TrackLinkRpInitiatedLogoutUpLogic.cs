@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
                 RequireLogoutConsent = logoutRequest.RequireLogoutConsent
             });
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkRpLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.TrackLinkController, Constants.Endpoints.UpJump.TrackLinkRpLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
 
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData, setKeyValidUntil: true);
 
-            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult();
+            return HttpContext.GetTrackDownPartyUrl(party.ToDownTrackName, party.ToDownPartyName, party.SelectedUpParties, Constants.Routes.TrackLinkController, Constants.Endpoints.TrackLinkRpLogoutRequest, includeKeySequence: true).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> SingleLogoutDone(string partyId)

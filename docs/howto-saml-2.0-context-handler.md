@@ -22,11 +22,11 @@ Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect 
 
 ## Certificate
 
-Context Handler requires all requests (authn and logout) to be signed with OCES (FOCES/VOCES) certificates. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
+Context Handler requires all requests (authn and logout) to be signed with OCES (FOCES/VOCES) or OCES3 certificates. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
 
 An OCES certificate is valid for three years. After that, it must be updated manually.
 
-Add the `.P12` OCES certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+Add the `.P12` OCES or OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) the track to be used for Context Handler as Relying Party (RP) or Identity Provider (IdP)
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type

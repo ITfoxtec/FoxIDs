@@ -14,9 +14,9 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public void LogLoginEvent()
+        public void LogLoginEvent(PartyTypes partyType)
         {
-            LogEvent(UsageLogTypes.Login);
+            logger.Event($"Usage {UsageLogTypes.Login}.{partyType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.Login.ToString() }, { Constants.Logs.UsageLoginType, partyType.ToString() } });
         }
 
         public void LogTokenRequestEvent(UsageLogTokenTypes tokenType)

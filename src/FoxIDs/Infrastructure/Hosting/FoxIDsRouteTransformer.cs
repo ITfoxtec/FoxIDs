@@ -64,16 +64,41 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 HandleWebSiteRoute(values, route);
             }
-            else if ((!hasCustomDomain && route.Length >= 5 && route.Length <= 6) || (hasCustomDomain && route.Length >= 4 && route.Length <= 5))
-            {
-                await HandleTenantRouteAsync(httpContext, hasCustomDomain, values, route);
-            }
             else
             {
-                throw new NotSupportedException($"Route '{string.Join('/', route)}' not supported.");
+                route = CompoundSequanceString(route);
+                if ((!hasCustomDomain && route.Length >= 5 && route.Length <= 6) || (hasCustomDomain && route.Length >= 4 && route.Length <= 5))
+                {
+                    await HandleTenantRouteAsync(httpContext, hasCustomDomain, values, route);
+                }
+                else
+                {
+                    throw new NotSupportedException($"Route '{string.Join('/', route)}' not supported.");
+                }
+            }
+            return values;
+        }
+
+        private string[] CompoundSequanceString(string[] route)
+        {
+            if (route[route.Length - 2].StartsWith('_'))
+            {
+                var tenantRoute = new string[route.Length - 1];
+                for(var i = 0; i <= route.Length - 2; i++)
+                {
+                    if (i < route.Length - 2)
+                    {
+                        tenantRoute[i] = route[i];
+                    }
+                    else
+                    {
+                        tenantRoute[i] = $"{route[i]}/{route[i + 1]}";
+                    }
+                }
+                return tenantRoute;
             }
 
-            return values;
+            return route;
         }
 
         private void HandleWebSiteRoute(RouteValueDictionary values, string[] route)

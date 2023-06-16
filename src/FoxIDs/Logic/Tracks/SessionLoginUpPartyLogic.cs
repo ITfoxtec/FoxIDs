@@ -116,11 +116,6 @@ namespace FoxIDs.Logic
                     var user = await tenantRepository.GetAsync<User>(id, false);
                     if (user != null && !user.DisableAccount)
                     {
-                        if (user.UserId != session.UserId)
-                        {
-                            throw new Exception($"Session user id '{session.UserId}' and the loaded Users user id '{user.UserId}' do not match, this should not be able to occur.");
-                        }
-
                         AddDownPartyLink(session, newDownPartyLink);
                         session.LastUpdated = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
                         await sessionCookieRepository.SaveAsync(loginUpParty, session, GetPersistentCookieExpires(loginUpParty, session.CreateTime));

@@ -10,38 +10,38 @@ namespace FoxIDs
     /// </summary>
     public static class HtmActionExtensions
     {
-        private const string title = "FoxIDs";
+        private const string defaultTitle = "FoxIDs";
 
         /// <summary>
         /// Converts a Dictionary&lt;string, string&gt; to a HTML Post ContentResult.
         /// </summary>
-        public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url)
+        public static Task<ContentResult> ToHtmlPostContentResultAsync(this Dictionary<string, string> items, string url, string title)
         {
-            return items.ToHtmlPostPage(url, title: title).ToContentResultAsync();
+            return items.ToHtmlPostPage(url, title: title ?? defaultTitle).ToContentResultAsync();
         }
 
         /// <summary>
         /// Converts a URL to a redirect ContentResult.
         /// </summary>
-        public static ContentResult ToRedirectResult(this string url)
+        public static ContentResult ToRedirectResult(this string url, string title)
         {
-            return url.HtmRedirectActionPage(title: title).ToContentResult();
+            return url.HtmRedirectActionPage(title: title ?? defaultTitle).ToContentResult();
         }
 
         /// <summary>
         /// Converts a Dictionary&lt;string, string&gt; to a redirect ContentResult.
         /// </summary>
-        public static Task<ContentResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url)
+        public static Task<ContentResult> ToRedirectResultAsync(this Dictionary<string, string> items, string url, string title)
         {
-            return items.ToHtmlGetPage(url, title: title).ToContentResultAsync();
+            return items.ToHtmlGetPage(url, title: title ?? defaultTitle).ToContentResultAsync();
         }
 
         /// <summary>
         /// Converts a Dictionary&lt;string, string&gt; to a fragment ContentResult.
         /// </summary>
-        public static Task<ContentResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url)
+        public static Task<ContentResult> ToFragmentResultAsync(this Dictionary<string, string> items, string url, string title)
         {
-            return items.ToHtmlFragmentPage(url, title: title).ToContentResultAsync();
+            return items.ToHtmlFragmentPage(url, title: title ?? defaultTitle).ToContentResultAsync();
         }
 
         /// <summary>

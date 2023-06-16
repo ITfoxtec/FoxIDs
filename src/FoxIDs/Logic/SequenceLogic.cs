@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity;
@@ -63,7 +64,7 @@ namespace FoxIDs.Logic
                     AccountAction = accountAction
                 };
 
-                if(currentSequence?.Culture?.IsNullOrEmpty() == false)
+                if (currentSequence?.Culture?.IsNullOrEmpty() == false)
                 {
                     sequence.Culture = currentSequence.Culture;
                 }
@@ -76,7 +77,7 @@ namespace FoxIDs.Logic
                 var sequenceString = await CreateSequenceStringAsync(sequence);
 
                 logger.ScopeTrace(() => $"Sequence started, id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.AccountAction, accountAction == true ? "true" : "false" } });
-                return (sequenceString: sequenceString, sequence: sequence);
+                return (sequenceString, sequence);
             }
             catch (Exception ex)
             {
@@ -97,6 +98,19 @@ namespace FoxIDs.Logic
                 logger.ScopeTrace(() => $"Sequence culture added, id '{sequence.Id}', culture '{culture}'.");
             }
         }
+        public async Task SetDownPartyAsync(string downPartyId, PartyTypes downPartyType)
+        {
+            if (!downPartyId.IsNullOrEmpty())
+            {
+                var sequence = HttpContext.GetSequence();
+                sequence.DownPartyId = downPartyId;
+                sequence.DownPartyType = downPartyType;
+                HttpContext.Items[Constants.Sequence.Object] = sequence;
+                HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
+
+                logger.ScopeTrace(() => $"Sequence down-party added, id '{sequence.Id}', downPartyId '{downPartyId}', downPartyType '{downPartyType}'.");
+            }
+        }
         public async Task SetUiUpPartyIdAsync(string uiUpPartyId)
         {
             if(!uiUpPartyId.IsNullOrEmpty())
@@ -106,7 +120,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace(() => $"Sequence culture added, id '{sequence.Id}', UiUpPartyId '{uiUpPartyId}'.");
+                logger.ScopeTrace(() => $"Sequence UI up-party added, id '{sequence.Id}', uiUpPartyId '{uiUpPartyId}'.");
             }
         }
 
@@ -118,7 +132,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    var sequence = CreateProtector().Unprotect(sequenceString).ToObject<Sequence>();
+                    var sequence = Unprotect(sequenceString);
                     if (sequence != null)
                     {
                         logger.SetScopeProperty(Constants.Logs.SequenceId, sequence.Id);
@@ -138,10 +152,10 @@ namespace FoxIDs.Logic
 
             try
             {
-                var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
-                CheckTimeout(sequence);
+                var sequence = await Task.FromResult(Unprotect(sequenceString));
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
+                CheckTimeout(sequence);
                 if (setValid)
                 {
                     HttpContext.Items[Constants.Sequence.Valid] = true;
@@ -166,7 +180,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                var sequence = await Task.FromResult(CreateProtector(trackName).Unprotect(sequenceString).ToObject<Sequence>());
+                var sequence = await Task.FromResult(Unprotect(sequenceString, trackName));
                 CheckTimeout(sequence);
 
                 logger.ScopeTrace(() => $"Sequence is validated, id '{sequence.Id}'.");
@@ -195,10 +209,9 @@ namespace FoxIDs.Logic
             var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
             var options = new DistributedCacheEntryOptions
             {
-                AbsoluteExpiration = absoluteExpiration
+                AbsoluteExpiration = data is IDownSequenceData ? absoluteExpiration.AddSeconds(settings.SequenceGracePeriod) : absoluteExpiration
             };
             await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
-
             return data;
         }
 
@@ -219,16 +232,16 @@ namespace FoxIDs.Logic
                 }
                 else
                 {
-                    throw new SequenceException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
+                    throw new SequenceBrowserBackException($"Cache do not contain the sequence object with sequence id '{sequence.Id}'.");
                 }
             }
 
-            if(remove)
+            var sequenceData = data.ToObject<T>();
+            if (remove)
             {
                 await distributedCache.RemoveAsync(key);
             }
-
-            return data.ToObject<T>();
+            return sequenceData;
         }
 
         public async Task<T> ValidateKeySequenceDataAsync<T>(Sequence sequence, string trackName, bool remove = true) where T : ISequenceKey
@@ -241,7 +254,7 @@ namespace FoxIDs.Logic
             }
             if (!(keySequenceData.KeyValidUntil > 0) || DateTimeOffset.FromUnixTimeSeconds(keySequenceData.KeyValidUntil) < DateTimeOffset.UtcNow)
             {
-                throw new SequenceException($"Key sequence timeout, id '{sequence.Id}'.");
+                throw new SequenceTimeoutException($"Key sequence timeout, id '{sequence.Id}'.");
             }
 
             if (!remove)
@@ -252,7 +265,7 @@ namespace FoxIDs.Logic
             return keySequenceData;
         }
 
-        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData
+        public async Task RemoveSequenceDataAsync<T>() where T : ISequenceData, new()
         {
             var sequence = HttpContext.GetSequence();
             var key = DataKey(typeof(T), sequence);
@@ -261,7 +274,7 @@ namespace FoxIDs.Logic
 
         private Task<string> CreateSequenceStringAsync(Sequence sequence)
         {
-            return Task.FromResult(CreateProtector().Protect(sequence.ToJson()));
+            return Task.FromResult(Protect(sequence));
         }
 
         private string DataKey(Type type, Sequence sequence, string trackName = null)
@@ -303,7 +316,7 @@ namespace FoxIDs.Logic
             var sequenceString = HttpContext.GetSequenceString();
 
             var externalId = RandomGenerator.Generate(50);
-            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
+            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime).AddSeconds(settings.SequenceGracePeriod);
             var options = new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = absoluteExpiration
@@ -322,14 +335,14 @@ namespace FoxIDs.Logic
                 var sequenceString = await distributedCache.GetStringAsync(key);
                 if (sequenceString == null)
                 {
-                    throw new SequenceException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
+                    throw new SequenceBrowserBackException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
                 }
                 await distributedCache.RemoveAsync(key);
 
-                var sequence = await Task.FromResult(CreateProtector().Unprotect(sequenceString).ToObject<Sequence>());
-                CheckTimeout(sequence);
+                var sequence = await Task.FromResult(Unprotect(sequenceString));
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = sequenceString;
+                CheckTimeout(sequence);
 
                 logger.ScopeTrace(() => $"Sequence is validated from external id, sequence id '{sequence.Id}'.", new Dictionary<string, string> { { Constants.Logs.SequenceId, sequence.Id }, { Constants.Logs.ExternalSequenceId, externalId }, { Constants.Logs.AccountAction, sequence.AccountAction == true ? "true" : "false" } });
             }
@@ -347,6 +360,32 @@ namespace FoxIDs.Logic
         {
             var routeBinding = HttpContext.GetRouteBinding();
             return $"{routeBinding.TenantName}.{routeBinding.TrackName}.seqext.{externalId}";
+        }
+
+        private string Protect(Sequence sequence)
+        {
+            var sequenceString = CreateProtector().Protect(sequence.ToJson());
+
+            var divideIndex = sequenceString.Length < 255 ? sequenceString.Length / 2 : 250;
+            divideIndex = NotDivideNextToUnderline(sequenceString, divideIndex);
+            return $"{sequenceString.Substring(0, divideIndex)}/{sequenceString.Substring(divideIndex, sequenceString.Length - divideIndex)}";
+        }
+
+        private int NotDivideNextToUnderline(string sequenceString, int divideIndex)
+        {
+            if (sequenceString[divideIndex + 1] == '_')
+            {
+                divideIndex--;
+                return NotDivideNextToUnderline(sequenceString, divideIndex);
+            }
+
+            return divideIndex;
+        }
+
+        private Sequence Unprotect(string sequenceString, string trackName = null)
+        {
+            sequenceString = sequenceString.Remove(sequenceString.IndexOf('/'), 1);
+            return CreateProtector(trackName).Unprotect(sequenceString).ToObject<Sequence>();
         }
     }
 }

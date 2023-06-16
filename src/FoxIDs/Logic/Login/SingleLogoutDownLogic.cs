@@ -125,15 +125,15 @@ namespace FoxIDs.Logic
             switch (upPartyType)
             {
                 case PartyTypes.Login:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.LoginController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
                 case PartyTypes.Oidc:
                     var oidcUpParty = await tenantRepository.GetAsync<UpParty>(partyId);
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: oidcUpParty.PartyBindingPattern).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.OAuthController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: oidcUpParty.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
                 case PartyTypes.Saml2:
                     var samlUpParty = await tenantRepository.GetAsync<UpParty>(partyId);
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: samlUpParty.PartyBindingPattern).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.SamlController, Constants.Endpoints.SingleLogoutDone, includeSequence: true, partyBindingPattern: samlUpParty.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
                 case PartyTypes.TrackLink:
-                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult();
+                    return HttpContext.GetUpPartyUrl(upPartyName, Constants.Routes.TrackLinkController, Constants.Endpoints.SingleLogoutDone, includeSequence: true).ToRedirectResult(RouteBinding.DisplayName);
 
                 default:
                     throw new NotSupportedException();

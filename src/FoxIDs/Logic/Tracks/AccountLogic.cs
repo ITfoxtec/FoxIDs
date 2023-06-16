@@ -18,12 +18,14 @@ namespace FoxIDs.Logic
 
         public async Task<User> GetUserAsync(string email)
         {
+            email = email?.ToLowerInvariant();
             var id = await User.IdFormatAsync(new User.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName, Email = email });
             return await tenantRepository.GetAsync<User>(id, required: false);
         }
 
         public async Task<User> ValidateUser(string email, string password)
         {
+            email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Validating user '{email}', Route '{RouteBinding?.Route}'.");
 
             ValidateEmail(email);
@@ -65,6 +67,7 @@ namespace FoxIDs.Logic
 
         public async Task<User> ChangePasswordUser(string email, string currentPassword, string newPassword)
         {
+            email = email?.ToLowerInvariant();
             logger.ScopeTrace(() => $"Change password user '{email}', Route '{RouteBinding?.Route}'.");
 
             ValidateEmail(email);

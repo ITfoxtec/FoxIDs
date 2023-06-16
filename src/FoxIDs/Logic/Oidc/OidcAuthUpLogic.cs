@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
             };
             await sequenceLogic.SaveSequenceDataAsync(oidcUpSequenceData);
 
-            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult();
+            return HttpContext.GetUpPartyUrl(partyLink.Name, Constants.Routes.OAuthUpJumpController, Constants.Endpoints.UpJump.AuthenticationRequest, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
         }
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
@@ -148,6 +148,15 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
+            if (party.Client.AdditionalParameters?.Count() > 0)
+            {
+                foreach(var additionalParameter in party.Client.AdditionalParameters)
+                {
+                    nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
+                }
+                logger.ScopeTrace(() => $"Up, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+            }
+
             if (party.Client.EnablePkce)
             {
                 var codeChallengeRequest = new CodeChallengeSecret
@@ -164,7 +173,7 @@ namespace FoxIDs.Logic
 
             logger.ScopeTrace(() => $"Up, Authentication request URL '{party.Client.AuthorizeUrl}'.");
             logger.ScopeTrace(() => "Up, Sending OIDC Authentication request.", triggerEvent: true);
-            return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl);            
+            return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl, RouteBinding.DisplayName);            
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)
@@ -584,7 +593,7 @@ namespace FoxIDs.Logic
 
                 if (error.IsNullOrEmpty())
                 {
-                    planUsageLogic.LogLoginEvent();
+                    planUsageLogic.LogLoginEvent(PartyTypes.Oidc);
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

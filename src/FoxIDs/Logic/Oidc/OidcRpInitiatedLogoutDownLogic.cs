@@ -48,6 +48,7 @@ namespace FoxIDs.Logic
             {
                 throw new NotSupportedException("Party Client not configured.");
             }
+            await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
 
             var formOrQueryDictionary = HttpContext.Request.Method switch
             {
@@ -213,7 +214,7 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri);
+            return await nameValueCollection.ToRedirectResultAsync(sequenceData.RedirectUri, RouteBinding.DisplayName);
         }
     }
 }

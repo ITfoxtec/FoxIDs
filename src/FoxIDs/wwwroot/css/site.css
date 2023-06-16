@@ -20,7 +20,6 @@ body {
 a {
     color: #df8935;
 }
-
     a:hover {
         color: #d87513;
     }
@@ -71,9 +70,9 @@ code {
 
 @media (min-width: 576px) {
     .page-content {
-        -ms-flex: 0 0 85%;
-        flex: 0 0 85%;
-        max-width: 85%;
+        -ms-flex: 0 0 92%;
+        flex: 0 0 92%;
+        max-width: 92%;
     }
 }
 
@@ -226,6 +225,17 @@ code {
         margin: 5px 0px;
     }
 
+.base-for-overlap {
+    position: relative;
+}
+    .base-for-overlap > .overlap {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
 .heading {
     font-weight: 300;
     padding-bottom: 15px;
@@ -240,13 +250,16 @@ code {
 }
 
 .list-item-filter {
+    position: relative;
+    vertical-align: middle;
     margin-bottom: 5px;
 }
 
 .img-item-filter {
-    max-height: 20px;
-    max-width: 60px;
+    height: 20px;
     width: auto;
+    max-width: 100px;
+    vertical-align: -0.25em;
 }
 
 .input-validation-error {

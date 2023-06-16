@@ -43,11 +43,13 @@ namespace FoxIDs.Logic
 
         public Task<ConfirmationCodeSendStatus> SendEmailConfirmationCodeAsync(string email, bool forceNewCode)
         {
+            email = email?.ToLowerInvariant();
             return SendEmailCodeAsync(GetEmailConfirmationCodeEmailContent(), EmailConfirmationCodeRedisKeyElement, email, forceNewCode, "email");
         }
 
         public Task<User> VerifyEmailConfirmationCodeAsync(string email, string code)
         {
+            email = email?.ToLowerInvariant();
             return VerifyEmailCodeAsync(GetEmailConfirmationCodeEmailContent(), EmailConfirmationCodeRedisKeyElement, null, email, code, "email");
         }
 
@@ -57,18 +59,20 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
-                Subject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Email confirmation"]}",
+                Subject = localizer["{0}Email confirmation", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
                 Body = localizer["Your{0}email confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
             };
         }
 
         public Task<ConfirmationCodeSendStatus> SendResetPasswordCodeAsync(string email, bool forceNewCode)
         {
+            email = email?.ToLowerInvariant();
             return SendEmailCodeAsync(GetResetPasswordCodeEmailContent(), ResetPasswordCodeRedisKeyElement, email, forceNewCode, "reset password");
         }
 
         public Task<User> VerifyResetPasswordCodeAndSetPasswordAsync(string email, string code, string newPassword)
         {
+            email = email?.ToLowerInvariant();
             Func<User, Task> onSuccess = (user) => accountLogic.SetPasswordUser(user, newPassword);
             return VerifyEmailCodeAsync(GetResetPasswordCodeEmailContent(), ResetPasswordCodeRedisKeyElement, onSuccess, email, code, "reset password");
         }
@@ -79,7 +83,7 @@ namespace FoxIDs.Logic
         {
             return (code) => new EmailContent
             {
-                Subject = $"{(RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - ")}{localizer["Reset password"]}",
+                Subject = localizer["{0}Reset password", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? string.Empty : $"{RouteBinding.DisplayName} - "],
                 Body = localizer["Your{0}reset password confirmation code: {1}", RouteBinding.DisplayName.IsNullOrWhiteSpace() ? " " : $" {RouteBinding.DisplayName} ", code]
             };
         }

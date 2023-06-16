@@ -84,6 +84,7 @@ namespace FoxIDs
             public const string Type = "f_Type";
             public const string FailingLoginCount = "f_FailingLoginCount";
             public const string UsageType = "f_UsageType";
+            public const string UsageLoginType = "f_UsageLoginType";
             public const string UsageTokenType = "f_UsageTokenType";
 
             public static class Results
@@ -172,7 +173,7 @@ namespace FoxIDs
                 public const int SupportedCulturesMax = 50;
                 public const int SupportedCulturesLength = 5;
                 public const int ResourcesMin = 1;
-                public const int ResourcesMax = 5000;
+                public const int ResourcesMax = 100;
                 public const int CultureLength = 5;
                 public const int NameLength = 500;
                 public const int ValueLength = 500;
@@ -212,9 +213,9 @@ namespace FoxIDs
                 public const int KeyExternalCacheLifetimeMax = 86400;
 
                 public const int ResourcesMin = 0;
-                public const int ResourcesMax = 5000;
+                public const int ResourcesMax = 250;
                 public const int SequenceLifetimeMin = 30;
-                public const int SequenceLifetimeMax = 10800;
+                public const int SequenceLifetimeMax = 18000;
 
                 public const int MaxFailingLoginsMin = 2;
                 public const int MaxFailingLoginsMax = 20;
@@ -234,6 +235,7 @@ namespace FoxIDs
 
                 public static class SendEmail
                 {
+                    public const int FromNameLength = 100;
                     public const int SendgridApiKeyLength = 200;
                     public const int SmtpHostLength = 100;
                     public const int SmtpPortLength = 10;
@@ -405,7 +407,7 @@ namespace FoxIDs
                 public const int IssuerLength = 300;
                 public const int KeysApiMin = 0;
                 public const int KeysMin = 1;
-                public const int KeysMax = 10;
+                public const int KeysMax = 10;   
                 public const int OidcDiscoveryUpdateRateMin = 14400; // 4 hours
                 public const int OidcDiscoveryUpdateRateMax = 5184000; // 60 days
 
@@ -419,6 +421,13 @@ namespace FoxIDs
                     public const int ScopesMax = 100;
                     public const int ClaimsMin = 0;
                     public const int ClaimsMax = 100;
+
+                    public const int AdditionalParametersMin = 0;
+                    public const int AdditionalParametersMax = 10;
+                    public const int AdditionalParameterNameLength = 50;
+                    public const string AdditionalParameterNameRegExPattern = @"^[\w:\-/.]*$";
+                    public const int AdditionalParameterValueLength = 250;
+                    public const string AdditionalParameterValueRegExPattern = @"^[\w:\-/.\[\]\{\} ""']*$";
 
                     public const int ResponseModeLength = 30;
                     public const int ResponseTypeLength = 30;
@@ -600,10 +609,14 @@ namespace FoxIDs
             public static class ResponseErrors
             {
                 /// <summary>
-                /// Login canceled by user.
+                /// Login canceled.
                 /// </summary>
                 public const string LoginCanceled = "login_canceled";
 
+                /// <summary>
+                /// Login timeout.
+                /// </summary>
+                public const string LoginTimeout = "login_timeout";
             }
         }
 

@@ -370,7 +370,7 @@ namespace FoxIDs.Logic
 
                 if (status == Saml2StatusCodes.Success)
                 {
-                    planUsageLogic.LogLoginEvent();
+                    planUsageLogic.LogLoginEvent(PartyTypes.Saml2);
                 }
 
                 switch (sequenceData.DownPartyLink.Type)

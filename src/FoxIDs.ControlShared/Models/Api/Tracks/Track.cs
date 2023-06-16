@@ -17,7 +17,7 @@ namespace FoxIDs.Models.Api
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
         public string DisplayName { get; set; }
 
-        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours
+        [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 5 hours. Default 2 hours.
         public int SequenceLifetime { get; set; } = 7200;
 
         [Range(Constants.Models.Track.MaxFailingLoginsMin, Constants.Models.Track.MaxFailingLoginsMax)]

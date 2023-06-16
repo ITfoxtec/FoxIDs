@@ -66,11 +66,23 @@ namespace FoxIDs.Logic
                 var value = GetValue(RouteBinding.Resources, id, culture);
                 if (!value.IsNullOrEmpty())
                 {
-                    return value;
+                    return AddResourceId(id, value);
                 }
             }
 
-            return GetValue(resourceEnvelope.Resources, id, culture);
+            return AddResourceId(id, GetValue(resourceEnvelope.Resources, id, culture));
+        }
+
+        private string AddResourceId(int id, string value)
+        {
+            if (RouteBinding.AddResourceId)
+            {
+                return $"[{id}]{value}";
+            }
+            else
+            {
+                return value;
+            }
         }
 
         private string GetValue(List<ResourceItem> resources, int id, string culture)

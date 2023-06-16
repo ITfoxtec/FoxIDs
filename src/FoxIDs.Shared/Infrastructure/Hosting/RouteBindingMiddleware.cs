@@ -107,6 +107,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
                 Resources = track.Resources,
+                AddResourceId = track.AddResourceId,
                 TelemetryClient = GetTelmetryClient(plan?.ApplicationInsightsConnectionString),
                 LogAnalyticsWorkspaceId = plan?.LogAnalyticsWorkspaceId
             };

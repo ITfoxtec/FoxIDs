@@ -19,7 +19,7 @@
             {
                 <PageEditForm @ref="resource.Form" TModel="ResourceItemViewModel" OnValidSubmit="@(async (editContext) => await OnEditResourceValidSubmitAsync(resource, editContext))">
                     <div class="modal-header">
-                        Resource @(!resource.Form.Model.Name.IsNullOrEmpty() ? $"(Id: {resource.Form.Model.Id})" : "")
+                        Resource @(!resource.Form.Model.Name.IsNullOrEmpty() ? $"(ID: {resource.Form.Model.Id})" : "")
                     </div>
                     <div class="modal-body">
                         @if (!resource.Form.Model.Name.IsNullOrEmpty())
@@ -113,7 +113,7 @@
                 <button class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateResourceAsync(resource))">
                     @resource.Name
                 </button><br />
-                <span>Id: @resource.Id</span>
+                <span>ID: @resource.Id</span>
             }
         </li>
     }

@@ -1,6 +1,15 @@
 ﻿@page "/{tenantName}/texts"
 @inherits PageBase
 
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Texts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textSettingsHref">Settings</a>
+    </li>
+</ul>
+
 <PageEditForm @ref="resourceFilterForm" TModel="FilterResourceViewModel" OnValidSubmit="OnResourceFilterValidSubmitAsync">
     <FInputTextFilter @bind-Value="resourceFilterForm.Model.FilterName" For="@(() => resourceFilterForm.Model.FilterName)" />
 </PageEditForm>

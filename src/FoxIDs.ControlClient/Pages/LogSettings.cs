@@ -56,6 +56,9 @@ namespace FoxIDs.Client.Pages
 
         private async Task DefaultLoadAsync()
         {
+            generalLogSettings.Error = null;
+            generalLogSettings.Edit = false;
+
             logSreamSettingsListError = null;
             try
             {

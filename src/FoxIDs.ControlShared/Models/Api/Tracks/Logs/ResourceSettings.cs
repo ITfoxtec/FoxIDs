@@ -7,7 +7,7 @@ namespace FoxIDs.Models.Api
     /// </summary>
     public class ResourceSettings
     {
-        [Display(Name = "Show resource ID - to find text resources")]
+        [Display(Name = "Show text ID")]
         public bool ShowResourceId { get; set; }
     }
 }

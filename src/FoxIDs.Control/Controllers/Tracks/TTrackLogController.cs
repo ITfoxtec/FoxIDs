@@ -41,6 +41,11 @@ namespace FoxIDs.Controllers
         {
             if (!await ModelState.TryValidateObjectAsync(logRequest)) return BadRequest(ModelState);
 
+            if (!logRequest.Filter.IsNullOrEmpty())
+            {
+                logRequest.Filter = logRequest.Filter.Trim();
+            }
+
             if (!logRequest.QueryExceptions && !logRequest.QueryTraces && !logRequest.QueryEvents && !logRequest.QueryMetrics)
             {
                 logRequest.QueryExceptions = true;

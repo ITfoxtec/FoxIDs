@@ -35,6 +35,8 @@ namespace FoxIDs.Models
 
         public List<ResourceItem> Resources { get; set; }
 
+        public bool ShowResourceId { get; set; }
+
         public int SequenceLifetime { get; set; }
 
         public int MaxFailingLogins { get; set; }

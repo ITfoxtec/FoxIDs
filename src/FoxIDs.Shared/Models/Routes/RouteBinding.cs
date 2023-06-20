@@ -35,7 +35,7 @@ namespace FoxIDs.Models
 
         public List<ResourceItem> Resources { get; set; }
 
-        public bool AddResourceId { get; set; }
+        public bool ShowResourceId { get; set; }
 
         public int SequenceLifetime { get; set; }
 

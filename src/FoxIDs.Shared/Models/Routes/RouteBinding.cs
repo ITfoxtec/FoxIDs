@@ -7,6 +7,8 @@ namespace FoxIDs.Models
     {
         public bool HasCustomDomain { get; set; }
 
+        public bool UseCustomDomain { get; set; }
+
         public string PlanName { get; set; }
 
         public string TenantName { get; set; }

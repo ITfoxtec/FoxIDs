@@ -12,7 +12,7 @@ namespace FoxIDs
         public static string GetHost(this HttpContext context, bool addTrailingSlash = true)
         {
             var routeBinding = context.GetRouteBinding();
-            if (routeBinding != null && !routeBinding.HasCustomDomain)
+            if (routeBinding != null && !routeBinding.UseCustomDomain)
             {
                 var settings = context.RequestServices.GetService<Settings>();
                 if (settings != null)
@@ -34,7 +34,7 @@ namespace FoxIDs
         public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null)
         {
             var routeBinding = context.GetRouteBinding();
-            if (!routeBinding.HasCustomDomain)
+            if (!routeBinding.UseCustomDomain)
             {
                 return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
             }

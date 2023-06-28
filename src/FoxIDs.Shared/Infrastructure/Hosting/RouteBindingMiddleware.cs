@@ -39,15 +39,12 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     var customDomain = httpContext.Items[Constants.Routes.RouteBindingCustomDomainHeader] as string;
                     var hasCustomDomain = !customDomain.IsNullOrEmpty();
-                    if (hasCustomDomain && !CheckCustomDomainSupport(route))
-                    {
-                        hasCustomDomain = false;
-                    }
+                    var useCustomDomain = GetUseCustomDomain(route, hasCustomDomain);
 
-                    var trackIdKey = GetTrackIdKey(route, hasCustomDomain);
+                    var trackIdKey = GetTrackIdKey(route, useCustomDomain);
                     if (trackIdKey != null)
                     {
-                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, hasCustomDomain, customDomain, GetPartyNameAndbinding(route, hasCustomDomain), AcceptUnknownParty(httpContext.Request.Path.Value, route));
+                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, hasCustomDomain, useCustomDomain, customDomain, GetPartyNameAndbinding(route, useCustomDomain), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
                     }
 
@@ -65,24 +62,34 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
+        private bool GetUseCustomDomain(string[] route, bool hasCustomDomain)
+        {
+            if (hasCustomDomain && !CheckCustomDomainSupport(route))
+            {
+                return false;
+            }
+
+            return hasCustomDomain;
+        }
+
         protected abstract bool CheckCustomDomainSupport(string[] route);
 
         protected virtual ValueTask SeedAsync(IServiceProvider requestServices) => default;
 
         protected virtual ValueTask<bool> PreAsync(HttpContext httpContext, string[] route) => new ValueTask<bool>(true);
 
-        protected abstract Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain);
+        protected abstract Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain);
 
         protected virtual bool AcceptUnknownParty(string path, string[] route) => false;
 
-        protected virtual string GetPartyNameAndbinding(string[] route, bool hasCustomDomain) => null;
+        protected virtual string GetPartyNameAndbinding(string[] route, bool useCustomDomain) => null;
 
         protected virtual ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty) => new ValueTask<RouteBinding>(routeBinding);
 
-        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool hasCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
+        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool hasCustomDomain, bool useCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
         {
-            var tenant = await GetTenantAsync(requestServices, hasCustomDomain, customDomain, trackIdKey.TenantName);
-            if (hasCustomDomain)
+            var tenant = await GetTenantAsync(requestServices, useCustomDomain, customDomain, trackIdKey.TenantName);
+            if (useCustomDomain)
             {
                 trackIdKey.TenantName = tenant.Name;
             }
@@ -90,19 +97,20 @@ namespace FoxIDs.Infrastructure.Hosting
             var plan = await GetPlanAsync(requestServices, tenant.PlanName);
             if (plan != null)
             {
-                if (hasCustomDomain && !plan.EnableCustomDomain)
+                if (useCustomDomain && !plan.EnableCustomDomain)
                 {
                     throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
                 }
             }
 
-            var track = await GetTrackAsync(trackIdKey, hasCustomDomain);
+            var track = await GetTrackAsync(trackIdKey, useCustomDomain);
             scopedLogger.SetScopeProperty(Constants.Logs.TenantName, trackIdKey.TenantName);
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
             {
                 HasCustomDomain = hasCustomDomain,
-                RouteUrl = $"{(!hasCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
+                UseCustomDomain = useCustomDomain,
+                RouteUrl = $"{(!useCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 PlanName = plan?.Name,
                 TenantName = trackIdKey.TenantName,
                 TrackName = trackIdKey.TrackName,
@@ -127,10 +135,10 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private static async Task<Tenant> GetTenantAsync(IServiceProvider requestServices, bool hasCustomDomain, string customDomain, string tenantName)
+        private static async Task<Tenant> GetTenantAsync(IServiceProvider requestServices, bool useCustomDomain, string customDomain, string tenantName)
         {
             var tenantCacheLogic = requestServices.GetService<TenantCacheLogic>();
-            if (hasCustomDomain)
+            if (useCustomDomain)
             {
                 return await tenantCacheLogic.GetTenantByCustomDomainAsync(customDomain);
             }
@@ -150,7 +158,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return await planCacheLogic.GetPlanAsync(planName, required: false);
         }
 
-        private async Task<Track> GetTrackAsync(Track.IdKey idKey, bool hasCustomDomain)
+        private async Task<Track> GetTrackAsync(Track.IdKey idKey, bool useCustomDomain)
         {
             try
             {
@@ -162,7 +170,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     if (cex.InnerException is CosmosException)
                     {
-                        if (hasCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase))
+                        if (useCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase))
                         {
                             throw new RouteCreationException($"Invalid tenant and track '{idKey.TenantName}'. The URL for a custom domain has to be without the tenant element.", ex);
                         }
@@ -170,7 +178,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     }
                 }
 
-                if (hasCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase)) 
+                if (useCustomDomain && idKey.TenantName.Equals(idKey.TrackName, StringComparison.OrdinalIgnoreCase)) 
                 {
                     throw new RouteCreationException($"Error loading tenant and track '{idKey.TenantName}'.", ex);
                 }

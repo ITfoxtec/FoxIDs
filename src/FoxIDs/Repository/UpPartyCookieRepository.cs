@@ -157,7 +157,7 @@ namespace FoxIDs.Repository
 
         private string GetPath(RouteBinding routeBinding, UpParty party)
         {
-            return $"{(!routeBinding.HasCustomDomain ? $"/{routeBinding.TenantName}" : string.Empty)}/{routeBinding.TrackName}/{routeBinding.UpParty.Name.ToUpPartyBinding(party.PartyBindingPattern)}";
+            return $"{(!routeBinding.UseCustomDomain ? $"/{routeBinding.TenantName}" : string.Empty)}/{routeBinding.TrackName}/{routeBinding.UpParty.Name.ToUpPartyBinding(party.PartyBindingPattern)}";
         }
 
         private IDataProtector CreateProtector(RouteBinding routeBinding)

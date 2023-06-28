@@ -30,7 +30,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return new ValueTask<bool>(true);
         }
 
-        protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
+        protected override Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain)
         {
             if (route.Length >= 1)
             {

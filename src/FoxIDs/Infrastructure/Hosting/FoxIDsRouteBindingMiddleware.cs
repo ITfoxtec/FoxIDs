@@ -55,7 +55,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return true;
         }
 
-        protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
+        protected override Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain)
         {
             if (route.Length == 0)
             {
@@ -69,9 +69,9 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 return null;
             }
-            else if ((!hasCustomDomain && route.Length > 2) || (hasCustomDomain && route.Length > 1))
+            else if ((!useCustomDomain && route.Length > 2) || (useCustomDomain && route.Length > 1))
             {
-                if (!hasCustomDomain)
+                if (!useCustomDomain)
                 {
                     return new Track.IdKey
                     {
@@ -87,7 +87,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     };
                 }
             }
-            else if ((!hasCustomDomain && route.Length == 2) || (hasCustomDomain && route.Length == 1))
+            else if ((!useCustomDomain && route.Length == 2) || (useCustomDomain && route.Length == 1))
             {
                 throw new NotSupportedException($"FoxIDs route '{string.Join('/', route)}' without an action is not supported.");
             }
@@ -122,11 +122,11 @@ namespace FoxIDs.Infrastructure.Hosting
             return false;
         }
 
-        protected override string GetPartyNameAndbinding(string[] route, bool hasCustomDomain)
+        protected override string GetPartyNameAndbinding(string[] route, bool useCustomDomain)
         {
-            if ((!hasCustomDomain && route.Length >= 3) || (hasCustomDomain && route.Length >= 2))
+            if ((!useCustomDomain && route.Length >= 3) || (useCustomDomain && route.Length >= 2))
             {
-                if (!hasCustomDomain)
+                if (!useCustomDomain)
                 {
                     return route[2].ToLower();
                 }

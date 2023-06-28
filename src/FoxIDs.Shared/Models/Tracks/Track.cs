@@ -63,6 +63,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }
 
+        [JsonProperty(PropertyName = "show_resource_id")]
+        public bool ShowResourceId { get; set; }
+
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] // 30 seconds to 3 hours
         [JsonProperty(PropertyName = "sequence_lifetime")] 
         public int SequenceLifetime { get; set; }

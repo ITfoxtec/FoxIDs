@@ -27,9 +27,9 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Filter resource name.
+        /// Filter resource name or ID.
         /// </summary>
-        /// <param name="filterName">Filter resource name.</param>
+        /// <param name="filterName">Filter resource name or ID.</param>
         /// <returns>Resource name.</returns>
         [ProducesResponseType(typeof(List<Api.ResourceName>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

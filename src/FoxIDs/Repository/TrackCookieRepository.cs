@@ -144,7 +144,7 @@ namespace FoxIDs.Repository
 
         private string GetPath(RouteBinding routeBinding)
         {
-            return $"{(!routeBinding.HasCustomDomain ? $"/{routeBinding.TenantName}" : string.Empty)}/{routeBinding.TrackName}";
+            return $"{(!routeBinding.UseCustomDomain ? $"/{routeBinding.TenantName}" : string.Empty)}/{routeBinding.TrackName}";
         }
 
         private IDataProtector CreateProtector(RouteBinding routeBinding)

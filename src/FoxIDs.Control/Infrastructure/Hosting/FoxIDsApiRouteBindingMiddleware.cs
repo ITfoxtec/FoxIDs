@@ -16,7 +16,7 @@ namespace FoxIDs.Infrastructure.Hosting
             throw new NotSupportedException("Host in header not supported in Control API.");
         }
 
-        protected override Track.IdKey GetTrackIdKey(string[] route, bool hasCustomDomain)
+        protected override Track.IdKey GetTrackIdKey(string[] route, bool useCustomDomain)
         {
             var trackIdKey = new Track.IdKey();
             trackIdKey.TrackName = Constants.Routes.MasterTrackName;

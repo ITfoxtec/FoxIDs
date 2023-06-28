@@ -923,7 +923,7 @@ namespace FoxIDs.Controllers
         {
             sequenceData.Email = email;
             await sequenceLogic.SaveSequenceDataAsync(sequenceData);
-            return new RedirectResult($"{Constants.Endpoints.ChangePassword}/_{SequenceString}");
+            return new RedirectResult($"../{Constants.Endpoints.ChangePassword}/_{SequenceString}");
         }
 
         public async Task<IActionResult> ChangePassword()

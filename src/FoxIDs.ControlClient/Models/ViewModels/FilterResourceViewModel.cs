@@ -5,10 +5,10 @@ namespace FoxIDs.Client.Models.ViewModels
     public class FilterResourceViewModel
     {
         /// <summary>
-        /// Search by user email.
+        /// Search by text or ID.
         /// </summary>
         [MaxLength(Constants.Models.Resource.NameLength)]
-        [Display(Name = "Search resource")]
+        [Display(Name = "Search for text or ID")]
         public string FilterName { get; set; }
     }
 }

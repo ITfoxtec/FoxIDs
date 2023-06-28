@@ -1,0 +1,58 @@
+﻿@page "/{tenantName}/textsettings"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link active">Settings</a>
+    </li>
+</ul>
+
+<div class="tab-content pt-4">
+    <div class="card">
+        <div class="card-body @(generalTextSettings.Edit ? "active" : string.Empty)">
+            @if (TrackSelectedLogic.IsTrackSelected)
+            {
+
+                <div>
+                    <p>Each text element in FoxIDs has its unique ID. It is possible to change the settings so that the ID's are displayed together with the text in FoxIDs, making it possible to search the text elements by ID.</p>
+                </div>
+
+                @if (generalTextSettings.Edit && !generalTextSettings.Error.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @generalTextSettings.Error
+                    </div>
+                }
+
+                @if (generalTextSettings.Edit)
+                {
+                    <PageEditForm @ref="generalTextSettings.Form" TModel="Api.ResourceSettings" OnValidSubmit="OnUpdateTextSettingsValidSubmitAsync">
+                        @if (generalTextSettings.Form?.Model != null)
+                        {
+                            <div class="modal-header">
+                                Text settings
+                            </div>
+                            <div class="modal-body">
+                                <FInputToggle @bind-Value="generalTextSettings.Form.Model.ShowResourceId" For="@(() => generalTextSettings.Form.Model.ShowResourceId)" TextType="e.d" />
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Update</button>
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => generalTextSettings.Edit = false)">Cancel</button>
+                            </div>
+                        }
+                    </PageEditForm>
+                }
+                else
+                {
+                    <button class="btn btn-link text-left p-0" @onclick="@(async () => await ShowUpdateTextSettingsAsync())">
+                        Change text settings
+                    </button>
+                }
+            }
+        </div>
+    </div>
+
+</div>

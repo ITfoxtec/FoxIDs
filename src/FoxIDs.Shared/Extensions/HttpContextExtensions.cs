@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using ITfoxtec.Identity.Util;
+using FoxIDs.Models;
 
 namespace FoxIDs
 {
@@ -12,7 +13,7 @@ namespace FoxIDs
         public static string GetHost(this HttpContext context, bool addTrailingSlash = true)
         {
             var routeBinding = context.GetRouteBinding();
-            if (routeBinding != null && !routeBinding.HasCustomDomain)
+            if (routeBinding != null && !routeBinding.UseCustomDomain)
             {
                 var settings = context.RequestServices.GetService<Settings>();
                 if (settings != null)
@@ -33,8 +34,8 @@ namespace FoxIDs
 
         public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null)
         {
-            var routeBinding = context.GetRouteBinding();
-            if (!routeBinding.HasCustomDomain)
+            var routeBinding = context.GetRouteBinding();         
+            if (!GetUseCustomDomainConsideringTrackName(routeBinding, trackName))
             {
                 return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
             }
@@ -42,6 +43,23 @@ namespace FoxIDs
             {
                 return UrlCombine.Combine(context.GetHost(), trackName ?? routeBinding.TrackName);
             }
+        }
+
+        private static bool GetUseCustomDomainConsideringTrackName(RouteBinding routeBinding, string trackName)
+        {
+            if (!trackName.IsNullOrEmpty())
+            {
+                if (trackName.Equals(Constants.Routes.MasterTrackName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+                else
+                {
+                    return routeBinding.HasCustomDomain;
+                }
+            }
+
+            return routeBinding.UseCustomDomain;
         }
 
         public static Uri GetHostUri(this HttpContext context)

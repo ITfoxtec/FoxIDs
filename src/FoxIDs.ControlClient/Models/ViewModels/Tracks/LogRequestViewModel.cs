@@ -13,7 +13,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Interval")]
         public LogTimeIntervals TimeInterval { get; set; } = LogTimeIntervals.FifteenMinutes;
 
-        [Display(Name = "Filter")]
+        [Display(Name = "Search")]
         public string Filter { get; set; }
 
         [Display(Name = "Log types")]

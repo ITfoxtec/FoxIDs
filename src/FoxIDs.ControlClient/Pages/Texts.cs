@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
+using FoxIDs.Client.Logic;
 
 namespace FoxIDs.Client.Pages
 {
@@ -19,6 +20,10 @@ namespace FoxIDs.Client.Pages
     {
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
+        private string textSettingsHref;
+
+        [Inject]
+        public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
         public TrackService TrackService { get; set; }
@@ -28,6 +33,7 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            textSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/textsettings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

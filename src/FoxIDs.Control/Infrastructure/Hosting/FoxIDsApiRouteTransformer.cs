@@ -17,7 +17,7 @@ namespace FoxIDs.Infrastructure.Hosting
             return path;
         }
 
-        protected override async Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, bool hasCustomDomain, RouteValueDictionary values, string[] route)
+        protected override async Task<RouteValueDictionary> HandleRouteAsync(HttpContext httpContext, bool useCustomDomain, RouteValueDictionary values, string[] route)
         {
             if (route.Length >= 2 && route.Length <= 4)
             {

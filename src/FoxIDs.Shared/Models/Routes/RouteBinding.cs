@@ -7,6 +7,8 @@ namespace FoxIDs.Models
     {
         public bool HasCustomDomain { get; set; }
 
+        public bool UseCustomDomain { get; set; }
+
         public string PlanName { get; set; }
 
         public string TenantName { get; set; }
@@ -34,6 +36,8 @@ namespace FoxIDs.Models
         public List<ClaimMap> ClaimMappings { get; set; }
 
         public List<ResourceItem> Resources { get; set; }
+
+        public bool ShowResourceId { get; set; }
 
         public int SequenceLifetime { get; set; }
 

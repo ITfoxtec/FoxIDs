@@ -17,6 +17,7 @@ namespace FoxIDs.Client.Services
         private const string keyTypeApiUri = "api/{tenant}/{track}/!trackkeytype";
         private const string filterResourceNameApiUri = "api/{tenant}/master/!filterresourcename";
         private const string resourceApiUri = "api/{tenant}/{track}/!trackresource";
+        private const string resourceSettingApiUri = "api/{tenant}/{track}/!trackresourcesetting";
         private const string sendEmailApiUri = "api/{tenant}/{track}/!tracksendemail";
         private const string claimMappingApiUri = "api/{tenant}/{track}/!trackclaimmapping";
         private const string logUsageApiUri = "api/{tenant}/{track}/!tracklogusage";
@@ -48,6 +49,9 @@ namespace FoxIDs.Client.Services
         public async Task<ResourceItem> GetTrackResourceAsync(int resourceId) => await GetAsync<ResourceItem>(resourceApiUri, Convert.ToString(resourceId), parmName: nameof(resourceId));
         public async Task UpdateTrackResourceAsync(TrackResourceItem trackResourceItem) => await PutAsync(resourceApiUri, trackResourceItem);
         public async Task DeleteTrackResourceAsync(int resourceId) => await DeleteAsync(resourceApiUri, Convert.ToString(resourceId), parmName: nameof(resourceId));
+
+        public async Task<ResourceSettings> GetTrackResourceSettingAsync() => await GetAsync<ResourceSettings>(resourceSettingApiUri);
+        public async Task SaveTrackResourceSettingAsync(ResourceSettings resourceSettings) => await PostAsync(resourceSettingApiUri, resourceSettings);
 
         public async Task<SendEmail> GetTrackSendEmailAsync() => await GetAsync<SendEmail>(sendEmailApiUri);
         public async Task UpdateTrackSendEmailAsync(SendEmail sendEmail) => await PutAsync(sendEmailApiUri, sendEmail);

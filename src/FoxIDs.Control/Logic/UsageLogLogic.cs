@@ -32,10 +32,10 @@ namespace FoxIDs.Logic
             this.tokenCredential = tokenCredential;
         }
 
-        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName)
+        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMaster = false)
         {
             var client = new LogsQueryClient(tokenCredential);  
-            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope), logRequest);
+            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMaster);
 
             var items = new List<Api.UsageLogItem>();
             if(logRequest.IncludeUsers && logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
@@ -70,13 +70,14 @@ namespace FoxIDs.Logic
 
                     if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
                     {
-                        if (date.Hour != hourPointer)
+                        var hour = date.Hour + logRequest.TimeOffset;
+                        if (hour != hourPointer)
                         {
-                            hourPointer = date.Hour;
+                            hourPointer = hour;
                             var hourItem = new Api.UsageLogItem
                             {
                                 Type = Api.UsageLogTypes.Hour,
-                                Value = date.Hour
+                                Value = hour
                             };
                             hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
                             dayItemsPointer.Add(hourItem);
@@ -167,21 +168,21 @@ namespace FoxIDs.Logic
             }
         }
 
-        private QueryTimeRange GetQueryTimeRange(Api.UsageLogTimeScopes timeScope)
+        private QueryTimeRange GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
         {
             var timePointer = DateTimeOffset.Now;
             if (timeScope == Api.UsageLogTimeScopes.LastMonth)
             {
                 timePointer = timePointer.AddMonths(-1);
             }
-            var startDate = new DateTime(timePointer.Year, timePointer.Month, 1);
+            var startDate = new DateTimeOffset(timePointer.Year, timePointer.Month, 1, 0, 0, 0, TimeSpan.FromHours(timeOffset));
             var endDate = startDate.AddMonths(1).AddDays(-1);
             return new QueryTimeRange(startDate, endDate);
         }
 
-        private string GetLogAnalyticsWorkspaceId()
+        private string GetLogAnalyticsWorkspaceId(bool isMaster)
         {
-            if (!string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
+            if (!isMaster && !string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
             {
                 return RouteBinding.LogAnalyticsWorkspaceId;
             }
@@ -191,7 +192,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest)
+        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMaster)
         {
             if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
             {
@@ -205,8 +206,8 @@ namespace FoxIDs.Logic
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
-            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(), eventsQuery, queryTimeRange);
+            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMaster);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(isMaster), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
         }
@@ -245,16 +246,28 @@ namespace FoxIDs.Logic
             return string.Join(" and ", whereDataSlice);
         }
 
-        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy)
+        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMaster)
         {
             return
-@$"{fromType}
+@$"{GetFromTypeAndUnion(fromType, isMaster)}
 | extend f_TenantName = Properties.f_TenantName
 | extend f_TrackName = Properties.f_TrackName
 | extend f_UsageType = Properties.f_UsageType
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
 | summarize UsageCount = count() by {preOrderSummarizeBy}tostring(f_UsageType)
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
+        }
+
+        private string GetFromTypeAndUnion(string fromType, bool isMaster)
+        {
+            if (!isMaster || !(settings.ApplicationInsights.PlanWorkspaceIds?.Count() > 0))
+            {
+                return fromType;
+            }
+            else
+            {
+                return $"union {fromType}, {string.Join(", ", settings.ApplicationInsights.PlanWorkspaceIds.Select(w => $"workspace(\"{w}\").{fromType}").ToArray())}";
+            }
         }
     }
 }

@@ -12,6 +12,11 @@ namespace FoxIDs.Models.Api
         public UsageLogTimeScopes TimeScope { get; set; }
 
         /// <summary>
+        /// The time's offset from Coordinated Universal Time (UTC) in hours.
+        /// </summary>
+        public int TimeOffset { get; set; }
+
+        /// <summary>
         /// Log summarize level.
         /// </summary>
         [Required]

@@ -13,7 +13,6 @@ using ITfoxtec.Identity;
 using Azure.Monitor.Query;
 using Azure.Monitor.Query.Models;
 using Azure;
-using FoxIDs.Models.Api;
 
 namespace FoxIDs.Controllers
 {
@@ -441,7 +440,7 @@ f_UserAgent contains '{filter}'";
 
         private class InternalLogItem
         {
-            public LogItemTypes Type { get; set; }
+            public Api.LogItemTypes Type { get; set; }
 
             public DateTimeOffset? Timestamp { get; set; }
 
@@ -451,9 +450,9 @@ f_UserAgent contains '{filter}'";
 
             public Dictionary<string, string> Values { get; set; }
 
-            public List<LogItemDetail> Details { get; set; }
+            public List<Api.LogItemDetail> Details { get; set; }
 
-            public List<LogItem> SubItems { get; set; }
+            public List<Api.LogItem> SubItems { get; set; }
         }
     }
 }

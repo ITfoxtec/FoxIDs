@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
         public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName)
         {
             var client = new LogsQueryClient(tokenCredential);  
-            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope), logRequest);
+            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest);
 
             var items = new List<Api.UsageLogItem>();
             if(logRequest.IncludeUsers && logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
@@ -70,13 +70,14 @@ namespace FoxIDs.Logic
 
                     if (logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Hour)
                     {
-                        if (date.Hour != hourPointer)
+                        var hour = date.Hour + logRequest.TimeOffset;
+                        if (hour != hourPointer)
                         {
-                            hourPointer = date.Hour;
+                            hourPointer = hour;
                             var hourItem = new Api.UsageLogItem
                             {
                                 Type = Api.UsageLogTypes.Hour,
-                                Value = date.Hour
+                                Value = hour
                             };
                             hourItem.SubItems = itemsPointer = new List<Api.UsageLogItem>();
                             dayItemsPointer.Add(hourItem);
@@ -167,14 +168,14 @@ namespace FoxIDs.Logic
             }
         }
 
-        private QueryTimeRange GetQueryTimeRange(Api.UsageLogTimeScopes timeScope)
+        private QueryTimeRange GetQueryTimeRange(Api.UsageLogTimeScopes timeScope, int timeOffset)
         {
             var timePointer = DateTimeOffset.Now;
             if (timeScope == Api.UsageLogTimeScopes.LastMonth)
             {
                 timePointer = timePointer.AddMonths(-1);
             }
-            var startDate = new DateTime(timePointer.Year, timePointer.Month, 1);
+            var startDate = new DateTimeOffset(timePointer.Year, timePointer.Month, 1, 0, 0, 0, TimeSpan.FromHours(timeOffset));
             var endDate = startDate.AddMonths(1).AddDays(-1);
             return new QueryTimeRange(startDate, endDate);
         }

@@ -68,6 +68,10 @@ code {
     letter-spacing: normal;
 }
 
+.footer-version {
+    display: none;
+}
+
 @media (min-width: 576px) {
     .page-content {
         -ms-flex: 0 0 92%;

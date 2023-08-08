@@ -23,7 +23,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    var settings = context.RequestServices.GetService<Settings>();
+                    var settings = context.RequestServices.GetService<FoxIDsSettings>();
                     if (settings.RequestDomainAsCustomDomain)
                     {
                         context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = context.Request.Host.Host;
@@ -36,7 +36,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         private bool Secret(HttpContext context)
         {
-            var settings = context.RequestServices.GetService<Settings>();
+            var settings = context.RequestServices.GetService<FoxIDsSettings>();
             if (!settings.ProxySecret.IsNullOrEmpty())
             {
                 string secretHeader = context.Request.Headers["X-FoxIDs-Secret"];

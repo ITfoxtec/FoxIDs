@@ -54,6 +54,11 @@ namespace FoxIDs.Models.Config
         public bool TrustProxyHeaders { get; set; }
 
         /// <summary>
+        /// Read the HTTP request domain and use it as custom domain if configured on a tenant.
+        /// </summary>
+        public bool RequestDomainAsCustomDomain { get; set; }        
+
+        /// <summary>
         /// Only used in development!
         /// The servers client credentials. 
         /// </summary>

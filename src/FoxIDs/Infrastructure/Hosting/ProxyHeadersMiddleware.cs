@@ -21,6 +21,14 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = host;
                 }
+                else
+                {
+                    var settings = context.RequestServices.GetService<Settings>();
+                    if (settings.RequestDomainAsCustomDomain)
+                    {
+                        context.Items[Constants.Routes.RouteBindingCustomDomainHeader] = context.Request.Host.Host;
+                    }
+                }
             }
 
             await next.Invoke(context);

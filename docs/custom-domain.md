@@ -30,7 +30,10 @@ Steps:
  5. After successfully verification your domain become active.
 
 ## Your own private cloud FoxIDs
-Custom domains is only supported if the FoxIDs service is behind a [reverse proxy](reverse-proxy.md) that can do domain rewrite.
+Custom domains is supported if the FoxIDs service is behind a [reverse proxy](reverse-proxy.md) that can do domain rewrite.  
+OR  
+Alternatively without a reverse proxy, FoxIDs support custom domains by reading the HTTP request domain and using the domain as a custom domain if the `Setting:RequestDomainAsCustomDomain` setting is set to `true`. The FoxIDs App Service need to be configured with the custom domain in this case.
+
 
 A domain is marked as verified in the master tenants master track and is thereafter accepted by FoxIDs.
 

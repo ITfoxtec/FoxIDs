@@ -14,6 +14,11 @@ namespace FoxIDs.Models.Config
 
         public bool DisableBackgroundQueueService { get; set; }
 
+        /// <summary>
+        /// Enable master seed if true.
+        /// </summary>
+        public bool MasterSeedEnabled { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

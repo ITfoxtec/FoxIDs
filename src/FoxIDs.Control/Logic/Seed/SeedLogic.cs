@@ -12,11 +12,11 @@ namespace FoxIDs.Logic.Seed
     public class SeedLogic : LogicBase
     {
         private readonly TelemetryLogger logger;
-        private readonly Settings settings;
+        private readonly FoxIDsControlSettings settings;
         private readonly IRepositoryClient repositoryClient;
         private readonly MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic;
 
-        public SeedLogic(TelemetryLogger logger, Settings settings, IRepositoryClient repositoryClient, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SeedLogic(TelemetryLogger logger, FoxIDsControlSettings settings, IRepositoryClient repositoryClient, MasterTenantDocumentsSeedLogic masterTenantDocumentsSeedLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.settings = settings;

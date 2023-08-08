@@ -37,13 +37,7 @@ namespace FoxIDs.Models.Config
         /// </summary>
         [Required]
         public CacheSettings Cache { get; set; } = new CacheSettings();
-
-        /// <summary>
-        /// Enable master seed if true.
-        /// </summary>
-        public bool MasterSeedEnabled { get; set; }
  
-
         /// <summary>
         /// Only used in development!
         /// The servers client credentials. 

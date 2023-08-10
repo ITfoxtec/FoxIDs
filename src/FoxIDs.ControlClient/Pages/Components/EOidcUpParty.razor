@@ -183,6 +183,14 @@
                         <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
                     </FInputSelect>
                     <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnablePkce" For="@(() => oidcUpParty.Form.Model.Client.EnablePkce)" TextType="y.n" />
+                    @if (UpParty.ShowAdvanced)
+                    {
+                        <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ClientAuthenticationMethod" For="@(() => oidcUpParty.Form.Model.Client.ClientAuthenticationMethod)">
+                            <option value="@ClientAuthenticationMethods.ClientSecretBasic">Client secret basic</option>
+                            <option value="@ClientAuthenticationMethods.ClientSecretPost">Client secret post - default</option>
+                            <option value="@ClientAuthenticationMethods.PrivateKeyJwt">Private key JWT</option>
+                        </FInputSelect>
+                    }
                     <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
                     @if (!oidcUpParty.CreateMode)
                     {

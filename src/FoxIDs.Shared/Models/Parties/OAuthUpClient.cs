@@ -64,6 +64,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
+        [JsonProperty(PropertyName = "client_authentication_method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }

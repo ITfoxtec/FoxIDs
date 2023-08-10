@@ -56,6 +56,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Front channel logout session required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
+        [Display(Name = "Client authentication method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }

@@ -30,6 +30,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
+        [Display(Name = "Client authentication method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>

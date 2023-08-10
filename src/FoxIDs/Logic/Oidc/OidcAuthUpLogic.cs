@@ -314,6 +314,9 @@ namespace FoxIDs.Logic
 
         private async Task<TokenResponse> TokenRequestAsync(TClient client, string code, OidcUpSequenceData sequenceData)
         {
+            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
+            var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
+
             var tokenRequest = new TokenRequest
             {
                 GrantType = IdentityConstants.GrantTypes.AuthorizationCode,
@@ -324,15 +327,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var requestDictionary = tokenRequest.ToDictionary();
 
-            if (!client.ClientSecret.IsNullOrEmpty())
-            {
-                var clientCredentials = new ClientCredentials
-                {
-                    ClientSecret = client.ClientSecret,
-                };
-                logger.ScopeTrace(() => $"Up, Client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
-            }
+            AddClientAuthentication(client, tokenRequest.ClientId, request, ref requestDictionary);
 
             if (client.EnablePkce)
             {
@@ -344,8 +339,6 @@ namespace FoxIDs.Logic
                 requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
-            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
-            var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
             request.Content = new FormUrlEncodedContent(requestDictionary);
 
             using var response = await httpClientFactory.CreateClient(nameof(HttpClient)).SendAsync(request);
@@ -398,6 +391,38 @@ namespace FoxIDs.Logic
                         throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}", ex) { RouteBinding = RouteBinding };
                     }
                     throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}") { RouteBinding = RouteBinding };
+            }
+        }
+
+        private void AddClientAuthentication(TClient client, string clientId, HttpRequestMessage request, ref Dictionary<string, string> requestDictionary)
+        {
+            if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic)
+            {
+                if (!client.ClientSecret.IsNullOrEmpty())
+                {
+                    logger.ScopeTrace(() => $"Up, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, $"{WebUtility.UrlEncode(clientId)}:{WebUtility.UrlEncode(client.ClientSecret)}".Base64Encode());
+                }
+            }
+            else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)
+            {
+                if (!client.ClientSecret.IsNullOrEmpty())
+                {
+                    var clientCredentials = new ClientCredentials
+                    {
+                        ClientSecret = client.ClientSecret,
+                    };
+                    logger.ScopeTrace(() => $"Up, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
+                }
+            }
+            else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
+            {
+                throw new NotImplementedException("ClientAuthenticationMethods.PrivateKeyJwt not implemented.");
+            }
+            else
+            {
+                throw new NotImplementedException($"Client authentication method '{client.ClientAuthenticationMethod}' not implemented");
             }
         }
 

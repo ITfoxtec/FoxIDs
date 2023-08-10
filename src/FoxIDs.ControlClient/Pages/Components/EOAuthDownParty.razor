@@ -129,6 +129,14 @@
                     <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" DynamicFirstRow="true" />
                     <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                     <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <FInputSelect @bind-Value="oauthDownParty.Form.Model.Client.ClientAuthenticationMethod" For="@(() => oauthDownParty.Form.Model.Client.ClientAuthenticationMethod)">
+                            <option value="@ClientAuthenticationMethods.ClientSecretBasic">Client secret basic</option>
+                            <option value="@ClientAuthenticationMethods.ClientSecretPost">Client secret post - default</option>
+                            <option value="@ClientAuthenticationMethods.PrivateKeyJwt">Private key JWT</option>
+                        </FInputSelect>
+                    }
                     <OAuthSecrets ClientSecret="oauthDownParty.Form.Model.Client" />
                     <OAuthResourceScopes DownPartyNameModel="oauthDownParty.Form.Model" ClientResourceScope="oauthDownParty.Form.Model.Client" />
 

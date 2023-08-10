@@ -41,6 +41,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Front channel logout require session")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
+        [Display(Name = "Client authentication method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using ITfoxtec.Identity;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
 using System.Globalization;
@@ -7,6 +8,19 @@ namespace FoxIDs
 {
     public static class HttpContextExtensions
     {
+        public static string GetHostWithTenantAndTrack(this HttpContext context, string trackName = null)
+        {
+            var routeBinding = context.GetRouteBinding();
+            if (!routeBinding.UseCustomDomain)
+            {
+                return UrlCombine.Combine(context.GetHost(), routeBinding.TenantName, trackName ?? routeBinding.TrackName);
+            }
+            else
+            {
+                return UrlCombine.Combine(context.GetHost(), trackName ?? routeBinding.TrackName);
+            }
+        }
+
         public static CultureInfo GetCulture(this HttpContext context)
         {
             return context.Features.Get<IRequestCultureFeature>()?.RequestCulture?.UICulture ?? new CultureInfo("en");

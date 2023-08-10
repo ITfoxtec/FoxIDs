@@ -116,7 +116,7 @@ The FoxIDs site support one primary domain and multiple [custom domains](custom-
 
 Configure new primary custom domains:
 
-1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Parties` tab and `Down-parties` tap then click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
+1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Parties` tab and `Down-parties` tab then click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
 
    - Add the FoxIDs Control sites new primary custom domain URL to the `Allow CORS origins` list without a trailing slash.
    - Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.
@@ -138,14 +138,13 @@ Depending on the reverse proxy your are using you might be required to also conf
    - The setting `Settings:FoxIDsEndpoint` is changed to the FoxIDs service sites new primary custom domain.
    - The setting `Settings:FoxIDsControlEndpoint` is changed to the FoxIDs Control sites new primary custom domain.
 
-> Yo can achieve a shorter and prettier URL where the tenant element is removed from the URL. By creating a `main` tenant where the custom primary domain used on the FoxIDs service is set 92452093
-as a [custom domain](custom-domain.md).
+> Yo can achieve a shorter and prettier URL where the tenant element is removed from the URL. By creating a `main` tenant where the custom primary domain used on the FoxIDs service is set as a [custom domain](custom-domain.md).
 
 ## Reverse proxy
 It is recommended to place both the FoxIDs Azure App service and the FoxIDs Control Azure App service behind a [reverse proxy](reverse-proxy.md). 
 
 ## Enable test slots for testing
-Both the FoxIDs App Service and FoxIDs Control App service contain a test slots use for [updating](update.md) the sites without downtime.
+Both the FoxIDs App Service and FoxIDs Control App service contains test slots used for [updating](update.md) the sites without downtime.
 
 It is possible to do preliminary test in the test slots against the production data or create a new dataset for testing. 
 

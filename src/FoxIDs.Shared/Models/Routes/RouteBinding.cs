@@ -5,8 +5,6 @@ namespace FoxIDs.Models
 {
     public class RouteBinding
     {
-        public bool HasCustomDomain { get; set; }
-
         public bool UseCustomDomain { get; set; }
 
         public string PlanName { get; set; }

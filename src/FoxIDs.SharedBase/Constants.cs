@@ -427,7 +427,7 @@ namespace FoxIDs
                     public const int AdditionalParameterNameLength = 50;
                     public const string AdditionalParameterNameRegExPattern = @"^[\w:\-/.]*$";
                     public const int AdditionalParameterValueLength = 250;
-                    public const string AdditionalParameterValueRegExPattern = @"^[\w\-/:;.,,\[\]\{\} ""']*$";
+                    public const string AdditionalParameterValueRegExPattern = @"^[\w\-/:;.,=\[\]\{\} ""']*$";
 
                     public const int ResponseModeLength = 30;
                     public const int ResponseTypeLength = 30;

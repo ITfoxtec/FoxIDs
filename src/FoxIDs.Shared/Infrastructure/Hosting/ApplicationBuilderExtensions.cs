@@ -39,11 +39,6 @@ namespace FoxIDs.Infrastructure.Hosting
             return app;
         }
 
-        public static IApplicationBuilder UseProxyClientIpMiddleware(this IApplicationBuilder app)
-        {
-            return app.UseMiddleware<ProxyHeadersMiddleware>();
-        }
-
         public static void UseEnLocalization(this IApplicationBuilder builder)
         {
             var defaultCulture = new CultureInfo("en");

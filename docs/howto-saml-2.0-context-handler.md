@@ -51,7 +51,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 5. Click Create
 6. Change Logout response binding to Redirect
 
-> Currently Context Handler has an error where it does logout with a post binding. Therefore, after successfully configuration you need to change the Logout response binding back to post in order to make logout work.
+> Currently, Context Handler has an bug where it logs out with a post binding event if you configure a redirect binding. Therefore, after successfully configuration in Context Handler, you need to change the Logout response binding back to post in order to make logout work.
 
 ![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-read-metadata.png)
 

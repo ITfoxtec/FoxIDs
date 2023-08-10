@@ -9,7 +9,7 @@ It is possible to interconnect FoxIDs tracks either with a track link or OpenID 
 
 ## Up-party - How to connect Identity Provider (IdP)
 
-An Identity Provider (IdP) can be connected with an [OpenID Connect up-party](#openid-connect-up-party) or an [SAML 2.0 up-party](#saml-20-up-party). An Identity Provider (IdP) is more precisely called an OpenID Provider (OP) if configured with OpenID Connect.
+An Identity Provider (IdP) can be connected with a [OpenID Connect up-party](#openid-connect-up-party) or a [SAML 2.0 up-party](#saml-20-up-party). An Identity Provider (IdP) is more precisely called an OpenID Provider (OP) if configured with OpenID Connect.
 
 All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to FoxIDs. The following is how to guides for some IdPs, more guides will be added over time.
 

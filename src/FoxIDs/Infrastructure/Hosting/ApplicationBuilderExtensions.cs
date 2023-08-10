@@ -8,5 +8,10 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             return app.UseMiddleware<FoxIDsRouteBindingMiddleware>();
         }
+
+        public static IApplicationBuilder UseProxyMiddleware(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<ProxyHeadersMiddleware>();
+        }
     }
 }

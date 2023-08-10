@@ -25,6 +25,11 @@ namespace FoxIDs.Infrastructure.Hosting
 #endif
         }
 
+        public static IApplicationBuilder UseProxyClientIpMiddleware(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<ProxyClientIpHeadersMiddleware>();
+        }
+
         public static IApplicationBuilder UseClientRouteBindingMiddleware(this IApplicationBuilder app)
         {
             return app.UseMiddleware<FoxIDsClientRouteBindingMiddleware>();

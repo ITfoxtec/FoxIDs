@@ -50,7 +50,7 @@ namespace FoxIDs
 
             app.UseHttpsRedirection();
             app.UseStaticFilesCacheControl(CurrentEnvironment);
-            app.UseProxyClientIpMiddleware();
+            app.UseProxyMiddleware();
 
             app.UseRouteBindingMiddleware();
             app.UseCors();

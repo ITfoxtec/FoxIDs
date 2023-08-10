@@ -36,6 +36,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "redirect_uris")]
         public virtual List<string> RedirectUris { get; set; }
 
+        [JsonProperty(PropertyName = "client_authentication_method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }

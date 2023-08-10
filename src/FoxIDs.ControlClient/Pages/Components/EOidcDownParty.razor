@@ -133,6 +133,14 @@
                     }
                     <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <FInputSelect @bind-Value="oidcDownParty.Form.Model.Client.ClientAuthenticationMethod" For="@(() => oidcDownParty.Form.Model.Client.ClientAuthenticationMethod)">
+                            <option value="@ClientAuthenticationMethods.ClientSecretBasic">Client secret basic</option>
+                            <option value="@ClientAuthenticationMethods.ClientSecretPost">Client secret post - default</option>
+                            <option value="@ClientAuthenticationMethods.PrivateKeyJwt">Private key JWT</option>
+                        </FInputSelect>
+                    }
                     <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
                     <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
 

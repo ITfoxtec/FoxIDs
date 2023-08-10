@@ -45,9 +45,6 @@ namespace FoxIDs.Logic
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
             logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
-            var clientCredentials = formDictionary.ToObject<ClientCredentials>();
-            logger.ScopeTrace(() => $"Down, Client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-
             var codeVerifierSecret = party.Client.RequirePkce ? formDictionary.ToObject<CodeVerifierSecret>() : null;
             if (codeVerifierSecret != null)
             {
@@ -60,17 +57,17 @@ namespace FoxIDs.Logic
                 switch (tokenRequest.GrantType)
                 {
                     case IdentityConstants.GrantTypes.AuthorizationCode:
-                        ValidateAuthCodeRequest(party.Client, tokenRequest);
                         var validatePkce = party.Client.RequirePkce && codeVerifierSecret != null;
-                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !validatePkce);
+                        ValidateAuthCodeRequest(party.Client, tokenRequest);
+                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !validatePkce);
                         return await AuthorizationCodeGrantAsync(party.Client, tokenRequest, validatePkce, codeVerifierSecret);
                     case IdentityConstants.GrantTypes.RefreshToken:
                         ValidateRefreshTokenRequest(party.Client, tokenRequest);
-                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials, secretValidationRequired: !party.Client.RequirePkce);
+                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary, clientAuthenticationRequired: !party.Client.RequirePkce);
                         return await RefreshTokenGrantAsync(party.Client, tokenRequest);
                     case IdentityConstants.GrantTypes.ClientCredentials:
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
-                        await ValidateSecretAsync(party.Client, tokenRequest, clientCredentials);
+                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.Delegation:
                         throw new NotImplementedException();
@@ -81,7 +78,7 @@ namespace FoxIDs.Logic
             }
             catch (ArgumentException ex)
             {
-                throw new OAuthRequestException(ex.Message, ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                throw new OAuthRequestException($"{ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
             }
         }
 

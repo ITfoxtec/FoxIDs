@@ -14,6 +14,8 @@ The custom domain can be configured with [Control Client](control.md#foxids-cont
 
 Custom domains is not supported in the master tenant and master tracks.
 
+> Please also take a look at [custom primary domains](deployment.md#custom-primary-domains).
+
 ## FoxIDs.com
 Configuring a custom domain in your FoxIDs.com tenant.
 

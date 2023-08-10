@@ -29,6 +29,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Cost per month")]
         public decimal CostPerMonth { get; set; }
 
+        [Display(Name = "Custom domain")]
+        public bool EnableCustomDomain { get; set; }
+
         [Required]
         [Display(Name = "Total users")]
         public PlanItem Users { get; set; }

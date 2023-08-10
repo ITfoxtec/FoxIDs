@@ -115,6 +115,9 @@ namespace FoxIDs.Client.Pages
 
         private void AddUsageLogValues(UsageLogRequest usageLogRequest)
         {
+            var now = DateTimeOffset.Now;
+            usageLogRequest.TimeOffset = now.Offset.Hours;
+
             if (usageLogRequestForm?.Model != null)
             {
                 usageLogRequest.TimeScope = usageLogRequestForm.Model.TimeScope;

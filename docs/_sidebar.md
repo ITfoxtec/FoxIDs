@@ -6,7 +6,6 @@
   - [OpenID Connect](oidc.md)
   - [OAuth 2.0](oauth-2.0.md)
   - [SAML 2.0](saml-2.0.md)
-  - [OpenID Connect](oidc.md)
   - [Track link](howto-tracklink-foxids.md)
 - Topics
   - [Users](users.md)

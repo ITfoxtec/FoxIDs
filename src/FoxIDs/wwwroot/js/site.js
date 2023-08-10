@@ -71,6 +71,10 @@
         });
         event.preventDefault();
     });
+
+    $('.footer-content').click(function () {
+        $('.footer-version').toggle('slow');
+    });
 })();
 
 

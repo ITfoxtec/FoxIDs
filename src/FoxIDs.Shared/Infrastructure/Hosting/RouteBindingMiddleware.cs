@@ -38,13 +38,12 @@ namespace FoxIDs.Infrastructure.Hosting
                 if (await PreAsync(httpContext, route))
                 {
                     var customDomain = httpContext.Items[Constants.Routes.RouteBindingCustomDomainHeader] as string;
-                    var hasCustomDomain = !customDomain.IsNullOrEmpty();
-                    var useCustomDomain = GetUseCustomDomain(route, hasCustomDomain);
+                    var useCustomDomain = GetUseCustomDomain(route, customDomain);
 
                     var trackIdKey = GetTrackIdKey(route, useCustomDomain);
                     if (trackIdKey != null)
                     {
-                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, hasCustomDomain, useCustomDomain, customDomain, GetPartyNameAndbinding(route, useCustomDomain), AcceptUnknownParty(httpContext.Request.Path.Value, route));
+                        var routeBinding = await GetRouteDataAsync(scopedLogger, httpContext.RequestServices, trackIdKey, useCustomDomain, customDomain, GetPartyNameAndbinding(route, useCustomDomain), AcceptUnknownParty(httpContext.Request.Path.Value, route));
                         httpContext.Items[Constants.Routes.RouteBindingKey] = routeBinding;
                     }
 
@@ -62,8 +61,9 @@ namespace FoxIDs.Infrastructure.Hosting
             }
         }
 
-        private bool GetUseCustomDomain(string[] route, bool hasCustomDomain)
+        private bool GetUseCustomDomain(string[] route, string customDomain)
         {
+            var hasCustomDomain = !customDomain.IsNullOrEmpty();
             if (hasCustomDomain && !CheckCustomDomainSupport(route))
             {
                 return false;
@@ -86,7 +86,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
         protected virtual ValueTask<RouteBinding> PostRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, Track track, RouteBinding routeBinding, string partyNameAndBinding, bool acceptUnknownParty) => new ValueTask<RouteBinding>(routeBinding);
 
-        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool hasCustomDomain, bool useCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
+        private async Task<RouteBinding> GetRouteDataAsync(TelemetryScopedLogger scopedLogger, IServiceProvider requestServices, Track.IdKey trackIdKey, bool useCustomDomain, string customDomain, string partyNameAndBinding, bool acceptUnknownParty)
         {
             var tenant = await GetTenantAsync(requestServices, useCustomDomain, customDomain, trackIdKey.TenantName);
             if (useCustomDomain)
@@ -108,7 +108,6 @@ namespace FoxIDs.Infrastructure.Hosting
             scopedLogger.SetScopeProperty(Constants.Logs.TrackName, trackIdKey.TrackName);
             var routeBinding = new RouteBinding
             {
-                HasCustomDomain = hasCustomDomain,
                 UseCustomDomain = useCustomDomain,
                 RouteUrl = $"{(!useCustomDomain ? $"{trackIdKey.TenantName}/" : string.Empty)}{trackIdKey.TrackName}{(!partyNameAndBinding.IsNullOrWhiteSpace() ? $"/{partyNameAndBinding}" : string.Empty)}",
                 PlanName = plan?.Name,

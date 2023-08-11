@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -70,6 +71,14 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }
+
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "client_key")]
+        public ClientKey ClientKey { get; set; }
+
+        [Range(Constants.Models.OAuthUpParty.Client.ClientAssertionLifetimeMin, Constants.Models.OAuthUpParty.Client.ClientAssertionLifetimeMax)]
+        [JsonProperty(PropertyName = "client_assertion_lifetime")]
+        public int ClientAssertionLifetime { get; set; } = 300; // 5 minutes
 
         [JsonProperty(PropertyName = "enable_pkce")]
         public bool EnablePkce { get; set; }

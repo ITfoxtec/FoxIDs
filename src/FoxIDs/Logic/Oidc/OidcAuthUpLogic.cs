@@ -327,7 +327,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var requestDictionary = tokenRequest.ToDictionary();
 
-            AddClientAuthentication(client, tokenRequest.ClientId, request, ref requestDictionary);
+            requestDictionary = await AddClientAuthenticationAsync(client, tokenRequest.ClientId, request, requestDictionary);
 
             if (client.EnablePkce)
             {
@@ -394,7 +394,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private void AddClientAuthentication(TClient client, string clientId, HttpRequestMessage request, ref Dictionary<string, string> requestDictionary)
+        private async Task<Dictionary<string, string>> AddClientAuthenticationAsync(TClient client, string clientId, HttpRequestMessage request, Dictionary<string, string> requestDictionary)
         {
             if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic)
             {
@@ -418,12 +418,26 @@ namespace FoxIDs.Logic
             }
             else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
             {
-                throw new NotImplementedException("ClientAuthenticationMethods.PrivateKeyJwt not implemented.");
+                if (client.ClientKey == null)
+                {
+                    throw new ArgumentException($"Client id '{client.ClientId}' key is null.");
+                }
+
+                string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                var clientAssertionCredentials = new ClientAssertionCredentials
+                {
+                    ClientAssertionType = IdentityConstants.ClientAssertionTypes.JwtBearer,
+                    ClientAssertion = await jwtUpLogic.CreateClientAssertionAsync(client, clientId, algorithm)
+                };
+                logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKey.Key.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                requestDictionary = requestDictionary.AddToDictionary(clientAssertionCredentials);
             }
             else
             {
                 throw new NotImplementedException($"Client authentication method '{client.ClientAuthenticationMethod}' not implemented");
             }
+
+            return requestDictionary;
         }
 
         private async Task<(List<Claim>, string)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)

@@ -438,6 +438,9 @@ namespace FoxIDs
                     public const int TokenUrlLength = 500;  
                     public const int UserInfoUrlLength = 500;
                     public const int EndSessionUrlLength = 500;
+
+                    public const int ClientAssertionLifetimeMin = 10; // 10 seconds 
+                    public const int ClientAssertionLifetimeMax = 900; // 15 minutes                    
                 }
             }
 

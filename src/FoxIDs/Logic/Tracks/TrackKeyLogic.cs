@@ -106,18 +106,10 @@ namespace FoxIDs.Logic
 
         private async Task ValidatePrimaryTrackKeyAsync(RouteTrackKey trackKey)
         {
-            var nowLocal = DateTime.Now;
             var certificate = trackKey.PrimaryKey.Key.ToX509Certificate();
             try
             {
-                if (certificate.NotBefore > nowLocal)
-                {
-                    throw new KeyException($"Track primary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
-                }
-                if (certificate.NotAfter < nowLocal)
-                {
-                    throw new KeyException($"Track primary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
-                }
+                certificate.ValidateCertificate("Track primary key");
             }
             catch (Exception ex)
             {
@@ -150,16 +142,8 @@ namespace FoxIDs.Logic
 
         private void ValidateSecondaryTrackKey(RouteTrackKey trackKey)
         {
-            var nowLocal = DateTime.Now;
             var certificate = trackKey.SecondaryKey.Key.ToX509Certificate();
-            if (certificate.NotBefore > nowLocal)
-            {
-                throw new KeyException($"Track secondary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
-            }
-            if (certificate.NotAfter < nowLocal)
-            {
-                throw new KeyException($"Track secondary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
-            }
+            certificate.ValidateCertificate("Track secondary key");
         }
     }
 }

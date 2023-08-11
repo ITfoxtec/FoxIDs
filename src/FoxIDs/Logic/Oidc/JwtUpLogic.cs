@@ -1,4 +1,6 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Models;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Tokens;
 using Microsoft.AspNetCore.Http;
@@ -13,8 +15,14 @@ namespace FoxIDs.Logic
 {
     public class JwtUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
-        public JwtUpLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
-        { }
+        private readonly TelemetryScopedLogger logger;
+        private readonly ClientKeySecretLogic<TClient> clientKeySecretLogic;
+
+        public JwtUpLogic(TelemetryScopedLogger logger, ClientKeySecretLogic<TClient> clientKeySecretLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        {
+            this.logger = logger;
+            this.clientKeySecretLogic = clientKeySecretLogic;
+        }
 
         public async Task<ClaimsPrincipal> ValidateIdTokenAsync(string idToken, string issuer, TParty party, string clientId)
         {
@@ -54,7 +62,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public Exception GetInvalidKeyException(IEnumerable<(JsonWebKey key, X509Certificate2 certificate)> invalidKeys, Exception ex)
+        private Exception GetInvalidKeyException(IEnumerable<(JsonWebKey key, X509Certificate2 certificate)> invalidKeys, Exception ex)
         {
             if (invalidKeys.Count() > 0)
             {
@@ -64,5 +72,23 @@ namespace FoxIDs.Logic
             }
             return null;
         }
+
+        public async Task<string> CreateClientAssertionAsync(TClient client, string clientId, string algorithm)
+        {
+            var clientAssertionClaims = new List<Claim>
+            {
+                new Claim(JwtClaimTypes.Issuer, clientId),
+                new Claim(JwtClaimTypes.Subject, clientId),
+                new Claim(JwtClaimTypes.Audience, client.TokenUrl),
+                new Claim(JwtClaimTypes.JwtId, Guid.NewGuid().ToString())
+            };
+
+            logger.ScopeTrace(() => $"Up, JWT client assertion claims '{clientAssertionClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            var claims = clientAssertionClaims.Where(c => c.Type != JwtClaimTypes.Issuer && c.Type != JwtClaimTypes.Audience);
+            var token = JwtHandler.CreateToken(clientKeySecretLogic.GetClientKey(client), clientAssertionClaims.Single(c => c.Type == JwtClaimTypes.Issuer).Value, clientAssertionClaims.Single(c => c.Type == JwtClaimTypes.Audience).Value, 
+                claims, expiresIn: client.ClientAssertionLifetime, algorithm: algorithm);
+            return await token.ToJwtString();
+        }
+
     }
 }

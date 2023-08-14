@@ -113,6 +113,10 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { nameof(ResponseMode) }));
             }
+            if (ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && ClientKey == null)
+            {
+                results.Add(new ValidationResult($"Require '{nameof(ClientKey)}' if {nameof(ClientAuthenticationMethod)} is '{ClientAuthenticationMethods.PrivateKeyJwt}'.", new[] { nameof(ClientAuthenticationMethod), nameof(ClientKey) }));
+            }
             return results;
         }
     }

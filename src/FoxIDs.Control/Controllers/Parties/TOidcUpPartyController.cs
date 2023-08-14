@@ -15,12 +15,14 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOidcUpPartyController : GenericPartyApiController<Api.OidcUpParty, Api.OAuthClaimTransform, OidcUpParty>
     {
-        private readonly ValidateOAuthOidcPartyLogic validateOAuthOidcPartyLogic;
+        private readonly ValidateApiModelOAuthOidcPartyLogic validateApiModelOAuthOidcPartyLogic;
+        private readonly ValidateModelOAuthOidcPartyLogic validateModelOAuthOidcPartyLogic;
         private readonly OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic;
 
-        public TOidcUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateGenericPartyLogic validateGenericPartyLogic, ValidateOAuthOidcPartyLogic validateOAuthOidcPartyLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateGenericPartyLogic)
+        public TOidcUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, DownPartyAllowUpPartiesQueueLogic downPartyAllowUpPartiesQueueLogic, ValidateApiModelGenericPartyLogic validateApiModelGenericPartyLogic, ValidateModelGenericPartyLogic validateModelGenericPartyLogic, ValidateApiModelOAuthOidcPartyLogic validateApiModelOAuthOidcPartyLogic, ValidateModelOAuthOidcPartyLogic validateModelOAuthOidcPartyLogic, OidcDiscoveryReadUpLogic oidcDiscoveryReadUpLogic) : base(logger, mapper, tenantRepository, downPartyCacheLogic, upPartyCacheLogic, downPartyAllowUpPartiesQueueLogic, validateApiModelGenericPartyLogic, validateModelGenericPartyLogic)
         {
-            this.validateOAuthOidcPartyLogic = validateOAuthOidcPartyLogic;
+            this.validateApiModelOAuthOidcPartyLogic = validateApiModelOAuthOidcPartyLogic;
+            this.validateModelOAuthOidcPartyLogic = validateModelOAuthOidcPartyLogic;
             this.oidcDiscoveryReadUpLogic = oidcDiscoveryReadUpLogic;
         }
 
@@ -40,7 +42,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC up-party.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.OidcUpParty>> PostOidcUpParty([FromBody] Api.OidcUpParty party) => await Post(party, ap => new ValueTask<bool>(validateOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OidcUpParty>> PostOidcUpParty([FromBody] Api.OidcUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp) && await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Update OIDC up-party.
@@ -49,7 +51,7 @@ namespace FoxIDs.Controllers
         /// <returns>OIDC up-party.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.OidcUpParty>> PutOidcUpParty([FromBody] Api.OidcUpParty party) => await Put(party, ap => new ValueTask<bool>(validateOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp));
+        public async Task<ActionResult<Api.OidcUpParty>> PutOidcUpParty([FromBody] Api.OidcUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp) && await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
         /// Delete OIDC up-party.

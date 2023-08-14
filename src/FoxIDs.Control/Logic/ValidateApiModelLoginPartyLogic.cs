@@ -11,11 +11,11 @@ using FoxIDs.Models;
 
 namespace FoxIDs.Logic
 {
-    public class ValidateLoginPartyLogic : LogicBase
+    public class ValidateApiModelLoginPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
 
-        public ValidateLoginPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
         }

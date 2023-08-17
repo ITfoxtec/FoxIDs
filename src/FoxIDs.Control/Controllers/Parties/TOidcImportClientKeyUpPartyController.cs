@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
             this.externalKeyLogic = externalKeyLogic;
         }
 
-        protected async Task<ActionResult<Api.OAuthClientKeyResponse>> Get(string partyName)
+        protected async Task<ActionResult<Api.OidcClientKeyResponse>> Get(string partyName)
         {
             try
             {
@@ -43,11 +43,11 @@ namespace FoxIDs.Controllers
                 var oidcUpParty = await tenantRepository.GetAsync<OidcUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (oidcUpParty.Client.ClientKeys?.Count() > 0 && oidcUpParty.Client.ClientKeys.First().Type == ClientKeyTypes.KeyVaultUpload)
                 {
-                    return Ok(new Api.OAuthClientKeyResponse { PublicCertificate = WebEncoders.Base64UrlEncode(oidcUpParty.Client.ClientKeys.First().PublicKey.ToX509Certificate().RawData) });
+                    return Ok(new Api.OidcClientKeyResponse { PublicCertificate = WebEncoders.Base64UrlEncode(oidcUpParty.Client.ClientKeys.First().PublicKey.ToX509Certificate().RawData) });
                 }
                 else
                 {
-                    return Ok(new Api.OAuthClientKeyResponse());
+                    return Ok(new Api.OidcClientKeyResponse());
                 }
             }
             catch (CosmosDataException ex)
@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<Api.OAuthClientKeyResponse>> Post(Api.OAuthClientKeyRequest keyRequest)
+        protected async Task<ActionResult<Api.OidcClientKeyResponse>> Post(Api.OidcClientKeyRequest keyRequest)
         {
             try
             {

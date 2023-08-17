@@ -11,6 +11,7 @@ namespace FoxIDs.Client.Services
         private const string filterApiUri = "api/{tenant}/{track}/!filterupparty";
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcupparty";
+        private const string oidcImportClientKeyApiUri = "api/{tenant}/{track}/!oidcimportclientkeyupparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
         private const string samlReadMetadataApiUri = "api/{tenant}/{track}/!samluppartyreadmetadata";
         private const string trackLinkApiUri = "api/{tenant}/{track}/!tracklinkupparty";
@@ -29,6 +30,10 @@ namespace FoxIDs.Client.Services
         public async Task<OidcUpParty> CreateOidcUpPartyAsync(OidcUpParty party) => await PostResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
         public async Task<OidcUpParty> UpdateOidcUpPartyAsync(OidcUpParty party) => await PutResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
         public async Task DeleteOidcUpPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
+
+        public async Task<OidcClientKeyResponse> GetOidcImportClientKeyUpPartyAsync(string name) => await GetAsync<OidcClientKeyResponse>(oidcImportClientKeyApiUri, name);
+        public async Task<OidcUpParty> CreateOidcImportClientKeyUpPartyAsync(OidcClientKeyRequest keyRequest) => await PostResponseAsync<OidcClientKeyRequest, OidcUpParty>(oidcImportClientKeyApiUri, keyRequest);
+        public async Task DeleteOidcImportClientKeyUpPartyAsync(string name) => await DeleteAsync(oidcImportClientKeyApiUri, name);
 
         public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);
         public async Task<SamlUpParty> CreateSamlUpPartyAsync(SamlUpParty party) => await PostResponseAsync<SamlUpParty, SamlUpParty>(samlApiUri, party);

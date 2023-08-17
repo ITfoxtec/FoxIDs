@@ -3,9 +3,9 @@
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// OAuth 2.0 client key request.
+    /// Oidc client key request.
     /// </summary>
-    public class OAuthClientKeyRequest 
+    public class OidcClientKeyRequest 
     {
         /// <summary>
         /// OAuth 2.0 or OIDC party name.

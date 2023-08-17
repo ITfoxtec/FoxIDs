@@ -1,9 +1,9 @@
 ﻿namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// OAuth 2.0 client key response.
+    /// Oidc client key response.
     /// </summary>
-    public class OAuthClientKeyResponse 
+    public class OidcClientKeyResponse 
     {
         /// <summary>
         /// Base64 url encode primary public certificate.

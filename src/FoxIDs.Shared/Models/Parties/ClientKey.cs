@@ -7,12 +7,16 @@ namespace FoxIDs.Models
     public class ClientKey
     {
         [Required]
+        [JsonProperty(PropertyName = "type")]
+        public ClientKeyTypes Type { get; set; }
+
+        [Required]
         [JsonProperty(PropertyName = "external_name")]
         public string ExternalName { get; set; }
 
         [Required]
-        [JsonProperty(PropertyName = "key")]
-        public JsonWebKey Key { get; set; }
+        [JsonProperty(PropertyName = "public_key")]
+        public JsonWebKey PublicKey { get; set; }
 
         [Required]
         [JsonProperty(PropertyName = "external_id")]

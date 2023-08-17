@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models
 {
-    public enum TrackKeyType
+    public enum TrackKeyTypes
     {
         [EnumMember(Value = "contained")]
         Contained,

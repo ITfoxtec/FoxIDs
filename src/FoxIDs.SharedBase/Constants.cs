@@ -167,6 +167,12 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
             }
 
+            public static class Certificate
+            {
+                public const int EncodeCertificateLength = 20000;
+                public const int CertificateLength = SecretHash.SecretLength;
+            }
+
             public static class Resource
             {
                 public const int SupportedCulturesMin = 0;
@@ -421,6 +427,9 @@ namespace FoxIDs
                     public const int ScopesMax = 100;
                     public const int ClaimsMin = 0;
                     public const int ClaimsMax = 100;
+
+                    public const int ClientKeysMin = 0;
+                    public const int ClientKeysMax = 2;
 
                     public const int AdditionalParametersMin = 0;
                     public const int AdditionalParametersMax = 10;

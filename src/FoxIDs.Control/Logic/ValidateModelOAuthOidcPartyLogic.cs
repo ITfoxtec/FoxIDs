@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                if (party.Client?.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && party.Client.ClientKey == null)
+                if (party.Client?.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && party.Client.ClientKeys == null)
                 {
 
                     throw new ValidationException($"The Client Key need to be set before the {nameof(party.Client.ClientAuthenticationMethod)} can be set to '{ClientAuthenticationMethods.PrivateKeyJwt}'");
@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
             {
                 isValid = false;
                 logger.Warning(vex);
-                modelState.TryAddModelError($"{nameof(party.Client.ClientAuthenticationMethod)}.{nameof(party.Client.ClientKey)}".ToCamelCase(), vex.Message);
+                modelState.TryAddModelError($"{nameof(party.Client.ClientAuthenticationMethod)}.{nameof(party.Client.ClientKeys)}".ToCamelCase(), vex.Message);
             }
             return isValid;
         }

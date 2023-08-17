@@ -7,7 +7,7 @@
     <div class="p-2">
 
         <div class="btn-group" role="group">
-            @if (trackKey?.Type == TrackKeyType.Contained && certificates.Any(c => !c.IsPrimary && !c.CreateMode))
+            @if (trackKey?.Type == TrackKeyTypes.Contained && certificates.Any(c => !c.IsPrimary && !c.CreateMode))
             {
                 <button type="button" class="btn btn-primary" @onclick="@(() => { swapCertificateError = null; swapCertificateModal.Show(); })">Swap certificate</button>
             }
@@ -30,7 +30,7 @@
     </div>
 }
 
-@if (trackKey?.Type == TrackKeyType.Contained)
+@if (trackKey?.Type == TrackKeyTypes.Contained)
 {
     @foreach (var certificate in certificates.OrderByDescending(c => c.IsPrimary))
     {
@@ -125,7 +125,7 @@
         </div>
     }
 }
-else if (trackKey?.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+else if (trackKey?.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
 {
     <div class="card bg-light">
         <div class="card-body">
@@ -134,7 +134,7 @@ else if (trackKey?.Type == TrackKeyType.KeyVaultRenewSelfSigned)
         </div>
     </div>
 }
-else if (trackKey?.Type == TrackKeyType.KeyVaultUpload)
+else if (trackKey?.Type == TrackKeyTypes.KeyVaultUpload)
 {
     <div class="card bg-light">
         <div class="card-body">
@@ -188,13 +188,13 @@ else if (trackKey?.Type == TrackKeyType.KeyVaultUpload)
                         <li>No cost per signing.</li>
                     </ul>
                 </div>
-                @if (trackKey?.Type == TrackKeyType.Contained)
+                @if (trackKey?.Type == TrackKeyTypes.Contained)
                 {
                     <div><i>Current container type.</i></div>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyType.Contained))">Change container type</button>
+                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyTypes.Contained))">Change container type</button>
                 }
             </div>
         </div>
@@ -211,13 +211,13 @@ else if (trackKey?.Type == TrackKeyType.KeyVaultUpload)
                         <li>Cost per signing.</li>
                     </ul>
                 </div>
-                @if (trackKey?.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+                @if (trackKey?.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
                     <div><i>Current container type.</i></div>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyType.KeyVaultRenewSelfSigned))">Change container type</button>
+                    <button type="button" class="btn btn-primary" @onclick="@(async () => await SelectContainerTypeAsync(TrackKeyTypes.KeyVaultRenewSelfSigned))">Change container type</button>
                 }
             </div>
         </div>

@@ -418,7 +418,7 @@ namespace FoxIDs.Logic
             }
             else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
             {
-                if (client.ClientKey == null)
+                if (!(client.ClientKeys?.Count > 0))
                 {
                     throw new ArgumentException($"Client id '{client.ClientId}' key is null.");
                 }
@@ -429,7 +429,7 @@ namespace FoxIDs.Logic
                     ClientAssertionType = IdentityConstants.ClientAssertionTypes.JwtBearer,
                     ClientAssertion = await jwtUpLogic.CreateClientAssertionAsync(client, clientId, algorithm)
                 };
-                logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKey.Key.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(clientAssertionCredentials);
             }
             else

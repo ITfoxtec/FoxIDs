@@ -59,7 +59,7 @@ namespace FoxIDs.Client.Pages
             changeContainerTypeModal.Show();
         }
 
-        private async Task SelectContainerTypeAsync(TrackKeyType type)
+        private async Task SelectContainerTypeAsync(TrackKeyTypes type)
         {
             changeContainerTypeError = null;
             try
@@ -86,7 +86,7 @@ namespace FoxIDs.Client.Pages
             {
                 trackKey = await TrackService.GetTrackKeyTypeAsync();
 
-                if(trackKey.Type == TrackKeyType.Contained)
+                if(trackKey.Type == TrackKeyTypes.Contained)
                 {
                     SetGeneralCertificates(await TrackService.GetTrackKeyContainedAsync());
                 }

@@ -1,6 +1,6 @@
 ﻿namespace FoxIDs.Models.Api
 {
-    public enum TrackKeyType
+    public enum TrackKeyTypes
     {
         Contained,
         KeyVaultRenewSelfSigned,

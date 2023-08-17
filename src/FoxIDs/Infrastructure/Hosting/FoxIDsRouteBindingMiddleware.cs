@@ -202,7 +202,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             switch (track.Key.Type)
             {
-                case TrackKeyType.Contained:
+                case TrackKeyTypes.Contained:
                     return new RouteTrackKey
                     {
                         Type = track.Key.Type,
@@ -210,7 +210,7 @@ namespace FoxIDs.Infrastructure.Hosting
                         SecondaryKey = track.Key.Keys.Count > 1 ? new RouteTrackKeyItem { Key = track.Key.Keys[1].Key } : null,
                     };
 
-                case TrackKeyType.KeyVaultRenewSelfSigned:
+                case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     var trackKeyExternal = await GetTrackKeyItemsAsync(scopedLogger, trackIdKey.TenantName, trackIdKey.TrackName, track);
                     var externalRouteTrackKey = new RouteTrackKey
                     {
@@ -228,7 +228,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     }
                     return externalRouteTrackKey;
 
-                case TrackKeyType.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultUpload:
                 default:
                     throw new Exception($"Track key type not supported '{track.Key.Type}'.");
             }

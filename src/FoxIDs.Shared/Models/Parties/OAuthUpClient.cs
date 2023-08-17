@@ -73,8 +73,9 @@ namespace FoxIDs.Models
         public string ClientSecret { get; set; }
 
         [ValidateComplexType]
-        [JsonProperty(PropertyName = "client_key")]
-        public ClientKey ClientKey { get; set; }
+        [Length(Constants.Models.OAuthUpParty.Client.ClientKeysMin, Constants.Models.OAuthUpParty.Client.ClientKeysMax)]
+        [JsonProperty(PropertyName = "client_keys")]
+        public List<ClientKey> ClientKeys { get; set; }
 
         [Range(Constants.Models.OAuthUpParty.Client.ClientAssertionLifetimeMin, Constants.Models.OAuthUpParty.Client.ClientAssertionLifetimeMax)]
         [JsonProperty(PropertyName = "client_assertion_lifetime")]
@@ -113,9 +114,9 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { nameof(ResponseMode) }));
             }
-            if (ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && ClientKey == null)
+            if (ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && !(ClientKeys?.Count() > 0))
             {
-                results.Add(new ValidationResult($"Require '{nameof(ClientKey)}' if {nameof(ClientAuthenticationMethod)} is '{ClientAuthenticationMethods.PrivateKeyJwt}'.", new[] { nameof(ClientAuthenticationMethod), nameof(ClientKey) }));
+                results.Add(new ValidationResult($"Require at least one '{nameof(ClientKeys)}' if {nameof(ClientAuthenticationMethod)} is '{ClientAuthenticationMethods.PrivateKeyJwt}'.", new[] { nameof(ClientAuthenticationMethod), nameof(ClientKeys) }));
             }
             return results;
         }

@@ -3,6 +3,7 @@ using FoxIDs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Logic
 {
@@ -20,7 +21,7 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                if (party.Client?.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && party.Client.ClientKeys == null)
+                if (party.Client?.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && !(party.Client.ClientKeys?.Count() > 0))
                 {
 
                     throw new ValidationException($"The Client Key need to be set before the {nameof(party.Client.ClientAuthenticationMethod)} can be set to '{ClientAuthenticationMethods.PrivateKeyJwt}'");

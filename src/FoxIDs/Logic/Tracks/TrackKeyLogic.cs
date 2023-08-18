@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
                 case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     return GetPrimaryRSAKeyVault(trackKey).ToSecurityKey(trackKey.PrimaryKey.Key.Kid);
 
-                case TrackKeyTypes.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultImport:
                 default:
                     throw new NotSupportedException($"Track primary key type '{trackKey.Type}' not supported.");
             }
@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                 case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     return new Saml2X509Certificate(trackKey.PrimaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
 
-                case TrackKeyTypes.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultImport:
                 default:
                     throw new NotSupportedException($"Track primary key type '{trackKey.Type}' not supported.");
             }
@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
                         case TrackKeyTypes.KeyVaultRenewSelfSigned:
                             return new Saml2X509Certificate(trackKey.SecondaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
 
-                        case TrackKeyTypes.KeyVaultUpload:
+                        case TrackKeyTypes.KeyVaultImport:
                         default:
                             throw new NotSupportedException($"Track secondary key type '{trackKey.Type}' not supported.");
                     }

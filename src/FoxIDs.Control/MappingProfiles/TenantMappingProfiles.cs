@@ -81,6 +81,8 @@ namespace FoxIDs.MappingProfiles
             CreateMap<JsonWebKey, Api.JwtWithCertificateInfo>()
                 .ForMember(d => d.CertificateInfo, opt => opt.MapFrom(s => GetCertificateInfo(s)));
 
+            CreateMap<ClientKey, Api.ClientKey>();
+
             CreateMap<TrackKey, Api.TrackKeyItemsContained>()
                 .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0].Key.GetPublicKey()))
                 .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));

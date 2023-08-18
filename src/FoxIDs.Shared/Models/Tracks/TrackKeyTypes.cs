@@ -9,6 +9,6 @@ namespace FoxIDs.Models
         [EnumMember(Value = "key_vault_renew_self_signed")]
         KeyVaultRenewSelfSigned,
         [EnumMember(Value = "key_vault_upload")]
-        KeyVaultUpload,
+        KeyVaultImport,
     }
 }

@@ -3,6 +3,7 @@ using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -62,6 +63,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
+
+        [Display(Name = "Client certificate")]
+        public KeyInfoViewModel PublicClientKeyInfo { get; set; }
 
         [Display(Name = "Use PKCE")]
         public bool EnablePkce { get; set; } = true;

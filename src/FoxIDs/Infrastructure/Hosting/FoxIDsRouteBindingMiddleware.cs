@@ -228,7 +228,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     }
                     return externalRouteTrackKey;
 
-                case TrackKeyTypes.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultImport:
                 default:
                     throw new Exception($"Track key type not supported '{track.Key.Type}'.");
             }

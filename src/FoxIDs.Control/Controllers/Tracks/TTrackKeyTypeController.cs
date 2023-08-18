@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
                             mTrack.Key.ExternalName = (await externalKeyLogic.CreateExternalKeyAsync(mTrack)).externalName;
                             break;
 
-                        case TrackKeyTypes.KeyVaultUpload:
+                        case TrackKeyTypes.KeyVaultImport:
                         default:
                             throw new Exception($"Track key type not supported '{mTrackKey.Type}'.");
                     }

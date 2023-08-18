@@ -79,10 +79,8 @@
                                     @if (!keyInfo.Subject.IsNullOrEmpty())
                                     {
                                         <strong>@keyInfo.Subject</strong>
-
                                         <br />
                                         <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span>
-
                                         <br />
                                     }
                                     <span>Key id: @keyInfo.KeyId</span><br />
@@ -192,6 +190,50 @@
                         </FInputSelect>
                     }
                     <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
+
+                    @if (UpParty.ShowAdvanced) 
+                    {
+                        @if (oidcUpParty.CreateMode)
+                        {
+                            <div class="form-group active-group active">
+                                <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
+                                <div class="font-italic alert alert-secondary" role="alert">
+                                    You need to create the up-party before it is possible to add a client certificate.
+                                </div>
+                            </div>
+                        }
+                        else 
+                        {
+                            <button type="button" class="mb-3 btn btn-link" @onclick="@(() => importClientKeyModal.Show())">Import client certificate</button>
+                            if (oidcUpParty.Form.Model.Client.PublicClientKeyInfo != null)
+                            {
+                                <div class="form-group active-group active">
+                                    <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
+                                    <ul class="list-group">
+                                        <li class="list-group-item p-0 bg-light">
+                                            <div class="d-flex">
+                                                <div class="mr-auto p-2">
+                                                    @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject.IsNullOrEmpty())
+                                                    {
+                                                        <strong>@oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject</strong>
+                                                        <br />
+                                                        <span class="@(oidcUpParty.Form.Model.Client.PublicClientKeyInfo.IsValid ? "" : "text-danger")">Valid from @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidFrom.ToShortDateString() to @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidTo.ToShortDateString()</span>
+                                                        <br />
+                                                    }
+                                                    <span>Key id: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.KeyId</span><br />
+                                                    @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
+                                                    {
+                                                        <span>Thumbprint: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint</span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            }
+                        }                    
+                    }
+
                     @if (!oidcUpParty.CreateMode)
                     {
                         <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
@@ -265,3 +307,45 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+
+<Modal @ref="importClientKeyModal" Title="Import client certificate">
+    <PageEditForm @ref="importClientKeyForm" TModel="OidcUpImportClientKeyViewModel">
+        <div class="modal-body">
+            <FInputPassword @bind-Value="importClientKeyForm.Model.Password" For="@(() => importClientKeyForm.Model.Password)" />
+            <div class="form-group active-group active">
+                <div class="drag-drop-zone input-control">
+                    <BlazorInputFile.InputFile OnChange="@(async (files) => await OnImportClientKeyFileAsync(oidcUpParty, files))" />
+                    @importClientKeyForm.Model.ClientKeyFileStatus
+                </div>
+                <label class="label-control">Certificate</label>
+                <ValidationMessage For="@(() => importClientKeyForm.Model.ClientKeyFileStatus)" />
+                <ul class="list-group">
+                    <li class="list-group-item p-0 bg-light">
+                        @if (importClientKeyForm.Model.PublicClientKeyInfo != null)
+                        {
+                            <div class="d-flex">
+                                <div class="mr-auto p-2">
+                                    @if (!importClientKeyForm.Model.PublicClientKeyInfo.Subject.IsNullOrEmpty())
+                                    {
+                                        <strong>@importClientKeyForm.Model.PublicClientKeyInfo.Subject</strong>
+                                        <br />
+                                        <span class="@(importClientKeyForm.Model.PublicClientKeyInfo.IsValid ? "" : "text-danger")">Valid from @importClientKeyForm.Model.PublicClientKeyInfo.ValidFrom.ToShortDateString() to @importClientKeyForm.Model.PublicClientKeyInfo.ValidTo.ToShortDateString()</span>
+                                        <br />
+                                    }
+                                    <span>Key id: @importClientKeyForm.Model.PublicClientKeyInfo.KeyId</span><br />
+                                    @if (!importClientKeyForm.Model.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
+                                    {
+                                        <span>Thumbprint: @importClientKeyForm.Model.PublicClientKeyInfo.Thumbprint</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @onclick="@(() => importClientKeyModal.Hide())">Close</button>
+        </div>
+    </PageEditForm>
+</Modal>

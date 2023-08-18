@@ -4,6 +4,6 @@
     {
         Contained,
         KeyVaultRenewSelfSigned,
-        KeyVaultUpload,
+        KeyVaultImport,
     }
 }

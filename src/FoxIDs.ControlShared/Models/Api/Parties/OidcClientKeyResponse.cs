@@ -1,13 +1,18 @@
 ﻿namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Oidc client key response.
+    /// Oidc client key import response.
     /// </summary>
-    public class OidcClientKeyResponse 
+    public class OidcClientKeyResponse : INameValue
     {
         /// <summary>
-        /// Base64 url encode primary public certificate.
+        /// Primary keys external name.
+        /// </summary>        
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Primary key.
         /// </summary>
-        public string PublicCertificate { get; set; }
+        public ClientKey PrimaryKey { get; set; }
     }
 }

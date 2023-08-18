@@ -18,14 +18,14 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// OIDC import client key for up-party API.
     /// </summary>
-    public class TOidcImportClientKeyUpPartyController : TenantApiController 
+    public class TOidcClientKeyUpPartyController : TenantApiController 
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TOidcImportClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
             this.externalKeyLogic = externalKeyLogic;
         }
 
-        protected async Task<ActionResult<Api.OidcClientKeyResponse>> Get(string partyName)
+        public async Task<ActionResult<Api.OidcClientKeyResponse>> GetOidcClientKeyUpParty(string partyName)
         {
             try
             {
@@ -41,9 +41,14 @@ namespace FoxIDs.Controllers
                 partyName = partyName?.ToLower();
 
                 var oidcUpParty = await tenantRepository.GetAsync<OidcUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
-                if (oidcUpParty.Client.ClientKeys?.Count() > 0 && oidcUpParty.Client.ClientKeys.First().Type == ClientKeyTypes.KeyVaultUpload)
+                if (oidcUpParty.Client.ClientKeys?.Count() > 0 && oidcUpParty.Client.ClientKeys.First().Type == ClientKeyTypes.KeyVaultImport)
                 {
-                    return Ok(new Api.OidcClientKeyResponse { PublicCertificate = WebEncoders.Base64UrlEncode(oidcUpParty.Client.ClientKeys.First().PublicKey.ToX509Certificate().RawData) });
+                    var clientKey = oidcUpParty.Client.ClientKeys.First();
+                    return Ok(new Api.OidcClientKeyResponse
+                    {
+                        Name = clientKey.ExternalName,
+                        PrimaryKey = mapper.Map<Api.ClientKey>(clientKey.PublicKey)
+                    });
                 }
                 else
                 {
@@ -61,7 +66,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<Api.OidcClientKeyResponse>> Post(Api.OidcClientKeyRequest keyRequest)
+        public async Task<ActionResult<Api.OidcClientKeyResponse>> PostOidcClientKeyUpParty(Api.OidcClientKeyRequest keyRequest)
         {
             try
             {
@@ -78,7 +83,7 @@ namespace FoxIDs.Controllers
                 {
                     new ClientKey
                     {
-                        Type = ClientKeyTypes.KeyVaultUpload,
+                        Type = ClientKeyTypes.KeyVaultImport,
                         ExternalName = externalName,
                         PublicKey = publicKey,
                         ExternalId = externalId,
@@ -92,7 +97,12 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(keyRequest)) return BadRequest(ModelState);
                 await tenantRepository.UpdateAsync(oidcUpParty);
 
-                return Created(new Api.OidcUpParty { Name = keyRequest.PartyName });
+                var clientKey = oidcUpParty.Client.ClientKeys.First();
+                return Created(new Api.OidcClientKeyResponse
+                {
+                    Name = clientKey.ExternalName,
+                    PrimaryKey = mapper.Map<Api.ClientKey>(clientKey.PublicKey)
+                });
             }
             catch (CosmosDataException ex)
             {
@@ -105,7 +115,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<IActionResult> Delete(string name)
+        public async Task<IActionResult> DeleteOidcClientKeyUpParty(string name)
         {
             try
             {
@@ -116,7 +126,7 @@ namespace FoxIDs.Controllers
                 var externalName = name.GetLastInDotList();
                 var oidcUpParty = await tenantRepository.GetAsync<OidcUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
 
-                var key = oidcUpParty.Client.ClientKeys?.Select(k => k.Type == ClientKeyTypes.KeyVaultUpload && k.ExternalName == externalName).FirstOrDefault();
+                var key = oidcUpParty.Client.ClientKeys?.Select(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
                 if (key != null)
                 {
                     await externalKeyLogic.DeleteExternalKeyAsync(externalName);

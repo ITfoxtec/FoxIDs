@@ -100,9 +100,8 @@ namespace FoxIDs.Logic
         {
             var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
             var usePartitionId = !idKey.TenantName.IsNullOrEmpty() && !idKey.TrackName.IsNullOrEmpty();
-            Expression<Func<User, bool>> whereQuery = usePartitionId ? p => p.DataType.Equals("user") : p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
 
-            var count = await tenantRepository.CountAsync<User>(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
+            var count = await tenantRepository.CountAsync(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem

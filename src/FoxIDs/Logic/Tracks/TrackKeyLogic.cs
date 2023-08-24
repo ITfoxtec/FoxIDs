@@ -9,10 +9,10 @@ using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RSAKeyVaultProvider;
 using ITfoxtec.Identity.Util;
+using System.Collections.Generic;
 
 namespace FoxIDs.Logic
 {
@@ -124,12 +124,24 @@ namespace FoxIDs.Logic
                 if (RouteBinding.TrackName == Constants.Routes.MasterTrackName && RouteBinding.Key.Type != TrackKeyType.KeyVaultRenewSelfSigned)
                 {
                     var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
-                    mTrack.Key.Type = TrackKeyType.KeyVaultRenewSelfSigned;
-                    mTrack.Key.Keys = null;
-                    mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
-                    await tenantRepository.UpdateAsync(mTrack);
 
-                    throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary external track key certificate is under construction in Key Vault, it is ready in a little while.", ex);
+                    if (RouteBinding.Key.Type == TrackKeyType.Contained)
+                    {
+                        var ContainedCertificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
+                        mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await ContainedCertificate.ToFTJsonWebKeyAsync(true) } };
+                        await tenantRepository.UpdateAsync(mTrack);
+
+                        throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary track key certificate has been created, please try one more time.", ex);
+                    }
+                    else
+                    {
+                        mTrack.Key.Type = TrackKeyType.KeyVaultRenewSelfSigned;
+                        mTrack.Key.Keys = null;
+                        mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
+                        await tenantRepository.UpdateAsync(mTrack);
+
+                        throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary external track key certificate is under construction in Key Vault, it is ready in a little while.", ex);
+                    }
                 }
 
                 throw;

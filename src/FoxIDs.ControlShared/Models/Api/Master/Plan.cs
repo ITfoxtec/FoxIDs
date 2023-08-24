@@ -32,6 +32,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Custom domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [Display(Name = "Key Vault")]
+        public bool EnableKeyVault { get; set; }
+
+        [Required]
+        [Display(Name = "Total tracks")]
+        public PlanItem Tracks { get; set; } = new PlanItem();
+
         [Required]
         [Display(Name = "Total users")]
         public PlanItem Users { get; set; }

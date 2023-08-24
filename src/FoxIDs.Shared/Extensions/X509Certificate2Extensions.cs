@@ -24,7 +24,7 @@ namespace FoxIDs
         public static Task<X509Certificate2> CreateSelfSignedCertificateBySubjectAsync(this (string tenantName, string trackName) subjectData)
         {
             var subject = (subjectData.tenantName, subjectData.trackName).GetCertificateSubject();
-            return subject.CreateSelfSignedCertificateAsync();
+            return subject.CreateSelfSignedCertificateAsync(expiry: TimeSpan.FromDays(365.0 * 3));
         }
     }
 }

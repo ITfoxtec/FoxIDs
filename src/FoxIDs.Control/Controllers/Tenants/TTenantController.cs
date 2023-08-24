@@ -25,19 +25,17 @@ namespace FoxIDs.Controllers
         private readonly ITenantRepository tenantRepository;
         private readonly IMasterRepository masterRepository;
         private readonly MasterTenantLogic masterTenantLogic;
-        private readonly PlanCacheLogic planCacheLogic;
         private readonly TenantCacheLogic tenantCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, PlanCacheLogic planCacheLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTenantController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, IMasterRepository masterRepository, MasterTenantLogic masterTenantLogic, TenantCacheLogic tenantCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
             this.masterRepository = masterRepository;
             this.masterTenantLogic = masterTenantLogic;
-            this.planCacheLogic = planCacheLogic;
             this.tenantCacheLogic = tenantCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.externalKeyLogic = externalKeyLogic;

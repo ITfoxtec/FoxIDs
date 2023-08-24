@@ -28,6 +28,7 @@
                     </div>
                 }
                 <FFieldText @bind-Value="tenantSettingsForm.Model.Name" For="@(() => tenantSettingsForm.Model.Name)" />
+                <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
                 <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
                 <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
 

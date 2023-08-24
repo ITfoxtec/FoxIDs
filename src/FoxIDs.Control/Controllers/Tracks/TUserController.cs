@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FoxIDs.Infrastructure;
 using FoxIDs.Repository;
+using FoxIDs.Models;
 using Api = FoxIDs.Models.Api;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +12,7 @@ using System.Security.Claims;
 using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System;
+using System.Linq.Expressions;
 
 namespace FoxIDs.Controllers
 {
@@ -19,14 +21,16 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly PlanCacheLogic planCacheLogic;
         private readonly BaseAccountLogic accountLogic;
         private readonly ExternalSecretLogic externalSecretLogic;
 
-        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
+        public TUserController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, BaseAccountLogic accountLogic, ExternalSecretLogic externalSecretLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.planCacheLogic = planCacheLogic;
             this.accountLogic = accountLogic;
             this.externalSecretLogic = externalSecretLogic;
         }
@@ -44,7 +48,7 @@ namespace FoxIDs.Controllers
             {
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
 
-                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
+                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email?.ToLower()));
                 return Ok(mapper.Map<Api.User>(mUser));
             }
             catch (CosmosDataException ex)
@@ -71,6 +75,28 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(createUserRequest)) return BadRequest(ModelState);
                 createUserRequest.Email = createUserRequest.Email?.ToLower();
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (plan.Users.IsLimited)
+                    {
+                        Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
+                        var count = await tenantRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
+                        if (count >= plan.Users.Included)
+                        {
+                            throw new Exception($"Maximum number of users ({plan.Users.Included}) included in the '{plan.Name}' plan has been reached.");
+                        }
+                    }
+
+                    if (createUserRequest.RequireMultiFactor)
+                    {                        
+                        if (!plan.EnableKeyVault)
+                        {
+                            throw new Exception($"Key Vault and thereby two-factor authentication is not supported in the '{plan.Name}' plan.");
+                        }
+                    }
+                }
 
                 var claims = new List<Claim>();
                 if (createUserRequest.Claims?.Count > 0)
@@ -122,7 +148,16 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(user)) return BadRequest(ModelState);
                 user.Email = user.Email?.ToLower();
 
-                var mUser = await tenantRepository.GetAsync<Models.User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
+                if (!RouteBinding.PlanName.IsNullOrEmpty() && user.RequireMultiFactor)
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableKeyVault)
+                    {
+                        throw new Exception($"Key Vault and thereby two-factor authentication is not supported in the '{plan.Name}' plan.");
+                    }
+                }
+
+                var mUser = await tenantRepository.GetAsync<User>(await Models.User.IdFormatAsync(RouteBinding, user.Email));
 
                 mUser.ConfirmAccount = user.ConfirmAccount;
                 mUser.EmailVerified = user.EmailVerified;
@@ -146,7 +181,7 @@ namespace FoxIDs.Controllers
                     mUser.TwoFactorAppRecoveryCode = null;
                 }
                 mUser.RequireMultiFactor = user.RequireMultiFactor;
-                var mClaims = mapper.Map<List<Models.ClaimAndValues>>(user.Claims);
+                var mClaims = mapper.Map<List<ClaimAndValues>>(user.Claims);
                 mUser.Claims = mClaims;
                 await tenantRepository.UpdateAsync(mUser);
 
@@ -176,7 +211,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
                 email = email?.ToLower();
 
-                await tenantRepository.DeleteAsync<Models.User>(await Models.User.IdFormatAsync(RouteBinding, email));
+                await tenantRepository.DeleteAsync<User>(await Models.User.IdFormatAsync(RouteBinding, email));
                 return NoContent();
             }
             catch (CosmosDataException ex)

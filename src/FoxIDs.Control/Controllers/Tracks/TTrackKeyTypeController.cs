@@ -21,15 +21,17 @@ namespace FoxIDs.Controllers
         private readonly FoxIDsControlSettings settings;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackKeyTypeController(FoxIDsControlSettings settings, TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.settings = settings;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
@@ -72,6 +74,15 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(trackKey)) return BadRequest(ModelState);
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
+
+                if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyType.Contained)
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (!plan.EnableKeyVault)
+                    {
+                        throw new Exception($"Key Vault is not supported in the '{plan.Name}' plan.");
+                    }
+                }
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
                 var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);

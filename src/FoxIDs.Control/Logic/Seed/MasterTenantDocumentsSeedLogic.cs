@@ -30,7 +30,7 @@ namespace FoxIDs.Logic.Seed
             {
                 await CreateAndValidateMasterTenantDocumentAsync();
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName);
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(Constants.Routes.MasterTenantName, TrackKeyType.KeyVaultRenewSelfSigned);
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(Constants.Routes.MasterTenantName);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(Constants.Routes.MasterTenantName, Constants.DefaultAdminAccount.Email, Constants.DefaultAdminAccount.Password, true, false, false);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(Constants.Routes.MasterTenantName, includeMasterTenantScope: true);

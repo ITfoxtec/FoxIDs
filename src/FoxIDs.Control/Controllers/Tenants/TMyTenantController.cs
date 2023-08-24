@@ -73,12 +73,12 @@ namespace FoxIDs.Controllers
 
                 var invalidateCustomDomainInCache = (!mTenant.CustomDomain.IsNullOrEmpty() && !mTenant.CustomDomain.Equals(tenant.CustomDomain, StringComparison.OrdinalIgnoreCase)) ? mTenant.CustomDomain : null;
 
-                if (!mTenant.PlanName.IsNullOrEmpty() && !tenant.CustomDomain.IsNullOrEmpty())
+                if (!RouteBinding.PlanName.IsNullOrEmpty() && !tenant.CustomDomain.IsNullOrEmpty())
                 {
-                    var plan = await planCacheLogic.GetPlanAsync(mTenant.PlanName);
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableCustomDomain)
                     {
-                        throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                        throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
                     }
                 }
 

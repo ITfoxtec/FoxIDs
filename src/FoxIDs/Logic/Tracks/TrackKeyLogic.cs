@@ -9,11 +9,9 @@ using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Saml2.Cryptography;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using RSAKeyVaultProvider;
 using ITfoxtec.Identity.Util;
-using Azure.Security.KeyVault.Keys;
 using System.Collections.Generic;
 
 namespace FoxIDs.Logic

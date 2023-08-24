@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
                 {
                     if (!plan.EnableCustomDomain)
                     {
-                        throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                        throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
                     }
                 }
 
@@ -106,14 +106,14 @@ namespace FoxIDs.Controllers
                     await tenantCacheLogic.InvalidateCustomDomainCacheAsync(tenant.CustomDomain);
                 }
 
-                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name);
+                await masterTenantLogic.CreateMasterTrackDocumentAsync(tenant.Name, plan.GetKeyType());
                 var mLoginUpParty = await masterTenantLogic.CreateMasterLoginDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateFirstAdminUserDocumentAsync(tenant.Name, tenant.AdministratorEmail, tenant.AdministratorPassword, tenant.ChangeAdministratorPassword, true, tenant.ConfirmAdministratorAccount);
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                await CreateTrackDocumentAsync(tenant.Name, "test");
-                await CreateTrackDocumentAsync(tenant.Name, "-"); // production
+                await CreateTrackDocumentAsync(tenant.Name, "test", plan.GetKeyType());
+                await CreateTrackDocumentAsync(tenant.Name, "-", plan.GetKeyType()); // production
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -152,10 +152,10 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task CreateTrackDocumentAsync(string tenantName, string trackName)
+        private async Task CreateTrackDocumentAsync(string tenantName, string trackName, TrackKeyType keyType)
         {
             var mTrack = mapper.Map<Track>(new Api.Track { Name = trackName?.ToLower() });
-            await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack);
+            await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack, keyType);
             await masterTenantLogic.CreateLoginDocumentAsync(tenantName, mTrack.Name);
         }
 
@@ -186,7 +186,7 @@ namespace FoxIDs.Controllers
                 {
                     if (!plan.EnableCustomDomain)
                     {
-                        throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                        throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
                     }
                 }
                 mTenant.CustomDomain = tenant.CustomDomain;

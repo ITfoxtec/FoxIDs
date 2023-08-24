@@ -12,6 +12,10 @@ namespace FoxIDs.Models
         public long Included { get; set; }
 
         [Required]
+        [JsonProperty(PropertyName = "is_limited")]
+        public bool IsLimited { get; set; }
+
+        [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]
         [JsonProperty(PropertyName = "first_cost")]
         public decimal FirstLevelCost { get; set; }

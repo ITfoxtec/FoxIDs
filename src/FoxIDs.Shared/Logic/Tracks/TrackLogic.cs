@@ -1,6 +1,9 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.Repository;
+using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -20,13 +23,29 @@ namespace FoxIDs.Logic
             this.upPartyCacheLogic = upPartyCacheLogic;
         }
 
-        public async Task CreateTrackDocumentAsync(Track mTrack, string tenantName = null, string trackName = null)
+        public async Task CreateTrackDocumentAsync(Track mTrack, TrackKeyType keyType, string tenantName = null, string trackName = null)
         {
-            mTrack.Key = new TrackKey()
+            if (keyType == TrackKeyType.Contained)
             {
-                Type = TrackKeyType.KeyVaultRenewSelfSigned,
-                ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
-            };
+                var certificate = await (RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
+                mTrack.Key = new TrackKey()
+                {
+                    Type = keyType,
+                    Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
+                };
+            }
+            else if (keyType == TrackKeyType.KeyVaultRenewSelfSigned)
+            {
+                mTrack.Key = new TrackKey()
+                {
+                    Type = keyType,
+                    ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
+                };
+            }
+            else
+            {
+                throw new NotSupportedException($"Track key type '{keyType}' not supported.");
+            }
 
             await tenantRepository.CreateAsync(mTrack);
 

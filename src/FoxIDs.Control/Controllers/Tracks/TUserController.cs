@@ -83,7 +83,8 @@ namespace FoxIDs.Controllers
                     {
                         Expression<Func<User, bool>> whereQuery = p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{RouteBinding.TenantName}:");
                         var count = await tenantRepository.CountAsync(whereQuery: whereQuery, usePartitionId: false);
-                        if (count >= plan.Users.Included)
+                        // included + one master user
+                        if (count > plan.Users.Included)
                         {
                             throw new Exception($"Maximum number of users ({plan.Users.Included}) included in the '{plan.Name}' plan has been reached.");
                         }

@@ -22,6 +22,12 @@ namespace FoxIDs.Models.Api
         [Required]
         public UsageLogSummarizeLevels SummarizeLevel { get; set; }
 
+        public bool IncludeTenants { get; set; }
+
+        public bool IncludeTracks { get; set; }
+
+        public bool IncludeKeyVaultManagedCertificates { get; set; }
+
         public bool IncludeUsers { get; set; }
 
         public bool IncludeLogins { get; set; }

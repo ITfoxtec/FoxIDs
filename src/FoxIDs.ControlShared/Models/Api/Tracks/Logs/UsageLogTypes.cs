@@ -2,12 +2,15 @@
 {
     public enum UsageLogTypes
     {
-        Hour = 3,
-        Day = 6,
-        user = 10,
-        Login = 20,
-        TokenRequest = 30,
-        ControlApiGet = 40,
-        ControlApiUpdate = 50
+        Hour = 10,
+        Day = 20,
+        Tenant = 100,
+        Track = 120,
+        KeyVaultManagedCertificate = 140,
+        User = 200,
+        Login = 300,
+        TokenRequest = 400,
+        ControlApiGet = 500,
+        ControlApiUpdate = 520
     }
 }

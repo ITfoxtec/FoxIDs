@@ -15,7 +15,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public UsageLogSummarizeLevels SummarizeLevel { get; set; } = UsageLogSummarizeLevels.Month;
 
         [Display(Name = "Usage types")]
-        public List<string> IncludeTypes { get; set; } = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests };
+        public List<string> IncludeTypes { get; set; } = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.KeyVaultManagedCertificate, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests };
 
         [Display(Name = "Select one tenant by full tenant name")]
         public string TenantName { get; set; } 

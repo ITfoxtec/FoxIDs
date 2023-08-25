@@ -99,7 +99,7 @@ namespace FoxIDs.Infrastructure.Hosting
             {
                 if (useCustomDomain && !plan.EnableCustomDomain)
                 {
-                    throw new Exception($"Custom domain not enabled by plan '{plan.Name}'.");
+                    throw new Exception($"Custom domain is not supported in the '{plan.Name}' plan.");
                 }
             }
 

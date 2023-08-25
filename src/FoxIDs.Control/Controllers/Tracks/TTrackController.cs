@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using FoxIDs.Logic;
+using ITfoxtec.Identity;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -16,15 +18,17 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly PlanCacheLogic planCacheLogic;
         private readonly TrackCacheLogic trackCacheLogic;
         private readonly TrackLogic trackLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TTrackController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, TrackCacheLogic trackCacheLogic, TrackLogic trackLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.planCacheLogic = planCacheLogic;
             this.trackCacheLogic = trackCacheLogic;
             this.trackLogic = trackLogic;
             this.externalKeyLogic = externalKeyLogic;
@@ -72,8 +76,22 @@ namespace FoxIDs.Controllers
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
                 track.Name = track.Name?.ToLower();
 
+                if (!RouteBinding.PlanName.IsNullOrEmpty())
+                {
+                    var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                    if (plan.Tracks.IsLimited)
+                    {
+                        var count = await tenantRepository.CountAsync<Track>(new Track.IdKey { TenantName = RouteBinding.TenantName });
+                        // included + master track
+                        if (count > plan.Tracks.Included) 
+                        {
+                            throw new Exception($"Maximum number of tracks ({plan.Tracks.Included}) included in the '{plan.Name}' plan has been reached. Master track not counted.");
+                        }
+                    }
+                }
+
                 var mTrack = mapper.Map<Track>(track);
-                await trackLogic.CreateTrackDocumentAsync(mTrack);
+                await trackLogic.CreateTrackDocumentAsync(mTrack, await GetKeyTypeAsync());
                 await trackLogic.CreateLoginDocumentAsync(mTrack);
 
                 return Created(mapper.Map<Api.Track>(mTrack));
@@ -87,6 +105,16 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task<TrackKeyType> GetKeyTypeAsync()
+        {
+            Plan plan = null;
+            if (!RouteBinding.PlanName.IsNullOrEmpty())
+            {            
+                plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);                
+            }
+            return plan.GetKeyType();
         }
 
         /// <summary>

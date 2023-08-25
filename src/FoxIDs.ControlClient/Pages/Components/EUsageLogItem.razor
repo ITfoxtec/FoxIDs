@@ -17,7 +17,13 @@
     {
         switch (type)
         {
-            case UsageLogTypes.user:
+            case UsageLogTypes.Tenant:
+                return "Tenants";
+            case UsageLogTypes.Track:
+                return "Tracks";
+            case UsageLogTypes.KeyVaultManagedCertificate:
+                return "Key Vault managed certificates";
+            case UsageLogTypes.User:
                 return "Users";
             case UsageLogTypes.Login:
                 return "Logins";

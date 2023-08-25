@@ -5,7 +5,9 @@ The [custom primary domains](deployment.md#custom-primary-domains) is exposed th
 
 The FoxIDs service support [custom domains](custom-domain.md) which is handled with domain rewrite through the reverse proxy.
 
-> FoxIDs only support [custom domains](custom-domain.md) if it is behind a reverse proxy and the access is restricted by the `X-FoxIDs-Secret` HTTP header or the `Settings:TrustProxyHeaders` setting is set to `true` in the FoxIDs App Service configuration.
+> FoxIDs support [custom domains](custom-domain.md) if it is behind a reverse proxy and the access is restricted by the `X-FoxIDs-Secret` HTTP header or the `Settings:TrustProxyHeaders` setting is set to `true` in the FoxIDs App Service configuration.  
+> OR  
+> If not behind a reverse proxy FoxIDs support [custom domains](custom-domain.md) by reading the HTTP request domain and using the domain as a custom domain if the `Setting:RequestDomainAsCustomDomain` setting is set to `true`.
 
 ## Restrict access
 Both the FoxIDs service and FoxIDs Control sites can restrict access based on the `X-FoxIDs-Secret` HTTP header.  

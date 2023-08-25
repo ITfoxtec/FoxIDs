@@ -8,19 +8,23 @@ using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using FoxIDs.Models;
+using System;
+using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
     public class ValidateLoginPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
+        private readonly PlanCacheLogic planCacheLogic;
 
-        public ValidateLoginPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
+            this.planCacheLogic = planCacheLogic;
         }
 
-        public bool ValidateApiModel(ModelStateDictionary modelState, Api.LoginUpParty party)
+        public async Task<bool> ValidateApiModelAsync(ModelStateDictionary modelState, Api.LoginUpParty party)
         {
             var isValid = true;
 
@@ -49,6 +53,15 @@ namespace FoxIDs.Logic
                     isValid = false;
                     logger.Warning(vex);
                     modelState.TryAddModelError(nameof(Api.LoginUpParty.IconUrl).ToCamelCase(), vex.Message);
+                }
+            }
+
+            if (!RouteBinding.PlanName.IsNullOrEmpty() && party.RequireTwoFactor)
+            {
+                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                if (!plan.EnableKeyVault)
+                {
+                    throw new Exception($"Key Vault and thereby two-factor authentication is not supported in the '{plan.Name}' plan.");
                 }
             }
 

@@ -61,6 +61,13 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "enable_custom_domain")]
         public bool EnableCustomDomain { get; set; }
 
+        [JsonProperty(PropertyName = "enable_key_vault")]
+        public bool EnableKeyVault { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "tracks")]
+        public PlanItem Tracks { get; set; } = new PlanItem();
+
         [Required]
         [JsonProperty(PropertyName = "users")]
         public PlanItem Users { get; set; }

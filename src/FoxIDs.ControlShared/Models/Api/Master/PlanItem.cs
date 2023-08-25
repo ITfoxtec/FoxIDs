@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
@@ -9,6 +10,10 @@ namespace FoxIDs.Models.Api
         [Min(Constants.Models.Plan.IncludedMin)]
         [Display(Name = "Included")]
         public long Included { get; set; }
+
+        [Required]
+        [Display(Name = "Is limited")]
+        public bool IsLimited { get; set; }
 
         [Required]
         [Min(Constants.Models.Plan.CostPerMonthMin)]

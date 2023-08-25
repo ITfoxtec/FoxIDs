@@ -32,18 +32,51 @@ namespace FoxIDs.Logic
             this.tokenCredential = tokenCredential;
         }
 
-        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMaster = false)
+        public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
         {
             var client = new LogsQueryClient(tokenCredential);  
-            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMaster);
+            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
 
             var items = new List<Api.UsageLogItem>();
-            if(logRequest.IncludeUsers && logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
+            if (logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
             {
-                var users = await GetUserCountAsync(tenantName, trackName);
-                if (users != null)
+                if (isMasterTenant)
                 {
-                    items.Add(users);
+                    if (logRequest.IncludeTenants)
+                    {
+                        var tenants = await GetTenantCountAsync(tenantName);
+                        if (tenants != null)
+                        {
+                            items.Add(tenants);
+                        }
+                    }
+                }
+                if (isMasterTenant || isMasterTrack)
+                { 
+                    if (logRequest.IncludeTracks)
+                    {
+                        var tracks = await GetTrackCountAsync(tenantName, trackName);
+                        if (tracks != null)
+                        {
+                            items.Add(tracks);
+                        }
+                    }
+                    if (logRequest.IncludeKeyVaultManagedCertificates)
+                    {
+                        var tracks = await GetKeyVaultManagedCertificateCountAsync(tenantName, trackName);
+                        if (tracks != null)
+                        {
+                            items.Add(tracks);
+                        }
+                    }
+                }
+                if (logRequest.IncludeUsers)
+                {
+                    var users = await GetUserCountAsync(tenantName, trackName);
+                    if (users != null)
+                    {
+                        items.Add(users);
+                    }
                 }
             }
             var dayPointer = 0;
@@ -96,18 +129,16 @@ namespace FoxIDs.Logic
             return new Api.UsageLogResponse { SummarizeLevel = logRequest.SummarizeLevel, Items = SortUsageTypes(items) };
         }
 
-        private async Task<Api.UsageLogItem> GetUserCountAsync(string tenantName, string trackName)
+        private async Task<Api.UsageLogItem> GetTenantCountAsync(string tenantName)
         {
-            var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
-            var usePartitionId = !idKey.TenantName.IsNullOrEmpty() && !idKey.TrackName.IsNullOrEmpty();
-            Expression<Func<User, bool>> whereQuery = usePartitionId ? p => p.DataType.Equals("user") : p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
+            var usePartitionId = tenantName.IsNullOrWhiteSpace();
 
-            var count = await tenantRepository.CountAsync<User>(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
+            var count = await tenantRepository.CountAsync(whereQuery: await GetTenantCountWhereQueryAsync(tenantName, usePartitionId), usePartitionId: usePartitionId);
             if (count > 0)
             {
                 return new Api.UsageLogItem
                 {
-                    Type = Api.UsageLogTypes.user,
+                    Type = Api.UsageLogTypes.Tenant,
                     Value = count
                 };
             }
@@ -116,10 +147,115 @@ namespace FoxIDs.Logic
                 return null;
             }
         }
+        private async Task<Expression<Func<Tenant, bool>>> GetTenantCountWhereQueryAsync(string tenantName, bool usePartitionId)
+        {
+            if (usePartitionId)
+            {
+                return null;
+            }
+            else
+            {
+                var id = await Tenant.IdFormatAsync(tenantName);
+                return p => p.Id.Equals(id);
+            }
+        }
 
+        private async Task<Api.UsageLogItem> GetTrackCountAsync(string tenantName, string trackName)
+        {
+            var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
+            var usePartitionId = !idKey.TenantName.IsNullOrWhiteSpace() && idKey.TrackName.IsNullOrWhiteSpace();
+
+            var count = await tenantRepository.CountAsync(idKey, whereQuery: await GetTrackCountWhereQueryAsync(idKey, usePartitionId), usePartitionId: usePartitionId);
+            if (count > 0)
+            {
+                return new Api.UsageLogItem
+                {
+                    Type = Api.UsageLogTypes.Track,
+                    Value = count
+                };
+            }
+            else
+            {
+                return null;
+            }
+        }
+        private async Task<Expression<Func<Track, bool>>> GetTrackCountWhereQueryAsync(Track.IdKey idKey, bool usePartitionId)
+        {
+            if (usePartitionId)
+            {
+                return null;
+            }
+            else
+            {
+                if (idKey.TenantName.IsNullOrWhiteSpace())
+                {
+                    return p => p.DataType.Equals("track");
+                }
+
+                var id = await Track.IdFormatAsync(idKey);
+                return p => p.Id.Equals(id);
+            }
+        }
+
+        private async Task<Api.UsageLogItem> GetKeyVaultManagedCertificateCountAsync(string tenantName, string trackName)
+        {
+            var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
+            var usePartitionId = !idKey.TenantName.IsNullOrWhiteSpace() && idKey.TrackName.IsNullOrWhiteSpace();
+
+            var count = await tenantRepository.CountAsync(idKey, whereQuery: await GetKeyVaultManagedCertificateCountWhereQueryAsync(idKey, usePartitionId), usePartitionId: usePartitionId);
+            if (count > 0)
+            {
+                return new Api.UsageLogItem
+                {
+                    Type = Api.UsageLogTypes.KeyVaultManagedCertificate,
+                    Value = count
+                };
+            }
+            else
+            {
+                return null;
+            }
+        }
+        private async Task<Expression<Func<Track, bool>>> GetKeyVaultManagedCertificateCountWhereQueryAsync(Track.IdKey idKey, bool usePartitionId)
+        {
+            if (usePartitionId)
+            {
+                return p => p.Key.Type != TrackKeyType.Contained;
+            }
+            else
+            {
+                if (idKey.TenantName.IsNullOrWhiteSpace())
+                {
+                    return p => p.DataType.Equals("track") && p.Key.Type != TrackKeyType.Contained;
+                }
+
+                var id = await Track.IdFormatAsync(idKey);
+                return p => p.Id.Equals(id) && p.Key.Type != TrackKeyType.Contained;
+            }
+        }
+
+        private async Task<Api.UsageLogItem> GetUserCountAsync(string tenantName, string trackName)
+        {
+            var idKey = new Track.IdKey { TenantName = tenantName, TrackName = trackName };
+            var usePartitionId = !idKey.TenantName.IsNullOrWhiteSpace() && !idKey.TrackName.IsNullOrWhiteSpace();
+
+            var count = await tenantRepository.CountAsync(idKey, whereQuery: GetUserCountWhereQuery(idKey, usePartitionId), usePartitionId: usePartitionId);
+            if (count > 0)
+            {
+                return new Api.UsageLogItem
+                {
+                    Type = Api.UsageLogTypes.User,
+                    Value = count
+                };
+            }
+            else
+            {
+                return null;
+            }
+        }
         private Expression<Func<User, bool>> GetUserCountWhereQuery(Track.IdKey idKey, bool usePartitionId)
         {
-            if (!usePartitionId && !idKey.TenantName.IsNullOrEmpty())
+            if (!usePartitionId && !idKey.TenantName.IsNullOrWhiteSpace())
             {
                 return p => p.DataType.Equals("user") && p.PartitionId.StartsWith($"{idKey.TenantName}:");
             }
@@ -180,9 +316,9 @@ namespace FoxIDs.Logic
             return new QueryTimeRange(startDate, endDate);
         }
 
-        private string GetLogAnalyticsWorkspaceId(bool isMaster)
+        private string GetLogAnalyticsWorkspaceId(bool isMasterTenant)
         {
-            if (!isMaster && !string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
+            if (!isMasterTenant && !string.IsNullOrWhiteSpace(RouteBinding?.LogAnalyticsWorkspaceId))
             {
                 return RouteBinding.LogAnalyticsWorkspaceId;
             }
@@ -192,7 +328,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMaster)
+        private async Task<IReadOnlyList<LogsTableRow>> LoadUsageEventsAsync(LogsQueryClient client, string tenantName, string trackName, QueryTimeRange queryTimeRange, Api.UsageLogRequest logRequest, bool isMasterTenant)
         {
             if(!logRequest.IncludeLogins && !logRequest.IncludeTokenRequests && !logRequest.IncludeControlApiGets && !logRequest.IncludeControlApiUpdates)
             {
@@ -206,8 +342,8 @@ namespace FoxIDs.Logic
             var preOrderSummarizeBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : $"bin(TimeGenerated, 1{(logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Day ? "d" : "h")}), ";
             var preSortBy = logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month ? string.Empty : "TimeGenerated asc";
 
-            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMaster);
-            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(isMaster), eventsQuery, queryTimeRange);
+            var eventsQuery = GetQuery("AppEvents", GetWhereDataSlice(tenantName, trackName), where, preOrderSummarizeBy, preSortBy, isMasterTenant);
+            Response<LogsQueryResult> response = await client.QueryWorkspaceAsync(GetLogAnalyticsWorkspaceId(isMasterTenant), eventsQuery, queryTimeRange);
             var table = response.Value.Table;
             return table.Rows;
         }
@@ -246,10 +382,10 @@ namespace FoxIDs.Logic
             return string.Join(" and ", whereDataSlice);
         }
 
-        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMaster)
+        private string GetQuery(string fromType, string whereDataSlice, string where, string preOrderSummarizeBy, string preSortBy, bool isMasterTenant)
         {
             return
-@$"{GetFromTypeAndUnion(fromType, isMaster)}
+@$"{GetFromTypeAndUnion(fromType, isMasterTenant)}
 | extend f_TenantName = Properties.f_TenantName
 | extend f_TrackName = Properties.f_TrackName
 | extend f_UsageType = Properties.f_UsageType
@@ -258,9 +394,9 @@ namespace FoxIDs.Logic
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 
-        private string GetFromTypeAndUnion(string fromType, bool isMaster)
+        private string GetFromTypeAndUnion(string fromType, bool isMasterTenant)
         {
-            if (!isMaster || !(settings.ApplicationInsights.PlanWorkspaceIds?.Count() > 0))
+            if (!isMasterTenant || !(settings.ApplicationInsights.PlanWorkspaceIds?.Count() > 0))
             {
                 return fromType;
             }

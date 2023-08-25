@@ -46,17 +46,18 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.ClaimsTransform))">Claim transform</button>
                 }
             </li>
-            <li class="nav-item">
-                @if (loginUpParty.ShowCreateUserTab)
-                {
-                    <a class="nav-link active">Create user</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create user</button>
-                }
-            </li>
-
+            @if (loginUpParty.Form.Model.EnableCreateUser) {
+                <li class="nav-item">
+                    @if (loginUpParty.ShowCreateUserTab)
+                    {
+                        <a class="nav-link active">Create user</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowLoginTab(loginUpParty, LoginTabTypes.CreateUser))">Create user</button>
+                    }
+                </li>
+            }
             <li class="nav-item">
                 @if (loginUpParty.ShowSessionTab)
                 {

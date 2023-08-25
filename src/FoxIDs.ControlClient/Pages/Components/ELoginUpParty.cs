@@ -32,6 +32,11 @@ namespace FoxIDs.Client.Pages.Components
                 var generalLoginUpParty = UpParty as GeneralLoginUpPartyViewModel;                
                 var loginUpParty = await UpPartyService.GetLoginUpPartyAsync(UpParty.Name);
                 await generalLoginUpParty.Form.InitAsync(ToViewModel(loginUpParty));
+                if (generalLoginUpParty.ShowCreateUserTab && !loginUpParty.EnableCreateUser)
+                {
+                    generalLoginUpParty.ShowCreateUserTab = false;
+                    generalLoginUpParty.ShowLoginTab = true;
+                }
             }
             catch (TokenUnavailableException)
             {
@@ -108,6 +113,11 @@ namespace FoxIDs.Client.Pages.Components
                             claimTransform.ClaimsIn = new List<string> { claimTransformClaimIn.ClaimIn };
                         }
                     }
+                }
+
+                if (!generalLoginUpParty.Form.Model.EnableCreateUser)
+                {
+                    generalLoginUpParty.Form.Model.CreateUser = null;
                 }
 
                 if (generalLoginUpParty.CreateMode)

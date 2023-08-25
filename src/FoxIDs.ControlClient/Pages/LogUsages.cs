@@ -17,7 +17,9 @@ namespace FoxIDs.Client.Pages
     public partial class LogUsages
     {
         private static List<string> includeNotUserTypeItems = new List<string> { UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
-        private static List<string> includeAllTypeItems = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private static List<string> includeMasterTenantAllTypeItems = new List<string> { UsageLogIncludeTypes.Tenants, UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.KeyVaultManagedCertificate, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private static List<string> includeMasterTrackAllTypeItems = new List<string> { UsageLogIncludeTypes.Tracks, UsageLogIncludeTypes.KeyVaultManagedCertificate, UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
+        private static List<string> includeDefaultAllTypeItems = new List<string> { UsageLogIncludeTypes.Users, UsageLogIncludeTypes.Logins, UsageLogIncludeTypes.TokenRequests, UsageLogIncludeTypes.ControlApiGets, UsageLogIncludeTypes.ControlApiUpdates };
 
         private string logLoadError;
         private PageEditForm<UsageLogRequestViewModel> usageLogRequestForm;
@@ -25,7 +27,7 @@ namespace FoxIDs.Client.Pages
         private string logsHref;
         private string logSettingsHref;
 
-        public List<string> IncludeTypeItems { get; set; } = includeAllTypeItems;
+        public List<string> IncludeTypeItems { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -69,6 +71,19 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
+                if (IsMasterTenant)
+                {
+                    IncludeTypeItems = includeMasterTenantAllTypeItems;
+                }
+                else if (IsMasterTrack)
+                {
+                    IncludeTypeItems = includeMasterTrackAllTypeItems;
+                }
+                else
+                {
+                    IncludeTypeItems = includeDefaultAllTypeItems;
+                }
+                StateHasChanged();
                 await LoadUsageLogAsync();
             }
             catch (TokenUnavailableException)
@@ -122,6 +137,17 @@ namespace FoxIDs.Client.Pages
             {
                 usageLogRequest.TimeScope = usageLogRequestForm.Model.TimeScope;
                 usageLogRequest.SummarizeLevel = usageLogRequestForm.Model.SummarizeLevel;
+                if (IsMasterTenant)
+                {
+                    usageLogRequest.IncludeTenants = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Tenants);
+                    usageLogRequest.IncludeTracks = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Tracks);
+                    usageLogRequest.IncludeKeyVaultManagedCertificates = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.KeyVaultManagedCertificate);
+                }
+                else if (IsMasterTrack)
+                {
+                    usageLogRequest.IncludeTracks = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Tracks);
+                    usageLogRequest.IncludeKeyVaultManagedCertificates = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.KeyVaultManagedCertificate);
+                }
                 usageLogRequest.IncludeUsers = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Users);
                 usageLogRequest.IncludeLogins = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.Logins);
                 usageLogRequest.IncludeTokenRequests = usageLogRequestForm.Model.IncludeTypes.Contains(UsageLogIncludeTypes.TokenRequests);
@@ -132,6 +158,18 @@ namespace FoxIDs.Client.Pages
             {
                 usageLogRequest.TimeScope = UsageLogTimeScopes.ThisMonth;
                 usageLogRequest.SummarizeLevel = UsageLogSummarizeLevels.Month;
+                if (IsMasterTenant)
+                {
+                    usageLogRequest.IncludeTenants = true;
+                    usageLogRequest.IncludeTracks = true;
+                    usageLogRequest.IncludeKeyVaultManagedCertificates = true;
+                }
+                else if (IsMasterTrack)
+                {
+                    usageLogRequest.IncludeTracks = true;
+                    usageLogRequest.IncludeKeyVaultManagedCertificates = true;
+                }
+                usageLogRequest.IncludeUsers = true;
                 usageLogRequest.IncludeUsers = true;
                 usageLogRequest.IncludeLogins = true;
                 usageLogRequest.IncludeTokenRequests = true;
@@ -148,7 +186,18 @@ namespace FoxIDs.Client.Pages
 
             if (usageLogRequestForm.Model.TimeScope == UsageLogTimeScopes.ThisMonth && usageLogRequestForm.Model.SummarizeLevel == UsageLogSummarizeLevels.Month)
             {
-                IncludeTypeItems = includeAllTypeItems;
+                if (IsMasterTenant)
+                {
+                    IncludeTypeItems = includeMasterTenantAllTypeItems;
+                }
+                else if (IsMasterTrack)
+                {
+                    IncludeTypeItems = includeMasterTrackAllTypeItems;
+                }
+                else
+                {
+                    IncludeTypeItems = includeDefaultAllTypeItems;
+                }
             }
             else
             {

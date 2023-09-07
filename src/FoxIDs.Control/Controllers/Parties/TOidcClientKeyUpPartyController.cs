@@ -12,8 +12,6 @@ using FoxIDs.Logic;
 using Microsoft.AspNetCore.WebUtilities;
 using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
-using Azure.Core;
-using System.Reflection;
 
 namespace FoxIDs.Controllers
 {

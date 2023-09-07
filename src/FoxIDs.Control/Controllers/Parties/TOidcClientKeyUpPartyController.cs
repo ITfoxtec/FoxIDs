@@ -137,9 +137,9 @@ namespace FoxIDs.Controllers
                 var key = oidcUpParty.Client.ClientKeys?.Where(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
                 if (key != null)
                 {
-                    await externalKeyLogic.DeleteExternalKeyAsync(externalName);
                     oidcUpParty.Client.ClientKeys.Remove(key);
                     await tenantRepository.UpdateAsync(oidcUpParty);
+                    await externalKeyLogic.DeleteExternalKeyAsync(externalName);
                 }
 
                 return NoContent();

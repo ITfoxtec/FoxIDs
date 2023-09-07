@@ -16,11 +16,16 @@ using FoxIDs.Client.Shared.Components;
 using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcUpParty : UpPartyBase
     {
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
         protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
         private Modal importClientKeyModal;
         private PageEditForm<OidcUpImportClientKeyViewModel> importClientKeyForm;
@@ -285,6 +290,11 @@ namespace FoxIDs.Client.Pages.Components
 
             oidcUpParty.Form.Model.Client.PublicClientKeyInfo = null;
             toastService.ShowSuccess("Up-party client key removed.");
+        }
+
+        private async Task DownloadPublicCertificateFileAsync(KeyInfoViewModel publicClientKeyInfo)
+        {
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{publicClientKeyInfo.Subject}.cer", publicClientKeyInfo.Key.X5c.First());
         }
     }
 }

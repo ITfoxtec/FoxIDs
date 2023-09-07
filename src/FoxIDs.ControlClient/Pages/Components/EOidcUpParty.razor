@@ -224,7 +224,12 @@
                                                             <span>Key id: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.KeyId</span><br />
                                                             @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
                                                             {
-                                                                <span>Thumbprint: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint</span>
+                                                                <span>Thumbprint: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint</span><br />
+                                                            }
+                                                            @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject.IsNullOrEmpty() && oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Key?.X5c?.Count > 0)
+                                                            {
+                                                                <button type="button" class="btn btn-link" @onclick="@(async () => await DownloadPublicCertificateFileAsync(oidcUpParty.Form.Model.Client.PublicClientKeyInfo))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download public certificate</button>
+                                                                <br />
                                                             }
                                                         </div>
                                                     </div>

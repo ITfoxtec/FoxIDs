@@ -430,6 +430,7 @@ namespace FoxIDs.Logic
                     ClientAssertion = await jwtUpLogic.CreateClientAssertionAsync(client, clientId, algorithm)
                 };
                 logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Up, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(clientAssertionCredentials);
             }
             else

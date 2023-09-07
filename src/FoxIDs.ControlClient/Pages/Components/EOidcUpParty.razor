@@ -204,34 +204,45 @@
                         }
                         else 
                         {
-                            <button type="button" class="mb-3 btn btn-link" @onclick="@(() => importClientKeyModal.Show())">Import client certificate</button>
                             if (oidcUpParty.Form.Model.Client.PublicClientKeyInfo != null)
                             {
-                                <div class="form-group active-group active">
+                                <div class="pb-0 form-group active-group active">
                                     <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
                                     <ul class="list-group">
                                         <li class="list-group-item p-0 bg-light">
-                                            <div class="d-flex">
-                                                <div class="mr-auto p-2">
-                                                    @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject.IsNullOrEmpty())
-                                                    {
-                                                        <strong>@oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject</strong>
-                                                        <br />
-                                                        <span class="@(oidcUpParty.Form.Model.Client.PublicClientKeyInfo.IsValid ? "" : "text-danger")">Valid from @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidFrom.ToShortDateString() to @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidTo.ToShortDateString()</span>
-                                                        <br />
-                                                    }
-                                                    <span>Key id: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.KeyId</span><br />
-                                                    @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
-                                                    {
-                                                        <span>Thumbprint: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint</span>
-                                                    }
+                                            <div class="row">
+                                                <div class="col-11">
+                                                    <div class="d-flex">
+                                                        <div class="mr-auto p-2">
+                                                            @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject.IsNullOrEmpty())
+                                                            {
+                                                                <strong>@oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject</strong>
+                                                                <br />
+                                                                <span class="@(oidcUpParty.Form.Model.Client.PublicClientKeyInfo.IsValid ? "" : "text-danger")">Valid from @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidFrom.ToShortDateString() to @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidTo.ToShortDateString()</span>
+                                                                <br />
+                                                            }
+                                                            <span>Key id: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.KeyId</span><br />
+                                                            @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
+                                                            {
+                                                                <span>Thumbprint: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-1 text-right">
+                                                    <button type="button" class="btn btn-link px-2" title="Remove" @onclick="@(async () => await RemoveClientKeyAsync(oidcUpParty, oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Name))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
                                                 </div>
                                             </div>
                                         </li>
                                     </ul>
                                 </div>
+                                <button type="button" class="mb-3 btn btn-link" @onclick="@(() => importClientKeyModal.Show())">Import and replace client certificate</button>
                             }
-                        }                    
+                            else 
+                            {
+                                <button type="button" class="mb-3 btn btn-link" @onclick="@(() => importClientKeyModal.Show())">Import client certificate</button>
+                            }
+                        }
                     }
 
                     @if (!oidcUpParty.CreateMode)

@@ -87,7 +87,8 @@ namespace FoxIDs.Client.Pages.Components
                             IsValid = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.IsValid(),
                             Thumbprint = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Thumbprint,
                             KeyId = clientKeyResponse.PrimaryKey.PublicKey.Kid,
-                            Key = clientKeyResponse.PrimaryKey.PublicKey
+                            Key = clientKeyResponse.PrimaryKey.PublicKey,
+                            Name = clientKeyResponse.Name
                         };
                     }
                 }
@@ -236,7 +237,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OidcClientKeyRequest { PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
+                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OidcClientKeyRequest { Type = ClientKeyTypes.KeyVaultImport, PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
 
                     //if (!jwtWithCertificateInfo.HasPrivateKey())
                     //{
@@ -255,11 +256,13 @@ namespace FoxIDs.Client.Pages.Components
                         IsValid = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.IsValid(),
                         Thumbprint = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Thumbprint,
                         KeyId = clientKeyResponse.PrimaryKey.PublicKey.Kid,
-                        Key = clientKeyResponse.PrimaryKey.PublicKey
+                        Key = clientKeyResponse.PrimaryKey.PublicKey,
+                        Name = clientKeyResponse.Name
                     };
 
                     importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                     importClientKeyModal.Hide();
+                    toastService.ShowSuccess("Up-party client key imported.");
                 }
             }
             catch (TokenUnavailableException)
@@ -274,6 +277,14 @@ namespace FoxIDs.Client.Pages.Components
             {
                 importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), aex.Message);
             }
+        }
+
+        private async Task RemoveClientKeyAsync(GeneralOidcUpPartyViewModel oidcUpParty, string keyName)
+        {
+            await UpPartyService.DeleteOidcClientKeyUpPartyAsync($"{oidcUpParty.Name}.{keyName}");
+
+            oidcUpParty.Form.Model.Client.PublicClientKeyInfo = null;
+            toastService.ShowSuccess("Up-party client key removed.");
         }
     }
 }

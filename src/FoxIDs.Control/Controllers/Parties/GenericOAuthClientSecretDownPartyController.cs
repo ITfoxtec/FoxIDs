@@ -94,15 +94,21 @@ namespace FoxIDs.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a client secret.
+        /// </summary>
+        /// <param name="name">Name is [down-party name].[secret id] </param>
         protected async Task<IActionResult> Delete(string name)
         {
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
-                name = name?.ToLower();
 
-                var partyName = name.GetFirstInDotList();
+                var partyName = name?.ToLower().GetFirstInDotList();
+                if (!ModelState.TryValidateRequiredParameter(partyName, $"{nameof(name)}[0]")) return BadRequest(ModelState);
                 var secretId = name.GetLastInDotList();
+                if (!ModelState.TryValidateRequiredParameter(secretId, $"{nameof(name)}[1]")) return BadRequest(ModelState);
+
                 var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
                 var secret = oauthDownParty.Client.Secrets.Where(s => s.Id == secretId).FirstOrDefault();
                 if (secret == null)

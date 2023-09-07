@@ -24,7 +24,7 @@ namespace FoxIDs.Logic
         {
             tenantName = tenantName ?? RouteBinding.TenantName;
             trackName = trackName ?? RouteBinding.TrackName;
-            var externalName = $"{tenantName}-{trackName}-{(upPartyName.IsNullOrEmpty() ? string.Empty : $"up.{upPartyName}-")}{Guid.NewGuid()}";
+            var externalName = $"{tenantName}-{trackName}-{(upPartyName.IsNullOrEmpty() ? string.Empty : $"UP{upPartyName}-")}{Guid.NewGuid()}";
             externalName = externalName.Replace('_', 'U');
 
             var certificatePolicy = new CertificatePolicy("self", (tenantName, trackName).GetCertificateSubject())
@@ -52,14 +52,13 @@ namespace FoxIDs.Logic
         {
             tenantName = tenantName ?? RouteBinding.TenantName;
             trackName = trackName ?? RouteBinding.TrackName;
-            var externalName = $"{tenantName}-{trackName}-{(upPartyName.IsNullOrEmpty() ? string.Empty : $"up.{upPartyName}-")}{Guid.NewGuid()}";
+            var externalName = $"{tenantName}-{trackName}-{(upPartyName.IsNullOrEmpty() ? string.Empty : $"UP{upPartyName}-")}{Guid.NewGuid()}";
             externalName = externalName.Replace('_', 'U');
 
             var importCertificateOptions = new ImportCertificateOptions(externalName, certificate)
             {
                 Enabled = true,
-                Password = password,
-                Policy = new CertificatePolicy { Exportable = false }
+                Password = password
             };
 
             var certificateClient = new CertificateClient(new Uri(settings.KeyVault.EndpointUri), tokenCredential);

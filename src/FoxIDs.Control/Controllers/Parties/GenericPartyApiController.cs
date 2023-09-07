@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System;
 using FoxIDs.Logic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Controllers
 {
@@ -125,8 +126,16 @@ namespace FoxIDs.Controllers
                         (mParty as OAuthDownParty).Client.Secrets = (tempMParty as OAuthDownParty).Client.Secrets;
                     }
                 }
+                else if (party is Api.OidcUpParty)
+                {
+                    var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
+                    if ((tempMParty as OidcUpParty)?.Client?.ClientKeys?.Count > 0)
+                    {
+                        (mParty as OidcUpParty).Client.ClientKeys = (tempMParty as OidcUpParty).Client.ClientKeys;
+                    }
+                }
 
-                var oldMUpParty = (mParty is UpParty) ? await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;      
+                var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;
                 await tenantRepository.UpdateAsync(mParty);
 
                 if (mParty is UpParty)

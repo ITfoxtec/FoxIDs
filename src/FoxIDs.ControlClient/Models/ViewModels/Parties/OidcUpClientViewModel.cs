@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Models.ViewModels
             }
             if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
             {
-                if (ClientSecret.IsNullOrEmpty())
+                if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret) }));
                 }

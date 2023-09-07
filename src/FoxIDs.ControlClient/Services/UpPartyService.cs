@@ -33,7 +33,7 @@ namespace FoxIDs.Client.Services
 
         public async Task<OidcClientKeyResponse> GetOidcClientKeyUpPartyAsync(string partyName) => await GetAsync<OidcClientKeyResponse>(oidcClientKeyApiUri, partyName, parmName: nameof(partyName));
         public async Task<OidcClientKeyResponse> CreateOidcClientKeyUpPartyAsync(OidcClientKeyRequest keyRequest) => await PostResponseAsync<OidcClientKeyRequest, OidcClientKeyResponse>(oidcClientKeyApiUri, keyRequest);
-        public async Task DeleteOidcClientKeyUpPartyAsync(string partyName) => await DeleteAsync(oidcClientKeyApiUri, partyName, parmName: nameof(partyName));
+        public async Task DeleteOidcClientKeyUpPartyAsync(string name) => await DeleteAsync(oidcClientKeyApiUri, name, parmName: nameof(name));
 
         public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);
         public async Task<SamlUpParty> CreateSamlUpPartyAsync(SamlUpParty party) => await PostResponseAsync<SamlUpParty, SamlUpParty>(samlApiUri, party);

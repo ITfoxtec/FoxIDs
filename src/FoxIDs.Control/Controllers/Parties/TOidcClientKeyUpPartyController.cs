@@ -12,6 +12,8 @@ using FoxIDs.Logic;
 using Microsoft.AspNetCore.WebUtilities;
 using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
+using Azure.Core;
+using System.Reflection;
 
 namespace FoxIDs.Controllers
 {
@@ -47,7 +49,7 @@ namespace FoxIDs.Controllers
                     return Ok(new Api.OidcClientKeyResponse
                     {
                         Name = clientKey.ExternalName,
-                        PrimaryKey = mapper.Map<Api.ClientKey>(clientKey.PublicKey)
+                        PrimaryKey = mapper.Map<Api.ClientKey>(clientKey)
                     });
                 }
                 else
@@ -66,7 +68,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        public async Task<ActionResult<Api.OidcClientKeyResponse>> PostOidcClientKeyUpParty(Api.OidcClientKeyRequest keyRequest)
+        public async Task<ActionResult<Api.OidcClientKeyResponse>> PostOidcClientKeyUpParty([FromBody] Api.OidcClientKeyRequest keyRequest)
         {
             try
             {
@@ -101,7 +103,7 @@ namespace FoxIDs.Controllers
                 return Created(new Api.OidcClientKeyResponse
                 {
                     Name = clientKey.ExternalName,
-                    PrimaryKey = mapper.Map<Api.ClientKey>(clientKey.PublicKey)
+                    PrimaryKey = mapper.Map<Api.ClientKey>(clientKey)
                 });
             }
             catch (CosmosDataException ex)
@@ -115,25 +117,30 @@ namespace FoxIDs.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a client key.
+        /// </summary>
+        /// <param name="name">Name is [up-party name].[key name] </param>
         public async Task<IActionResult> DeleteOidcClientKeyUpParty(string name)
         {
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
-                name = name?.ToLower();
 
-                var partyName = name.GetFirstInDotList();
+                var partyName = name?.ToLower().GetFirstInDotList();
+                if (!ModelState.TryValidateRequiredParameter(partyName, $"{nameof(name)}[0]")) return BadRequest(ModelState);
                 var externalName = name.GetLastInDotList();
+                if (!ModelState.TryValidateRequiredParameter(externalName, $"{nameof(name)}[1]")) return BadRequest(ModelState);
+
                 var oidcUpParty = await tenantRepository.GetAsync<OidcUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
 
-                var key = oidcUpParty.Client.ClientKeys?.Select(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
+                var key = oidcUpParty.Client.ClientKeys?.Where(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
                 if (key != null)
                 {
                     await externalKeyLogic.DeleteExternalKeyAsync(externalName);
-                    oidcUpParty.Client.ClientKeys = oidcUpParty.Client.ClientKeys.Where(k => k.ExternalName != externalName).ToList();
+                    oidcUpParty.Client.ClientKeys.Remove(key);
+                    await tenantRepository.UpdateAsync(oidcUpParty);
                 }
-
-                await tenantRepository.UpdateAsync(oidcUpParty);
 
                 return NoContent();
             }

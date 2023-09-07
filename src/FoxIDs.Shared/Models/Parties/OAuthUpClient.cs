@@ -105,7 +105,7 @@ namespace FoxIDs.Models
                 {
                     results.Add(new ValidationResult($"Require '{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(TokenUrl), nameof(ResponseType) }));
                 }
-                if (ClientSecret.IsNullOrEmpty())
+                if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
                 {
                     results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret), nameof(ResponseType) }));
                 }
@@ -113,10 +113,6 @@ namespace FoxIDs.Models
             if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
             {
                 results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { nameof(ResponseMode) }));
-            }
-            if (ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt && !(ClientKeys?.Count() > 0))
-            {
-                results.Add(new ValidationResult($"Require at least one '{nameof(ClientKeys)}' if {nameof(ClientAuthenticationMethod)} is '{ClientAuthenticationMethods.PrivateKeyJwt}'.", new[] { nameof(ClientAuthenticationMethod), nameof(ClientKeys) }));
             }
             return results;
         }

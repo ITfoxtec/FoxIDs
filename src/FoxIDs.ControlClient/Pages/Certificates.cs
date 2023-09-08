@@ -222,10 +222,12 @@ namespace FoxIDs.Client.Pages
             }
             catch (HttpRequestException ex)
             {
+                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), ex.Message);
             }
             catch (FoxIDsApiException aex)
             {
+                generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 generalCertificate.Form.SetFieldError(nameof(generalCertificate.Form.Model.Key), aex.Message);
             }
         }

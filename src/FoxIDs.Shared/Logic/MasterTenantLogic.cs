@@ -28,7 +28,7 @@ namespace FoxIDs.Logic
             this.downPartyCacheLogic = downPartyCacheLogic;
         }
 
-        public async Task CreateMasterTrackDocumentAsync(string tenantName, TrackKeyType keyType)
+        public async Task CreateMasterTrackDocumentAsync(string tenantName, TrackKeyTypes keyType)
         {
             tenantName = tenantName?.ToLower();
             var trackName = Constants.Routes.MasterTrackName;
@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             await trackLogic.CreateTrackDocumentAsync(mTrack, keyType, tenantName, trackName);
         }
 
-        public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack, TrackKeyType keyType)
+        public async Task CreateTrackDocumentAsync(string tenantName, Track mTrack, TrackKeyTypes keyType)
         {
             tenantName = tenantName?.ToLower();
 

@@ -150,7 +150,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task CreateTrackDocumentAsync(string tenantName, string trackName, TrackKeyType keyType)
+        private async Task CreateTrackDocumentAsync(string tenantName, string trackName, TrackKeyTypes keyType)
         {
             var mTrack = mapper.Map<Track>(new Api.Track { Name = trackName?.ToLower() });
             await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack, keyType);

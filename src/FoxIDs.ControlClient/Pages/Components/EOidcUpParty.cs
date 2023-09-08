@@ -219,6 +219,14 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
+        private void ShowImportClientKeyPopup()
+        {
+            importClientKeyForm.Model.Password = null;
+            importClientKeyForm.ClearFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus));
+            importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+            importClientKeyModal.Show();
+        }
+
         private async Task OnImportClientKeyFileAsync(GeneralOidcUpPartyViewModel oidcUpParty, IFileListEntry[] files)
         {
             try
@@ -244,15 +252,6 @@ namespace FoxIDs.Client.Pages.Components
                     var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
                     var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OidcClientKeyRequest { Type = ClientKeyTypes.KeyVaultImport, PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
 
-                    //if (!jwtWithCertificateInfo.HasPrivateKey())
-                    //{
-                    //    importClientKeyForm.Model.Subject = null;
-                    //    importClientKeyForm.Model.Key = null;
-                    //    importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.Key), "Private key is required. Maybe a password is required to unlock the private key.");
-                    //    importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
-                    //    return;
-                    //}
-
                     oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
                     {
                         Subject = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Subject,
@@ -276,10 +275,12 @@ namespace FoxIDs.Client.Pages.Components
             }
             catch (HttpRequestException ex)
             {
+                importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), ex.Message);
             }
             catch (FoxIDsApiException aex)
             {
+                importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), aex.Message);
             }
         }

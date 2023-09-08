@@ -12,6 +12,7 @@ using FoxIDs.Logic;
 using Microsoft.AspNetCore.WebUtilities;
 using ITfoxtec.Identity;
 using System.Security.Cryptography.X509Certificates;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -23,13 +24,15 @@ namespace FoxIDs.Controllers
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
+        private readonly PlanCacheLogic planCacheLogic;
         private readonly ExternalKeyLogic externalKeyLogic;
 
-        public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, ExternalKeyLogic externalKeyLogic) : base(logger)
+        public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
             this.tenantRepository = tenantRepository;
+            this.planCacheLogic = planCacheLogic;
             this.externalKeyLogic = externalKeyLogic;
         }
 
@@ -72,6 +75,12 @@ namespace FoxIDs.Controllers
             {
                 if (!await ModelState.TryValidateObjectAsync(keyRequest)) return BadRequest(ModelState);
                 keyRequest.PartyName = keyRequest.PartyName?.ToLower();
+
+                var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
+                if (!plan.EnableKeyVault)
+                {
+                    throw new Exception($"Key Vault and thereby client certificates is not supported in the '{plan.Name}' plan.");
+                }
 
                 var oidcUpParty = await tenantRepository.GetAsync<OidcUpParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
 

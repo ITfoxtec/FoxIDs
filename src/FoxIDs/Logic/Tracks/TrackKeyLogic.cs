@@ -117,7 +117,7 @@ namespace FoxIDs.Logic
                 {
                     var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
-                    if (RouteBinding.Key.Type == TrackKeyType.Contained)
+                    if (RouteBinding.Key.Type == TrackKeyTypes.Contained)
                     {
                         var ContainedCertificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                         mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await ContainedCertificate.ToFTJsonWebKeyAsync(true) } };

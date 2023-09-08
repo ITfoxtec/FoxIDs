@@ -75,7 +75,7 @@ namespace FoxIDs.Controllers
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
 
-                if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyType.Contained)
+                if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyTypes.Contained)
                 {
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableKeyVault)

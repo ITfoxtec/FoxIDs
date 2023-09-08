@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<TrackKeyType> GetKeyTypeAsync()
+        private async Task<TrackKeyTypes> GetKeyTypeAsync()
         {
             Plan plan = null;
             if (!RouteBinding.PlanName.IsNullOrEmpty())

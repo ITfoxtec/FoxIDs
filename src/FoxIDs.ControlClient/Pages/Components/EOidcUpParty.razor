@@ -241,11 +241,11 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <button type="button" class="mb-3 btn btn-link" @onclick="@(() => importClientKeyModal.Show())">Import and replace client certificate</button>
+                                <button type="button" class="mb-3 btn btn-link" @onclick="@(() => ShowImportClientKeyPopup())">Import and replace client certificate</button>
                             }
                             else 
                             {
-                                <button type="button" class="mb-3 btn btn-link" @onclick="@(() => importClientKeyModal.Show())">Import client certificate</button>
+                                <button type="button" class="mb-3 btn btn-link" @onclick="@(() => ShowImportClientKeyPopup())">Import client certificate</button>
                             }
                         }
                     }

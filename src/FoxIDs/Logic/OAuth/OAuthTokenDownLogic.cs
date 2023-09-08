@@ -1,5 +1,4 @@
-﻿using Azure.Identity;
-using FoxIDs.Infrastructure;
+﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;

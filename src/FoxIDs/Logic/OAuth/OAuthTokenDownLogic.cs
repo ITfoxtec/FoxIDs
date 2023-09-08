@@ -1,8 +1,12 @@
-﻿using FoxIDs.Infrastructure;
+﻿using Azure.Identity;
+using FoxIDs.Infrastructure;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Messages;
+using ITfoxtec.Identity.Models;
+using ITfoxtec.Identity.Tokens;
+using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -132,7 +136,7 @@ namespace FoxIDs.Logic
             }
             else if(client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
             {
-                throw new NotImplementedException("ClientAuthenticationMethods.PrivateKeyJwt not implemented.");
+                await ValidateClientAssertionAsync(client, tokenRequest, formDictionary, clientAuthenticationRequired);
             }
             else
             {
@@ -205,6 +209,71 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 throw new OAuthRequestException($"Client authentication, client secret post. {ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = ex is OAuthRequestException oare ? oare.Error : IdentityConstants.ResponseErrors.AccessDenied };
+            }
+        }
+
+        private async Task ValidateClientAssertionAsync(TClient client, TokenRequest tokenRequest, Dictionary<string, string> formDictionary, bool clientAuthenticationRequired = true)
+        {
+            if (!clientAuthenticationRequired && !(client.ClientKeys?.Count() > 0))
+            {
+                return;
+            }
+
+            var clientAssertionCredentials = formDictionary.ToObject<ClientAssertionCredentials>();
+            logger.ScopeTrace(() => $"Down, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            try
+            {
+                if (tokenRequest.ClientId.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenRequest.ClientId), tokenRequest.GetTypeName());
+                clientAssertionCredentials.Validate();
+
+                if (clientAssertionCredentials.ClientAssertionType != IdentityConstants.ClientAssertionTypes.JwtBearer)
+                {
+                    throw new OAuthRequestException($"Invalid client assertion type, supported types ['{IdentityConstants.ClientAssertionTypes.JwtBearer}']. Client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                }
+
+                if (client?.ClientKeys.Count() <= 0)
+                {
+                    throw new OAuthRequestException($"Invalid client key (certificate). Key (certificate) not configured for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                }
+                else
+                {
+                    var validClientKeys = new List<JsonWebKey>();
+                    var clientKeyAndCertificates = client.ClientKeys.Select(c => new { Key = c, Certificate = c.ToX509Certificate() }).ToList();
+                    foreach(var clientKeyAndCertificate in clientKeyAndCertificates)
+                    {
+                        if (clientKeyAndCertificate.Certificate.IsValidateCertificate())
+                        {
+                            validClientKeys.Add(clientKeyAndCertificate.Key);
+                        }
+                    }
+                    if(validClientKeys.Count <= 0)
+                    {
+                        clientKeyAndCertificates.First().Certificate.ValidateCertificate($"Client (client id '{client.ClientId}') key");
+                    }
+
+                    var clientAssertion = JwtHandler.ReadToken(clientAssertionCredentials.ClientAssertion);
+                    if (!client.ClientId.Equals(clientAssertion.Issuer))
+                    {
+                        throw new OAuthRequestException($"Client credentials assertion issuer '{clientAssertion.Issuer}' is invalid. It should be client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                    }
+
+                    var tokenEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Token);
+                    var claimsPrincipal = await jwtDownLogic.ValidateClientAssertionAsync(clientAssertionCredentials.ClientAssertion, client.ClientId, validClientKeys, tokenEndpoint);
+
+                    if (!client.ClientId.Equals(claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject)))
+                    {
+                        throw new OAuthRequestException($"Client credentials assertion {JwtClaimTypes.Subject} is invalid for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                    }
+
+                    if (string.IsNullOrWhiteSpace(claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.JwtId)))
+                    {
+                        throw new OAuthRequestException($"Client credentials assertion {JwtClaimTypes.JwtId} is empty for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new OAuthRequestException($"Client authentication, client credentials assertion. {ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = ex is OAuthRequestException oare ? oare.Error : IdentityConstants.ResponseErrors.AccessDenied };
             }
         }
 

@@ -142,6 +142,35 @@
                         </FInputSelect>
                     }
                     <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <div class="form-group active-group active">
+                            <div class="drag-drop-zone input-control">
+                                <BlazorInputFile.InputFile multiple OnChange="@(async (files) => await OnClientCertificateFileSelectedAsync(oidcDownParty, files))" />
+                                @oidcDownParty.ClientCertificateFileStatus
+                            </div>
+                            <Label For="@(() => oidcDownParty.Form.Model.Client.ClientKeys)" class="label-control" />
+                            <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client.ClientKeys)" />
+                            <ul class="list-group">
+                                @foreach (var clientKeyInfo in oidcDownParty.ClientKeyInfoList)
+                                {
+                                    <li class="list-group-item p-0">
+                                        <div class="d-flex">
+                                            <div class="mr-auto p-2">
+                                                <strong>@clientKeyInfo.Subject</strong><br />
+                                                <span class="@(clientKeyInfo.IsValid ? "" : "text-danger")">Valid from @clientKeyInfo.ValidFrom.ToShortDateString() to @clientKeyInfo.ValidTo.ToShortDateString()</span><br />
+                                                Thumbprint: @clientKeyInfo.Thumbprint
+                                            </div>
+                                            <div class="p-2">
+                                                <button type="button" class="btn btn-link p-0" title="Remove" @onclick="@(() => RemoveClientCertificate(oidcDownParty, clientKeyInfo))"><span class="oi oi-delete" aria-hidden="true"></span></button>
+                                            </div>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    }
+
                     <OAuthResourceScopes DownPartyNameModel="oidcDownParty.Form.Model" ClientResourceScope="oidcDownParty.Form.Model.Client" />
 
                     <div class="form-group active-group active">

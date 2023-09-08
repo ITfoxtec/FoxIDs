@@ -44,6 +44,10 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Client authentication method")]
         public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
 
+        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [Display(Name = "Client certificates")]
+        public List<JwtWithCertificateInfo> ClientKeys { get; set; }
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>

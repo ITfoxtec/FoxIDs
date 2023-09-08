@@ -351,6 +351,8 @@ namespace FoxIDs
                     public const int RedirectUriLength = 500;
                     public const int SecretsMin = 0;
                     public const int SecretsMax = 10;
+                    public const int ClientKeysMin = 0;
+                    public const int ClientKeysMax = 4;
 
                     public const int AuthorizationCodeLifetimeMin = 10; // 10 seconds 
                     public const int AuthorizationCodeLifetimeMax = 900; // 15 minutes

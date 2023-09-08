@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -42,6 +43,10 @@ namespace FoxIDs.Models
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }
+
+        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [JsonProperty(PropertyName = "client_keys")]
+        public List<JsonWebKey> ClientKeys { get; set; }
 
         [JsonProperty(PropertyName = "require_pkce")]
         public bool RequirePkce { get; set; }

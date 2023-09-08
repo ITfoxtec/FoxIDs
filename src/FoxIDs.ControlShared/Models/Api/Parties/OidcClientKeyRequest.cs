@@ -29,7 +29,6 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Certificate password
         /// </summary>
-        [Required]
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         public string Password { get; set; }
 

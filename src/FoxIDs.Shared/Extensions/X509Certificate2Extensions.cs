@@ -28,6 +28,20 @@ namespace FoxIDs
             return subject.CreateSelfSignedCertificateAsync(expiry: TimeSpan.FromDays(365.0 * 3));
         }
 
+        public static bool IsValidateCertificate(this X509Certificate2 certificate)
+        {
+            var nowLocal = DateTime.Now;
+            if (certificate.NotBefore > nowLocal)
+            {
+                return false;
+            }
+            if (certificate.NotAfter < nowLocal)
+            {
+                return false;
+            }
+            return true;
+        }
+
         public static void ValidateCertificate(this X509Certificate2 certificate, string postErrorMessage)
         {
             var nowLocal = DateTime.Now;

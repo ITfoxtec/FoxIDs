@@ -13,12 +13,15 @@ using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
 using System.Net.Http;
 using FoxIDs.Client.Util;
+using BlazorInputFile;
+using Microsoft.AspNetCore.WebUtilities;
+using System.IO;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcDownParty : DownPartyBase
     {
-        protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
+        protected List<string> responseTypeItems = new List<string>(Constants.Oidc.DefaultResponseTypes);
 
         protected override async Task OnInitializedAsync()
         {
@@ -80,6 +83,20 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OidcDownScopeViewModel>>() ?? new List<OidcDownScopeViewModel>();
+
+                    generalOidcDownParty.ClientKeyInfoList.Clear();
+                    foreach (var key in afterMap.Client.ClientKeys)
+                    {
+                        generalOidcDownParty.ClientKeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            Subject = key.CertificateInfo.Subject,
+                            ValidFrom = key.CertificateInfo.ValidFrom,
+                            ValidTo = key.CertificateInfo.ValidTo,
+                            IsValid = key.CertificateInfo.IsValid(),
+                            Thumbprint = key.CertificateInfo.Thumbprint,
+                            Key = key
+                        });
+                    }
                 }
 
                 if (afterMap.Resource == null)
@@ -269,6 +286,68 @@ namespace FoxIDs.Client.Pages.Components
             catch (Exception ex)
             {
                 generalOidcDownParty.Form.SetError(ex.Message);
+            }
+        }
+
+        private async Task OnClientCertificateFileSelectedAsync(GeneralOidcDownPartyViewModel generalOidcDownParty, IFileListEntry[] files)
+        {
+            if (generalOidcDownParty.Form.Model.Client.ClientKeys == null)
+            {
+                generalOidcDownParty.Form.Model.Client.ClientKeys = new List<JwtWithCertificateInfo>();
+            }
+            generalOidcDownParty.Form.ClearFieldError(nameof(generalOidcDownParty.Form.Model.Client.ClientKeys));
+            foreach (var file in files)
+            {
+                if (file.Size > GeneralSamlUpPartyViewModel.CertificateMaxFileSize)
+                {
+                    generalOidcDownParty.Form.SetFieldError(nameof(generalOidcDownParty.Form.Model.Client.ClientKeys), $"That's too big. Max size: {GeneralSamlUpPartyViewModel.CertificateMaxFileSize} bytes.");
+                    return;
+                }
+
+                generalOidcDownParty.ClientCertificateFileStatus = "Loading...";
+
+                using (var memoryStream = new MemoryStream())
+                {
+                    await file.Data.CopyToAsync(memoryStream);
+
+                    try
+                    {
+                        var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
+                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+
+                        if (generalOidcDownParty.Form.Model.Client.ClientKeys.Any(k => k.X5t.Equals(jwtWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            generalOidcDownParty.Form.SetFieldError(nameof(generalOidcDownParty.Form.Model.Client.ClientKeys), "Client certificates has duplicates.");
+                            return;
+                        }
+
+                        generalOidcDownParty.ClientKeyInfoList.Add(new KeyInfoViewModel
+                        {
+                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
+                            IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid(),
+                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwtWithCertificateInfo
+                        });
+                        generalOidcDownParty.Form.Model.Client.ClientKeys.Add(jwtWithCertificateInfo);
+                    }
+                    catch (Exception ex)
+                    {
+                        generalOidcDownParty.Form.SetFieldError(nameof(generalOidcDownParty.Form.Model.Client.ClientKeys), ex.Message);
+                    }
+                }
+
+                generalOidcDownParty.ClientCertificateFileStatus = GeneralSamlUpPartyViewModel.DefaultCertificateFileStatus;
+            }
+        }
+
+        private void RemoveClientCertificate(GeneralOidcDownPartyViewModel generalOidcDownParty, KeyInfoViewModel keyInfo)
+        {
+            generalOidcDownParty.Form.ClearFieldError(nameof(generalOidcDownParty.Form.Model.Client.ClientKeys));
+            if (generalOidcDownParty.Form.Model.Client.ClientKeys.Remove(keyInfo.Key))
+            {
+                generalOidcDownParty.ClientKeyInfoList.Remove(keyInfo);
             }
         }
     }

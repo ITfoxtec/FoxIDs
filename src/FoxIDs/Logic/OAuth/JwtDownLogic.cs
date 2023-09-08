@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using ITfoxtec.Identity.Saml2.Schemas.Conditions;
 
 namespace FoxIDs.Logic
 {
@@ -141,6 +142,13 @@ namespace FoxIDs.Logic
                 logger.Error(ex, $"JWT not valid. Route '{RouteBinding.Route}'.");
                 return null;
             }
+        }
+
+        public async Task<ClaimsPrincipal> ValidateClientAssertionAsync(string clientAssertion, string issuer, List<JsonWebKey> clientKeys, string audience)
+        {
+            (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(clientAssertion, issuer, clientKeys, audience));
+            return claimsPrincipal;
+
         }
     }
 }

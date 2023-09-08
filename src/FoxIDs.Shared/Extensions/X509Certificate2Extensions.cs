@@ -40,18 +40,5 @@ namespace FoxIDs
                 throw new KeyException($"{postErrorMessage} certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
             }
         }
-
-        public static void ValidateCertificate(this X509Certificate2 certificate, string postErrorMessage)
-        {
-            var nowLocal = DateTime.Now;
-            if (certificate.NotBefore > nowLocal)
-            {
-                throw new KeyException($"{postErrorMessage} certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
-            }
-            if (certificate.NotAfter < nowLocal)
-            {
-                throw new KeyException($"{postErrorMessage} certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
-            }
-        }
     }
 }

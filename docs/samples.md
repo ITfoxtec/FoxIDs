@@ -13,7 +13,7 @@ The sample Visual Studio solution contain the following down-party and up-party 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
-Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
 
 The possible up-parties is configured in the down-party as allowed up-parties. There can be configured one to many allowed up-parties. 
 All the configured up-parties is selected with a star indited of an up-party name.
@@ -26,7 +26,7 @@ Local development domain and port: `https://localhost:44349`
 ### AspNetCoreOidcAuthorizationCodeSample
 
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
-Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
@@ -50,28 +50,33 @@ Local development domain and port: `https://localhost:44343`
 
 ### NetCoreClientGrantConsoleSample
 
-Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant.  
-Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant using a secret (client authentication method client_secret_post).  
+Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
+
+### NetCoreClientAssertionGrantConsoleSample
+
+Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).  
+Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
 ### BlazorBFFAspNetCoreOidcSample
 
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow in a Blazor BFF (Backend For Frontend) application with a ASP.NET Core backend.  
 In a BFF architecture the backend handles OIDC, the tokens are never shared with the Blazor client. Instead a session based on an identity cookie secure the application after successfully user authentication.  
-The sample show how to call the [API sample](#aspnetcoreapi1sample) from both the Blazor client and a ASP.NET page securing the call with an access token. 
+The sample show how to call the [API1 sample](#aspnetcoreapi1sample) from both the Blazor client and a ASP.NET page securing the call with an access token. 
 
 Local development domain and port: `https://localhost:44348`
 
 ### BlazorOidcPkceSample
 
 Blazor sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow and PKCE as a service provider.  
-Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Local development domain and port: `https://localhost:44345`
 
 ### BlazorServerOidcSample
 
 Blazor server sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider.  
-Show how to call the [API sample](#aspnetcoreapi1sample) secured with an access token. 
+Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
 
 Local development domain and port: `https://localhost:44347`
 
@@ -81,7 +86,15 @@ Local development domain and port: `https://localhost:44347`
 
 Sample API showing how to secure an API with an access token and how to restrict access by a scope.
 
+The API calls [API2 sample](#aspnetcoreapi2sample) secured with an access token obtained with token exchange and client authentication method private_key_jwt (certificate), 
+
 Local development domain and port: `https://localhost:44344`
+
+### AspNetCoreApi2Sample
+
+Sample API showing how to secure an API with an access token and how to restrict access by a scope.
+
+Local development domain and port: `https://localhost:44351`
 
 ### AspNetCoreApiOAuthTwoIdPsSample
 

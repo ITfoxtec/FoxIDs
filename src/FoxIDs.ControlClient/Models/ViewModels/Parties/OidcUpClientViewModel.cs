@@ -3,7 +3,6 @@ using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Client.Models.ViewModels
 {

@@ -22,7 +22,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Issue claims (use * to issue all claims)")]
         public List<OidcDownClaim> Claims { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
+        [Length(Constants.Models.OidcDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [Display(Name = "Response types")]
         public List<string> ResponseTypes { get; set; }
 

@@ -61,6 +61,9 @@ namespace FoxIDs.Client.Shared.Components
         public void UpdateModel(TModel model)
         {
             Model = model;
+            error = null;
+            EditContext = new EditContext(Model);
+            validationMessageStore = new ValidationMessageStore(EditContext);
         }
 
         public void SetError(string error)
@@ -76,23 +79,22 @@ namespace FoxIDs.Client.Shared.Components
             StateHasChanged();
         }
 
-        public void SetFieldError(string fieldname, string error)
+        public void SetFieldError(string fieldName, string error)
         {
             Console.WriteLine(error);
-            validationMessageStore.Add(EditContext.Field(fieldname), error);
+            validationMessageStore.Add(EditContext.Field(fieldName), error);
             EditContext.NotifyValidationStateChanged();
         }
 
-        public void ClearFieldError(string fieldname)
+        public void ClearFieldError(string fieldName)
         {
-            validationMessageStore.Clear(EditContext.Field(fieldname));
+            validationMessageStore.Clear(EditContext.Field(fieldName));
             EditContext.NotifyValidationStateChanged();
         }
 
         private async Task OnSubmitAsync()
         {
             error = null;
-            validationMessageStore.Clear();
             var isValid = EditContext.Validate();
 
             if (isValid)
@@ -112,14 +114,6 @@ namespace FoxIDs.Client.Shared.Components
                 catch (FoxIDsApiException aex)
                 {
                     error = aex.Message;
-                }
-            }
-            else
-            {
-                var validationMessages = EditContext.GetValidationMessages();
-                foreach(var message  in validationMessages)
-                {
-                    Console.WriteLine(message);
                 }
             }
         }

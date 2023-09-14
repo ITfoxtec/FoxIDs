@@ -375,6 +375,7 @@ namespace FoxIDs
             {
                 public static class Client
                 {
+                    public const int ResponseTypesMin = 1;
                     public const int RedirectUrisMin = 1;
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours

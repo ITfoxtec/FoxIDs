@@ -31,7 +31,7 @@ namespace FoxIDs.Models
 
         [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [JsonProperty(PropertyName = "response_types")]
-        public List<string> ResponseTypes { get; set; }
+        public virtual List<string> ResponseTypes { get; set; }
 
         [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [JsonProperty(PropertyName = "redirect_uris")]

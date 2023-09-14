@@ -48,6 +48,12 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 results.Add(new ValidationResult($"The field Resource and scopes must be between 1 and 50 if default Resource Scope is not selected.", new[] { nameof(ResourceScopes) }));
             }
+
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
             return results;
         }
     }

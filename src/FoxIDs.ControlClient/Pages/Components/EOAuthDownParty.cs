@@ -86,17 +86,20 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.Client.ScopesViewModel = afterMap.Client.Scopes.Map<List<OAuthDownScopeViewModel>>() ?? new List<OAuthDownScopeViewModel>();
 
                     generalOAuthDownParty.ClientKeyInfoList.Clear();
-                    foreach (var key in afterMap.Client.ClientKeys)
+                    if (afterMap.Client.ClientKeys?.Count > 0)
                     {
-                        generalOAuthDownParty.ClientKeyInfoList.Add(new KeyInfoViewModel
+                        foreach (var key in afterMap.Client.ClientKeys)
                         {
-                            Subject = key.CertificateInfo.Subject,
-                            ValidFrom = key.CertificateInfo.ValidFrom,
-                            ValidTo = key.CertificateInfo.ValidTo,
-                            IsValid = key.CertificateInfo.IsValid(),
-                            Thumbprint = key.CertificateInfo.Thumbprint,
-                            Key = key
-                        });
+                            generalOAuthDownParty.ClientKeyInfoList.Add(new KeyInfoViewModel
+                            {
+                                Subject = key.CertificateInfo.Subject,
+                                ValidFrom = key.CertificateInfo.ValidFrom,
+                                ValidTo = key.CertificateInfo.ValidTo,
+                                IsValid = key.CertificateInfo.IsValid(),
+                                Thumbprint = key.CertificateInfo.Thumbprint,
+                                Key = key
+                            });
+                        }
                     }
                 }
 

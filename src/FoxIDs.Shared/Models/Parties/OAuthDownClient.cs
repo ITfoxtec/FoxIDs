@@ -85,7 +85,7 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"Claims.Values is not allowed in wildcard (*) claims.", new[] { nameof(Claims) }));
             }
 
-            if (RequirePkce && !ResponseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
+            if (RequirePkce && ResponseTypes?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
                 results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
             }

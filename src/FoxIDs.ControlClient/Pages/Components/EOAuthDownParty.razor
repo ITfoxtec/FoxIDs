@@ -310,6 +310,9 @@
                         <FInputNumberN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenAbsoluteLifetime)" />
                         <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
                         <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
+
+                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oauthDownParty.Form.Model.Client.DisableClientCredentialsGrant)" TextType="e.d" />
+                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableTokenExchange" For="@(() => oauthDownParty.Form.Model.Client.DisableTokenExchange)" TextType="e.d" />
                     }
                 }
             }

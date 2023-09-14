@@ -163,6 +163,7 @@ namespace FoxIDs.Logic
                 RefreshTokenUseOneTime = true,
                 RefreshTokenLifetimeUnlimited = false,
                 RequireLogoutIdTokenHint = false,
+                DisableClientCredentialsGrant = true
             };
             
             await tenantRepository.CreateAsync(mControlClientDownParty);

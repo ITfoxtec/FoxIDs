@@ -93,6 +93,12 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Response mode (RP-Initiated Logout response)")]
         public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.Query;
 
+        [Display(Name = "Disable client credentials grant")]
+        public bool DisableClientCredentialsGrant { get; set; }
+
+        [Display(Name = "Disable token exchange")]
+        public bool DisableTokenExchange { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

@@ -66,7 +66,7 @@ namespace FoxIDs.Logic
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
-                    case IdentityConstants.GrantTypes.Delegation:
+                    case IdentityConstants.GrantTypes.TokenExchange:
                         throw new NotImplementedException();
 
                     default:
@@ -105,6 +105,11 @@ namespace FoxIDs.Logic
         }
         protected void ValidateClientCredentialsRequest(TClient client, TokenRequest tokenRequest)
         {
+            if (client.DisableClientCredentialsGrant)
+            {
+                throw new OAuthRequestException($"Client credentials grant is disabled for client id '{tokenRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+            }
+
             tokenRequest.Validate();
 
             if (!client.ClientId.Equals(tokenRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))

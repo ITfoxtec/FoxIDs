@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
                         ValidateClientCredentialsRequest(party.Client, tokenRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
-                    case IdentityConstants.GrantTypes.Delegation:
+                    case IdentityConstants.GrantTypes.TokenExchange:
                         throw new NotImplementedException();
 
                     default:

@@ -145,8 +145,6 @@ namespace FoxIDs.Client.Pages.Components
 
                     model.Client.RequirePkce = false;
                     model.Client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
-
-                    model.Client.ResponseTypes.Add("token");
                 }
                 else
                 {

@@ -73,6 +73,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "refresh_token_lifetime_unlimited")]
         public bool? RefreshTokenLifetimeUnlimited { get; set; }
 
+        [JsonProperty(PropertyName = "disable_client_credentials_grant")]
+        public bool DisableClientCredentialsGrant { get; set; }
+
+        [JsonProperty(PropertyName = "disable_token_exchange")]
+        public bool DisableTokenExchange { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

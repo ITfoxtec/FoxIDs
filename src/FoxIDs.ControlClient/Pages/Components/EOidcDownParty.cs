@@ -146,6 +146,8 @@ namespace FoxIDs.Client.Pages.Components
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = JwtClaimTypes.Email, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified, InIdToken = false } } });
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = JwtClaimTypes.Address, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Address, InIdToken = true } } });
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = JwtClaimTypes.PhoneNumber, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } });
+
+                    model.Client.DisableClientCredentialsGrant = true;
                 }
             }
         }

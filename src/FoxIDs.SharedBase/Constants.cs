@@ -315,6 +315,8 @@ namespace FoxIDs
                 public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int NoteLength = 200;
 
+                public const int IssuerLength = 300;
+
                 public const string NameAndGuidIdRegExPattern = @"^[\w\-]*$";
             }
 
@@ -391,6 +393,9 @@ namespace FoxIDs
 
             public static class UpParty
             {
+                public const int IssuersBaseMin = 0;
+                public const int IssuersMin = 1;
+                public const int IssuersMax = 10;
                 public const int SessionLifetimeMin = 0; // 0 minutes
                 public const int SessionLifetimeMax = 43200; // 12 hours
                 public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
@@ -410,10 +415,6 @@ namespace FoxIDs
             public static class OAuthUpParty
             {
                 public const int AuthorityLength = 300;
-                public const int IssuersApiMin = 0;
-                public const int IssuersMin = 1;
-                public const int IssuersMax = 10;
-                public const int IssuerLength = 300;
                 public const int KeysApiMin = 0;
                 public const int KeysMin = 1;
                 public const int KeysMax = 10;   
@@ -480,7 +481,6 @@ namespace FoxIDs
                 public const int MetadataRequestedAttributesMin = 1;
                 public const int MetadataRequestedAttributesMax = 100;
 
-                public const int IssuerLength = 300;
                 public const int SignatureAlgorithmLength = 100;
                 public const int KeysMax = 10;
 

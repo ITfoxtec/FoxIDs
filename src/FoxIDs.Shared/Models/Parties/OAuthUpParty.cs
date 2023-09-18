@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity.Models;
+using System;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -37,9 +39,12 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "edit_issuers_in_automatic")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.IssuersMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [JsonIgnore]
+        public override string Issuer { get { return Issuers?.FirstOrDefault(); } set { throw new NotSupportedException(); } }
+
+        [Length(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
-        public List<string> Issuers { get; set; }
+        public override List<string> Issuers { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]

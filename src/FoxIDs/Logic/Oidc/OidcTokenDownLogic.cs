@@ -20,7 +20,7 @@ namespace FoxIDs.Logic
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic;
 
-        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, planUsageLogic, jwtDownLogic, secretHashLogic, claimTransformLogic, oauthResourceScopeDownLogic, httpContextAccessor)
+        public OidcTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthRefreshTokenGrantDownLogic<TClient, TScope, TClaim> oauthRefreshTokenGrantDownLogic, SecretHashLogic secretHashLogic, TrackIssuerLogic trackIssuerLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, planUsageLogic, jwtDownLogic, secretHashLogic, trackIssuerLogic, claimTransformLogic, oauthResourceScopeDownLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
@@ -43,7 +43,10 @@ namespace FoxIDs.Logic
 
             var formDictionary = HttpContext.Request.Form.ToDictionary();
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
-            logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            if (tokenRequest.GrantType != IdentityConstants.GrantTypes.TokenExchange)
+            {
+                logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            }
 
             var codeVerifierSecret = party.Client.RequirePkce ? formDictionary.ToObject<CodeVerifierSecret>() : null;
             if (codeVerifierSecret != null)
@@ -70,7 +73,11 @@ namespace FoxIDs.Logic
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
-                        throw new NotImplementedException();
+                        var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
+                        logger.ScopeTrace(() => $"Down, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
+                        await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
+                        return await TokenExchangeAsync(party, tokenExchangeRequest);
 
                     default:
                         throw new OAuthRequestException($"Unsupported grant type '{tokenRequest.GrantType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedGrantType };

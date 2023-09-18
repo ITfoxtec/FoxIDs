@@ -28,7 +28,7 @@ namespace FoxIDs.Models.Api
 
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.IssuersApiMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [Length(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         public List<string> Issuers { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]

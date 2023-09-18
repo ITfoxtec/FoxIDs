@@ -79,6 +79,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_token_exchange")]
         public bool DisableTokenExchange { get; set; }
 
+        [JsonProperty(PropertyName = "disable_client_as_token_exchange_actor")]
+        public bool DisableClientAsTokenExchangeActor { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

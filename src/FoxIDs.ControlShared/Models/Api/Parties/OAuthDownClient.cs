@@ -74,6 +74,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Disable token exchange")]
         public bool DisableTokenExchange { get; set; }
 
+        [Display(Name = "Disable client as token exchange actor")]
+        public bool DisableClientAsTokenExchangeActor { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();

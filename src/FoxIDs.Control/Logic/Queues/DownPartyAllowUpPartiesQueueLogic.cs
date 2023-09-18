@@ -78,6 +78,7 @@ namespace FoxIDs.Logic
             var message = new UpPartyHrdQueueMessage
             {
                 Name = upParty.Name,
+                Issuers = upParty.Issuers,
                 HrdDisplayName = upParty.HrdDisplayName,
                 HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain,
                 HrdDomains = upParty.HrdDomains,
@@ -165,6 +166,7 @@ namespace FoxIDs.Logic
             {
                 if (!messageObj.Remove)
                 {
+                    upParty.Issuers = messageObj.Issuers;
                     upParty.HrdDomains = messageObj.HrdDomains;
                     upParty.HrdShowButtonWithDomain = messageObj.HrdShowButtonWithDomain;
                     upParty.HrdDisplayName = messageObj.HrdDisplayName;

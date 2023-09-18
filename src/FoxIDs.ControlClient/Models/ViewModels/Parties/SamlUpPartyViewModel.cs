@@ -48,7 +48,7 @@ namespace FoxIDs.Client.Models.ViewModels
             }
         }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Optional custom SP issuer (default auto generated)")]
         public string SpIssuer { get; set; }
 
@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 

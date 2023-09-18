@@ -154,7 +154,7 @@ namespace FoxIDs.Logic
 
         private IEnumerable<HrdUpPartySequenceData> ToHrdUpPartis(IEnumerable<UpPartyLink> toUpParties)
         {
-            return toUpParties.Select(up => new HrdUpPartySequenceData { Name = up.Name, Type = up.Type, HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl });
+            return toUpParties.Select(up => new HrdUpPartySequenceData { Name = up.Name, Type = up.Type, Issuers = up.Issuers, HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl });
         }
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)

@@ -120,7 +120,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, bool validateAudience = false, bool validateLifetime = true)
+        public async Task<ClaimsPrincipal> ValidateTokenAsync(string token, string audience = null, bool validateLifetime = true)
         {
             var issuerSigningKeys = new List<JsonWebKey>
             {
@@ -133,7 +133,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(), issuerSigningKeys, validateAudience: validateAudience, validateLifetime: validateLifetime));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(token, trackIssuerLogic.GetIssuer(), issuerSigningKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace(), validateLifetime: validateLifetime));
                 return claimsPrincipal;
             }
             catch (Exception ex)

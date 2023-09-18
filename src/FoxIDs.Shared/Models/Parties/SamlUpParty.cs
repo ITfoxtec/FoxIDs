@@ -6,6 +6,7 @@ using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
 using System.Linq;
+using System;
 
 namespace FoxIDs.Models
 {
@@ -33,7 +34,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "last_updated")]
         public long LastUpdated { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "sp_issuer")]
         public string SpIssuer { get; set; }
 
@@ -59,9 +60,12 @@ namespace FoxIDs.Models
         public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
-        public string Issuer { get; set; }
+        public override string Issuer { get; set; }
+
+        [JsonIgnore]
+        public override List<string> Issuers { get { return ReadIssuers; } set { throw new NotSupportedException(); } }
 
         [Required]
         [JsonProperty(PropertyName = "authn_binding")]

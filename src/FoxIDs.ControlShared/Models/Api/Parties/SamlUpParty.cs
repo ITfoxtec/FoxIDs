@@ -33,7 +33,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Optional custom SP issuer (default auto generated).
         /// </summary>
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         public string SpIssuer { get; set; }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         public string Issuer { get; set; }
 
         public SamlBindingTypes? AuthnRequestBinding { get; set; }

@@ -26,7 +26,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Allow up-party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Optional custom IdP issuer (default auto generated)")]
         public string IdPIssuer { get; set; }
 
@@ -84,7 +84,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 

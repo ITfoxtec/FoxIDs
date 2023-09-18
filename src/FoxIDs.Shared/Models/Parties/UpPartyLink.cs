@@ -17,6 +17,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "type")]
         public PartyTypes Type { get; set; }
 
+        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "issuers")]
+        public virtual List<string> Issuers { get; set; }
+
         [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [JsonProperty(PropertyName = "hrd_domains")]
         public List<string> HrdDomains { get; set; }

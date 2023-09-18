@@ -16,7 +16,7 @@ namespace FoxIDs.Models
             Type = PartyTypes.Saml2;
         }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "idp_issuer")]
         public string IdPIssuer { get; set; }
 
@@ -50,7 +50,7 @@ namespace FoxIDs.Models
         public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
         public string Issuer { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,17 @@ namespace FoxIDs.Models
 
             return await IdFormatAsync(idKey);
         }
+
+        [JsonIgnore]
+        public List<string> ReadIssuers => !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
+
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "issuer")]
+        public virtual string Issuer { get; set; }
+
+        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "issuers")]
+        public virtual List<string> Issuers { get; set; }
 
         [JsonProperty(PropertyName = "party_binding_pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;

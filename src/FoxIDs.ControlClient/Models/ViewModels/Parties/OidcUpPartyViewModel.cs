@@ -34,7 +34,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Edit issuer")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.IssuersApiMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuers")]
         public List<string> Issuers { get; set; }
 

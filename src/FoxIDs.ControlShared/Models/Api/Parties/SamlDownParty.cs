@@ -26,7 +26,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Optional custom IdP issuer (default auto generated).
         /// </summary>
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         public string IdPIssuer { get; set; }
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace FoxIDs.Models.Api
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         public string Issuer { get; set; }
 
         [Required]

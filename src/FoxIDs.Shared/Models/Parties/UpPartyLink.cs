@@ -37,5 +37,11 @@ namespace FoxIDs.Models
         [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [JsonProperty(PropertyName = "hrd_logo_url")]
         public string HrdLogoUrl { get; set; }
+
+        [JsonProperty(PropertyName = "disable_user_authentication_trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [JsonProperty(PropertyName = "disable_token_exchange_trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
     }
 }

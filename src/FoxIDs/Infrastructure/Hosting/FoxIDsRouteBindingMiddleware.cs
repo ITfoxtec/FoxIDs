@@ -174,18 +174,16 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     routeBinding.DownParty = await GetDownPartyAsync(trackIdKey, partyNameBindingMatch.Groups["downparty"], acceptUnknownParty);
 
-                    if (routeBinding.DownParty?.AllowUpParties?.Count() >= Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin)
+                    var allowUpParties = routeBinding.DownParty?.AllowUpParties?.Where(up => !up.DisableUserAuthenticationTrust)?.ToList();
+                    if (allowUpParties?.Count() >= Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin)
                     {
-                        //TODO can be deleted when data is updated everywhere, delete after summer 2023
-                        var allowUpParties = routeBinding.DownParty.AllowUpParties.OrderBy(p => p.Type).ThenBy(p => p.Name);
-
                         if (partyNameBindingMatch.Groups["toupparty"].Success)
                         {
                             routeBinding.ToUpParties = GetAllowedToUpPartyIds(scopedLogger, partyNameBindingMatch.Groups["toupparty"], routeBinding.DownParty.Id, allowUpParties);
                         }
                         else
                         {
-                            routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties;
+                            routeBinding.ToUpParties = allowUpParties;
                         }
                     }
                 }

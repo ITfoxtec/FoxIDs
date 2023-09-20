@@ -75,9 +75,23 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
+
+            if (!DisableUserAuthenticationTrust)
+            {
+                var clientResults = Client.ValidateFromParty();
+                if (clientResults.Count() > 0)
+                {
+                    results.AddRange(clientResults);
+                }
+            }
             if (UpdateState != PartyUpdateStates.Manual)
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)

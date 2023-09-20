@@ -24,27 +24,38 @@
         }
         <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
 
-        <div class="mb-3 alert alert-info" role="alert">
-            @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern); }
-            <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
-        </div>
-        @if (UpParty.ShowAdvanced)
+        @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
         {
-            <FInputSelect @bind-Value="samlUpParty.Form.Model.PartyBindingPattern" For="@(() => samlUpParty.Form.Model.PartyBindingPattern)">
-                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
-                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
-                <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
-            </FInputSelect>
+            <div class="mb-3 alert alert-info" role="alert">
+                @{ var samlMetadata = @GetSamlMetadata(samlUpParty.Form.Model.Name, samlUpParty.Form.Model.PartyBindingPattern); }
+                <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
+            </div>
+            @if (UpParty.ShowAdvanced)
+            {
+                <FInputSelect @bind-Value="samlUpParty.Form.Model.PartyBindingPattern" For="@(() => samlUpParty.Form.Model.PartyBindingPattern)">
+                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
+                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
+                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
+                </FInputSelect>        
+            }
         }
 
         @if (UpParty.ShowAdvanced)
         {
             <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
+            @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
+            {
+                <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableSingleLogout" For="@(() => samlUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+            }
         }
 
-        @if (UpParty.ShowAdvanced)
+        @if (UpParty.ShowAdvanced || samlUpParty.Form.Model.DisableUserAuthenticationTrust)
         {
-            <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableSingleLogout" For="@(() => samlUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+            <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => samlUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
+        }
+        @if (UpParty.ShowAdvanced || samlUpParty.Form.Model.DisableTokenExchangeTrust)
+        {
+            <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => samlUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
         }
 
         @if (samlUpParty.Form.Model.AutomaticStopped)
@@ -76,26 +87,29 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.ClaimsTransform))">Claim transform</button>
                 }
             </li>
-            <li class="nav-item">
-                @if (samlUpParty.ShowSessionTab)
-                {
-                    <a class="nav-link active">Logout session</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout session</button>
-                }
-            </li>
-            <li class="nav-item">
-                @if (samlUpParty.ShowHrdTab)
-                {
-                    <a class="nav-link active">Home Realm Discovery</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">Home Realm Discovery</button>
-                }
-            </li>
+            @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
+            {
+                <li class="nav-item">
+                    @if (samlUpParty.ShowSessionTab)
+                    {
+                        <a class="nav-link active">Logout session</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Session))">Logout session</button>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (samlUpParty.ShowHrdTab)
+                    {
+                        <a class="nav-link active">Home Realm Discovery</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowSamlTab(samlUpParty, SamlTabTypes.Hrd))">Home Realm Discovery</button>
+                    }
+                </li>
+            }
         </ul>
 
         <div class="tab-content pt-3">
@@ -159,110 +173,113 @@
                     </div>
                 }
 
-                @if (samlUpParty.Form.Model.IsManual)
-                {
-                    <FInputText @bind-Value="samlUpParty.Form.Model.AuthnUrl" For="@(() => samlUpParty.Form.Model.AuthnUrl)" />
-                }
-                else if (!samlUpParty.CreateMode)
-                {
-                    <FFieldText @bind-Value="samlUpParty.Form.Model.AuthnUrl" For="@(() => samlUpParty.Form.Model.AuthnUrl)" />
-                }
-
-                <div class="row active-group-outline">
-                    @if (samlUpParty.Form.Model.IsManual || (!samlUpParty.Form.Model.IsManual && !samlUpParty.CreateMode))
-                    {
-                        <div class="col">
-                            @if (samlUpParty.Form.Model.IsManual)
-                            {
-                                <div class="form-group active-group">
-                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnRequestBinding" For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
-                                        <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                        <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                    </FInputSelect>
-                                </div>
-                            }
-                            else if (!samlUpParty.CreateMode)
-                            {
-                                <div class="active-group active">
-                                    <div class="card bg-light">
-                                        <div class="card-body px-3 py-2">
-                                            @samlUpParty.Form.Model.AuthnRequestBinding.ToString()
-                                        </div>
-                                    </div>
-                                    <Label For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" class="label-control" />
-                                </div>
-                            }
-                        </div>
-                    }
-                    <div class="col">
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnResponseBinding" For="@(() => samlUpParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
-                        </div>
-                    </div>
-                </div>
-                @if (samlUpParty.ShowAdvanced)
-                {
-                    <FInputToggle @bind-Value="samlUpParty.Form.Model.SignAuthnRequest" For="@(() => samlUpParty.Form.Model.SignAuthnRequest)" TextType="y.n" />
-                }
-
-                @if (samlUpParty.Form.Model.IsManual)
-                {
-                    <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
-                }
-                else if (!samlUpParty.CreateMode)
-                {
-                    <FFieldText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
-                }
-
-                @if (samlUpParty.ShowAdvanced)
+                @if(!samlUpParty.Form.Model.DisableUserAuthenticationTrust) 
                 {
                     @if (samlUpParty.Form.Model.IsManual)
                     {
-                        <FInputText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
+                        <FInputText @bind-Value="samlUpParty.Form.Model.AuthnUrl" For="@(() => samlUpParty.Form.Model.AuthnUrl)" />
                     }
-                    else if (!samlUpParty.CreateMode && !samlUpParty.Form.Model.SingleLogoutResponseUrl.IsNullOrEmpty())
+                    else if (!samlUpParty.CreateMode)
                     {
-                        <FFieldText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
+                        <FFieldText @bind-Value="samlUpParty.Form.Model.AuthnUrl" For="@(() => samlUpParty.Form.Model.AuthnUrl)" />
                     }
-                }
-                <div class="row active-group-outline">
-                    @if (samlUpParty.Form.Model.IsManual || (!samlUpParty.Form.Model.IsManual && !samlUpParty.CreateMode))
-                    {
-                        <div class="col">
-                            @if (samlUpParty.Form.Model.IsManual)
-                            {
-                                <div class="form-group active-group">
-                                    <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutRequestBinding" For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
-                                        <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                        <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                                    </FInputSelect>
-                                </div>
-                            }
-                            else if (!samlUpParty.CreateMode)
-                            {
-                                <div class="active-group active">
-                                    <div class="card bg-light">
-                                        <div class="card-body px-3 py-2">
-                                            @samlUpParty.Form.Model.LogoutRequestBinding.ToString()
-                                        </div>
+
+                    <div class="row active-group-outline">
+                        @if (samlUpParty.Form.Model.IsManual || (!samlUpParty.Form.Model.IsManual && !samlUpParty.CreateMode))
+                        {
+                            <div class="col">
+                                @if (samlUpParty.Form.Model.IsManual)
+                                {
+                                    <div class="form-group active-group">
+                                        <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnRequestBinding" For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
+                                            <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                            <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                        </FInputSelect>
                                     </div>
-                                    <Label For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" class="label-control" />
-                                </div>
-                            }
-                        </div>
-                    }
-                    <div class="col">
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutResponseBinding" For="@(() => samlUpParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
+                                }
+                                else if (!samlUpParty.CreateMode)
+                                {
+                                    <div class="active-group active">
+                                        <div class="card bg-light">
+                                            <div class="card-body px-3 py-2">
+                                                @samlUpParty.Form.Model.AuthnRequestBinding.ToString()
+                                            </div>
+                                        </div>
+                                        <Label For="@(() => samlUpParty.Form.Model.AuthnRequestBinding)" class="label-control" />
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <div class="col">
+                            <div class="form-group active-group">
+                                <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnResponseBinding" For="@(() => samlUpParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    @if (samlUpParty.ShowAdvanced)
+                    {
+                        <FInputToggle @bind-Value="samlUpParty.Form.Model.SignAuthnRequest" For="@(() => samlUpParty.Form.Model.SignAuthnRequest)" TextType="y.n" />
+                    }
+
+                    @if (samlUpParty.Form.Model.IsManual)
+                    {
+                        <FInputText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
+                    }
+                    else if (!samlUpParty.CreateMode)
+                    {
+                        <FFieldText @bind-Value="samlUpParty.Form.Model.LogoutUrl" For="@(() => samlUpParty.Form.Model.LogoutUrl)" />
+                    }
+
+                    @if (samlUpParty.ShowAdvanced)
+                    {
+                        @if (samlUpParty.Form.Model.IsManual)
+                        {
+                            <FInputText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
+                        }
+                        else if (!samlUpParty.CreateMode && !samlUpParty.Form.Model.SingleLogoutResponseUrl.IsNullOrEmpty())
+                        {
+                            <FFieldText @bind-Value="samlUpParty.Form.Model.SingleLogoutResponseUrl" For="@(() => samlUpParty.Form.Model.SingleLogoutResponseUrl)" />
+                        }
+                    }
+                    <div class="row active-group-outline">
+                        @if (samlUpParty.Form.Model.IsManual || (!samlUpParty.Form.Model.IsManual && !samlUpParty.CreateMode))
+                        {
+                            <div class="col">
+                                @if (samlUpParty.Form.Model.IsManual)
+                                {
+                                    <div class="form-group active-group">
+                                        <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutRequestBinding" For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
+                                            <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                            <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                        </FInputSelect>
+                                    </div>
+                                }
+                                else if (!samlUpParty.CreateMode)
+                                {
+                                    <div class="active-group active">
+                                        <div class="card bg-light">
+                                            <div class="card-body px-3 py-2">
+                                                @samlUpParty.Form.Model.LogoutRequestBinding.ToString()
+                                            </div>
+                                        </div>
+                                        <Label For="@(() => samlUpParty.Form.Model.LogoutRequestBinding)" class="label-control" />
+                                    </div>
+                                }
+                            </div>
+                        }
+                        <div class="col">
+                            <div class="form-group active-group">
+                                <FInputSelect @bind-Value="samlUpParty.Form.Model.LogoutResponseBinding" For="@(() => samlUpParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            </div>
+                        </div>
+                    </div>
+                }
                 @if (samlUpParty.ShowAdvanced)
                 {
                     <FInputText @bind-Value="samlUpParty.Form.Model.SpIssuer" For="@(() => samlUpParty.Form.Model.SpIssuer)" />
@@ -270,16 +287,19 @@
                 <FInputTextList @bind-ValueList="samlUpParty.Form.Model.Claims" For="@(() => samlUpParty.Form.Model.Claims)" DynamicFirstRow="true" />
                 @if (samlUpParty.ShowAdvanced)
                 {
-                    <div class="form-group active-group">
-                        <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnContextComparisonViewModel" For="@(() => samlUpParty.Form.Model.AuthnContextComparisonViewModel)" IncludeActiveFormGroup="false">
+                    @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
+                    {
+                        <div class="form-group active-group">
+                            <FInputSelect @bind-Value="samlUpParty.Form.Model.AuthnContextComparisonViewModel" For="@(() => samlUpParty.Form.Model.AuthnContextComparisonViewModel)" IncludeActiveFormGroup="false">
                             <option value="@SamlAuthnContextComparisonTypesVievModel.Null"></option>
                             <option value="@SamlAuthnContextComparisonTypesVievModel.Exact">@SamlAuthnContextComparisonTypesVievModel.Exact</option>
                             <option value="@SamlAuthnContextComparisonTypesVievModel.Minimum">@SamlAuthnContextComparisonTypesVievModel.Minimum</option>
                             <option value="@SamlAuthnContextComparisonTypesVievModel.Maximum">@SamlAuthnContextComparisonTypesVievModel.Maximum</option>
                             <option value="@SamlAuthnContextComparisonTypesVievModel.Better">@SamlAuthnContextComparisonTypesVievModel.Better</option>
                         </FInputSelect>
-                    </div>
-                    <FInputTextList @bind-ValueList="samlUpParty.Form.Model.AuthnContextClassReferences" For="@(() => samlUpParty.Form.Model.AuthnContextClassReferences)" DynamicFirstRow="true" />
+                        </div>
+                        <FInputTextList @bind-ValueList="samlUpParty.Form.Model.AuthnContextClassReferences" For="@(() => samlUpParty.Form.Model.AuthnContextClassReferences)" DynamicFirstRow="true" />
+                    }
                     <FInputSelect @bind-Value="samlUpParty.Form.Model.SignatureAlgorithm" For="@(() => samlUpParty.Form.Model.SignatureAlgorithm)">
                         <option value="@Saml2SecurityAlgorithms.RsaSha1Signature">RSA-SHA-1</option>
                         <option value="@Saml2SecurityAlgorithms.RsaSha256Signature">RSA-SHA-256</option>
@@ -297,12 +317,15 @@
                         <option value="@X509RevocationMode.Offline">Offline</option>
                         <option value="@X509RevocationMode.Online">Online</option>
                     </FInputSelect>
-                    <FInputToggle @bind-Value="samlUpParty.Form.Model.MetadataAddLogoutResponseLocation" For="@(() => samlUpParty.Form.Model.MetadataAddLogoutResponseLocation)" TextType="y.n" />
-                    <FInputToggle @bind-Value="samlUpParty.Form.Model.SignMetadata" For="@(() => samlUpParty.Form.Model.SignMetadata)" TextType="y.n" />
-                    <FInputToggle @bind-Value="samlUpParty.Form.Model.MetadataIncludeEncryptionCertificates" For="@(() => samlUpParty.Form.Model.MetadataIncludeEncryptionCertificates)" TextType="y.n" />
-                    <FInputTextList @bind-ValueList="samlUpParty.Form.Model.MetadataNameIdFormats" For="@(() => samlUpParty.Form.Model.MetadataNameIdFormats)" DynamicFirstRow="true" />
-                    <SamlMetadataAttributeConsumingServices Model="samlUpParty.Form.Model" />
-                    <SamlMetadataContactPersons Model="samlUpParty.Form.Model" />
+                    @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
+                    {
+                        <FInputToggle @bind-Value="samlUpParty.Form.Model.MetadataAddLogoutResponseLocation" For="@(() => samlUpParty.Form.Model.MetadataAddLogoutResponseLocation)" TextType="y.n" />
+                        <FInputToggle @bind-Value="samlUpParty.Form.Model.SignMetadata" For="@(() => samlUpParty.Form.Model.SignMetadata)" TextType="y.n" />
+                        <FInputToggle @bind-Value="samlUpParty.Form.Model.MetadataIncludeEncryptionCertificates" For="@(() => samlUpParty.Form.Model.MetadataIncludeEncryptionCertificates)" TextType="y.n" />
+                        <FInputTextList @bind-ValueList="samlUpParty.Form.Model.MetadataNameIdFormats" For="@(() => samlUpParty.Form.Model.MetadataNameIdFormats)" DynamicFirstRow="true" />
+                        <SamlMetadataAttributeConsumingServices Model="samlUpParty.Form.Model" />
+                        <SamlMetadataContactPersons Model="samlUpParty.Form.Model" />
+                    }
                 }
             }
             else if (samlUpParty.ShowClaimTransformTab)

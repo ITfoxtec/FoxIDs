@@ -34,6 +34,12 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "hl")]
         public string HrdLogoUrl { get; set; }
 
+        [JsonProperty(PropertyName = "duat")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [JsonProperty(PropertyName = "dtet")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         [JsonProperty(PropertyName = "r")]
         public bool Remove { get; set; }
     }

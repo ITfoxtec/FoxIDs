@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -114,5 +114,21 @@ namespace FoxIDs.Client.Models.ViewModels
         [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
+
+        [Display(Name = "Disable user authentication trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [Display(Name = "Disable token exchange trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+            return results;
+        }
     }
 }

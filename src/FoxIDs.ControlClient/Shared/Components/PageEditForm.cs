@@ -116,6 +116,13 @@ namespace FoxIDs.Client.Shared.Components
                     error = aex.Message;
                 }
             }
+            else
+            {
+                foreach(var message in EditContext.GetValidationMessages())
+                {
+                    Console.WriteLine(message);
+                }
+            }
         }
     }
 }

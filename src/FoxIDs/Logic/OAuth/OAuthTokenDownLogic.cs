@@ -397,9 +397,9 @@ namespace FoxIDs.Logic
 
         protected void ValidateTokenExchangeRequest(TClient client, TokenExchangeRequest tokenExchangeRequest)
         {
-            if (client.DisableTokenExchange)
+            if (client.DisableTokenExchangeGrant)
             {
-                throw new OAuthRequestException($"Token exchange is disabled for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                throw new OAuthRequestException($"Token exchange grant is disabled for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
             }
 
             tokenExchangeRequest.Validate();
@@ -418,16 +418,15 @@ namespace FoxIDs.Logic
         protected virtual async Task<IActionResult> TokenExchangeAsync(TParty party, TokenExchangeRequest tokenExchangeRequest)
         {
             logger.ScopeTrace(() => "Down, OAuth Token Exchange accepted.", triggerEvent: true);
-            
+
             try
             {
-                if (tokenExchangeRequest.SubjectTokenType != IdentityConstants.TokenTypeIdentifiers.AccessToken && tokenExchangeRequest.SubjectTokenType != IdentityConstants.TokenTypeIdentifiers.Saml2) 
+                if (tokenExchangeRequest.SubjectTokenType != IdentityConstants.TokenTypeIdentifiers.AccessToken && tokenExchangeRequest.SubjectTokenType != IdentityConstants.TokenTypeIdentifiers.Saml2)
                 {
                     throw new NotSupportedException($"Subject token type not supported. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}', '{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
                 }
 
                 // TODO
-
 
                 var tokenExchangeResponse = new TokenExchangeResponse
                 {

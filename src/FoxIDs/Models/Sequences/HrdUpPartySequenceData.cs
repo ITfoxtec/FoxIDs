@@ -30,5 +30,11 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "hl")]
         public string HrdLogoUrl { get; set; }
+
+        [JsonProperty(PropertyName = "duat")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [JsonProperty(PropertyName = "dtet")]
+        public bool DisableTokenExchangeTrust { get; set; }
     }
 }

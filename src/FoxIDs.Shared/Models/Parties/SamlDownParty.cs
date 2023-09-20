@@ -109,9 +109,9 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (AllowUpParties?.Count <= 0)
+            if (AllowUpParties?.Where(up => !up.DisableUserAuthenticationTrust)?.Count() <= 0)
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
+                results.Add(new ValidationResult($"At least one (with user authentication trust) in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)

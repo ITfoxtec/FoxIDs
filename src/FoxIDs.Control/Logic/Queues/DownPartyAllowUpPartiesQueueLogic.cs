@@ -83,6 +83,8 @@ namespace FoxIDs.Logic
                 HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain,
                 HrdDomains = upParty.HrdDomains,
                 HrdLogoUrl = upParty.HrdLogoUrl,
+                DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust,
+                DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust,
                 Remove = remove
             };
             await message.ValidateObjectAsync();
@@ -171,6 +173,8 @@ namespace FoxIDs.Logic
                     upParty.HrdShowButtonWithDomain = messageObj.HrdShowButtonWithDomain;
                     upParty.HrdDisplayName = messageObj.HrdDisplayName;
                     upParty.HrdLogoUrl = messageObj.HrdLogoUrl;
+                    upParty.DisableUserAuthenticationTrust = messageObj.DisableUserAuthenticationTrust;
+                    upParty.DisableTokenExchangeTrust = messageObj.DisableTokenExchangeTrust;
                 }
                 else
                 {

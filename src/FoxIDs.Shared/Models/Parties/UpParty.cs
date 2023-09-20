@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class UpParty : Party
+    public class UpParty : Party, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -82,11 +82,27 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "hrd_logo_url")]
         public string HrdLogoUrl { get; set; }
 
+        [JsonProperty(PropertyName = "disable_user_authentication_trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [JsonProperty(PropertyName = "disable_token_exchange_trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormatAsync(idKey);
+        }
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+            return results;
         }
     }
 }

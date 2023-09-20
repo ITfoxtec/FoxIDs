@@ -28,7 +28,7 @@ namespace FoxIDs.Models.Api
 
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         public List<string> Issuers { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
@@ -102,9 +102,28 @@ namespace FoxIDs.Models.Api
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
+        [Display(Name = "Disable user authentication trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [Display(Name = "Disable token exchange trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+            if (!DisableUserAuthenticationTrust)
+            {
+                var clientResults = Client.ValidateFromParty(UpdateState);
+                if (clientResults.Count() > 0)
+                {
+                    results.AddRange(clientResults);
+                }
+            }
+
             if (UpdateState == PartyUpdateStates.Manual)
             {
                 if (Issuers?.Count(i => !string.IsNullOrWhiteSpace(i)) <= 0)
@@ -123,15 +142,6 @@ namespace FoxIDs.Models.Api
                 {
                     results.Add(new ValidationResult($"Require '{nameof(Client)}.{nameof(Client.AuthorizeUrl)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
                         new[] { $"{nameof(Client)}.{nameof(Client.AuthorizeUrl)}" }));
-                }
-
-                if (Client.ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
-                {
-                    if (Client.TokenUrl.IsNullOrEmpty())
-                    {
-                        results.Add(new ValidationResult($"Require '{nameof(Client)}.{nameof(Client.TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                            new[] { $"{nameof(Client)}.{nameof(Client.TokenUrl)}" }));
-                    }
                 }
             }
             else

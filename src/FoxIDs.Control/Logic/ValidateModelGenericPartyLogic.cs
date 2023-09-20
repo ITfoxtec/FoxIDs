@@ -40,6 +40,8 @@ namespace FoxIDs.Logic
                         upPartyLink.HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain;
                         upPartyLink.HrdDisplayName = upParty.HrdDisplayName;
                         upPartyLink.HrdLogoUrl = upParty.HrdLogoUrl;
+                        upPartyLink.DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust;
+                        upPartyLink.DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust;
                     }
                     catch (CosmosDataException ex)
                     {

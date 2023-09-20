@@ -124,9 +124,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
+
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
                 results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));

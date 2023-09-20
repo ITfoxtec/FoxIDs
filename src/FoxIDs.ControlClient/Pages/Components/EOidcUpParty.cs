@@ -80,6 +80,8 @@ namespace FoxIDs.Client.Pages.Components
                 afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
                 if (oidcUpParty.Client != null)
                 {
+                    afterMap.Client.Party = afterMap;
+
                     afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
 
                     if (clientKeyResponse?.PrimaryKey?.PublicKey != null)

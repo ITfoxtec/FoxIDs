@@ -71,8 +71,8 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Disable client credentials grant")]
         public bool DisableClientCredentialsGrant { get; set; }
 
-        [Display(Name = "Disable token exchange")]
-        public bool DisableTokenExchange { get; set; }
+        [Display(Name = "Disable token exchange grant")]
+        public bool DisableTokenExchangeGrant { get; set; }
 
         [Display(Name = "Disable client as token exchange actor")]
         public bool DisableClientAsTokenExchangeActor { get; set; }

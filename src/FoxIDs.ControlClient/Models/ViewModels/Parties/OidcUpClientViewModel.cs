@@ -3,11 +3,16 @@ using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpClientViewModel : IClientAdditionalParameters, IValidatableObject
     {
+        // Link to referring party.
+        [JsonIgnore]
+        public OidcUpPartyViewModel Party { get; set; }
+
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [Display(Name = "Optional custom SP client ID (default the party name)")]
         public string SpClientId { get; set; }
@@ -78,20 +83,23 @@ namespace FoxIDs.Client.Models.ViewModels
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
-            {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce) }));
-            }
-            if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
-            {
-                if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
-                {
-                    results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret) }));
-                }
-            }
             if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
             {
                 results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
+            }
+            if (!Party.DisableUserAuthenticationTrust)
+            {
+                if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+                {
+                    results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce) }));
+                }
+                if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require Client Secret or Client Certificate to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret) }));
+                    }
+                }
             }
             return results;
         }

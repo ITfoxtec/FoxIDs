@@ -75,20 +75,35 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
+            {
+                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
+            }
+            return results;
+        }
+
+        public IEnumerable<ValidationResult> ValidateFromParty(PartyUpdateStates updateState)
+        {
+            var results = new List<ValidationResult>();
             if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce) }));
+                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(EnablePkce)}" }));
             }
             if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
             {
                 if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret) }));
+                    results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OidcUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}" }));
                 }
             }
-            if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
+
+            if (updateState == PartyUpdateStates.Manual && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
             {
-                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
+                if (TokenUrl.IsNullOrEmpty())
+                {
+                    results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type. If '{nameof(OidcUpParty.UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                        new[] { $"{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}" }));
+                }
             }
             return results;
         }

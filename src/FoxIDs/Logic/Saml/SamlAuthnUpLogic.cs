@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Logic.Tracks;
+using Azure.Core;
+using System.ServiceModel.Channels;
+using FoxIDs.Infrastructure.Saml2;
 
 namespace FoxIDs.Logic
 {
@@ -412,6 +415,61 @@ namespace FoxIDs.Logic
                 default:
                     return IdentityConstants.ResponseErrors.InvalidRequest;
             }
+        }
+
+        public async Task<IEnumerable<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
+        {
+            logger.ScopeTrace(() => "Up, SAML validate token exchange subject token.");
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSignatureValidationCertificates: true);
+
+            var binding = new FoxIdsSaml2TokenExchangeBinding();
+            var saml2TokenExchangeRequest = new FoxIdsSaml2TokenExchangeRequest(samlConfig);
+            var requestIssuer = saml2TokenExchangeRequest.Issuer;
+            binding.ReadSamlRequest(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
+            logger.SetScopeProperty(Constants.Logs.Issuer, requestIssuer);
+
+            if (!samlConfig.Issuer.Equals(requestIssuer))
+            {
+                throw new OAuthRequestException($"{party.Name}|Invalid issuer '{requestIssuer}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+            }
+
+            binding.Unbind(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
+            logger.ScopeTrace(() => "Up, SAML validate token exchange request accepted.", triggerEvent: true);
+
+            var principal = new ClaimsPrincipal(saml2TokenExchangeRequest.ClaimsIdentity);
+
+            if (principal.Identity == null || !principal.Identity.IsAuthenticated)
+            {
+                throw new InvalidOperationException("No Claims Identity created from SAML2 Response.");
+            }
+
+            var claims = new List<Claim>();
+
+            logger.ScopeTrace(() => "Up, SAML token exchange subject token valid.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Up, SAML received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            claims = claims.Where(c => c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
+            claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+
+            var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            var validClaims = ValidateClaims(party, transformedClaims);
+            logger.ScopeTrace(() => $"Up, SAML output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
+
+            logger.ScopeTrace(() => $"Up, SAML output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return claims;
+        }
+
+        private ITfoxtec.Identity.Saml2.Http.HttpRequest GetHttpRequest(string subjectToken)
+        {
+            return new ITfoxtec.Identity.Saml2.Http.HttpRequest { Method = "DIRECT", Body = subjectToken };
         }
     }
 }

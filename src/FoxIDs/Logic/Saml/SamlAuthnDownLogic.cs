@@ -83,7 +83,6 @@ namespace FoxIDs.Logic
                 {
                     binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnRequest);
                     logger.ScopeTrace(() => "Down, SAML Authn request accepted.", triggerEvent: true);
-
                 }
                 catch (Exception ex)
                 {

@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace FoxIDs.Logic
 {
-    public class ClientKeySecretLogic<TClient> : LogicSequenceBase where TClient : OidcUpClient
+    public class ClientKeySecretLogic<TClient> : LogicSequenceBase where TClient : OAuthUpClient
     {
         private readonly FoxIDsSettings settings;
         private readonly TokenCredential tokenCredential;

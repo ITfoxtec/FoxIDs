@@ -22,22 +22,22 @@ namespace FoxIDs.Logic
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
         private readonly PlanUsageLogic planUsageLogic;
-        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
+        private readonly OAuthJwtDownLogic<TClient, TScope, TClaim> oauthJwtDownLogic;
         private readonly SecretHashLogic secretHashLogic;
-        private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
+        private readonly OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic;
 
-        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, SecretHashLogic secretHashLogic, TrackIssuerLogic trackIssuerLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthTokenDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, PlanUsageLogic planUsageLogic, OAuthJwtDownLogic<TClient, TScope, TClaim> oauthJwtDownLogic, SecretHashLogic secretHashLogic, ClaimTransformLogic claimTransformLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, OAuthTokenExchangeDownLogic<TParty, TClient, TScope, TClaim> oauthTokenExchangeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
             this.planUsageLogic = planUsageLogic;
-            this.jwtDownLogic = jwtDownLogic;
+            this.oauthJwtDownLogic = oauthJwtDownLogic;
             this.secretHashLogic = secretHashLogic;
-            this.trackIssuerLogic = trackIssuerLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
+            this.oauthTokenExchangeDownLogic = oauthTokenExchangeDownLogic;
         }
 
         public virtual async Task<IActionResult> TokenRequestAsync(string partyId)
@@ -74,9 +74,9 @@ namespace FoxIDs.Logic
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
                         logger.ScopeTrace(() => $"Down, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                        ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
+                        oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
-                        return await TokenExchangeAsync(party, tokenExchangeRequest);
+                        return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
 
                     default:
                         throw new OAuthRequestException($"Unsupported grant type '{tokenRequest.GrantType}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.UnsupportedGrantType };
@@ -276,7 +276,7 @@ namespace FoxIDs.Logic
                     }
 
                     var tokenEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.Token);
-                    var claimsPrincipal = await jwtDownLogic.ValidateClientAssertionAsync(clientAssertionCredentials.ClientAssertion, client.ClientId, validClientKeys, tokenEndpoint);
+                    var claimsPrincipal = await oauthJwtDownLogic.ValidateClientAssertionAsync(clientAssertionCredentials.ClientAssertion, client.ClientId, validClientKeys, tokenEndpoint);
 
                     if (!client.ClientId.Equals(claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Subject)))
                     {
@@ -381,61 +381,13 @@ namespace FoxIDs.Logic
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
 
-                tokenResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
+                tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
 
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
                 return new JsonResult(tokenResponse);
-            }
-            catch (KeyException kex)
-            {
-                throw new OAuthRequestException(kex.Message, kex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.ServerError };
-            }
-        }
-
-        protected void ValidateTokenExchangeRequest(TClient client, TokenExchangeRequest tokenExchangeRequest)
-        {
-            if (client.DisableTokenExchangeGrant)
-            {
-                throw new OAuthRequestException($"Token exchange grant is disabled for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
-            }
-
-            tokenExchangeRequest.Validate();
-
-            if (!tokenExchangeRequest.Scope.IsNullOrEmpty())
-            {
-                var resourceScopes = oauthResourceScopeDownLogic.GetResourceScopes(client as TClient);
-                var invalidScope = tokenExchangeRequest.Scope.ToSpaceList().Where(s => !(resourceScopes.Select(rs => rs).Contains(s) || (client.Scopes != null && client.Scopes.Select(ps => ps.Scope).Contains(s))));
-                if (invalidScope.Count() > 0)
-                {
-                    throw new OAuthRequestException($"Invalid scope '{tokenExchangeRequest.Scope}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidScope };
-                }
-            }
-        }
-
-        protected virtual async Task<IActionResult> TokenExchangeAsync(TParty party, TokenExchangeRequest tokenExchangeRequest)
-        {
-            logger.ScopeTrace(() => "Down, OAuth Token Exchange accepted.", triggerEvent: true);
-
-            try
-            {
-                if (tokenExchangeRequest.SubjectTokenType != IdentityConstants.TokenTypeIdentifiers.AccessToken && tokenExchangeRequest.SubjectTokenType != IdentityConstants.TokenTypeIdentifiers.Saml2)
-                {
-                    throw new NotSupportedException($"Subject token type not supported. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}', '{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
-                }
-
-                // TODO
-
-                var tokenExchangeResponse = new TokenExchangeResponse
-                {
-                    TokenType = IdentityConstants.TokenTypes.Bearer,
-                    ExpiresIn = party.Client.AccessTokenLifetime,
-                };
-
-
-                return new JsonResult(tokenExchangeResponse);
             }
             catch (KeyException kex)
             {

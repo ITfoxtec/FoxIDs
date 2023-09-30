@@ -48,12 +48,12 @@ Support login/logout with FoxIDs login page, [Identity Server](#identityserveroi
 
 Local development domain and port: `https://localhost:44343`
 
-### NetCoreClientGrantConsoleSample
+### NetCoreClientCredentialGrantConsoleSample
 
 Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant using a secret (client authentication method client_secret_post).  
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
-### NetCoreClientAssertionGrantConsoleSample
+### NetCoreClientCredentialGrantAssertionConsoleSample
 
 Sample console application (backend) showing client login with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).  
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 

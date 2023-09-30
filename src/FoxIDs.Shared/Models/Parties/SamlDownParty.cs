@@ -6,6 +6,7 @@ using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
 using System.Linq;
+using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Models
 {
@@ -48,6 +49,9 @@ namespace FoxIDs.Models
         [Required]
         [JsonProperty(PropertyName = "revocation_mode")]
         public X509RevocationMode RevocationMode { get; set; }
+
+        [JsonProperty(PropertyName = "authn_response_sign_type")]
+        public Saml2AuthnResponseSignTypes AuthnResponseSignType { get; set; } = Saml2AuthnResponseSignTypes.SignResponse;
 
         [Required]
         [MaxLength(Constants.Models.Party.IssuerLength)]

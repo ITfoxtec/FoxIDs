@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class JwtUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcJwtUpLogic<TParty, TClient> : OAuthJwtUpLogic<TParty, TClient> where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ClientKeySecretLogic<TClient> clientKeySecretLogic;
 
-        public JwtUpLogic(TelemetryScopedLogger logger, ClientKeySecretLogic<TClient> clientKeySecretLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcJwtUpLogic(TelemetryScopedLogger logger, ClientKeySecretLogic<TClient> clientKeySecretLogic, IHttpContextAccessor httpContextAccessor) : base(logger, clientKeySecretLogic, httpContextAccessor)
         {
             this.logger = logger;
             this.clientKeySecretLogic = clientKeySecretLogic;

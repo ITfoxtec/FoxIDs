@@ -6,6 +6,7 @@ using ITfoxtec.Identity.Saml2.Schemas;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
 using Newtonsoft.Json;
+using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -82,6 +83,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [Display(Name = "Revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
+
+        [Display(Name = "Authn response sign type")]
+        public Saml2AuthnResponseSignTypes AuthnResponseSignType { get; set; } = Saml2AuthnResponseSignTypes.SignResponse;
 
         [Required]
         [MaxLength(Constants.Models.Party.IssuerLength)]

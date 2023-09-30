@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class JwtDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public class OAuthJwtDownLogic<TClient, TScope, TClaim> : LogicSequenceBase where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly TrackKeyLogic trackKeyLogic;
@@ -20,51 +20,13 @@ namespace FoxIDs.Logic
         private readonly ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public JwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthJwtDownLogic(TelemetryScopedLogger logger, TrackKeyLogic trackKeyLogic, TrackIssuerLogic trackIssuerLogic, ClaimsOAuthDownLogic<TClient, TScope, TClaim> claimsOAuthDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.trackKeyLogic = trackKeyLogic;
             this.trackIssuerLogic = trackIssuerLogic;
             this.claimsOAuthDownLogic = claimsOAuthDownLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
-        }
-
-        public async Task<string> CreateIdTokenAsync(TClient client, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string nonce, IEnumerable<string> responseTypes, string code, string accessToken, string algorithm)
-        {
-            if (!(client is OidcDownClient))
-            {
-                throw new InvalidOperationException("Include ID Token only possible for OIDC Down Client.");
-            }
-
-            var onlyIdToken = !responseTypes.Contains(IdentityConstants.ResponseTypes.Code) && !responseTypes.Contains(IdentityConstants.ResponseTypes.Token);
-            var idTokenClaims = new List<Claim>(await claimsOAuthDownLogic.FilterJwtClaimsAsync(client, claims, selectedScopes, includeIdTokenClaims: true, includeAccessTokenClaims: onlyIdToken));
-
-            var clientClaims = claimsOAuthDownLogic.GetClientJwtClaims(client, onlyIdTokenClaims: true);
-            if(clientClaims?.Count() > 0)
-            {
-                idTokenClaims.AddRange(clientClaims);
-            }
-
-            if(!nonce.IsNullOrEmpty())
-            {
-                idTokenClaims.AddClaim(JwtClaimTypes.Nonce, nonce);
-            }
-
-            if(!onlyIdToken)
-            {
-                if (responseTypes.Contains(IdentityConstants.ResponseTypes.Token))
-                {
-                    idTokenClaims.AddClaim(JwtClaimTypes.AtHash, await accessToken.LeftMostBase64urlEncodedHashAsync(algorithm));
-                }
-                if (responseTypes.Contains(IdentityConstants.ResponseTypes.Code))
-                {
-                    idTokenClaims.AddClaim(JwtClaimTypes.CHash, await code.LeftMostBase64urlEncodedHashAsync(algorithm));
-                }
-            }
-
-            logger.ScopeTrace(() => $"Down, JWT ID token claims '{idTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
-            return await token.ToJwtString();
         }
 
         public async Task<string> CreateAccessTokenAsync(TClient client, IEnumerable<Claim> claims, IEnumerable<string> selectedScopes, string algorithm)

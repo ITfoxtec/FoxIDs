@@ -7,7 +7,7 @@ using System.Xml;
 
 namespace FoxIDs.Infrastructure.Saml2
 {
-    public class FoxIdsSaml2TokenExchangeRequest : // er det bedre at nedarve fra Saml2AuthnResponse?
+    public class FoxIdsSaml2TokenExchangeRequest : //  Saml2AuthnResponse?
     {
         /// <summary>
         /// Claims Identity.

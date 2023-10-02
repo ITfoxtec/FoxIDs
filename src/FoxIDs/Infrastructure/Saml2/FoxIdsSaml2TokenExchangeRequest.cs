@@ -1,28 +1,28 @@
 ﻿using ITfoxtec.Identity.Saml2;
-using ITfoxtec.Identity.Saml2.Tokens;
 using Microsoft.IdentityModel.Tokens.Saml2;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Xml;
 
 namespace FoxIDs.Infrastructure.Saml2
 {
-    public class FoxIdsSaml2TokenExchangeRequest : //  Saml2AuthnResponse?
+    public class FoxIdsSaml2TokenExchangeRequest : Saml2AuthnResponse // : Saml2AuthnResponse
     {
-        /// <summary>
-        /// Claims Identity.
-        /// </summary>
-        public ClaimsIdentity ClaimsIdentity { get; set; }
+        ///// <summary>
+        ///// Claims Identity.
+        ///// </summary>
+        //public ClaimsIdentity ClaimsIdentity { get; set; }
 
-        /// <summary>
-        /// Saml2 Security Token.
-        /// </summary>
-        public Saml2SecurityToken Saml2SecurityToken { get; protected set; }
+        ///// <summary>
+        ///// Saml2 Security Token.
+        ///// </summary>
+        //public Saml2SecurityToken Saml2SecurityToken { get; protected set; }
 
-        /// <summary>
-        /// Saml2 Security Token Handler.
-        /// </summary>
-        public Saml2ResponseSecurityTokenHandler Saml2SecurityTokenHandler { get; protected set; }
+        ///// <summary>
+        ///// Saml2 Security Token Handler.
+        ///// </summary>
+        //public Saml2ResponseSecurityTokenHandler Saml2SecurityTokenHandler { get; protected set; }
 
         public FoxIdsSaml2TokenExchangeRequest(Saml2Configuration config) : base(config)
         { }
@@ -56,6 +56,11 @@ namespace FoxIDs.Infrastructure.Saml2
             var tokenString = XmlDocument.DocumentElement.OuterXml;
             Saml2SecurityToken = ReadSecurityToken(tokenString);
             ClaimsIdentity = ReadClaimsIdentity(tokenString, detectReplayedTokens);
+        }
+
+        protected override XmlElement GetAssertionElement()
+        {
+            return XmlDocument.DocumentElement;
         }
 
         private Saml2SecurityToken ReadSecurityToken(string tokenString)

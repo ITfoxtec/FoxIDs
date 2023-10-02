@@ -448,12 +448,11 @@ namespace FoxIDs.Logic
                 throw new InvalidOperationException("No Claims Identity created from SAML2 Response.");
             }
 
-            var claims = new List<Claim>();
-
+            var receivedClaims = principal.Identities.First().Claims;
             logger.ScopeTrace(() => "Up, SAML token exchange subject token valid.", triggerEvent: true);
-            logger.ScopeTrace(() => $"Up, SAML received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"Up, SAML received JWT claims '{receivedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            claims = claims.Where(c => c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
             claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
             claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
 

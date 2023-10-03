@@ -351,8 +351,9 @@
                             <option value="@IdentityConstants.ResponseModes.Query">query</option>
                         </FInputSelect>
 
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant)" TextType="e.d" />
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" TextType = "e.d" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" TextType="y.n" />
                     }
                 }
             }

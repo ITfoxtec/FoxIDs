@@ -131,75 +131,75 @@ namespace FoxIDs.Logic
 
         private async Task<IEnumerable<Claim>> ValidateSubjectTokenAsync(TParty party, string subjectToken, string subjectTokenType)
         {
-            var subjectSecurityToken = JwtHandler.ReadToken(subjectToken);
-            if (subjectTokenType == IdentityConstants.TokenTypeIdentifiers.AccessToken && trackIssuerLogic.GetIssuer().Equals(subjectSecurityToken.Issuer))
+            var subjectTokenAudiences = ReadSubjectTokenAudiences(subjectToken, subjectTokenType);
+
+            var trackIssuer = trackIssuerLogic.GetIssuer();
+            if (subjectTokenType == IdentityConstants.TokenTypeIdentifiers.AccessToken && subjectTokenAudiences.Where(a => a.Equals(trackIssuer, StringComparison.Ordinal)).Any())
             {
                 // access token (OIDC/OAuth) issued to the client (audience=client_id) in the same track
                 return (await oauthJwtDownLogic.ValidatePartyClientTokenAsync(party.Client, subjectToken))?.Claims;
             }
             else
             {
-                var tokenExchangeUpParties = party.AllowUpParties?.Where(up => !up.DisableTokenExchangeTrust);
-                if (tokenExchangeUpParties?.Count() <= 0)
-                {
-                    throw new OAuthRequestException($"Invalid client id '{party.Client.ClientId}', require at least one allowed up-party with token exchange trust.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
-                }
-
-                var subjectUpParties = tokenExchangeUpParties.Where(tup => tup.Issuers.Any(i => i.Equals(subjectSecurityToken.Issuer, StringComparison.Ordinal)));
-                if (subjectUpParties.Count() > 1)
-                {
-                    throw new OAuthRequestException($"Invalid client id '{party.Client.ClientId}', more then one matching issuer '{subjectSecurityToken.Issuer}' in allowed up-party.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
-                }
-
-                var subjectUpPartie = subjectUpParties.First();
-                if ((subjectUpPartie.Type == PartyTypes.OAuth2 || subjectUpPartie.Type == PartyTypes.Oidc) && subjectTokenType != IdentityConstants.TokenTypeIdentifiers.AccessToken)
-                {
-                    throw new NotSupportedException($"Subject token type not supported for up-party type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}'].");
-                }
-                if ((subjectUpPartie.Type == PartyTypes.Saml2) && subjectTokenType != IdentityConstants.TokenTypeIdentifiers.Saml2)
-                {
-                    throw new NotSupportedException($"Subject token type not supported for up-party type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
-                }
-
-                switch (subjectUpPartie.Type)
-                {
-                    case PartyTypes.OAuth2:
-                        return await serviceProvider.GetService<OAuthAuthUpLogic<OAuthUpParty, OAuthUpClient>>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
-                    case PartyTypes.Oidc:
-                        return await serviceProvider.GetService<OAuthAuthUpLogic<OidcUpParty, OidcUpClient>>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
-                    case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlAuthnUpLogic>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
-                    default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
-                }
-
-
-
-
-
-                // validate token by AllowTokenUpParties
-                //    party.Client.AllowTokenUpParties
-                //            - List med
-                //                - data id navn...
-                //                - typen - OIDC/OAuth eller SAML2
-                //                - issuer (ClientID eller custum issuer)
-                //            - resolve keys
-
-                //    Ny type up-parties - token up-parties
-
-                // find up-party i listen by subjectToken.Issuer
-                // checke om up-party type (OIDC/OAuth eller SAML2) og tokenExchangeRequest.SubjectTokenType passer sammen
-
-
-
+                return await ValidateSubjectTokenByUpPartyAsync(party, subjectTokenAudiences, subjectToken, subjectTokenType);
             }
         }
 
-
-
-        private async Task<IEnumerable<Claim>> ValidateSubjectTokenSamlUpPartyAsync(UpPartyLink subjectUpPartie, string subjectTokenType)
+        private IEnumerable<string> ReadSubjectTokenAudiences(string subjectToken, string subjectTokenType)
         {
-            throw new NotImplementedException();
+            switch (subjectTokenType)
+            {
+                case IdentityConstants.TokenTypeIdentifiers.AccessToken:
+                    var subjectSecurityToken = JwtHandler.ReadToken(subjectToken);
+                    return subjectSecurityToken.Audiences;
+                case IdentityConstants.TokenTypeIdentifiers.Saml2:
+                    return SamlAuthnUpLogic.ReadTokenExchangeSubjectTokenAudiencesAsync(subjectToken);
+                default:
+                    throw new NotSupportedException($"Subject token type '{subjectTokenType}' not supported.");
+            }
+        }
+
+        private async Task<IEnumerable<Claim>> ValidateSubjectTokenByUpPartyAsync(TParty party, IEnumerable<string> subjectTokenAudiences, string subjectToken, string subjectTokenType)
+        {
+            var tokenExchangeUpParties = party.AllowUpParties?.Where(up => !up.DisableTokenExchangeTrust);
+            if (tokenExchangeUpParties?.Count() <= 0)
+            {
+                throw new OAuthRequestException($"Require at least one allowed up-party with token exchange trust. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+            }
+
+            
+
+            var subjectUpParties = tokenExchangeUpParties.Where(tup => tup.Issuers.Any(i => subjectTokenAudiences.Any(a => a.Equals(i, StringComparison.Ordinal))));
+            if (subjectUpParties?.Count() <= 0)
+            {
+                throw new OAuthRequestException($"Require at least one allowed up-party with matching issuer '{subjectTokenAudiences}'. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+            }
+            if (subjectUpParties.Count() > 1)
+            {
+                throw new OAuthRequestException($"More then one matching issuer '{subjectTokenAudiences}' in allowed up-party. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+            }
+
+            var subjectUpPartie = subjectUpParties.First();
+            if ((subjectUpPartie.Type == PartyTypes.OAuth2 || subjectUpPartie.Type == PartyTypes.Oidc) && subjectTokenType != IdentityConstants.TokenTypeIdentifiers.AccessToken)
+            {
+                throw new NotSupportedException($"Subject token type not supported for up-party type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}'].");
+            }
+            if ((subjectUpPartie.Type == PartyTypes.Saml2) && subjectTokenType != IdentityConstants.TokenTypeIdentifiers.Saml2)
+            {
+                throw new NotSupportedException($"Subject token type not supported for up-party type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
+            }
+
+            switch (subjectUpPartie.Type)
+            {
+                case PartyTypes.OAuth2:
+                    return await serviceProvider.GetService<OAuthAuthUpLogic<OAuthUpParty, OAuthUpClient>>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
+                case PartyTypes.Oidc:
+                    return await serviceProvider.GetService<OAuthAuthUpLogic<OidcUpParty, OidcUpClient>>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
+                case PartyTypes.Saml2:
+                    return await serviceProvider.GetService<SamlAuthnUpLogic>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
+                default:
+                    throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+            }
         }
     }
 }

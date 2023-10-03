@@ -24,25 +24,6 @@ namespace FoxIDs.Logic
             this.clientKeySecretLogic = clientKeySecretLogic;
         }
 
-        public async Task<ClaimsPrincipal> ValidateIdTokenAsync(string idToken, string issuer, TParty party, string clientId)
-        {
-            (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
-            try
-            {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(idToken, issuer, validKeys, clientId));
-                return claimsPrincipal;
-            }
-            catch (Exception ex)
-            {
-                var ikex = GetInvalidKeyException(invalidKeys, ex);
-                if (ikex != null)
-                {
-                    throw ikex;
-                }
-                throw;
-            }
-        }
-
         public async Task<ClaimsPrincipal> ValidateAccessTokenAsync(string accessToken, string issuer, TParty party, string clientId)
         {
             (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
@@ -89,6 +70,5 @@ namespace FoxIDs.Logic
                 claims, expiresIn: client.ClientAssertionLifetime, algorithm: algorithm);
             return await token.ToJwtString();
         }
-
     }
 }

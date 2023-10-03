@@ -226,6 +226,7 @@ namespace FoxIDs.Client.Pages.Components
             importClientKeyForm.Model.Password = null;
             importClientKeyForm.ClearFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus));
             importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+            importClientKeyForm.Model.PublicClientKeyInfo = null;
             importClientKeyModal.Show();
         }
 

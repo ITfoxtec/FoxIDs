@@ -17,9 +17,8 @@ using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Logic.Tracks;
-using Azure.Core;
-using System.ServiceModel.Channels;
 using FoxIDs.Infrastructure.Saml2;
+using System.Xml;
 
 namespace FoxIDs.Logic
 {
@@ -417,6 +416,21 @@ namespace FoxIDs.Logic
             }
         }
 
+        public static IEnumerable<string> ReadTokenExchangeSubjectTokenAudiencesAsync(string subjectToken)
+        {
+            var xmlDocument = subjectToken.ToXmlDocument();
+            var audienceElements = xmlDocument.DocumentElement.SelectNodes($"//*[local-name()='Audience']");
+            if (!(audienceElements?.Count > 0))
+            {
+                throw new Saml2RequestException("There is not at leas one audience element.");
+            }
+
+            foreach(XmlNode audienceElement in audienceElements)
+            {
+                yield return audienceElement.InnerText;
+            }
+        }
+
         public async Task<IEnumerable<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
         {
             logger.ScopeTrace(() => "Up, SAML validate token exchange subject token.");
@@ -429,13 +443,10 @@ namespace FoxIDs.Logic
 
             var binding = new FoxIdsSaml2TokenExchangeBinding();
             var saml2TokenExchangeRequest = new FoxIdsSaml2TokenExchangeRequest(samlConfig);
-            var requestIssuer = saml2TokenExchangeRequest.Issuer;
             binding.ReadSamlRequest(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
-            logger.SetScopeProperty(Constants.Logs.Issuer, requestIssuer);
-
-            if (!samlConfig.Issuer.Equals(requestIssuer))
+            if (!samlConfig.Issuer.Equals(saml2TokenExchangeRequest.Issuer))
             {
-                throw new OAuthRequestException($"{party.Name}|Invalid issuer '{requestIssuer}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                throw new OAuthRequestException($"{party.Name}|Invalid issuer '{saml2TokenExchangeRequest.Issuer}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
 
             binding.Unbind(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
@@ -466,7 +477,7 @@ namespace FoxIDs.Logic
             return claims;
         }
 
-        private ITfoxtec.Identity.Saml2.Http.HttpRequest GetHttpRequest(string subjectToken)
+        private static ITfoxtec.Identity.Saml2.Http.HttpRequest GetHttpRequest(string subjectToken)
         {
             return new ITfoxtec.Identity.Saml2.Http.HttpRequest { Method = "DIRECT", Body = subjectToken };
         }

@@ -33,9 +33,6 @@ namespace FoxIDs.Models
             return await IdFormatAsync(idKey);
         }
 
-        [JsonIgnore]
-        public List<string> ReadIssuers => !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
-
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
         public virtual string Issuer { get; set; }

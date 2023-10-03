@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
 using System.Linq;
 using System;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Models
 {
@@ -65,7 +66,7 @@ namespace FoxIDs.Models
         public override string Issuer { get; set; }
 
         [JsonIgnore]
-        public override List<string> Issuers { get { return ReadIssuers; } set { throw new NotSupportedException(); } }
+        public override List<string> Issuers { get { return ReadIssuers(); } set { throw new NotSupportedException(); } }
 
         [Required]
         [JsonProperty(PropertyName = "authn_binding")]
@@ -123,6 +124,20 @@ namespace FoxIDs.Models
         [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
+
+        private List<string> ReadIssuers()
+        {
+            var tempIssuers = !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
+            if (!SpIssuer.IsNullOrWhiteSpace())
+            {
+                if (tempIssuers == null)
+                {
+                    tempIssuers = new List<string>();
+                }
+                tempIssuers.ConcatOnce(SpIssuer);
+            }
+            return tempIssuers;
+        }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

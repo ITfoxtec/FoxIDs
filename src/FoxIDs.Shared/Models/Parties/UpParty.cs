@@ -33,6 +33,9 @@ namespace FoxIDs.Models
             return await IdFormatAsync(idKey);
         }
 
+        [JsonIgnore]
+        public List<string> ReadIssuers => !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
+
         [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
         public virtual string Issuer { get; set; }
@@ -40,6 +43,14 @@ namespace FoxIDs.Models
         [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
         public virtual List<string> Issuers { get; set; }
+
+        /// <summary>
+        /// SP issuer / audience
+        /// For OAuth 2.0 and OIDC, only used in relation to token exchange trust.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "sp_issuer")]
+        public string SpIssuer { get; set; }
 
         [JsonProperty(PropertyName = "party_binding_pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;

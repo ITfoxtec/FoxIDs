@@ -49,7 +49,7 @@ namespace FoxIDs.Client.Models.ViewModels
         }
 
         [MaxLength(Constants.Models.Party.IssuerLength)]
-        [Display(Name = "Optional custom SP issuer (default auto generated)")]
+        [Display(Name = "Optional custom SP issuer / audience (default auto generated)")]
         public string SpIssuer { get; set; }
 
         /// <summary>

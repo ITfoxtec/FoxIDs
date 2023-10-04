@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace FoxIDs.Models.Api
 {
@@ -30,6 +31,13 @@ namespace FoxIDs.Models.Api
 
         [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         public List<string> Issuers { get; set; }
+
+        /// <summary>
+        /// SP issuer / audience
+        /// Only used in relation to token exchange trust.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        public string SpIssuer { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JwtWithCertificateInfo> Keys { get; set; }

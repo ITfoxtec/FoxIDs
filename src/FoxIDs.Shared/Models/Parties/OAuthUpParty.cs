@@ -39,9 +39,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "edit_issuers_in_automatic")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [JsonIgnore]
-        public override string Issuer { get { return Issuers?.FirstOrDefault(); } set { throw new NotSupportedException(); } }
-
         [Length(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
         public override List<string> Issuers { get; set; }

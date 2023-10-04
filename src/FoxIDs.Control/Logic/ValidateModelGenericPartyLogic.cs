@@ -35,7 +35,8 @@ namespace FoxIDs.Logic
                     {
                         var upParty = await upPartyCacheLogic.GetUpPartyAsync(upPartyLink.Name);
                         upPartyLink.Type = upParty.Type;
-                        upPartyLink.Issuers = upParty.Issuers;
+                        upPartyLink.Issuers = upParty.ReadIssuers;
+                        upPartyLink.SpIssuer = upParty.SpIssuer;
                         upPartyLink.HrdDomains = upParty.HrdDomains;
                         upPartyLink.HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain;
                         upPartyLink.HrdDisplayName = upParty.HrdDisplayName;

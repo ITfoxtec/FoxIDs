@@ -41,6 +41,14 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Issuer")]
         public string FirstIssuer { get { return Issuers?.FirstOrDefault(); } set {} }
 
+        /// <summary>
+        /// Optional custom SP issuer / audience (default auto generated).
+        /// Only used in relation to token exchange trust.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [Display(Name = "Optional custom SP issuer / audience used in token exchange trust (default auto generated)")]
+        public string SpIssuer { get; set; }
+
         [Display(Name = "Keys")]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 

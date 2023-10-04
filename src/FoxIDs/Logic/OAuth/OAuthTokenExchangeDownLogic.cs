@@ -74,6 +74,13 @@ namespace FoxIDs.Logic
                 //https://cloudentity.com/developers/basics/oauth-extensions/token-exchange/
 
 
+                // TODO
+                /*
+                    validere token i forhod til ekstern issuer og intern SP issuer, finde up-party der matcher begge dele
+                        ekstern issuer er UpPartyLink.Issuers/UpParty.ReadIssuers og findes modtaget token som issuer
+                        SP issuer er UpParty.SpIssuer og er audience i det modtagne token 
+
+                */
 
                 var subjectClaims = await ValidateSubjectTokenAsync(party, tokenExchangeRequest.SubjectToken, tokenExchangeRequest.SubjectTokenType);               
                 if (subjectClaims?.Count() <= 0)
@@ -166,8 +173,6 @@ namespace FoxIDs.Logic
             {
                 throw new OAuthRequestException($"Require at least one allowed up-party with token exchange trust. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
             }
-
-            
 
             var subjectUpParties = tokenExchangeUpParties.Where(tup => tup.Issuers.Any(i => subjectTokenAudiences.Any(a => a.Equals(i, StringComparison.Ordinal))));
             if (subjectUpParties?.Count() <= 0)

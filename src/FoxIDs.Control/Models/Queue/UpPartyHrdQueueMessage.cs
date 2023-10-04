@@ -17,6 +17,10 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "i")]
         public List<string> Issuers { get; set; }
 
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "si")]
+        public string SpIssuer { get; set; }
+
         [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }

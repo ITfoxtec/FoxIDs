@@ -35,10 +35,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "last_updated")]
         public long LastUpdated { get; set; }
 
-        [MaxLength(Constants.Models.Party.IssuerLength)]
-        [JsonProperty(PropertyName = "sp_issuer")]
-        public string SpIssuer { get; set; }
-
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<SamlClaimTransform> ClaimTransforms { get; set; }
@@ -66,7 +62,7 @@ namespace FoxIDs.Models
         public override string Issuer { get; set; }
 
         [JsonIgnore]
-        public override List<string> Issuers { get { return ReadIssuers(); } set { throw new NotSupportedException(); } }
+        public override List<string> Issuers { get { return ReadIssuers; } set { throw new NotSupportedException(); } }
 
         [Required]
         [JsonProperty(PropertyName = "authn_binding")]
@@ -124,20 +120,6 @@ namespace FoxIDs.Models
         [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
-
-        private List<string> ReadIssuers()
-        {
-            var tempIssuers = !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
-            if (!SpIssuer.IsNullOrWhiteSpace())
-            {
-                if (tempIssuers == null)
-                {
-                    tempIssuers = new List<string>();
-                }
-                tempIssuers.ConcatOnce(SpIssuer);
-            }
-            return tempIssuers;
-        }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

@@ -29,11 +29,6 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
         public string MetadataUrl { get; set; }
 
-        /// <summary>
-        /// Optional custom SP issuer (default auto generated).
-        /// </summary>
-        [MaxLength(Constants.Models.Party.IssuerLength)]
-        public string SpIssuer { get; set; }
 
         /// <summary>
         /// Claim transforms.
@@ -62,6 +57,12 @@ namespace FoxIDs.Models.Api
 
         [MaxLength(Constants.Models.Party.IssuerLength)]
         public string Issuer { get; set; }
+
+        /// <summary>
+        /// Optional custom SP issuer / audience (default auto generated).
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        public string SpIssuer { get; set; }
 
         public SamlBindingTypes? AuthnRequestBinding { get; set; }
 

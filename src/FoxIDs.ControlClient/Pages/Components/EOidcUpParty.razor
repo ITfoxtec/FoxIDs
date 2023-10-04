@@ -178,12 +178,13 @@
 
                 @if (oidcUpParty.Form.Model.Client != null)
                 {
-                    @if (UpParty.ShowAdvanced)
-                    {
-                        <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
-                    }
                     @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust) 
                     {
+                        @if (UpParty.ShowAdvanced)
+                        {
+                            <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
+                        }
+
                         <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Scopes" For="@(() => oidcUpParty.Form.Model.Client.Scopes)" DynamicFirstRow="true" />
                         @if (UpParty.ShowAdvanced)
                         {
@@ -273,6 +274,12 @@
                             <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
                         }
                     }
+
+                    @if (!oidcUpParty.Form.Model.DisableTokenExchangeTrust && UpParty.ShowAdvanced)
+                    {
+                        <FInputText @bind-Value="oidcUpParty.Form.Model.SpIssuer" For="@(() => oidcUpParty.Form.Model.SpIssuer)" />
+                    }
+
                     @if (UpParty.ShowAdvanced)
                     {
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseUserInfoClaims" For="@(() => oidcUpParty.Form.Model.Client.UseUserInfoClaims)" TextType="y.n" />

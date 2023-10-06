@@ -24,12 +24,12 @@ namespace FoxIDs.Logic
             this.clientKeySecretLogic = clientKeySecretLogic;
         }
 
-        public async Task<ClaimsPrincipal> ValidateAccessTokenAsync(string accessToken, string issuer, TParty party, string clientId)
+        public async Task<ClaimsPrincipal> ValidateAccessTokenAsync(string accessToken, string issuer, TParty party, string audience = null)
         {
             (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, clientId, validateAudience: false));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace()));
                 return claimsPrincipal;
             }
             catch (Exception ex)

@@ -20,36 +20,29 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
+        private readonly TrackIssuerLogic trackIssuerLogic;
         private readonly OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OAuthAuthUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OAuthAuthUpLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OAuthJwtUpLogic<TParty, TClient> oauthJwtUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
+            this.trackIssuerLogic = trackIssuerLogic;
             this.oauthJwtUpLogic = oauthJwtUpLogic;
             this.claimTransformLogic = claimTransformLogic;
             this.claimValidationLogic = claimValidationLogic;
             this.httpClientFactory = httpClientFactory;
         }
 
-        protected async Task<List<Claim>> ValidateTokenAsync(TParty party, string accessToken)
+        protected async Task<List<Claim>> ValidateTokenAsync(TParty party, string accessToken, string audience = null)
         {
-            List<Claim> claims = null;
+            List<Claim> claims = await ValidateAccessTokenAsync(party, accessToken, audience);
             if (party.Client.UseUserInfoClaims)
             {
                 claims = await UserInforRequestAsync(party.Client, accessToken);
-            }
-            else
-            {
-                var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
-                claims = await ValidateAccessTokenAsync(party, ResolveClientId(party), accessToken);
-                if (sessionIdClaim != null && !claims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
-                {
-                    claims.Add(sessionIdClaim);
-                }
             }
 
             var accessTokenClaims = claims.Where(c => c.Type == Constants.JwtClaimTypes.AccessToken).Select(c => c.Value);
@@ -80,7 +73,7 @@ namespace FoxIDs.Logic
             return claims;
         }
 
-        protected virtual async Task<List<Claim>> ValidateAccessTokenAsync(TParty party, string resolvedClientId, string accessToken)
+        protected virtual async Task<List<Claim>> ValidateAccessTokenAsync(TParty party, string accessToken, string audience = null)
         {
             try
             {
@@ -91,7 +84,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"{party.Name}|Access token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                var claimsPrincipal = await oauthJwtUpLogic.ValidateAccessTokenAsync(accessToken, issuer, party, resolvedClientId);
+                var claimsPrincipal = await oauthJwtUpLogic.ValidateAccessTokenAsync(accessToken, issuer, party, audience);
                 return claimsPrincipal.Claims.ToList();
             }
             catch (OAuthRequestException)
@@ -176,7 +169,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<IEnumerable<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
+        public async Task<List<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
         {
             logger.ScopeTrace(() => "Up, OAuth validate token exchange subject token.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
@@ -184,7 +177,7 @@ namespace FoxIDs.Logic
 
             var party = await tenantRepository.GetAsync<TParty>(partyId);
 
-            var claims = await ValidateTokenAsync(party, subjectToken);
+            var claims = await ValidateTokenAsync(party, subjectToken, ResolveAudience(party));
 
             logger.ScopeTrace(() => "Up, OAuth token exchange subject token valid.", triggerEvent: true);
             logger.ScopeTrace(() => $"Up, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
@@ -197,7 +190,12 @@ namespace FoxIDs.Logic
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
 
             logger.ScopeTrace(() => $"Up, OAuth output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            return claims;
+            return validClaims;
+        }
+
+        protected string ResolveAudience(TParty party)
+        {
+            return !party.SpIssuer.IsNullOrWhiteSpace() ? party.SpIssuer : trackIssuerLogic.GetIssuer();
         }
 
         protected string ResolveClientId(TParty party)

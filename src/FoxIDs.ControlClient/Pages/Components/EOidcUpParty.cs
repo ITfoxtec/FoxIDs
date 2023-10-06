@@ -78,7 +78,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
 
                 afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
-                if (oidcUpParty.Client != null)
+                if (afterMap.Client != null)
                 {
                     afterMap.Client.Party = afterMap;
 
@@ -139,6 +139,11 @@ namespace FoxIDs.Client.Pages.Components
             {
                 model.Client = new OidcUpClientViewModel();
                 model.Client.Claims = new List<string> { "*" };
+            }
+
+            if (model.Client != null && model.Client.Party == null)
+            {
+                model.Client.Party = model;
             }
         }
 

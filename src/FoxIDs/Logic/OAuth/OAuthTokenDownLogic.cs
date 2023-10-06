@@ -380,7 +380,6 @@ namespace FoxIDs.Logic
                 logger.SetUserScopeProperty(claims);
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
-
                 tokenResponse.AccessToken = await oauthJwtDownLogic.CreateAccessTokenAsync(party.Client, claims, scopes, algorithm);
 
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);

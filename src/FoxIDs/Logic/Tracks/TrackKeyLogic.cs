@@ -39,13 +39,13 @@ namespace FoxIDs.Logic
 
             switch (trackKey.Type)
             {
-                case TrackKeyType.Contained:
+                case TrackKeyTypes.Contained:
                     return trackKey.PrimaryKey.Key.ToSecurityKey();
 
-                case TrackKeyType.KeyVaultRenewSelfSigned:
+                case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     return GetPrimaryRSAKeyVault(trackKey).ToSecurityKey(trackKey.PrimaryKey.Key.Kid);
 
-                case TrackKeyType.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultImport:
                 default:
                     throw new NotSupportedException($"Track primary key type '{trackKey.Type}' not supported.");
             }
@@ -57,13 +57,13 @@ namespace FoxIDs.Logic
 
             switch (trackKey.Type)
             {
-                case TrackKeyType.Contained:
+                case TrackKeyTypes.Contained:
                     return trackKey.PrimaryKey.Key.ToSaml2X509Certificate(true);
 
-                case TrackKeyType.KeyVaultRenewSelfSigned:
+                case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     return new Saml2X509Certificate(trackKey.PrimaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
 
-                case TrackKeyType.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultImport:
                 default:
                     throw new NotSupportedException($"Track primary key type '{trackKey.Type}' not supported.");
             }
@@ -79,13 +79,13 @@ namespace FoxIDs.Logic
 
                     switch (trackKey.Type)
                     {
-                        case TrackKeyType.Contained:
+                        case TrackKeyTypes.Contained:
                             return trackKey.SecondaryKey.Key.ToSaml2X509Certificate(true);
 
-                        case TrackKeyType.KeyVaultRenewSelfSigned:
+                        case TrackKeyTypes.KeyVaultRenewSelfSigned:
                             return new Saml2X509Certificate(trackKey.SecondaryKey.Key.ToX509Certificate(), GetPrimaryRSAKeyVault(trackKey));
 
-                        case TrackKeyType.KeyVaultUpload:
+                        case TrackKeyTypes.KeyVaultImport:
                         default:
                             throw new NotSupportedException($"Track secondary key type '{trackKey.Type}' not supported.");
                     }
@@ -106,26 +106,18 @@ namespace FoxIDs.Logic
 
         private async Task ValidatePrimaryTrackKeyAsync(RouteTrackKey trackKey)
         {
-            var nowLocal = DateTime.Now;
             var certificate = trackKey.PrimaryKey.Key.ToX509Certificate();
             try
             {
-                if (certificate.NotBefore > nowLocal)
-                {
-                    throw new KeyException($"Track primary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
-                }
-                if (certificate.NotAfter < nowLocal)
-                {
-                    throw new KeyException($"Track primary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
-                }
+                certificate.ValidateCertificate("Track primary key");
             }
             catch (Exception ex)
             {
-                if (RouteBinding.TrackName == Constants.Routes.MasterTrackName && RouteBinding.Key.Type != TrackKeyType.KeyVaultRenewSelfSigned)
+                if (RouteBinding.TrackName == Constants.Routes.MasterTrackName && RouteBinding.Key.Type != TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
                     var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName });
 
-                    if (RouteBinding.Key.Type == TrackKeyType.Contained)
+                    if (RouteBinding.Key.Type == TrackKeyTypes.Contained)
                     {
                         var ContainedCertificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                         mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await ContainedCertificate.ToFTJsonWebKeyAsync(true) } };
@@ -135,9 +127,9 @@ namespace FoxIDs.Logic
                     }
                     else
                     {
-                        mTrack.Key.Type = TrackKeyType.KeyVaultRenewSelfSigned;
+                        mTrack.Key.Type = TrackKeyTypes.KeyVaultRenewSelfSigned;
                         mTrack.Key.Keys = null;
-                        mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
+                        mTrack.Key.ExternalName = (await externalKeyLogic.CreateExternalKeyAsync(mTrack)).externalName;
                         await tenantRepository.UpdateAsync(mTrack);
 
                         throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary external track key certificate is under construction in Key Vault, it is ready in a little while.", ex);
@@ -150,16 +142,8 @@ namespace FoxIDs.Logic
 
         private void ValidateSecondaryTrackKey(RouteTrackKey trackKey)
         {
-            var nowLocal = DateTime.Now;
             var certificate = trackKey.SecondaryKey.Key.ToX509Certificate();
-            if (certificate.NotBefore > nowLocal)
-            {
-                throw new KeyException($"Track secondary key certificate not valid yet. Not before {certificate.NotBefore.ToUniversalTime():u}.");
-            }
-            if (certificate.NotAfter < nowLocal)
-            {
-                throw new KeyException($"Track secondary key certificate has expired. Not after {certificate.NotAfter.ToUniversalTime():u}.");
-            }
+            certificate.ValidateCertificate("Track secondary key");
         }
     }
 }

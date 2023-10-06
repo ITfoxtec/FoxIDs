@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<TrackKeyType> GetKeyTypeAsync()
+        private async Task<TrackKeyTypes> GetKeyTypeAsync()
         {
             Plan plan = null;
             if (!RouteBinding.PlanName.IsNullOrEmpty())
@@ -178,7 +178,7 @@ namespace FoxIDs.Controllers
                 await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                 await tenantRepository.DeleteAsync<Track>(await Track.IdFormatAsync(RouteBinding, name));
 
-                if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+                if (mTrack.Key.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
                 {
                     await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                 }

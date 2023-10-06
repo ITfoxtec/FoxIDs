@@ -12,12 +12,23 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using MTokens = Microsoft.IdentityModel.Tokens;
 using System.Net.Http;
+using FoxIDs.Client.Shared.Components;
+using BlazorInputFile;
+using Microsoft.AspNetCore.WebUtilities;
+using System.IO;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class EOidcUpParty : UpPartyBase
     {
+        [Inject]
+        public IJSRuntime JSRuntime { get; set; }
+
         protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
+        private Modal importClientKeyModal;
+        private PageEditForm<OidcUpImportClientKeyViewModel> importClientKeyForm;
 
         protected override async Task OnInitializedAsync()
         {
@@ -34,7 +45,8 @@ namespace FoxIDs.Client.Pages.Components
             {
                 var generalOidcUpParty = UpParty as GeneralOidcUpPartyViewModel;
                 var oidcUpParty = await UpPartyService.GetOidcUpPartyAsync(UpParty.Name);
-                await generalOidcUpParty.Form.InitAsync(ToViewModel(generalOidcUpParty, oidcUpParty));
+                var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
+                await generalOidcUpParty.Form.InitAsync(ToViewModel(generalOidcUpParty, oidcUpParty, clientKeyResponse));
             }
             catch (TokenUnavailableException)
             {
@@ -46,8 +58,9 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty)
+        private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty, OidcClientKeyResponse clientKeyResponse)
         {
+
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
             {
                 if (oidcUpParty.UpdateState == PartyUpdateStates.Manual)
@@ -65,9 +78,26 @@ namespace FoxIDs.Client.Pages.Components
                 }
 
                 afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
-                if (oidcUpParty.Client != null)
+                if (afterMap.Client != null)
                 {
+                    afterMap.Client.Party = afterMap;
+
                     afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
+
+                    if (clientKeyResponse?.PrimaryKey?.PublicKey != null)
+                    {
+                        afterMap.Client.PublicClientKeyInfo = new KeyInfoViewModel
+                        {
+                            Subject = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Subject,
+                            ValidFrom = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidFrom,
+                            ValidTo = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidTo,
+                            IsValid = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.IsValid(),
+                            Thumbprint = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Thumbprint,
+                            KeyId = clientKeyResponse.PrimaryKey.PublicKey.Kid,
+                            Key = clientKeyResponse.PrimaryKey.PublicKey,
+                            Name = clientKeyResponse.Name
+                        };
+                    }
                 }
 
                 generalOidcUpParty.KeyInfoList.Clear();
@@ -110,6 +140,11 @@ namespace FoxIDs.Client.Pages.Components
                 model.Client = new OidcUpClientViewModel();
                 model.Client.Claims = new List<string> { "*" };
             }
+
+            if (model.Client != null && model.Client.Party == null)
+            {
+                model.Client.Party = model;
+            }
         }
 
         private async Task OnEditOidcUpPartyValidSubmitAsync(GeneralOidcUpPartyViewModel generalOidcUpParty, EditContext editContext)
@@ -146,14 +181,15 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalOidcUpParty.CreateMode)
                 {
                     var oidcUpPartyResult = await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty);
-                    generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult));
+                    generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, null));
                     generalOidcUpParty.CreateMode = false;
                     toastService.ShowSuccess("OpenID Connect up-party created.");
                 }
                 else
                 {
                     var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
-                    generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult));
+                    var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
+                    generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));
                     toastService.ShowSuccess("OpenID Connect up-party updated.");
                 }
 
@@ -188,6 +224,86 @@ namespace FoxIDs.Client.Pages.Components
             {
                 generalOidcUpParty.Form.SetError(ex.Message);
             }
+        }
+
+        private void ShowImportClientKeyPopup()
+        {
+            importClientKeyForm.Model.Password = null;
+            importClientKeyForm.ClearFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus));
+            importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+            importClientKeyForm.Model.PublicClientKeyInfo = null;
+            importClientKeyModal.Show();
+        }
+
+        private async Task OnImportClientKeyFileAsync(GeneralOidcUpPartyViewModel oidcUpParty, IFileListEntry[] files)
+        {
+            try
+            {
+                importClientKeyForm.ClearFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus));
+                foreach (var file in files)
+                {
+                    if (file.Size > GeneralTrackCertificateViewModel.CertificateMaxFileSize)
+                    {
+                        importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), $"That's too big. Max size: {GeneralTrackCertificateViewModel.CertificateMaxFileSize} bytes.");
+                        return;
+                    }
+
+                    importClientKeyForm.Model.ClientKeyFileStatus = "Loading...";
+
+                    byte[] certificateBytes;
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await file.Data.CopyToAsync(memoryStream);
+                        certificateBytes = memoryStream.ToArray();
+                    }
+
+                    var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
+                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OidcClientKeyRequest { Type = ClientKeyTypes.KeyVaultImport, PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
+
+                    oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
+                    {
+                        Subject = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Subject,
+                        ValidFrom = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidFrom,
+                        ValidTo = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.ValidTo,
+                        IsValid = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.IsValid(),
+                        Thumbprint = clientKeyResponse.PrimaryKey.PublicKey.CertificateInfo.Thumbprint,
+                        KeyId = clientKeyResponse.PrimaryKey.PublicKey.Kid,
+                        Key = clientKeyResponse.PrimaryKey.PublicKey,
+                        Name = clientKeyResponse.Name
+                    };
+
+                    importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                    importClientKeyModal.Hide();
+                    toastService.ShowSuccess("Up-party client key imported.");
+                }
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), ex.Message);
+            }
+            catch (FoxIDsApiException aex)
+            {
+                importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
+                importClientKeyForm.SetFieldError(nameof(importClientKeyForm.Model.ClientKeyFileStatus), aex.Message);
+            }
+        }
+
+        private async Task RemoveClientKeyAsync(GeneralOidcUpPartyViewModel oidcUpParty, string keyName)
+        {
+            await UpPartyService.DeleteOidcClientKeyUpPartyAsync($"{oidcUpParty.Name}.{keyName}");
+
+            oidcUpParty.Form.Model.Client.PublicClientKeyInfo = null;
+            toastService.ShowSuccess("Up-party client key removed.");
+        }
+
+        private async Task DownloadPublicCertificateFileAsync(KeyInfoViewModel publicClientKeyInfo)
+        {
+            await JSRuntime.InvokeAsync<object>("saveCertFile", $"{publicClientKeyInfo.Subject}.cer", publicClientKeyInfo.Key.X5c.First());
         }
     }
 }

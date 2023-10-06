@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -30,11 +29,6 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
         public string MetadataUrl { get; set; }
 
-        /// <summary>
-        /// Optional custom SP issuer (default auto generated).
-        /// </summary>
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        public string SpIssuer { get; set; }
 
         /// <summary>
         /// Claim transforms.
@@ -61,8 +55,14 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         public string Issuer { get; set; }
+
+        /// <summary>
+        /// Optional custom SP issuer / audience (default auto generated).
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        public string SpIssuer { get; set; }
 
         public SamlBindingTypes? AuthnRequestBinding { get; set; }
 
@@ -164,9 +164,20 @@ namespace FoxIDs.Models.Api
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
+        [Display(Name = "Disable user authentication trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [Display(Name = "Disable token exchange trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
                 results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));

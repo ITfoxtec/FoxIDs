@@ -134,7 +134,12 @@ namespace FoxIDs.Controllers
 
         private UpPartyLink ToUpPartyLink(HrdUpPartySequenceData upParty)
         {
-            return new UpPartyLink { Name = upParty.Name, Type = upParty.Type, HrdDomains = upParty.HrdDomains, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl };
+            return new UpPartyLink 
+            {
+                Name = upParty.Name, Type = upParty.Type, Issuers = upParty.Issuers, 
+                HrdDomains = upParty.HrdDomains, HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl,
+                DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust, DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust
+            };
         }
 
         private async Task<IActionResult> GoToUpParty(LoginUpSequenceData sequenceData, UpPartyLink selectedUpParty)

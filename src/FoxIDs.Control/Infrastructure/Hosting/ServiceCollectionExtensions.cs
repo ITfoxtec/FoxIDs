@@ -41,12 +41,13 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<UsageLogLogic>();            
 
-            services.AddTransient<ValidateGenericPartyLogic>();
-            services.AddTransient<ValidateLoginPartyLogic>();
-            services.AddTransient<ValidateOAuthOidcPartyLogic>();
+            services.AddTransient<ValidateApiModelGenericPartyLogic>();
+            services.AddTransient<ValidateModelGenericPartyLogic>();
+            services.AddTransient<ValidateApiModelLoginPartyLogic>();
+            services.AddTransient<ValidateApiModelOAuthOidcPartyLogic>();
             services.AddTransient<OidcDiscoveryReadLogic>();
             services.AddTransient<OidcDiscoveryReadUpLogic>();
-            services.AddTransient<ValidateSamlPartyLogic>();
+            services.AddTransient<ValidateApiModelSamlPartyLogic>();
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
 

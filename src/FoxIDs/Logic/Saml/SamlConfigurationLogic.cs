@@ -110,6 +110,7 @@ namespace FoxIDs.Logic
 
                 samlConfig.CertificateValidationMode = party.CertificateValidationMode;
                 samlConfig.RevocationMode = party.RevocationMode;
+                samlConfig.AuthnResponseSignType = party.AuthnResponseSignType;
             }
 
             return samlConfig;

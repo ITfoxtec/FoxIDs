@@ -14,12 +14,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class ValidateOAuthOidcPartyLogic : LogicBase
+    public class ValidateApiModelOAuthOidcPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantService;
 
-        public ValidateOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelOAuthOidcPartyLogic(TelemetryScopedLogger logger, ITenantRepository tenantService, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantService = tenantService;

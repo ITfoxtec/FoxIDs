@@ -25,11 +25,11 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
         private readonly ClaimTransformLogic claimTransformLogic;
-        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
+        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
         private readonly OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic;
         private readonly OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic;
 
-        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, SecurityHeaderLogic securityHeaderLogic, ClaimTransformLogic claimTransformLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, OAuthAuthCodeGrantDownLogic<TClient, TScope, TClaim> oauthAuthCodeGrantDownLogic, OAuthResourceScopeDownLogic<TClient, TScope, TClaim> oauthResourceScopeDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -37,7 +37,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.securityHeaderLogic = securityHeaderLogic;
             this.claimTransformLogic = claimTransformLogic;
-            this.jwtDownLogic = jwtDownLogic;
+            this.oidcJwtDownLogic = oidcJwtDownLogic;
             this.oauthAuthCodeGrantDownLogic = oauthAuthCodeGrantDownLogic;
             this.oauthResourceScopeDownLogic = oauthResourceScopeDownLogic;
         }
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
 
             if (!authenticationRequest.IdTokenHint.IsNullOrEmpty())
             {
-                var claimsPrincipal = await jwtDownLogic.ValidatePartyClientTokenAsync(party.Client as TClient, authenticationRequest.IdTokenHint, validateLifetime: false);
+                var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(party.Client as TClient, authenticationRequest.IdTokenHint, validateLifetime: false);
                 if (claimsPrincipal == null)
                 {
                     throw new OAuthRequestException("Invalid id token hint.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
@@ -214,7 +214,7 @@ namespace FoxIDs.Logic
             }
             catch (ArgumentException ex)
             {
-                throw new OAuthRequestException(ex.Message, ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                throw new OAuthRequestException($"{ex.Message}{(ex is ArgumentNullException ? " is null or empty." : string.Empty)}", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
             }
         }
 
@@ -315,11 +315,11 @@ namespace FoxIDs.Logic
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Token)).Any())
                 {
                     authenticationResponse.TokenType = IdentityConstants.TokenTypes.Bearer;
-                    authenticationResponse.AccessToken = await jwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
+                    authenticationResponse.AccessToken = await oidcJwtDownLogic.CreateAccessTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), algorithm);
                 }
                 if (responseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.IdToken)).Any())
                 {
-                    authenticationResponse.IdToken = await jwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
+                    authenticationResponse.IdToken = await oidcJwtDownLogic.CreateIdTokenAsync(party.Client as TClient, claims, sequenceData.Scope?.ToSpaceList(), sequenceData.Nonce, responseTypes, authenticationResponse.Code, authenticationResponse.AccessToken, algorithm);
                 }
 
                 logger.ScopeTrace(() => $"Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);

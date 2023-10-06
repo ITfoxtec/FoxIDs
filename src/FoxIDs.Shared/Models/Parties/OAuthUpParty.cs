@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using ITfoxtec.Identity.Models;
+using System;
+using System.Linq;
 
 namespace FoxIDs.Models
 {
@@ -37,9 +39,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "edit_issuers_in_automatic")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.IssuersMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [Length(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
-        public List<string> Issuers { get; set; }
+        public override List<string> Issuers { get; set; }
 
         [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
@@ -70,9 +72,23 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
+
+            if (!DisableUserAuthenticationTrust)
+            {
+                var clientResults = Client.ValidateFromParty();
+                if (clientResults.Count() > 0)
+                {
+                    results.AddRange(clientResults);
+                }
+            }
             if (UpdateState != PartyUpdateStates.Manual)
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)

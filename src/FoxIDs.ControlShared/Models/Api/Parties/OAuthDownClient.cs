@@ -30,6 +30,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
+        [Display(Name = "Client authentication method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
+        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [Display(Name = "Client certificates")]
+        public List<JwtWithCertificateInfo> ClientKeys { get; set; }
+
         /// <summary>
         /// Require PKCE, default true.
         /// </summary>
@@ -60,6 +67,15 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Refresh token lifetime unlimited")]
         public bool? RefreshTokenLifetimeUnlimited { get; set; }
+
+        [Display(Name = "Disable client credentials grant")]
+        public bool DisableClientCredentialsGrant { get; set; }
+
+        [Display(Name = "Disable token exchange grant")]
+        public bool DisableTokenExchangeGrant { get; set; }
+
+        [Display(Name = "Disable client as token exchange actor")]
+        public bool DisableClientAsTokenExchangeActor { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

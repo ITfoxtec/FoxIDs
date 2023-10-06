@@ -48,8 +48,8 @@ namespace FoxIDs.Client.Models.ViewModels
             }
         }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        [Display(Name = "Optional custom SP issuer (default auto generated)")]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [Display(Name = "Optional custom SP issuer / audience (default auto generated)")]
         public string SpIssuer { get; set; }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 
@@ -206,9 +206,20 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
+        [Display(Name = "Disable user authentication trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [Display(Name = "Disable token exchange trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+
             if (IsManual)
             {
                 if (Issuer.IsNullOrEmpty())

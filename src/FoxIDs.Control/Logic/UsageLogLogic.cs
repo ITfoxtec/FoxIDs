@@ -220,17 +220,17 @@ namespace FoxIDs.Logic
         {
             if (usePartitionId)
             {
-                return p => p.Key.Type != TrackKeyType.Contained;
+                return p => p.Key.Type != TrackKeyTypes.Contained;
             }
             else
             {
                 if (idKey.TenantName.IsNullOrWhiteSpace())
                 {
-                    return p => p.DataType.Equals("track") && p.Key.Type != TrackKeyType.Contained;
+                    return p => p.DataType.Equals("track") && p.Key.Type != TrackKeyTypes.Contained;
                 }
 
                 var id = await Track.IdFormatAsync(idKey);
-                return p => p.Id.Equals(id) && p.Key.Type != TrackKeyType.Contained;
+                return p => p.Id.Equals(id) && p.Key.Type != TrackKeyTypes.Contained;
             }
         }
 

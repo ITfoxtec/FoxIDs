@@ -6,6 +6,7 @@ using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
 using System.Linq;
+using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Models
 {
@@ -16,7 +17,7 @@ namespace FoxIDs.Models
             Type = PartyTypes.Saml2;
         }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "idp_issuer")]
         public string IdPIssuer { get; set; }
 
@@ -49,8 +50,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "revocation_mode")]
         public X509RevocationMode RevocationMode { get; set; }
 
+        [JsonProperty(PropertyName = "authn_response_sign_type")]
+        public Saml2AuthnResponseSignTypes AuthnResponseSignType { get; set; } = Saml2AuthnResponseSignTypes.SignResponse;
+
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
         public string Issuer { get; set; }
 
@@ -109,9 +113,9 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (AllowUpParties?.Count <= 0)
+            if (AllowUpParties?.Where(up => !up.DisableUserAuthenticationTrust)?.Count() <= 0)
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
+                results.Add(new ValidationResult($"At least one (with user authentication trust) in the field {nameof(AllowUpParties)} is required.", new[] { nameof(AllowUpParties) }));
             }
 
             if (Claims?.Where(c => c == "*").Count() > 1)

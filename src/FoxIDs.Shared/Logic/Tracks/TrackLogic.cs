@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
                 mTrack.Key = new TrackKey()
                 {
                     Type = keyType,
-                    ExternalName = (await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)).externalName
+                    ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack, tenantName, trackName)
                 };
             }
             else

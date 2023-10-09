@@ -104,7 +104,7 @@ namespace FoxIDs.Controllers
                         case TrackKeyTypes.KeyVaultRenewSelfSigned:
                             mTrack.Key.Type = mTrackKey.Type;
                             mTrack.Key.Keys = null;
-                            mTrack.Key.ExternalName = (await externalKeyLogic.CreateExternalKeyAsync(mTrack)).externalName;
+                            mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
                             break;
 
                         case TrackKeyTypes.KeyVaultImport:

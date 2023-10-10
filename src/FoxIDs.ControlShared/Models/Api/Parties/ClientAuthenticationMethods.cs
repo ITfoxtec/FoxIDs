@@ -2,8 +2,8 @@
 {
     public enum ClientAuthenticationMethods
     {
-        ClientSecretBasic = 10,
-        ClientSecretPost = 20,
+        ClientSecretPost = 0,
+        ClientSecretBasic = 10,        
         //clientSecretJwt = 30,
         PrivateKeyJwt = 100,
     }

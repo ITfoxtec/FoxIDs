@@ -7,7 +7,6 @@ using System;
 using Microsoft.Net.Http.Headers;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
-using System.Web;
 
 namespace FoxIDs.Infrastructure.Filters
 {

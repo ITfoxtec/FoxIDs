@@ -57,6 +57,7 @@ namespace FoxIDs.Controllers
 
             if (exceptionHandlerPathFeature != null && exceptionHandlerPathFeature.Path.EndsWith($"/{Constants.Routes.OAuthController}/{Constants.Endpoints.Token}", StringComparison.OrdinalIgnoreCase))
             {
+                logger.Error(exception);
                 return HandleOAuthTokenException(exception);
             }
 

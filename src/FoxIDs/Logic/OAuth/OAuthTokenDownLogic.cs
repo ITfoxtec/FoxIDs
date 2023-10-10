@@ -187,10 +187,10 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Down, Client credentials basic '{new { ClientId = clientId, ClientSecret = $"{(clientSecret?.Length > 10 ? clientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             try
             {
-                if (clientId.IsNullOrEmpty() || clientSecret.IsNullOrEmpty()) throw new ArgumentException("Client id / username or password is null or empty.");
+                if (clientId.IsNullOrEmpty() || clientSecret.IsNullOrEmpty()) throw new ArgumentException("Client id or secret is null or empty.");
                 if (clientId.Length > IdentityConstants.MessageLength.ClientIdMax)
                 {
-                    throw new ArgumentException($"Invalid client id / username, max length {IdentityConstants.MessageLength.ClientIdMax}.");
+                    throw new ArgumentException($"Invalid client id, max length {IdentityConstants.MessageLength.ClientIdMax}.");
                 }
                 if (clientSecret.Length > IdentityConstants.MessageLength.ClientSecretMax)
                 {
@@ -199,7 +199,7 @@ namespace FoxIDs.Logic
 
                 if (!client.ClientId.Equals(clientId, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new OAuthRequestException($"Invalid client id / username '{clientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                    throw new OAuthRequestException($"Invalid client id '{clientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
                 }
 
                 await ValidateClientSecretAsync(client, clientSecret, clientAuthenticationRequired);
@@ -310,7 +310,7 @@ namespace FoxIDs.Logic
                 {
                     if (await secretHashLogic.ValidateSecretAsync(secret, clientSecret))
                     {
-                        logger.ScopeTrace(() => $"Down, OAuth Client id '{client.ClientId}. Client secret valid.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"Down, OAuth client id '{client.ClientId}. Client secret valid.", triggerEvent: true);
                         return;
                     }
                 }

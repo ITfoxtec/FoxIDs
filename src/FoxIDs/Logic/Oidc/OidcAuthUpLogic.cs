@@ -18,6 +18,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -190,8 +191,17 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
-            await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            OidcUpSequenceData sequenceData = null;
+            try
+            {
+                await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Invalid State '{authenticationResponse.State}' returned from the IdP.");
+                throw;
+            }
 
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)

@@ -123,13 +123,11 @@ namespace FoxIDs.Models.Api
             {
                 results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
             }
-            if (!DisableUserAuthenticationTrust)
+
+            var clientResults = Client.ValidateFromParty(UpdateState, DisableUserAuthenticationTrust);
+            if (clientResults.Count() > 0)
             {
-                var clientResults = Client.ValidateFromParty(UpdateState);
-                if (clientResults.Count() > 0)
-                {
-                    results.AddRange(clientResults);
-                }
+                results.AddRange(clientResults);
             }
 
             if (UpdateState == PartyUpdateStates.Manual)

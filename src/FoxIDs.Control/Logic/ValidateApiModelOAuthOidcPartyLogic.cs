@@ -101,10 +101,13 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                var validResponseMode = new string[] { IdentityConstants.ResponseModes.FormPost, IdentityConstants.ResponseModes.Query };
-                if (!validResponseMode.Contains(responseMode))
+                if (!responseMode.IsNullOrWhiteSpace())
                 {
-                    throw new ValidationException($"Not supported response mode '{responseMode}'");
+                    var validResponseMode = new string[] { IdentityConstants.ResponseModes.FormPost, IdentityConstants.ResponseModes.Query };
+                    if (!validResponseMode.Contains(responseMode))
+                    {
+                        throw new ValidationException($"Not supported response mode '{responseMode}'");
+                    }
                 }
             }
             catch (ValidationException vex)
@@ -121,11 +124,14 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                responseType = OrderResponseType(responseType);
-
-                if (!defaultResponseTypes.Contains(responseType))
+                if (!responseType.IsNullOrWhiteSpace())
                 {
-                    throw new ValidationException($"Not supported response type '{responseType}'");
+                    responseType = OrderResponseType(responseType);
+
+                    if (!defaultResponseTypes.Contains(responseType))
+                    {
+                        throw new ValidationException($"Not supported response type '{responseType}'");
+                    }
                 }
             }
             catch (ValidationException vex)
@@ -142,25 +148,28 @@ namespace FoxIDs.Logic
             var isValid = true;
             try
             {
-                responseTypes = OrderResponseTypes(responseTypes);
-
-                foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()))
+                if (responseTypes?.Count > 0)
                 {
-                    if (responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
-                    {
-                        throw new ValidationException($"Invalid response type '{responseType.ToSpaceList()}'");
-                    }
+                    responseTypes = OrderResponseTypes(responseTypes);
 
-                    var responseTypeString = responseType.ToSpaceList();
-                    if (!defaultResponseTypes.Contains(responseTypeString))
+                    foreach (var responseType in responseTypes.Select(rt => rt.ToSpaceList()))
                     {
-                        throw new ValidationException($"Not supported response type '{responseTypeString}'");
-                    }
+                        if (responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Any())
+                        {
+                            throw new ValidationException($"Invalid response type '{responseType.ToSpaceList()}'");
+                        }
 
-                    var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                    if (duplicatedResponseType != null)
-                    {
-                        throw new ValidationException($"Duplicated response type '{duplicatedResponseType}'.");
+                        var responseTypeString = responseType.ToSpaceList();
+                        if (!defaultResponseTypes.Contains(responseTypeString))
+                        {
+                            throw new ValidationException($"Not supported response type '{responseTypeString}'");
+                        }
+
+                        var duplicatedResponseType = responseType.GroupBy(rt => rt).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
+                        if (duplicatedResponseType != null)
+                        {
+                            throw new ValidationException($"Duplicated response type '{duplicatedResponseType}'.");
+                        }
                     }
                 }
             }
@@ -175,7 +184,7 @@ namespace FoxIDs.Logic
 
         private List<string> OrderResponseTypes(List<string> responseTypes)
         {
-            return responseTypes.Select(rt => OrderResponseType(rt)).ToList();
+            return responseTypes.Select(OrderResponseType).ToList();
         }
 
         private string OrderResponseType(string responseType)

@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -24,15 +23,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Additional parameters")]
         public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
         [Display(Name = "Response mode")]
-        public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.FormPost;
+        public string ResponseMode { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseTypeLength)]
         [Display(Name = "Response type")]
-        public string ResponseType { get; set; } = IdentityConstants.ResponseTypes.Code;
+        public string ResponseType { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.AuthorizeUrlLength)]
         [Display(Name = "Authorize URL")]
@@ -82,27 +79,39 @@ namespace FoxIDs.Models.Api
             return results;
         }
 
-        public IEnumerable<ValidationResult> ValidateFromParty(PartyUpdateStates updateState)
+        public IEnumerable<ValidationResult> ValidateFromParty(PartyUpdateStates updateState, bool disableUserAuthenticationTrust)
         {
             var results = new List<ValidationResult>();
-            if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+            if (!disableUserAuthenticationTrust)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(EnablePkce)}" }));
-            }
-            if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
-            {
-                if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
+                if (ResponseMode.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OidcUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}" }));
+                    ResponseMode = IdentityConstants.ResponseModes.FormPost;
                 }
-            }
-
-            if (updateState == PartyUpdateStates.Manual && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
-            {
-                if (TokenUrl.IsNullOrEmpty())
+                if (ResponseType.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type. If '{nameof(OidcUpParty.UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { $"{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}" }));
+                    ResponseType = IdentityConstants.ResponseTypes.Code;
+                }
+
+                if (EnablePkce && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) != true)
+                {
+                    results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(EnablePkce)}" }));
+                }
+                if (ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OidcUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}" }));
+                    }
+                }
+
+                if (updateState == PartyUpdateStates.Manual && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (TokenUrl.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type. If '{nameof(OidcUpParty.UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                            new[] { $"{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}" }));
+                    }
                 }
             }
             return results;

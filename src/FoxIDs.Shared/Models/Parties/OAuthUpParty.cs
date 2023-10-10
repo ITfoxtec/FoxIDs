@@ -81,14 +81,12 @@ namespace FoxIDs.Models
                 results.AddRange(baseResults);
             }
 
-            if (!DisableUserAuthenticationTrust)
+            var clientResults = Client.ValidateFromParty(DisableUserAuthenticationTrust);
+            if (clientResults.Count() > 0)
             {
-                var clientResults = Client.ValidateFromParty();
-                if (clientResults.Count() > 0)
-                {
-                    results.AddRange(clientResults);
-                }
+                results.AddRange(clientResults);
             }
+
             if (UpdateState != PartyUpdateStates.Manual)
             {
                 if (!OidcDiscoveryUpdateRate.HasValue)

@@ -209,6 +209,7 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 logger.Error(ex, $"Invalid RelayState '{binding.RelayState}' returned from the IdP.");
+                throw;
             }
 
             try

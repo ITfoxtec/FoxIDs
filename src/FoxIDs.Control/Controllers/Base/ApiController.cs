@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
             }
             catch (Exception ex)
             {
-                logger.Warning(ex);
+                logger.Error(ex);
                 if (modelState.Keys.Count() == 1)
                 {
                     Response.Headers["field"] = modelState.Keys.First();

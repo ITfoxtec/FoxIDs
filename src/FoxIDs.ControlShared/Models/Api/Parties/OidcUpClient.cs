@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcUpClient : IValidatableObject
+    public class OidcUpClient
     {
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [Display(Name = "Optional custom SP client ID (default the party name)")]
@@ -69,16 +69,6 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Read claims from the ID token instead of the access token")]
         public bool UseIdTokenClaims { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            var results = new List<ValidationResult>();
-            if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
-            {
-                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
-            }
-            return results;
-        }
-
         public IEnumerable<ValidationResult> ValidateFromParty(PartyUpdateStates updateState, bool disableUserAuthenticationTrust)
         {
             var results = new List<ValidationResult>();
@@ -91,6 +81,11 @@ namespace FoxIDs.Models.Api
                 if (ResponseType.IsNullOrWhiteSpace())
                 {
                     ResponseType = IdentityConstants.ResponseTypes.Code;
+                }
+
+                if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
+                {
+                    results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
                 }
 
                 if (EnablePkce && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) != true)

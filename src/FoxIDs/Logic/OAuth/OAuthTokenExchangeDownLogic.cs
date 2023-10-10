@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
                 }
 
                 (var claims, bool sameTrack) = await ValidateSubjectTokenAsync(party, tokenExchangeRequest.SubjectToken, tokenExchangeRequest.SubjectTokenType);               
-                if (claims?.Count() <= 0)
+                if (!(claims?.Count() > 0))
                 {
                     throw new OAuthRequestException($"Subject token not valid. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
                 }
@@ -159,7 +159,7 @@ namespace FoxIDs.Logic
         private async Task<List<Claim>> ValidateSubjectTokenByUpPartyAsync(TParty party, string trackIssuer, string subjectToken, string subjectTokenType, string subjectTokenIssuer, IEnumerable<string> subjectTokenAudiences)
         {
             var tokenExchangeUpParties = party.AllowUpParties?.Where(up => (up.Type == PartyTypes.OAuth2 || up.Type == PartyTypes.Oidc || up.Type == PartyTypes.Saml2) && !up.DisableTokenExchangeTrust);
-            if (tokenExchangeUpParties?.Count() <= 0)
+            if (!(tokenExchangeUpParties?.Count() > 0))
             {
                 return null;
             }
@@ -167,7 +167,7 @@ namespace FoxIDs.Logic
             var subjectUpParties = tokenExchangeUpParties.Where(tup => tup.Issuers.Any(i => i.Equals(subjectTokenIssuer, StringComparison.Ordinal)) && 
                 subjectTokenAudiences.Any(a => !string.IsNullOrEmpty(tup.SpIssuer) ? tup.SpIssuer.Equals(a, StringComparison.Ordinal) : trackIssuer.Equals(a, StringComparison.Ordinal)));
 
-            if (subjectUpParties?.Count() <= 0)
+            if (!(subjectUpParties?.Count() > 0))
             {
                 return null;
             }

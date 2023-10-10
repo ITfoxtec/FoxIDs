@@ -238,7 +238,7 @@ namespace FoxIDs.Logic
                     throw;
                 }
 
-                if (saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() <= 0)
+                if (!(saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() > 0))
                 {
                     throw new SamlRequestException("Empty claims collection.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }

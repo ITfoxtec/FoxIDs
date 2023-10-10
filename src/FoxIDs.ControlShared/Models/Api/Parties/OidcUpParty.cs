@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Api
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
 
         [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        public int? OidcDiscoveryUpdateRate { get; set; }
+        public int? OidcDiscoveryUpdateRate { get; set; } = 172800; // 2 days
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]

@@ -24,7 +24,7 @@ namespace FoxIDs.Models.Api
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
 
         [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
-        public int? MetadataUpdateRate { get; set; }
+        public int? MetadataUpdateRate { get; set; } = 172800; // 2 days
 
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
         public string MetadataUrl { get; set; }
@@ -192,15 +192,15 @@ namespace FoxIDs.Models.Api
             {
                 if (Issuer.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required.", new[] { nameof(Issuer) }));
+                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(Issuer) }));
                 }
                 if (AuthnUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required.", new[] { nameof(AuthnUrl) }));
+                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(AuthnUrl) }));
                 }
                 if (AuthnRequestBinding == null)
                 {
-                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required.", new[] { nameof(AuthnRequestBinding) }));
+                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(AuthnRequestBinding) }));
                 }
                 if (!LogoutUrl.IsNullOrWhiteSpace())
                 {
@@ -215,18 +215,18 @@ namespace FoxIDs.Models.Api
                 }
                 if (Keys?.Count < Constants.Models.SamlParty.Up.KeysMin)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}.", new[] { nameof(Keys) }));
+                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(Keys) }));
                 }
             }
             else
             {
                 if (!MetadataUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required.", new[] { nameof(MetadataUpdateRate) }));
+                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(MetadataUpdateRate) }));
                 }
                 if (MetadataUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required.", new[] { nameof(MetadataUrl) }));
+                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(MetadataUrl) }));
                 } 
             }
             return results;

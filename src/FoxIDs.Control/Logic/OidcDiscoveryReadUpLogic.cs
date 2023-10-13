@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryReadUpLogic : LogicBase
+    public class OidcDiscoveryReadUpLogic<MParty, MClient> : LogicBase where MParty : OAuthUpParty<MClient> where MClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly OidcDiscoveryReadLogic oidcDiscoveryReadLogic;
@@ -18,7 +18,7 @@ namespace FoxIDs.Logic
             this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
         }
 
-        public async Task<bool> PopulateModelAsync(ModelStateDictionary modelState, OidcUpParty mp)
+        public async Task<bool> PopulateModelAsync(ModelStateDictionary modelState, MParty mp)
         {
             var isValid = true;
             try

@@ -21,7 +21,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task PopulateModelAsync(OidcUpParty party)
+        public async Task PopulateModelAsync(OAuthUpParty party)
         {
             (var oidcDiscovery, var jsonWebKeySet) = await GetOidcDiscoveryAndValidateAsync(party.Authority);
 

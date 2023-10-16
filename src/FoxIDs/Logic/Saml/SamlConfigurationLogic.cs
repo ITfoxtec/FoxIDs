@@ -56,7 +56,8 @@ namespace FoxIDs.Logic
 
             if (includeSigningAndDecryptionCertificate)
             {
-                samlConfig.SigningCertificate = samlConfig.DecryptionCertificate = await trackKeyLogic.GetPrimarySaml2X509CertificateAsync(RouteBinding.Key);
+                samlConfig.SigningCertificate = await trackKeyLogic.GetPrimarySaml2X509CertificateAsync(RouteBinding.Key);
+                samlConfig.DecryptionCertificates.Add(samlConfig.SigningCertificate);
                 samlConfig.SecondaryDecryptionCertificate = trackKeyLogic.GetSecondarySaml2X509Certificate(RouteBinding.Key);
             }
             if (party != null)

@@ -19,6 +19,7 @@ using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Logic.Tracks;
 using FoxIDs.Infrastructure.Saml2;
 using System.Xml;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Logic
 {
@@ -187,7 +188,7 @@ namespace FoxIDs.Logic
             {
                 if (samlConfig.SecondaryDecryptionCertificate != null && binding is Saml2PostBinding && ex.Source.Contains("cryptography", StringComparison.OrdinalIgnoreCase))
                 {
-                    samlConfig.DecryptionCertificate = samlConfig.SecondaryDecryptionCertificate;
+                    samlConfig.DecryptionCertificates = new List<X509Certificate2> { samlConfig.SecondaryDecryptionCertificate };
                     saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
                     binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
                     logger.ScopeTrace(() => $"SAML Authn response decrypted with secondary certificate.", traceType: TraceTypes.Message);

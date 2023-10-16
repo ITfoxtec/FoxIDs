@@ -10,9 +10,9 @@ namespace FoxIDs.Logic
     public class OidcDiscoveryReadUpLogic<MParty, MClient> : LogicBase where MParty : OAuthUpParty<MClient> where MClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly OidcDiscoveryReadLogic oidcDiscoveryReadLogic;
+        private readonly OidcDiscoveryReadLogic<MParty, MClient> oidcDiscoveryReadLogic;
 
-        public OidcDiscoveryReadUpLogic(TelemetryScopedLogger logger, OidcDiscoveryReadLogic oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(TelemetryScopedLogger logger, OidcDiscoveryReadLogic<MParty, MClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;

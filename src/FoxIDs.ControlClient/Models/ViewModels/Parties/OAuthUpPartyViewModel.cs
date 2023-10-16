@@ -1,57 +1,69 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using FoxIDs.Models.Api;
 using System.Linq;
-using Newtonsoft.Json;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthUpParty : IValidatableObject, INameValue, IClaimTransform<OAuthClaimTransform>
+    public class OAuthUpPartyViewModel : IOAuthClaimTransformViewModel, IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
-        [RegularExpression(Constants.Models.Party.NameRegExPattern)]
+        [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
+        [Display(Name = "Up-party name (client ID)")]
         public string Name { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
+        [Display(Name = "Your notes")]
         public string Note { get; set; }
 
-        [Required]
-        public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
+        public bool IsManual { get; set; }
+
+        public bool AutomaticStopped { get; set; }
 
         [Range(Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMin, Constants.Models.OAuthUpParty.OidcDiscoveryUpdateRateMax)]
-        public int? OidcDiscoveryUpdateRate { get; set; } = 172800; // 2 days
+        [Display(Name = "Automatic update rate in seconds")]
+        public int OidcDiscoveryUpdateRate { get; set; } = 172800; // 2 days
 
         [Required]
         [MaxLength(Constants.Models.OAuthUpParty.AuthorityLength)]
+        [Display(Name = "Authority")]
         public string Authority { get; set; }
 
+        [Display(Name = "Edit issuer")]
         public bool? EditIssuersInAutomatic { get; set; }
 
         [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [Display(Name = "Issuers")]
         public List<string> Issuers { get; set; }
 
+        [Display(Name = "Issuer")]
+        public string FirstIssuer { get { return Issuers?.FirstOrDefault(); } set {} }
+
         /// <summary>
-        /// SP issuer / audience
+        /// Optional custom SP issuer / audience (default auto generated).
         /// Only used in relation to token exchange trust.
         /// </summary>
         [MaxLength(Constants.Models.Party.IssuerLength)]
+        [Display(Name = "Optional custom SP issuer / audience used in token exchange trust (default auto generated)")]
         public string SpIssuer { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
+        [Display(Name = "Keys")]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
         /// <summary>
-        /// OAuth up client.
+        /// OIDC up client.
         /// </summary>
         [Required]
-        public OAuthUpClient Client { get; set; }
+        [ValidateComplexType]
+        public OAuthUpClientViewModel Client { get; set; }
 
         /// <summary>
         /// Claim transforms.
         /// </summary>
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
-        public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+        public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         [Display(Name = "Disable user authentication trust")]
         public bool DisableUserAuthenticationTrust { get; set; }
@@ -62,37 +74,9 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (!DisableUserAuthenticationTrust)
-            {
-                results.Add(new ValidationResult($"The field {nameof(DisableUserAuthenticationTrust)} has to be false. User authentication not supported.", new[] { nameof(DisableUserAuthenticationTrust) }));
-            }
-
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
                 results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
-            }
-
-            if (UpdateState == PartyUpdateStates.Manual)
-            {
-                if (Issuers?.Count(i => !string.IsNullOrWhiteSpace(i)) <= 0)
-                {
-                    results.Add(new ValidationResult($"Require at least one issuer in '{nameof(Issuers)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Issuers) }));
-                }
-
-                if (Keys?.Count <= 0)
-                {
-                    results.Add(new ValidationResult($"Require at least one key in '{nameof(Keys)}'. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.",
-                        new[] { nameof(Keys) }));
-                }
-            }
-            else
-            {
-                if (!OidcDiscoveryUpdateRate.HasValue)
-                {
-                    results.Add(new ValidationResult($"Require '{nameof(OidcDiscoveryUpdateRate)}'. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", 
-                        new[] { nameof(OidcDiscoveryUpdateRate) }));
-                }
             }
             return results;
         }

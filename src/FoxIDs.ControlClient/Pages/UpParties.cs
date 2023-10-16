@@ -90,6 +90,10 @@ namespace FoxIDs.Client.Pages
                 {
                     upParties.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
+                else if (dp.Type == PartyTypes.OAuth2)
+                {
+                    upParties.Add(new GeneralOAuthUpPartyViewModel(dp));
+                }
                 else if (dp.Type == PartyTypes.Oidc)
                 {
                     upParties.Add(new GeneralOidcUpPartyViewModel(dp));
@@ -113,6 +117,13 @@ namespace FoxIDs.Client.Pages
                 loginUpParty.CreateMode = true;
                 loginUpParty.Edit = true;
                 upParties.Add(loginUpParty);
+            }
+            else if (type == PartyTypes.OAuth2)
+            {
+                var oauthUpParty = new GeneralOAuthUpPartyViewModel();
+                oauthUpParty.CreateMode = true;
+                oauthUpParty.Edit = true;
+                upParties.Add(oauthUpParty);
             }
             else if (type == PartyTypes.Oidc)
             {
@@ -159,6 +170,10 @@ namespace FoxIDs.Client.Pages
             if (upParty.Type == PartyTypes.Login)
             {
                 return $"Login - {upParty.Name}";
+            }
+            else if (upParty.Type == PartyTypes.OAuth2)
+            {
+                return $"OAuth 2.0 - {upParty.Name}";
             }
             else if (upParty.Type == PartyTypes.Oidc)
             {

@@ -1,11 +1,18 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using FoxIDs.Models.Api;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
-namespace FoxIDs.Models.Api
+namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OAuthUpClient
+    public class OAuthUpClientViewModel 
     {
+        // Link to referring party.
+        [JsonIgnore]
+        public OAuthUpPartyViewModel Party { get; set; }
+
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [Display(Name = "Optional custom SP client ID (default the party name)")]
         public string SpClientId { get; set; }

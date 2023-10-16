@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcUpImportClientKeyViewModel
+    public class OAuthUpImportClientKeyViewModel
     {
         public string ClientKeyFileStatus { get; set; } = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
 

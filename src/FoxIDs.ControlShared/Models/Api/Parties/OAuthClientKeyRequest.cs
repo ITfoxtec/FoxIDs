@@ -4,12 +4,12 @@ using System.ComponentModel.DataAnnotations;
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Oidc client key import request.
+    /// OAuth client key import request.
     /// </summary>
-    public class OidcClientKeyRequest : IValidatableObject
+    public class OAuthClientKeyRequest : IValidatableObject
     {
         /// <summary>
-        /// OAuth 2.0 or OIDC party name.
+        /// OAuth 2.0 party name.
         /// </summary>
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

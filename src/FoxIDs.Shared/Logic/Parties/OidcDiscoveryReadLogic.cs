@@ -12,7 +12,7 @@ using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryReadLogic
+    public class OidcDiscoveryReadLogic<MParty, MClient> where MParty : OAuthUpParty<MClient> where MClient : OAuthUpClient
     {
         private readonly IHttpClientFactory httpClientFactory;
 
@@ -21,7 +21,7 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        public async Task PopulateModelAsync(OAuthUpParty party)
+        public async Task PopulateModelAsync(MParty party)
         {
             (var oidcDiscovery, var jsonWebKeySet) = await GetOidcDiscoveryAndValidateAsync(party.Authority);
 

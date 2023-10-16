@@ -6,6 +6,7 @@ using FoxIDs.Infrastructure.Security;
 using FoxIDs.Logic;
 using FoxIDs.Logic.Seed;
 using FoxIDs.MappingProfiles;
+using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -41,13 +42,18 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<UsageLogLogic>();            
 
-            services.AddTransient<ValidateApiModelGenericPartyLogic>();
             services.AddTransient<ValidateModelGenericPartyLogic>();
+
+            services.AddTransient<ValidateApiModelGenericPartyLogic>();
             services.AddTransient<ValidateApiModelLoginPartyLogic>();
             services.AddTransient<ValidateApiModelOAuthOidcPartyLogic>();
-            services.AddTransient<OidcDiscoveryReadLogic>();
-            services.AddTransient<OidcDiscoveryReadUpLogic>();
             services.AddTransient<ValidateApiModelSamlPartyLogic>();
+
+            services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcDiscoveryReadUpLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient>>();
+
             services.AddTransient<SamlMetadataReadLogic>();
             services.AddTransient<SamlMetadataReadUpLogic>();
 

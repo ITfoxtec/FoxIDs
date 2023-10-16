@@ -348,7 +348,7 @@
 </PageEditForm>
 
 <Modal @ref="importClientKeyModal" Title="Import client certificate">
-    <PageEditForm @ref="importClientKeyForm" TModel="OidcUpImportClientKeyViewModel">
+    <PageEditForm @ref="importClientKeyForm" TModel="OAuthUpImportClientKeyViewModel">
         <div class="modal-body">
             <FInputPassword @bind-Value="importClientKeyForm.Model.Password" For="@(() => importClientKeyForm.Model.Password)" />
             <div class="form-group active-group active">

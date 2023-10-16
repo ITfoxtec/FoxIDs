@@ -15,14 +15,14 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// Abstract OAuth 2.0 client secret for down-party API.
     /// </summary>
-    public abstract class GenericClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : TenantApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public abstract class GenericOAuthClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : TenantApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly SecretHashLogic secretHashLogic;
 
-        public GenericClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
+        public GenericOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;

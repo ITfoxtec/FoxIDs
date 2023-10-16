@@ -14,7 +14,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// OIDC client secret for down-party API.
     /// </summary>
-    public class TOidcClientSecretDownPartyController : GenericClientSecretDownPartyController<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>
+    public class TOidcClientSecretDownPartyController : GenericOAuthClientSecretDownPartyController<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>
     {
         public TOidcClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger, mapper, tenantRepository, secretHashLogic)
         { }

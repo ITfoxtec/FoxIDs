@@ -10,6 +10,7 @@ namespace FoxIDs.Client.Services
     {
         private const string filterApiUri = "api/{tenant}/{track}/!filterupparty";
         private const string loginApiUri = "api/{tenant}/{track}/!loginupparty";
+        private const string oauthApiUri = "api/{tenant}/{track}/!oauthupparty";
         private const string oidcApiUri = "api/{tenant}/{track}/!oidcupparty";
         private const string oidcClientKeyApiUri = "api/{tenant}/{track}/!oidcclientkeyupparty";
         private const string samlApiUri = "api/{tenant}/{track}/!samlupparty";
@@ -26,13 +27,18 @@ namespace FoxIDs.Client.Services
         public async Task<LoginUpParty> UpdateLoginUpPartyAsync(LoginUpParty party) => await PutResponseAsync<LoginUpParty, LoginUpParty>(loginApiUri, party);
         public async Task DeleteLoginUpPartyAsync(string name) => await DeleteAsync(loginApiUri, name);
 
+        public async Task<OAuthUpParty> GetOAuthUpPartyAsync(string name) => await GetAsync<OAuthUpParty>(oauthApiUri, name);
+        public async Task<OAuthUpParty> CreateOAuthUpPartyAsync(OAuthUpParty party) => await PostResponseAsync<OAuthUpParty, OAuthUpParty>(oauthApiUri, party);
+        public async Task<OAuthUpParty> UpdateOAuthUpPartyAsync(OAuthUpParty party) => await PutResponseAsync<OAuthUpParty, OAuthUpParty>(oauthApiUri, party);
+        public async Task DeleteOAuthUpPartyAsync(string name) => await DeleteAsync(oauthApiUri, name);
+
         public async Task<OidcUpParty> GetOidcUpPartyAsync(string name) => await GetAsync<OidcUpParty>(oidcApiUri, name);
         public async Task<OidcUpParty> CreateOidcUpPartyAsync(OidcUpParty party) => await PostResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
         public async Task<OidcUpParty> UpdateOidcUpPartyAsync(OidcUpParty party) => await PutResponseAsync<OidcUpParty, OidcUpParty>(oidcApiUri, party);
         public async Task DeleteOidcUpPartyAsync(string name) => await DeleteAsync(oidcApiUri, name);
 
-        public async Task<OidcClientKeyResponse> GetOidcClientKeyUpPartyAsync(string partyName) => await GetAsync<OidcClientKeyResponse>(oidcClientKeyApiUri, partyName, parmName: nameof(partyName));
-        public async Task<OidcClientKeyResponse> CreateOidcClientKeyUpPartyAsync(OidcClientKeyRequest keyRequest) => await PostResponseAsync<OidcClientKeyRequest, OidcClientKeyResponse>(oidcClientKeyApiUri, keyRequest);
+        public async Task<OAuthClientKeyResponse> GetOidcClientKeyUpPartyAsync(string partyName) => await GetAsync<OAuthClientKeyResponse>(oidcClientKeyApiUri, partyName, parmName: nameof(partyName));
+        public async Task<OAuthClientKeyResponse> CreateOidcClientKeyUpPartyAsync(OAuthClientKeyRequest keyRequest) => await PostResponseAsync<OAuthClientKeyRequest, OAuthClientKeyResponse>(oidcClientKeyApiUri, keyRequest);
         public async Task DeleteOidcClientKeyUpPartyAsync(string name) => await DeleteAsync(oidcClientKeyApiUri, name, parmName: nameof(name));
 
         public async Task<SamlUpParty> GetSamlUpPartyAsync(string name) => await GetAsync<SamlUpParty>(samlApiUri, name);

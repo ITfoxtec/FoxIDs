@@ -47,7 +47,9 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<OidcDiscoveryExposeDownLogic<OAuthDownParty, OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>();
-            services.AddTransient<OidcDiscoveryReadLogic>();
+            services.AddTransient<OidcDiscoveryReadLogic<OAuthUpParty, OAuthUpClient>>();
+            services.AddTransient<OidcDiscoveryReadLogic<OidcUpParty, OidcUpClient>>();
+            services.AddTransient<OidcDiscoveryReadUpLogic<OAuthUpParty, OAuthUpClient>>();
             services.AddTransient<OidcDiscoveryReadUpLogic<OidcUpParty, OidcUpClient>>();
 
             services.AddTransient<OAuthJwtDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
@@ -68,6 +70,7 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<OAuthResourceScopeDownLogic<OAuthDownClient, OAuthDownScope, OAuthDownClaim>>();
             services.AddTransient<OAuthResourceScopeDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
 
+            services.AddTransient<ClientKeySecretLogic<OAuthUpClient>>();
             services.AddTransient<ClientKeySecretLogic<OidcUpClient>>();
             services.AddTransient<OidcJwtDownLogic<OidcDownClient, OidcDownScope, OidcDownClaim>>();
             services.AddTransient<OidcJwtUpLogic<OidcUpParty, OidcUpClient>>();

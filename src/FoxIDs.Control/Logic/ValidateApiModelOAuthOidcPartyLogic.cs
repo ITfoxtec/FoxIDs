@@ -25,6 +25,15 @@ namespace FoxIDs.Logic
             this.tenantService = tenantService;
         }
 
+        public bool ValidateApiModel(ModelStateDictionary modelState, Api.OAuthUpParty party)
+        {
+            var isValid = true;
+
+            // Space to validate
+
+            return isValid;
+        }
+
         public bool ValidateApiModel(ModelStateDictionary modelState, Api.OidcUpParty party)
         {
             var isValid = true;

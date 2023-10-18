@@ -28,7 +28,7 @@ namespace FoxIDs.Client.Pages.Components
 
         protected List<string> responseTypeItems = new List<string> (Constants.Oidc.DefaultResponseTypes);
         private Modal importClientKeyModal;
-        private PageEditForm<OidcUpImportClientKeyViewModel> importClientKeyForm;
+        private PageEditForm<OAuthUpImportClientKeyViewModel> importClientKeyForm;
 
         protected override async Task OnInitializedAsync()
         {
@@ -58,7 +58,7 @@ namespace FoxIDs.Client.Pages.Components
             }
         }
 
-        private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty, OidcClientKeyResponse clientKeyResponse)
+        private OidcUpPartyViewModel ToViewModel(GeneralOidcUpPartyViewModel generalOidcUpParty, OidcUpParty oidcUpParty, OAuthClientKeyResponse clientKeyResponse)
         {
 
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
@@ -258,7 +258,7 @@ namespace FoxIDs.Client.Pages.Components
                     }
 
                     var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OidcClientKeyRequest { Type = ClientKeyTypes.KeyVaultImport, PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
+                    var clientKeyResponse = await UpPartyService.CreateOidcClientKeyUpPartyAsync(new OAuthClientKeyRequest { Type = ClientKeyTypes.KeyVaultImport, PartyName = UpParty.Name, Certificate = base64UrlEncodeCertificate, Password = importClientKeyForm.Model.Password });
 
                     oidcUpParty.Form.Model.Client.PublicClientKeyInfo = importClientKeyForm.Model.PublicClientKeyInfo = new KeyInfoViewModel
                     {

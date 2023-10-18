@@ -108,11 +108,11 @@
             }
         }
 
-        @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
+        @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
             <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oidcUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
         }
-        @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
+        @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
             <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oidcUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
         }
@@ -275,7 +275,7 @@
                         }
                     }
 
-                    @if (!oidcUpParty.Form.Model.DisableTokenExchangeTrust && UpParty.ShowAdvanced)
+                    @if (!oidcUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust))
                     {
                         <FInputText @bind-Value="oidcUpParty.Form.Model.SpIssuer" For="@(() => oidcUpParty.Form.Model.SpIssuer)" />
                     }
@@ -348,7 +348,7 @@
 </PageEditForm>
 
 <Modal @ref="importClientKeyModal" Title="Import client certificate">
-    <PageEditForm @ref="importClientKeyForm" TModel="OidcUpImportClientKeyViewModel">
+    <PageEditForm @ref="importClientKeyForm" TModel="OAuthUpImportClientKeyViewModel">
         <div class="modal-body">
             <FInputPassword @bind-Value="importClientKeyForm.Model.Password" For="@(() => importClientKeyForm.Model.Password)" />
             <div class="form-group active-group active">

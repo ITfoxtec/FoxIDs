@@ -1,9 +1,9 @@
 ﻿namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Oidc client key import response.
+    /// OAuth client key import response.
     /// </summary>
-    public class OidcClientKeyResponse : INameValue
+    public class OAuthClientKeyResponse : INameValue
     {
         /// <summary>
         /// Primary keys external name.

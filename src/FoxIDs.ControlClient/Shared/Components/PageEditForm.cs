@@ -95,6 +95,7 @@ namespace FoxIDs.Client.Shared.Components
         private async Task OnSubmitAsync()
         {
             error = null;
+            validationMessageStore.Clear();
             var isValid = EditContext.Validate();
 
             if (isValid)

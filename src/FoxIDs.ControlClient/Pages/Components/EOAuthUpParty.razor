@@ -125,7 +125,7 @@
 
                 @if (oauthUpParty.Form.Model.Client != null)
                 {
-                    @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust && UpParty.ShowAdvanced)
+                    @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oauthUpParty.Form.Model.DisableUserAuthenticationTrust))
                     {
                         <FInputText @bind-Value="oauthUpParty.Form.Model.SpIssuer" For="@(() => oauthUpParty.Form.Model.SpIssuer)" />
                     }

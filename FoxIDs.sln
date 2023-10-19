@@ -53,9 +53,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\email.md = docs\email.md
 		docs\faq.md = docs\faq.md
 		docs\getting-started.md = docs\getting-started.md
-		docs\howto-saml-2.0-context-handler.md = docs\howto-saml-2.0-context-handler.md
-		docs\howto-oidc-foxids.md = docs\howto-oidc-foxids.md
 		docs\howto-connect.md = docs\howto-connect.md
+		docs\howto-oidc-foxids.md = docs\howto-oidc-foxids.md
+		docs\howto-saml-2.0-context-handler.md = docs\howto-saml-2.0-context-handler.md
 		docs\howto-tracklink-foxids.md = docs\howto-tracklink-foxids.md
 		docs\index.md = docs\index.md
 		docs\language.md = docs\language.md
@@ -189,6 +189,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\upload-risk-passwords-seed-client.png = docs\images\upload-risk-passwords-seed-client.png
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -227,6 +229,10 @@ Global
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -241,6 +247,7 @@ Global
 		{56C8921F-64BA-4AD0-A2EA-BAE0A183269F} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{CB88126F-3F28-4511-93E1-2454E239E9C7} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
+		{AF16CC91-2EEA-4790-8672-9ACCA430991D} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

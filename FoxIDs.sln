@@ -189,7 +189,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\upload-risk-passwords-seed-client.png = docs\images\upload-risk-passwords-seed-client.png
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -26,6 +26,8 @@ Context Handler requires all requests (authn and logout) to be signed with OCES 
 
 An OCES certificate is valid for three years. After that, it must be updated manually.
 
+> If the `.P12` file fails, you can convert it to a `.PFX` file with the tools/FoxIDs.ConvertCertificateTool.
+
 Add the `.P12` OCES or OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) the track to be used for Context Handler as Relying Party (RP) or Identity Provider (IdP)
 2. Select the Certificates tab

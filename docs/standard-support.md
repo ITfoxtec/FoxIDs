@@ -4,6 +4,7 @@
   - [RFC 7519](https://tools.ietf.org/html/rfc7519)
 - OpenID Connect 1.0 supported in both down-parties and up-parties
    - [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
+     - Client Authentication methods supported: client_secret_basic, client_secret_post, private_key_jwt and none
    - [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html)
    - [OpenID Connect Session Management 1.0 ](http://openid.net/specs/openid-connect-session-1_0.html)
    - [OpenID Connect Front-Channel Logout 1.0](http://openid.net/specs/openid-connect-frontchannel-1_0.html)

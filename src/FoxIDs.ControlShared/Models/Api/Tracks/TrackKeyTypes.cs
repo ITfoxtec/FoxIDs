@@ -2,8 +2,8 @@
 {
     public enum TrackKeyTypes
     {
-        Contained,
-        KeyVaultRenewSelfSigned,
-        KeyVaultImport,
+        Contained = 0,
+        KeyVaultRenewSelfSigned = 1,
+        KeyVaultImport = 2,
     }
 }

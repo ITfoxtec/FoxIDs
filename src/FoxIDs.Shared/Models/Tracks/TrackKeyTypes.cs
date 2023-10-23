@@ -5,10 +5,10 @@ namespace FoxIDs.Models
     public enum TrackKeyTypes
     {
         [EnumMember(Value = "contained")]
-        Contained,
+        Contained = 0,
         [EnumMember(Value = "key_vault_renew_self_signed")]
-        KeyVaultRenewSelfSigned,
+        KeyVaultRenewSelfSigned = 1,
         [EnumMember(Value = "key_vault_upload")]
-        KeyVaultImport,
+        KeyVaultImport = 2,
     }
 }

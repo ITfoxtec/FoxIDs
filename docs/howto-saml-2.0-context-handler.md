@@ -47,7 +47,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 **1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Up-parties
-2. Click Create up-party and then SMAL 2.0
+2. Click Create up-party and then SAML 2.0
 3. Add the name
 4. Add the Context Handler IdP metadata in the Metadata URL field
 5. Click Create
@@ -134,7 +134,7 @@ You are done. The SAML 2.0 up-party can now be used as an up-party for down-part
 **1 - Start by creating an SAML 2.0 down-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Down-parties
-2. Click Create down-party and then SMAL 2.0
+2. Click Create down-party and then SAML 2.0
 3. Add the name
 4. Select where the user should be allowed to login in Allow up-party names
 

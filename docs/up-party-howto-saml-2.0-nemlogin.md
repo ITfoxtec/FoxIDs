@@ -55,7 +55,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 **1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Up-parties
-2. Click Create up-party and then SMAL 2.0
+2. Click Create up-party and then SAML 2.0
 3. Add the name
 4. Select show advanced settings
 5. Select the dot URL binding pattern

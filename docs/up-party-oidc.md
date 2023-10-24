@@ -35,6 +35,8 @@ FoxIDs automatically read future updates. If the endpoint become unavailable for
 
 Default the up-party is configured for Authorization Code Flow, to use PKCE and read claim from the external access token. These settings can be changed.
 
+The default client authentication method is `client secret post` and can be changed to `client secret basic` or `private key JWT`. Client authentication method none is supported with PKCE.
+
 The scopes the FoxIDs up-party should send in the request to the external OP can be configured. E.g, `profile` or `email`.
 
 The up-party only transfer default claims and configured claim to the down-partis. 

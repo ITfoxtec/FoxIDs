@@ -4,7 +4,7 @@
   - [RFC 7519](https://tools.ietf.org/html/rfc7519)
 - OpenID Connect 1.0 supported in both down-parties and up-parties
    - [OpenID Connect Core 1.0](http://openid.net/specs/openid-connect-core-1_0.html)
-     - Client Authentication methods supported: client_secret_basic, client_secret_post, private_key_jwt and none
+     - Client Authentication methods: client_secret_basic, client_secret_post, private_key_jwt and none with PKCE
    - [OpenID Connect Discovery 1.0](https://openid.net/specs/openid-connect-discovery-1_0.html)
    - [OpenID Connect Session Management 1.0 ](http://openid.net/specs/openid-connect-session-1_0.html)
    - [OpenID Connect Front-Channel Logout 1.0](http://openid.net/specs/openid-connect-frontchannel-1_0.html)
@@ -13,6 +13,7 @@
   - [RFC 7636](https://tools.ietf.org/html/rfc7636)
 - OAuth 2.0 limited to down-party [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4)
   - [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)
+     - Client Authentication methods: client_secret_basic, client_secret_post and private_key_jwt
 - OAuth 2.0 Client Authentication with Assertion 
   - [RFC7523](https://datatracker.ietf.org/doc/html/rfc7523)
   - [RFC7521, chapter 4.2](https://datatracker.ietf.org/doc/html/rfc7521#section-4.2)
@@ -22,3 +23,8 @@
   - [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf)
 - Two-factor authentication (2FA) with One-Time Password (OPT)
   - [RFC 6238](https://datatracker.ietf.org/doc/html/rfc6238)
+- Token exchange 
+  - [RFC 8693](https://tools.ietf.org/html/rfc8693)
+       - Exchange JWT access token to JWT access token
+       - Exchange SAML 2.0 token to JWT access token
+       - Client Authentication methods: client_secret_basic, client_secret_post and private_key_jwt

@@ -13,7 +13,12 @@ The sample Visual Studio solution contain the following down-party and up-party 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
 Sample application showing login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
-Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
+
+Show API calls:
+
+ - Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token. 
+ - Show how to call the [API1 sample](#aspnetcoreapi1sample) secured with an access token which again call [API2 sample](#aspnetcoreapi2sample). 
+ - Show how to obtained an access token by token exchange and call the [API2 sample](#aspnetcoreapi2sample) secured with the obtained access token, the client use client authentication method client_secret_post.
 
 The possible up-parties is configured in the down-party as allowed up-parties. There can be configured one to many allowed up-parties. 
 All the configured up-parties is selected with a star indited of an up-party name.
@@ -43,6 +48,8 @@ Local development domain and port: `https://localhost:44341`
 ### AspNetCoreSamlSample
 
 Sample application showing login and logout with SAML 2.0 as a relying party.
+
+Show how to obtained an access token by token exchange and call the [API1 sample](#aspnetcoreapi1sample) secured with the obtained access token, the client use client authentication method private_key_jwt (certificate).
 
 Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and if configured [AD FS using SAML 2.0](saml-2.0.md#connecting-ad-fs).
 
@@ -86,7 +93,7 @@ Local development domain and port: `https://localhost:44347`
 
 Sample API showing how to secure an API with an access token and how to restrict access by a scope.
 
-The API calls [API2 sample](#aspnetcoreapi2sample) secured with an access token obtained with token exchange and client authentication method private_key_jwt (certificate), 
+The API calls [API2 sample](#aspnetcoreapi2sample) secured with an access token obtained by token exchange and the client use client authentication method private_key_jwt (certificate).
 
 Local development domain and port: `https://localhost:44344`
 

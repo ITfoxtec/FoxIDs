@@ -31,19 +31,9 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.JwtTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.JwtTypeLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                if (Constants.EmbeddedJwtToken.JwtTokenClaims.Any(claim.Type.Contains))
+                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
                 {
-                    if (claim.Value?.Length > Constants.EmbeddedJwtToken.ValueLength)
-                    {
-                        throw new OAuthRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.EmbeddedJwtToken.ValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                    }
-                }
-                else
-                {
-                    if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
-                    {
-                        throw new OAuthRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                    }
+                    throw new OAuthRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
             }
             return claims;

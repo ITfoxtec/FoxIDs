@@ -190,27 +190,13 @@ namespace FoxIDs.Logic
             var truncateClaims = new List<Claim>();
             foreach (var claim in jwtClaims)
             {
-                if (Constants.EmbeddedJwtToken.JwtTokenClaims.Contains(claim.Type))
+                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
                 {
-                    if (claim.Value?.Length > Constants.EmbeddedJwtToken.ValueLength)
-                    {
-                        truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.EmbeddedJwtToken.ValueLength), claim.ValueType, claim.Issuer);
-                    }
-                    else
-                    {
-                        truncateClaims.Add(claim);
-                    }
+                    truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ValueLength), claim.ValueType, claim.Issuer);
                 }
                 else
                 {
-                    if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
-                    {
-                        truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ValueLength), claim.ValueType, claim.Issuer);
-                    }
-                    else
-                    {
-                        truncateClaims.Add(claim);
-                    }
+                    truncateClaims.Add(claim);
                 }
             }
             return truncateClaims;

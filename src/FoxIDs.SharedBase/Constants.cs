@@ -286,7 +286,7 @@ namespace FoxIDs
                 /// <summary>
                 /// JWT and SAML claim value max length.
                 /// </summary>
-                public const int ValueLength = 1000;               
+                public const int ValueLength = 8000;               
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -676,15 +676,6 @@ namespace FoxIDs
             /// Default SAML claims.
             /// </summary>
             public readonly static string[] SamlClaims = { ClaimTypes.NameIdentifier, Saml2ClaimTypes.NameIdFormat, Saml2ClaimTypes.SessionIndex, ClaimTypes.Upn, ClaimTypes.AuthenticationInstant, ClaimTypes.AuthenticationMethod, SamlClaimTypes.UpParty, SamlClaimTypes.UpPartyType };
-        }
-
-        /// <summary>
-        /// JWT tokens embed as a claim in a token.
-        /// </summary>
-        public class EmbeddedJwtToken
-        {
-            public readonly static string[] JwtTokenClaims = { JwtClaimTypes.AccessToken };
-            public const int ValueLength = 4000;
         }
 
         public static class JwtClaimTypes

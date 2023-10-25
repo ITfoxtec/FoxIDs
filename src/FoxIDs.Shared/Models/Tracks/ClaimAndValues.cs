@@ -21,22 +21,10 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-
-            if (Constants.EmbeddedJwtToken.JwtTokenClaims.Any(Claim.Contains))
+            if (Claim.Length > Constants.Models.Claim.ValueLength)
             {
-                if (Claim.Length > Constants.EmbeddedJwtToken.ValueLength)
-                {
-                    results.Add(new ValidationResult($"Claim '{Claim}' value is too long, maximum length of '{Constants.EmbeddedJwtToken.ValueLength}'."));
-                }
+                results.Add(new ValidationResult($"Claim '{Claim}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'."));
             }
-            else
-            {
-                if (Claim.Length > Constants.Models.Claim.ValueLength)
-                {
-                    results.Add(new ValidationResult($"Claim '{Claim}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'."));
-                }
-            }
-
             return results;
         }
     }

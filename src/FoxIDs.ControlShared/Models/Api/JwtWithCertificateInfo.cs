@@ -1,5 +1,4 @@
 ﻿using ITfoxtec.Identity.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {

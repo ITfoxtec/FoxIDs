@@ -9,6 +9,10 @@ namespace FoxIDs.Models
     public class OidcDownClient : OidcDownClient<OidcDownScope, OidcDownClaim> { }
     public class OidcDownClient<TScope, TClaim> : OAuthDownClient<TScope, TClaim> where TScope : OidcDownScope<TClaim> where TClaim : OidcDownClaim
     {
+        [Length(Constants.Models.OidcDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
+        [JsonProperty(PropertyName = "response_types")]
+        public override List<string> ResponseTypes { get; set; }
+
         [Length(Constants.Models.OidcDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [JsonProperty(PropertyName = "redirect_uris")]
         public override List<string> RedirectUris { get; set; }

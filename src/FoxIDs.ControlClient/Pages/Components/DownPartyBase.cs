@@ -35,6 +35,9 @@ namespace FoxIDs.Client.Pages.Components
         [Inject]
         public DownPartyService DownPartyService { get; set; }
 
+        [Inject]
+        public HelpersService HelpersService { get; set; }
+
         [Parameter]
         public EventCallback<GeneralDownPartyViewModel> OnStateHasChanged { get; set; }
 

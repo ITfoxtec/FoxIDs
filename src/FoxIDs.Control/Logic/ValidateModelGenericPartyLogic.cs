@@ -1,11 +1,9 @@
 ﻿using FoxIDs.Infrastructure;
-using Api = FoxIDs.Models.Api;
 using FoxIDs.Models;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -13,40 +11,17 @@ using System;
 
 namespace FoxIDs.Logic
 {
-    public class ValidateGenericPartyLogic : LogicBase
+    public class ValidateModelGenericPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
         private readonly ClaimTransformValidationLogic claimTransformValidationLogic;
 
-        public ValidateGenericPartyLogic(TelemetryScopedLogger logger, UpPartyCacheLogic upPartyCacheLogic, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateModelGenericPartyLogic(TelemetryScopedLogger logger, UpPartyCacheLogic upPartyCacheLogic, ClaimTransformValidationLogic claimTransformValidationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.upPartyCacheLogic = upPartyCacheLogic;
             this.claimTransformValidationLogic = claimTransformValidationLogic;
-        }
-
-        public bool ValidateApiModelClaimTransforms<T>(ModelStateDictionary modelState, List<T> claimTransforms) where T : Api.ClaimTransform
-        {
-            var isValid = true;
-            try
-            {
-                if (claimTransforms?.Count() > 0)
-                {
-                    var duplicatedOrderNumber = claimTransforms.GroupBy(ct => ct.Order as int?).Where(g => g.Count() > 1).Select(g => g.Key).FirstOrDefault();
-                    if (duplicatedOrderNumber >= 0)
-                    {
-                        throw new ValidationException($"Duplicated claim transform order number '{duplicatedOrderNumber}'");
-                    }
-                }
-            }
-            catch (ValidationException vex)
-            {
-                isValid = false;
-                logger.Warning(vex);
-                modelState.TryAddModelError(nameof(Api.OAuthDownParty.ClaimTransforms).ToCamelCase(), vex.Message);
-            }
-            return isValid;
         }
 
         public async Task<bool> ValidateModelAllowUpPartiesAsync(ModelStateDictionary modelState, string propertyName, DownParty downParty)
@@ -60,10 +35,14 @@ namespace FoxIDs.Logic
                     {
                         var upParty = await upPartyCacheLogic.GetUpPartyAsync(upPartyLink.Name);
                         upPartyLink.Type = upParty.Type;
+                        upPartyLink.Issuers = upParty.ReadIssuers;
+                        upPartyLink.SpIssuer = upParty.SpIssuer;
                         upPartyLink.HrdDomains = upParty.HrdDomains;
                         upPartyLink.HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain;
                         upPartyLink.HrdDisplayName = upParty.HrdDisplayName;
                         upPartyLink.HrdLogoUrl = upParty.HrdLogoUrl;
+                        upPartyLink.DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust;
+                        upPartyLink.DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust;
                     }
                     catch (CosmosDataException ex)
                     {

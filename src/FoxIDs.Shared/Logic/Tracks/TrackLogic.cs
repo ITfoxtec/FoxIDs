@@ -23,9 +23,9 @@ namespace FoxIDs.Logic
             this.upPartyCacheLogic = upPartyCacheLogic;
         }
 
-        public async Task CreateTrackDocumentAsync(Track mTrack, TrackKeyType keyType, string tenantName = null, string trackName = null)
+        public async Task CreateTrackDocumentAsync(Track mTrack, TrackKeyTypes keyType, string tenantName = null, string trackName = null)
         {
-            if (keyType == TrackKeyType.Contained)
+            if (keyType == TrackKeyTypes.Contained)
             {
                 var certificate = await (RouteBinding.TenantName, mTrack.Name).CreateSelfSignedCertificateBySubjectAsync();
                 mTrack.Key = new TrackKey()
@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
                     Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } }
                 };
             }
-            else if (keyType == TrackKeyType.KeyVaultRenewSelfSigned)
+            else if (keyType == TrackKeyTypes.KeyVaultRenewSelfSigned)
             {
                 mTrack.Key = new TrackKey()
                 {

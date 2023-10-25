@@ -30,7 +30,6 @@ namespace FoxIDs.Client.Models.ViewModels
             {
                 results.AddRange(baseResults);
             }
-
             return results;
         }
     }

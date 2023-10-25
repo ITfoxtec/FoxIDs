@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>1.0.20.1</Version>
+		<Version>1.1.0.1</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -32,11 +32,11 @@
 	<ItemGroup>
 		<FrameworkReference Include="Microsoft.AspNetCore.App" />
 		<PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
-		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.32.3" />
+		<PackageReference Include="Microsoft.Azure.Cosmos" Version="3.35.4" />
 		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.5.1" />
 		<PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.6.2" />
-		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.4" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.12" />
 		<PackageReference Include="SendGrid" Version="9.28.1" />
 	</ItemGroup>
 

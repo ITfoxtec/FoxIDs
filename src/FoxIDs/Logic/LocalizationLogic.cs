@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
 
         private string AddResourceId(int id, string value)
         {
-            if (RouteBinding.ShowResourceId)
+            if (RouteBinding?.ShowResourceId == true)
             {
                 return $"[{id}]{value}";
             }

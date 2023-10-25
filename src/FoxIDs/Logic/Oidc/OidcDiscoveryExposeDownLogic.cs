@@ -41,8 +41,10 @@ namespace FoxIDs.Logic
                 EndSessionEndpoint = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, Constants.Routes.OAuthController, Constants.Endpoints.EndSession),
                 JwksUri = UrlCombine.Combine(HttpContext.GetHostWithTenantAndTrack(), RouteBinding.PartyNameAndBinding, IdentityConstants.OidcDiscovery.Path, IdentityConstants.OidcDiscovery.Keys),
                 FrontchannelLogoutSupported = true,
-                FrontchannelLogoutSessionSupported = true
-            };
+                FrontchannelLogoutSessionSupported = true,
+                TokenEndpointAuthMethodsSupported = new[] { IdentityConstants.TokenEndpointAuthMethods.ClientSecretPost, IdentityConstants.TokenEndpointAuthMethods.ClientSecretBasic, IdentityConstants.TokenEndpointAuthMethods.PrivateKeyJwt },
+                TokenEndpointAuthSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 }
+        };
 
             if (party?.Client != null)
             {

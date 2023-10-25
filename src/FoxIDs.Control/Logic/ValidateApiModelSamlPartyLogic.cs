@@ -11,11 +11,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Logic
 {
-    public class ValidateSamlPartyLogic : LogicBase
+    public class ValidateApiModelSamlPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
 
-        public ValidateSamlPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelSamlPartyLogic(TelemetryScopedLogger logger, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
         }

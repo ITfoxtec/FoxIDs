@@ -1,4 +1,5 @@
-﻿using FoxIDs.Models;
+﻿using FoxIDs.Infrastructure;
+using FoxIDs.Models;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Tokens;
 using Microsoft.AspNetCore.Http;
@@ -11,9 +12,9 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class JwtUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcJwtUpLogic<TParty, TClient> : OAuthJwtUpLogic<TParty, TClient> where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
-        public JwtUpLogic(IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcJwtUpLogic(TelemetryScopedLogger logger, ClientKeySecretLogic<TClient> clientKeySecretLogic, IHttpContextAccessor httpContextAccessor) : base(logger, clientKeySecretLogic, httpContextAccessor)
         { }
 
         public async Task<ClaimsPrincipal> ValidateIdTokenAsync(string idToken, string issuer, TParty party, string clientId)
@@ -35,26 +36,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        public async Task<ClaimsPrincipal> ValidateAccessTokenAsync(string accessToken, string issuer, TParty party, string clientId)
-        {
-            (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
-            try
-            {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, clientId, validateAudience: false));
-                return claimsPrincipal;
-            }
-            catch (Exception ex)
-            {
-                var ikex = GetInvalidKeyException(invalidKeys, ex);
-                if (ikex != null)
-                {
-                    throw ikex;
-                }
-                throw;
-            }
-        }
-
-        public Exception GetInvalidKeyException(IEnumerable<(JsonWebKey key, X509Certificate2 certificate)> invalidKeys, Exception ex)
+        private Exception GetInvalidKeyException(IEnumerable<(JsonWebKey key, X509Certificate2 certificate)> invalidKeys, Exception ex)
         {
             if (invalidKeys.Count() > 0)
             {

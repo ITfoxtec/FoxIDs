@@ -61,6 +61,9 @@ namespace FoxIDs.Client.Shared.Components
         public void UpdateModel(TModel model)
         {
             Model = model;
+            error = null;
+            EditContext = new EditContext(Model);
+            validationMessageStore = new ValidationMessageStore(EditContext);
         }
 
         public void SetError(string error)
@@ -76,16 +79,16 @@ namespace FoxIDs.Client.Shared.Components
             StateHasChanged();
         }
 
-        public void SetFieldError(string fieldname, string error)
+        public void SetFieldError(string fieldName, string error)
         {
             Console.WriteLine(error);
-            validationMessageStore.Add(EditContext.Field(fieldname), error);
+            validationMessageStore.Add(EditContext.Field(fieldName), error);
             EditContext.NotifyValidationStateChanged();
         }
 
-        public void ClearFieldError(string fieldname)
+        public void ClearFieldError(string fieldName)
         {
-            validationMessageStore.Clear(EditContext.Field(fieldname));
+            validationMessageStore.Clear(EditContext.Field(fieldName));
             EditContext.NotifyValidationStateChanged();
         }
 
@@ -116,8 +119,7 @@ namespace FoxIDs.Client.Shared.Components
             }
             else
             {
-                var validationMessages = EditContext.GetValidationMessages();
-                foreach(var message  in validationMessages)
+                foreach(var message in EditContext.GetValidationMessages())
                 {
                     Console.WriteLine(message);
                 }

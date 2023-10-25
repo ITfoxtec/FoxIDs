@@ -26,9 +26,9 @@ namespace FoxIDs.Logic
         private readonly SequenceLogic sequenceLogic;
         private readonly HrdLogic hrdLogic;
         private readonly SecurityHeaderLogic securityHeaderLogic;
-        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
+        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcRpInitiatedLogoutDownLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, SequenceLogic sequenceLogic, HrdLogic hrdLogic, SecurityHeaderLogic securityHeaderLogic, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
             this.sequenceLogic = sequenceLogic;
             this.hrdLogic = hrdLogic;
             this.securityHeaderLogic = securityHeaderLogic;
-            this.jwtDownLogic = jwtDownLogic;
+            this.oidcJwtDownLogic = oidcJwtDownLogic;
         }
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
@@ -166,7 +166,7 @@ namespace FoxIDs.Logic
         {
             if (!idToken.IsNullOrEmpty())
             {
-                var claimsPrincipal = await jwtDownLogic.ValidatePartyClientTokenAsync(client, idToken, validateLifetime: false);
+                var claimsPrincipal = await oidcJwtDownLogic.ValidatePartyClientTokenAsync(client, idToken, validateLifetime: false);
                 if (claimsPrincipal != null)
                 {
                     return (true, claimsPrincipal.FindFirstValue(JwtClaimTypes.SessionId), claimsPrincipal.Claims);

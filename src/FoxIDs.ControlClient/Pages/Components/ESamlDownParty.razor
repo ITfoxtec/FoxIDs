@@ -1,4 +1,5 @@
 ﻿@inherits DownPartyBase
+@using ITfoxtec.Identity.Saml2
 
 @{
     var samlDownParty = DownParty as GeneralSamlDownPartyViewModel;
@@ -182,6 +183,11 @@
                         <option value="@X509RevocationMode.NoCheck">No check</option>
                         <option value="@X509RevocationMode.Offline">Offline</option>
                         <option value="@X509RevocationMode.Online">Online</option>
+                    </FInputSelect>
+                    <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseSignType" For="@(() => samlDownParty.Form.Model.AuthnResponseSignType)">
+                        <option value="@Saml2AuthnResponseSignTypes.SignResponse">Sign response</option>
+                        <option value="@Saml2AuthnResponseSignTypes.SignAssertion">Sign assertion</option>
+                        <option value="@Saml2AuthnResponseSignTypes.SignAssertionAndResponse">Sign assertion and response</option>
                     </FInputSelect>
                     <FInputText @bind-Value="samlDownParty.Form.Model.IdPIssuer" For="@(() => samlDownParty.Form.Model.IdPIssuer)" />
                     <FInputNumber @bind-Value="samlDownParty.Form.Model.SubjectConfirmationLifetime" For="@(() => samlDownParty.Form.Model.SubjectConfirmationLifetime)" />

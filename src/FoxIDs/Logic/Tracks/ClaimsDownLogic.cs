@@ -185,19 +185,14 @@ namespace FoxIDs.Logic
 
         }
 
-        public List<Claim> TruncateIdTokenClaimValues(IEnumerable<Claim> jwtClaims)
-        {
-            return TruncateJwtClaimValues(jwtClaims, Constants.Models.Claim.IdTokenValueLength);
-        }
-
-        private List<Claim> TruncateJwtClaimValues(IEnumerable<Claim> jwtClaims, int claimValueMaxLength = Constants.Models.Claim.ValueLength)
+        private List<Claim> TruncateJwtClaimValues(IEnumerable<Claim> jwtClaims)
         {
             var truncateClaims = new List<Claim>();
             foreach (var claim in jwtClaims)
             {
-                if (claim.Value?.Length > claimValueMaxLength)
+                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
                 {
-                    truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, claimValueMaxLength), claim.ValueType, claim.Issuer);
+                    truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ValueLength), claim.ValueType, claim.Issuer);
                 }
                 else
                 {

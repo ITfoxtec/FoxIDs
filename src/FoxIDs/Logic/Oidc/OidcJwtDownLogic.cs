@@ -59,10 +59,8 @@ namespace FoxIDs.Logic
                 }
             }
 
-            var truncateIdTokenClaims = claimsOAuthDownLogic.TruncateIdTokenClaimValues(idTokenClaims);
-
-            logger.ScopeTrace(() => $"Down, JWT ID token claims '{truncateIdTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
-            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), client.ClientId, truncateIdTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
+            logger.ScopeTrace(() => $"Down, JWT ID token claims '{idTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), client.ClientId, idTokenClaims, expiresIn: (client as OidcDownClient).IdTokenLifetime, algorithm: algorithm);
             return await token.ToJwtString();
         }
     }

@@ -4,8 +4,13 @@ You can rune FoxIDs locally e.g., in Visual Studio on your development machine.
 
 If you like, you can clone the [FoxIDs GitHub repository](https://github.com/ITfoxtec/FoxIDs) and possible do pull requests.
  
+Solution description:
+
+- FoxIDs  
+  `https://localhost:44330`
+-
 FoxIDs  
-`https://localhost:44330`
+
 
 FoxIDs Control (Blazor WebAssembly Client and API)  
 `https://localhost:44331`

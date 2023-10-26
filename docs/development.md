@@ -1,5 +1,8 @@
 # Development
-//TODO
+
+You can rune FoxIDs locally e.g., in Visual Studio on your development machine. 
+
+If you like, you can clone the [FoxIDs GitHub repository](https://github.com/ITfoxtec/FoxIDs) and possible do pull requests.
  
 FoxIDs  
 `https://localhost:44330`

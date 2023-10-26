@@ -292,7 +292,11 @@ namespace FoxIDs
                 /// <summary>
                 /// JWT and SAML claim value max length.
                 /// </summary>
-                public const int ValueLength = 8000;               
+                public const int ValueLength = 8000;
+                /// <summary>
+                /// ID Token value max length.
+                /// </summary>
+                public const int IdTokenValueLength = 1000;
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;

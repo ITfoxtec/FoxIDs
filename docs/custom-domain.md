@@ -19,7 +19,7 @@ Custom domains is not supported in the master tenant and master tracks.
 ## FoxIDs.com
 Configuring a custom domain in your FoxIDs.com tenant.
 
-> Only sub domains is supported as custom domains, like e.g., `auth.some-domain.com`, `login.some-domain.com` or `auth.zyx.some-domain.com`
+> Only sub domains is supported as custom domains, like e.g., `id.some-domain.com`, `auth.some-domain.com`, `login.some-domain.com` or `id.zyx.some-domain.com`
 
 Steps:
 

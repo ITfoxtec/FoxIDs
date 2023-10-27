@@ -16,13 +16,13 @@ namespace FoxIDs.Logic
     {
         private readonly TelemetryScopedLogger logger;
         private readonly ITenantRepository tenantRepository;
-        private readonly JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic;
+        private readonly OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic;
 
-        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, JwtDownLogic<TClient, TScope, TClaim> jwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcUserInfoDownLogic(TelemetryScopedLogger logger, ITenantRepository tenantRepository, OidcJwtDownLogic<TClient, TScope, TClaim> oidcJwtDownLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.tenantRepository = tenantRepository;
-            this.jwtDownLogic = jwtDownLogic;
+            this.oidcJwtDownLogic = oidcJwtDownLogic;
         }
 
         public async Task<IActionResult> UserInfoRequestAsync(string partyId)
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
                 var accessToken = HttpContext.Request.Headers.GetAuthorizationHeaderBearer();
                 logger.ScopeTrace(() => $"Access token '{accessToken}'.");
 
-                var claimsPrincipal = await jwtDownLogic.ValidateTokenAsync(accessToken);
+                var claimsPrincipal = await oidcJwtDownLogic.ValidateTokenAsync(accessToken);
                 if (claimsPrincipal == null)
                 {
                     throw new Exception("Access token not valid.");

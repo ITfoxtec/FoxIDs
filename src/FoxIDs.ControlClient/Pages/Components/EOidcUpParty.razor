@@ -29,21 +29,24 @@
         }
         <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
 
-        <div class="mb-3 alert alert-info" role="alert">
-            @{
-                (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
-            }
-            <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
-            <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
-            <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
-        </div>
-        @if (UpParty.ShowAdvanced)
+        @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
         {
-            <FInputSelect @bind-Value="oidcUpParty.Form.Model.PartyBindingPattern" For="@(() => oidcUpParty.Form.Model.PartyBindingPattern)">
-                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
-                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
-                <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
-            </FInputSelect>
+            <div class="mb-3 alert alert-info" role="alert">
+                @{
+                    (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
+                }
+                <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
+                <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
+                <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
+            </div>
+            @if (UpParty.ShowAdvanced)
+            {
+                <FInputSelect @bind-Value="oidcUpParty.Form.Model.PartyBindingPattern" For="@(() => oidcUpParty.Form.Model.PartyBindingPattern)">
+                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
+                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
+                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
+                </FInputSelect>
+            }
         }
 
         <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
@@ -79,10 +82,8 @@
                                     @if (!keyInfo.Subject.IsNullOrEmpty())
                                     {
                                         <strong>@keyInfo.Subject</strong>
-
                                         <br />
                                         <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span>
-
                                         <br />
                                     }
                                     <span>Key id: @keyInfo.KeyId</span><br />
@@ -101,11 +102,19 @@
         @if (UpParty.ShowAdvanced)
         {
             <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
+            @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
+            {
+                <FInputToggle @bind-Value="oidcUpParty.Form.Model.EnableSingleLogout" For="@(() => oidcUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+            }
         }
 
-        @if (UpParty.ShowAdvanced)
+        @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="oidcUpParty.Form.Model.EnableSingleLogout" For="@(() => oidcUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oidcUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
+        }
+        @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
+        {
+            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oidcUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
         }
 
         @if (oidcUpParty.Form.Model.AutomaticStopped)
@@ -137,26 +146,29 @@
                     <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.ClaimsTransform))">Claim transform</button>
                 }
             </li>
-            <li class="nav-item">
-                @if (oidcUpParty.ShowSessionTab)
-                {
-                    <a class="nav-link active">Logout session</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout session</button>
-                }
-            </li>
-            <li class="nav-item">
-                @if (oidcUpParty.ShowHrdTab)
-                {
-                    <a class="nav-link active">Home Realm Discovery</a>
-                }
-                else
-                {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Hrd))">Home Realm Discovery</button>
-                }
-            </li>
+            @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust) 
+            {
+                <li class="nav-item">
+                    @if (oidcUpParty.ShowSessionTab)
+                    {
+                        <a class="nav-link active">Logout session</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Session))">Logout session</button>
+                    }
+                </li>
+                <li class="nav-item">
+                    @if (oidcUpParty.ShowHrdTab)
+                    {
+                        <a class="nav-link active">Home Realm Discovery</a>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcUpParty, OAuthTabTypes.Hrd))">Home Realm Discovery</button>
+                    }
+                </li>
+            }
         </ul>
 
         <div class="tab-content pt-3">
@@ -166,41 +178,118 @@
 
                 @if (oidcUpParty.Form.Model.Client != null)
                 {
-                    @if (UpParty.ShowAdvanced)
+                    @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust) 
                     {
-                        <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
+                        @if (UpParty.ShowAdvanced)
+                        {
+                            <FInputText @bind-Value="oidcUpParty.Form.Model.Client.SpClientId" For="@(() => oidcUpParty.Form.Model.Client.SpClientId)" />
+                        }
+
+                        <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Scopes" For="@(() => oidcUpParty.Form.Model.Client.Scopes)" DynamicFirstRow="true" />
+                        @if (UpParty.ShowAdvanced)
+                        {
+                            <OAuthAdditionalParameters Model="oidcUpParty.Form.Model.Client" />
+                        }
+                        <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
+                            <option value="@IdentityConstants.ResponseTypes.Code">@IdentityConstants.ResponseTypes.Code</option>
+                            <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                            <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                            <option value="@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                            <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
+                        </FInputSelect>
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnablePkce" For="@(() => oidcUpParty.Form.Model.Client.EnablePkce)" TextType="y.n" />
+                        @if (UpParty.ShowAdvanced)
+                        {
+                            <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ClientAuthenticationMethod" For="@(() => oidcUpParty.Form.Model.Client.ClientAuthenticationMethod)">
+                                <option value="@ClientAuthenticationMethods.ClientSecretBasic">Client secret basic</option>
+                                <option value="@ClientAuthenticationMethods.ClientSecretPost">Client secret post - default</option>
+                                <option value="@ClientAuthenticationMethods.PrivateKeyJwt">Private key JWT</option>
+                            </FInputSelect>
+                        }
+                        <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
+
+                        @if (UpParty.ShowAdvanced) 
+                        {
+                            @if (oidcUpParty.CreateMode)
+                            {
+                                <div class="form-group active-group active">
+                                    <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
+                                    <div class="font-italic alert alert-secondary" role="alert">
+                                        You need to create the up-party before it is possible to add a client certificate.
+                                    </div>
+                                </div>
+                            }
+                            else 
+                            {
+                                if (oidcUpParty.Form.Model.Client.PublicClientKeyInfo != null)
+                                {
+                                    <div class="pb-0 form-group active-group active">
+                                        <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
+                                        <ul class="list-group">
+                                            <li class="list-group-item p-0 bg-light">
+                                                <div class="row">
+                                                    <div class="col-11">
+                                                        <div class="d-flex">
+                                                            <div class="mr-auto p-2">
+                                                                @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject.IsNullOrEmpty())
+                                                                {
+                                                                    <strong>@oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject</strong>
+                                                                    <br />
+                                                                    <span class="@(oidcUpParty.Form.Model.Client.PublicClientKeyInfo.IsValid ? "" : "text-danger")">Valid from @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidFrom.ToShortDateString() to @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.ValidTo.ToShortDateString()</span>
+                                                                    <br />
+                                                                }
+                                                                <span>Key id: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.KeyId</span><br />
+                                                                @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
+                                                                {
+                                                                    <span>Thumbprint: @oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Thumbprint</span><br />
+                                                                }
+                                                                @if (!oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Subject.IsNullOrEmpty() && oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Key?.X5c?.Count > 0)
+                                                                {
+                                                                    <button type="button" class="btn btn-link" @onclick="@(async () => await DownloadPublicCertificateFileAsync(oidcUpParty.Form.Model.Client.PublicClientKeyInfo))"><span class="oi oi-cloud-download" aria-hidden="true"></span> Download public certificate</button>
+                                                                    <br />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-1 text-right">
+                                                        <button type="button" class="btn btn-link px-2" title="Remove" @onclick="@(async () => await RemoveClientKeyAsync(oidcUpParty, oidcUpParty.Form.Model.Client.PublicClientKeyInfo.Name))"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <button type="button" class="mb-3 btn btn-link" @onclick="@(() => ShowImportClientKeyPopup())">Import and replace client certificate</button>
+                                }
+                                else 
+                                {
+                                    <button type="button" class="mb-3 btn btn-link" @onclick="@(() => ShowImportClientKeyPopup())">Import client certificate</button>
+                                }
+                            }
+                        }
+                        @if (!oidcUpParty.CreateMode)
+                        {
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.UserInfoUrl" For="@(() => oidcUpParty.Form.Model.Client.UserInfoUrl)" />
+                            <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
+                        }
                     }
-                    <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Scopes" For="@(() => oidcUpParty.Form.Model.Client.Scopes)" DynamicFirstRow="true" />
-                    @if (UpParty.ShowAdvanced)
+
+                    @if (!oidcUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust))
                     {
-                        <OAuthAdditionalParameters Model="oidcUpParty.Form.Model.Client" />
+                        <FInputText @bind-Value="oidcUpParty.Form.Model.SpIssuer" For="@(() => oidcUpParty.Form.Model.SpIssuer)" />
                     }
-                    <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
-                        <option value="@IdentityConstants.ResponseTypes.Code">@IdentityConstants.ResponseTypes.Code</option>
-                        <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")</option>
-                        <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
-                        <option value="@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
-                        <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
-                    </FInputSelect>
-                    <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnablePkce" For="@(() => oidcUpParty.Form.Model.Client.EnablePkce)" TextType="y.n" />
-                    <FInputText @bind-Value="oidcUpParty.Form.Model.Client.ClientSecret" For="@(() => oidcUpParty.Form.Model.Client.ClientSecret)" />
-                    @if (!oidcUpParty.CreateMode)
-                    {
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.AuthorizeUrl" For="@(() => oidcUpParty.Form.Model.Client.AuthorizeUrl)" />
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.TokenUrl" For="@(() => oidcUpParty.Form.Model.Client.TokenUrl)" />
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.UserInfoUrl" For="@(() => oidcUpParty.Form.Model.Client.UserInfoUrl)" />
-                        <FFieldText @bind-Value="oidcUpParty.Form.Model.Client.EndSessionUrl" For="@(() => oidcUpParty.Form.Model.Client.EndSessionUrl)" />
-                    }
+
                     @if (UpParty.ShowAdvanced)
                     {
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseUserInfoClaims" For="@(() => oidcUpParty.Form.Model.Client.UseUserInfoClaims)" TextType="y.n" />
-                        if (!oidcUpParty.Form.Model.Client.UseUserInfoClaims)
+                        if (!oidcUpParty.Form.Model.Client.UseUserInfoClaims && !oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
                         {
                             <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.UseIdTokenClaims" For="@(() => oidcUpParty.Form.Model.Client.UseIdTokenClaims)" TextType="y.n" />
                         }
                     }
                     <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Client.Claims" For="@(() => oidcUpParty.Form.Model.Client.Claims)" DynamicFirstRow="true" />
-                    @if (UpParty.ShowAdvanced)
+                    @if (UpParty.ShowAdvanced && !oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
                     {
                         <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseMode" For="@(() => oidcUpParty.Form.Model.Client.ResponseMode)">
                             <option value="@IdentityConstants.ResponseModes.FormPost">form_post</option>
@@ -257,3 +346,45 @@
         <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
     </div>
 </PageEditForm>
+
+<Modal @ref="importClientKeyModal" Title="Import client certificate">
+    <PageEditForm @ref="importClientKeyForm" TModel="OAuthUpImportClientKeyViewModel">
+        <div class="modal-body">
+            <FInputPassword @bind-Value="importClientKeyForm.Model.Password" For="@(() => importClientKeyForm.Model.Password)" />
+            <div class="form-group active-group active">
+                <div class="drag-drop-zone input-control">
+                    <BlazorInputFile.InputFile OnChange="@(async (files) => await OnImportClientKeyFileAsync(oidcUpParty, files))" />
+                    @importClientKeyForm.Model.ClientKeyFileStatus
+                </div>
+                <label class="label-control">Certificate</label>
+                <ValidationMessage For="@(() => importClientKeyForm.Model.ClientKeyFileStatus)" />
+                <ul class="list-group">
+                    <li class="list-group-item p-0 bg-light">
+                        @if (importClientKeyForm.Model.PublicClientKeyInfo != null)
+                        {
+                            <div class="d-flex">
+                                <div class="mr-auto p-2">
+                                    @if (!importClientKeyForm.Model.PublicClientKeyInfo.Subject.IsNullOrEmpty())
+                                    {
+                                        <strong>@importClientKeyForm.Model.PublicClientKeyInfo.Subject</strong>
+                                        <br />
+                                        <span class="@(importClientKeyForm.Model.PublicClientKeyInfo.IsValid ? "" : "text-danger")">Valid from @importClientKeyForm.Model.PublicClientKeyInfo.ValidFrom.ToShortDateString() to @importClientKeyForm.Model.PublicClientKeyInfo.ValidTo.ToShortDateString()</span>
+                                        <br />
+                                    }
+                                    <span>Key id: @importClientKeyForm.Model.PublicClientKeyInfo.KeyId</span><br />
+                                    @if (!importClientKeyForm.Model.PublicClientKeyInfo.Thumbprint.IsNullOrEmpty())
+                                    {
+                                        <span>Thumbprint: @importClientKeyForm.Model.PublicClientKeyInfo.Thumbprint</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" @onclick="@(() => importClientKeyModal.Hide())">Close</button>
+        </div>
+    </PageEditForm>
+</Modal>

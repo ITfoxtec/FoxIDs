@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
+    public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -34,12 +34,20 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Edit issuer")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.IssuersApiMin, Constants.Models.OAuthUpParty.IssuersMax, Constants.Models.OAuthUpParty.IssuerLength)]
+        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuers")]
         public List<string> Issuers { get; set; }
 
         [Display(Name = "Issuer")]
         public string FirstIssuer { get { return Issuers?.FirstOrDefault(); } set {} }
+
+        /// <summary>
+        /// Optional custom SP issuer / audience (default auto generated).
+        /// Only used in relation to token exchange trust.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [Display(Name = "Optional custom SP issuer / audience used in token exchange trust (default auto generated)")]
+        public string SpIssuer { get; set; }
 
         [Display(Name = "Keys")]
         public List<JwtWithCertificateInfo> Keys { get; set; }
@@ -114,5 +122,21 @@ namespace FoxIDs.Client.Models.ViewModels
         [RegularExpression(Constants.Models.UpParty.HrdLogoUrlRegExPattern)]
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
+
+        [Display(Name = "Disable user authentication trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [Display(Name = "Disable token exchange trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+            return results;
+        }
     }
 }

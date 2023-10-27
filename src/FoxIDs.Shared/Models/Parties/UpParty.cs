@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Models
 {
-    public class UpParty : Party
+    public class UpParty : Party, IValidatableObject
     {
         public static async Task<string> IdFormatAsync(IdKey idKey)
         {
@@ -31,6 +32,25 @@ namespace FoxIDs.Models
 
             return await IdFormatAsync(idKey);
         }
+
+        [JsonIgnore]
+        public List<string> ReadIssuers => !Issuer.IsNullOrEmpty() ? new List<string> { Issuer } : Issuers;
+
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "issuer")]
+        public virtual string Issuer { get; set; }
+
+        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "issuers")]
+        public virtual List<string> Issuers { get; set; }
+
+        /// <summary>
+        /// SP issuer / audience
+        /// For OAuth 2.0 and OIDC, only used in relation to token exchange trust.
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [JsonProperty(PropertyName = "sp_issuer")]
+        public string SpIssuer { get; set; }
 
         [JsonProperty(PropertyName = "party_binding_pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
@@ -70,11 +90,27 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "hrd_logo_url")]
         public string HrdLogoUrl { get; set; }
 
+        [JsonProperty(PropertyName = "disable_user_authentication_trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [JsonProperty(PropertyName = "disable_token_exchange_trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         public async Task SetIdAsync(IdKey idKey)
         {
             if (idKey == null) new ArgumentNullException(nameof(idKey));
 
             Id = await IdFormatAsync(idKey);
+        }
+
+        public virtual IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+            return results;
         }
     }
 }

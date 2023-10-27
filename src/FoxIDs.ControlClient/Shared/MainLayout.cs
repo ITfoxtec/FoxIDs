@@ -207,6 +207,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
+                selectTrackError = null;
                 selectTrackTasks = await TrackService.FilterTrackAsync(null);
             }
             catch (TokenUnavailableException)

@@ -8,7 +8,7 @@ namespace FoxIDs.Models
         RefreshToken = 10,
         [EnumMember(Value = "client_credentials")]
         ClientCredentials = 20,
-        [EnumMember(Value = "delegation")]
-        Delegation = 30
+        [EnumMember(Value = "token_exchange")]
+        TokenExchange = 30
     }
 }

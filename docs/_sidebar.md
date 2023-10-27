@@ -7,6 +7,7 @@
   - [OAuth 2.0](oauth-2.0.md)
   - [SAML 2.0](saml-2.0.md)
   - [Track link](howto-tracklink-foxids.md)
+- [Token exchange](token-exchange.md)
 - Topics
   - [Users](users.md)
   - [Claims & Claim transforms](claim.md)
@@ -14,6 +15,7 @@
   - [Logging](logging.md)
   - [Email provider](email.md)
   - [Supported standards](standard-support.md)
+  - [FoxIDs inside](foxids-inside.md)
   - [Plans](plan.md)
 - [Development](development.md)
   - [Samples](samples.md)

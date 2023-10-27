@@ -6,6 +6,7 @@ using ITfoxtec.Identity.Saml2.Schemas;
 using System.ServiceModel.Security;
 using FoxIDs.Models.Api;
 using Newtonsoft.Json;
+using ITfoxtec.Identity.Saml2;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -26,7 +27,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Allow up-party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Optional custom IdP issuer (default auto generated)")]
         public string IdPIssuer { get; set; }
 
@@ -83,8 +84,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Revocation mode")]
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
+        [Display(Name = "Authn response sign type")]
+        public Saml2AuthnResponseSignTypes AuthnResponseSignType { get; set; } = Saml2AuthnResponseSignTypes.SignResponse;
+
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuer")]
         public string Issuer { get; set; }
 

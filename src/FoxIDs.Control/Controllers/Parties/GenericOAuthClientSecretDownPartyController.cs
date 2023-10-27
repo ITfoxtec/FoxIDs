@@ -15,14 +15,14 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// Abstract OAuth 2.0 client secret for down-party API.
     /// </summary>
-    public abstract class GenericClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : TenantApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public abstract class GenericOAuthClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : TenantApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
         private readonly ITenantRepository tenantRepository;
         private readonly SecretHashLogic secretHashLogic;
 
-        public GenericClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
+        public GenericOAuthClientSecretDownPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic) : base(logger)
         {
             this.logger = logger;
             this.mapper = mapper;
@@ -94,15 +94,21 @@ namespace FoxIDs.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete a client secret.
+        /// </summary>
+        /// <param name="name">Name is [down-party name].[secret id] </param>
         protected async Task<IActionResult> Delete(string name)
         {
             try
             {
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
-                name = name?.ToLower();
 
-                var partyName = name.GetFirstInDotList();
+                var partyName = name?.ToLower().GetFirstInDotList();
+                if (!ModelState.TryValidateRequiredParameter(partyName, $"{nameof(name)}[0]")) return BadRequest(ModelState);
                 var secretId = name.GetLastInDotList();
+                if (!ModelState.TryValidateRequiredParameter(secretId, $"{nameof(name)}[1]")) return BadRequest(ModelState);
+
                 var oauthDownParty = await tenantRepository.GetAsync<TParty>(await DownParty.IdFormatAsync(RouteBinding, partyName));
                 var secret = oauthDownParty.Client.Secrets.Where(s => s.Id == secretId).FirstOrDefault();
                 if (secret == null)

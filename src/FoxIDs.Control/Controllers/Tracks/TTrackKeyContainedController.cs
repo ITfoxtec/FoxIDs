@@ -41,9 +41,9 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName});
                 try
                 {
-                    if (mTrack.Key.Type != TrackKeyType.Contained)
+                    if (mTrack.Key.Type != TrackKeyTypes.Contained)
                     {
-                        throw new ValidationException($"Only {Api.TrackKeyType.Contained} keys is supported.");
+                        throw new ValidationException($"Only {Api.TrackKeyTypes.Contained} keys is supported.");
                     }
                 }
                 catch (ValidationException vex)
@@ -101,9 +101,9 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
-                    if (mTrack.Key.Type != TrackKeyType.Contained)
+                    if (mTrack.Key.Type != TrackKeyTypes.Contained)
                     {
-                        throw new ValidationException($"Only {Api.TrackKeyType.Contained} keys is supported.");
+                        throw new ValidationException($"Only {Api.TrackKeyTypes.Contained} keys is supported.");
                     }
                 }
                 catch (ValidationException vex)
@@ -165,9 +165,9 @@ namespace FoxIDs.Controllers
                 var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
                 try
                 {
-                    if (mTrack.Key.Type != TrackKeyType.Contained)
+                    if (mTrack.Key.Type != TrackKeyTypes.Contained)
                     {
-                        throw new ValidationException($"Only {Api.TrackKeyType.Contained} keys is supported.");
+                        throw new ValidationException($"Only {Api.TrackKeyTypes.Contained} keys is supported.");
                     }
                 }
                 catch (ValidationException vex)

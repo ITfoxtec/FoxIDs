@@ -180,9 +180,10 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
+            var genericHttpRequest = request.ToGenericHttpRequest(validate: true);
             try
             {
-                binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                binding.ReadSamlResponse(genericHttpRequest, saml2AuthnResponse);
             }
             catch (Exception ex)
             {
@@ -190,7 +191,7 @@ namespace FoxIDs.Logic
                 {
                     samlConfig.DecryptionCertificates = new List<X509Certificate2> { samlConfig.SecondaryDecryptionCertificate };
                     saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
-                    binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    binding.ReadSamlResponse(genericHttpRequest, saml2AuthnResponse);
                     logger.ScopeTrace(() => $"SAML Authn response decrypted with secondary certificate.", traceType: TraceTypes.Message);
                 }
                 else
@@ -226,7 +227,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    binding.Unbind(genericHttpRequest, saml2AuthnResponse);
                     logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
                 }
                 catch (Exception ex)

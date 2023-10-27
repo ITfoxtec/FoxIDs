@@ -12,7 +12,8 @@
             <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">SAML 2.0</button> 
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.OAuth2))">OAuth 2.0 - Token Exchange</button>
+                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">SAML 2.0</button>
                 <div class="dropdown-divider"></div>
                 <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.TrackLink))">Track link</button>
             </div>
@@ -49,6 +50,10 @@
                     if (upParty.Type == PartyTypes.Login)
                     {
                         <ELoginUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
+                    }
+                    else if (upParty.Type == PartyTypes.OAuth2)
+                    {
+                        <EOAuthUpParty OnStateHasChanged="OnStateHasChangedAsync" UpParties="upParties" UpParty="upParty" TenantName="@TenantName" />
                     }
                     else if (upParty.Type == PartyTypes.Oidc)
                     {

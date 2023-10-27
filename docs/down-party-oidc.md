@@ -15,10 +15,12 @@ Default both id token and access token are issued with the client's client id as
 Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as [OAuth 2.0 resources](down-party-oauth-2.0.md#oauth-20-resource).  
 The application can then call an API securing the call with the access token using the [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).
 
-FoxIDs support both client secret and [Proof Key for Code Exchange
-(PKCE)](https://datatracker.ietf.org/doc/html/rfc7636), and default require PKCE. If a client is configured with both PKCE and secret(s) they will both (all) be validated. PKCE and client secret is not validated in implicit flow.  
+FoxIDs support both client secret and [Proof Key for Code Exchange (PKCE)](https://datatracker.ietf.org/doc/html/rfc7636), and default require PKCE. 
+If a client is configured with both PKCE and secret/key they will both be validated. PKCE and client secret/key is not validated in implicit flow.  
 
-There can be configured a maximum of 10 secrets per client.
+The default client authentication method is `client secret post` and can be changed to `client secret basic` or `private key JWT`. Client authentication method none is supported with PKCE.
+
+There can be configured a maximum of 10 secrets and 4 keys per client.
 
 FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
 

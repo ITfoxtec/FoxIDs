@@ -22,7 +22,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Issue claims (use * to issue all claims)")]
         public List<OidcDownClaim> Claims { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
+        [Length(Constants.Models.OidcDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [Display(Name = "Response types")]
         public List<string> ResponseTypes { get; set; }
 
@@ -40,6 +40,13 @@ namespace FoxIDs.Models.Api
 
         [Display(Name = "Front channel logout require session")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
+
+        [Display(Name = "Client authentication method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
+        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [Display(Name = "Client certificates")]
+        public List<JwtWithCertificateInfo> ClientKeys { get; set; }
 
         /// <summary>
         /// Require PKCE, default true.
@@ -85,6 +92,15 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
         [Display(Name = "Response mode (RP-Initiated Logout response)")]
         public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.Query;
+
+        [Display(Name = "Disable client credentials grant")]
+        public bool DisableClientCredentialsGrant { get; set; }
+
+        [Display(Name = "Disable token exchange grant")]
+        public bool DisableTokenExchangeGrant { get; set; }
+
+        [Display(Name = "Disable client as token exchange actor")]
+        public bool DisableClientAsTokenExchangeActor { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

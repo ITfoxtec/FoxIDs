@@ -209,8 +209,8 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
 
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
-
-            binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+            var genericHttpRequest = HttpContext.Request.ToGenericHttpRequest(validate: true);
+            binding.ReadSamlResponse(genericHttpRequest, saml2LogoutResponse);
 
             await sequenceLogic.ValidateExternalSequenceIdAsync(binding.RelayState);
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: party.DisableSingleLogout);
@@ -228,7 +228,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+                    binding.Unbind(genericHttpRequest, saml2LogoutResponse);
                     logger.ScopeTrace(() => "Up, Successful SAML Logout response.", triggerEvent: true);
 
                 }
@@ -361,8 +361,8 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
                         
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
-
-            binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+            var genericHttpRequest = HttpContext.Request.ToGenericHttpRequest(validate: true);
+            binding.ReadSamlRequest(genericHttpRequest, saml2LogoutRequest);
 
             try
             {
@@ -371,7 +371,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+                    binding.Unbind(genericHttpRequest, saml2LogoutRequest);
                     logger.ScopeTrace(() => "Up, Successful SAML Single Logout request.", triggerEvent: true);
 
                 }

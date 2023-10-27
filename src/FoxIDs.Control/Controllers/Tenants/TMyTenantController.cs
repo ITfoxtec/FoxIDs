@@ -126,7 +126,7 @@ namespace FoxIDs.Controllers
                     await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                     await tenantRepository.DeleteAsync<Track>(mTrack.Id);
 
-                    if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+                    if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
                         await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }

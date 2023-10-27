@@ -75,7 +75,7 @@ namespace FoxIDs.Controllers
 
                 var mTrackKey = mapper.Map<TrackKey>(trackKey);
 
-                if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyType.Contained)
+                if (!RouteBinding.PlanName.IsNullOrEmpty() && mTrackKey.Type != TrackKeyTypes.Contained)
                 {
                     var plan = await planCacheLogic.GetPlanAsync(RouteBinding.PlanName);
                     if (!plan.EnableKeyVault)
@@ -90,7 +90,7 @@ namespace FoxIDs.Controllers
                 {
                     switch (mTrackKey.Type)
                     {
-                        case TrackKeyType.Contained:
+                        case TrackKeyTypes.Contained:
                             mTrack.Key.Type = mTrackKey.Type;
                             var certificate = await RouteBinding.CreateSelfSignedCertificateBySubjectAsync();
                             mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await certificate.ToFTJsonWebKeyAsync(true) } };
@@ -101,13 +101,13 @@ namespace FoxIDs.Controllers
                             }
                             break;
 
-                        case TrackKeyType.KeyVaultRenewSelfSigned:
+                        case TrackKeyTypes.KeyVaultRenewSelfSigned:
                             mTrack.Key.Type = mTrackKey.Type;
                             mTrack.Key.Keys = null;
                             mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
                             break;
 
-                        case TrackKeyType.KeyVaultUpload:
+                        case TrackKeyTypes.KeyVaultImport:
                         default:
                             throw new Exception($"Track key type not supported '{mTrackKey.Type}'.");
                     }

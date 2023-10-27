@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
+using ITfoxtec.Identity.Models;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -30,15 +31,22 @@ namespace FoxIDs.Models
 
         [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [JsonProperty(PropertyName = "response_types")]
-        public List<string> ResponseTypes { get; set; }
+        public virtual List<string> ResponseTypes { get; set; }
 
         [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [JsonProperty(PropertyName = "redirect_uris")]
         public virtual List<string> RedirectUris { get; set; }
 
+        [JsonProperty(PropertyName = "client_authentication_method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }
+
+        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [JsonProperty(PropertyName = "client_keys")]
+        public List<JsonWebKey> ClientKeys { get; set; }
 
         [JsonProperty(PropertyName = "require_pkce")]
         public bool RequirePkce { get; set; }
@@ -65,6 +73,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "refresh_token_lifetime_unlimited")]
         public bool? RefreshTokenLifetimeUnlimited { get; set; }
 
+        [JsonProperty(PropertyName = "disable_client_credentials_grant")]
+        public bool DisableClientCredentialsGrant { get; set; }
+
+        [JsonProperty(PropertyName = "disable_token_exchange_grant")]
+        public bool DisableTokenExchangeGrant { get; set; }
+
+        [JsonProperty(PropertyName = "disable_client_as_token_exchange_actor")]
+        public bool DisableClientAsTokenExchangeActor { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
@@ -77,7 +94,7 @@ namespace FoxIDs.Models
                 results.Add(new ValidationResult($"Claims.Values is not allowed in wildcard (*) claims.", new[] { nameof(Claims) }));
             }
 
-            if (RequirePkce && !ResponseTypes.Where(rt => rt.Contains(IdentityConstants.ResponseTypes.Code)).Any())
+            if (RequirePkce && ResponseTypes?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
                 results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
             }

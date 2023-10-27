@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcDiscoveryReadUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcDiscoveryReadUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IConnectionMultiplexer redisConnectionMultiplexer;
         private readonly ITenantRepository tenantRepository;
-        private readonly OidcDiscoveryReadLogic oidcDiscoveryReadLogic;
+        private readonly OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic;
 
-        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, OidcDiscoveryReadLogic oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
             {
                 try
                 {
-                    await oidcDiscoveryReadLogic.PopulateModelAsync(party as OidcUpParty);
+                    await oidcDiscoveryReadLogic.PopulateModelAsync(party);
                 }
                 catch (Exception ex)
                 {

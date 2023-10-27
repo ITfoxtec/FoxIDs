@@ -1,7 +1,7 @@
 # Connect to Context Handler with SAML 2.0
 **Both up-party and down-party**
 
-FoxIDs can be connected to Context Handler (Danish IdP) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and [SAML 2.0 down-party](down-party-saml-2.0.md). 
+FoxIDs can be connected to Context Handler (Danish IdP, Fælleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and [SAML 2.0 down-party](down-party-saml-2.0.md). 
 Where Context Handler is either a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider-idp) or [Relying Party (RP)](#configuring-context-handler-as-relying-party-rp) and FoxIDs is acting as an SAML 2.0 Relying Party or Identity Provider.
 
 Context Handler is a Danish Identity Provider (IdP) connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support both OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
@@ -26,6 +26,8 @@ Context Handler requires all requests (authn and logout) to be signed with OCES 
 
 An OCES certificate is valid for three years. After that, it must be updated manually.
 
+> If the `.P12` file fails to load, you can convert it to a `.PFX` file with the [FoxIDs.ConvertCertificateTool](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.ConvertCertificateTool).
+
 Add the `.P12` OCES or OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
 1. Select (or create) the track to be used for Context Handler as Relying Party (RP) or Identity Provider (IdP)
 2. Select the Certificates tab
@@ -45,7 +47,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 **1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Up-parties
-2. Click Create up-party and then SMAL 2.0
+2. Click Create up-party and then SAML 2.0
 3. Add the name
 4. Add the Context Handler IdP metadata in the Metadata URL field
 5. Click Create
@@ -132,7 +134,7 @@ You are done. The SAML 2.0 up-party can now be used as an up-party for down-part
 **1 - Start by creating an SAML 2.0 down-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Down-parties
-2. Click Create down-party and then SMAL 2.0
+2. Click Create down-party and then SAML 2.0
 3. Add the name
 4. Select where the user should be allowed to login in Allow up-party names
 

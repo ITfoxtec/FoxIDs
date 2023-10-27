@@ -1,12 +1,11 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class OidcUpClient : IValidatableObject
+    public class OidcUpClient
     {
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [Display(Name = "Optional custom SP client ID (default the party name)")]
@@ -24,15 +23,13 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Additional parameters")]
         public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
         [Display(Name = "Response mode")]
-        public string ResponseMode { get; set; } = IdentityConstants.ResponseModes.FormPost;
+        public string ResponseMode { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseTypeLength)]
         [Display(Name = "Response type")]
-        public string ResponseType { get; set; } = IdentityConstants.ResponseTypes.Code;
+        public string ResponseType { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.AuthorizeUrlLength)]
         [Display(Name = "Authorize URL")]
@@ -56,6 +53,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Front channel logout session required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
+        [Display(Name = "Client authentication method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
@@ -69,23 +69,45 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Read claims from the ID token instead of the access token")]
         public bool UseIdTokenClaims { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public IEnumerable<ValidationResult> ValidateFromParty(PartyUpdateStates updateState, bool disableUserAuthenticationTrust)
         {
             var results = new List<ValidationResult>();
-            if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+            if (!disableUserAuthenticationTrust)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce) }));
-            }
-            if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
-            {
-                if (ClientSecret.IsNullOrEmpty())
+                if (ResponseMode.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret) }));
+                    ResponseMode = IdentityConstants.ResponseModes.FormPost;
                 }
-            }
-            if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
-            {
-                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
+                if (ResponseType.IsNullOrWhiteSpace())
+                {
+                    ResponseType = IdentityConstants.ResponseTypes.Code;
+                }
+
+                if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
+                {
+                    results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'. '{IdentityConstants.ResponseModes.FormPost}' and '{IdentityConstants.ResponseModes.Query}' is supported. ", new[] { nameof(ResponseMode) }));
+                }
+
+                if (EnablePkce && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) != true)
+                {
+                    results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(EnablePkce)}" }));
+                }
+                if (ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OidcUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}" }));
+                    }
+                }
+
+                if (updateState == PartyUpdateStates.Manual && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (TokenUrl.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type. If '{nameof(OidcUpParty.UpdateState)}' is '{PartyUpdateStates.Manual}'.",
+                            new[] { $"{nameof(OidcUpParty.Client)}.{nameof(TokenUrl)}" }));
+                    }
+                }
             }
             return results;
         }

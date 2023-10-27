@@ -81,6 +81,8 @@ namespace FoxIDs.MappingProfiles
             CreateMap<JsonWebKey, Api.JwtWithCertificateInfo>()
                 .ForMember(d => d.CertificateInfo, opt => opt.MapFrom(s => GetCertificateInfo(s)));
 
+            CreateMap<ClientKey, Api.ClientKey>();
+
             CreateMap<TrackKey, Api.TrackKeyItemsContained>()
                 .ForMember(d => d.PrimaryKey, opt => opt.MapFrom(s => s.Keys[0].Key.GetPublicKey()))
                 .ForMember(d => d.SecondaryKey, opt => opt.MapFrom(s => s.Keys.Count > 1 ? s.Keys[1].Key.GetPublicKey() : null));
@@ -138,6 +140,14 @@ namespace FoxIDs.MappingProfiles
 
             CreateMap<CreateUser, Api.CreateUser>()
                 .ReverseMap();
+
+            CreateMap<OAuthUpParty, Api.OAuthUpParty>()
+                .ReverseMap()
+                .ForMember(d => d.Name, opt => opt.MapFrom(s => s.Name.ToLower()))
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UpParty.IdFormatAsync(RouteBinding, s.Name.ToLower()).GetAwaiter().GetResult()));
+            CreateMap<OAuthUpClient, Api.OAuthUpClient>()
+               .ReverseMap()
+               .ForMember(d => d.Claims, opt => opt.MapFrom(s => s.Claims.OrderBy(c => c)));
 
             CreateMap<OidcUpParty, Api.OidcUpParty>()
                 .ReverseMap()

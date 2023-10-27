@@ -1,6 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
 using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Saml2.Schemas;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -25,16 +24,11 @@ namespace FoxIDs.Models.Api
         public PartyUpdateStates UpdateState { get; set; } = PartyUpdateStates.Automatic;
 
         [Range(Constants.Models.SamlParty.MetadataUpdateRateMin, Constants.Models.SamlParty.MetadataUpdateRateMax)]
-        public int? MetadataUpdateRate { get; set; }
+        public int? MetadataUpdateRate { get; set; } = 172800; // 2 days
 
         [MaxLength(Constants.Models.SamlParty.MetadataUrlLength)]
         public string MetadataUrl { get; set; }
 
-        /// <summary>
-        /// Optional custom SP issuer (default auto generated).
-        /// </summary>
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        public string SpIssuer { get; set; }
 
         /// <summary>
         /// Claim transforms.
@@ -61,8 +55,14 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public X509RevocationMode RevocationMode { get; set; } = X509RevocationMode.NoCheck;
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         public string Issuer { get; set; }
+
+        /// <summary>
+        /// Optional custom SP issuer / audience (default auto generated).
+        /// </summary>
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        public string SpIssuer { get; set; }
 
         public SamlBindingTypes? AuthnRequestBinding { get; set; }
 
@@ -164,9 +164,20 @@ namespace FoxIDs.Models.Api
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
+        [Display(Name = "Disable user authentication trust")]
+        public bool DisableUserAuthenticationTrust { get; set; }
+
+        [Display(Name = "Disable token exchange trust")]
+        public bool DisableTokenExchangeTrust { get; set; }
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
+            {
+                results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));
+            }
+
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
                 results.Add(new ValidationResult($"Only one wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
@@ -181,15 +192,15 @@ namespace FoxIDs.Models.Api
             {
                 if (Issuer.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required.", new[] { nameof(Issuer) }));
+                    results.Add(new ValidationResult($"The {nameof(Issuer)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(Issuer) }));
                 }
                 if (AuthnUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required.", new[] { nameof(AuthnUrl) }));
+                    results.Add(new ValidationResult($"The {nameof(AuthnUrl)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(AuthnUrl) }));
                 }
                 if (AuthnRequestBinding == null)
                 {
-                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required.", new[] { nameof(AuthnRequestBinding) }));
+                    results.Add(new ValidationResult($"The {nameof(AuthnRequestBinding)} field is required. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(AuthnRequestBinding) }));
                 }
                 if (!LogoutUrl.IsNullOrWhiteSpace())
                 {
@@ -204,18 +215,18 @@ namespace FoxIDs.Models.Api
                 }
                 if (Keys?.Count < Constants.Models.SamlParty.Up.KeysMin)
                 {
-                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}.", new[] { nameof(Keys) }));
+                    results.Add(new ValidationResult($"The field {nameof(Keys)} must be at least {Constants.Models.SamlParty.Up.KeysMin}. If '{nameof(UpdateState)}' is '{PartyUpdateStates.Manual}'.", new[] { nameof(Keys) }));
                 }
             }
             else
             {
                 if (!MetadataUpdateRate.HasValue)
                 {
-                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required.", new[] { nameof(MetadataUpdateRate) }));
+                    results.Add(new ValidationResult($"The {nameof(MetadataUpdateRate)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(MetadataUpdateRate) }));
                 }
                 if (MetadataUrl.IsNullOrEmpty())
                 {
-                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required.", new[] { nameof(MetadataUrl) }));
+                    results.Add(new ValidationResult($"The {nameof(MetadataUrl)} field is required. If '{nameof(UpdateState)}' is different from '{PartyUpdateStates.Manual}'.", new[] { nameof(MetadataUrl) }));
                 } 
             }
             return results;

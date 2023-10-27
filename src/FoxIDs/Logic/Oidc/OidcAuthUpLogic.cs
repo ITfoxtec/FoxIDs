@@ -18,16 +18,17 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.ServiceModel.Channels;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class OidcAuthUpLogic<TParty, TClient> : LogicSequenceBase where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
+    public class OidcAuthUpLogic<TParty, TClient> : OAuthAuthUpLogic<TParty, TClient> where TParty : OidcUpParty<TClient> where TClient : OidcUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IServiceProvider serviceProvider;
         private readonly ITenantRepository tenantRepository;
-        private readonly JwtUpLogic<TParty, TClient> jwtUpLogic;
+        private readonly OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic;
         private readonly SequenceLogic sequenceLogic;
         private readonly PlanUsageLogic planUsageLogic;
         private readonly HrdLogic hrdLogic;
@@ -38,12 +39,12 @@ namespace FoxIDs.Logic
         private readonly ClaimValidationLogic claimValidationLogic;
         private readonly IHttpClientFactory httpClientFactory;
 
-        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, JwtUpLogic<TParty, TClient> jwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcAuthUpLogic(TelemetryScopedLogger logger, IServiceProvider serviceProvider, ITenantRepository tenantRepository, TrackIssuerLogic trackIssuerLogic, OidcJwtUpLogic<TParty, TClient> oidcJwtUpLogic, SequenceLogic sequenceLogic, PlanUsageLogic planUsageLogic, HrdLogic hrdLogic, SessionUpPartyLogic sessionUpPartyLogic, SecurityHeaderLogic securityHeaderLogic, OidcDiscoveryReadUpLogic<TParty, TClient> oidcDiscoveryReadUpLogic, ClaimTransformLogic claimTransformLogic, ClaimValidationLogic claimValidationLogic, IHttpClientFactory httpClientFactory, IHttpContextAccessor httpContextAccessor) : base(logger, tenantRepository, trackIssuerLogic, oidcJwtUpLogic, claimTransformLogic, claimValidationLogic, httpClientFactory, httpContextAccessor)
         {
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.tenantRepository = tenantRepository;
-            this.jwtUpLogic = jwtUpLogic;
+            this.oidcJwtUpLogic = oidcJwtUpLogic;
             this.sequenceLogic = sequenceLogic;
             this.planUsageLogic = planUsageLogic;
             this.hrdLogic = hrdLogic;
@@ -98,7 +99,7 @@ namespace FoxIDs.Logic
             var nonce = RandomGenerator.GenerateNonce();
             var loginCallBackUrl = HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.OAuthController, Constants.Endpoints.AuthorizationResponse, partyBindingPattern: party.PartyBindingPattern);
 
-            oidcUpSequenceData.ClientId = !party.Client.SpClientId.IsNullOrWhiteSpace() ? party.Client.SpClientId : party.Client.ClientId;
+            oidcUpSequenceData.ClientId = ResolveClientId(party);
             oidcUpSequenceData.RedirectUri = loginCallBackUrl;
             oidcUpSequenceData.Nonce = nonce;  
             if (party.Client.EnablePkce)
@@ -190,8 +191,17 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
-            await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
-            var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            OidcUpSequenceData sequenceData = null;
+            try
+            {
+                await sequenceLogic.ValidateExternalSequenceIdAsync(authenticationResponse.State);
+                sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Invalid State '{authenticationResponse.State}' returned from the IdP.");
+                throw;
+            }
 
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)
@@ -314,6 +324,9 @@ namespace FoxIDs.Logic
 
         private async Task<TokenResponse> TokenRequestAsync(TClient client, string code, OidcUpSequenceData sequenceData)
         {
+            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
+            var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
+
             var tokenRequest = new TokenRequest
             {
                 GrantType = IdentityConstants.GrantTypes.AuthorizationCode,
@@ -324,15 +337,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Up, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var requestDictionary = tokenRequest.ToDictionary();
 
-            if (!client.ClientSecret.IsNullOrEmpty())
-            {
-                var clientCredentials = new ClientCredentials
-                {
-                    ClientSecret = client.ClientSecret,
-                };
-                logger.ScopeTrace(() => $"Up, Client credentials '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
-            }
+            requestDictionary = await AddClientAuthenticationAsync(client, tokenRequest.ClientId, request, requestDictionary);
 
             if (client.EnablePkce)
             {
@@ -344,8 +349,6 @@ namespace FoxIDs.Logic
                 requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
-            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
-            var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
             request.Content = new FormUrlEncodedContent(requestDictionary);
 
             using var response = await httpClientFactory.CreateClient(nameof(HttpClient)).SendAsync(request);
@@ -401,7 +404,54 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim>, string)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        private async Task<Dictionary<string, string>> AddClientAuthenticationAsync(TClient client, string clientId, HttpRequestMessage request, Dictionary<string, string> requestDictionary)
+        {
+            if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretBasic)
+            {
+                if (!client.ClientSecret.IsNullOrEmpty())
+                {
+                    logger.ScopeTrace(() => $"Up, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, $"{WebUtility.UrlEncode(clientId)}:{WebUtility.UrlEncode(client.ClientSecret)}".Base64Encode());
+                }
+            }
+            else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.ClientSecretPost)
+            {
+                if (!client.ClientSecret.IsNullOrEmpty())
+                {
+                    var clientCredentials = new ClientCredentials
+                    {
+                        ClientSecret = client.ClientSecret,
+                    };
+                    logger.ScopeTrace(() => $"Up, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
+                }
+            }
+            else if (client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
+            {
+                if (!(client.ClientKeys?.Count > 0))
+                {
+                    throw new ArgumentException($"Client id '{client.ClientId}' key is null.");
+                }
+
+                string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
+                var clientAssertionCredentials = new ClientAssertionCredentials
+                {
+                    ClientAssertionType = IdentityConstants.ClientAssertionTypes.JwtBearer,
+                    ClientAssertion = await oidcJwtUpLogic.CreateClientAssertionAsync(client, clientId, algorithm)
+                };
+                logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"Up, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                requestDictionary = requestDictionary.AddToDictionary(clientAssertionCredentials);
+            }
+            else
+            {
+                throw new NotImplementedException($"Client authentication method '{client.ClientAuthenticationMethod}' not implemented");
+            }
+
+            return requestDictionary;
+        }
+
+        protected async Task<(List<Claim>, string)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
             if (!accessToken.IsNullOrWhiteSpace())
@@ -413,7 +463,7 @@ namespace FoxIDs.Logic
                 else if (!party.Client.UseIdTokenClaims)
                 {
                     var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
-                    claims = await ValidateAccessTokenAsync(party, sequenceData, accessToken);
+                    claims = await ValidateAccessTokenAsync(party, accessToken);
                     if (sessionIdClaim != null && !claims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
                     {
                         claims.Add(sessionIdClaim);
@@ -426,7 +476,7 @@ namespace FoxIDs.Logic
                     claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AccessToken).ToList();
                     foreach (var accessTokenClaim in accessTokenClaims)
                     {
-                        claims.Add(new Claim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessTokenClaim}"));
+                        claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessTokenClaim}");
                     }
                 }
 
@@ -460,7 +510,7 @@ namespace FoxIDs.Logic
                     throw new OAuthRequestException($"{party.Name}|Id token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
 
-                var claimsPrincipal = await jwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);
+                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);
                 var nonce = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
                 {
@@ -486,102 +536,6 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 throw new OAuthRequestException($"{party.Name}|Id token not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-            }
-        }
-
-        private async Task<List<Claim>> ValidateAccessTokenAsync(TParty party, OidcUpSequenceData sequenceData, string accessToken)
-        {
-            try
-            {
-                var jwtToken = JwtHandler.ReadToken(accessToken);
-                var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
-                if (string.IsNullOrEmpty(issuer))
-                {
-                    throw new OAuthRequestException($"{party.Name}|Access token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                }
-
-                var claimsPrincipal = await jwtUpLogic.ValidateAccessTokenAsync(accessToken, issuer, party, sequenceData.ClientId);              
-                return claimsPrincipal.Claims.ToList();
-            }
-            catch (OAuthRequestException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                throw new OAuthRequestException($"{party.Name}|Access token not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-            }
-        }
-
-        private async Task<List<Claim>> UserInforRequestAsync(TClient client, string accessToken)
-        {
-            ValidateClientUserInfoSupport(client);
-            logger.ScopeTrace(() => $"Up, OIDC UserInfo request URL '{client.UserInfoUrl}'.", traceType: TraceTypes.Message);
-    
-            var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
-
-            using var response = await httpClient.GetAsync(client.UserInfoUrl);
-            switch (response.StatusCode)
-            {
-                case HttpStatusCode.OK:
-                    var result = await response.Content.ReadAsStringAsync();
-                    var userInfoResponse = result.ToObject<Dictionary<string, string>>();
-                    logger.ScopeTrace(() => $"Up, UserInfo response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-
-                    var claims = userInfoResponse.Select(c => new Claim(c.Key, c.Value)).ToList();
-                    if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
-                    {
-                        throw new OAuthRequestException($"Require {JwtClaimTypes.Subject} claim from userinfo endpoint.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
-                    }
-                    return claims;
-
-                case HttpStatusCode.BadRequest:
-                    var resultBadRequest = await response.Content.ReadAsStringAsync();
-                    var userInfoResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"Up, Bad userinfo response '{userInfoResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                    try
-                    {
-                        userInfoResponseBadRequest.Validate(true);
-                    }
-                    catch (ResponseErrorException rex)
-                    {
-                        throw new OAuthRequestException($"External {rex.Message}") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
-                    }
-                    throw new EndpointException($"Bad request. Status code '{response.StatusCode}'. Response '{resultBadRequest}'.") { RouteBinding = RouteBinding };
-
-                default:
-                    try
-                    {
-                        var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
-                        var userInfoResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
-                        logger.ScopeTrace(() => $"Up, Unexpected status code userinfo response '{userInfoResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                        try
-                        {
-                            userInfoResponseUnexpectedStatus.Validate(true);
-                        }
-                        catch (ResponseErrorException rex)
-                        {
-                            throw new OAuthRequestException($"External {rex.Message}") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
-                        }
-                    }
-                    catch (OAuthRequestException)
-                    {
-                        throw;
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}", ex) { RouteBinding = RouteBinding };
-                    }
-                    throw new EndpointException($"Unexpected status code. Status code={response.StatusCode}") { RouteBinding = RouteBinding };
-            }
-        }
-
-        private void ValidateClientUserInfoSupport(TClient client)
-        {
-            if (client.UserInfoUrl.IsNullOrEmpty())
-            {
-                throw new EndpointException("Userinfo endpoint not configured.") { RouteBinding = RouteBinding };
             }
         }
 

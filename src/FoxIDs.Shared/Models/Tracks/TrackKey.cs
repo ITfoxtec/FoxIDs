@@ -10,7 +10,7 @@ namespace FoxIDs.Models
     {
         [Required]
         [JsonProperty(PropertyName = "type")]
-        public TrackKeyType Type { get; set; }
+        public TrackKeyTypes Type { get; set; }
 
         [JsonProperty(PropertyName = "external_name")]
         public string ExternalName { get; set; }
@@ -22,20 +22,20 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (Type == TrackKeyType.KeyVaultRenewSelfSigned && ExternalName.IsNullOrWhiteSpace())
+            if (Type == TrackKeyTypes.KeyVaultRenewSelfSigned && ExternalName.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(ExternalName)} is required for track key type '{Type}'.", new[] { nameof(ExternalName) }));
             }
-            else if(Type != TrackKeyType.KeyVaultRenewSelfSigned && !ExternalName.IsNullOrWhiteSpace())
+            else if(Type != TrackKeyTypes.KeyVaultRenewSelfSigned && !ExternalName.IsNullOrWhiteSpace())
             {
                 results.Add(new ValidationResult($"The field {nameof(ExternalName)} is not supported for track key type '{Type}'.", new[] { nameof(ExternalName) }));
             }
 
-            if(Type == TrackKeyType.Contained && Keys?.Count < 1) 
+            if(Type == TrackKeyTypes.Contained && Keys?.Count < 1) 
             {
                 results.Add(new ValidationResult($"The field {nameof(Keys)} required at least one element for track key type '{Type}'.", new[] { nameof(Keys) }));
             }
-            else if (Type != TrackKeyType.Contained && Keys?.Count > 0)
+            else if (Type != TrackKeyTypes.Contained && Keys?.Count > 0)
             {
                 results.Add(new ValidationResult($"The field {nameof(Keys)} is not supported for track key type '{Type}'.", new[] { nameof(Keys) }));
             }

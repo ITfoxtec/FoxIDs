@@ -81,7 +81,8 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
 
             var saml2LogoutRequest = new Saml2LogoutRequest(samlConfig);
-            binding.ReadSamlRequest(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+            var genericHttpRequest = HttpContext.Request.ToGenericHttpRequest(validate: true);
+            binding.ReadSamlRequest(genericHttpRequest, saml2LogoutRequest);
             logger.ScopeTrace(() => $"SAML Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
 
             try
@@ -90,7 +91,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutRequest);
+                    binding.Unbind(genericHttpRequest, saml2LogoutRequest);
                     logger.ScopeTrace(() => "Down, SAML Logout request accepted.", triggerEvent: true);
 
                 }
@@ -333,7 +334,8 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
 
             var saml2LogoutResponse = new Saml2LogoutResponse(samlConfig);
-            binding.ReadSamlResponse(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+            var genericHttpRequest = HttpContext.Request.ToGenericHttpRequest(validate: true);
+            binding.ReadSamlResponse(genericHttpRequest, saml2LogoutResponse);
             logger.ScopeTrace(() => $"SAML Single Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             
             ValidateLogoutResponse(party, saml2LogoutResponse);
@@ -341,7 +343,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                binding.Unbind(HttpContext.Request.ToGenericHttpRequest(), saml2LogoutResponse);
+                binding.Unbind(genericHttpRequest, saml2LogoutResponse);
                 logger.ScopeTrace(() => "Down, SAML Single Logout response accepted.", triggerEvent: true);
 
             }

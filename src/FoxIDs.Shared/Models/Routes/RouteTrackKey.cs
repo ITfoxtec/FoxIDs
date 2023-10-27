@@ -2,7 +2,7 @@
 {
     public class RouteTrackKey
     {
-        public TrackKeyType Type { get; set; }
+        public TrackKeyTypes Type { get; set; }
 
         public string ExternalName { get; set; }
 

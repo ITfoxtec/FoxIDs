@@ -20,10 +20,11 @@ namespace FoxIDs.Models
             {
                 results.AddRange(baseResults);
             }
-            if (Client != null && AllowUpParties?.Count <= 0)
+            if (Client != null && Client.ResponseTypes?.Count() > 0 && !(AllowUpParties?.Where(up => !up.DisableUserAuthenticationTrust)?.Count() > 0))
             {
-                results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpParties)} is required if the Client is defined.", new[] { nameof(Client), nameof(AllowUpParties) }));
+                results.Add(new ValidationResult($"At least one (with user authentication trust) in the field {nameof(AllowUpParties)} is required if the Client is defined with a response type.", new[] { nameof(Client), nameof(AllowUpParties), nameof(Client.ResponseTypes) }));
             }
+
             return results;
         }
     }

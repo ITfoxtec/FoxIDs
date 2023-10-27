@@ -1,0 +1,176 @@
+﻿@inherits UpPartyBase
+
+@{
+    var oauthUpParty = UpParty as GeneralOAuthUpPartyViewModel;
+}
+
+<PageEditForm @ref="oauthUpParty.Form" TModel="OAuthUpPartyViewModel" OnAfterInit="@(m => OAuthUpPartyViewModelAfterInit(oauthUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOAuthUpPartyValidSubmitAsync(oauthUpParty, editContext))">
+    <div class="modal-header">
+        <div>
+            OAuth 2.0
+        </div>
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+    </div>
+    <div class="modal-body">
+        @if (oauthUpParty.Form.Model.IsManual)
+        {
+            <div class="mb-3 alert alert-warning" role="alert">
+                The OAuth 2.0 up-party is configured with manual update, which can only be updated through the Control API.
+            </div>
+        }
+
+        @if (oauthUpParty.CreateMode)
+        {
+            <FInputText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" Focus="true" />
+        }
+        else
+        {
+            <FFieldText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
+        }
+        <FInputText @bind-Value="oauthUpParty.Form.Model.Note" For="@(() => oauthUpParty.Form.Model.Note)" />
+
+        <FInputText @bind-Value="oauthUpParty.Form.Model.Authority" For="@(() => oauthUpParty.Form.Model.Authority)" Focus="@(oauthUpParty.CreateMode ? false : true)" />
+
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputToggleN @bind-Value="oauthUpParty.Form.Model.EditIssuersInAutomatic" For="@(() => oauthUpParty.Form.Model.EditIssuersInAutomatic)" TextType="e.d" />
+        }
+
+        @if (oauthUpParty.Form.Model.EditIssuersInAutomatic == true)
+        {
+            <FInputTextList @bind-ValueList="oauthUpParty.Form.Model.Issuers" For="@(() => oauthUpParty.Form.Model.Issuers)" />
+        }
+        else
+        {
+            @if (!oauthUpParty.CreateMode)
+            {
+                <FFieldText @bind-Value="oauthUpParty.Form.Model.FirstIssuer" For="@(() => oauthUpParty.Form.Model.FirstIssuer)" />
+            }
+        }
+
+        @if (!oauthUpParty.CreateMode)
+        {
+            <div class="form-group active-group active">
+                <Label For="@(() => oauthUpParty.Form.Model.Keys)" class="label-control" />
+                <ValidationMessage For="@(() => oauthUpParty.Form.Model.Keys)" />
+                <ul class="list-group">
+                    @foreach (var keyInfo in oauthUpParty.KeyInfoList)
+                    {
+                        <li class="list-group-item p-0 bg-light">
+                            <div class="d-flex">
+                                <div class="mr-auto p-2">
+                                    @if (!keyInfo.Subject.IsNullOrEmpty())
+                                    {
+                                        <strong>@keyInfo.Subject</strong>
+                                        <br />
+                                        <span class="@(keyInfo.IsValid ? "" : "text-danger")">Valid from @keyInfo.ValidFrom.ToShortDateString() to @keyInfo.ValidTo.ToShortDateString()</span>
+                                        <br />
+                                    }
+                                    <span>Key id: @keyInfo.KeyId</span><br />
+                                    @if (!keyInfo.Thumbprint.IsNullOrEmpty())
+                                    {
+                                        <span>Thumbprint: @keyInfo.Thumbprint</span>
+                                    }
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+
+        @if (UpParty.ShowAdvanced)
+        {
+            <FInputNumber @bind-Value="oauthUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oauthUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
+        }
+
+        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oauthUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
+        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oauthUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
+
+        @if (oauthUpParty.Form.Model.AutomaticStopped)
+        {
+            <div class="mb-3 alert alert-warning" role="alert">
+                <i>Automatic configuration update is currently stopped.</i>
+                <div>Restart the automatic configuration update process by clicking the update button.</div>
+            </div>
+        }
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                @if (oauthUpParty.ShowClientTab)
+                {
+                    <a class="nav-link active">OpenID Connect Client</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthUpParty, OAuthTabTypes.Client))">OpenID Connect Client</button>
+                }
+            </li>
+            <li class="nav-item">
+                @if (oauthUpParty.ShowClaimTransformTab)
+                {
+                    <a class="nav-link active">Claim transform</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthUpParty, OAuthTabTypes.ClaimsTransform))">Claim transform</button>
+                }
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3">
+            @if (oauthUpParty.ShowClientTab)
+            {
+                <ValidationMessage For="@(() => oauthUpParty.Form.Model.Client)" />
+
+                @if (oauthUpParty.Form.Model.Client != null)
+                {
+                    @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oauthUpParty.Form.Model.DisableUserAuthenticationTrust))
+                    {
+                        <FInputText @bind-Value="oauthUpParty.Form.Model.SpIssuer" For="@(() => oauthUpParty.Form.Model.SpIssuer)" />
+                    }
+
+                    @if (UpParty.ShowAdvanced)
+                    {
+                        <FInputToggle @bind-Value="oauthUpParty.Form.Model.Client.UseUserInfoClaims" For="@(() => oauthUpParty.Form.Model.Client.UseUserInfoClaims)" TextType="y.n" />
+                    }
+                    <FInputTextList @bind-ValueList="oauthUpParty.Form.Model.Client.Claims" For="@(() => oauthUpParty.Form.Model.Client.Claims)" DynamicFirstRow="true" />
+                }
+            }
+            else if (oauthUpParty.ShowClaimTransformTab)
+            {
+                <div class="mb-3 alert alert-info" role="alert">
+                    If you create a new claim the claim is local unless you add the claim to the 'Forward claims' list or alternative add the claim to a scopes 'Voluntary claims' list.
+                </div>
+                <OAuthClaimTransforms Model="oauthUpParty.Form.Model" />
+            }
+        </div>
+    </div>
+    @if (!UpParty.CreateMode && UpParty.DeleteAcknowledge)
+    {
+        <div class="modal-footer">
+            <div class="alert alert-danger" role="alert">
+                <div>
+                    You are about to delete OpenID Connect Up-party "@UpParty.Name", are you sure?
+                </div>
+
+                <div class="mt-3">
+                    <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteOAuthUpPartyAsync(oauthUpParty))">Yes delete</button>
+                    <button type="button" class="btn btn-secondary" @onclick="@(() => UpParty.DeleteAcknowledge = false)">No</button>
+                </div>
+            </div>
+        </div>
+    }
+    <div class="modal-footer">
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        @if (!UpParty.CreateMode)
+        {
+            <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>
+        }
+        @if (!oauthUpParty.Form.Model.IsManual)
+        {
+            <button type="submit" class="btn btn-primary">@(@UpParty.CreateMode ? "Create" : "Update")</button>
+        }
+        <button type="button" class="btn btn-secondary" @onclick="@(() => UpPartyCancelAsync(UpParty))">@(@UpParty.CreateMode ? "Cancel" : "Close")</button>
+    </div>
+</PageEditForm>

@@ -150,7 +150,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task CreateTrackDocumentAsync(string tenantName, string trackName, TrackKeyType keyType)
+        private async Task CreateTrackDocumentAsync(string tenantName, string trackName, TrackKeyTypes keyType)
         {
             var mTrack = mapper.Map<Track>(new Api.Track { Name = trackName?.ToLower() });
             await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack, keyType);
@@ -263,7 +263,7 @@ namespace FoxIDs.Controllers
                     await tenantRepository.DeleteListAsync<DefaultElement>(trackIdKey);
                     await tenantRepository.DeleteAsync<Track>(mTrack.Id);
 
-                    if (mTrack.Key.Type == TrackKeyType.KeyVaultRenewSelfSigned)
+                    if (!mTrack.Key.ExternalName.IsNullOrWhiteSpace())
                     {
                         await externalKeyLogic.DeleteExternalKeyAsync(mTrack.Key.ExternalName);
                     }

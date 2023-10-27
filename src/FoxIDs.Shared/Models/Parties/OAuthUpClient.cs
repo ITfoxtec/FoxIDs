@@ -31,12 +31,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseModeLength)]
         [JsonProperty(PropertyName = "response_mode")]
         public string ResponseMode { get; set; }
 
-        [Required]
         [MaxLength(Constants.Models.OAuthUpParty.Client.ResponseTypeLength)]
         [JsonProperty(PropertyName = "response_type")]
         public string ResponseType { get; set; }
@@ -64,9 +62,21 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "frontchannel_logout_session_required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;
 
+        [JsonProperty(PropertyName = "client_authentication_method")]
+        public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
+
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [JsonProperty(PropertyName = "client_secret")]
         public string ClientSecret { get; set; }
+
+        [ValidateComplexType]
+        [Length(Constants.Models.OAuthUpParty.Client.ClientKeysMin, Constants.Models.OAuthUpParty.Client.ClientKeysMax)]
+        [JsonProperty(PropertyName = "client_keys")]
+        public List<ClientKey> ClientKeys { get; set; }
+
+        [Range(Constants.Models.OAuthUpParty.Client.ClientAssertionLifetimeMin, Constants.Models.OAuthUpParty.Client.ClientAssertionLifetimeMax)]
+        [JsonProperty(PropertyName = "client_assertion_lifetime")]
+        public int ClientAssertionLifetime { get; set; } = 300; // 5 minutes
 
         [JsonProperty(PropertyName = "enable_pkce")]
         public bool EnablePkce { get; set; }
@@ -81,25 +91,43 @@ namespace FoxIDs.Models
             {
                 results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));
             }
+            return results;
+        }
 
-            if (EnablePkce && ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) != true)
+        public IEnumerable<ValidationResult> ValidateFromParty(bool disableUserAuthenticationTrust)
+        {
+            var results = new List<ValidationResult>();
+
+            if (!disableUserAuthenticationTrust)
             {
-                results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(EnablePkce), nameof(ResponseType) }));
-            }
-            if (ResponseType?.Contains(IdentityConstants.ResponseTypes.Code) == true)
-            {
-                if (TokenUrl.IsNullOrEmpty())
+                if (ResponseMode.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(TokenUrl), nameof(ResponseType) }));
+                    results.Add(new ValidationResult($"The field '{ResponseMode}' is required.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseMode)}" }));
                 }
-                if (ClientSecret.IsNullOrEmpty())
+                if (ResponseType.IsNullOrWhiteSpace())
                 {
-                    results.Add(new ValidationResult($"Require '{nameof(ClientSecret)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { nameof(ClientSecret), nameof(ResponseType) }));
+                    results.Add(new ValidationResult($"The field '{ResponseType}' is required.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
                 }
-            }
-            if (!(ResponseMode?.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode?.Equals(IdentityConstants.ResponseModes.FormPost) == true))
-            {
-                results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { nameof(ResponseMode) }));
+
+                if (EnablePkce && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) != true)
+                {
+                    results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] {  $"{nameof(OAuthUpParty.Client)}.{nameof(EnablePkce)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                }
+                if (ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
+                {
+                    if (TokenUrl.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(OAuthUpParty.Client)}.{nameof(TokenUrl)}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(TokenUrl)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                    }
+                    if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
+                    {
+                        results.Add(new ValidationResult($"Require '{nameof(OAuthUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OAuthUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ClientSecret)}", $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseType)}" }));
+                    }
+                }
+                if (!(ResponseMode.Equals(IdentityConstants.ResponseModes.Query) == true || ResponseMode.Equals(IdentityConstants.ResponseModes.FormPost) == true))
+                {
+                    results.Add(new ValidationResult($"Invalid response mode '{ResponseMode}'.", new[] { $"{nameof(OAuthUpParty.Client)}.{nameof(ResponseMode)}" }));
+                }
             }
             return results;
         }

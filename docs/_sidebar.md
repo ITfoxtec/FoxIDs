@@ -15,6 +15,7 @@
   - [Logging](logging.md)
   - [Email provider](email.md)
   - [Supported standards](standard-support.md)
+  - [FoxIDs inside](foxids-inside.md)
   - [Plans](plan.md)
 - [Development](development.md)
   - [Samples](samples.md)

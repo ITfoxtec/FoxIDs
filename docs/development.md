@@ -18,19 +18,95 @@ Solution description:
 
 ## Azure resources
 
-FoxIDs depends on Azure resources to run locally. They need to be created in Azure and configured.
+FoxIDs depends on Azure resources to run locally. They need to be created in Azure and configured.  
+The following guide is based on [Azure Portal](https://portal.azure.com/).
+
+### Resource group
+Create a resource group.
+
+- Search Resource groups
+- Click Create
+- Enter a name and select a region
+- Click Review + create and Create
+
+### Add dev client app
+
+- Search App registrations
+- Click New registration
+- Add a name in the user-facing display name
+- Click Register
+- In the Overview section, find the Directory (tenant) ID and add it to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.ServerClientCredential.TenantId
+- In the Overview section, find the Application (client) ID and add it to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.ServerClientCredential.ClientId
+- Click Certificates & Secrets
+- Click New client secret
+- Select 730 days
+- Click Add
+- Add the secret value to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.ServerClientCredential.ClientSecret 
 
 ### Key Vault
 
+- Navigate to the resource group
+- Search Key Vault and click Create on the found Key Vault element
+- Enter a name and select a region
+- Click next
+- Select Vault access policy
+- Select your own user
+- Click Review + create and Create
+- Navigate to the Key Vault resource
+- In the Overview section, find the Vault URI and add it to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.KeyVault.EndpointUri
+- Click Access policies
+- Click Create
+- In Key Permissions select: Get, List, Decrypt and Sign
+- In Secret Permissions select: Get, List, Set and Delete
+- In Certificate Permissions select: Get, List, Update, Create, Import and Delete
+- Click Next
+- Search the dev client app by name
+- Select the ev client app item 
+- Click Next and Click Next and Click Create
+
 ### Cosmos DB
 
-### Redis cache
+- Navigate to the resource group
+- Search Cosmos DB and click Create on the found Azure Cosmos DB element
+- Click create in the Azure Cosmos DB for NoSQL element 
+- Enter an account name and select a region
+- Click Review + create and Create
+- Navigate to the Cosmos DB resource
+- Click Keys
+- Add the URI to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.CosmosDb.EndpointUri
+- Add the Primary Key to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.CosmosDb.PrimaryKey
+
+### Redis Cache
+
+- Navigate to the resource group
+- Search Redis Cache and click Create on the found Azure cache for Redis element
+- Enter a DNS name and select a region
+- In Cache type, select C0 Basic or C0 Standard
+- Click Review + create and Create
+- Navigate to the Redis Cache resource
+- Click Access keys
+- Add the Primary connection string to both the FoxIDs and FoxIDs.Control appsettings.json in Settings.RedisCache.ConnectionString
 
 ### Application Insights and Log Analytics workspace
 
+- Navigate to the resource group
+- Search Application Insights and click Create on the found Application Insights element
+- Enter a name and select a region
+- Click Review + create and Create
+- Navigate to the Application Insights resource
+- In the Overview section, find the Connection String and add it to both the FoxIDs and FoxIDs.Control appsettings.json in ApplicationInsights.ConnectionString
+- In the Overview section, click on the Workspace link
+- In the Overview section, find the Workspace ID and add it to the FoxIDs.Control appsettings.json in Settings.ApplicationInsights.WorkspaceId
+
 ## Run and debug 
 
-After the Azure resources is in place you should be able to run and debug the solution. First time you hit run and access FoxIDs Control on `https://localhost:44331` Cosmos DB is pre seeded. 
+After the Azure resources is in place you are nearly ready to run and debug the solution
+
+- Add the FoxIDs local endpoint `https://localhost:44330` to the FoxIDs appsettings.json in Settings.WebsiteUrl
+- Add the FoxIDs local endpoint `https://localhost:44330` FoxIDs Control local endpoint `https://localhost:44331` to the FoxIDs.Control appsettings.json in Settings.FoxIDsEndpoint and Settings.FoxIDsControlEndpoint
+- Configure Visual studio to start both the FoxIDs project and FoxIDs.Control project and hit run.
+
+First time you run the solution and access FoxIDs Control on `https://localhost:44331` Cosmos DB and Key Vault is pre seeded, you probably need to refresh the browser to reload after pre seed. 
 
 > The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)  
 

@@ -42,9 +42,20 @@ namespace FoxIDs.Logic
                 return true;
             }
 
+            var oldHrdIssuers = oldUpParty.ReadIssuers != null ? string.Join(',', oldUpParty.ReadIssuers) : string.Empty;
+            var newHrdIssuers = newUpParty.ReadIssuers != null ? string.Join(',', newUpParty.ReadIssuers) : string.Empty;
+            if (oldHrdIssuers != newHrdIssuers) 
+            {
+                return true;
+            }
+
+            if (oldUpParty.SpIssuer != newUpParty.SpIssuer)
+            {
+                return true;
+            }
+
             var oldHrdDomains = oldUpParty.HrdDomains != null ? string.Join(',', oldUpParty.HrdDomains) : string.Empty;
             var newHrdDomains = newUpParty.HrdDomains != null ? string.Join(',', newUpParty.HrdDomains) : string.Empty;
-
             if (oldHrdDomains != newHrdDomains)
             {
                 return true;
@@ -78,10 +89,14 @@ namespace FoxIDs.Logic
             var message = new UpPartyHrdQueueMessage
             {
                 Name = upParty.Name,
+                Issuers = upParty.ReadIssuers,
+                SpIssuer = upParty.SpIssuer,
                 HrdDisplayName = upParty.HrdDisplayName,
                 HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain,
                 HrdDomains = upParty.HrdDomains,
                 HrdLogoUrl = upParty.HrdLogoUrl,
+                DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust,
+                DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust,
                 Remove = remove
             };
             await message.ValidateObjectAsync();
@@ -165,10 +180,14 @@ namespace FoxIDs.Logic
             {
                 if (!messageObj.Remove)
                 {
+                    upParty.Issuers = messageObj.Issuers;
+                    upParty.SpIssuer = messageObj.SpIssuer;
                     upParty.HrdDomains = messageObj.HrdDomains;
                     upParty.HrdShowButtonWithDomain = messageObj.HrdShowButtonWithDomain;
                     upParty.HrdDisplayName = messageObj.HrdDisplayName;
                     upParty.HrdLogoUrl = messageObj.HrdLogoUrl;
+                    upParty.DisableUserAuthenticationTrust = messageObj.DisableUserAuthenticationTrust;
+                    upParty.DisableTokenExchangeTrust = messageObj.DisableTokenExchangeTrust;
                 }
                 else
                 {

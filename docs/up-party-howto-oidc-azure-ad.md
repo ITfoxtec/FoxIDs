@@ -33,6 +33,7 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
  6. Copy the Directory (tenant) ID
  7. Go to the Authentication tab and add the FoxIDs up-party `Front channel logout URL`, click save
  8. Go to the Certificates & secrets tab and click New client secret and add the secret 
+    - Optionally, use a client certificate instead of a secret
  9. Copy the client secret value (not the secret ID)
  10. Go to the Token configuration tab and click Add optional claims. Then select ID (for adding claims to the ID token) and select `email`, `family_name`, `given_name`, `ipaddr`, `preferred_username` and click Add twice. 
 
@@ -42,6 +43,7 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
  2. Add the Azure AD client ID as a custom SP client ID
  3. Add the `profile` and `email` scopes (possible other or more scopes)
  4. Add the Azure AD client secret value as the client secret
+    - Optionally, select show advanced settings, change the client authentication method to `private key JWT` and upload the client certificate
  5. Select use claims from ID token
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., `preferred_username`, `email`, `name`, `given_name`, `family_name`, `oid`, `ipaddr` and possible the `access_token` claim to transfer the Azure AD access token to down-parties.  
  It is possible to see the claims returned from the Azure AD app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the revived JWTs

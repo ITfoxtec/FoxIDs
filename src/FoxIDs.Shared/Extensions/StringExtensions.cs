@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO.Compression;
 using System.IO;
-using System.Xml;
 using System.Text;
 
 namespace FoxIDs
@@ -48,15 +47,6 @@ namespace FoxIDs
 
         public static string Compress(this string text)
         {
-            //using (var compressedStream = new MemoryStream())
-            //using (var deflateStream = new DeflateStream(compressedStream, CompressionMode.Compress))
-            //{
-            //    using (var originalStream = new StreamWriter(deflateStream))
-            //    {
-            //        originalStream.Write(text);
-            //    }
-            //    return Convert.ToBase64String(compressedStream.ToArray());
-            //}
             byte[] compressedBytes;
 
             using (var uncompressedStream = new MemoryStream(Encoding.UTF8.GetBytes(text)))

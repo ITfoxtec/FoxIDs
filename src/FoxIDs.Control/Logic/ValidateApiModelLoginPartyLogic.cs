@@ -13,12 +13,12 @@ using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
 {
-    public class ValidateLoginPartyLogic : LogicBase
+    public class ValidateApiModelLoginPartyLogic : LogicBase
     {
         private readonly TelemetryScopedLogger logger;
         private readonly PlanCacheLogic planCacheLogic;
 
-        public ValidateLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public ValidateApiModelLoginPartyLogic(TelemetryScopedLogger logger, PlanCacheLogic planCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
             this.planCacheLogic = planCacheLogic;

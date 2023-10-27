@@ -17,6 +17,9 @@ using System.Threading.Tasks;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2.Claims;
 using FoxIDs.Logic.Tracks;
+using FoxIDs.Infrastructure.Saml2;
+using System.Xml;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoxIDs.Logic
 {
@@ -177,17 +180,18 @@ namespace FoxIDs.Logic
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
             var saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
+            var genericHttpRequest = request.ToGenericHttpRequest(validate: true);
             try
             {
-                binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                binding.ReadSamlResponse(genericHttpRequest, saml2AuthnResponse);
             }
             catch (Exception ex)
             {
                 if (samlConfig.SecondaryDecryptionCertificate != null && binding is Saml2PostBinding && ex.Source.Contains("cryptography", StringComparison.OrdinalIgnoreCase))
                 {
-                    samlConfig.DecryptionCertificate = samlConfig.SecondaryDecryptionCertificate;
+                    samlConfig.DecryptionCertificates = new List<X509Certificate2> { samlConfig.SecondaryDecryptionCertificate };
                     saml2AuthnResponse = new Saml2AuthnResponse(samlConfig);
-                    binding.ReadSamlResponse(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    binding.ReadSamlResponse(genericHttpRequest, saml2AuthnResponse);
                     logger.ScopeTrace(() => $"SAML Authn response decrypted with secondary certificate.", traceType: TraceTypes.Message);
                 }
                 else
@@ -207,6 +211,7 @@ namespace FoxIDs.Logic
             catch (Exception ex)
             {
                 logger.Error(ex, $"Invalid RelayState '{binding.RelayState}' returned from the IdP.");
+                throw;
             }
 
             try
@@ -222,7 +227,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnResponse);
+                    binding.Unbind(genericHttpRequest, saml2AuthnResponse);
                     logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
                 }
                 catch (Exception ex)
@@ -235,7 +240,7 @@ namespace FoxIDs.Logic
                     throw;
                 }
 
-                if (saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() <= 0)
+                if (!(saml2AuthnResponse.ClaimsIdentity?.Claims?.Count() > 0))
                 {
                     throw new SamlRequestException("Empty claims collection.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
@@ -412,6 +417,75 @@ namespace FoxIDs.Logic
                 default:
                     return IdentityConstants.ResponseErrors.InvalidRequest;
             }
+        }
+
+        public static (string issuer, IEnumerable<string> audiences) ReadTokenExchangeSubjectTokenIssuerAndAudiencesAsync(string subjectToken)
+        {
+            var binding = new FoxIdsSaml2TokenExchangeBinding();
+            var saml2TokenExchangeRequest = new FoxIdsSaml2TokenExchangeRequest(new Saml2Configuration { AudienceRestricted = false });
+            binding.ReadSamlRequest(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
+
+            return (saml2TokenExchangeRequest.Issuer, ReadTokenExchangeSubjectTokenAudiences(subjectToken));
+        }
+
+        private static IEnumerable<string> ReadTokenExchangeSubjectTokenAudiences(string subjectToken)
+        {
+            var xmlDocument = subjectToken.ToXmlDocument();
+            var audienceElements = xmlDocument.DocumentElement.SelectNodes($"//*[local-name()='Audience']");
+            if (!(audienceElements?.Count > 0))
+            {
+                throw new Saml2RequestException("There is not at leas one audience element.");
+            }
+
+            foreach (XmlNode audienceElement in audienceElements)
+            {
+                yield return audienceElement.InnerText;
+            }
+        }
+
+        public async Task<List<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
+        {
+            logger.ScopeTrace(() => "Up, SAML validate token exchange subject token.");
+            var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
+            logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
+
+            var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
+
+            var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSignatureValidationCertificates: true);
+
+            var binding = new FoxIdsSaml2TokenExchangeBinding();
+            var saml2TokenExchangeRequest = new FoxIdsSaml2TokenExchangeRequest(samlConfig);
+            binding.Unbind(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
+            logger.ScopeTrace(() => "Up, SAML validate token exchange request accepted.", triggerEvent: true);
+
+            var principal = new ClaimsPrincipal(saml2TokenExchangeRequest.ClaimsIdentity);
+
+            if (principal.Identity == null || !principal.Identity.IsAuthenticated)
+            {
+                throw new InvalidOperationException("No Claims Identity created from SAML2 Response.");
+            }
+
+            var receivedClaims = principal.Identities.First().Claims;
+            logger.ScopeTrace(() => "Up, SAML token exchange subject token valid.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Up, SAML received JWT claims '{receivedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
+            claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+
+            var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
+            var validClaims = ValidateClaims(party, transformedClaims);
+            logger.ScopeTrace(() => $"Up, SAML output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+
+            var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
+
+            logger.ScopeTrace(() => $"Up, SAML output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            return jwtValidClaims;
+        }
+
+        private static ITfoxtec.Identity.Saml2.Http.HttpRequest GetHttpRequest(string subjectToken)
+        {
+            return new ITfoxtec.Identity.Saml2.Http.HttpRequest { Method = "DIRECT", Body = subjectToken };
         }
     }
 }

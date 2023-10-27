@@ -6,6 +6,8 @@ using System.ServiceModel.Security;
 using System.Security.Cryptography.X509Certificates;
 using ITfoxtec.Identity.Models;
 using System.Linq;
+using System;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Models
 {
@@ -33,10 +35,6 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "last_updated")]
         public long LastUpdated { get; set; }
 
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
-        [JsonProperty(PropertyName = "sp_issuer")]
-        public string SpIssuer { get; set; }
-
         [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<SamlClaimTransform> ClaimTransforms { get; set; }
@@ -59,9 +57,12 @@ namespace FoxIDs.Models
         public X509RevocationMode RevocationMode { get; set; }
 
         [Required]
-        [MaxLength(Constants.Models.SamlParty.IssuerLength)]
+        [MaxLength(Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuer")]
-        public string Issuer { get; set; }
+        public override string Issuer { get; set; }
+
+        [JsonIgnore]
+        public override List<string> Issuers { get { return ReadIssuers; } set { throw new NotSupportedException(); } }
 
         [Required]
         [JsonProperty(PropertyName = "authn_binding")]
@@ -120,9 +121,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            var baseResults = base.Validate(validationContext);
+            if (baseResults.Count() > 0)
+            {
+                results.AddRange(baseResults);
+            }
+
             if (Claims?.Where(c => c == "*").Count() > 1)
             {
                 results.Add(new ValidationResult($"Only one allow all wildcard (*) is allowed in the field {nameof(Claims)}.", new[] { nameof(Claims) }));

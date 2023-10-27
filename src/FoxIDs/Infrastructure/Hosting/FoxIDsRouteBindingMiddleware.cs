@@ -174,18 +174,16 @@ namespace FoxIDs.Infrastructure.Hosting
                 {
                     routeBinding.DownParty = await GetDownPartyAsync(trackIdKey, partyNameBindingMatch.Groups["downparty"], acceptUnknownParty);
 
-                    if (routeBinding.DownParty?.AllowUpParties?.Count() >= Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin)
+                    var allowUpParties = routeBinding.DownParty?.AllowUpParties?.Where(up => !up.DisableUserAuthenticationTrust)?.ToList();
+                    if (allowUpParties?.Count() >= Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin)
                     {
-                        //TODO can be deleted when data is updated everywhere, delete after summer 2023
-                        var allowUpParties = routeBinding.DownParty.AllowUpParties.OrderBy(p => p.Type).ThenBy(p => p.Name);
-
                         if (partyNameBindingMatch.Groups["toupparty"].Success)
                         {
                             routeBinding.ToUpParties = GetAllowedToUpPartyIds(scopedLogger, partyNameBindingMatch.Groups["toupparty"], routeBinding.DownParty.Id, allowUpParties);
                         }
                         else
                         {
-                            routeBinding.ToUpParties = routeBinding.DownParty.AllowUpParties;
+                            routeBinding.ToUpParties = allowUpParties;
                         }
                     }
                 }
@@ -202,7 +200,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             switch (track.Key.Type)
             {
-                case TrackKeyType.Contained:
+                case TrackKeyTypes.Contained:
                     return new RouteTrackKey
                     {
                         Type = track.Key.Type,
@@ -210,7 +208,7 @@ namespace FoxIDs.Infrastructure.Hosting
                         SecondaryKey = track.Key.Keys.Count > 1 ? new RouteTrackKeyItem { Key = track.Key.Keys[1].Key } : null,
                     };
 
-                case TrackKeyType.KeyVaultRenewSelfSigned:
+                case TrackKeyTypes.KeyVaultRenewSelfSigned:
                     var trackKeyExternal = await GetTrackKeyItemsAsync(scopedLogger, trackIdKey.TenantName, trackIdKey.TrackName, track);
                     var externalRouteTrackKey = new RouteTrackKey
                     {
@@ -228,7 +226,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     }
                     return externalRouteTrackKey;
 
-                case TrackKeyType.KeyVaultUpload:
+                case TrackKeyTypes.KeyVaultImport:
                 default:
                     throw new Exception($"Track key type not supported '{track.Key.Type}'.");
             }

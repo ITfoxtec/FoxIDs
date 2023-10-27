@@ -15,6 +15,8 @@ namespace FoxIDs.Client.Models.ViewModels
         public JwtWithCertificateInfo Key { get; set; }
 
         [Display(Name = "Optional certificate password")]
-        public string Password { get; set; }        
+        public string Password { get; set; }
+
+        public string Name { get; set; }
     }
 }

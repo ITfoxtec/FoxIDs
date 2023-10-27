@@ -167,6 +167,12 @@ namespace FoxIDs
                 public const int HashSaltLength = 512;
             }
 
+            public static class Certificate
+            {
+                public const int EncodeCertificateLength = 20000;
+                public const int CertificateLength = SecretHash.SecretLength;
+            }
+
             public static class Resource
             {
                 public const int SupportedCulturesMin = 0;
@@ -286,7 +292,7 @@ namespace FoxIDs
                 /// <summary>
                 /// JWT and SAML claim value max length.
                 /// </summary>
-                public const int ValueLength = 8000;               
+                public const int ValueLength = 8000;
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -308,6 +314,8 @@ namespace FoxIDs
                 public const int IdLength = 110;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int NoteLength = 200;
+
+                public const int IssuerLength = 300;
 
                 public const string NameAndGuidIdRegExPattern = @"^[\w\-]*$";
             }
@@ -337,7 +345,7 @@ namespace FoxIDs
                     public const int ClaimsMax = 100;
                     public const int VoluntaryClaimsMin = 0;
                     public const int VoluntaryClaimsMax = 100;                    
-                    public const int ResponseTypesMin = 1;
+                    public const int ResponseTypesMin = 0;
                     public const int ResponseTypesMax = 5;
                     public const int ResponseTypeLength = 30;
                     public const int RedirectUrisMin = 0;
@@ -345,6 +353,8 @@ namespace FoxIDs
                     public const int RedirectUriLength = 500;
                     public const int SecretsMin = 0;
                     public const int SecretsMax = 10;
+                    public const int ClientKeysMin = 0;
+                    public const int ClientKeysMax = 4;
 
                     public const int AuthorizationCodeLifetimeMin = 10; // 10 seconds 
                     public const int AuthorizationCodeLifetimeMax = 900; // 15 minutes
@@ -367,6 +377,7 @@ namespace FoxIDs
             {
                 public static class Client
                 {
+                    public const int ResponseTypesMin = 1;
                     public const int RedirectUrisMin = 1;
                     public const int IdTokenLifetimeMin = 300; // 5 minutes
                     public const int IdTokenLifetimeMax = 86400; // 24 hours
@@ -382,6 +393,9 @@ namespace FoxIDs
 
             public static class UpParty
             {
+                public const int IssuersBaseMin = 0;
+                public const int IssuersMin = 1;
+                public const int IssuersMax = 10;
                 public const int SessionLifetimeMin = 0; // 0 minutes
                 public const int SessionLifetimeMax = 43200; // 12 hours
                 public const int SessionAbsoluteLifetimeMin = 0; // 0 minutes 
@@ -401,10 +415,6 @@ namespace FoxIDs
             public static class OAuthUpParty
             {
                 public const int AuthorityLength = 300;
-                public const int IssuersApiMin = 0;
-                public const int IssuersMin = 1;
-                public const int IssuersMax = 10;
-                public const int IssuerLength = 300;
                 public const int KeysApiMin = 0;
                 public const int KeysMin = 1;
                 public const int KeysMax = 10;   
@@ -422,6 +432,9 @@ namespace FoxIDs
                     public const int ClaimsMin = 0;
                     public const int ClaimsMax = 100;
 
+                    public const int ClientKeysMin = 0;
+                    public const int ClientKeysMax = 2;
+
                     public const int AdditionalParametersMin = 0;
                     public const int AdditionalParametersMax = 10;
                     public const int AdditionalParameterNameLength = 50;
@@ -438,6 +451,9 @@ namespace FoxIDs
                     public const int TokenUrlLength = 500;  
                     public const int UserInfoUrlLength = 500;
                     public const int EndSessionUrlLength = 500;
+
+                    public const int ClientAssertionLifetimeMin = 10; // 10 seconds 
+                    public const int ClientAssertionLifetimeMax = 900; // 15 minutes                    
                 }
             }
 
@@ -465,7 +481,6 @@ namespace FoxIDs
                 public const int MetadataRequestedAttributesMin = 1;
                 public const int MetadataRequestedAttributesMax = 100;
 
-                public const int IssuerLength = 300;
                 public const int SignatureAlgorithmLength = 100;
                 public const int KeysMax = 10;
 
@@ -660,7 +675,7 @@ namespace FoxIDs
             /// <summary>
             /// Default Access Token claims.
             /// </summary>
-            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken;
+            public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] { FoxI.JwtClaimTypes.Actor }).ToArray();
 
             /// <summary>
             /// Default JWT Token up-party claims.
@@ -670,7 +685,7 @@ namespace FoxIDs
             /// <summary>
             /// Exclude JWT Token up-party claims.
             /// </summary>
-            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
+            public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 
             /// <summary>
             /// Default SAML claims.

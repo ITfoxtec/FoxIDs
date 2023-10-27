@@ -460,7 +460,7 @@ namespace FoxIDs.Logic
                 {
                     claims = await UserInforRequestAsync(party.Client, accessToken);
                 }
-                else 
+                else if (!party.Client.UseIdTokenClaims)
                 {
                     var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
                     claims = await ValidateAccessTokenAsync(party, accessToken);
@@ -476,7 +476,7 @@ namespace FoxIDs.Logic
                     claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AccessToken).ToList();
                     foreach (var accessTokenClaim in accessTokenClaims)
                     {
-                        claims.Add(new Claim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessTokenClaim}"));
+                        claims.AddClaim(Constants.JwtClaimTypes.AccessToken, $"{party.Name}|{accessTokenClaim}");
                     }
                 }
 

@@ -89,7 +89,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var genericHttpRequest = Request.ToGenericHttpRequest();
+                var genericHttpRequest = Request.ToGenericHttpRequest(validate: true);
                 if (new Saml2PostBinding().IsResponse(genericHttpRequest) || new Saml2RedirectBinding().IsResponse(genericHttpRequest))
                 {
                     return await LoggedOutInternal();
@@ -218,7 +218,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Up-party not configured.");
                 }
 
-                var genericHttpRequest = Request.ToGenericHttpRequest();
+                var genericHttpRequest = Request.ToGenericHttpRequest(validate: true);
                 if (new Saml2PostBinding().IsRequest(genericHttpRequest) || new Saml2RedirectBinding().IsRequest(genericHttpRequest))
                 {
                     await sequenceLogic.StartSequenceAsync(true);

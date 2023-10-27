@@ -72,7 +72,8 @@ namespace FoxIDs.Logic
             var request = HttpContext.Request;
 
             var saml2AuthnRequest = new Saml2AuthnRequest(samlConfig);
-            binding.ReadSamlRequest(request.ToGenericHttpRequest(), saml2AuthnRequest);
+            var genericHttpRequest = request.ToGenericHttpRequest(validate: true);
+            binding.ReadSamlRequest(genericHttpRequest, saml2AuthnRequest);
             logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
 
             try
@@ -81,7 +82,7 @@ namespace FoxIDs.Logic
 
                 try
                 {
-                    binding.Unbind(request.ToGenericHttpRequest(), saml2AuthnRequest);
+                    binding.Unbind(genericHttpRequest, saml2AuthnRequest);
                     logger.ScopeTrace(() => "Down, SAML Authn request accepted.", triggerEvent: true);
                 }
                 catch (Exception ex)

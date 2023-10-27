@@ -75,11 +75,3 @@ It is possible to run the sample applications after they are configured in a Fox
 If you have questions please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with 'foxids' and I will answer as soon as possible.
 
 Otherwise you can use [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=FoxIDs) for topics not suitable for Stack Overflow.
-
-## Development
-
-FoxIDs  
-`https://localhost:44330`
-
-FoxIDs Control (Blazor WebAssembly Client and API)  
-`https://localhost:44331`

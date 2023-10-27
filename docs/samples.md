@@ -11,7 +11,9 @@ The sample Visual Studio solution contain the following [down-party](#down-party
 ## Down-party sample applications
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
-
+<sub><sup>src: https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample</sup></sub>  
+<font size="2">src: https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample</font>  
+<font size="3">src: https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample</font>  
 Sample application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
 
 > This sample is a good starting point!

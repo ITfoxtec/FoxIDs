@@ -135,6 +135,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\configure-tenant.png = docs\images\configure-tenant.png
 		docs\images\configure-track-setting.png = docs\images\configure-track-setting.png
 		docs\images\configure-track.png = docs\images\configure-track.png
+		docs\images\development-foxids-db.png = docs\images\development-foxids-db.png
 		docs\images\example-claim-transform-name-to-given_name-family_name.png = docs\images\example-claim-transform-name-to-given_name-family_name.png
 		docs\images\example-claim-transform-remove-post-up-party-name.png = docs\images\example-claim-transform-remove-post-up-party-name.png
 		docs\images\faq-pass-through-all-claims-down-party.png = docs\images\faq-pass-through-all-claims-down-party.png

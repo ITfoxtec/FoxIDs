@@ -100,15 +100,24 @@ Create a resource group.
 
 ## Run and debug 
 
-After the Azure resources is in place you are nearly ready to run and debug the solution
+After the Azure resources is in place you are nearly ready to run and debug the solution. Please do the following endpoint settings.
 
 - Add the FoxIDs local endpoint `https://localhost:44330` to the FoxIDs appsettings.json in Settings.WebsiteUrl
 - Add the FoxIDs local endpoint `https://localhost:44330` FoxIDs Control local endpoint `https://localhost:44331` to the FoxIDs.Control appsettings.json in Settings.FoxIDsEndpoint and Settings.FoxIDsControlEndpoint
-- Configure Visual studio to start both the FoxIDs project and FoxIDs.Control project and hit run.
+- Configure Visual studio to start both the FoxIDs project and FoxIDs.Control project
+- In the FoxIDs project navigate to Dependencies --> npm, right click and click Restore packages
+- Hit run
+- The FoxIDs Control site should open on `https://localhost:44331` 
+- Login with the default admin user is: `admin@foxids.com` with password: `FirstAccess!` - you are required to change the password on first login
 
-First time you run the solution and access FoxIDs Control on `https://localhost:44331` Cosmos DB and Key Vault is pre seeded, you probably need to refresh the browser to reload after pre seed. 
+First time you run the solution Cosmos DB and Key Vault is pre seeded, you probably need to refresh the browser to reload after pre seed.  
 
-> The default admin user is: `admin@foxids.com` with password: `FirstAccess!` (you are required to change the password on first login)  
+![FoxIDs database in Cosmos DB](images/development-foxids-db.png)
+
+> If the seed fails e.g., because of missing settings. You can re-initiate the pre seeded by deleting the FoxIDs database in Cosmos DB.
+
+After successfully login you have access to the master tenant. You should then create a dev tenant where you can add applications (down-party), APIs (down-party), user login (up-party) and external trust (up-party).  
+After having your dev tenant created you can follow the [get started guide](https://localhost:44333/docs/getting-started#2-first-login).
 
 ## API client proxy
 

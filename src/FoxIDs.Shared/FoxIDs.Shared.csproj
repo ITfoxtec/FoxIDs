@@ -20,12 +20,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.14.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
-		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.15.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
-		<Content Remove="C:\Users\anders\.nuget\packages\microsoft.azure.cosmos\3.31.2\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<EmbeddedResource Include="Models\Master\Resources\EmbeddedResource.json" />
 	</ItemGroup>
 

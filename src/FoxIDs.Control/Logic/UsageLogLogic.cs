@@ -312,7 +312,7 @@ namespace FoxIDs.Logic
                 timePointer = timePointer.AddMonths(-1);
             }
             var startDate = new DateTimeOffset(timePointer.Year, timePointer.Month, 1, 0, 0, 0, TimeSpan.FromHours(timeOffset));
-            var endDate = startDate.AddMonths(1).AddDays(-1);
+            var endDate = startDate.AddMonths(1);
             return new QueryTimeRange(startDate, endDate);
         }
 

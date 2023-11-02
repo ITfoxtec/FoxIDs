@@ -350,8 +350,9 @@ namespace FoxIDs
                     public const int ResponseTypesMax = 5;
                     public const int ResponseTypeLength = 30;
                     public const int RedirectUrisMin = 0;
-                    public const int RedirectUrisMax = 40;
+                    public const int RedirectUrisMax = 200;
                     public const int RedirectUriLength = 500;
+                    public const int RedirectUriSumLength = 20000;
                     public const int SecretsMin = 0;
                     public const int SecretsMax = 10;
                     public const int ClientKeysMin = 0;

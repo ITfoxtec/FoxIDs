@@ -34,10 +34,9 @@ namespace FoxIDs.Logic
 
         public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
         {
-            var client = new LogsQueryClient(tokenCredential);  
-            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
-
             var items = new List<Api.UsageLogItem>();
+
+            #region DB
             if (logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
             {
                 if (isMasterTenant)
@@ -79,10 +78,15 @@ namespace FoxIDs.Logic
                     }
                 }
             }
+            #endregion
+
+            #region logs
             var dayPointer = 0;
             var hourPointer = 0;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
+            var client = new LogsQueryClient(tokenCredential);
+            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
             foreach (var row in rows)
             {
                 if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
@@ -118,13 +122,15 @@ namespace FoxIDs.Logic
                     }
                 }
 
+                var logType = GetLogType(row);
                 var item = new Api.UsageLogItem
                 {
-                    Type = GetLogType(row),
-                    Value = GetCount(row),
+                    Type = logType,
+                    Value = GetCount(row, logType),
                 };
                 itemsPointer.Add(item);
             }
+            #endregion
 
             return new Api.UsageLogResponse { SummarizeLevel = logRequest.SummarizeLevel, Items = SortUsageTypes(items) };
         }
@@ -279,9 +285,17 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private long GetCount(LogsTableRow row)
+        private double GetCount(LogsTableRow row, Api.UsageLogTypes logType)
         {
-            var count = row.GetInt64("UsageCount");
+            double? count = null;
+            if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
+            {
+                count = row.GetDouble("UsageRatingCount");
+            }
+            if (!(count > 0))
+            {
+                count = row.GetDouble("UsageCount");
+            }
             return count.HasValue ? count.Value : 0;
         }
 
@@ -389,8 +403,9 @@ namespace FoxIDs.Logic
 | extend f_TenantName = Properties.f_TenantName
 | extend f_TrackName = Properties.f_TrackName
 | extend f_UsageType = Properties.f_UsageType
+| extend f_UsageRating = Properties.f_UsageRating
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count() by {preOrderSummarizeBy}tostring(f_UsageType)
+| summarize UsageCount = count(), UsageRatingCount = sum(todouble(f_UsageRating)) by {preOrderSummarizeBy}tostring(f_UsageType)
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

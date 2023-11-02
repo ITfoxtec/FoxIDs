@@ -86,6 +86,7 @@ namespace FoxIDs
             public const string UsageType = "f_UsageType";
             public const string UsageLoginType = "f_UsageLoginType";
             public const string UsageTokenType = "f_UsageTokenType";
+            public const string UsageRatingType = "f_UsageRating";
 
             public static class Results
             {

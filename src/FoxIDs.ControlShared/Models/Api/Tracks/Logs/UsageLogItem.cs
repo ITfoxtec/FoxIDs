@@ -6,7 +6,7 @@ namespace FoxIDs.Models.Api
     {
         public UsageLogTypes Type { get; set; }
 
-        public long Value { get; set; }
+        public double Value { get; set; }
 
         public IEnumerable<UsageLogItem> SubItems { get; set; }
     }

@@ -323,33 +323,33 @@ namespace FoxIDs.Controllers
         }
 
         private string GetGeneralQueryExtend() =>
-@"| extend f_DownPartyId = Properties.f_DownPartyId 
-| extend f_UpPartyId = Properties.f_UpPartyId 
-| extend f_SessionId = Properties.f_SessionId 
-| extend f_ExternalSessionId = Properties.f_ExternalSessionId 
-| extend f_UserId = Properties.f_UserId 
-| extend f_Email = Properties.f_Email 
-| extend f_UserAgent = Properties.f_UserAgent";
+@$"| extend {Constants.Logs.DownPartyId} = Properties.{Constants.Logs.DownPartyId} 
+| extend {Constants.Logs.UpPartyId} = Properties.{Constants.Logs.UpPartyId} 
+| extend {Constants.Logs.SessionId} = Properties.{Constants.Logs.SessionId} 
+| extend {Constants.Logs.ExternalSequenceId} = Properties.{Constants.Logs.ExternalSequenceId} 
+| extend {Constants.Logs.UserId} = Properties.{Constants.Logs.UserId} 
+| extend {Constants.Logs.Email} = Properties.{Constants.Logs.Email} 
+| extend {Constants.Logs.UserAgent} = Properties.{Constants.Logs.UserAgent}";
 
         private string GetGeneralQueryWhere(string filter) =>
 @$"ClientIP contains '{filter}' or 
-f_DownPartyId contains '{filter}' or 
-f_UpPartyId contains '{filter}' or 
-f_SequenceId contains '{filter}' or 
-f_SessionId contains '{filter}' or 
-f_ExternalSessionId contains '{filter}' or 
-f_UserId contains '{filter}' or 
-f_Email contains '{filter}' or 
-f_UserAgent contains '{filter}'";
+{Constants.Logs.DownPartyId} contains '{filter}' or 
+{Constants.Logs.UpPartyId} contains '{filter}' or 
+{Constants.Logs.SequenceId} contains '{filter}' or 
+{Constants.Logs.SessionId} contains '{filter}' or 
+{Constants.Logs.ExternalSequenceId} contains '{filter}' or 
+{Constants.Logs.UserId} contains '{filter}' or 
+{Constants.Logs.Email} contains '{filter}' or 
+{Constants.Logs.UserAgent} contains '{filter}'";
 
         private string GetQuery(string fromType, string extend, string where)
         {
             return
 @$"{fromType}
-| extend f_TenantName = Properties.f_TenantName
-| extend f_TrackName = Properties.f_TrackName
-| extend f_SequenceId = Properties.f_SequenceId {(extend.IsNullOrEmpty() ? string.Empty : extend)}
-| where f_TenantName == '{RouteBinding.TenantName}' and f_TrackName == '{RouteBinding.TrackName}' {(where.IsNullOrEmpty() ? string.Empty : where)}
+| extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
+| extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
+| extend {Constants.Logs.SequenceId} = Properties.{Constants.Logs.SequenceId} {(extend.IsNullOrEmpty() ? string.Empty : extend)}
+| where {Constants.Logs.TenantName} == '{RouteBinding.TenantName}' and {Constants.Logs.TrackName} == '{RouteBinding.TrackName}' {(where.IsNullOrEmpty() ? string.Empty : where)}
 | limit {maxQueryLogItems}
 | order by TimeGenerated";
         }

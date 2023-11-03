@@ -2,6 +2,7 @@
 using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace FoxIDs.Models.Api
 {
@@ -83,6 +84,10 @@ namespace FoxIDs.Models.Api
             if (RequirePkce && ResponseTypes?.Contains(IdentityConstants.ResponseTypes.Code) != true)
             {
                 results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { nameof(RequirePkce), nameof(ResponseTypes) }));
+            }
+            if (RedirectUris?.Sum(i => i.Count()) > Constants.Models.OAuthDownParty.Client.RedirectUriSumLength)
+            {
+                results.Add(new ValidationResult($"The {RedirectUris} total summarised number of characters is more then {Constants.Models.OAuthDownParty.Client.RedirectUriSumLength}.", new[] { nameof(RedirectUris) }));
             }
             return results;
         }

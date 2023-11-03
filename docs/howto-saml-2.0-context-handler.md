@@ -18,7 +18,7 @@ Context Handler documentation and configuration:
 
 Context Handler requires the Relying Party (RP) and Identity Provider (IdP) to use different OSES certificates. Therefore, consider connecting Context Handler in separate tracks where the OCES certificates can be configured without affecting any other configurations.
 
-Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect FoxIDs with OpenID Connect](howto-oidc-foxids.md) guide. The track with a up-party connected to Context Handler is called the parallel FoxIDs track in the guide.
+You can easy connect two tracks in the same tenant with a [track link](howto-tracklink-foxids.md).
 
 ## Certificate
 

@@ -19,14 +19,14 @@ namespace FoxIDs.Logic
 
         public void LogLoginEvent(PartyTypes partyType)
         {
-            var rating = GetLogRating();
-            logger.Event($"Usage {UsageLogTypes.Login}.{partyType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.Login.ToString() }, { Constants.Logs.UsageLoginType, partyType.ToString() }, { Constants.Logs.UsageRatingType, rating.ToString(CultureInfo.InvariantCulture) } });
+            var addRating = GetLogAddRating();
+            logger.Event($"Usage {UsageLogTypes.Login}.{partyType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.Login.ToString() }, { Constants.Logs.UsageLoginType, partyType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
         }
 
         public void LogTokenRequestEvent(UsageLogTokenTypes tokenType)
         {
-            var rating = GetLogRating();
-            logger.Event($"Usage {UsageLogTypes.TokenRequest}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.TokenRequest.ToString() }, { Constants.Logs.UsageTokenType, tokenType.ToString() }, { Constants.Logs.UsageRatingType, rating.ToString(CultureInfo.InvariantCulture) } });
+            var addRating = GetLogAddRating();
+            logger.Event($"Usage {UsageLogTypes.TokenRequest}.{tokenType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, UsageLogTypes.TokenRequest.ToString() }, { Constants.Logs.UsageTokenType, tokenType.ToString() }, { Constants.Logs.UsageAddRating, addRating.ToString(CultureInfo.InvariantCulture) } });
         }
 
         public void LogControlApiGetEvent()
@@ -44,10 +44,10 @@ namespace FoxIDs.Logic
             logger.Event($"Usage {planUsageType} event.", properties: new Dictionary<string, string> { { Constants.Logs.UsageType, planUsageType.ToString() } });
         }
 
-        private double GetLogRating()
+        private double GetLogAddRating()
         {
             var scopedLogger = RouteBinding.Logging?.ScopedLogger;
-            var rating = 1.0;
+            var rating = 0.0;
             if (scopedLogger != null)
             {
                 if (scopedLogger.LogInfoTrace)

@@ -287,14 +287,10 @@ namespace FoxIDs.Logic
 
         private double GetCount(LogsTableRow row, Api.UsageLogTypes logType)
         {
-            double? count = null;
+            var count = row.GetDouble("UsageCount");
             if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
             {
-                count = row.GetDouble("UsageRatingCount");
-            }
-            if (!(count > 0))
-            {
-                count = row.GetDouble("UsageCount");
+                count += row.GetDouble("UsageAddRating");
             }
             return count.HasValue ? count.Value : 0;
         }
@@ -387,11 +383,11 @@ namespace FoxIDs.Logic
             var whereDataSlice = new List<string>();
             if (!tenantName.IsNullOrWhiteSpace())
             {
-                whereDataSlice.Add($"f_TenantName == '{tenantName}'");
+                whereDataSlice.Add($"{Constants.Logs.TenantName} == '{tenantName}'");
             }
             if (!trackName.IsNullOrWhiteSpace())
             {
-                whereDataSlice.Add($"f_TrackName == '{trackName}'");
+                whereDataSlice.Add($"{Constants.Logs.TrackName} == '{trackName}'");
             }
             return string.Join(" and ", whereDataSlice);
         }
@@ -400,12 +396,12 @@ namespace FoxIDs.Logic
         {
             return
 @$"{GetFromTypeAndUnion(fromType, isMasterTenant)}
-| extend f_TenantName = Properties.f_TenantName
-| extend f_TrackName = Properties.f_TrackName
-| extend f_UsageType = Properties.f_UsageType
-| extend f_UsageRating = Properties.f_UsageRating
+| extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
+| extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
+| extend {Constants.Logs.UsageType} = Properties.{Constants.Logs.UsageType}
+| extend {Constants.Logs.UsageAddRating} = Properties.{Constants.Logs.UsageAddRating}
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count(), UsageRatingCount = sum(todouble(f_UsageRating)) by {preOrderSummarizeBy}tostring(f_UsageType)
+| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

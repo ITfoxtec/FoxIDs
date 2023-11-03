@@ -292,7 +292,7 @@ namespace FoxIDs.Logic
             {
                 count += row.GetDouble("UsageAddRating");
             }
-            return count.HasValue ? count.Value : 0;
+            return Math.Round(count.HasValue ? count.Value : 0, 1);
         }
 
         private DateTime GetDate(LogsTableRow row)

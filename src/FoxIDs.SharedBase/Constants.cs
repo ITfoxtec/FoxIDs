@@ -190,7 +190,7 @@ namespace FoxIDs
             {
                 public const int IdLength = 50;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
                 public const int CustomDomainLength = 200;
@@ -201,7 +201,7 @@ namespace FoxIDs
             {
                 public const int IdLength = 80;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
                 public const int DisplayNameLength = 100;
@@ -310,7 +310,7 @@ namespace FoxIDs
 
             public static class Party
             {
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 110;
                 public const string IdRegExPattern = @"^[\w:\-]*$";

@@ -123,6 +123,8 @@ namespace FoxIDs.Logic
                     tokenResponse.RefreshToken = await oauthRefreshTokenGrantDownLogic.CreateRefreshTokenGrantAsync(client, claims, authCodeGrant.Scope);
                 }
 
+                planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.AuthorizationCode);
+
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
                 return new JsonResult(tokenResponse);

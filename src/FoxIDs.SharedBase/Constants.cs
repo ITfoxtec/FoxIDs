@@ -65,27 +65,28 @@ namespace FoxIDs
             public const string TrackName = "f_TrackName";
             public const string GrantType = "f_GrantType";
             public const string Domain = "f_Domain";
-            public const string UserAgent = "f_UserAgent";
-            public const string UpPartyId = "f_UpPartyId";
+            public const string UserAgent = "{Constants.Logs.UserAgent}";
+            public const string UpPartyId = "{Constants.Logs.UpPartyId}";
             public const string UpPartyClientId = "f_UpPartyClientId";
             public const string UpPartyStatus = "f_UpPartyStatus";
-            public const string DownPartyId = "f_DownPartyId";
+            public const string DownPartyId = "{Constants.Logs.DownPartyId}";
             public const string DownPartyClientId = "f_DownPartyClientId";
-            public const string SequenceId = "f_SequenceId";
+            public const string SequenceId = "{Constants.Logs.SequenceId}";
             public const string ExternalSequenceId = "f_ExternalSequenceId";            
             public const string AccountAction = "f_AccountAction";            
             public const string SequenceCulture = "f_SequenceCulture";
             public const string Issuer = "f_Issuer";
             public const string Status = "f_Status";
-            public const string SessionId = "f_SessionId";
-            public const string ExternalSessionId = "f_ExternalSessionId";
-            public const string UserId = "f_UserId";
-            public const string Email = "f_Email";
+            public const string SessionId = "{Constants.Logs.SessionId}";
+            public const string ExternalSessionId = "{Constants.Logs.ExternalSequenceId}";
+            public const string UserId = "{Constants.Logs.UserId}";
+            public const string Email = "{Constants.Logs.Email}";
             public const string Type = "f_Type";
             public const string FailingLoginCount = "f_FailingLoginCount";
             public const string UsageType = "f_UsageType";
             public const string UsageLoginType = "f_UsageLoginType";
             public const string UsageTokenType = "f_UsageTokenType";
+            public const string UsageAddRating = "f_UsageAddRating";
 
             public static class Results
             {
@@ -189,7 +190,7 @@ namespace FoxIDs
             {
                 public const int IdLength = 50;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
                 public const int CustomDomainLength = 200;
@@ -200,7 +201,7 @@ namespace FoxIDs
             {
                 public const int IdLength = 80;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
                 public const int DisplayNameLength = 100;
@@ -309,7 +310,7 @@ namespace FoxIDs
 
             public static class Party
             {
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 110;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
@@ -349,8 +350,9 @@ namespace FoxIDs
                     public const int ResponseTypesMax = 5;
                     public const int ResponseTypeLength = 30;
                     public const int RedirectUrisMin = 0;
-                    public const int RedirectUrisMax = 40;
+                    public const int RedirectUrisMax = 200;
                     public const int RedirectUriLength = 500;
+                    public const int RedirectUriSumLength = 20000;
                     public const int SecretsMin = 0;
                     public const int SecretsMax = 10;
                     public const int ClientKeysMin = 0;
@@ -445,8 +447,6 @@ namespace FoxIDs
                     public const int ResponseModeLength = 30;
                     public const int ResponseTypeLength = 30;
 
-                    public const int RedirectUrisMin = 1;
-                    public const int RedirectUrisMax = 40;
                     public const int AuthorizeUrlLength = 500;
                     public const int TokenUrlLength = 500;  
                     public const int UserInfoUrlLength = 500;

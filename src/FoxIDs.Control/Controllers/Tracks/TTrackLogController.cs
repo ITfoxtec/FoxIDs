@@ -326,7 +326,7 @@ namespace FoxIDs.Controllers
 @$"| extend {Constants.Logs.DownPartyId} = Properties.{Constants.Logs.DownPartyId} 
 | extend {Constants.Logs.UpPartyId} = Properties.{Constants.Logs.UpPartyId} 
 | extend {Constants.Logs.SessionId} = Properties.{Constants.Logs.SessionId} 
-| extend {Constants.Logs.ExternalSequenceId} = Properties.{Constants.Logs.ExternalSequenceId} 
+| extend {Constants.Logs.ExternalSessionId} = Properties.{Constants.Logs.ExternalSessionId}
 | extend {Constants.Logs.UserId} = Properties.{Constants.Logs.UserId} 
 | extend {Constants.Logs.Email} = Properties.{Constants.Logs.Email} 
 | extend {Constants.Logs.UserAgent} = Properties.{Constants.Logs.UserAgent}";
@@ -337,7 +337,7 @@ namespace FoxIDs.Controllers
 {Constants.Logs.UpPartyId} contains '{filter}' or 
 {Constants.Logs.SequenceId} contains '{filter}' or 
 {Constants.Logs.SessionId} contains '{filter}' or 
-{Constants.Logs.ExternalSequenceId} contains '{filter}' or 
+{Constants.Logs.ExternalSessionId} contains '{filter}' or 
 {Constants.Logs.UserId} contains '{filter}' or 
 {Constants.Logs.Email} contains '{filter}' or 
 {Constants.Logs.UserAgent} contains '{filter}'";

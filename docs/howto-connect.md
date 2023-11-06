@@ -9,7 +9,7 @@ FoxIDs will then handle the SAML 2.0 connection and you only need to care about 
 
 If needed you can [connect two FoxIDs tracks](#connect-foxids-tracks).
 
-## Up-party - How to connect an Identity Provider (IdP)
+## Up-party - How to connect Identity Provider (IdP)
 
 An external OpenID Provider (OP) / Identity Provider (IdP) can be connected with a OpenID Connect up-party or a SAML 2.0 up-party.
 

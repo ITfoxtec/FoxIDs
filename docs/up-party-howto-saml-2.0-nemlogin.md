@@ -1,10 +1,26 @@
 # Up-party - Connect NemLog-in with SAML 2.0
 
-FoxIDs can be connected to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-party-saml-2.0.md). Where NemLog-in is a SAML 2.0 Identity Provider and FoxIDs is acting as an SAML 2.0 Relying Party (RP) / Service Provider (SP).
+You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
-> NemLog-in give your users access to authenticate with MitID.
+    
+---
 
-NemLog-in (currently called NemLog-in3) is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
+
+
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
+FoxIDs will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly connect to multiple up-parties from the same OpenID Connect down-party.
+
+
+
+Where NemLog-in is a SAML 2.0 Identity Provider and FoxIDs is acting as an SAML 2.0 Relying Party (RP) / Service Provider (SP).
+
+
+---
+
+
+
+
+NemLog-in (NemLog-in3) is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
 
 > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 

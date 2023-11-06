@@ -1,10 +1,10 @@
 # Connect to Context Handler with SAML 2.0
 **Both up-party and down-party**
 
-FoxIDs can be connected to Context Handler (Danish IdP, Fælleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and [SAML 2.0 down-party](down-party-saml-2.0.md). 
+FoxIDs can be connected to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and [SAML 2.0 down-party](down-party-saml-2.0.md). 
 Where Context Handler is either a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider-idp) or [Relying Party (RP)](#configuring-context-handler-as-relying-party-rp) and FoxIDs is acting as an SAML 2.0 Relying Party or Identity Provider.
 
-Context Handler is a Danish Identity Provider (IdP) connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support both OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
+Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support both OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
 
 > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
@@ -18,7 +18,7 @@ Context Handler documentation and configuration:
 
 Context Handler requires the Relying Party (RP) and Identity Provider (IdP) to use different OSES certificates. Therefore, consider connecting Context Handler in separate tracks where the OCES certificates can be configured without affecting any other configurations.
 
-Two FoxIDs tracks can be connected with OpenID Connect. Please see the [connect FoxIDs with OpenID Connect](howto-oidc-foxids.md) guide. The track with a up-party connected to Context Handler is called the parallel FoxIDs track in the guide.
+You can easy connect two tracks in the same tenant with a [track link](howto-tracklink-foxids.md).
 
 ## Certificate
 

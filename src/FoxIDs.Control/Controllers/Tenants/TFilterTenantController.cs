@@ -12,6 +12,7 @@ using System.Linq;
 using ITfoxtec.Identity;
 using FoxIDs.Infrastructure.Security;
 using FoxIDs.Infrastructure.Filters;
+using System;
 
 namespace FoxIDs.Controllers
 {
@@ -68,15 +69,15 @@ namespace FoxIDs.Controllers
             }
             else if(!filterName.IsNullOrWhiteSpace() && filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName));
+                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase));
             }
             else if (filterName.IsNullOrWhiteSpace() && !filterCustomDomain.IsNullOrWhiteSpace())
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain));
+                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
             }
             else
             {
-                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName) || t.CustomDomain.Contains(filterCustomDomain));
+                return tenantRepository.GetListAsync<Tenant>(whereQuery: t => t.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || t.CustomDomain.Contains(filterCustomDomain, StringComparison.OrdinalIgnoreCase));
             }
         }
     }

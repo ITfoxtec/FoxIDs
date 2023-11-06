@@ -1,4 +1,4 @@
-﻿# Up-party - connect Azure AD with OpenID Connect
+﻿# Up-party - connect Azure AD (Microsoft Entra ID) with OpenID Connect
 
 FoxIDs can be connected to Azure AD with OpenID Connect and thereby authenticating end users in a Azure AD tenant.
 

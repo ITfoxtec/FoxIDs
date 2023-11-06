@@ -34,10 +34,9 @@ namespace FoxIDs.Logic
 
         public async Task<Api.UsageLogResponse> GetTrackUsageLog(Api.UsageLogRequest logRequest, string tenantName, string trackName, bool isMasterTenant = false, bool isMasterTrack = false)
         {
-            var client = new LogsQueryClient(tokenCredential);  
-            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
-
             var items = new List<Api.UsageLogItem>();
+
+            #region DB
             if (logRequest.TimeScope == Api.UsageLogTimeScopes.ThisMonth && logRequest.SummarizeLevel == Api.UsageLogSummarizeLevels.Month)
             {
                 if (isMasterTenant)
@@ -79,10 +78,15 @@ namespace FoxIDs.Logic
                     }
                 }
             }
+            #endregion
+
+            #region logs
             var dayPointer = 0;
             var hourPointer = 0;
             List<Api.UsageLogItem> dayItemsPointer = items;
             List<Api.UsageLogItem> itemsPointer = items;
+            var client = new LogsQueryClient(tokenCredential);
+            var rows = await LoadUsageEventsAsync(client, tenantName, trackName, GetQueryTimeRange(logRequest.TimeScope, logRequest.TimeOffset), logRequest, isMasterTenant);
             foreach (var row in rows)
             {
                 if (logRequest.SummarizeLevel != Api.UsageLogSummarizeLevels.Month)
@@ -118,13 +122,15 @@ namespace FoxIDs.Logic
                     }
                 }
 
+                var logType = GetLogType(row);
                 var item = new Api.UsageLogItem
                 {
-                    Type = GetLogType(row),
-                    Value = GetCount(row),
+                    Type = logType,
+                    Value = GetCount(row, logType),
                 };
                 itemsPointer.Add(item);
             }
+            #endregion
 
             return new Api.UsageLogResponse { SummarizeLevel = logRequest.SummarizeLevel, Items = SortUsageTypes(items) };
         }
@@ -279,10 +285,14 @@ namespace FoxIDs.Logic
             return logType;
         }
 
-        private long GetCount(LogsTableRow row)
+        private double GetCount(LogsTableRow row, Api.UsageLogTypes logType)
         {
-            var count = row.GetInt64("UsageCount");
-            return count.HasValue ? count.Value : 0;
+            var count = row.GetDouble("UsageCount");
+            if (logType == Api.UsageLogTypes.Login || logType == Api.UsageLogTypes.TokenRequest)
+            {
+                count += row.GetDouble("UsageAddRating");
+            }
+            return Math.Round(count.HasValue ? count.Value : 0, 1);
         }
 
         private DateTime GetDate(LogsTableRow row)
@@ -312,7 +322,7 @@ namespace FoxIDs.Logic
                 timePointer = timePointer.AddMonths(-1);
             }
             var startDate = new DateTimeOffset(timePointer.Year, timePointer.Month, 1, 0, 0, 0, TimeSpan.FromHours(timeOffset));
-            var endDate = startDate.AddMonths(1).AddDays(-1);
+            var endDate = startDate.AddMonths(1);
             return new QueryTimeRange(startDate, endDate);
         }
 
@@ -373,11 +383,11 @@ namespace FoxIDs.Logic
             var whereDataSlice = new List<string>();
             if (!tenantName.IsNullOrWhiteSpace())
             {
-                whereDataSlice.Add($"f_TenantName == '{tenantName}'");
+                whereDataSlice.Add($"{Constants.Logs.TenantName} == '{tenantName}'");
             }
             if (!trackName.IsNullOrWhiteSpace())
             {
-                whereDataSlice.Add($"f_TrackName == '{trackName}'");
+                whereDataSlice.Add($"{Constants.Logs.TrackName} == '{trackName}'");
             }
             return string.Join(" and ", whereDataSlice);
         }
@@ -386,11 +396,12 @@ namespace FoxIDs.Logic
         {
             return
 @$"{GetFromTypeAndUnion(fromType, isMasterTenant)}
-| extend f_TenantName = Properties.f_TenantName
-| extend f_TrackName = Properties.f_TrackName
-| extend f_UsageType = Properties.f_UsageType
+| extend {Constants.Logs.TenantName} = Properties.{Constants.Logs.TenantName}
+| extend {Constants.Logs.TrackName} = Properties.{Constants.Logs.TrackName}
+| extend {Constants.Logs.UsageType} = Properties.{Constants.Logs.UsageType}
+| extend {Constants.Logs.UsageAddRating} = Properties.{Constants.Logs.UsageAddRating}
 {(whereDataSlice.IsNullOrEmpty() ? string.Empty : $"| where {whereDataSlice} ")}| where {where}
-| summarize UsageCount = count() by {preOrderSummarizeBy}tostring(f_UsageType)
+| summarize UsageCount = count(), UsageAddRating = sum(todouble({Constants.Logs.UsageAddRating})) by {preOrderSummarizeBy}tostring({Constants.Logs.UsageType})
 {(preSortBy.IsNullOrEmpty() ? string.Empty : $"| sort by {preSortBy}")}";
         }
 

@@ -1,6 +1,8 @@
 - [Description](index.md)
 - [Getting Started](getting-started.md)
 - [How to connect](howto-connect.md)
+  - [Connect an IdP](howto-connect.md#up-party---how-to-connect-an-identity-provider-idp)
+  - [Become an IdP](howto-connect.md#down-party---how-to-become-an-identity-provider-idp)
 - [Parties](parties.md)
   - [Login & HRD & 2FA/MFA](login.md)
   - [OpenID Connect](oidc.md)

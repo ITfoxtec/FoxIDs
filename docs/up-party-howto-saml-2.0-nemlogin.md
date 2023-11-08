@@ -4,7 +4,7 @@ You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-p
 
     
 ---
-
+ 
 
 
 By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 

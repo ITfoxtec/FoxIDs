@@ -9,11 +9,11 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "i")]
         public string Id { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(Constants.Models.SamlParty.RelayStateLength)]
         [JsonProperty(PropertyName = "rs")]
         public string RelayState { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(Constants.Models.SamlParty.AcsResponseUrlLength)]
         [JsonProperty(PropertyName = "a")]
         public string AcsResponseUrl { get; set; }
     }

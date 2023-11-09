@@ -2,44 +2,32 @@
 
 You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
-    
----
- 
-
-
 By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
-FoxIDs will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly connect to multiple up-parties from the same OpenID Connect down-party.
+FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed you can possibly select multiple up-parties from the same OpenID Connect down-party.
 
+![Connect to NemLog-in](images/how-to-nemlogin.svg)    
 
-
-Where NemLog-in is a SAML 2.0 Identity Provider and FoxIDs is acting as an SAML 2.0 Relying Party (RP) / Service Provider (SP).
-
-
----
-
-
-
-
-NemLog-in (NemLog-in3) is a Danish Identity Provider (IdP) which uses the SAML 2.0 based OIOSAML 3. FoxIDs support NemLog-in / OIOSAML 3 including logging, issuer naming, required certificates and it is possible to support NSIS.
+FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including logging, issuer naming, required OCES3 certificates and it is possible to support NSIS.
 
 > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
-NemLog-in documentation and configuration:
+NemLog-in documentation:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation
-  - [test](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can find the NemLog-in IdP-metadata for test and OCES3 test certificates
+  - [test](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/integrationstestmiljo/), where you can find the NemLog-in IdP-metadata for test and OCES3 test certificate (everyone can use the same test certificate in NemLog-ins test environment)
   - [production](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/log-in/dokumentation-og-guides/produktionsmiljo/), where you can find the NemLog-in IdP-metadata for production
 - The [NemLog-in administration portal](https://administration.nemlog-in.dk/) where you configure IT-systems
 - Test environment
   - Create citizens test users in [MitID emulator](https://pp.mitid.dk/test-tool/frontend/#/create-identity) 
   - Create citizens and employee test users in [MitID simulator](https://mitidsimulator.test-nemlog-in.dk/Home/Create) (login with username and password)
-  - OCES3 certificate - [create an organization](https://testportal.test-devtest4-nemlog-in.dk/TU) and [create OCES3 certificates](https://erhvervsadministration.devtest4-nemlog-in.dk/certificates)
 
 > A sample showing the NemLog-in integrations is configured in the FoxIDs `test-corp` with the up-party name `nemlogin_oidc`. The configuration uses a separate track where the NemLog-in integrations is configured and converted from SAMl 2.0 to OpenId Connect.  
-> You can test NemLog-in login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC NemLog-in Log in` or by clicking `Log in` and then `Danish NemLog-in`.
+> You can test NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) application by clicking `Log in` and then `Danish NemLog-in` for production or `Danish NemLog-in TEST` for the test environment.
 
 ## Consider separate track
 
 NemLog-in requires the Relying Party (RP) to use a OSES certificate and a high level of logging. Therefore, consider connecting NemLog-in in a separate track where the OCES3 certificate and log level can be configured without affecting any other configuration.
+
+![Connect to NemLog-in and use track link](images/how-to-nemlogin-track-link.svg)    
 
 You can easy connect two tracks in the same tenant with a [track link](howto-tracklink-foxids.md).
 

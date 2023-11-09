@@ -1,42 +1,43 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
     public class OidcDownSequenceData : ISequenceData, IDownSequenceData
     {
-        [MaxLength(50)]
+        [MaxLength(IdentityConstants.MessageLength.ResponseTypeMax)]
         [JsonProperty(PropertyName = "rt")]
         public string ResponseType { get; set; }
 
         [JsonProperty(PropertyName = "fa")]
         public bool RestrictFormAction { get; set; }        
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.RedirectUriMax)]
         [JsonProperty(PropertyName = "ru")]
         public string RedirectUri { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.ScopeMax)]
         [JsonProperty(PropertyName = "sc")]
         public string Scope { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.StateMax)]
         [JsonProperty(PropertyName = "st")]
         public string State { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(IdentityConstants.MessageLength.ResponseModeMax)]
         [JsonProperty(PropertyName = "rm")]
         public string ResponseMode { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.NonceMax)]
         [JsonProperty(PropertyName = "n")]
         public string Nonce { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(IdentityConstants.MessageLength.CodeChallengeMax)]
         [JsonProperty(PropertyName = "cc")]
         public string CodeChallenge { get; set; }
 
-        [MaxLength(10)]
+        [MaxLength(IdentityConstants.MessageLength.CodeChallengeMethodMax)]
         [JsonProperty(PropertyName = "cm")]
         public string CodeChallengeMethod { get; set; }
     }

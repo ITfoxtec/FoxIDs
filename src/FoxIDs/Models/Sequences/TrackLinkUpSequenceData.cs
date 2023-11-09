@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -41,7 +42,7 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "a")]
         public IEnumerable<string> Acr { get; set; }
 
-        [MaxLength(200)]
+        [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
 

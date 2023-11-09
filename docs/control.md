@@ -19,7 +19,7 @@ Normally you should not change the master track configuration or add new up-part
 
 ### Create administrator user(s)
 
-It is possible to create more administrator users in the master track. A user become an administrator by adding the administrator role `foxids:tenant.admin` like shown below.
+It is possible to create more administrator users in the `master` track. A user become an administrator by adding the administrator role `foxids:tenant.admin` like shown below.
 
 Create a user:
 

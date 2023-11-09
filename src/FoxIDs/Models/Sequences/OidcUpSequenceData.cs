@@ -1,27 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using ITfoxtec.Identity;
+using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Sequences
 {
     public class OidcUpSequenceData : UpSequenceData
     {
-        [MaxLength(500)]
+        [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
         [JsonProperty(PropertyName = "ci")]
         public string ClientId { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.RedirectUriMax)]
         [JsonProperty(PropertyName = "ru")]
         public string RedirectUri { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.NonceMax)]
         [JsonProperty(PropertyName = "n")]
         public string Nonce { get; set; }
 
-        [MaxLength(500)]
+        [MaxLength(IdentityConstants.MessageLength.CodeVerifierMax)]
         [JsonProperty(PropertyName = "cv")]
         public string CodeVerifier { get; set; }
 
-        [MaxLength(200)]
+        [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
 

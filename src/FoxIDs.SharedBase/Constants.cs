@@ -336,6 +336,13 @@ namespace FoxIDs
                 public const int ScopeLength = 50;
                 public const string ScopeRegExPattern = @"^[\w:\-.]*$";
 
+                public static class Grant
+                {
+                    public const int IdLength = 220;
+                    public const int ClaimsMin = 1;
+                    public const int ClaimsMax = 1000;
+                }
+
                 public static class Client
                 {
                     public const int ResourceScopesMin = 1;
@@ -486,6 +493,9 @@ namespace FoxIDs
 
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
+
+                public const int RelayStateLength = 2000;
+                public const int AcsResponseUrlLength = 2000;
 
                 public static class Up
                 {

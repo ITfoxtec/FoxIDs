@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
 
             if (!client.RedirectUris.Any(u => u.Equals(tokenRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
             {
-                throw new OAuthRequestException($"Invalid redirect Uri '{tokenRequest.RedirectUri}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
+                throw new OAuthRequestException($"Invalid redirect URI '{tokenRequest.RedirectUri}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
 
             if (!client.ClientId.Equals(tokenRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))

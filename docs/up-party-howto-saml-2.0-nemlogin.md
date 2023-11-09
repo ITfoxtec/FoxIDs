@@ -3,13 +3,14 @@
 You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
 By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
-FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed you can possibly select multiple up-parties from the same OpenID Connect down-party.
+FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple up-parties from the same OpenID Connect down-party.
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)    
 
-FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including logging, issuer naming, required OCES3 certificates and it is possible to support NSIS.
+FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including single logout (SLO), logging, issuer naming, required OCES3 certificates and it is possible to support NSIS.
 
-> Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+> You can test NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.  
+> The sample is configured with a separate track for the NemLog-in SAML 2.0 integration and another track for the OpenId Connect based sample application.  
 
 NemLog-in documentation:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation
@@ -21,12 +22,11 @@ NemLog-in documentation:
   - Create citizens test users in [MitID emulator](https://pp.mitid.dk/test-tool/frontend/#/create-identity) 
   - Create citizens and employee test users in [MitID simulator](https://mitidsimulator.test-nemlog-in.dk/Home/Create) (login with username and password)
 
-> A sample showing the NemLog-in integrations is configured in the FoxIDs `test-corp` with the up-party name `nemlogin_oidc`. The configuration uses a separate track where the NemLog-in integrations is configured and converted from SAMl 2.0 to OpenId Connect.  
-> You can test NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) application by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.
+> Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
 ## Consider separate track
 
-NemLog-in requires the Relying Party (RP) to use a OSES certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate track where the OCES3 certificate and log level can be configured without affecting anything else.
+NemLog-in requires the Relying Party (RP) to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate track where the OCES3 certificate and log level can be configured without affecting anything else.
 
 ![Connect to NemLog-in and use track link](images/how-to-nemlogin-track-link.svg)    
 
@@ -36,7 +36,8 @@ You can connect two tracks in the same tenant with a [track link](howto-tracklin
 
 NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES3 certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by FoxIDs.
 
-OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.
+OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.  
+You will need separate FoxIDs tracks to handle the test and production environments respectively. The tracks can optionally be combined in an app track with [track links](howto-tracklink-foxids.md).
 
 > If the `.P12` file fails to load in FoxIDs, you can convert it to a `.PFX` file with the [FoxIDs.ConvertCertificateTool](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.ConvertCertificateTool).
 

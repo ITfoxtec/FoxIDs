@@ -42,7 +42,7 @@ namespace FoxIDs.Infrastructure.Security
                 {
                     try
                     {
-                        throw new Exception($"OIDC discovery keys is empty, reload keys, Uri '{oidcDiscoveryUri}'.");
+                        throw new Exception($"OIDC discovery keys is empty, reload keys, URI '{oidcDiscoveryUri}'.");
                     }
                     catch (Exception ex)
                     {
@@ -58,7 +58,7 @@ namespace FoxIDs.Infrastructure.Security
                 }
                 catch (SecurityTokenInvalidSignatureException isex)
                 {
-                    Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, Uri '{oidcDiscoveryUri}'.");
+                    Logger.LogWarning(isex, $"Invalid signature reload OIDC discovery keys, URI '{oidcDiscoveryUri}'.");
                     oidcDiscoveryKeySet = await oidcDiscoveryHandler.GetOidcDiscoveryKeysAsync(oidcDiscoveryUri, refreshCache: true);
                     (principal, _) = JwtHandler.ValidateToken(accessToken, oidcDiscovery.Issuer, oidcDiscoveryKeySet.Keys, Options.DownParty);
                 }

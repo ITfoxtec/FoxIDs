@@ -177,12 +177,12 @@ namespace FoxIDs.Logic
 
                 if (!client.RedirectUris.Any(u => u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
                 {
-                    throw new OAuthRequestException($"Invalid redirect Uri '{authenticationRequest.RedirectUri}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
+                    throw new OAuthRequestException($"Invalid redirect URI '{authenticationRequest.RedirectUri}' (maybe the request URL do not match the expected client).") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                 }
 
                 if (!client.ClientId.Equals(authenticationRequest.ClientId, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    throw new OAuthRequestException($"Invalid client id '{authenticationRequest.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                    throw new OAuthRequestException($"Invalid client id '{authenticationRequest.ClientId}' (maybe the request URL do not match the expected client).") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
                 }
 
                 if (!authenticationRequest.Scope.Contains(IdentityConstants.DefaultOidcScopes.OpenId))
@@ -331,7 +331,7 @@ namespace FoxIDs.Logic
                     nameValueCollection = nameValueCollection.AddToDictionary(sessionResponse);
                 }
 
-                logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.");
+                logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");
                 logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
                 return nameValueCollection;
             }
@@ -392,7 +392,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"Authentication error response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationResponse.ToDictionary();
 
-            logger.ScopeTrace(() => $"Redirect Uri '{redirectUri}'.");
+            logger.ScopeTrace(() => $"Redirect URI '{redirectUri}'.");
 
             if (restrictFormAction)
             {

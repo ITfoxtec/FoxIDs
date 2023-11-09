@@ -195,7 +195,7 @@ namespace FoxIDs.Logic
                 !client.RedirectUris.Any(u => u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
                 !rpInitiatedLogoutRequest.PostLogoutRedirectUri.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new OAuthRequestException($"Invalid post logout redirect Uri '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
+                throw new OAuthRequestException($"Invalid post logout redirect URI '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
             }
         }
 
@@ -214,7 +214,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => $"End session response '{rpInitiatedLogoutResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = rpInitiatedLogoutResponse.ToDictionary();
 
-            logger.ScopeTrace(() => $"Redirect Uri '{sequenceData.RedirectUri}'.");
+            logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");
             logger.ScopeTrace(() => "Down, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();

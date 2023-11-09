@@ -67,7 +67,7 @@ namespace FoxIDs.Logic
 
             if (!grant.RedirectUri.Equals(redirectUri, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new OAuthRequestException($"Redirect Uri '{redirectUri}' do not match related grant.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
+                throw new OAuthRequestException($"Redirect URI '{redirectUri}' do not match related grant.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidGrant };
             }
 
             if (!grant.ClientId.Equals(clientId, StringComparison.InvariantCultureIgnoreCase))

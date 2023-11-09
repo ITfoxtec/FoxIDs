@@ -152,7 +152,7 @@ namespace FoxIDs.Logic
         {
             if (saml2AuthnRequest.AssertionConsumerServiceUrl != null && !party.AcsUrls.Any(u => u.Equals(saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString, StringComparison.InvariantCultureIgnoreCase)))
             {
-                throw new EndpointException($"Invalid assertion consumer service URL '{saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString}'.") { RouteBinding = RouteBinding };
+                throw new EndpointException($"Invalid assertion consumer service URL '{saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString}' (maybe the request URL do not match the expected relaying party).") { RouteBinding = RouteBinding };
             }
 
             var requestIssuer = saml2AuthnRequest.Issuer;
@@ -160,7 +160,7 @@ namespace FoxIDs.Logic
 
             if (!party.Issuer.Equals(requestIssuer))
             {
-                throw new SamlRequestException($"Invalid issuer '{requestIssuer}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                throw new SamlRequestException($"Invalid issuer '{requestIssuer}' (maybe the request URL do not match the expected relaying party).") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
             }
         }
 

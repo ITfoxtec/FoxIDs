@@ -131,10 +131,10 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
 Furthermore, it makes the tokens readable.
 
-1. Set the privilege claim depending of the Context Handler version. 
+1. Add the DK privilege claim transformer. 
 2. Remove the original privilege claim from the claims pipeline.
 
-![NemLog-in SAML 2.0 up-party privilege claim transformation](images/howto-saml-nemlogin3-up-privilege-claim-tf.png)
+![NemLog-in SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
  **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 

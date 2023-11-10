@@ -317,9 +317,9 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.SamlTypeLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
 
-                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                if (claim.Value?.Length > Constants.Models.Claim.ProcessValueLength)
                 {
-                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ProcessValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
             }
             return claims;

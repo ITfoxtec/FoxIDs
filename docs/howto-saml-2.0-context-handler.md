@@ -110,7 +110,9 @@ Furthermore, it makes the tokens readable.
 2. Remove the original privilege claim from the claims pipeline.
 3. Click update
 
-![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-context-handler-up-privilege-claim-tf.png)
+![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
+
+> Remember to add a claim mapping from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` please see next section 4).
 
  **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 

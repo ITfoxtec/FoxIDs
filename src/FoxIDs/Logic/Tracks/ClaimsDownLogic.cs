@@ -190,9 +190,9 @@ namespace FoxIDs.Logic
             var truncateClaims = new List<Claim>();
             foreach (var claim in jwtClaims)
             {
-                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                if (claim.Value?.Length > Constants.Models.Claim.ProcessValueLength)
                 {
-                    truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ValueLength), claim.ValueType, claim.Issuer);
+                    truncateClaims.AddClaim(claim.Type, claim.Value.Substring(0, Constants.Models.Claim.ProcessValueLength), claim.ValueType, claim.Issuer);
                 }
                 else
                 {

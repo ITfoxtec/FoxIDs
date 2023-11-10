@@ -21,9 +21,9 @@ namespace FoxIDs.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
-            if (Claim.Length > Constants.Models.Claim.ValueLength)
+            if (Claim.Length > Constants.Models.Claim.ProcessValueLength)
             {
-                results.Add(new ValidationResult($"Claim '{Claim}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'."));
+                results.Add(new ValidationResult($"Claim '{Claim}' value is too long, maximum length of '{Constants.Models.Claim.ProcessValueLength}'."));
             }
             return results;
         }

@@ -24,6 +24,7 @@ namespace FoxIDs.Logic
                 var acceptedClaims = Constants.DefaultClaims.JwtTokenUpParty.ConcatOnce(upPartyClaims).Where(c => !Constants.DefaultClaims.ExcludeJwtTokenUpParty.Contains(c));
                 claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type)).ToList();
             }
+            var totalValueLenght = 0;
             foreach (var claim in claims)
             {
                 if (claim.Type?.Length > Constants.Models.Claim.JwtTypeLength)
@@ -35,6 +36,14 @@ namespace FoxIDs.Logic
                 {
                     throw new OAuthRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ProcessValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
                 }
+                if (claim.Value?.Length > 0)
+                {
+                    totalValueLenght += claim.Value.Length;
+                }
+            }
+            if (totalValueLenght > Constants.Models.Claim.ProcessValueLength)
+            {
+                throw new OAuthRequestException($"The total length of all claim values combined is too long, maximum length of '{Constants.Models.Claim.ProcessValueLength}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
             return claims;
         }

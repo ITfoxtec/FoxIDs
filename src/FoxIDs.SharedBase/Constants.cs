@@ -293,8 +293,9 @@ namespace FoxIDs
                 /// <summary>
                 /// JWT and SAML claim value max length.
                 /// </summary>
-                public const int ValueLength = 4000;
-                public const int ProcessValueLength = 10000;
+                public const int ValueLength = 10000;
+                public const int LimitedValueLength = 1000;
+                public const int ProcessValueLength = 50000;
 
                 public const int IdTokenLimitedHintValueLength = 8000;
 

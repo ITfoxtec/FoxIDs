@@ -92,7 +92,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-claims.png)
 
- 12. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+ 12. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
  13. Select to include the encryption certificate in metadata
  14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 

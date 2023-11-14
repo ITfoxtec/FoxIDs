@@ -59,7 +59,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 7. Select show advanced settings
 8. Configure a custom SP issuer, the issuer is required to start with `https://saml.` The issuer in this example `https://saml.localdev.foxids.com/test-corp/contexthandler-test/`
-9. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+9. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
 10. Select to add logout response location URL in metadata
 11. Select to include the encryption certificate in metadata
 12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
@@ -168,7 +168,7 @@ The following claims is most often used:
 ![Context Handler SAML 2.0 down-party](images/howto-saml-context-handler-down-base-config.png)
 
 10. Select show advanced settings
-11. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+11. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
 12. Configure a custom IdP issuer, the issuer is required to start with `https://saml.` The issuer in this example `https://saml.localdev-ipd.foxids.com/test-corp/test-contexthandler-idp/`.
 13. Select to add logout response location URL in metadata
 14. Select to include the encryption certificate in metadata

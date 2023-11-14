@@ -6,14 +6,14 @@ namespace FoxIDs.Models
     public class SamlMetadataRequestedAttribute
     {
         [Required]
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
         [JsonProperty(PropertyName = "is_required")]
         public bool IsRequired { get; set; }
 
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "name_format")]
         public string NameFormat { get; set; }
     }

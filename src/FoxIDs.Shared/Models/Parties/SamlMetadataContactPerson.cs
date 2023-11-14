@@ -21,21 +21,21 @@ namespace FoxIDs.Models
         /// <summary>
         /// Optional string element that specifies the name of the company for the contact person.
         /// </summary>
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "company")]
         public string Company { get; set; }
 
         /// <summary>
         /// Optional string element that specifies the given (first) name of the contact person.
         /// </summary>
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "given_name")]
         public string GivenName { get; set; }
 
         /// <summary>
         /// Optional string element that specifies the surname of the contact person.
         /// </summary>
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "surname")]
         public string Surname { get; set; }
 
@@ -43,14 +43,14 @@ namespace FoxIDs.Models
         /// Optional string element containing mailto: URIs representing e-mail addresses belonging to the
         /// contact person.
         /// </summary>
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "email_address")]
         public string EmailAddress { get; set; }
 
         /// <summary>
         /// Optional string element specifying a telephone number of the contact person.
         /// </summary>
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "telephone_number")]
         public string TelephoneNumber { get; set; }
     }

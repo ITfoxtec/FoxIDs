@@ -12,7 +12,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Claim")]
         public string Claim { get; set; }
 
-        [Length(Constants.Models.Claim.ValuesOAuthMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength)]
+        [Length(Constants.Models.Claim.ValuesOAuthMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.ValueLength)]
         [Display(Name = "Values")]
         public List<string> Values { get; set; }
     }

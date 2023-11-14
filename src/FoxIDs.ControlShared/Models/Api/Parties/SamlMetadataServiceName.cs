@@ -19,7 +19,7 @@ namespace FoxIDs.Models.Api
         /// Name for the service.
         /// </summary>
         [Required]
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [Display(Name = "Service name")]
         public string Name { get; set; }
     }

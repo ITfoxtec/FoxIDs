@@ -10,17 +10,48 @@ namespace FoxIDs.Infrastructure.DataAnnotations
     {
         private const string fieldNameKey = "[field_name]";
         private readonly int? maxStringLenght;
+        private readonly int? totalMaxStringLenght;
         private readonly string regExPattern;
         private string tempFormatErrorMessage;
 
+        /// <summary>
+        /// Validates string list.
+        /// </summary>
+        /// <param name="minListLength">Min number of items in the list.</param>
+        /// <param name="maxListLangth">Max number of items in the list.</param>
         public LengthAttribute(int minListLength, int maxListLangth) : base(minListLength, maxListLangth)
         { }
 
+        /// <summary>
+        /// Validates string list.
+        /// </summary>
+        /// <param name="minListLength">Min number of items in the list.</param>
+        /// <param name="maxListLangth">Max number of items in the list.</param>
+        /// <param name="maxStringLenght">Max string length per item.</param>
         public LengthAttribute(int minListLength, int maxListLangth, int maxStringLenght) : base(minListLength, maxListLangth)
         {
             this.maxStringLenght = maxStringLenght;
         }
 
+        /// <summary>
+        /// Validates string list.
+        /// </summary>
+        /// <param name="minListLength">Min number of items in the list.</param>
+        /// <param name="maxListLangth">Max number of items in the list.</param>
+        /// <param name="maxStringLenght">Max string length per item.</param>
+        /// <param name="totalMaxStringLenght">Max string length for all items combined.</param>
+        public LengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, int totalMaxStringLenght) : this(minListLength, maxListLangth, maxStringLenght)
+        {
+            this.totalMaxStringLenght = totalMaxStringLenght;
+        }
+
+        /// <summary>
+        /// Validates string list.
+        /// </summary>
+        /// <param name="minListLength">Min number of items in the list.</param>
+        /// <param name="maxListLangth">Max number of items in the list.</param>
+        /// <param name="maxStringLenght">Max string length per item.</param>
+        /// <param name="regExPattern">RegEx validation of each item in the list.</param>
         public LengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, string regExPattern) : this(minListLength, maxListLangth, maxStringLenght)
         {
             this.regExPattern = regExPattern;
@@ -29,6 +60,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         public override bool IsValid(object value)
         {
             tempFormatErrorMessage = null;
+            var totalStringLenght = 0;
             var count = 0;
             try
             {
@@ -42,20 +74,30 @@ namespace FoxIDs.Infrastructure.DataAnnotations
                             throw new ValidationException($"{fieldNameKey}.item[{count + 1}] is null or contain only white spaces.");
                         }
 
-                        if (enumerator.Current is string)
+                        if (enumerator.Current is string currentStringItem)
                         {
                             if (maxStringLenght.HasValue)
                             {
-                                new MaxLengthAttribute(maxStringLenght.Value).Validate(enumerator.Current as string, $"{fieldNameKey}.item[{count}]");
+                                new MaxLengthAttribute(maxStringLenght.Value).Validate(currentStringItem, $"{fieldNameKey}.item[{count}]");
+                            }
+
+                            if (totalMaxStringLenght.HasValue && currentStringItem != null)
+                            {
+                                totalStringLenght += currentStringItem.Length;
                             }
 
                             if (!regExPattern.IsNullOrEmpty())
                             {
-                                new RegularExpressionAttribute(regExPattern).Validate(enumerator.Current as string, $"{fieldNameKey}.item[{count}]");
+                                new RegularExpressionAttribute(regExPattern).Validate(currentStringItem, $"{fieldNameKey}.item[{count}]");
                             }
                         }
                         count++;
                     }
+                }
+
+                if (totalMaxStringLenght.HasValue && totalStringLenght > totalMaxStringLenght.Value)
+                {
+                    throw new ValidationException($"The total length of all items combined in {fieldNameKey} exceeds the maximum allowed length '{totalMaxStringLenght.Value}'.");
                 }
             }
             catch (ValidationException ex)

@@ -69,7 +69,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "encrypt_authn_response")]
         public bool EncryptAuthnResponse { get; set; }
 
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "nameid_format")]
         public string NameIdFormat { get; set; }
@@ -102,7 +102,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_include_enc_certs")]
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "metadata_nameid_formats")]
         public List<string> MetadataNameIdFormats { get; set; }
 

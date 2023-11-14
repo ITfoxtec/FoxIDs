@@ -96,7 +96,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_context_comparison")]
         public SamlAuthnContextComparisonTypes? AuthnContextComparison { get; set; }
 
-        [Length(Constants.Models.SamlParty.Up.AuthnContextClassReferencesMin, Constants.Models.SamlParty.Up.AuthnContextClassReferencesMax, Constants.Models.Claim.ValueLength)]
+        [Length(Constants.Models.SamlParty.Up.AuthnContextClassReferencesMin, Constants.Models.SamlParty.Up.AuthnContextClassReferencesMax, Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "authn_context_class_refs")]
         public List<string> AuthnContextClassReferences { get; set; }
 
@@ -109,7 +109,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_include_enc_certs")]
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength)]
+        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength)]
         [JsonProperty(PropertyName = "metadata_nameid_formats")]
         public List<string> MetadataNameIdFormats { get; set; }
 

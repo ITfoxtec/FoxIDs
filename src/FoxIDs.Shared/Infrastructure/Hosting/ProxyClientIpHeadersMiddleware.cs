@@ -38,11 +38,10 @@ namespace FoxIDs.Infrastructure.Hosting
                 if (IPAddress.TryParse(ipHeader, out ipAddress))
                 {
                     context.Connection.RemoteIpAddress = ipAddress;
-                    return IPAddress.IsLoopback(ipAddress);
                 }
             }
 
-            return false;
+            return IPAddress.IsLoopback(context.Connection.RemoteIpAddress);
         }
     }
 }

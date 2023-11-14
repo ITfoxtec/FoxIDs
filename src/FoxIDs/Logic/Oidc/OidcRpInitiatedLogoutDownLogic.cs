@@ -61,7 +61,7 @@ namespace FoxIDs.Logic
 
             try
             {
-                if (party.Client.ResponseMode == IdentityConstants.ResponseModes.Query && rpInitiatedLogoutRequest.IdTokenHint?.Count() > Constants.Models.Claim.ValueLength)
+                if (party.Client.ResponseMode == IdentityConstants.ResponseModes.Query && rpInitiatedLogoutRequest.IdTokenHint?.Count() > Constants.Models.Claim.IdTokenLimitedHintValueLength)
                 {
                     throw new Exception("The ID Token hint length is close to the maximum allowed limit and may be truncated. If this happens the ID Token become invalid and is not accepted.");
                 }

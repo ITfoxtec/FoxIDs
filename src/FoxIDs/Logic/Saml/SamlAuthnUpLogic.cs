@@ -310,6 +310,7 @@ namespace FoxIDs.Logic
                 var acceptedClaims = Constants.DefaultClaims.SamlClaims.ConcatOnce(party.Claims);
                 claims = claims.Where(c => acceptedClaims.Any(ic => ic == c.Type));
             }
+            var totalValueLenght = 0;
             foreach (var claim in claims)
             {
                 if(claim.Type?.Length > Constants.Models.Claim.SamlTypeLength)
@@ -317,10 +318,18 @@ namespace FoxIDs.Logic
                     throw new SamlRequestException($"Claim '{claim.Type.Substring(0, Constants.Models.Claim.SamlTypeLength)}' is too long, maximum length of '{Constants.Models.Claim.SamlTypeLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
 
-                if (claim.Value?.Length > Constants.Models.Claim.ValueLength)
+                if (claim.Value?.Length > Constants.Models.Claim.ProcessValueLength)
                 {
-                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
+                    throw new SamlRequestException($"Claim '{claim.Type}' value is too long, maximum length of '{Constants.Models.Claim.ProcessValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
                 }
+                if (claim.Value?.Length > 0)
+                {
+                    totalValueLenght += claim.Value.Length;
+                }
+            }
+            if (totalValueLenght > Constants.Models.Claim.ProcessValueLength)
+            {
+                throw new SamlRequestException($"The total length of all claim values combined is too long, maximum length of '{Constants.Models.Claim.ProcessValueLength}'.") { RouteBinding = RouteBinding, Status = Saml2StatusCodes.Responder };
             }
             return claims;
         }

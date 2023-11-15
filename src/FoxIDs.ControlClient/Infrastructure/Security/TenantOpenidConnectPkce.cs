@@ -2,6 +2,7 @@
 using FoxIDs.Client.Logic;
 using FoxIDs.Client.Models.Config;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
+using ITfoxtec.Identity.Helpers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
@@ -16,7 +17,7 @@ namespace FoxIDs.Client.Infrastructure.Security
         private readonly ControlClientSettingLogic controlClientSettingLogic;
         private readonly ClientSettings clientSettings;
 
-        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ControlClientSettingLogic controlClientSettingLogic, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, authenticationStateProvider)
+        public TenantOpenidConnectPkce(IServiceProvider serviceProvider, RouteBindingLogic routeBindingBase, ControlClientSettingLogic controlClientSettingLogic, ClientSettings clientSettings, OpenidConnectPkceSettings globalOpenidClientPkceSettings, NavigationManager NavigationManager, ISessionStorageService sessionStorage, OidcHelper oidcHelper, AuthenticationStateProvider authenticationStateProvider) : base(serviceProvider, globalOpenidClientPkceSettings, NavigationManager, sessionStorage, oidcHelper, authenticationStateProvider)
         {
             this.routeBindingBase = routeBindingBase;
             this.controlClientSettingLogic = controlClientSettingLogic;

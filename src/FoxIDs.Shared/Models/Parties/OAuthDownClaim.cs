@@ -13,7 +13,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "claim")]
         public string Claim { get; set; }
 
-        [Length(Constants.Models.Claim.ValuesOAuthMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.ValueLength)]
+        [ListLength(Constants.Models.Claim.ValuesOAuthMin, Constants.Models.Claim.ValuesMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.ValueLength)]
         [JsonProperty(PropertyName = "values")]
         public List<string> Values { get; set; }
     }

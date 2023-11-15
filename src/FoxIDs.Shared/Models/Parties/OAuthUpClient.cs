@@ -19,15 +19,15 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "sp_client_id")]
         public string SpClientId { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.Client.ScopesMin, Constants.Models.OAuthUpParty.Client.ScopesMax, Constants.Models.OAuthUpParty.ScopeLength, Constants.Models.OAuthUpParty.ScopeRegExPattern)]
+        [ListLength(Constants.Models.OAuthUpParty.Client.ScopesMin, Constants.Models.OAuthUpParty.Client.ScopesMax, Constants.Models.OAuthUpParty.ScopeLength, Constants.Models.OAuthUpParty.ScopeRegExPattern)]
         [JsonProperty(PropertyName = "scopes")]
         public List<string> Scopes { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
+        [ListLength(Constants.Models.OAuthUpParty.Client.AdditionalParametersMin, Constants.Models.OAuthUpParty.Client.AdditionalParametersMax)]
         [JsonProperty(PropertyName = "additional_parameter")]
         public List<OAuthAdditionalParameter> AdditionalParameters { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
+        [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
@@ -70,7 +70,7 @@ namespace FoxIDs.Models
         public string ClientSecret { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthUpParty.Client.ClientKeysMin, Constants.Models.OAuthUpParty.Client.ClientKeysMax)]
+        [ListLength(Constants.Models.OAuthUpParty.Client.ClientKeysMin, Constants.Models.OAuthUpParty.Client.ClientKeysMax)]
         [JsonProperty(PropertyName = "client_keys")]
         public List<ClientKey> ClientKeys { get; set; }
 

@@ -7,7 +7,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public interface ISamlMetadataAttributeConsumingServiceVievModel
     {
-        [Length(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
         [Display(Name = "Optional attribute consuming services in metadata")]
         public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; }
     }

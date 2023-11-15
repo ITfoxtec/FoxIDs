@@ -56,7 +56,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool? CheckPasswordRisk { get; set; } 
 
         [ValidateComplexType]
-        [Length(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
+        [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         [Display(Name = "Allow Iframe on domains (domain without https://)")]
         public List<string> AllowIframeOnDomains { get; set; }
     }

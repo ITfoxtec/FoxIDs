@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Api
 {
     public class LogStreams
     {
-        [Length(Constants.Models.Track.Logging.ScopedStreamLoggersMin, Constants.Models.Track.Logging.ScopedStreamLoggersMax)]
+        [ListLength(Constants.Models.Track.Logging.ScopedStreamLoggersMin, Constants.Models.Track.Logging.ScopedStreamLoggersMax)]
         public List<LogStreamSettings> LogStreamSettings { get; set; }
     }
 }

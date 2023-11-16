@@ -22,7 +22,7 @@ Configure [OpenID Connect up-party](up-party-oidc.md) which trust an external Op
 How to guides:
 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
-- Connect [Azure AD (Microsoft Entra ID)](up-party-howto-oidc-azure-ad.md) 
+- Connect [Microsoft Entra ID (Azure AD)](up-party-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
 - Connect [Signicat](up-party-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)

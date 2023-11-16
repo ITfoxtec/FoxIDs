@@ -93,7 +93,6 @@ namespace FoxIDs.Logic
                 {
                     binding.Unbind(genericHttpRequest, saml2LogoutRequest);
                     logger.ScopeTrace(() => "Down, SAML Logout request accepted.", triggerEvent: true);
-
                 }
                 catch (Exception ex)
                 {

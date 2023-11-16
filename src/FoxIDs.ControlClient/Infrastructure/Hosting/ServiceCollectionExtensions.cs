@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.Logging;
 using System.IdentityModel.Tokens.Jwt;
 using Blazored.Toast;
+using ITfoxtec.Identity.Helpers;
 
 namespace FoxIDs.Client.Infrastructure.Hosting
 {
@@ -82,6 +83,7 @@ namespace FoxIDs.Client.Infrastructure.Hosting
             services.AddSingleton<OpenidConnectPkceSettings>();
             services.AddScoped<OpenidConnectPkce, TenantOpenidConnectPkce>();
             services.AddSingleton(sp => new OidcDiscoveryHandler(sp.GetService<IHttpClientFactory>()));
+            services.AddScoped(sp => new OidcHelper(sp.GetService<IHttpClientFactory>(), sp.GetService<OidcDiscoveryHandler>()));
 
             services.AddScoped<AuthenticationStateProvider, OidcAuthenticationStateProvider>();
             services.AddTransient<AccessTokenMessageHandler>();

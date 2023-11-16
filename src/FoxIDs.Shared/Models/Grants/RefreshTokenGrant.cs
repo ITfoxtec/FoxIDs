@@ -27,7 +27,7 @@ namespace FoxIDs.Models
         [JsonIgnore]
         public string RefreshToken { get => Id.Substring(Id.LastIndexOf(':') + 1); }
 
-        [Length(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 

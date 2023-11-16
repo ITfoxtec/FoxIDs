@@ -28,7 +28,7 @@ namespace FoxIDs.Models.Api
 
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         public List<string> Issuers { get; set; }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.IssuerLength)]
         public string SpIssuer { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
+        [ListLength(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         [Display(Name = "Disable user authentication trust")]

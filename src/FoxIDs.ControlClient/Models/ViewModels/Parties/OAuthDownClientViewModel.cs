@@ -20,12 +20,12 @@ namespace FoxIDs.Client.Models.ViewModels
         }
 
         [ValidateComplexType]
-        [Length(0, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
+        [ListLength(0, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public new List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
         [Display(Name = "Scopes")]
         public List<OAuthDownScopeViewModel> ScopesViewModel { get; set; }
 
@@ -36,7 +36,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<OAuthClientSecretViewModel> ExistingSecrets { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Secrets")]
         public List<string> Secrets { get; set; }
 

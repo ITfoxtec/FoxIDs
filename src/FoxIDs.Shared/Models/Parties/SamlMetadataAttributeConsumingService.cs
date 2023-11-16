@@ -21,7 +21,7 @@ namespace FoxIDs.Models
         /// <summary>
         /// A required element specifying attributes required or desired by this service.
         /// </summary>
-        [Length(Constants.Models.SamlParty.MetadataRequestedAttributesMin, Constants.Models.SamlParty.MetadataRequestedAttributesMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataRequestedAttributesMin, Constants.Models.SamlParty.MetadataRequestedAttributesMax)]
         [JsonProperty(PropertyName = "requested_attributes")]
         public List<SamlMetadataRequestedAttribute> RequestedAttributes { get; set; }
     }

@@ -93,6 +93,14 @@ namespace FoxIDs.Logic
                             samlConfig.InvalidSignatureValidationCertificates.Add(partyCertificate);
                         }
                     }
+                    if (samlConfig.SignatureValidationCertificates.Count() <= 0)
+                    {
+                        var isex = GetInvalidSignatureValidationCertificateException(samlConfig);
+                        if (isex != null)
+                        {
+                            throw isex;
+                        }
+                    }
                 }
 
                 if (includeEncryptionCertificates && party.EncryptAuthnResponse && party.EncryptionKey != null)
@@ -117,7 +125,7 @@ namespace FoxIDs.Logic
             return samlConfig;
         }      
 
-        public Exception GetInvalidSignatureValidationCertificateException(FoxIDsSaml2Configuration samlConfig, Exception ex)
+        public Exception GetInvalidSignatureValidationCertificateException(FoxIDsSaml2Configuration samlConfig, Exception ex = null)
         {
             if (samlConfig.InvalidSignatureValidationCertificates?.Count() > 0)
             {

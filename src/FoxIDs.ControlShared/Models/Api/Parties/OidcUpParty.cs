@@ -29,7 +29,7 @@ namespace FoxIDs.Models.Api
 
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         public List<string> Issuers { get; set; }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.IssuerLength)]
         public string SpIssuer { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
+        [ListLength(Constants.Models.OAuthUpParty.KeysApiMin, Constants.Models.OAuthUpParty.KeysMax)]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Home realm discovery (HRD) domains.
         /// </summary>
-        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [Display(Name = "HRD domains")]
         public List<string> HrdDomains { get; set; }
 

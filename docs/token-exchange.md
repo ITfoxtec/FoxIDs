@@ -32,7 +32,7 @@ A down-party client is configured to handle the token exchange and to whitelist 
 A web application token exchange JWT access token to JWT access token' in the same track.
 
 In this scenario an OpenID Connect client has obtained an access token after user authentication.  
-The client could also be an OAuth 2.0 client using [client credentials grant](#client-credentials-grant).
+The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant).
 
 ![Token exchange, Access token to Access token in web application](images/token-exchange-access-token-in-web-app.svg)
 
@@ -105,7 +105,7 @@ Sample JWT access token' body:
 An API token exchange JWT access token to JWT access token' in the same track.
 
 In this scenario an OpenID Connect client has obtained an access token after user authentication.  
-The client could also be an OAuth 2.0 client using [client credentials grant](#client-credentials-grant).
+The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant).
 
 ![Token exchange, Access token to Access token in API](images/token-exchange-access-token-in-api.svg)
 
@@ -181,7 +181,7 @@ It is possible to configure if the up-party trust should be allowed for token ex
 Token exchange external JWT access token to internal JWT access token by external trust.
 
 In this scenario an OpenID Connect client trust an external OpenID Provider (OP) / Identity Provider (IdP) and has obtained an access token after user authentication.  
-The client could also be an OAuth 2.0 client using [client credentials grant](#client-credentials-grant) to obtain the external access token.
+The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant) to obtain the external access token.
 
 ![Token exchange, Access token to Access token by trust](images/token-exchange-access-token-by-trust.svg)
 

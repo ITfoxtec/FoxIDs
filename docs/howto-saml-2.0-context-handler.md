@@ -37,7 +37,7 @@ Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-co
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
 4. Then click on the primary certificate, then write the password and upload the `.P12` OCES3 certificate 
 
-![Add OCES3 certificate](images/howto-saml-nemlogin3-certificate.png)
+![Add OCES3 certificate](images/howto-saml-context-handler-certificate.png)
 
 It is subsequently possible to add a secondary certificate and to swap between the primary and secondary certificates.
 

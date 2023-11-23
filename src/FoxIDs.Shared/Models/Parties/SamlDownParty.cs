@@ -21,11 +21,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "idp_issuer")]
         public string IdPIssuer { get; set; }
 
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<SamlClaimTransform> ClaimTransforms { get; set; }
 
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [JsonProperty(PropertyName = "claims")]
         public List<string> Claims { get; set; }
 
@@ -62,14 +62,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "authn_binding")]
         public SamlBinding AuthnBinding { get; set; }
 
-        [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
+        [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [JsonProperty(PropertyName = "acs_urls")]
         public List<string> AcsUrls { get; set; }
 
         [JsonProperty(PropertyName = "encrypt_authn_response")]
         public bool EncryptAuthnResponse { get; set; }
 
-        [MaxLength(Constants.Models.Claim.ValueLength)]
+        [MaxLength(Constants.Models.Claim.LimitedValueLength)]
         [RegularExpression(Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "nameid_format")]
         public string NameIdFormat { get; set; }
@@ -86,7 +86,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "logged_out_url")]
         public string LoggedOutUrl { get; set; }
 
-        [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [ListLength(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
 
@@ -102,11 +102,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_include_enc_certs")]
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [JsonProperty(PropertyName = "metadata_nameid_formats")]
         public List<string> MetadataNameIdFormats { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 

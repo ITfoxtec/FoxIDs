@@ -1,7 +1,10 @@
 # Interconnect two FoxIDs tracks with a track link
 
-FoxIDs tracks in the same tenant can be connected with track links. A track link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster.  
-Therefor a login sequence that jumps between tracks will execute faster using a track link competed with using OpenID Connect. But an [OpenID connect connection](howto-oidc-foxids.md) is required if you need to jump between tracks located in different tenants.
+FoxIDs tracks in the same tenant can be connected with track links. A track link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster. 
+
+![Track link](images/how-to-track-link.svg)
+
+Track links is fast and secure but can only be used in the same tenant. A link based on [OpenID connect connection](howto-oidc-foxids.md) is required if you need to jump between tracks located in different tenants.
 
 Track links support login, RP-initiated logout and front-channel logout. Furthermore, it is possible to configure [claim and claim transforms](claim.md), logout session and home realm discovery (HRD) like all other connecting up-parties and down-parties.
 

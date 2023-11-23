@@ -34,7 +34,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Edit issuer")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [Display(Name = "Issuers")]
         public List<string> Issuers { get; set; }
 
@@ -62,7 +62,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         [Display(Name = "Disable user authentication trust")]

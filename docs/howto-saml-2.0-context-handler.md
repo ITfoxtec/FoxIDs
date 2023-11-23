@@ -1,13 +1,14 @@
 # Connect to Context Handler with SAML 2.0
 **Both up-party and down-party for testing**
 
-FoxIDs can be connected to Context Handler (Danish IdP, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
+
+FoxIDs can be connected to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
 Where Context Handler is a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider-idp) and FoxIDs is acting as an SAML 2.0 Relying Party.
 
-In the test environment FoxIDs can be connected to Context Handler with a [SAML 2.0 down-party](down-party-saml-2.0.md) where Context Handler is a SAML 2.0 [Relying Party (RP)](#configuring-context-handler-as-relying-party-rp).
-Thereby FoxIDs is acting as an SAML 2.0 Identity Provider and can handle login with test users.
+In the test environment FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 down-party](down-party-saml-2.0.md) where Context Handler is a SAML 2.0 [Relying Party (RP)](#configuring-context-handler-as-relying-party-rp).  
+Acting as test Identity Provider FoxIDs can handle login with test users.
 
-Context Handler is a Danish Identity Provider (IdP) connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support both OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
+Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3. FoxIDs support both OIOSAML 2 / OIOSAML 3, issuer naming, required certificates and it is possible to support NSIS.
 
 > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
@@ -64,7 +65,7 @@ This guide is for Context Handler and use OIOSAML3.
 
 7. Select show advanced settings
 8. Configure a custom SP issuer, the issuer can optionally to start with `https://saml.` The issuer in this example `https://saml.foxids.com/test-corp/context-handler-test/`
-9. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+9. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
 10. Select to add logout response location URL in metadata
 11. Select to include the encryption certificate in metadata
 12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
@@ -114,7 +115,9 @@ Furthermore, it makes the tokens readable.
 2. Remove the original privilege claim from the claims pipeline.
 3. Click update
 
-![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-context-handler-up-privilege-claim-tf.png)
+![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
+
+> Remember to add a claim mapping from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` please see next section 4).
 
  **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -172,7 +175,7 @@ The following claims is most often used:
 ![Context Handler SAML 2.0 down-party](images/howto-saml-context-handler-down-base-config.png)
 
 10. Select show advanced settings
-11. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+11. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
 12. Configure a custom IdP issuer, the issuer is required to start with `https://saml.` The issuer in this example `https://saml.localdev-ipd.foxids.com/test-corp/test-contexthandler-idp/`.
 13. Select to add logout response location URL in metadata
 14. Select to include the encryption certificate in metadata

@@ -2,7 +2,7 @@
 
 FoxIDs support two different sceneries of token exchange: [token exchange in the same track](#token-exchange-in-the-same-track) and [token exchange by trust to external IdP/OP](#token-exchange-by-trust). 
 
-In the same track it is possible to do token exchange of [access tokens](#access-token-to-access-token-in-the-same-track) between resources.
+In the same track it is possible to do token exchange of access tokens in a [web application](#access-token-to-access-token-in-web-application) or [API/resource](#access-token-to-access-token-in-api) to another resource.
 
 By external trust it is possible to do token exchange of external [access tokens](#access-token-to-access-token-by-trust) and [SAML 2.0 tokens](#saml-20-to-access-token-by-trust) to internal access tokens.
 
@@ -27,24 +27,145 @@ Default the client is added as the token exchange actor, this behaviour can be d
 It is possible to token exchange an [access token](#access-token-to-access-token-in-the-same-track) issued to a resource and thereby obtain an access token for another resource in the track.  
 A down-party client is configured to handle the token exchange and to whitelist for which resources in the track, it is allowed to do a token exchange.
 
-### Access token to Access token in the same track
+### Access token to Access token in web application
 
-Token exchange JWT access token to JWT access token' in the same track.
+A web application token exchange JWT access token to JWT access token' in the same track.
 
-In this scenario an OpenID Connect client has obtained an access token after user authentication. The client could also be an OAuth 2.0 client using [client credentials grant](#client-credentials-grant).
+In this scenario an OpenID Connect client has obtained an access token after user authentication.  
+The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant).
 
-![Token exchange, Access token to Access token in the same track](images/token-exchange-access-token-same-track.svg)
+![Token exchange, Access token to Access token in web application](images/token-exchange-access-token-in-web-app.svg)
 
-The track includes two resources and the OpenID Connect client is allowed to call the first resource directly. On the first resource a client is configured allowing calling access tokens to be exchange to an access token' valid for the second resource.  
+The track includes two resources and the OpenID Connect client is allowed to call both the first and second resource directly. To achieve lease privileges the OpenID Connect client only get an access token for the first resource after user authentication. 
+And subsequently get an access token for the second resource when it's needed. 
+
+![OpenID Connect client client - resource scopes](images/token-exchange-oidc-same-track-down-party.png)
+
+The first access token is issued with a scope/audience for the OpenID Connect client and the client is thereby allowed to exchange the access tokens to an access token' valid for the second resource.  
+The OpenID Connect client is configured with a secret as client credentials used both in the OpenID Connect communication and token exchange.
+
+During the token exchange sequence the claims transformations and limitations is executed on the OpenID Connect down-party. 
+
+The OpenID Connect client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
+If success, the resource client gets back an access token' and can now call the second resource with the access token'.
+
+Sample token exchange POST request to the token endpoint:
+
+```plaintext 
+POST https://foxids.com/test-corp/-/aspnet_oidc_allup_online_sample(*)/oauth/token HTTP/1.1
+Host: foxids.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=aspnet_oidc_allup_sample
+&client_secret=IxIruKswG4sQxzOrKlXR58strgZtoyZPG18J3FhzEXI
+&grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+&scope=aspnetcore_api2_sample%3Asome_2_access
+&subject_token=accVkjcJyb4...UC5PbRDqceLTC
+&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token
+```
+
+Sample token exchange JSON response:
+
+```plaintext
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+    "access_token":"eyJhGcjlc...nNjb3IIWvmDCM",
+    "issued_token_type": "urn:ietf:params:oauth:token-type:access_token",
+    "token_type":"Bearer",
+    "expires_in":600
+}
+```
+
+Sample JWT access token' body:
+
+```json
+{
+    "sub": "2f18c344-1204-4629-b992-215913b85c2b",
+    "auth_time": "1699955593",
+    "amr": "pwd",
+    "email": "test1@foxids.com",
+    "role": ["role1","role2"],
+    "name": "Test 1 user",
+    "act": "{\"sub\":\"c_aspnet_oidc_allup_sample\"}",
+    "scope": "aspnetcore_api2_sample:some_2_access",
+    "client_id": "aspnet_oidc_allup_sample",
+    "nbf": 1699955534,
+    "exp": 1699956194,
+    "iat": 1699955594,
+    "iss": "https://foxids.com/test-corp/-/",
+    "aud": "aspnetcore_api2_sample"
+}
+```
+
+### Access token to Access token in API
+
+An API token exchange JWT access token to JWT access token' in the same track.
+
+In this scenario an OpenID Connect client has obtained an access token after user authentication.  
+The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant).
+
+![Token exchange, Access token to Access token in API](images/token-exchange-access-token-in-api.svg)
+
+The track includes two resources and the OpenID Connect client is allowed to call the first resource directly. The OpenID Connect client is NOT allowed to call the second resource directly. On the first resource a client is configured allowing access tokens with the client/resource audience to be exchange to an access token' valid for the second resource.  
 The flowing client on the first resource is configured with a certificate as client credentials.
 
 ![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-track-down-party.png)
 
 During the token exchange sequence the claims transformations and limitations is executed on the down-party. 
 
-The OpenID Connect client call the first resource with the obtained access token. The resources client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking for an access token' to the second resource. 
-If success, the resources client gets back an access token' and can now call the second resource with the access token'.
+The OpenID Connect client call the first resource with the obtained access token. The resource client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
+If success, the resource client gets back an access token' and can now call the second resource with the access token'.
 
+Sample token exchange POST request to the token endpoint:
+
+```plaintext 
+POST https://foxids.com/test-corp/-/aspnet_oidc_allup_online_sample(*)/oauth/token HTTP/1.1
+Host: foxids.com
+Content-Type: application/x-www-form-urlencoded
+
+client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
+&client_assertion=eyJhbGciOiI...kyX3NhbXBsZS
+&grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+&scope=aspnetcore_api2_sample%3Asome_2_access
+&subject_token=accVkjcJyb4...C5PbRDqceLTC
+&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token
+```
+
+Sample token exchange JSON response:
+
+```plaintext 
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+    "access_token":"eyJhGcRwczov...nNjb3BlIjoi",
+    "issued_token_type": "urn:ietf:params:oauth:token-type:access_token",
+    "token_type":"Bearer",
+    "expires_in":600
+}
+```
+
+Sample JWT access token' body:
+
+```json 
+{
+    "sub": "2f18c344-1204-4629-b992-215913b85c2b",
+    "auth_time": "1699955841",
+    "amr": "pwd",
+    "act": "{\"sub\":\"c_aspnetcore_api1_sample\"}",
+    "scope": "aspnetcore_api2_sample:some_2_access",
+    "client_id": "aspnetcore_api1_sample",
+    "nbf": 1699955786,
+    "exp": 1699956446,
+    "iat": 1699955846,
+    "iss": "https://foxids.com/test-corp/-/",
+    "aud": "aspnetcore_api2_sample"
+}
+```
 
 ## Token exchange by trust
 
@@ -59,12 +180,13 @@ It is possible to configure if the up-party trust should be allowed for token ex
 
 Token exchange external JWT access token to internal JWT access token by external trust.
 
-In this scenario an OpenID Connect client trust an external OpenID Provider (OP) / Identity Provider (IdP) and has obtained an access token after user authentication. The client could also be an OAuth 2.0 client using [client credentials grant](#client-credentials-grant) to obtain the external access token.
+In this scenario an OpenID Connect client trust an external OpenID Provider (OP) / Identity Provider (IdP) and has obtained an access token after user authentication.  
+The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant) to obtain the external access token.
 
 ![Token exchange, Access token to Access token by trust](images/token-exchange-access-token-by-trust.svg)
 
 There is a resource in the track but the external defined OpenID Connect client is NOT allowed to call the resource directly.  
-First an OAuth 2.0 or OpenID Connect up-party is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the OpenID Connect client's audience.  
+First an OAuth 2.0 or OpenID Connect up-party is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the external OpenID Connect client's audience.  
 The flowing external trust example is a trust to another FoxIDs track.
 
 ![OAuth 2.0 up-party trust](images/token-exchange-oauth-by-trust-up-party.png)
@@ -78,8 +200,38 @@ It is thereby possible to token exchange an external access token to an internal
 
 During the token exchange sequence both the claims' transformations and limitations is executed firs on the up-party and then on the down-party. 
 
-The OpenID Connect client backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external access token while asking for an access token to the resource. 
+The OpenID Connect client backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external access token while asking (with a scope) for an access token to the resource. 
 If success, the OpenID Connect client backend application get back an access token and can now call the resource.
+
+Sample token exchange POST request to the token endpoint:
+
+```plaintext 
+POST https://foxids.com/test-corp/-/aspnet_oidc_allup_online_sample(*)/oauth/token HTTP/1.1
+Host: foxids.com
+Content-Type: application/x-www-form-urlencoded
+
+client_id=some_external_id
+&client_secret=goOxwj8Kz...wUC-3CGs
+&grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+&scope=aspnetcore_api2_sample%3Asome_2_access
+&subject_token=accVkjcJyb4...UC5PbRDqceLTC
+&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Aaccess_token
+```
+
+Sample token exchange JSON response:
+
+```plaintext
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+    "access_token":"eyJhGcjlc...nNjb3IIWvmDCM",
+    "issued_token_type": "urn:ietf:params:oauth:token-type:access_token",
+    "token_type":"Bearer",
+    "expires_in":600
+}
+```
 
 ### SAML 2.0 to Access token by trust
 
@@ -90,7 +242,8 @@ In this scenario an SAML 2.0 application trust an external Identity Provider (Id
 ![Token exchange, SAML 2.0 to Access token by trust](images/token-exchange-saml-by-trust.svg)
 
 There is a resource in the track but the external defined SAML 2.0 application is NOT allowed to call the resource directly.  
-First an SAML 2.0 up-party is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the SAML 2.0 applications audience. 
+First an SAML 2.0 up-party is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
+The flowing external trust example is a trust to a FoxIDs SAML 2.0 down-party.
 
 ![SAML 2.0 up-party trust](images/token-exchange-saml-by-trust-up-party.png)
 
@@ -101,8 +254,37 @@ The flowing client is configured with a certificate as client credentials.
 
 It is thereby possible to token exchange an external SAML 2.0 token to an internal access token valid for the resource.
 
-During the token exchange sequence both the claims' transformations and limitations is executed firs on the up-party and then on the down-party. 
+During the token exchange sequence both the claims transformations and limitations is executed firs on the up-party and then on the down-party. 
 
-The SAML 2.0 backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external SAML 2.0 token while asking for an access token to the resource. 
+The SAML 2.0 backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external SAML 2.0 token while asking (with a scope) for an access token to the resource. 
 If success, the SAML 2.0 backend application get back an access token and can now call the resource.
 
+Sample token exchange POST request to the token endpoint:
+
+```plaintext 
+POST https://foxids.com/test-corp/-/aspnet_oidc_allup_online_sample(*)/oauth/token HTTP/1.1
+Host: foxids.com
+Content-Type: application/x-www-form-urlencoded
+
+client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer
+&client_assertion=eyJhbGciOiI...kyX3NhbXBsZS
+&grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Atoken-exchange
+&scope=aspnetcore_api2_sample%3Asome_2_access
+&subject_token=%3Csaml%3AAssertion%20xmlns%3Asaml...%3AAssertion%3E%0A
+&subject_token_type=urn%3Aietf%3Aparams%3Aoauth%3Atoken-type%3Asaml2
+```
+
+Sample token exchange JSON response:
+
+```plaintext 
+HTTP/1.1 200 OK
+Content-Type: application/json
+Cache-Control: no-cache, no-store
+
+{
+    "access_token":"eyJhGcRwczov...nNjb3BlIjoi",
+    "issued_token_type": "urn:ietf:params:oauth:token-type:access_token",
+    "token_type":"Bearer",
+    "expires_in":600
+}
+```

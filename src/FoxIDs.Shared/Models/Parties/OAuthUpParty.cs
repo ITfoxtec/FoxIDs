@@ -39,11 +39,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "edit_issuers_in_automatic")]
         public bool? EditIssuersInAutomatic { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
         public override List<string> Issuers { get; set; }
 
-        [Length(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
+        [ListLength(Constants.Models.OAuthUpParty.KeysMin, Constants.Models.OAuthUpParty.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<JsonWebKey> Keys { get; set; }
 
@@ -68,7 +68,7 @@ namespace FoxIDs.Models
             }            
         }
 
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 

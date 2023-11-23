@@ -20,7 +20,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Allow up-party names.
         /// </summary>
-        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Allow CORS origins.
         /// </summary>
-        [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
+        [ListLength(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         public List<string> AllowCorsOrigins { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

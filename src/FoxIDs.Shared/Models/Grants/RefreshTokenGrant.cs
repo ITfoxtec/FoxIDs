@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [MaxLength(180)]
+        [MaxLength(Constants.Models.OAuthDownParty.Grant.IdLength)]
         [RegularExpression(@"^[\w:\-_]*$")]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
@@ -26,19 +27,19 @@ namespace FoxIDs.Models
         [JsonIgnore]
         public string RefreshToken { get => Id.Substring(Id.LastIndexOf(':') + 1); }
 
-        [Length(1, 1000)]
+        [ListLength(Constants.Models.OAuthDownParty.Grant.ClaimsMin, Constants.Models.OAuthDownParty.Grant.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 
-        [MaxLength(30)]
+        [MaxLength(Constants.Models.Party.NameLength)]
         [JsonProperty(PropertyName = "client_id")]
         public string ClientId { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.ScopeMax)]
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
-        [MaxLength(100)]
+        [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
         [JsonProperty(PropertyName = "session_id")]
         public string SessionId { get; set; }
 

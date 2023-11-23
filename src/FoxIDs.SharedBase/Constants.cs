@@ -72,8 +72,8 @@ namespace FoxIDs
             public const string DownPartyId = "f_DownPartyId";
             public const string DownPartyClientId = "f_DownPartyClientId";
             public const string SequenceId = "f_SequenceId";
-            public const string ExternalSequenceId = "f_ExternalSequenceId";            
-            public const string AccountAction = "f_AccountAction";            
+            public const string ExternalSequenceId = "f_ExternalSequenceId";
+            public const string AccountAction = "f_AccountAction";
             public const string SequenceCulture = "f_SequenceCulture";
             public const string Issuer = "f_Issuer";
             public const string Status = "f_Status";
@@ -86,6 +86,7 @@ namespace FoxIDs
             public const string UsageType = "f_UsageType";
             public const string UsageLoginType = "f_UsageLoginType";
             public const string UsageTokenType = "f_UsageTokenType";
+            public const string UsageAddRating = "f_UsageAddRating";
 
             public static class Results
             {
@@ -114,7 +115,7 @@ namespace FoxIDs
 
             public const int MasterPartitionIdLength = 30;
             public const string MasterPartitionIdExPattern = @"^[\w:@]*$";
-            public const int DocumentPartitionIdLength = 70;
+            public const int DocumentPartitionIdLength = 110;
             public const string DocumentPartitionIdExPattern = @"^[\w:\-]*$";
 
             public static class Master
@@ -187,9 +188,9 @@ namespace FoxIDs
 
             public static class Tenant
             {
-                public const int IdLength = 50;
+                public const int IdLength = 70;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^\w[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_][a-z0-9_-]*$";
                 public const int CustomDomainLength = 200;
@@ -198,9 +199,9 @@ namespace FoxIDs
 
             public static class Track
             {
-                public const int IdLength = 80;
+                public const int IdLength = 120;
                 public const string IdRegExPattern = @"^[a-z0-9_:-]*$";
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const string NameDbRegExPattern = @"^[a-z0-9_-]*$";
                 public const int DisplayNameLength = 100;
@@ -257,7 +258,7 @@ namespace FoxIDs
 
             public static class User
             {
-                public const int IdLength = 140;
+                public const int IdLength = 180;
                 public const string IdRegExPattern = @"^[\w:\-.+@]*$";
                 public const int UserIdLength = 40;
                 public const int ClaimsMin = 0;
@@ -292,7 +293,11 @@ namespace FoxIDs
                 /// <summary>
                 /// JWT and SAML claim value max length.
                 /// </summary>
-                public const int ValueLength = 8000;
+                public const int ValueLength = 10000;
+                public const int LimitedValueLength = 1000;
+                public const int ProcessValueLength = 50000;
+
+                public const int IdTokenLimitedHintValueLength = 8000;
 
                 public const int MapIdLength = 90;
                 public const int MapMin = 0;
@@ -309,9 +314,9 @@ namespace FoxIDs
 
             public static class Party
             {
-                public const int NameLength = 30;
+                public const int NameLength = 50;
                 public const string NameRegExPattern = @"^[\w\-]*$";
-                public const int IdLength = 110;
+                public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
                 public const int NoteLength = 200;
 
@@ -335,6 +340,13 @@ namespace FoxIDs
                 public const int ScopeLength = 50;
                 public const string ScopeRegExPattern = @"^[\w:\-.]*$";
 
+                public static class Grant
+                {
+                    public const int IdLength = 220;
+                    public const int ClaimsMin = 1;
+                    public const int ClaimsMax = 1000;
+                }
+
                 public static class Client
                 {
                     public const int ResourceScopesMin = 1;
@@ -349,8 +361,9 @@ namespace FoxIDs
                     public const int ResponseTypesMax = 5;
                     public const int ResponseTypeLength = 30;
                     public const int RedirectUrisMin = 0;
-                    public const int RedirectUrisMax = 40;
+                    public const int RedirectUrisMax = 200;
                     public const int RedirectUriLength = 500;
+                    public const int RedirectUriSumLength = 25000;
                     public const int SecretsMin = 0;
                     public const int SecretsMax = 10;
                     public const int ClientKeysMin = 0;
@@ -445,8 +458,6 @@ namespace FoxIDs
                     public const int ResponseModeLength = 30;
                     public const int ResponseTypeLength = 30;
 
-                    public const int RedirectUrisMin = 1;
-                    public const int RedirectUrisMax = 40;
                     public const int AuthorizeUrlLength = 500;
                     public const int TokenUrlLength = 500;  
                     public const int UserInfoUrlLength = 500;
@@ -486,6 +497,9 @@ namespace FoxIDs
 
                 public const int ClaimsMin = 0;
                 public const int ClaimsMax = 500;
+
+                public const int RelayStateLength = 2000;
+                public const int AcsResponseUrlLength = 2000;
 
                 public static class Up
                 {

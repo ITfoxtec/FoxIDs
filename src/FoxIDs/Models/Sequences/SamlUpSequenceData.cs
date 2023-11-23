@@ -1,5 +1,4 @@
-﻿using FoxIDs.Infrastructure.DataAnnotations;
-using ITfoxtec.Identity;
+﻿using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,11 +10,11 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "i")]
         public string Id { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(Constants.Models.SamlParty.RelayStateLength)]
         [JsonProperty(PropertyName = "rs")]
         public string RelayState { get; set; }
 
-        [MaxLength(200)]
+        [MaxLength(IdentityConstants.MessageLength.SessionIdMax)]
         [JsonProperty(PropertyName = "si")]
         public string SessionId { get; set; }
 
@@ -24,10 +23,6 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "lr")]
         public bool PostLogoutRedirect { get; set; }
-
-        [Length(0, 10)]
-        [JsonProperty(PropertyName = "c")]
-        public List<ClaimAndValues> Claims { get; set; }
 
         public override IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

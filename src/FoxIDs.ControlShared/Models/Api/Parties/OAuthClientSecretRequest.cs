@@ -20,7 +20,7 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Secrets.
         /// </summary>
-        [Length(1, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
+        [ListLength(1, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
         public List<string> Secrets { get; set; }
     }
 }

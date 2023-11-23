@@ -40,7 +40,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "issuer")]
         public virtual string Issuer { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "issuers")]
         public virtual List<string> Issuers { get; set; }
 
@@ -73,7 +73,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "disable_single_logout")]
         public bool DisableSingleLogout { get; set; }
 
-        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [JsonProperty(PropertyName = "hrd_domains")]
         public List<string> HrdDomains { get; set; }
 

@@ -23,7 +23,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string Note { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         [Display(Name = "Allow up-party names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
@@ -34,11 +34,11 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<SamlClaimTransformViewModel> ClaimTransforms { get; set; } = new List<SamlClaimTransformViewModel>();
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [Display(Name = "Issue claims (use * to issue all claims)")]
         public List<string> Claims { get; set; }
 
@@ -101,7 +101,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
+        [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) URL")]
         public List<string> AcsUrls { get; set; }
 
@@ -126,7 +126,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string LoggedOutUrl { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
+        [ListLength(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "Optional one or more signature validation certificates")]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
@@ -142,11 +142,11 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Include encryption certificates in metadata")]
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Optional NameID formats in metadata")]
         public List<string> MetadataNameIdFormats { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; } = new List<SamlMetadataContactPerson>();
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

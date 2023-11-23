@@ -15,7 +15,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "external_name")]
         public string ExternalName { get; set; }
 
-        [Length(Constants.Models.Track.KeysMin, Constants.Models.Track.KeysMax)]
+        [ListLength(Constants.Models.Track.KeysMin, Constants.Models.Track.KeysMax)]
         [JsonProperty(PropertyName = "keys")]
         public List<TrackKeyItem> Keys { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,36 +19,36 @@ namespace FoxIDs.Models
         }
 
         [Required]
-        [MaxLength(180)]
+        [MaxLength(Constants.Models.OAuthDownParty.Grant.IdLength)]
         [RegularExpression(@"^[\w:\-_]*$")]
         [JsonProperty(PropertyName = "id")]
         public override string Id { get; set; }
 
-        [Length(1, 1000)]
+        [ListLength(1, 1000)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 
-        [MaxLength(30)]
+        [MaxLength(Constants.Models.Party.NameLength)]
         [JsonProperty(PropertyName = "client_id")]
         public string ClientId { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [JsonProperty(PropertyName = "redirect_uri")]
         public string RedirectUri { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.ScopeMax)]
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.NonceMax)]
         [JsonProperty(PropertyName = "nonce")]
         public string Nonce { get; set; }
 
-        [MaxLength(2000)]
+        [MaxLength(IdentityConstants.MessageLength.CodeChallengeMax)]
         [JsonProperty(PropertyName = "code_challenge")]
         public string CodeChallenge { get; set; }
 
-        [MaxLength(10)]
+        [MaxLength(IdentityConstants.MessageLength.CodeChallengeMethodMax)]
         [JsonProperty(PropertyName = "code_challenge_method")]
         public string CodeChallengeMethod { get; set; }
 

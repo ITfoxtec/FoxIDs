@@ -8,9 +8,9 @@ It is possible to configure multiple OpenID Connect up-parties which then can be
 
 How to guides:
 
-- Connect two FoxIDs tracks in a tenant with a [track link](howto-tracklink-foxids.md)
+- Connect two FoxIDs tracks in the same tenant with a [track link](howto-tracklink-foxids.md)
 - Connect two FoxIDs tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
-- Connect [Azure AD](up-party-howto-oidc-azure-ad.md) 
+- Connect [Microsoft Entra ID (Azure AD)](up-party-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
 - Connect [Signicat](up-party-howto-oidc-signicat.md)
@@ -45,8 +45,8 @@ Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 
 > Change the claims the up-party pass on with [claim transforms](claim-transform.md).
 
-FoxIDs default use the brackets party pattern `.../(up-party)/...`. If not supported by the external OP (e.g., like Azure AD), the pattern can be changed to the tildes party pattern `.../~up-party~/...` or dot party pattern `.../.up-party./...`.
+FoxIDs default use the brackets party pattern `.../(up-party)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes party pattern `.../~up-party~/...` or dot party pattern `.../.up-party./...`.
 
 If necessary, a custom client ID can be configured, otherwise the up-party name is used as the client ID.
 
-Optionally the issuer can be changed. Otherwise read from the OpenID Configuration endpoint. Furthermore, multiple issuers can be configured to trust tokens form multiple issuers signed with the same key (often used with Azure AD).
+Optionally the issuer can be changed. Otherwise read from the OpenID Configuration endpoint. Furthermore, multiple issuers can be configured to trust tokens form multiple issuers signed with the same key (often used with Microsoft Entra ID).

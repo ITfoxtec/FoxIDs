@@ -17,7 +17,7 @@ When you create a down-party it is in most cases the best solution to use a star
 If a down-party is configured to only be allowed to use one up-party the user is immediately redirected to that particular up-party. 
 If more than one up-party is allowed the user is redirected to a login up-party which make it possible to select an up-party either by writing an e-mail (looking at the domain) or by clicking a HRD button.
 
-It is possible to select up to 4 up-parties by name or use the star notation, please see more about [separation and selection](index.md#separation).
+It is possible to select up to 4 up-parties by name or use the star notation, please see more about [selection](index.md#selection-by-url).
 
 It is configurable for each up-party which domains should result in selecting the up-party and if a HRD button should be shown optionally with a logo. 
 A HRD button is shown for the up-party if not at least one domain or wildcard is configured. 

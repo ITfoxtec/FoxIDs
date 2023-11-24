@@ -1,7 +1,6 @@
 # Connect to Context Handler with SAML 2.0
 **Both up-party and down-party for testing**
 
-
 FoxIDs can be connected to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
 Where Context Handler is a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider-idp) and FoxIDs is acting as an SAML 2.0 Relying Party.
 
@@ -18,7 +17,7 @@ Context Handler documentation and configuration:
 - The Context Handler [test application with NSIS](https://spwithnsis.eksterntest-stoettesystemerne.dk ) and [test application with out NSIS](https://spwithoutnsis.eksterntest-stoettesystemerne.dk)
 - The [current/old Context Handler test application](https://demo-brugervendtsystem.kombit.dk/test) 
 
-## Consider separate track
+## Separate track
 
 Context Handler requires the Relying Party (RP) and Identity Provider (IdP) to use different OSES certificates. Therefore, consider connecting Context Handler in separate tracks where the OCES3 certificates can be configured without affecting any other configurations.
 
@@ -138,7 +137,7 @@ You are done. The SAML 2.0 up-party can now be used as an up-party for down-part
 
 This guide is for Context Handler and use OIOSAML2.
 
-> You need to [configure the OCES3 certificate](#certificate) before following this configuration.
+> You need to use a [separate track](#separate-track) to have a place for the test users and to [configure the OCES3 certificate](#certificate) before following this configuration.
 
 **1 - Start by creating an SAML 2.0 down-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 

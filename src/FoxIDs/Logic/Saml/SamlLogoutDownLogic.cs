@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> LogoutRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding)
+        private async Task<IActionResult> LogoutRequestAsync(SamlDownParty party, Saml2Binding binding)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
 
@@ -198,7 +198,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> LogoutResponseAsync<T>(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex)
+        private async Task<IActionResult> LogoutResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2Binding binding, Saml2StatusCodes status, string sessionIndex)
         {
             binding.RelayState = relayState;
 
@@ -224,13 +224,13 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            if (binding is Saml2RedirectBinding saml2RedirectBinding)
             {
-                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+                return await saml2RedirectBinding.ToActionFormResultAsync();
             }
-            if (binding is Saml2Binding<Saml2PostBinding>)
+            if (binding is Saml2PostBinding saml2PostBinding)
             {
-                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+                return await saml2PostBinding.ToActionFormResultAsync();
             }
             else
             {
@@ -270,7 +270,7 @@ namespace FoxIDs.Logic
             return true;
         }
 
-        private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlDownParty party, Saml2Binding<T> binding, IEnumerable<Claim> claims)
+        private async Task<IActionResult> SingleLogoutRequestAsync(SamlDownParty party, Saml2Binding binding, IEnumerable<Claim> claims)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party, includeSigningCertificate: true);
 
@@ -297,13 +297,13 @@ namespace FoxIDs.Logic
             {
                 securityHeaderLogic.AddFormActionAllowAll();
             }
-            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            if (binding is Saml2RedirectBinding saml2RedirectBinding)
             {
-                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+                return await saml2RedirectBinding.ToActionFormResultAsync();
             }
-            if (binding is Saml2Binding<Saml2PostBinding>)
+            if (binding is Saml2PostBinding saml2PostBinding)
             {
-                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+                return await saml2PostBinding.ToActionFormResultAsync();
             }
             else
             {
@@ -328,7 +328,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> SingleLogoutResponseAsync<T>(SamlDownParty party, Saml2Binding<T> binding)
+        private async Task<IActionResult> SingleLogoutResponseAsync(SamlDownParty party, Saml2Binding binding)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlDownConfigAsync(party);
 

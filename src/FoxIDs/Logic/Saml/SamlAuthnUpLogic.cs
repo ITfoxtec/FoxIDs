@@ -102,7 +102,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> AuthnRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
+        private async Task<IActionResult> AuthnRequestAsync(SamlUpParty party, Saml2Binding binding, SamlUpSequenceData samlUpSequenceData)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
@@ -141,13 +141,13 @@ namespace FoxIDs.Logic
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            if (binding is Saml2RedirectBinding saml2RedirectBinding)
             {
-                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+                return await saml2RedirectBinding.ToActionFormResultAsync();
             }
-            else if (binding is Saml2Binding<Saml2PostBinding>)
+            else if (binding is Saml2PostBinding saml2PostBinding)
             {
-                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+                return await saml2PostBinding.ToActionFormResultAsync();
             }
             else
             {
@@ -174,7 +174,7 @@ namespace FoxIDs.Logic
             }            
         }
 
-        private async Task<IActionResult> AuthnResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
+        private async Task<IActionResult> AuthnResponseAsync(SamlUpParty party, Saml2Binding binding)
         {
             var request = HttpContext.Request;
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);

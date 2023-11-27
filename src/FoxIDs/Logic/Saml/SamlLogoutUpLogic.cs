@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> LogoutRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding, SamlUpSequenceData samlUpSequenceData)
+        private async Task<IActionResult> LogoutRequestAsync(SamlUpParty party, Saml2Binding binding, SamlUpSequenceData samlUpSequenceData)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party, includeSigningAndDecryptionCertificate: true);
 
@@ -170,13 +170,13 @@ namespace FoxIDs.Logic
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            if (binding is Saml2RedirectBinding saml2RedirectBinding)
             {
-                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+                return await saml2RedirectBinding.ToActionFormResultAsync();
             }
-            else if (binding is Saml2Binding<Saml2PostBinding>)
+            else if (binding is Saml2PostBinding saml2PostBinding)
             {
-                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+                return await saml2PostBinding.ToActionFormResultAsync();
             }
             else
             {
@@ -204,7 +204,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> LogoutResponseAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
+        private async Task<IActionResult> LogoutResponseAsync(SamlUpParty party, Saml2Binding binding)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
 
@@ -356,7 +356,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> SingleLogoutRequestAsync<T>(SamlUpParty party, Saml2Binding<T> binding)
+        private async Task<IActionResult> SingleLogoutRequestAsync(SamlUpParty party, Saml2Binding binding)
         {
             var samlConfig = await saml2ConfigurationLogic.GetSamlUpConfigAsync(party);
                         
@@ -394,7 +394,7 @@ namespace FoxIDs.Logic
                     SessionId = saml2LogoutRequest.SessionIndex
                 });
 
-                if (binding is Saml2Binding<Saml2PostBinding>)
+                if (binding is Saml2PostBinding)
                 {
                     return HttpContext.GetUpPartyUrl(party.Name, Constants.Routes.SamlController, Constants.Endpoints.UpJump.SingleLogoutRequestJump, includeSequence: true, partyBindingPattern: party.PartyBindingPattern).ToRedirectResult(RouteBinding.DisplayName);
                 }
@@ -482,7 +482,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<IActionResult> LogoutResponseAsync<T>(Saml2Configuration samlConfig, string inResponseTo, string relayState, string singleLogoutResponseUrl, Saml2Binding<T> binding, Saml2StatusCodes status, string sessionIndex)
+        private async Task<IActionResult> LogoutResponseAsync(Saml2Configuration samlConfig, string inResponseTo, string relayState, string singleLogoutResponseUrl, Saml2Binding binding, Saml2StatusCodes status, string sessionIndex)
         {
             binding.RelayState = relayState;
 
@@ -502,13 +502,13 @@ namespace FoxIDs.Logic
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
             securityHeaderLogic.AddFormActionAllowAll();
 
-            if (binding is Saml2Binding<Saml2RedirectBinding>)
+            if (binding is Saml2RedirectBinding saml2RedirectBinding)
             {
-                return await (binding as Saml2RedirectBinding).ToActionFormResultAsync();
+                return await saml2RedirectBinding.ToActionFormResultAsync();
             }
-            if (binding is Saml2Binding<Saml2PostBinding>)
+            if (binding is Saml2PostBinding saml2PostBinding)
             {
-                return await (binding as Saml2PostBinding).ToActionFormResultAsync();
+                return await saml2PostBinding.ToActionFormResultAsync();
             }
             else
             {

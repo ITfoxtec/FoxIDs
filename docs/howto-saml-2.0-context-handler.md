@@ -192,7 +192,7 @@ The following claims is most often used:
 5. Fill out the rest, accept the terms and click Save (DK: Gem)
 
 > Additionally, a federation agreement (DK: f&oslash;derationsaftaler) is required to enable the identity provider in Context Handler.  
-> You are required to be registered as an authority (DK: myndighed) in the test environment to add a federation agreement.
+> You are required to be registered as your own test authority (DK: egen test myndighed) in the test environment to add a federation agreement.
 
  **3 - Add claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
 

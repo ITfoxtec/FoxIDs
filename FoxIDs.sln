@@ -154,6 +154,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-oidc-foxids-up-party-readredirect.png = docs\images\howto-oidc-foxids-up-party-readredirect.png
 		docs\images\howto-oidc-foxids-up-party.png = docs\images\howto-oidc-foxids-up-party.png
 		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
+		docs\images\howto-saml-claim-mappings.png = docs\images\howto-saml-claim-mappings.png
 		docs\images\howto-saml-context-handler-certificate.png = docs\images\howto-saml-context-handler-certificate.png
 		docs\images\howto-saml-context-handler-down-base-config.png = docs\images\howto-saml-context-handler-down-base-config.png
 		docs\images\howto-saml-context-handler-down-ct1.png = docs\images\howto-saml-context-handler-down-ct1.png

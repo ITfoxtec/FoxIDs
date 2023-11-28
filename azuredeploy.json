@@ -318,7 +318,6 @@
         "name": "[variables('foxidsDefaultName')]",
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
           "alwaysOn": true,
           "webSocketsEnabled": false
         },
@@ -345,7 +344,6 @@
         "name": "[variables('foxidsControlSiteName')]",
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
           "alwaysOn": true,
           "webSocketsEnabled": false
         },
@@ -371,7 +369,6 @@
       "properties": {
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
           "alwaysOn": false,
           "webSocketsEnabled": false,
           "autoSwapSlotName": "production"
@@ -398,7 +395,6 @@
       "properties": {
         "siteConfig": {
           "ftpsState": "Disabled",
-          "use32BitWorkerProcess": false,
           "alwaysOn": false,
           "webSocketsEnabled": false,
           "autoSwapSlotName": "production"

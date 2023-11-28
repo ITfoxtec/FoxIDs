@@ -12,7 +12,10 @@ The sample Visual Studio solution contain the following [down-party](#down-party
 ## Down-party sample applications
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
-Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  applicationshowing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
+
+You can test this [sample online](https://aspnetcoreoidcallupsample.itfoxtec.com/).
 
 > This sample is a good starting point!
 
@@ -99,6 +102,8 @@ Local development domain and port: `https://localhost:44347`
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreApi1Sample)) API showing how to secure an API with an access token and how to restrict access by scopes.
 
+You can call this [sample online](https://aspnetcoreoauthapi1sample.itfoxtec.com/).
+
 The API calls [API2 sample](#aspnetcoreapi2sample) secured with an access token obtained by token exchange where the client use client authentication method private_key_jwt (certificate).
 
 Local development domain and port: `https://localhost:44344`
@@ -106,6 +111,8 @@ Local development domain and port: `https://localhost:44344`
 ### AspNetCoreApi2Sample
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreApi2Sample)) API showing how to secure an API with an access token and how to restrict access by a scope.
+
+You can call this [sample online](https://aspnetcoreoauthapi2sample.itfoxtec.com/).
 
 Local development domain and port: `https://localhost:44351`
 
@@ -124,6 +131,8 @@ Local development domain and port: `https://localhost:44350`
 ### AspNetCoreSamlIdPSample
 
 Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 up-party in FoxIDs.
+
+You can test this [sample online](https://aspnetcoresamlidpsample.itfoxtec.com/).
 
 Local development domain and port: `https://localhost:44342`
 

@@ -412,7 +412,7 @@ namespace FoxIDs.Logic
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
 
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
-            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session.SessionId);
+            await oauthRefreshTokenGrantLogic.DeleteRefreshTokenGrantsAsync(session?.SessionId);
 
             if (party.DisableSingleLogout)
             {
@@ -421,7 +421,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session.DownPartyLinks, session.Claims);
+                (var doSingleLogout, var singleLogoutSequenceData) = await singleLogoutDownLogic.InitializeSingleLogoutAsync(new UpPartyLink { Name = party.Name, Type = party.Type }, null, session?.DownPartyLinks, session?.Claims);
 
                 if (doSingleLogout)
                 {

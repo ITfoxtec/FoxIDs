@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFramework>net7.0</TargetFramework>
-		<Version>1.1.5.1</Version>
+		<Version>1.2.0.1</Version>
 		<RootNamespace>FoxIDs</RootNamespace>
 		<Authors>Anders Revsgaard</Authors>
 		<Company>ITfoxtec</Company>
@@ -10,8 +10,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="ITfoxtec.Identity" Version="2.5.34" />
-		<PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.10.4" />
+		<PackageReference Include="ITfoxtec.Identity" Version="2.5.41.5" />
+		<PackageReference Include="ITfoxtec.Identity.Saml2" Version="4.10.5.4" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-rc1.20223.4" />
 		<PackageReference Include="System.Net.Http.Json" Version="7.0.1" />
 	</ItemGroup>

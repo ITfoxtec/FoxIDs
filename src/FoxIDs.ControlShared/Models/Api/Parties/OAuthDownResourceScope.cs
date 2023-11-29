@@ -12,7 +12,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Resource")]
         public string Resource { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopeLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopeLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
         [Display(Name = "Scopes")]
         public List<string> Scopes { get; set; }
     }

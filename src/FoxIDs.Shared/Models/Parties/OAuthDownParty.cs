@@ -51,14 +51,14 @@ namespace FoxIDs.Models
             }
         }
 
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
         /// Allow CORS origins.
         /// </summary>
-        [Length(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
+        [ListLength(Constants.Models.OAuthDownParty.AllowCorsOriginsMin, Constants.Models.OAuthDownParty.AllowCorsOriginsMax, Constants.Models.OAuthDownParty.AllowCorsOriginLength)]
         [JsonProperty(PropertyName = "allow_cors_origins")]
         public List<string> AllowCorsOrigins { get; set; }
 

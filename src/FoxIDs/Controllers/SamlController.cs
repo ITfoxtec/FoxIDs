@@ -8,6 +8,7 @@ using FoxIDs.Models;
 using FoxIDs.Models.Sequences;
 using ITfoxtec.Identity.Saml2;
 using ITfoxtec.Identity.Saml2.MvcCore;
+using Saml2Http = ITfoxtec.Identity.Saml2.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -89,15 +90,22 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                var genericHttpRequest = Request.ToGenericHttpRequest(validate: true);
-                if (new Saml2PostBinding().IsResponse(genericHttpRequest) || new Saml2RedirectBinding().IsResponse(genericHttpRequest))
+                var samlHttpRequest = Request.ToGenericHttpRequest(validate: true);
+                if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
                 {
-                    return await LoggedOutInternal();
+                    if (samlHttpRequest.Binding.IsResponse(samlHttpRequest))
+                    {
+                        return await LoggedOutInternal(samlHttpRequest);
+                    }
+                    else
+                    {
+                        await sequenceLogic.StartSequenceAsync(true);
+                        return await SingleLogoutInternal(samlHttpRequest);
+                    }
                 }
                 else
                 {
-                    await sequenceLogic.StartSequenceAsync(true);
-                    return await SingleLogoutInternal();
+                    throw new NotSupportedException($"Binding '{samlHttpRequest.Binding.GetType().Name}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -106,7 +114,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LoggedOutInternal()
+        private async Task<IActionResult> LoggedOutInternal(Saml2Http.HttpRequest samlHttpRequest)
         {
             try
             {
@@ -114,7 +122,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutResponseAsync(RouteBinding.UpParty.Id);
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutResponseAsync(RouteBinding.UpParty.Id, samlHttpRequest);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
                 }
@@ -125,7 +133,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> SingleLogoutInternal()
+        private async Task<IActionResult> SingleLogoutInternal(Saml2Http.HttpRequest samlHttpRequest)
         {
             try
             {
@@ -133,7 +141,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutUpLogic>().SingleLogoutRequestAsync(RouteBinding.UpParty.Id);
+                        return await serviceProvider.GetService<SamlLogoutUpLogic>().SingleLogoutRequestAsync(RouteBinding.UpParty.Id, samlHttpRequest);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
                 }
@@ -218,15 +226,22 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException("Up-party not configured.");
                 }
 
-                var genericHttpRequest = Request.ToGenericHttpRequest(validate: true);
-                if (new Saml2PostBinding().IsRequest(genericHttpRequest) || new Saml2RedirectBinding().IsRequest(genericHttpRequest))
+                var samlHttpRequest = Request.ToGenericHttpRequest(validate: true);
+                if (samlHttpRequest.Binding is Saml2RedirectBinding || samlHttpRequest.Binding is Saml2PostBinding)
                 {
-                    await sequenceLogic.StartSequenceAsync(true);
-                    return await LogoutInternal();
+                    if (samlHttpRequest.Binding.IsRequest(samlHttpRequest))
+                    {
+                        await sequenceLogic.StartSequenceAsync(true);
+                        return await LogoutInternal(samlHttpRequest);
+                    }
+                    else
+                    {
+                        return await SingleLogoutResponseInternal(samlHttpRequest);
+                    }
                 }
                 else
                 {
-                    return await SingleLogoutResponseInternal();
+                    throw new NotSupportedException($"Binding '{samlHttpRequest.Binding.GetType().Name}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -235,7 +250,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> LogoutInternal()
+        private async Task<IActionResult> LogoutInternal(Saml2Http.HttpRequest samlHttpRequest)
         {
             try
             {
@@ -243,7 +258,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutRequestAsync(RouteBinding.DownParty.Id);
+                        return await serviceProvider.GetService<SamlLogoutDownLogic>().LogoutRequestAsync(RouteBinding.DownParty.Id, samlHttpRequest);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }
@@ -254,7 +269,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<IActionResult> SingleLogoutResponseInternal()
+        private async Task<IActionResult> SingleLogoutResponseInternal(Saml2Http.HttpRequest samlHttpRequest)
         {
             try
             {
@@ -262,7 +277,7 @@ namespace FoxIDs.Controllers
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Saml2:
-                        return await serviceProvider.GetService<SamlLogoutDownLogic>().SingleLogoutResponseAsync(RouteBinding.DownParty.Id);
+                        return await serviceProvider.GetService<SamlLogoutDownLogic>().SingleLogoutResponseAsync(RouteBinding.DownParty.Id, samlHttpRequest);
                     default:
                         throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
                 }

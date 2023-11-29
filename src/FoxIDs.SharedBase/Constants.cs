@@ -295,7 +295,7 @@ namespace FoxIDs
                 /// </summary>
                 public const int ValueLength = 10000;
                 public const int LimitedValueLength = 1000;
-                public const int ProcessValueLength = 50000;
+                public const int ProcessValueLength = 200000;
 
                 public const int IdTokenLimitedHintValueLength = 8000;
 

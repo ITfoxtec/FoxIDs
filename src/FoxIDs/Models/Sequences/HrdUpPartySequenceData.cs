@@ -15,7 +15,7 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "t")]
         public PartyTypes Type { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "i")]
         public List<string> Issuers { get; set; }
 

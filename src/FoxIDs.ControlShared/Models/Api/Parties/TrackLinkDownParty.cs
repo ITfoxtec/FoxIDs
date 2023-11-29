@@ -15,7 +15,7 @@ namespace FoxIDs.Models.Api
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
 
-        [Length(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
+        [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }
 
         [Required]
@@ -31,10 +31,10 @@ namespace FoxIDs.Models.Api
         public string ToUpPartyName { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
         public List<OAuthDownClaim> Claims { get; set; }
 
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
     }

@@ -24,11 +24,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "to_up_party_name")]
         public string ToUpPartyName { get; set; }
 
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<OAuthDownClaim> Claims { get; set; }
     }

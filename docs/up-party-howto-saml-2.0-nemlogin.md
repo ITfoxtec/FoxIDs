@@ -75,7 +75,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-read-metadata.png)
 
-10. Configure a custom SP issuer, the issuer can start with `https://saml.`
+10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
 11. Remove the `*` and configure claims, the following claims is most often used:
     - `https://data.gov.dk/concept/core/nsis/loa`
@@ -92,7 +92,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-claims.png)
 
- 12. In production only! Set certificate validation mode to `Chain trust` and revocation mode to `Online`
+ 12. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
  13. Select to include the encryption certificate in metadata
  14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
@@ -153,7 +153,7 @@ The SAML 2.0 up-party can now be used as an up-party for down-parties in the tra
 NemLog-in requires requests and responses to be logged including the signature proof and stored for half a year (180 days). It is also required to log which identity has login and logout of which session, at what time and the IP address.  
 [FoxIDs default log](logging.md) errors and events including the time and the IP address.
 
-> [FoxIDs.com](https://www.foxids.com) stores log data between 90 days to 180 days depending on the selected plan.
+> With an Enterprise plan on [FoxIDs.com](https://www.foxids.com) log data is stored for 180 days.
 
 It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 

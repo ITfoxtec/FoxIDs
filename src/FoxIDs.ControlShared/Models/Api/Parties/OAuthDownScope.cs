@@ -12,7 +12,7 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Scope")]
         public string Scope { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
         [Display(Name = "Voluntary claims")]
         public List<OAuthDownClaim> VoluntaryClaims { get; set; }
     }

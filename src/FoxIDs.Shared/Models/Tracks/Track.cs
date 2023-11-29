@@ -55,11 +55,11 @@ namespace FoxIDs.Models
         [Range(Constants.Models.Track.KeyExternalCacheLifetimeMin, Constants.Models.Track.KeyExternalCacheLifetimeMax)]
         public int KeyExternalCacheLifetime { get; set; } = 28800; // 8 hours
 
-        [Length(Constants.Models.Claim.MapMin, Constants.Models.Claim.MapMax)]
+        [ListLength(Constants.Models.Claim.MapMin, Constants.Models.Claim.MapMax)]
         [JsonProperty(PropertyName = "claim_mappings")]
         public List<ClaimMap> ClaimMappings { get; set; }
 
-        [Length(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
+        [ListLength(Constants.Models.Track.ResourcesMin, Constants.Models.Track.ResourcesMax)]
         [JsonProperty(PropertyName = "resources")]
         public List<ResourceItem> Resources { get; set; }
 
@@ -94,7 +94,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "check_password_risk")]
         public bool? CheckPasswordRisk { get; set; }
 
-        [Length(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
+        [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         [JsonProperty(PropertyName = "allow_iframe_on_domains")]
         public List<string> AllowIframeOnDomains { get; set; }
 

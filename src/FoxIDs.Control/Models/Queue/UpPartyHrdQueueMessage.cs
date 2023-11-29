@@ -13,7 +13,7 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "n")]
         public string Name { get; set; }
 
-        [Length(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
+        [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         [JsonProperty(PropertyName = "i")]
         public List<string> Issuers { get; set; }
 
@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Queue
         [JsonProperty(PropertyName = "si")]
         public string SpIssuer { get; set; }
 
-        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [JsonProperty(PropertyName = "hd")]
         public List<string> HrdDomains { get; set; }
 

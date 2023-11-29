@@ -7,7 +7,7 @@ namespace FoxIDs.Models.Api
 {
     public class OAuthClaimTransform : ClaimTransform
     {
-        [Length(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
+        [ListLength(Constants.Models.Claim.TransformClaimsInMin, Constants.Models.Claim.TransformClaimsInMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeRegExPattern)]
         public override List<string> ClaimsIn { get; set; }
 
         [Required]

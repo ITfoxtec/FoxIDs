@@ -17,34 +17,34 @@ namespace FoxIDs.Models
         [JsonIgnore]
         public string ClientId { get => Parent.Name; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [JsonProperty(PropertyName = "resource_scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
         [JsonProperty(PropertyName = "scopes")]
         public List<TScope> Scopes { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<TClaim> Claims { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [JsonProperty(PropertyName = "response_types")]
         public virtual List<string> ResponseTypes { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [JsonProperty(PropertyName = "redirect_uris")]
         public virtual List<string> RedirectUris { get; set; }
 
         [JsonProperty(PropertyName = "client_authentication_method")]
         public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
 
-        [Length(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax)]
         [JsonProperty(PropertyName = "secrets")]
         public List<OAuthClientSecret> Secrets { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
         [JsonProperty(PropertyName = "client_keys")]
         public List<JsonWebKey> ClientKeys { get; set; }
 

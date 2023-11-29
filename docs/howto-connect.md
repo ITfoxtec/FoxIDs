@@ -22,7 +22,7 @@ Configure [OpenID Connect up-party](up-party-oidc.md) which trust an external Op
 How to guides:
 
 - Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
-- Connect [Azure AD (Microsoft Entra ID)](up-party-howto-oidc-azure-ad.md) 
+- Connect [Microsoft Entra ID (Azure AD)](up-party-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
 - Connect [Signicat](up-party-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
@@ -36,7 +36,7 @@ How to guides:
 - Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
 - Connect [Microsoft AD FS](up-party-howto-saml-2.0-adfs.md)
 - Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
-- Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-identity-provider-idp)
+- Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-identity-provider)
 
 ## Down-party - How to become an Identity Provider (IdP)
 When you configure a down-party with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 
@@ -51,7 +51,7 @@ Configure [SAML 2.0 down-party](down-party-saml-2.0.md) to be an Identity Provid
 
 How to guides:
 
-- Connect test IdP on [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-relying-party-rp)
+- Connect test IdP on [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-test-relying-party)
 
 
 ## Connect FoxIDs tracks

@@ -5,14 +5,14 @@ using System;
 
 namespace FoxIDs.Infrastructure.Saml2
 {
-    public class FoxIdsSaml2TokenExchangeBinding : Saml2Binding<FoxIdsSaml2TokenExchangeBinding>
+    public class FoxIdsSaml2TokenExchangeBinding : Saml2Binding
     {
         public Saml2Request ReadSamlRequest(HttpRequest request, FoxIdsSaml2TokenExchangeRequest foxIdsSaml2TokenExchangeRequest)
         {
             return Read(request, foxIdsSaml2TokenExchangeRequest, Saml2Constants.Message.Assertion, false, false);
         }
 
-        protected override FoxIdsSaml2TokenExchangeBinding BindInternal(Saml2Request saml2RequestResponse, string messageName)
+        protected override void BindInternal(Saml2Request saml2RequestResponse, string messageName)
         {
             throw new NotImplementedException();
         }

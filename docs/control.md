@@ -39,11 +39,11 @@ Configure a number of tracks, one for each of your environments e.g. dev, qa and
 
 Each track contains a user repository and a default created [login](login.md) up-party.
 
-You can add [OAuth 2.0, OpenID Connect](oauth-2.0-oidc.md) and [SAML 2.0](saml-2.0.md) down-parties and up-parties in the Parties tab. 
+You can add [OpenID Connect](oidc.md), [OAuth 2.0](oauth-2.0.md) and [SAML 2.0](saml-2.0.md) down-parties and up-parties in the Parties tab. 
 
 ![Configure down-parties and down-parties](images/configure-parties.png)
 
-A track contains a primary certificate and possible a secondary certificate in the Certificates tab. It is possible to swap between the primary and secondary certificate if both is configured, depending on the [certificate](index.md#certificates) container type.
+A track contains a primary certificate and possible a secondary certificate in the Certificates tab. It is possible to swap between the primary and secondary certificate if both is configured, depending on the [certificate](certificates.md) container type.
 
 ![Configure certificates](images/configure-certificate.png)
 

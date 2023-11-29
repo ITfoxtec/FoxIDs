@@ -11,7 +11,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "scoped_logger")]
         public ScopedLogger ScopedLogger { get; set; }
 
-        [Length(Constants.Models.Track.Logging.ScopedStreamLoggersMin, Constants.Models.Track.Logging.ScopedStreamLoggersMax)]
+        [ListLength(Constants.Models.Track.Logging.ScopedStreamLoggersMin, Constants.Models.Track.Logging.ScopedStreamLoggersMax)]
         [JsonProperty(PropertyName = "scoped_stream_loggers")]
         public List<ScopedStreamLogger> ScopedStreamLoggers { get; set; }
     }

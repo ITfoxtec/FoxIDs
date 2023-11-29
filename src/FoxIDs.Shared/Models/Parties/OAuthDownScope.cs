@@ -14,7 +14,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "scope")]
         public string Scope { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMin, Constants.Models.OAuthDownParty.Client.VoluntaryClaimsMax)]
         [JsonProperty(PropertyName = "voluntary_claims")]
         public List<TClaim> VoluntaryClaims { get; set; }
     }

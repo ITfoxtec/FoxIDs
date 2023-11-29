@@ -21,7 +21,7 @@ namespace FoxIDs.Models.Api
         /// A required element specifying attributes required or desired by this service.
         /// </summary>
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.MetadataRequestedAttributesMin, Constants.Models.SamlParty.MetadataRequestedAttributesMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataRequestedAttributesMin, Constants.Models.SamlParty.MetadataRequestedAttributesMax)]
         [Display(Name = "Attributes (claims)")]
         public List<SamlMetadataRequestedAttribute> RequestedAttributes { get; set; }
     }

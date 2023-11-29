@@ -6,7 +6,7 @@ using ITfoxtec.Identity;
 namespace FoxIDs.Infrastructure.DataAnnotations
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
-    public class LengthAttribute : RangeAttribute
+    public class ListLengthAttribute : RangeAttribute
     {
         private const string fieldNameKey = "[field_name]";
         private readonly int? maxStringLenght;
@@ -19,7 +19,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         /// </summary>
         /// <param name="minListLength">Min number of items in the list.</param>
         /// <param name="maxListLangth">Max number of items in the list.</param>
-        public LengthAttribute(int minListLength, int maxListLangth) : base(minListLength, maxListLangth)
+        public ListLengthAttribute(int minListLength, int maxListLangth) : base(minListLength, maxListLangth)
         { }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         /// <param name="minListLength">Min number of items in the list.</param>
         /// <param name="maxListLangth">Max number of items in the list.</param>
         /// <param name="maxStringLenght">Max string length per item.</param>
-        public LengthAttribute(int minListLength, int maxListLangth, int maxStringLenght) : base(minListLength, maxListLangth)
+        public ListLengthAttribute(int minListLength, int maxListLangth, int maxStringLenght) : base(minListLength, maxListLangth)
         {
             this.maxStringLenght = maxStringLenght;
         }
@@ -40,7 +40,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         /// <param name="maxListLangth">Max number of items in the list.</param>
         /// <param name="maxStringLenght">Max string length per item.</param>
         /// <param name="totalMaxStringLenght">Max string length for all items combined.</param>
-        public LengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, int totalMaxStringLenght) : this(minListLength, maxListLangth, maxStringLenght)
+        public ListLengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, int totalMaxStringLenght) : this(minListLength, maxListLangth, maxStringLenght)
         {
             this.totalMaxStringLenght = totalMaxStringLenght;
         }
@@ -52,7 +52,7 @@ namespace FoxIDs.Infrastructure.DataAnnotations
         /// <param name="maxListLangth">Max number of items in the list.</param>
         /// <param name="maxStringLenght">Max string length per item.</param>
         /// <param name="regExPattern">RegEx validation of each item in the list.</param>
-        public LengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, string regExPattern) : this(minListLength, maxListLangth, maxStringLenght)
+        public ListLengthAttribute(int minListLength, int maxListLangth, int maxStringLenght, string regExPattern) : this(minListLength, maxListLangth, maxStringLenght)
         {
             this.regExPattern = regExPattern;
         }

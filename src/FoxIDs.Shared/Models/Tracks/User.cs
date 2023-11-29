@@ -85,7 +85,7 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "require_multi_factor")]
         public bool RequireMultiFactor { get; set; }
 
-        [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
+        [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [JsonProperty(PropertyName = "claims")]
         public List<ClaimAndValues> Claims { get; set; }
 

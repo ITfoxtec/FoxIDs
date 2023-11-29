@@ -12,14 +12,14 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "require_multi_factor")]
         public bool RequireMultiFactor { get; set; }
 
-        [Length(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
+        [ListLength(Constants.Models.DynamicElements.ElementsMin, Constants.Models.DynamicElements.ElementsMax)]
         [JsonProperty(PropertyName = "elements")]
         public List<DynamicElement> Elements { get; set; }
 
         /// <summary>
         /// Create user claim transforms, run after user creation.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
     }

@@ -9,32 +9,32 @@ namespace FoxIDs.Models.Api
     public class OAuthDownClient : IValidatableObject
     {
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax)]
         [Display(Name = "Scopes")]
         public List<OAuthDownScope> Scopes { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ClaimsMin, Constants.Models.OAuthDownParty.Client.ClaimsMax)]
         [Display(Name = "Issue claims (use * to issue all claims)")]
         public List<OAuthDownClaim> Claims { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResponseTypesMin, Constants.Models.OAuthDownParty.Client.ResponseTypesMax, Constants.Models.OAuthDownParty.Client.ResponseTypeLength)]
         [Display(Name = "Response types")]
         public List<string> ResponseTypes { get; set; }
 
-        [Length(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
         [Display(Name = "Client authentication method")]
         public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
 
-        [Length(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
         [Display(Name = "Client certificates")]
         public List<JwtWithCertificateInfo> ClientKeys { get; set; }
 

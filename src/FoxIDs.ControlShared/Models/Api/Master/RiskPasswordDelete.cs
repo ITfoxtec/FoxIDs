@@ -5,7 +5,7 @@ namespace FoxIDs.Models.Api
 {
     public class RiskPasswordDelete
     {
-        [Length(1, 10000)]
+        [ListLength(1, 10000)]
         public List<string> PasswordSha1Hashs { get; set; }
     }
 }

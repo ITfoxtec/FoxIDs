@@ -47,7 +47,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string UserId { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
+        [ListLength(Constants.Models.User.ClaimsMin, Constants.Models.User.ClaimsMax)]
         [Display(Name = "Claims")]
         public List<ClaimAndValues> Claims { get; set; }
     }

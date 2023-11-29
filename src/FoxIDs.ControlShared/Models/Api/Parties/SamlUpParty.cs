@@ -33,10 +33,10 @@ namespace FoxIDs.Models.Api
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<SamlClaimTransform> ClaimTransforms { get; set; }
 
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         public List<string> Claims { get; set; }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace FoxIDs.Models.Api
 
         public bool SignAuthnRequest { get; set; }
 
-        [Length(0, Constants.Models.SamlParty.KeysMax)]
+        [ListLength(0, Constants.Models.SamlParty.KeysMax)]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
         public SamlBindingTypes? LogoutRequestBinding { get; set; }
@@ -127,21 +127,21 @@ namespace FoxIDs.Models.Api
 
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> MetadataNameIdFormats { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
         public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 
         /// <summary>
         /// Home realm discovery (HRD) domains.
         /// </summary>
-        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [Display(Name = "HRD domains")]
         public List<string> HrdDomains { get; set; }
 

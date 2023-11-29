@@ -55,11 +55,11 @@ namespace FoxIDs.Client.Models.ViewModels
         /// <summary>
         /// Claim transforms.
         /// </summary>
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<SamlClaimTransformViewModel> ClaimTransforms { get; set; } = new List<SamlClaimTransformViewModel>();
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.ClaimsMin, Constants.Models.SamlParty.ClaimsMax, Constants.Models.Claim.SamlTypeLength, Constants.Models.Claim.SamlTypeWildcardRegExPattern)]
         [Display(Name = "Forward claims (use * to carried all claims forward)")]
         public List<string> Claims { get; set; }
 
@@ -103,7 +103,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool SignAuthnRequest { get; set; }
 
         [ValidateComplexType]
-        [Length(0, Constants.Models.SamlParty.KeysMax)]
+        [ListLength(0, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "One or more signature validation certificates")]
         public List<JwtWithCertificateInfo> Keys { get; set; }
 
@@ -168,22 +168,22 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Include encryption certificates in metadata")]
         public bool MetadataIncludeEncryptionCertificates { get; set; }
 
-        [Length(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.ValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
+        [ListLength(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         [Display(Name = "Optional NameID formats in metadata")]
         public List<string> MetadataNameIdFormats { get; set; }
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
         public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; } = new List<SamlMetadataAttributeConsumingService>();
 
         [ValidateComplexType]
-        [Length(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
+        [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; } = new List<SamlMetadataContactPerson>();
 
         /// <summary>
         /// Home realm discovery (HRD) domains.
         /// </summary>
-        [Length(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
+        [ListLength(Constants.Models.UpParty.HrdDomainMin, Constants.Models.UpParty.HrdDomainMax, Constants.Models.UpParty.HrdDomainLength, Constants.Models.UpParty.HrdDomainRegExPattern)]
         [Display(Name = "HRD domains")]
         public List<string> HrdDomains { get; set; }
 

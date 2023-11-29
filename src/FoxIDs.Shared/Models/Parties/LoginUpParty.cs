@@ -42,7 +42,7 @@ namespace FoxIDs.Models
         //[JsonProperty(PropertyName = "enable_multi_factor")]
         //public bool EnableMultiFactor { get; set; }
 
-        [Length(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
+        [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 

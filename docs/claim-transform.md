@@ -1,6 +1,6 @@
 # Claim transforms
 
-Each FoxIDs up-party and down-party support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
+Each FoxIDs up-party and down-party handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
 First executing any claim transforms on the up-party and then any claim transforms on the down-party. 
 
 If you create a new claim in a claim transform the claim is per default not send from the up-party to the down-party or from the down-party to the application / API. 

@@ -6,7 +6,7 @@ A track contains one [user repository](users.md#user-repository) and all up-part
 When a user authenticates the user's session is connected to the particular up-party login. Therefore, a user can authenticate in multiple configured up-party login's and have multiple separate user sessions.  
 A user session is only established in the up-party login if the session lifetime is set to more than 0 seconds.
 
-A [down-party OpenID Connect](down-party-oauth-2.0-oidc.md) or [down-party SAML 2.0](down-party-saml-2.0.md) can authenticate users by selecting an up-party login.
+A [down-party OpenID Connect](down-party-oidc.md) or [down-party SAML 2.0](down-party-saml-2.0.md) can authenticate users by selecting an up-party login.
 
 ![FoxIDs login](images/parties-login.svg)
 
@@ -17,7 +17,7 @@ When you create a down-party it is in most cases the best solution to use a star
 If a down-party is configured to only be allowed to use one up-party the user is immediately redirected to that particular up-party. 
 If more than one up-party is allowed the user is redirected to a login up-party which make it possible to select an up-party either by writing an e-mail (looking at the domain) or by clicking a HRD button.
 
-It is possible to select up to 4 up-parties by name or use the star notation, please see more about [separation and selection](index.md#separation).
+It is possible to select up to 4 up-parties by name or use the star notation, please see more about [selection](index.md#selection-by-url).
 
 It is configurable for each up-party which domains should result in selecting the up-party and if a HRD button should be shown optionally with a logo. 
 A HRD button is shown for the up-party if not at least one domain or wildcard is configured. 

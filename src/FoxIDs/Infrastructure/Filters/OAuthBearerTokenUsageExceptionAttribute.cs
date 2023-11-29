@@ -49,12 +49,12 @@ namespace FoxIDs.Infrastructure.Filters
 
             private void OAuthRequestExceptionToBearerTokenUsageError(ExceptionContext context, OAuthRequestException oAuthRequestException)
             {
-                var headerValues = new List<string> { IdentityConstants.TokenTypes.Bearer, $"error {oAuthRequestException.Error}" };
+                var headerValues = new List<string> { IdentityConstants.TokenTypes.Bearer, $"error=\"{oAuthRequestException.Error}\"" };
                 if (!oAuthRequestException.ErrorDescription.IsNullOrWhiteSpace())
                 {
-                    headerValues.Add($"error_description {oAuthRequestException.ErrorDescription}");
+                    headerValues.Add($"error_description=\"{oAuthRequestException.ErrorDescription}\"");
                 }
-                context.HttpContext.Response.Headers[HeaderNames.WWWAuthenticate] = new StringValues(headerValues.ToArray()); 
+                context.HttpContext.Response.Headers[HeaderNames.WWWAuthenticate] = new StringValues(string.Join(", ", headerValues)); 
                 context.Result = new UnauthorizedResult();
             }
         }

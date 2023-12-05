@@ -1,12 +1,62 @@
 # Languages
-FoxIDs support translating the user interfaces elements into the configured languages. English is default (FoxIDs Control Client only support English). It is possible to add text translations to all text elements.  
+FoxIDs has multi-language support with support for the following languages:
 
-By default, the text translations are read from the embedded resource file. The [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file can be found in the git repository.  
+- Bulgarian (bg)
+- Catalan (ca)
+- Croatian (hr)
+- Czech (cs)
+- Danish (da)
+- Dutch (nl)
+- English (en)
+- Estonian ()
+- Finnish (fi)
+- French (fr)
+- German (de)
+- Greek (el)
+- Icelandic (is)
+- Italian (it)
+- Latvian (lv)
+- Lithuanian (lt)
+- Norwegian (nb)
+- Polish (pl)
+- Portuguese (pt)
+- Romanian (ro)
+- Slovak (sk)
+- Slovenian (sl)
+- Spanish (es)
+- Swedish (sv)
+- Turkish (tr)
+- Ukrainian (uk)
+
+A language can be selected with the `ui_locales` parameter in a OpenID Connect request. The language is otherwise selected based on the culture send by the browser. English is the default language if the requested language is not supported.  
+The FoxIDs Control Client administrative site only supports English.
+
+The text translations are located in the embedded resource file ([EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json)).
+
+**Language examples**
+
+Spanish
+![Spanish](images/language-spanish.png)
+
+----
+
+Danish
+![Danish](images/language-danish.png)
+
+----
+
+German
+![German](images/language-german.png)
+
+----
+
+French
+![French](images/language-french.png)
 
 ## Contributions
 
 Text translations added to the [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file will become generally available. 
-Each time the FoxIDs app service are updated and restarted the new text resources is loaded and new translations will become available.
+Please contribute if you see an error, the text can be improved or you are lacking a language.
 
 > Text translation contributions are greatly appreciated.
 
@@ -15,6 +65,8 @@ It is possible to contribute either by creating a pull request in the FoxIDs [Gi
 ## Translation in track
 
 It is possible to add track specific translations for each text element in multiple languages in [FoxIDs Control Client](control.md#foxids-control-client).
+
+> If you want to change a text and thereby not using the default text. It can be archived by adding a new text for each supported language.
 
 Add translation to a track:
 
@@ -25,6 +77,6 @@ Add translation to a track:
 5. Click Add text to add a translation in another language
 6. Click Create
 
-This is an example of a text element translated into two languages (da and es).
+This is an example of a text element translated into two languages; Danish (da) and Spanish (es).
 
 ![Configure text](images/configure-tenant-text.png)

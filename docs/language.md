@@ -8,7 +8,7 @@ FoxIDs has multi-language support with support for the following languages:
 - Danish (da)
 - Dutch (nl)
 - English (en)
-- Estonian ()
+- Estonian (et)
 - Finnish (fi)
 - French (fr)
 - German (de)

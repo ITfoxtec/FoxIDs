@@ -9,7 +9,7 @@ namespace FoxIDs
 
         static JsonSerializerExtensions()
         {
-            JsonSerializerOptions.IgnoreNullValues = true;
+            JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
             JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
         }

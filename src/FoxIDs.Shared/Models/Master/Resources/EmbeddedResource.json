@@ -420,11 +420,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Log in"
+          "value": "Log in",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Log ind"
+          "value": "Log ind",
+          "edit_level": 100
         }
       ]
     },
@@ -433,11 +435,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Email"
+          "value": "Email",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "E-mail"
+          "value": "E-mail",
+          "edit_level": 100
         }
       ]
     },
@@ -446,11 +450,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Not a valid email address."
+          "value": "Not a valid email address.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "E-mail adressen er ikke gyldig."
+          "value": "E-mail adressen er ikke gyldig.",
+          "edit_level": 100
         }
       ]
     },
@@ -459,11 +465,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Password"
+          "value": "Password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Kodeord"
+          "value": "Kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -472,11 +480,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "The {0} field is required."
+          "value": "The {0} field is required.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "{0} feltet er påkrævet."
+          "value": "{0} feltet er påkrævet.",
+          "edit_level": 100
         }
       ]
     },
@@ -485,11 +495,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "The {0} fields maximum length is '{1}'."
+          "value": "The {0} fields maximum length is '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "{0} feltets maximum længde er '{1}'."
+          "value": "{0} feltets maximum længde er '{1}'.",
+          "edit_level": 100
         }
       ]
     },
@@ -498,11 +510,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "User"
+          "value": "User",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Bruger"
+          "value": "Bruger",
+          "edit_level": 100
         }
       ]
     },
@@ -511,11 +525,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirm password"
+          "value": "Confirm password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Gentag kodeord"
+          "value": "Gentag kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -524,11 +540,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please confirmation the password."
+          "value": "Please confirmation the password.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Bekræft venligst kodeord."
+          "value": "Bekræft venligst kodeord.",
+          "edit_level": 100
         }
       ]
     },
@@ -537,11 +555,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Given Name"
+          "value": "Given Name",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Fornavn"
+          "value": "Fornavn",
+          "edit_level": 100
         }
       ]
     },
@@ -550,11 +570,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Family Name"
+          "value": "Family Name",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Efternavn"
+          "value": "Efternavn",
+          "edit_level": 100
         }
       ]
     },
@@ -563,11 +585,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Don't have an account?"
+          "value": "Don't have an account?",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Har du ikke en konto?"
+          "value": "Har du ikke en konto?",
+          "edit_level": 100
         }
       ]
     },
@@ -576,11 +600,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Create user"
+          "value": "Create user",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Opret bruger"
+          "value": "Opret bruger",
+          "edit_level": 100
         }
       ]
     },
@@ -589,11 +615,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Cancel"
+          "value": "Cancel",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Annullere"
+          "value": "Annullere",
+          "edit_level": 100
         }
       ]
     },
@@ -602,11 +630,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Next"
+          "value": "Next",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Næste"
+          "value": "Næste",
+          "edit_level": 100
         }
       ]
     },
@@ -615,11 +645,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "'{0}' and 'Password' do not match."
+          "value": "'{0}' and 'Password' do not match.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "'{0}' og 'Kodeord' er ikke ens."
+          "value": "'{0}' og 'Kodeord' er ikke ens.",
+          "edit_level": 100
         }
       ]
     },
@@ -628,11 +660,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Create"
+          "value": "Create",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Opret"
+          "value": "Opret",
+          "edit_level": 100
         }
       ]
     },
@@ -641,11 +675,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Given name"
+          "value": "Given name",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Fornavn"
+          "value": "Fornavn",
+          "edit_level": 100
         }
       ]
     },
@@ -654,11 +690,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Family name"
+          "value": "Family name",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Efternavn"
+          "value": "Efternavn",
+          "edit_level": 100
         }
       ]
     },
@@ -667,11 +705,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "The password has previously appeared in a data breach. Please choose a more secure alternative."
+          "value": "The password has previously appeared in a data breach. Please choose a more secure alternative.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Det valgte kodeord er blevet observeret i tidligere databrud. Vælg venligst et mere sikkert alternativt."
+          "value": "Det valgte kodeord er blevet observeret i tidligere databrud. Vælg venligst et mere sikkert alternativt.",
+          "edit_level": 100
         }
       ]
     },
@@ -680,11 +720,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use {0} characters or more with a mix of letters, numbers and symbols."
+          "value": "Please use {0} characters or more with a mix of letters, numbers and symbols.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Benyt mindst {0} tegn i kodeordet (gerne flere) med et mix af bogstaver, tal og specialtegn."
+          "value": "Benyt mindst {0} tegn i kodeordet (gerne flere) med et mix af bogstaver, tal og specialtegn.",
+          "edit_level": 100
         }
       ]
     },
@@ -693,11 +735,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use a mix of letters, numbers and symbols"
+          "value": "Please use a mix of letters, numbers and symbols",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Benyt venligst et mix af både bogstaver, tal og specialtegn"
+          "value": "Benyt venligst et mix af både bogstaver, tal og specialtegn",
+          "edit_level": 100
         }
       ]
     },
@@ -706,11 +750,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Wrong email or password"
+          "value": "Wrong email or password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Forkert e-mail eller kodeord"
+          "value": "Forkert e-mail eller kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -719,11 +765,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Error"
+          "value": "Error",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Fejl"
+          "value": "Fejl",
+          "edit_level": 100
         }
       ]
     },
@@ -732,11 +780,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "An error has occurred. Please try again."
+          "value": "An error has occurred. Please try again.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Der opstod en fejl. Forsøg venligst igen."
+          "value": "Der opstod en fejl. Forsøg venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -745,11 +795,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Timeout"
+          "value": "Timeout",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Tiden er udløbet"
+          "value": "Tiden er udløbet",
+          "edit_level": 100
         }
       ]
     },
@@ -758,11 +810,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "The sequence must be completed within {0} minutes. Please try again."
+          "value": "The sequence must be completed within {0} minutes. Please try again.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Sekvensen skal gennemføres indenfor {0} minutter. Prøv venligst igen."
+          "value": "Sekvensen skal gennemføres indenfor {0} minutter. Prøv venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -771,11 +825,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Change password"
+          "value": "Change password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Skift kodeord"
+          "value": "Skift kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -784,11 +840,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Current password"
+          "value": "Current password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Nuværende kodeord"
+          "value": "Nuværende kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -797,11 +855,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "New password"
+          "value": "New password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Nyt kodeord"
+          "value": "Nyt kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -810,11 +870,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirm new password"
+          "value": "Confirm new password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Gentag nyt kodeord"
+          "value": "Gentag nyt kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -823,11 +885,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "'{0}' and 'NewPassword' do not match."
+          "value": "'{0}' and 'NewPassword' do not match.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "'{0}' og 'NytKodeord' er ikke ens."
+          "value": "'{0}' og 'NytKodeord' er ikke ens.",
+          "edit_level": 100
         }
       ]
     },
@@ -836,11 +900,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Wrong password"
+          "value": "Wrong password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Forkert kodeord"
+          "value": "Forkert kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -849,11 +915,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "'Confirm new password' and 'New password' do not match."
+          "value": "'Confirm new password' and 'New password' do not match.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "'Gentag nyt kodeord' og 'Nyt kodeord' er ikke ens."
+          "value": "'Gentag nyt kodeord' og 'Nyt kodeord' er ikke ens.",
+          "edit_level": 100
         }
       ]
     },
@@ -862,11 +930,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use a new password."
+          "value": "Please use a new password.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Benyt venligst et nyt kodeord."
+          "value": "Benyt venligst et nyt kodeord.",
+          "edit_level": 100
         }
       ]
     },
@@ -875,11 +945,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again."
+          "value": "Your account is temporarily locked because of too many log in attempts. Please wait for a while and try again.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Din konto er midlertidigt låst på grund af for mange log ind forsøg. Vent venligst et stykke tid og prøv så igen."
+          "value": "Din konto er midlertidigt låst på grund af for mange log ind forsøg. Vent venligst et stykke tid og prøv så igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -888,11 +960,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Forgot your password?"
+          "value": "Forgot your password?",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Glemt dit kodeord?"
+          "value": "Glemt dit kodeord?",
+          "edit_level": 100
         }
       ]
     },
@@ -901,11 +975,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "OR select where to log in"
+          "value": "OR select where to log in",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "ELLER vælg hvor du vil logge ind"
+          "value": "ELLER vælg hvor du vil logge ind",
+          "edit_level": 100
         }
       ]
     },
@@ -914,11 +990,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Log in with your existing user"
+          "value": "Log in with your existing user",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Log ind med din eksisterende bruger"
+          "value": "Log ind med din eksisterende bruger",
+          "edit_level": 100
         }
       ]
     },
@@ -927,11 +1005,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Select where to log in"
+          "value": "Select where to log in",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Vælg hvor du vil logge ind"
+          "value": "Vælg hvor du vil logge ind",
+          "edit_level": 100
         }
       ]
     },
@@ -940,11 +1020,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use {0} characters or more."
+          "value": "Please use {0} characters or more.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Benyt venligst mindst {0} tegn."
+          "value": "Benyt venligst mindst {0} tegn.",
+          "edit_level": 100
         }
       ]
     },
@@ -953,11 +1035,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please do not use the email or parts of it."
+          "value": "Please do not use the email or parts of it.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Brug venligst ikke e-mailen eller dele af den."
+          "value": "Brug venligst ikke e-mailen eller dele af den.",
+          "edit_level": 100
         }
       ]
     },
@@ -966,11 +1050,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please do not use parts of the URL."
+          "value": "Please do not use parts of the URL.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Brug venligst ikke dele af URL."
+          "value": "Brug venligst ikke dele af URL.",
+          "edit_level": 100
         }
       ]
     },
@@ -979,11 +1065,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Reset password"
+          "value": "Reset password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Nulstil kodeord"
+          "value": "Nulstil kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -992,11 +1080,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "A reset password confirmation code has just been sent to your email. Please use the confirmation code to reset your password."
+          "value": "A reset password confirmation code has just been sent to your email. Please use the confirmation code to reset your password.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "En nulstil kodeords bekræftelseskode er netop blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden."
+          "value": "En nulstil kodeords bekræftelseskode er netop blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden.",
+          "edit_level": 100
         }
       ]
     },
@@ -1005,11 +1095,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "A new reset password confirmation code has been sent to your email. Please use the confirmation code to reset your password."
+          "value": "A new reset password confirmation code has been sent to your email. Please use the confirmation code to reset your password.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "En ny nulstil kodeords bekræftelseskode er blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden."
+          "value": "En ny nulstil kodeords bekræftelseskode er blevet sendt til din e-mail. Nulstil venligst dit kodeord med bekræftelseskoden.",
+          "edit_level": 100
         }
       ]
     },
@@ -1018,11 +1110,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use the new reset password confirmation code just sent to your email."
+          "value": "Please use the new reset password confirmation code just sent to your email.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Brug venligst den nye nulstil kodeords bekræftelseskode, der lige er sendt til din e-mail."
+          "value": "Brug venligst den nye nulstil kodeords bekræftelseskode, der lige er sendt til din e-mail.",
+          "edit_level": 100
         }
       ]
     },
@@ -1031,11 +1125,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Invalid reset password confirmation code, please try one more time."
+          "value": "Invalid reset password confirmation code, please try one more time.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Ugyldig nulstil kodeords bekræftelseskode, prøv venligst igen."
+          "value": "Ugyldig nulstil kodeords bekræftelseskode, prøv venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1044,11 +1140,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please reset your password with the confirmation code sent to your email."
+          "value": "Please reset your password with the confirmation code sent to your email.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Nulstil venligst dit kodeord med den bekræftelseskode der er sendt til din e-mail."
+          "value": "Nulstil venligst dit kodeord med den bekræftelseskode der er sendt til din e-mail.",
+          "edit_level": 100
         }
       ]
     },
@@ -1057,11 +1155,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Save password"
+          "value": "Save password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Gem kodeord"
+          "value": "Gem kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -1070,11 +1170,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter a reset password confirmation code."
+          "value": "Please enter a reset password confirmation code.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en nulstil kodeords bekræftelseskode."
+          "value": "Indtast venligst en nulstil kodeords bekræftelseskode.",
+          "edit_level": 100
         }
       ]
     },
@@ -1083,11 +1185,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your{0}reset password confirmation code: {1}"
+          "value": "Your{0}reset password confirmation code: {1}",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Din{0}nulstil kodeords bekræftelseskode: {1}"
+          "value": "Din{0}nulstil kodeords bekræftelseskode: {1}",
+          "edit_level": 100
         }
       ]
     },
@@ -1096,11 +1200,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Email confirmation"
+          "value": "Email confirmation",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "E-mail bekræftelse"
+          "value": "E-mail bekræftelse",
+          "edit_level": 100
         }
       ]
     },
@@ -1109,11 +1215,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Your{0}email confirmation code: {1}"
+          "value": "Your{0}email confirmation code: {1}",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Din{0}e-mailbekræftelseskode: {1}"
+          "value": "Din{0}e-mailbekræftelseskode: {1}",
+          "edit_level": 100
         }
       ]
     },
@@ -1122,11 +1230,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter a mail confirmation code."
+          "value": "Please enter a mail confirmation code.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en e-mailbekræftelseskode."
+          "value": "Indtast venligst en e-mailbekræftelseskode.",
+          "edit_level": 100
         }
       ]
     },
@@ -1135,11 +1245,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please use the new confirmation code just sent to your email."
+          "value": "Please use the new confirmation code just sent to your email.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Brug venligst den nye bekræftelseskode, der lige er sendt til din e-mail."
+          "value": "Brug venligst den nye bekræftelseskode, der lige er sendt til din e-mail.",
+          "edit_level": 100
         }
       ]
     },
@@ -1148,11 +1260,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Invalid email confirmation code, please try one more time."
+          "value": "Invalid email confirmation code, please try one more time.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Ugyldig e-mailbekræftelseskode, prøv venligst igen."
+          "value": "Ugyldig e-mailbekræftelseskode, prøv venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1161,11 +1275,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "An error has occurred. Please try again."
+          "value": "An error has occurred. Please try again.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Der opstod en fejl. Prøv igen."
+          "value": "Der opstod en fejl. Prøv igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1174,11 +1290,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Log out"
+          "value": "Log out",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Log ud"
+          "value": "Log ud",
+          "edit_level": 100
         }
       ]
     },
@@ -1187,11 +1305,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Keep me logged in"
+          "value": "Keep me logged in",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Forbliv logget ind"
+          "value": "Forbliv logget ind",
+          "edit_level": 100
         }
       ]
     },
@@ -1200,11 +1320,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "OK"
+          "value": "OK",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "OK"
+          "value": "OK",
+          "edit_level": 100
         }
       ]
     },
@@ -1213,11 +1335,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "logged out"
+          "value": "logged out",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "logget ud"
+          "value": "logget ud",
+          "edit_level": 100
         }
       ]
     },
@@ -1226,11 +1350,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "You are now logged out!"
+          "value": "You are now logged out!",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Du er nu logget ud!"
+          "value": "Du er nu logget ud!",
+          "edit_level": 100
         }
       ]
     },
@@ -1239,11 +1365,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Initializing certificate in Key Vault"
+          "value": "Initializing certificate in Key Vault",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Opretter certifikat i Key Vault"
+          "value": "Opretter certifikat i Key Vault",
+          "edit_level": 100
         }
       ]
     },
@@ -1252,11 +1380,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "The certificate will soon be ready. Please try again in a little while."
+          "value": "The certificate will soon be ready. Please try again in a little while.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Certifikatet vil snart være klar. Prøv venligst igen lidt senere."
+          "value": "Certifikatet vil snart være klar. Prøv venligst igen lidt senere.",
+          "edit_level": 100
         }
       ]
     },
@@ -1265,11 +1395,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Two-factor authentication (2FA)"
+          "value": "Two-factor authentication (2FA)",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "To-faktor godkendelse (2FA)"
+          "value": "To-faktor godkendelse (2FA)",
+          "edit_level": 100
         }
       ]
     },
@@ -1278,11 +1410,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Register two-factor authentication with an app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others."
+          "value": "Register two-factor authentication with an app of your choice. You can use <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> and others.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Registrer to-faktor godkendelse med den app du ønsker. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre."
+          "value": "Registrer to-faktor godkendelse med den app du ønsker. Du kan benytte <a href=\"https://authy.com/\" target=\"_blank\">Anthy</a>, <a href=\"https://support.google.com/accounts/answer/1066447\" target=\"_blank\">Google Authenticator</a>, <a href=\"https://www.microsoft.com/en-us/security/mobile-authenticator-app\" target=\"_blank\">Microsoft Authenticator</a> og andre.",
+          "edit_level": 100
         }
       ]
     },
@@ -1291,11 +1425,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Or, use manual setup key (optional)"
+          "value": "Or, use manual setup key (optional)",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Eller benyt manuel setup key (valgfrit)"
+          "value": "Eller benyt manuel setup key (valgfrit)",
+          "edit_level": 100
         }
       ]
     },
@@ -1304,11 +1440,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Then, enter the authenticator app code"
+          "value": "Then, enter the authenticator app code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Indtast derefter koden fra din godkendelses app"
+          "value": "Indtast derefter koden fra din godkendelses app",
+          "edit_level": 100
         }
       ]
     },
@@ -1317,11 +1455,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter a valid code"
+          "value": "Please enter a valid code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en gyldig kode"
+          "value": "Indtast venligst en gyldig kode",
+          "edit_level": 100
         }
       ]
     },
@@ -1330,11 +1470,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please enter a valid code or a recovery code"
+          "value": "Please enter a valid code or a recovery code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Indtast venligst en gyldig kode eller benyt din genoprettelseskode"
+          "value": "Indtast venligst en gyldig kode eller benyt din genoprettelseskode",
+          "edit_level": 100
         }
       ]
     },
@@ -1343,11 +1485,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Register two-factor app"
+          "value": "Register two-factor app",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Registrer to-faktor app"
+          "value": "Registrer to-faktor app",
+          "edit_level": 100
         }
       ]
     },
@@ -1356,11 +1500,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Authenticator app code or a recovery code"
+          "value": "Authenticator app code or a recovery code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Kode fra godkendelses app eller din genoprettelseskode"
+          "value": "Kode fra godkendelses app eller din genoprettelseskode",
+          "edit_level": 100
         }
       ]
     },
@@ -1369,11 +1515,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Invalid code, please try to register the two-factor app one more time."
+          "value": "Invalid code, please try to register the two-factor app one more time.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Ugyldig kode, prøv venligst at registrere to-faktor app igen."
+          "value": "Ugyldig kode, prøv venligst at registrere to-faktor app igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1382,11 +1530,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Invalid code, please try one more time."
+          "value": "Invalid code, please try one more time.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Ugyldig kode, prøv venligst igen."
+          "value": "Ugyldig kode, prøv venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1395,11 +1545,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirm email"
+          "value": "Confirm email",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Bekræft e-mail"
+          "value": "Bekræft e-mail",
+          "edit_level": 100
         }
       ]
     },
@@ -1408,11 +1560,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Send new confirmation code"
+          "value": "Send new confirmation code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Send ny bekræftelseskode"
+          "value": "Send ny bekræftelseskode",
+          "edit_level": 100
         }
       ]
     },
@@ -1421,11 +1575,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Click to copy"
+          "value": "Click to copy",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Klik for at kopiere"
+          "value": "Klik for at kopiere",
+          "edit_level": 100
         }
       ]
     },
@@ -1434,11 +1590,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "First, scan the QR code with your app"
+          "value": "First, scan the QR code with your app",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Skan først QR koden med din app"
+          "value": "Skan først QR koden med din app",
+          "edit_level": 100
         }
       ]
     },
@@ -1447,11 +1605,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Two-factor authentication has been enabled for your account."
+          "value": "Two-factor authentication has been enabled for your account.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "To-faktor godkendelse er nu aktiveret på din konto."
+          "value": "To-faktor godkendelse er nu aktiveret på din konto.",
+          "edit_level": 100
         }
       ]
     },
@@ -1460,11 +1620,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "IMPORTANT: Save your recovery code!"
+          "value": "IMPORTANT: Save your recovery code!",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "VIGTIGT: Gem din genoprettelseskode!"
+          "value": "VIGTIGT: Gem din genoprettelseskode!",
+          "edit_level": 100
         }
       ]
     },
@@ -1473,11 +1635,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Recovery code"
+          "value": "Recovery code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Genoprettelseskode"
+          "value": "Genoprettelseskode",
+          "edit_level": 100
         }
       ]
     },
@@ -1486,11 +1650,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account."
+          "value": "If you lose your phone or for some other reason can no longer generate Two-factor authentication (2FA) codes, this recovery code is the ONLY way to gain access to your account.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor (2FA) koder, så er genoprettelseskoden den ENESTE adgang til din konto."
+          "value": "Hvis du mister din telefon eller af anden årsag ikke længere har adgang til at lave to-faktor (2FA) koder, så er genoprettelseskoden den ENESTE adgang til din konto.",
+          "edit_level": 100
         }
       ]
     },
@@ -1499,11 +1665,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "I have saved my recovery code"
+          "value": "I have saved my recovery code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Jeg har gemt min genoprettelseskode"
+          "value": "Jeg har gemt min genoprettelseskode",
+          "edit_level": 100
         }
       ]
     },
@@ -1512,11 +1680,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Change email"
+          "value": "Change email",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Skift e-mail"
+          "value": "Skift e-mail",
+          "edit_level": 100
         }
       ]
     },
@@ -1525,11 +1695,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "There is no account connected to this email."
+          "value": "There is no account connected to this email.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Der er ingen konto knyttet til denne e-mail."
+          "value": "Der er ingen konto knyttet til denne e-mail.",
+          "edit_level": 100
         }
       ]
     },
@@ -1538,11 +1710,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Search log in"
+          "value": "Search log in",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Søg log ind"
+          "value": "Søg log ind",
+          "edit_level": 100
         }
       ]
     },
@@ -1551,11 +1725,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Search"
+          "value": "Search",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Søg"
+          "value": "Søg",
+          "edit_level": 100
         }
       ]
     },
@@ -1564,11 +1740,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Logged in"
+          "value": "Logged in",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Logget ind"
+          "value": "Logget ind",
+          "edit_level": 100
         }
       ]
     },
@@ -1577,11 +1755,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "You are still logged in!"
+          "value": "You are still logged in!",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Du er stadig logget ind!"
+          "value": "Du er stadig logget ind!",
+          "edit_level": 100
         }
       ]
     },
@@ -1590,11 +1770,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please verify your email address with the confirmation code sent to your email."
+          "value": "Please verify your email address with the confirmation code sent to your email.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode der er sendt til din e-mail."
+          "value": "Bekræft venligst din e-mailadresse med den bekræftelseskode der er sendt til din e-mail.",
+          "edit_level": 100
         }
       ]
     },
@@ -1603,11 +1785,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "A confirmation code has just been sent to your email. Please verify your email address with the confirmation code."
+          "value": "A confirmation code has just been sent to your email. Please verify your email address with the confirmation code.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "En bekræftelseskode er netop blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden."
+          "value": "En bekræftelseskode er netop blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden.",
+          "edit_level": 100
         }
       ]
     },
@@ -1616,11 +1800,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "A new confirmation code has been sent to your email. Please verify your email address with the confirmation code."
+          "value": "A new confirmation code has been sent to your email. Please verify your email address with the confirmation code.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "En ny bekræftelseskode er blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden."
+          "value": "En ny bekræftelseskode er blevet sendt til din e-mail. Bekræft venligst din e-mailadresse med bekræftelseskoden.",
+          "edit_level": 100
         }
       ]
     },
@@ -1629,11 +1815,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Confirmation code"
+          "value": "Confirmation code",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Bekræftelseskode"
+          "value": "Bekræftelseskode",
+          "edit_level": 100
         }
       ]
     },
@@ -1642,11 +1830,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Try again"
+          "value": "Try again",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Prøv igen"
+          "value": "Prøv igen",
+          "edit_level": 100
         }
       ]
     },
@@ -1655,11 +1845,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Please try again in a little while."
+          "value": "Please try again in a little while.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Prøv venligst igen om lidt."
+          "value": "Prøv venligst igen om lidt.",
+          "edit_level": 100
         }
       ]
     },
@@ -1668,11 +1860,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Full name"
+          "value": "Full name",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Fulde navn"
+          "value": "Fulde navn",
+          "edit_level": 100
         }
       ]
     },
@@ -1681,11 +1875,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "The task should be completed within {0} days. Please try again."
+          "value": "The task should be completed within {0} days. Please try again.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Opgaven skal gennemføres indenfor {0} dage. Prøv venligst igen."
+          "value": "Opgaven skal gennemføres indenfor {0} dage. Prøv venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1694,11 +1890,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "It is not possible to go back in the browser at this point. Please try again."
+          "value": "It is not possible to go back in the browser at this point. Please try again.",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Det er ikke muligt at gå tilbage i browseren på dette sted. Prøv venligst igen."
+          "value": "Det er ikke muligt at gå tilbage i browseren på dette sted. Prøv venligst igen.",
+          "edit_level": 100
         }
       ]
     },
@@ -1707,11 +1905,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "Log in with your existing password"
+          "value": "Log in with your existing password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "Log ind med dit eksisterende kodeord"
+          "value": "Log ind med dit eksisterende kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -1720,11 +1920,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "{0}Reset password"
+          "value": "{0}Reset password",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "{0}Nulstil kodeord"
+          "value": "{0}Nulstil kodeord",
+          "edit_level": 100
         }
       ]
     },
@@ -1733,11 +1935,13 @@
       "items": [
         {
           "culture": "en",
-          "value": "{0}Email confirmation"
+          "value": "{0}Email confirmation",
+          "edit_level": 100
         },
         {
           "culture": "da",
-          "value": "{0}E-mail bekræftelse"
+          "value": "{0}E-mail bekræftelse",
+          "edit_level": 100
         }
       ]
     }

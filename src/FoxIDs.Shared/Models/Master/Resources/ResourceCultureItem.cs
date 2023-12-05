@@ -15,7 +15,8 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "value")]
         public string Value { get; set; }
 
+        [Required]
         [JsonProperty(PropertyName = "edit_level")]
-        public ResourceEditLevels EditLevel { get; set; } = ResourceEditLevels.Human;
+        public ResourceEditLevels EditLevel { get; set; }
     }
 }

@@ -18,12 +18,15 @@ namespace FoxIDs.ResourceTranslateTool.Logic
         public async Task LoadResourcesAsync()
         {
             var json = await File.ReadAllTextAsync(translateSettings.EmbeddedResourceJsonPath);
+            await json.ValidateObjectAsync();
             ResourceEnvelope = json.ToObject<ResourceEnvelope>();
         }
 
         public async Task SaveResourcesAsync()
         {
-            await File.WriteAllTextAsync(translateSettings.EmbeddedResourceJsonPath, ResourceEnvelope.ToJsonIndented());
+            var json = ResourceEnvelope.ToJsonIndented();
+            await json.ValidateObjectAsync();
+            await File.WriteAllTextAsync(translateSettings.EmbeddedResourceJsonPath, json);
         }
     }
 }

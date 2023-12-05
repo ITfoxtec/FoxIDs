@@ -11,13 +11,13 @@ try
     var resourceLogic = serviceProvider.GetService<ResourceLogic>();
     await resourceLogic.LoadResourcesAsync();
 
-    //Console.WriteLine("DeepL");
-    //await serviceProvider.GetService<DeepLTranslateLogic>().TranslateAllAsync();
-    //await resourceLogic.SaveResourcesAsync();
+    Console.WriteLine("DeepL");
+    await serviceProvider.GetService<DeepLTranslateLogic>().TranslateAllAsync();
+    await resourceLogic.SaveResourcesAsync();
 
-    //Console.WriteLine(string.Empty);
-    //Console.WriteLine("Google");
-    //await serviceProvider.GetService<GoogleTranslateLogic>().TranslateAllAsync();
+    Console.WriteLine(string.Empty);
+    Console.WriteLine("Google");
+    await serviceProvider.GetService<GoogleTranslateLogic>().TranslateAllAsync();
     await resourceLogic.SaveResourcesAsync();
 
 }

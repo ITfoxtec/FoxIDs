@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Models;
 using FoxIDs.ResourceTranslateTool.Models;
 using ITfoxtec.Identity;
+using System.Globalization;
 
 namespace FoxIDs.ResourceTranslateTool.Logic
 {
@@ -27,6 +28,13 @@ namespace FoxIDs.ResourceTranslateTool.Logic
             var json = ResourceEnvelope.ToJsonIndented();
             await json.ValidateObjectAsync();
             await File.WriteAllTextAsync(translateSettings.EmbeddedResourceJsonPath, json);
+        }
+
+        public void UpdateSupportedCultures(IEnumerable<string> languageCodes)
+        {
+            var isoLanguageCodes = languageCodes.Select(l => new CultureInfo(l).TwoLetterISOLanguageName);
+            ResourceEnvelope.SupportedCultures.ConcatOnce(isoLanguageCodes);
+            ResourceEnvelope.SupportedCultures = ResourceEnvelope.SupportedCultures.OrderBy(c => c).ToList();
         }
     }
 }

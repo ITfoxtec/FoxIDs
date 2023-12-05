@@ -18,7 +18,10 @@ namespace FoxIDs.ResourceTranslateTool.Logic
 
         public async Task TranslateAllAsync()
         {
-            foreach(var resource in resourceLogic.ResourceEnvelope.Resources)
+            var languageCodes = GetLanguageCodes();
+            resourceLogic.UpdateSupportedCultures(languageCodes);
+
+            foreach (var resource in resourceLogic.ResourceEnvelope.Resources)
             {
                 try
                 {
@@ -26,14 +29,14 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                     Console.Write($"Translating resource '{text}'");
 
                     var cultures = resource.Items.Select(i => i.Culture);
-                    var languageCodes = GetLanguageCodes().Where(c => !cultures.Contains(c.Substring(0, 2))).ToList();
+                    var resourceLanguageCodes = languageCodes.Where(c => !cultures.Contains(c.Substring(0, 2))).ToList();
 
-                    if (languageCodes.Count() > 0)
+                    if (resourceLanguageCodes.Count() > 0)
                     {
                         Console.Write(", language codes: ");
                     }
 
-                    foreach (var languageCode in languageCodes)
+                    foreach (var languageCode in resourceLanguageCodes)
                     {
                         Console.Write($", {languageCode}");
                         resource.Items.Add(new ResourceCultureItem

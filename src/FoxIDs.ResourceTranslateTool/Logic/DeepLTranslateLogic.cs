@@ -41,8 +41,9 @@ namespace FoxIDs.ResourceTranslateTool.Logic
                         Console.Write($", {languageCode}");
                         resource.Items.Add(new ResourceCultureItem
                         {
+                            EditLevel = ResourceEditLevels.MachineDeepL,
                             Culture = new CultureInfo(languageCode).TwoLetterISOLanguageName,
-                            Value = (await translator.TranslateTextAsync(text, LanguageCode.English, languageCode)).Text
+                            Value = (await translator.TranslateTextAsync(text, LanguageCode.English, languageCode)).Text,
                         });
                     }
 

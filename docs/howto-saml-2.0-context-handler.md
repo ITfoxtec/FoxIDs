@@ -11,12 +11,15 @@ In the test environment, FoxIDs can be connected to Context Handler as a test Id
 
 Context Handler is a Danish identity broker connected the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 and FoxIDs furthermore support the required certificates and it is possible to support NSIS.
 
-> Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+> You can test Context Handler login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment or `Danish Context Handler` for production.  
+> The sample is configured with a separate tracks for the Context Handler SAML 2.0 integration.  
 
 Context Handler documentation:
 - Context Handler [guide](https://digitaliseringskataloget.dk/l%C3%B8sninger/adgangsstyring-brugere).
 - [Context Handler administration portal](https://serviceplatformen.dk/administration/) 
 - Context Handler [test application with NSIS](https://spwithnsis.eksterntest-stoettesystemerne.dk) and [test application with out NSIS](https://spwithoutnsis.eksterntest-stoettesystemerne.dk)
+
+- > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
 ## Separate track
 

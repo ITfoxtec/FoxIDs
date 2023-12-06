@@ -19,7 +19,7 @@ Context Handler documentation:
 - [Context Handler administration portal](https://serviceplatformen.dk/administration/) 
 - Context Handler [test application with NSIS](https://spwithnsis.eksterntest-stoettesystemerne.dk) and [test application with out NSIS](https://spwithoutnsis.eksterntest-stoettesystemerne.dk)
 
-- > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+> Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
 ## Separate track
 

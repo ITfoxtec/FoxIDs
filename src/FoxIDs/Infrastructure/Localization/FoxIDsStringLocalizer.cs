@@ -1,7 +1,7 @@
 ﻿using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Localization;
 using System;
 using System.Collections.Generic;
@@ -40,7 +40,15 @@ namespace FoxIDs.Infrastructure.Localization
 
             if (arguments?.Length > 0)
             {
-                value = string.Format(value, arguments.ToArray());
+                try
+                {
+                    value = string.Format(value, arguments.ToArray());
+                }
+                catch (Exception ex)
+                {
+                    var logger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                    logger.Error(ex, $"Resource '{name}', value '{value}', arguments '{string.Join(", ", arguments)}'.");
+                }
             }
 
             return new LocalizedString(name, value);

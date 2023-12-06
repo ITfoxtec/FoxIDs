@@ -109,6 +109,8 @@ The FoxIDs service and FoxIDs Control sites primary domains can be customized. T
 
 > Important: change the primary domain before adding tenants.
 
+Domains:
+
 - FoxIDs service default domain is `https://foxidsxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://somedomain.com` or `https://id.somedomain.com`  
 - FoxIDs Control default domain is `https://foxidscontrolxxxx.azurewebsites.net` which can be changed to a custom primary domain like e.g., `https://control.somedomain.com` or `https://idcontrol.somedomain.com`
 

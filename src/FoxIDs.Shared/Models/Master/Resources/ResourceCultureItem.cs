@@ -14,5 +14,9 @@ namespace FoxIDs.Models
         [MaxLength(Constants.Models.Resource.ValueLength)]
         [JsonProperty(PropertyName = "value")]
         public string Value { get; set; }
+
+        [Required]
+        [JsonProperty(PropertyName = "edit_level")]
+        public ResourceEditLevels EditLevel { get; set; }
     }
 }

@@ -5,12 +5,12 @@ You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-p
 By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple up-parties from the same OpenID Connect down-party.
 
-![Connect to NemLog-in](images/how-to-nemlogin.svg)    
+![Connect to NemLog-in](images/how-to-nemlogin.svg)
 
 FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including single logout (SLO), logging, issuer naming, required OCES3 certificates and it is possible to support NSIS.
 
 > You can test NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.  
-> The sample is configured with a separate track for the NemLog-in SAML 2.0 integration and another track for the OpenId Connect based sample application.  
+> The sample is configured with a separate track for the NemLog-in SAML 2.0 integration.  
 
 NemLog-in documentation:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation

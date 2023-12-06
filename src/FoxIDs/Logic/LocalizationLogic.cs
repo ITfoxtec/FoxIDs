@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using FoxIDs.Models;
 using ITfoxtec.Identity;
@@ -20,24 +21,28 @@ namespace FoxIDs.Logic
 
         public string GetSupportedCulture(IEnumerable<string> cultures, RouteBinding routeBinding = null)
         {
-            var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
-
-            routeBinding = routeBinding ?? RouteBinding;
-            var supportedCultures = resourceEnvelope.SupportedCultures;
-            if(routeBinding.Resources?.Count > 0)
+            if (cultures?.Count() > 0)
             {
-                var trackSupportedCultures = routeBinding.Resources.SelectMany(r => r.Items.GroupBy(ig => ig.Culture)).Select(rk => rk.Key);
-                supportedCultures = supportedCultures.ConcatOnce(trackSupportedCultures);
-            }
+                var resourceEnvelope = embeddedResourceLogic.GetResourceEnvelope();
 
-            foreach (var culture in cultures.Take(maximumCultureNamesToTry))
-            {
-                if (supportedCultures.Where(c => c.Equals(culture, StringComparison.InvariantCultureIgnoreCase) || c.StartsWith($"{culture}_", StringComparison.InvariantCultureIgnoreCase)).Any())
+                routeBinding = routeBinding ?? RouteBinding;
+                var supportedCultures = resourceEnvelope.SupportedCultures;
+                if (routeBinding.Resources?.Count > 0)
                 {
-                    return culture;
+                    var trackSupportedCultures = routeBinding.Resources.SelectMany(r => r.Items.GroupBy(ig => ig.Culture)).Select(rk => rk.Key);
+                    supportedCultures = supportedCultures.ConcatOnce(trackSupportedCultures);
+                }
+
+                foreach (var culture in cultures.Take(maximumCultureNamesToTry))
+                {
+                    var supportedCulture = supportedCultures.Where(i => i.Equals(culture, StringComparison.InvariantCultureIgnoreCase) || i.Equals(new CultureInfo(culture).TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                    if (!supportedCulture.IsNullOrEmpty())
+                    {
+                        return supportedCulture;
+                    }
                 }
             }
-            return resourceEnvelope.SupportedCultures.First();
+            return Constants.Models.Resource.DefaultLanguage;
         }
 
         public string GetValue(string name, string culture)
@@ -53,7 +58,7 @@ namespace FoxIDs.Logic
                     return value;
                 }
 
-                return GetValue(resourceEnvelope, id, "en");
+                return GetValue(resourceEnvelope, id, Constants.Models.Resource.DefaultLanguage);
             }
 
             return null;
@@ -90,7 +95,7 @@ namespace FoxIDs.Logic
             var resource = resources.Where(r => r.Id == id).FirstOrDefault();
             if (resource != null)
             {
-                return resource.Items.Where(i => i.Culture.Equals(culture, StringComparison.InvariantCultureIgnoreCase) || i.Culture.StartsWith($"{culture}_", StringComparison.InvariantCultureIgnoreCase)).Select(i => i.Value).FirstOrDefault();
+                return resource.Items.Where(i => i.Culture.Equals(culture, StringComparison.InvariantCultureIgnoreCase) || i.Culture.Equals(new CultureInfo(culture).TwoLetterISOLanguageName, StringComparison.InvariantCultureIgnoreCase)).Select(i => i.Value).FirstOrDefault();
             }
             return null;
         }

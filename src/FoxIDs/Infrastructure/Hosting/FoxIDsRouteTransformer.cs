@@ -170,10 +170,6 @@ namespace FoxIDs.Infrastructure.Hosting
                 if (!(culture?.Count() > 0))
                 {
                     culture = providerResultCulture?.Cultures?.Select(c => c.Value);
-                    if (!(culture?.Count() > 0))
-                    {
-                        culture = new[] { "en" };
-                    }
                 }
                 return localizationLogic.GetSupportedCulture(culture, routeBinding);
             }

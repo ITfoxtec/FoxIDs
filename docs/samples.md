@@ -2,7 +2,13 @@
 The FoxIDs samples show user login and logout with OpenID Connect 1.0 and SAML 2.0, client credential grant with secret and certificate, API calls secured with OAuth 2.0 and token exchange. 
 The sample source is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
 
-> The samples are pre-configured in the FoxIDs.com test track and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
+> Online samples:  
+>   - [Web app OpenID Connect sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](#aspnetcoreoidcauthcodealluppartiessample))  
+>   - [IdP SAML 2.0 sample](https://aspnetcoresamlidpsample.itfoxtec.com/) ([sample docs](#aspnetcoresamlidpsample))  
+>   - [API1 OAuth 2.0 sample](https://aspnetcoreoauthapi1sample.itfoxtec.com/) ([sample docs](#aspnetcoreapi1sample))  
+>   - [API2 OAuth 2.0 sample](https://aspnetcoreoauthapi2sample.itfoxtec.com/) ([sample docs](#aspnetcoreapi2sample))
+
+The samples are pre-configured in the FoxIDs.com test track and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
 You can also configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).

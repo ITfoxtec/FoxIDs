@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Oprettet af Microsoft Visio, SVG-eksport how-to-nemlogin.svg Side-1 -->
+<!-- Oprettet af Microsoft Visio, SVG-eksport how-to-nemlogin.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="3.48939in" height="3.86166in"
-		viewBox="0 0 251.236 278.04" xml:space="preserve" color-interpolation-filters="sRGB" class="st21">
+		viewBox="0 0 251.236 278.04" xml:space="preserve" color-interpolation-filters="sRGB" class="st20">
 	<v:documentProperties v:langID="1033" v:metric="true" v:viewMarkup="false"/>
 
 	<style type="text/css">
@@ -17,23 +17,22 @@
 		.st7 {fill:#fff2cc;stroke:#7f7f7f;stroke-width:1}
 		.st8 {fill:#000000;font-family:Calibri;font-size:1.00001em}
 		.st9 {font-size:0.83333em}
-		.st10 {fill:#ffffff;stroke:none;stroke-linecap:butt}
-		.st11 {fill:#000000;font-family:Calibri;font-size:0.666664em}
-		.st12 {fill:#ffffff;stroke:#7f7f7f;stroke-width:1}
-		.st13 {fill:#bfbfbf;font-size:1em}
-		.st14 {font-size:1em}
-		.st15 {fill:none;stroke:#bfbfbf;stroke-dasharray:7,5;stroke-width:1}
-		.st16 {fill:#7f7f7f;font-family:Calibri;font-size:1.00001em}
-		.st17 {fill:none;stroke:#7f7f7f;stroke-width:1}
-		.st18 {fill:#deebf6;stroke:#7f7f7f;stroke-width:1}
-		.st19 {fill:#000000;font-family:Calibri;font-size:0.833336em}
-		.st20 {font-size:0.899997em}
-		.st21 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st10 {fill:#000000;font-family:Calibri;font-size:0.666664em}
+		.st11 {fill:#ffffff;stroke:#7f7f7f;stroke-width:1}
+		.st12 {fill:#bfbfbf;font-size:1em}
+		.st13 {font-size:1em}
+		.st14 {fill:none;stroke:#bfbfbf;stroke-dasharray:7,5;stroke-width:1}
+		.st15 {fill:#7f7f7f;font-family:Calibri;font-size:1.00001em}
+		.st16 {fill:#fbe5d5;stroke:#7f7f7f;stroke-width:1}
+		.st17 {fill:#deebf6;stroke:#7f7f7f;stroke-width:1}
+		.st18 {fill:#000000;font-family:Calibri;font-size:0.833336em}
+		.st19 {font-size:0.899997em}
+		.st20 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
 	<g v:mID="0" v:index="1" v:groupContext="foregroundPage">
-		<title>Side-1</title>
+		<title>Page-1</title>
 		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
 				v:shadowOffsetY="-8.50394"/>
 		<v:layer v:name="Connector" v:index="0"/>
@@ -87,8 +86,8 @@
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-7.08661" cy="295.595" width="63.18" height="17.6036"/>
 			<path d="M-5.08 278.04 L-9.09 313.15" class="st2"/>
-			<rect v:rectContext="textBkgnd" x="-33.7679" y="290.796" width="53.3628" height="9.59985" class="st10"/>
-			<text x="-33.77" y="298" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OpenID Connect</text>		</g>
+			<rect v:rectContext="textBkgnd" x="-33.7679" y="290.796" width="53.3628" height="9.59985" class="st4"/>
+			<text x="-33.77" y="298" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OpenID Connect</text>		</g>
 		<g id="shape102-25" v:mID="102" v:groupContext="shape" v:layerMember="0" transform="translate(178.509,-77.9007)">
 			<title>Dynamic connector.102</title>
 			<desc>OAuth 2.0</desc>
@@ -96,7 +95,7 @@
 			<v:textRect cx="-7.08661" cy="295.595" width="42.77" height="17.6036"/>
 			<path d="M-3.37 278.04 L-10.8 313.15" class="st2"/>
 			<rect v:rectContext="textBkgnd" x="-23.5611" y="290.796" width="32.9491" height="9.59985" class="st4"/>
-			<text x="-23.56" y="298" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OAuth 2.0</text>		</g>
+			<text x="-23.56" y="298" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OAuth 2.0</text>		</g>
 		<g id="shape103-30" v:mID="103" v:groupContext="shape" transform="translate(126.008,-1)">
 			<title>Rectangle.103</title>
 			<desc>Resource (API)</desc>
@@ -116,10 +115,10 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="254.027" width="113.53" height="48.0253"/>
-			<rect x="0" y="230.014" width="113.528" height="48.0253" class="st12"/>
+			<rect x="0" y="230.014" width="113.528" height="48.0253" class="st11"/>
 			<text x="27.79" y="243.23" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
-						x="16.59" dy="1.2em" class="st13">OAuth 2.0 Client<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
-						class="st14">OAuth 2.0 Resource</tspan></text>		</g>
+						x="16.59" dy="1.2em" class="st12">OAuth 2.0 Client<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
+						class="st13">OAuth 2.0 Resource</tspan></text>		</g>
 		<g id="shape105-39" v:mID="105" v:groupContext="shape" v:layerMember="0" transform="translate(69.3504,-142.65)">
 			<title>Dynamic connector.105</title>
 			<path d="M-6.7 278.04 L-7.48 294.76" class="st2"/>
@@ -132,10 +131,10 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="55.9134" cy="254.027" width="111.83" height="48.0253"/>
-			<rect x="0" y="230.014" width="111.827" height="48.0253" class="st12"/>
+			<rect x="0" y="230.014" width="111.827" height="48.0253" class="st11"/>
 			<text x="26.94" y="243.23" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
-						x="15.89" dy="1.2em" class="st14">OpenID Connect<v:newlineChar/></tspan><tspan x="7.32" dy="1.2em"
-						class="st13">OAuth 2.0 Resource</tspan></text>		</g>
+						x="15.89" dy="1.2em" class="st13">OpenID Connect<v:newlineChar/></tspan><tspan x="7.32" dy="1.2em"
+						class="st12">OAuth 2.0 Resource</tspan></text>		</g>
 		<g id="shape107-47" v:mID="107" v:groupContext="shape" transform="translate(5.96064,-167.414)">
 			<title>Rectangle.107</title>
 			<desc>Up-party Login</desc>
@@ -144,9 +143,9 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="55.9842" cy="257.145" width="111.97" height="41.7891"/>
-			<path d="M0 278.04 L111.97 278.04 L111.97 236.25 L0 236.25 L0 278.04 Z" class="st15"/>
-			<text x="34.3" y="253.55" class="st16" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
-						x="42.94" dy="1.2em" class="st14">Login</tspan></text>		</g>
+			<path d="M0 278.04 L111.97 278.04 L111.97 236.25 L0 236.25 L0 278.04 Z" class="st14"/>
+			<text x="34.3" y="253.55" class="st15" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+						x="42.94" dy="1.2em" class="st13">Login</tspan></text>		</g>
 		<g id="shape108-51" v:mID="108" v:groupContext="shape" v:layerMember="0" transform="translate(187.898,-167.363)">
 			<title>Dynamic connector.108</title>
 			<path d="M-4.08 278.04 L-10.1 300.25" class="st2"/>
@@ -159,9 +158,9 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="257.145" width="113.53" height="41.7891"/>
-			<rect x="0" y="236.25" width="113.528" height="41.7891" class="st17"/>
+			<rect x="0" y="236.25" width="113.528" height="41.7891" class="st16"/>
 			<text x="35.08" y="253.55" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><v:paragraph
-						v:horizAlign="1"/><tspan x="33.93" dy="1.2em" class="st14" v:langID="2057">SAML 2.0</tspan></text>		</g>
+						v:horizAlign="1"/><tspan x="33.93" dy="1.2em" class="st13" v:langID="2057">SAML 2.0</tspan></text>		</g>
 		<g id="shape111-58" v:mID="111" v:groupContext="shape" transform="translate(121.543,-243.773)">
 			<title>Rectangle.111</title>
 			<desc>NemLog-in External Identity Provider (IdP)</desc>
@@ -170,9 +169,9 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="64.3465" cy="261.406" width="128.7" height="33.2662"/>
-			<rect x="0" y="244.773" width="128.693" height="33.2662" class="st18"/>
-			<text x="42.24" y="258.41" class="st19" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>NemLog-in<v:newlineChar/><tspan
-						x="8.04" dy="1.333em" class="st20" v:langID="1033">External Identity Provider (IdP)</tspan></text>		</g>
+			<rect x="0" y="244.773" width="128.693" height="33.2662" class="st17"/>
+			<text x="42.24" y="258.41" class="st18" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>NemLog-in<v:newlineChar/><tspan
+						x="8.04" dy="1.333em" class="st19" v:langID="1033">External Identity Provider (IdP)</tspan></text>		</g>
 		<g id="shape112-62" v:mID="112" v:groupContext="shape" v:layerMember="0" transform="translate(190.309,-243.773)">
 			<title>Dynamic connector.112</title>
 			<desc>SAML 2.0</desc>
@@ -180,6 +179,6 @@
 			<v:textRect cx="-7.03746" cy="293.789" width="40.26" height="17.6036"/>
 			<path d="M-5.73 278.04 L-8.45 312.61" class="st2"/>
 			<rect v:rectContext="textBkgnd" x="-22.26" y="288.989" width="30.4453" height="9.59985" class="st4"/>
-			<text x="-22.26" y="296.19" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
+			<text x="-22.26" y="296.19" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
 	</g>
 </svg>

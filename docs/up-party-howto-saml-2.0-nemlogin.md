@@ -5,12 +5,12 @@ You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-p
 By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple up-parties from the same OpenID Connect down-party.
 
-![Connect to NemLog-in](images/how-to-nemlogin.svg)    
+![Connect to NemLog-in](images/how-to-nemlogin.svg)
 
 FoxIDs support NemLog-in and the SAML 2.0 based OIOSAML3 including single logout (SLO), logging, issuer naming, required OCES3 certificates and it is possible to support NSIS.
 
 > You can test NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.  
-> The sample is configured with a separate track for the NemLog-in SAML 2.0 integration and another track for the OpenId Connect based sample application.  
+> The sample is configured with a separate track for the NemLog-in SAML 2.0 integration.  
 
 NemLog-in documentation:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation
@@ -56,7 +56,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
 
-> You need to [configure the OCES3 certificate](#certificate) before following this configuration.
+> You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
 **1) - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -75,7 +75,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-read-metadata.png)
 
-10. Configure a custom SP issuer, the issuer can start with `https://saml.`
+10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
 11. Remove the `*` and configure claims, the following claims is most often used:
     - `https://data.gov.dk/concept/core/nsis/loa`
@@ -128,7 +128,7 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 *Optionally, if you are using the privilege claim.*
 
-FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
+FoxIDs can transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
 Furthermore, it makes the tokens readable.
 
 1. Add the DK privilege claim transformer. 
@@ -153,7 +153,7 @@ The SAML 2.0 up-party can now be used as an up-party for down-parties in the tra
 NemLog-in requires requests and responses to be logged including the signature proof and stored for half a year (180 days). It is also required to log which identity has login and logout of which session, at what time and the IP address.  
 [FoxIDs default log](logging.md) errors and events including the time and the IP address.
 
-> [FoxIDs.com](https://www.foxids.com) stores log data between 90 days to 180 days depending on the selected plan.
+> With an Enterprise plan on [FoxIDs.com](https://www.foxids.com) log data is stored for 180 days.
 
 It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 

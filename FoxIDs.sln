@@ -147,6 +147,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\get-started-test-user-new.png = docs\images\get-started-test-user-new.png
 		docs\images\get-started-test-user.png = docs\images\get-started-test-user.png
 		docs\images\how-to-connect.svg = docs\images\how-to-connect.svg
+		docs\images\how-to-context-handler-rp.svg = docs\images\how-to-context-handler-rp.svg
+		docs\images\how-to-context-handler-track-link.svg = docs\images\how-to-context-handler-track-link.svg
+		docs\images\how-to-context-handler.svg = docs\images\how-to-context-handler.svg
 		docs\images\how-to-track-link.svg = docs\images\how-to-track-link.svg
 		docs\images\how-to.vsdx = docs\images\how-to.vsdx
 		docs\images\howto-oidc-azuread-readredirect.png = docs\images\howto-oidc-azuread-readredirect.png
@@ -154,9 +157,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-oidc-foxids-up-party-readredirect.png = docs\images\howto-oidc-foxids-up-party-readredirect.png
 		docs\images\howto-oidc-foxids-up-party.png = docs\images\howto-oidc-foxids-up-party.png
 		docs\images\howto-oidc-identityserver-readredirect.png = docs\images\howto-oidc-identityserver-readredirect.png
+		docs\images\howto-saml-claim-mappings.png = docs\images\howto-saml-claim-mappings.png
+		docs\images\howto-saml-context-handler-certificate.png = docs\images\howto-saml-context-handler-certificate.png
 		docs\images\howto-saml-context-handler-down-base-config.png = docs\images\howto-saml-context-handler-down-base-config.png
 		docs\images\howto-saml-context-handler-down-ct1.png = docs\images\howto-saml-context-handler-down-ct1.png
 		docs\images\howto-saml-context-handler-down-ct2.png = docs\images\howto-saml-context-handler-down-ct2.png
+		docs\images\howto-saml-context-handler-test-user1.png = docs\images\howto-saml-context-handler-test-user1.png
 		docs\images\howto-saml-context-handler-up-attributes.png = docs\images\howto-saml-context-handler-up-attributes.png
 		docs\images\howto-saml-context-handler-up-nameidformat.png = docs\images\howto-saml-context-handler-up-nameidformat.png
 		docs\images\howto-saml-context-handler-up-read-metadata.png = docs\images\howto-saml-context-handler-up-read-metadata.png
@@ -175,6 +181,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\howto-saml-privilege-claim-tf.png = docs\images\howto-saml-privilege-claim-tf.png
 		docs\images\howto-tracklink-foxids-down-party.png = docs\images\howto-tracklink-foxids-down-party.png
 		docs\images\howto-tracklink-foxids-up-party.png = docs\images\howto-tracklink-foxids-up-party.png
+		docs\images\language-danish.png = docs\images\language-danish.png
+		docs\images\language-french.png = docs\images\language-french.png
+		docs\images\language-german.png = docs\images\language-german.png
+		docs\images\language-spanish.png = docs\images\language-spanish.png
 		docs\images\master-tenant2.png = docs\images\master-tenant2.png
 		docs\images\parties-down-party-oauth.svg = docs\images\parties-down-party-oauth.svg
 		docs\images\parties-down-party-oidc.svg = docs\images\parties-down-party-oidc.svg
@@ -211,6 +221,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ConvertCertificateTool", "tools\FoxIDs.ConvertCertificateTool\FoxIDs.ConvertCertificateTool.csproj", "{AF16CC91-2EEA-4790-8672-9ACCA430991D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FoxIDs.ResourceTranslateTool", "src\FoxIDs.ResourceTranslateTool\FoxIDs.ResourceTranslateTool.csproj", "{B63EC694-505A-4730-92B7-6827B8E61A6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -254,6 +266,10 @@ Global
 		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF16CC91-2EEA-4790-8672-9ACCA430991D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B63EC694-505A-4730-92B7-6827B8E61A6E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -269,6 +285,7 @@ Global
 		{11FB6E8F-F726-4AAA-95E1-82C360A9AF4E} = {48D65B3F-F81D-4A30-AD0E-855D0ADC29E1}
 		{CB88126F-3F28-4511-93E1-2454E239E9C7} = {CB5D86A0-DD55-49F6-B7AF-8162E9DA4CAF}
 		{AF16CC91-2EEA-4790-8672-9ACCA430991D} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
+		{B63EC694-505A-4730-92B7-6827B8E61A6E} = {66AA1AF7-CBCC-46AA-ACAB-9E1B7A8532EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AD8F0D8F-FD1F-4DE2-AC92-4948FC1EDE56}

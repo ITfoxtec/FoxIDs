@@ -10,7 +10,7 @@ The FoxIDs user interface can be customized with a another [title, icon and CSS]
 
 ## Languages
 
-The text elements on the FoxIDs user interface can be translated into different [Languages](language.md).
+The text elements in the FoxIDs user interface can be translated into multi [languages](language.md).
 
 ## Domain
 

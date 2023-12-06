@@ -56,7 +56,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
 
-> You need to [configure the OCES3 certificate](#certificate) before following this configuration.
+> You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
 **1) - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -128,7 +128,7 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 *Optionally, if you are using the privilege claim.*
 
-FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
+FoxIDs can transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
 Furthermore, it makes the tokens readable.
 
 1. Add the DK privilege claim transformer. 

@@ -36,7 +36,7 @@ How to guides:
 - Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
 - Connect [Microsoft AD FS](up-party-howto-saml-2.0-adfs.md)
 - Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
-- Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-identity-provider)
+- Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
 
 ## Down-party - How to become an Identity Provider (IdP)
 When you configure a down-party with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 
@@ -51,7 +51,7 @@ Configure [SAML 2.0 down-party](down-party-saml-2.0.md) to be an Identity Provid
 
 How to guides:
 
-- Connect test IdP on [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md#configuring-context-handler-as-test-relying-party)
+- Connect test IdP on [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
 
 
 ## Connect FoxIDs tracks

@@ -1,24 +1,32 @@
 # Connect to Context Handler with SAML 2.0
-**Both up-party and down-party for testing**
 
 FoxIDs can be connected to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
 Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider).
 
+![Connect to Context Handler](images/how-to-context-handler.svg)
+
 In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 down-party](down-party-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
+
+![Connect to Context Handler RP](images/how-to-context-handler-rp.svg)
 
 Context Handler is a Danish identity broker connected the Danish municipalities in a common federation. Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 and FoxIDs furthermore support the required certificates and it is possible to support NSIS.
 
-> Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+> You can test Context Handler login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment or `Danish Context Handler` for production.  
+> The sample is configured with a separate tracks for the Context Handler SAML 2.0 integration.  
 
 Context Handler documentation:
 - Context Handler [guide](https://digitaliseringskataloget.dk/l%C3%B8sninger/adgangsstyring-brugere).
 - [Context Handler administration portal](https://serviceplatformen.dk/administration/) 
 - Context Handler [test application with NSIS](https://spwithnsis.eksterntest-stoettesystemerne.dk) and [test application with out NSIS](https://spwithoutnsis.eksterntest-stoettesystemerne.dk)
 
+- > Transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+
 ## Separate track
 
 Context Handler requires each connection in an environment (test or production) to use a unique OCES3 certificate.  
 Therefore, consider connecting Context Handler in separate tracks where the OCES3 certificates can be configured without affecting any other configurations.
+
+![Connect to Context Handler](images/how-to-context-handler-track-link.svg)
 
 If you both configure a test and production environment, they should be placed in separate tracks. If you set up a [test Relying Party](#configuring-context-handler-as-test-relying-party), it should also be placed in a separate track and have a unique OCES3 certificate.
 

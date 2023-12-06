@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Oprettet af Microsoft Visio, SVG-eksport how-to-nemlogin.svg Page-1 -->
+<!-- Oprettet af Microsoft Visio, SVG-eksport how-to-context-handler.svg Page-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="3.48939in" height="3.86166in"
 		viewBox="0 0 251.236 278.04" xml:space="preserve" color-interpolation-filters="sRGB" class="st20">
@@ -163,14 +163,14 @@
 						v:horizAlign="1"/><tspan x="33.93" dy="1.2em" class="st13" v:langID="2057">SAML 2.0</tspan></text>		</g>
 		<g id="shape111-58" v:mID="111" v:groupContext="shape" transform="translate(121.543,-243.773)">
 			<title>Rectangle.111</title>
-			<desc>NemLog-in External Identity Provider (IdP)</desc>
+			<desc>Context Handler External Identity Provider (IdP)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="64.3465" cy="261.406" width="128.7" height="33.2662"/>
 			<rect x="0" y="244.773" width="128.693" height="33.2662" class="st17"/>
-			<text x="42.24" y="258.41" class="st18" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>NemLog-in<v:newlineChar/><tspan
+			<text x="31.14" y="258.41" class="st18" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Context Handler<v:newlineChar/><tspan
 						x="8.04" dy="1.333em" class="st19" v:langID="1033">External Identity Provider (IdP)</tspan></text>		</g>
 		<g id="shape112-62" v:mID="112" v:groupContext="shape" v:layerMember="0" transform="translate(190.309,-243.773)">
 			<title>Dynamic connector.112</title>

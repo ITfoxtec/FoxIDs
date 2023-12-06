@@ -23,7 +23,7 @@ namespace FoxIDs
 
         public static CultureInfo GetCulture(this HttpContext context)
         {
-            return context.Features.Get<IRequestCultureFeature>()?.RequestCulture?.UICulture ?? new CultureInfo("en");
+            return context.Features.Get<IRequestCultureFeature>()?.RequestCulture?.UICulture ?? new CultureInfo(Constants.Models.Resource.DefaultLanguage);
         }
 
         public static string GetCultureParentName(this HttpContext context)

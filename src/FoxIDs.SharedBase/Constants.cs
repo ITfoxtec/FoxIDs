@@ -176,6 +176,8 @@ namespace FoxIDs
 
             public static class Resource
             {
+                public const string DefaultLanguage = "en";
+
                 public const int SupportedCulturesMin = 0;
                 public const int SupportedCulturesMax = 50;
                 public const int SupportedCulturesLength = 5;

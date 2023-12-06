@@ -77,6 +77,11 @@ namespace FoxIDs.Logic
             ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
             logger.ScopeTrace(() => "Down, OIDC End session request accepted.", triggerEvent: true);
 
+            if (!rpInitiatedLogoutRequest.UiLocales.IsNullOrWhiteSpace())
+            {
+                await sequenceLogic.SetCultureAsync(rpInitiatedLogoutRequest.UiLocales.ToSpaceList());
+            }
+
             (var validIdToken, var sessionId, var idTokenClaims) = await ValidateIdTokenHintAsync(party.Client, rpInitiatedLogoutRequest.IdTokenHint);
             if (!validIdToken)
             {

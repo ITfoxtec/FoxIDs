@@ -34,7 +34,9 @@ namespace FoxIDs.ResourceTranslateTool.Logic
         {
             var isoLanguageCodes = languageCodes.Select(l => new CultureInfo(l).TwoLetterISOLanguageName);
             ResourceEnvelope.SupportedCultures.ConcatOnce(isoLanguageCodes);
-            ResourceEnvelope.SupportedCultures = ResourceEnvelope.SupportedCultures.OrderBy(c => c).ToList();
+            var supportedCultures = new List<string> { { "en" } };
+            supportedCultures.ConcatOnce(ResourceEnvelope.SupportedCultures.Where(c => c != "en").OrderBy(c => c).ToList());
+            ResourceEnvelope.SupportedCultures = supportedCultures;
         }
     }
 }

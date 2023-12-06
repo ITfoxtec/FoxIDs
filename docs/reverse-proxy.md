@@ -40,7 +40,7 @@ FoxIDs service support reading the [custom domain](custom-domain.md) (host name)
  1. `X-ORIGINAL-HOST`
  2. `X-Forwarded-Host`
 
- > The host header is only read if access is restricted by the `X-FoxIDs-Secret` HTTP header.
+> The host header is only read if access is restricted by the `X-FoxIDs-Secret` HTTP header.
 
 ## Supported and tested reverse proxies
 FoxIDs generally support all reverse proxies. The following reverse proxies is tested to work with FoxIDs.

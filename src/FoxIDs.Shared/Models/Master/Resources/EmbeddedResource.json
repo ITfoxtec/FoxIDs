@@ -1,12 +1,12 @@
 {
   "supported_cultures": [
-    "en",
     "bg",
     "ca",
     "cs",
     "da",
     "de",
     "el",
+    "en",
     "es",
     "et",
     "fi",
@@ -1123,13 +1123,13 @@
         },
         {
           "culture": "ca",
-          "value": "La longitud màxima dels {0} camps és &quot;{1}&quot;.",
-          "edit_level": 30
+          "value": "La longitud màxima dels {0} camps és '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "cs",
-          "value": "Maximální délka polí {0} je \"{1}\".",
-          "edit_level": 40
+          "value": "Maximální délka polí {0} je '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "da",
@@ -1158,8 +1158,8 @@
         },
         {
           "culture": "et",
-          "value": "Väljade {0} maksimaalne pikkus on \"{1}\".",
-          "edit_level": 40
+          "value": "Väljade {0} maksimaalne pikkus on '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "fi",
@@ -1173,13 +1173,13 @@
         },
         {
           "culture": "hr",
-          "value": "Maksimalna duljina {0} polja je &#39;{1}&#39;.",
-          "edit_level": 30
+          "value": "Maksimalna duljina {0} polja je '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "is",
-          "value": "Hámarkslengd {0} reitanna er &#39;{1}&#39;.",
-          "edit_level": 30
+          "value": "Hámarkslengd {0} reitanna er '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "it",
@@ -1188,8 +1188,8 @@
         },
         {
           "culture": "lt",
-          "value": "Didžiausias {0} laukų ilgis yra \"{1}\".",
-          "edit_level": 40
+          "value": "Didžiausias {0} laukų ilgis yra '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "lv",
@@ -1198,8 +1198,8 @@
         },
         {
           "culture": "nb",
-          "value": "{0}-feltets maksimale lengde er \"{1}\".",
-          "edit_level": 40
+          "value": "{0}-feltets maksimale lengde er '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "nl",
@@ -1208,23 +1208,23 @@
         },
         {
           "culture": "pl",
-          "value": "Maksymalna długość pól {0} wynosi \"{1}\".",
-          "edit_level": 40
+          "value": "Maksymalna długość pól {0} wynosi '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "pt",
-          "value": "O comprimento máximo dos campos {0} é \"{1}\".",
-          "edit_level": 40
+          "value": "O comprimento máximo dos campos {0} é '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "ro",
-          "value": "Lungimea maximă a câmpurilor {0} este \"{1}\".",
-          "edit_level": 40
+          "value": "Lungimea maximă a câmpurilor {0} este '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "sk",
-          "value": "Maximálna dĺžka polí {0} je \"{1}\".",
-          "edit_level": 40
+          "value": "Maximálna dĺžka polí {0} je '{1}'.",
+          "edit_level": 100
         },
         {
           "culture": "sl",
@@ -2468,18 +2468,18 @@
       "items": [
         {
           "culture": "bg",
-          "value": "'{0}' и 'Password' не съвпадат.",
-          "edit_level": 40
+          "value": "'{0}' и 'Парола' не съвпадат.",
+          "edit_level": 100
         },
         {
           "culture": "ca",
-          "value": "&quot;{0}&quot; i &quot;Contrasenya&quot; no coincideixen.",
-          "edit_level": 30
+          "value": "'{0}' i 'Contrasenya' no coincideixen.",
+          "edit_level": 100
         },
         {
           "culture": "cs",
-          "value": "'{0}' a 'Password' se neshodují.",
-          "edit_level": 40
+          "value": "'{0}' a 'Heslo' se neshodují.",
+          "edit_level": 100
         },
         {
           "culture": "da",
@@ -2493,8 +2493,8 @@
         },
         {
           "culture": "el",
-          "value": "'{0}' και 'Password' δεν ταιριάζουν.",
-          "edit_level": 40
+          "value": "'{0}' και 'Κωδικός πρόσβασης' δεν ταιριάζουν.",
+          "edit_level": 100
         },
         {
           "culture": "en",
@@ -2508,58 +2508,58 @@
         },
         {
           "culture": "et",
-          "value": "'{0}' ja 'Password' ei vasta.",
-          "edit_level": 40
+          "value": "'{0}' ja 'Parool' ei vasta.",
+          "edit_level": 100
         },
         {
           "culture": "fi",
-          "value": "'{0}' ja 'Password' eivät täsmää.",
-          "edit_level": 40
+          "value": "'{0}' ja 'Salasana' eivät täsmää.",
+          "edit_level": 100
         },
         {
           "culture": "fr",
-          "value": "'{0}' et 'Password' ne correspondent pas.",
-          "edit_level": 40
+          "value": "'{0}' et 'Mot de passe' ne correspondent pas.",
+          "edit_level": 100
         },
         {
           "culture": "hr",
-          "value": "&#39;{0}&#39; i &#39;Lozinka&#39; se ne podudaraju.",
-          "edit_level": 30
+          "value": "'{0}' i 'Lozinka' se ne podudaraju.",
+          "edit_level": 100
         },
         {
           "culture": "is",
-          "value": "&#39;{0}&#39; og &#39;Lykilorð&#39; passa ekki saman.",
-          "edit_level": 30
+          "value": "'{0}' og 'Lykilorð' passa ekki saman.",
+          "edit_level": 100
         },
         {
           "culture": "it",
           "value": "'{0}' e 'Password' non corrispondono.",
-          "edit_level": 40
+          "edit_level": 100
         },
         {
           "culture": "lt",
-          "value": "'{0}' ir 'Password' nesutampa.",
-          "edit_level": 40
+          "value": "'{0}' ir 'Slaptažodis' nesutampa.",
+          "edit_level": 100
         },
         {
           "culture": "lv",
-          "value": "'{0}' un 'Password' nesakrīt.",
-          "edit_level": 40
+          "value": "'{0}' un 'Parole' nesakrīt.",
+          "edit_level": 100
         },
         {
           "culture": "nb",
           "value": "'{0}' og 'Passord' stemmer ikke overens.",
-          "edit_level": 40
+          "edit_level": 100
         },
         {
           "culture": "nl",
-          "value": "{0}' en 'Password' komen niet overeen.",
-          "edit_level": 40
+          "value": "{0}' en 'Wachtwoord' komen niet overeen.",
+          "edit_level": 100
         },
         {
           "culture": "pl",
-          "value": "'{0}' i 'Password' nie pasują do siebie.",
-          "edit_level": 40
+          "value": "'{0}' i 'Hasło' nie pasują do siebie.",
+          "edit_level": 100
         },
         {
           "culture": "pt",
@@ -2573,8 +2573,8 @@
         },
         {
           "culture": "sk",
-          "value": "'{0}' a 'Password' sa nezhodujú.",
-          "edit_level": 40
+          "value": "'{0}' a 'Heslo' sa nezhodujú.",
+          "edit_level": 100
         },
         {
           "culture": "sl",
@@ -2583,13 +2583,13 @@
         },
         {
           "culture": "sv",
-          "value": "'{0}' och 'Password' stämmer inte överens.",
-          "edit_level": 40
+          "value": "'{0}' och 'Lösenord' stämmer inte överens.",
+          "edit_level": 100
         },
         {
           "culture": "tr",
-          "value": "'{0}' ve 'Parola' eşleşmiyor.",
-          "edit_level": 40
+          "value": "'{0}' ve 'Şifre' eşleşmiyor.",
+          "edit_level": 100
         },
         {
           "culture": "uk",
@@ -4628,18 +4628,18 @@
       "items": [
         {
           "culture": "bg",
-          "value": "'{0}' и 'NewPassword' не съвпадат.",
-          "edit_level": 40
+          "value": "'{0}' и 'Нова парола' не съвпадат.",
+          "edit_level": 100
         },
         {
           "culture": "ca",
-          "value": "&quot;{0}&quot; i &quot;NewPassword&quot; no coincideixen.",
-          "edit_level": 30
+          "value": "'{0}' i 'Nova contrasenya' no coincideixen.",
+          "edit_level": 100
         },
         {
           "culture": "cs",
-          "value": "'{0}' a 'NewPassword' se neshodují.",
-          "edit_level": 40
+          "value": "'{0}' a 'Nové heslo' se neshodují.",
+          "edit_level": 100
         },
         {
           "culture": "da",
@@ -4648,13 +4648,13 @@
         },
         {
           "culture": "de",
-          "value": "'{0}' und 'NewPassword' stimmen nicht überein.",
-          "edit_level": 40
+          "value": "'{0}' und 'Neues Passwort' stimmen nicht überein.",
+          "edit_level": 100
         },
         {
           "culture": "el",
-          "value": "'{0}' και 'NewPassword' δεν ταιριάζουν.",
-          "edit_level": 40
+          "value": "'{0}' και 'Νέος κωδικός πρόσβασης' δεν ταιριάζουν.",
+          "edit_level": 100
         },
         {
           "culture": "en",
@@ -4663,98 +4663,98 @@
         },
         {
           "culture": "es",
-          "value": "'{0}' y 'NuevaContraseña' no coinciden.",
-          "edit_level": 40
+          "value": "'{0}' y 'Nueva contraseña' no coinciden.",
+          "edit_level": 100
         },
         {
           "culture": "et",
-          "value": "'{0}' ja 'NewPassword' ei ühti.",
-          "edit_level": 40
+          "value": "'{0}' ja 'Uus parool' ei ühti.",
+          "edit_level": 100
         },
         {
           "culture": "fi",
-          "value": "'{0}' ja 'NewPassword' eivät täsmää.",
-          "edit_level": 40
+          "value": "'{0}' ja 'Uusi salasana' eivät täsmää.",
+          "edit_level": 100
         },
         {
           "culture": "fr",
-          "value": "'{0}' et 'NewPassword' ne correspondent pas.",
-          "edit_level": 40
+          "value": "'{0}' et 'Nouveau mot de passe' ne correspondent pas.",
+          "edit_level": 100
         },
         {
           "culture": "hr",
-          "value": "&#39;{0}&#39; i &#39;NewPassword&#39; se ne podudaraju.",
-          "edit_level": 30
+          "value": "'{0}' i 'Nova lozinka' se ne podudaraju.",
+          "edit_level": 100
         },
         {
           "culture": "is",
-          "value": "&#39;{0}&#39; og &#39;NewPassword&#39; passa ekki saman.",
-          "edit_level": 30
+          "value": "'{0}' og 'Nýtt lykilorð' passa ekki saman.",
+          "edit_level": 100
         },
         {
           "culture": "it",
-          "value": "'{0}' e 'NewPassword' non corrispondono.",
-          "edit_level": 40
+          "value": "'{0}' e 'Nuova password' non corrispondono.",
+          "edit_level": 100
         },
         {
           "culture": "lt",
-          "value": "'{0}' ir 'NewPassword' nesutampa.",
-          "edit_level": 40
+          "value": "'{0}' ir 'Naujas slaptažodis' nesutampa.",
+          "edit_level": 100
         },
         {
           "culture": "lv",
-          "value": "'{0}' un 'NewPassword' nesakrīt.",
-          "edit_level": 40
+          "value": "'{0}' un 'Jaunā parole' nesakrīt.",
+          "edit_level": 100
         },
         {
           "culture": "nb",
-          "value": "'{0}' og 'NewPassword' stemmer ikke overens.",
-          "edit_level": 40
+          "value": "'{0}' og 'Nytt passord' stemmer ikke overens.",
+          "edit_level": 100
         },
         {
           "culture": "nl",
-          "value": "{0}' en 'NewPassword' komen niet overeen.",
-          "edit_level": 40
+          "value": "{0}' en 'Nieuw wachtwoord' komen niet overeen.",
+          "edit_level": 100
         },
         {
           "culture": "pl",
-          "value": "'{0}' i 'NewPassword' nie są zgodne.",
-          "edit_level": 40
+          "value": "'{0}' i 'Nowe hasło' nie są zgodne.",
+          "edit_level": 100
         },
         {
           "culture": "pt",
-          "value": "'{0}' e 'NewPassword' não correspondem.",
-          "edit_level": 40
+          "value": "'{0}' e 'Nova palavra-passe' não correspondem.",
+          "edit_level": 100
         },
         {
           "culture": "ro",
-          "value": "'{0}' și 'NewPassword' nu se potrivesc.",
-          "edit_level": 40
+          "value": "'{0}' și 'Parolă nouă' nu se potrivesc.",
+          "edit_level": 100
         },
         {
           "culture": "sk",
-          "value": "'{0}' a 'NewPassword' sa nezhodujú.",
-          "edit_level": 40
+          "value": "'{0}' a 'Nové heslo' sa nezhodujú.",
+          "edit_level": 100
         },
         {
           "culture": "sl",
-          "value": "'{0}' in 'NewPassword' se ne ujemata.",
-          "edit_level": 40
+          "value": "'{0}' in 'Novo geslo' se ne ujemata.",
+          "edit_level": 100
         },
         {
           "culture": "sv",
-          "value": "'{0}' och 'NewPassword' matchar inte.",
-          "edit_level": 40
+          "value": "'{0}' och 'Nytt lösenord' matchar inte.",
+          "edit_level": 100
         },
         {
           "culture": "tr",
-          "value": "'{0}' ve 'NewPassword' eşleşmiyor.",
-          "edit_level": 40
+          "value": "'{0}' ve 'Yeni şifre' eşleşmiyor.",
+          "edit_level": 100
         },
         {
           "culture": "uk",
-          "value": "'{0}' і 'NewPassword' не збігаються.",
-          "edit_level": 40
+          "value": "'{0}' і 'Новий пароль' не збігаються.",
+          "edit_level": 100
         }
       ]
     },
@@ -4898,18 +4898,18 @@
       "items": [
         {
           "culture": "bg",
-          "value": "\"Потвърждаване на нова парола\" и \"Нова парола\" не съвпадат.",
-          "edit_level": 40
+          "value": "'Потвърждаване на нова парола' и 'Нова парола' не съвпадат.",
+          "edit_level": 100
         },
         {
           "culture": "ca",
-          "value": "&quot;Confirmar nova contrasenya&quot; i &quot;Nova contrasenya&quot; no coincideixen.",
-          "edit_level": 30
+          "value": "'Confirmar nova contrasenya' i 'Nova contrasenya' no coincideixen.",
+          "edit_level": 100
         },
         {
           "culture": "cs",
-          "value": "\"Potvrdit nové heslo\" a \"Nové heslo\" se neshodují.",
-          "edit_level": 40
+          "value": "'Potvrzení nového hesla' a 'Nové heslo' se neshodují.",
+          "edit_level": 100
         },
         {
           "culture": "da",
@@ -4918,7 +4918,7 @@
         },
         {
           "culture": "de",
-          "value": "'Neues Passwort bestätigen' und 'Neues Passwort' stimmen nicht überein.",
+          "value": "'Bestätigen Sie das neue Passwort' und 'Neues Passwort' stimmen nicht überein.",
           "edit_level": 40
         },
         {
@@ -4938,7 +4938,7 @@
         },
         {
           "culture": "et",
-          "value": "'Uue parooli kinnitamine' ja 'Uus parool' ei vasta.",
+          "value": "'Kinnitage uus parool' ja 'Uus parool' ei vasta.",
           "edit_level": 40
         },
         {
@@ -4948,18 +4948,18 @@
         },
         {
           "culture": "fr",
-          "value": "Les mots \"Confirmer le nouveau mot de passe\" et \"Nouveau mot de passe\" ne correspondent pas.",
-          "edit_level": 40
+          "value": "Les mots 'Confirmer le nouveau mot de passe' et 'Nouveau mot de passe' ne correspondent pas.",
+          "edit_level": 100
         },
         {
           "culture": "hr",
-          "value": "&#39;Potvrdi novu lozinku&#39; i &#39;Nova lozinka&#39; se ne podudaraju.",
-          "edit_level": 30
+          "value": "'Potvrdi novu lozinku' i 'Nova lozinka' se ne podudaraju.",
+          "edit_level": 100
         },
         {
           "culture": "is",
-          "value": "„Staðfesta nýtt lykilorð“ og „Nýtt lykilorð“ passa ekki saman.",
-          "edit_level": 30
+          "value": "'Staðfesta nýtt lykilorð' og 'Nýtt lykilorð' passa ekki saman.",
+          "edit_level": 100
         },
         {
           "culture": "it",
@@ -4968,53 +4968,53 @@
         },
         {
           "culture": "lt",
-          "value": "\"Patvirtinti naują slaptažodį\" ir \"Naujas slaptažodis\" nesutampa.",
-          "edit_level": 40
+          "value": "'Patvirtinti naują slaptažodį' ir 'Naujas slaptažodis' nesutampa.",
+          "edit_level": 100
         },
         {
           "culture": "lv",
-          "value": "\"Apstiprināt jauno paroli\" un \"Jaunā parole\" nesakrīt.",
-          "edit_level": 40
+          "value": "'Jaunās paroles apstiprināšana' un 'Jaunā parole' nesakrīt.",
+          "edit_level": 100
         },
         {
           "culture": "nb",
-          "value": "\"Bekreft nytt passord\" og \"Nytt passord\" stemmer ikke overens.",
-          "edit_level": 40
+          "value": "'Bekreft nytt passord' og 'Nytt passord' stemmer ikke overens.",
+          "edit_level": 100
         },
         {
           "culture": "nl",
-          "value": "'Bevestig nieuw wachtwoord' en 'Nieuw wachtwoord' komen niet overeen.",
+          "value": "'Nieuw wachtwoord bevestigen' en 'Nieuw wachtwoord' komen niet overeen.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "\"Potwierdź nowe hasło\" i \"Nowe hasło\" nie są zgodne.",
-          "edit_level": 40
+          "value": "'Potwierdź nowe hasło' i 'Nowe hasło' nie są zgodne.",
+          "edit_level": 100
         },
         {
           "culture": "pt",
-          "value": "\"Confirmar nova palavra-passe\" e \"Nova palavra-passe\" não correspondem.",
-          "edit_level": 40
+          "value": "'Confirmar nova palavra-passe' e 'Nova palavra-passe' não correspondem.",
+          "edit_level": 100
         },
         {
           "culture": "ro",
-          "value": "'Confirm new password' și 'New password' nu se potrivesc.",
-          "edit_level": 40
+          "value": "'Confirmați noua parolă' și 'Parolă nouă' nu se potrivesc.",
+          "edit_level": 100
         },
         {
           "culture": "sk",
-          "value": "\"Potvrdiť nové heslo\" a \"Nové heslo\" sa nezhodujú.",
-          "edit_level": 40
+          "value": "'Potvrdenie nového hesla' a 'Nové heslo' sa nezhodujú.",
+          "edit_level": 100
         },
         {
           "culture": "sl",
-          "value": "\"Potrdi novo geslo\" in \"Novo geslo\" se ne ujemata.",
-          "edit_level": 40
+          "value": "'Potrditev novega gesla' in 'Novo geslo' se ne ujemata.",
+          "edit_level": 100
         },
         {
           "culture": "sv",
-          "value": "\"Bekräfta nytt lösenord\" och \"Nytt lösenord\" stämmer inte överens.",
-          "edit_level": 40
+          "value": "'Bekräfta nytt lösenord' och 'Nytt lösenord' stämmer inte överens.",
+          "edit_level": 100
         },
         {
           "culture": "tr",
@@ -5023,8 +5023,8 @@
         },
         {
           "culture": "uk",
-          "value": "\"Підтвердити новий пароль\" і \"Новий пароль\" не збігаються.",
-          "edit_level": 40
+          "value": "'Підтвердіть новий пароль' і 'Новий пароль' не збігаються.",
+          "edit_level": 100
         }
       ]
     },
@@ -7328,8 +7328,8 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Вашият {0}код за потвърждение на паролата за нулиране: {1}",
-          "edit_level": 40
+          "value": "Вашият{0}код за потвърждение на паролата за нулиране: {1}",
+          "edit_level": 100
         },
         {
           "culture": "ca",
@@ -7363,8 +7363,8 @@
         },
         {
           "culture": "es",
-          "value": "Tu código de confirmación de contraseña: {1}",
-          "edit_level": 40
+          "value": "Su{0}código de confirmación para restablecer la contraseña: {1}",
+          "edit_level": 100
         },
         {
           "culture": "et",
@@ -7378,8 +7378,8 @@
         },
         {
           "culture": "fr",
-          "value": "Votre{0} code de confirmation du mot de passe de réinitialisation : {1}",
-          "edit_level": 40
+          "value": "Votre{0}code de confirmation du mot de passe de réinitialisation : {1}",
+          "edit_level": 100
         },
         {
           "culture": "hr",
@@ -7388,8 +7388,8 @@
         },
         {
           "culture": "is",
-          "value": "Staðfestingarkóði {0}endurstilla lykilorð: {1}",
-          "edit_level": 30
+          "value": "Staðfestingarkóði{0}endurstilla lykilorð: {1}",
+          "edit_level": 100
         },
         {
           "culture": "it",
@@ -7408,8 +7408,8 @@
         },
         {
           "culture": "nb",
-          "value": "Din {0}bekreftelseskode for tilbakestilling av passord: {1}",
-          "edit_level": 40
+          "value": "Din{0}bekreftelseskode for tilbakestilling av passord: {1}",
+          "edit_level": 100
         },
         {
           "culture": "nl",
@@ -7418,8 +7418,8 @@
         },
         {
           "culture": "pl",
-          "value": "Kod potwierdzenia resetowania hasła {0}: {1}",
-          "edit_level": 40
+          "value": "Kod potwierdzenia resetowania hasła{0}: {1}",
+          "edit_level": 100
         },
         {
           "culture": "pt",
@@ -7438,23 +7438,23 @@
         },
         {
           "culture": "sl",
-          "value": "Vaša {0}koda za potrditev ponastavljenega gesla: {1}",
-          "edit_level": 40
+          "value": "Vaša{0}koda za potrditev ponastavljenega gesla: {1}",
+          "edit_level": 100
         },
         {
           "culture": "sv",
-          "value": "Din{0} bekräftelsekod för återställning av lösenord: {1}",
-          "edit_level": 40
+          "value": "Din{0}bekräftelsekod för återställning av lösenord: {1}",
+          "edit_level": 100
         },
         {
           "culture": "tr",
-          "value": "0}sıfırlama şifresi onay kodunuz: {1}",
-          "edit_level": 40
+          "value": "{0}sıfırlama şifresi onay kodunuz: {1}",
+          "edit_level": 100
         },
         {
           "culture": "uk",
-          "value": "Ваш{0} код підтвердження скинутого пароля: {1}",
-          "edit_level": 40
+          "value": "Ваш{0}код підтвердження скинутого пароля: {1}",
+          "edit_level": 100
         }
       ]
     },
@@ -7598,8 +7598,8 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Код за потвърждаване на вашия {0}електронен адрес: {1}",
-          "edit_level": 40
+          "value": "Код за потвърждаване на вашия{0}електронен адрес: {1}",
+          "edit_level": 100
         },
         {
           "culture": "ca",
@@ -7623,8 +7623,8 @@
         },
         {
           "culture": "el",
-          "value": "Ο κωδικός επιβεβαίωσης του email σας: {1}",
-          "edit_level": 40
+          "value": "Ο κωδικός επιβεβαίωσης του email σας{0}: {1}",
+          "edit_level": 100
         },
         {
           "culture": "en",
@@ -7633,18 +7633,18 @@
         },
         {
           "culture": "es",
-          "value": "Su código de confirmación de correo electrónico: {1}",
-          "edit_level": 40
+          "value": "Su código de confirmación de{0}por correo electrónico: {1}",
+          "edit_level": 100
         },
         {
           "culture": "et",
-          "value": "Teie e-posti kinnituskood: {1}",
-          "edit_level": 40
+          "value": "Teie{0}e-posti kinnituskood: {1}",
+          "edit_level": 100
         },
         {
           "culture": "fi",
-          "value": "Sähköpostisi vahvistuskoodi: {1}",
-          "edit_level": 40
+          "value": "Sähköpostisi{0}vahvistuskoodi: {1}",
+          "edit_level": 100
         },
         {
           "culture": "fr",
@@ -7668,28 +7668,28 @@
         },
         {
           "culture": "lt",
-          "value": "Jūsų{0} el. pašto patvirtinimo kodas: {1}",
-          "edit_level": 40
+          "value": "Jūsų{0}el. pašto patvirtinimo kodas: {1}",
+          "edit_level": 100
         },
         {
           "culture": "lv",
-          "value": "Jūsu {0}pasta apstiprinājuma kods: {1}",
-          "edit_level": 40
+          "value": "Jūsu{0}pasta apstiprinājuma kods: {1}",
+          "edit_level": 100
         },
         {
           "culture": "nb",
-          "value": "Din {0}e-postbekreftelseskode: {1}",
-          "edit_level": 40
+          "value": "Din{0}e-postbekreftelseskode: {1}",
+          "edit_level": 100
         },
         {
           "culture": "nl",
-          "value": "Uw e-mailbevestigingscode: {1}",
-          "edit_level": 40
+          "value": "Uw{0}e-mailbevestigingscode: {1}",
+          "edit_level": 100
         },
         {
           "culture": "pl",
-          "value": "Twój {0} kod potwierdzenia e-mail: {1}",
-          "edit_level": 40
+          "value": "Twój{0}kod potwierdzenia e-mail: {1}",
+          "edit_level": 100
         },
         {
           "culture": "pt",
@@ -7698,8 +7698,8 @@
         },
         {
           "culture": "ro",
-          "value": "Codul dvs. de confirmare a e-mailului: {1}",
-          "edit_level": 40
+          "value": "Codul dvs.{0}de confirmare a e-mailului: {1}",
+          "edit_level": 100
         },
         {
           "culture": "sk",
@@ -7708,23 +7708,23 @@
         },
         {
           "culture": "sl",
-          "value": "Vaša {0}koda za potrditev e-pošte: {1}",
-          "edit_level": 40
+          "value": "Vaša{0}koda za potrditev e-pošte: {1}",
+          "edit_level": 100
         },
         {
           "culture": "sv",
-          "value": "Din bekräftelsekod för e-post{0}: {1}",
-          "edit_level": 40
+          "value": "Din{0}bekräftelsekod för e-post{0}: {1}",
+          "edit_level": 100
         },
         {
           "culture": "tr",
-          "value": "0}e-posta onay kodunuz: {1}",
-          "edit_level": 40
+          "value": "{0}e-posta onay kodunuz: {1}",
+          "edit_level": 100
         },
         {
           "culture": "uk",
-          "value": "Ваш {0} код підтвердження на електронну пошту: {1}",
-          "edit_level": 40
+          "value": "Ваш{0}код підтвердження на електронну пошту: {1}",
+          "edit_level": 100
         }
       ]
     },
@@ -14023,23 +14023,23 @@
         },
         {
           "culture": "nb",
-          "value": "{0} Tilbakestill passord",
-          "edit_level": 40
+          "value": "{0}Tilbakestill passord",
+          "edit_level": 100
         },
         {
           "culture": "nl",
-          "value": "{Wachtwoord opnieuw instellen",
-          "edit_level": 40
+          "value": "{0}Wachtwoord opnieuw instellen",
+          "edit_level": 100
         },
         {
           "culture": "pl",
-          "value": "{0} Zresetuj hasło",
-          "edit_level": 40
+          "value": "{0}Zresetuj hasło",
+          "edit_level": 100
         },
         {
           "culture": "pt",
-          "value": "{Repor a palavra-passe",
-          "edit_level": 40
+          "value": "{0}Repor a palavra-passe",
+          "edit_level": 100
         },
         {
           "culture": "ro",
@@ -14163,13 +14163,13 @@
         },
         {
           "culture": "nl",
-          "value": "{Bevestiging e-mail",
-          "edit_level": 40
+          "value": "{0}Bevestiging e-mail",
+          "edit_level": 100
         },
         {
           "culture": "pl",
-          "value": "{0} Potwierdzenie e-mail",
-          "edit_level": 40
+          "value": "{0}Potwierdzenie e-mail",
+          "edit_level": 100
         },
         {
           "culture": "pt",

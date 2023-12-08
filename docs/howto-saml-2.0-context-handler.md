@@ -95,7 +95,7 @@ The following claims is most often used:
 
 ![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-attributes.png)
 
-15. Add at a administrative contact person
+15. Add an administrative contact person
 16. Click Update
 17. Go to the top of the SAML 2.0 up-party
 18. Find the SAML 2.0 up-party SP-metadata URL, in this case https://foxids.com/test-corp/context-handler-test/(cp-rp)/saml/spmetadata. 
@@ -179,15 +179,17 @@ The following claims is most often used:
 12. Select Encrypt authn response
 13. Add the certificate from the metadata as a optional encryption certificate
 
-12. Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
-13. Configure a custom IdP issuer, the issuer can optionally start with `https://saml.` The issuer in this example `https://saml.foxids.com/test-corp/context-handler-test-idp/`.
-14. Select to add logout response location URL in metadata
-15. Select to include the encryption certificate in metadata
-16. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName`
-17. Click Update
-18. Go to the top of the SAML 2.0 down-party
-19. Find the SAML 2.0 down-party IdP-metadata, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`. 
-20. The IdP-metadata is used to configure the Context Handler identity provider.
+14. Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
+15. Set Authn response sign type to Sign assertion
+16. Configure a custom IdP issuer, the issuer can optionally start with `https://saml.` The issuer in this example `https://saml.foxids.com/test-corp/context-handler-test-idp/`.
+17. Select to add logout response location URL in metadata
+18. Select to include the encryption certificate in metadata
+19. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName`
+20. Add an administrative contact person
+20. Click Update
+21. Go to the top of the SAML 2.0 down-party
+22. Find the SAML 2.0 down-party IdP-metadata, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`. 
+23. The IdP-metadata is used to configure the Context Handler identity provider.
  
 **2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
 
@@ -208,7 +210,7 @@ The following claims is most often used:
 Create the claims which has to be issued to Context Handler in claim transforms.
 
 1. Add the spec. ver. claims
-2. Optionally add the assurance level claim or read it through the claims pipeline
+2. Optionally add the levels of assurance (loa) claim or read it through the claims pipeline
 
 ![Context Handler SAML 2.0 down-party](images/howto-saml-context-handler-down-ct1.png)
 
@@ -226,10 +228,18 @@ Create the claims which has to be issued to Context Handler in claim transforms.
  2. Add mappings for all the claims configured in step 1.8, you can create you own short JWT claim names if no standard name exists - please see step 4 in section [Configuring Context Handler as Identity Provider](#configuring-context-handler-as-identity-provider)
  3. Click update
 
-**5 - Optionally add users in [FoxIDs Control Client](control.md#foxids-control-client)**
+**5 - Add test users in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-You can add uses in the FoxIDs test track and add claims to each user.
-
-E.g. a claim with a CVR claim, given name, family name and a base64 encoded [DK privilege XML](claim-transform-dk-privilege.md) string.
+You can add test uses in the FoxIDs test track and add claims to each user.  
+A claim with a CVR claim, given name, family name and optionally a base64 encoded DK privilege XML string.
 
 ![Test user 1](images/howto-saml-context-handler-test-user1.png)
+
+If the user should have the Job function role (DK: Jobfunktionsrolle) `http://foxids.com/roles/jobrole/test-corp-admin_access/1` the DK privilege XML would be:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <bpp:PrivilegeList xmlns:bpp="http://digst.dk/oiosaml/basic_privilege_profile" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" >
+        <PrivilegeGroup Scope="urn:dk:gov:saml:cvrNumberIdentifier:11111111">
+            <Privilege>http://foxids.com/roles/jobrole/test-corp-admin_access/1</Privilege>
+        </PrivilegeGroup>
+    </bpp:PrivilegeList>

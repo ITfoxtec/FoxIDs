@@ -1,10 +1,14 @@
 # Connect to Context Handler with SAML 2.0
 
 FoxIDs can be connected to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
-Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.  
-Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider).
+Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
+
+Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider).  
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
+
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
+FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect down-party.
 
 In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 down-party](down-party-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
 

@@ -16,8 +16,8 @@ Token exchange is implemented in the following samples:
 
 ## Down-party configuration
 
-It is possible to configure if token exchange is allowed on the down-party OAuth 2.0 or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
-Default both client credentials grant and token exchange is allowed on down-party OAuth 2.0 and OpenID Connect clients.  
+It is possible to configure if token exchange is allowed on the OAuth 2.0 down-party or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
+Default both client credentials grant and token exchange is allowed on OAuth 2.0 down-party and OpenID Connect clients.  
 Default the client is added as the token exchange actor, this behaviour can be disabled.
 
 ![OAuth 2.0 client config](images/token-exchange-config-down-party.png)

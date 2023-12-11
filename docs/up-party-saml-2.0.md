@@ -1,8 +1,8 @@
-# Up-party - SAML 2.0
+# SAML 2.0 up-party
 
-FoxIDs up-party [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) which trust an external SAML 2.0 Identity Provider (IdP).
+FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) up-party which trust an external SAML 2.0 Identity Provider (IdP).
 
-![FoxIDs up-party SAML 2.0](images/parties-up-party-saml.svg)
+![FoxIDs SAML 2.0 up-party](images/parties-up-party-saml.svg)
 
 It is possible to configure multiple SAML 2.0 up-parties which then can be selected by [down-parties](parties.md#down-party).
 
@@ -24,10 +24,10 @@ How to guides:
 ## Configuration
 How to configure an external SAML 2.0 Identity Provider (IdP).
 
-> The FoxIDs up-party SAML 2.0 metadata endpoint is `https://foxids.com/tenant-x/track-y/(some_external_idp)/saml/spmetadata`  
+> The FoxIDs SAML 2.0 up-party metadata endpoint is `https://foxids.com/tenant-x/track-y/(some_external_idp)/saml/spmetadata`  
 > if the IdP is configured in tenant `tenant-x` and track `track-y` with the up-party name `some_external_idp`  
 
-The following screen shot show the basic FoxIDs up-party SAML 2.0 configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 up-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 Where the configuration is created with the external IdP metadata.
 
 > More configuration options become available by clicking `Show advanced settings`.

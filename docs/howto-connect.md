@@ -9,7 +9,7 @@ FoxIDs will then handle the SAML 2.0 connection and you only need to care about 
 
 If needed you can [connect two FoxIDs tracks](#connect-foxids-tracks).
 
-## Up-party - How to connect Identity Provider (IdP)
+## How to connect Identity Provider (IdP)
 
 An external OpenID Provider (OP) / Identity Provider (IdP) can be connected with a OpenID Connect up-party or a SAML 2.0 up-party.
 
@@ -38,7 +38,7 @@ How to guides:
 - Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
 - Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
 
-## Down-party - How to become an Identity Provider (IdP)
+## How to become an Identity Provider (IdP)
 When you configure a down-party with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 
 You would most often use down-parties to connect applications and APIs. But a down-party can also be used as a OP / IdP for an external system where the external system is the relaying party (RP). 
 
@@ -52,7 +52,6 @@ Configure [SAML 2.0 down-party](down-party-saml-2.0.md) to be an Identity Provid
 How to guides:
 
 - Connect test IdP on [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
-
 
 ## Connect FoxIDs tracks
 

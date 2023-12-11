@@ -1,8 +1,8 @@
-﻿# Down-party - OpenID Connect
+﻿# OpenID Connect down-party
 
-FoxIDs down-party [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) enable you to connect an OpenID Connect based application. 
+FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) down-party enable you to connect an OpenID Connect based application. 
 
-![FoxIDs down-party OpenID Connect](images/parties-down-party-oidc.svg)
+![FoxIDs OpenID Connect down-party](images/parties-down-party-oidc.svg)
 
 Your application become a Relying Party (RP) and FoxIDs acts as an OpenID Provider (OP).
 
@@ -45,7 +45,7 @@ The `AcrValues` parameter can be set in the `OnRedirectToIdentityProvider` event
 See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetcoreoidcauthorizationcodesample) and [Startup.cs line 141](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreOidcAuthorizationCodeSample/Startup.cs#L141).
 
 ## Configuration
-How to configure your application as a down-party OpenID Connect Relaying Party (RP) / client.
+How to configure your application as a OpenID Connect down-party Relaying Party (RP) / client.
 
 > The clients FoxIDs discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
 > if the client is configured in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`.

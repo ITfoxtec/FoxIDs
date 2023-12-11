@@ -10,7 +10,7 @@ The integration between two FoxIDs tracks support [OpenID Connect authentication
 > A sample integration to a parallel FoxIDs track is configured in the FoxIDs `test-corp` with the up-party name `foxids_oidcpkce`.  
 > You can test parallel FoxIDs login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC parallel FoxIDs Log in`.
 
-The following describes how to configure a up-party OpenID Connect in your FoxIDs track and trust a parallel FoxIDs track where a down-party OpenID Connect is configured. This will make your FoxIDs track trust the parallel FoxIDs track to authenticate users.
+The following describes how to configure a OpenID Connect up-party in your FoxIDs track and trust a parallel FoxIDs track where a OpenID Connect down-party is configured. This will make your FoxIDs track trust the parallel FoxIDs track to authenticate users.
 
 ## Configure integration
 

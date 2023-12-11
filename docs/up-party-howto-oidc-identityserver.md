@@ -1,4 +1,4 @@
-﻿# Up-party - connect IdentityServer with OpenID Connect
+﻿# Connect IdentityServer with OpenID Connect up-party
 
 FoxIDs can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.
 

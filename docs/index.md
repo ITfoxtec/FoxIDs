@@ -39,7 +39,7 @@ A down-party is call by adding the down-party name as the third path element in 
 A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
 If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
-When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify in which up-party the user should authenticate. 
+When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which up-party the user should authenticate. 
 The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
 Selecting multiple up-parties:

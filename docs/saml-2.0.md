@@ -6,7 +6,7 @@ FoxIDs support SAML 2.0 as both up-party and down-party.
 
 ## Up-party
 
-Configure [up-party SAML 2.0](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
+Configure [SAML 2.0 up-party](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
 
 How to guides:
 
@@ -17,7 +17,7 @@ How to guides:
 
 ## Down-party
 
-Configure your application as a [down-party SAML 2.0](down-party-saml-2.0.md).
+Configure your application as a [SAML 2.0 down-party](down-party-saml-2.0.md).
 
 How to guides:
 

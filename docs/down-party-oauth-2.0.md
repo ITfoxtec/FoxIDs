@@ -1,11 +1,11 @@
-﻿# Down-party - OAuth 2.0 
+﻿# OAuth 2.0 down-party
 
-FoxIDs down-party OAuth 2.0 enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
+FoxIDs OAuth 2.0 down-party enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
 
-![FoxIDs down-party OAuth 2.0](images/parties-down-party-oauth.svg)
+![FoxIDs OAuth 2.0 down-party](images/parties-down-party-oauth.svg)
 
 ## OAuth 2.0 Resource
-An API is configured as a down-party OAuth 2.0 resource.
+An API is configured as a OAuth 2.0 down-party resource.
 
 - Click Create Down-party and then OAuth 2.0 - Resource (API)
 - Specify resource (API) name in down-party name.

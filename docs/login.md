@@ -1,16 +1,16 @@
 # Login, Home Realm Discovery (HRD) and 2FA / MFA
-FoxIDs handle user login in the up-party login user interface (UI). There can be configured a number of up-party logins per track with different configurations and look and feel.
+FoxIDs handle user login in the login up-party user interface (UI). There can be configured a number of login up-parties per track with different configurations and look and feel.
 
-A track contains one [user repository](users.md#user-repository) and all up-party login's configured in a track authenticate users with the same user repository.
+A track contains one [user repository](users.md#user-repository) and all login up-parties configured in a track authenticate users with the same user repository.
 
-When a user authenticates the user's session is connected to the particular up-party login. Therefore, a user can authenticate in multiple configured up-party login's and have multiple separate user sessions.  
-A user session is only established in the up-party login if the session lifetime is set to more than 0 seconds.
+When a user authenticates the user's session is connected to the particular login up-party. Therefore, a user can authenticate in multiple configured login up-parties and have multiple separate user sessions.  
+A user session is only established in the login up-party if the session lifetime is set to more than 0 seconds.
 
-A [down-party OpenID Connect](down-party-oidc.md) or [down-party SAML 2.0](down-party-saml-2.0.md) can authenticate users by selecting an up-party login.
+A [OpenID Connect down-party](down-party-oidc.md) or [SAML 2.0 down-party](down-party-saml-2.0.md) can authenticate users by selecting an login up-party.
 
 ![FoxIDs login](images/parties-login.svg)
 
-The up-party login user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
+The login up-party user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
 
 ## Home Realm Discovery (HRD)
 When you create a down-party it is in most cases the best solution to use a star `(*)` in round brackets to select the up-parties. 
@@ -30,10 +30,10 @@ An example of how a login screen with HRD looks like, it can be [customized](tit
 The [title, icon and CSS](title-icon-css.md) configured on the first allowed login up-party on the down-party is used. Without an allowed login up-party configured the title, icon and CSS from the default login up-party is used.
 
 ## Two-factor authentication (2FA/MFA)
-A up-party login support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
+A login up-party support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
 
 Two-factor authentication with an authenticator app is per default enabled and is initiated if required.  
-Two-factor authentication can be set as a requirement in each [up-party login](login.md#configure-two-factor-authentication-2fa), per [user](users.md#configure-multi-factor-authentication-mfa) or required by the calling [OpenID Connect](down-party-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](down-party-saml-2.0.md#require-multi-factor-authentication-mfa) down-party.  
+Two-factor authentication can be set as a requirement in each [login up-party](login.md#configure-two-factor-authentication-2fa), per [user](users.md#configure-multi-factor-authentication-mfa) or required by the calling [OpenID Connect](down-party-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](down-party-saml-2.0.md#require-multi-factor-authentication-mfa) down-party.  
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
@@ -52,7 +52,7 @@ It can be configured whether users should be allowed to cancel login and whether
 ### Configure two-factor authentication (2FA)
 The two-factor authenticator app name shown for the user's is per default set to the tenant's name. You most likely want to change the name to something more human readable.
 
-You can select to require two-factor authentication for all users authenticating using the up-party login. 
+You can select to require two-factor authentication for all users authenticating using the login up-party. 
 
 ![Configure Login](images/configure-login-2fa.png)
 
@@ -70,12 +70,12 @@ The user session become a persistent session if either the persistent session li
 
 
 ### Configure customization
-The up-party login interface can be [customized with custom title, icon and CSS](title-icon-css).
+The login up-party interface can be [customized with custom title, icon and CSS](title-icon-css).
 
 ![Configure Login](images/configure-login-customization.png)
 
 ### Configure claims
-You can change the claims the up-party login pass on with [claim transforms](claim-transform.md).
+You can change the claims the login up-party pass on with [claim transforms](claim-transform.md).
 
 ### All login configurations
 All login configurations are available after clicking show advanced settings.

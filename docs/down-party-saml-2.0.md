@@ -1,8 +1,8 @@
-# Down-party - SAML 2.0
+# SAML 2.0 down-party
 
-FoxIDs down-party [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) enable you to connect an SAML 2.0 based application. 
+FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) down-party enable you to connect an SAML 2.0 based application. 
 
-![FoxIDs down-party SAML 2.0](images/parties-down-party-saml.svg)
+![FoxIDs SAML 2.0 down-party](images/parties-down-party-saml.svg)
 
 Your application become a SAML 2.0 Relying Party (RP) and FoxIDs acts as an SAML 2.0 Identity Provider (IdP).
 
@@ -50,13 +50,13 @@ See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and
 ## Configuration
 How to configure your application as an SAML 2.0 Relying Party (RP).
 
-> The FoxIDs down-party SAML 2.0 metadata endpoint is `https://foxids.com/tenant-x/track-y/party-saml-pr1/saml/idpmetadata`  
+> The FoxIDs SAML 2.0 down-party metadata endpoint is `https://foxids.com/tenant-x/track-y/party-saml-pr1/saml/idpmetadata`  
 > if the application is configured in tenant `tenant-x` and track `track-y` with the down-party name `party-saml-pr1`.
 
 > A down-party application can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
 > An up-party name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/party-saml-pr1(login)/saml/idpmetadata`
 
-The following screen shot show the basic FoxIDs down-party SAML 2.0 configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 down-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > More configuration options become available by clicking `Show advanced settings`.
 

@@ -14,6 +14,8 @@ By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Conne
 
 FoxIDs support Context Handler including OIOSAML3, login, single logout, logging, issuer naming, OCES3 certificates and NSIS.
 
+> Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
+
 You are maybe required to save logs for 180 days. If you are on an Enterprise plan, logs are stored for 180 days. If you are using a Free or Pro plan, you can send logs to your own Application Insights with a [log stream](logging.md#log-stream) and thereby save the logs for 180 days.
 
 It is safe to go into production with a Free or Pro plan, but you are guaranteed a better SLA with an Enterprise plan.

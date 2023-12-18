@@ -5,7 +5,7 @@
 > Start by testing Context Handler with the <a href="https://aspnetcoreoidcallupsample.itfoxtec.com/auth/login" target="_blank">online sample</a>, select `Danish Context Handler` or `Danish Context Handler TEST` for the test environment.  
 > The OpenID Connect sample call FoxIDs and FoxIDs call Context Handler to let the user authenticate.
 
-You can create one or more connections from [FoxIDs](https://www.foxids.com) to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) by following the [step-by-step guide](up-party-howto-saml-2.0-nemlogin.md). 
+You can create one or more connections from [FoxIDs](https://www.foxids.com) to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) by following the [step-by-step guide](howto-saml-2.0-context-handler.md). 
 FoxIDs handles the SAML 2.0 / OIOSAML3 traffic and you can connect your application to FoxIDs with [OpenID Connect](down-party-oidc.md) or a [lightweight SAML 2.0](down-party-saml-2.0.md) connection.
 
 ![Connect to Context Handler](images/how-to-nemlogin.svg)

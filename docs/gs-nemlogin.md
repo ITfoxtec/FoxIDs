@@ -10,7 +10,7 @@ FoxIDs handles the SAML 2.0 / OIOSAML3 traffic and you can connect your applicat
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)
 
-By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
+By default, FoxIDs is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 
 FoxIDs support NemLog-in including OIOSAML3, login, single logout, logging, issuer naming, OCES3 certificates and NSIS.
 

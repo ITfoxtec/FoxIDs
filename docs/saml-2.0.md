@@ -25,9 +25,10 @@ How to guides:
 - Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#down-party---connect-to-context-handler)
 
 ## Claim mappings
-Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md).
+Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md). The claim mappings is global for the track.
 
 > SAML 2.0 claims are internally [converted to JWT claims](parties.md#jwt-and-saml) between up-party and down-party.
 
 ![Configure JWT and SAML 2.0 mappings](images/configure-jwt-saml-mappings.png)
 
+If no claim mapping exists for a particular claim. The long SAML 2.0 claim name is kept from claims revived in a SAML 2.0 token instead of a shorter equivalent JWT claim name. The same goes in the opposite direction.

@@ -4,7 +4,7 @@ FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-o
 
 ![FoxIDs SAML 2.0 up-party](images/parties-up-party-saml.svg)
 
-By configuring an SAML 2.0 up-party and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
+By configuring an SAML 2.0 up-party and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application.
 
 It is possible to configure multiple SAML 2.0 up-parties which can then be selected by [OpenID Connect down-parties](down-party-oidc.md) and [SAML 2.0 down-parties](down-party-saml-2.0.md).

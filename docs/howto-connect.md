@@ -2,7 +2,7 @@
 
 An external IdP is connected with an [up-party](parties.md#up-party) and FoxIDs become an IdP by using a [down-party](parties.md#down-party) where you can connect applications and APIs.
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly connect to multiple up-parties from the same OpenID Connect down-party.
 
 ![How to connect with up-parties and down-parties](images/how-to-connect.svg)

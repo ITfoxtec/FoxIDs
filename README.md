@@ -12,7 +12,7 @@ FoxIDs is designed as a container with multi-tenant support.
 
 FoxIDs can be deployed and use by e.g. a single company or deployed as a shared cloud container and used by multiple organisations, companies or everyone with the need.  
 
-- - Use FoxIDs as an Identity as a Service (IDaaS) at [FoxIDs.com](https://foxids.com).
+- Use FoxIDs as an Identity as a Service (IDaaS) at [FoxIDs.com](https://foxids.com).
 - Or [deployed](https://www.foxids.com/docs/deployment) FoxIDs as your own private cloud on Microsoft Azure.
 
 Separation is ensured at the tenant level and in each tenant separated by tracks. The tracks in a tenant segmentate environments, e.g. test, QA and production and e.g. trusts to external or internal IdPs.

@@ -1,6 +1,6 @@
 # Connect to Context Handler with SAML 2.0
 
-FoxIDs can be connected to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
+FoxIDs can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
 Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
 
 Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider).  

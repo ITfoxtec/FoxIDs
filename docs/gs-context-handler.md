@@ -1,5 +1,8 @@
 # Connect to Context Handler with FoxIDs
-Configure a connection from [FoxIDs](https://www.foxids.com) to Context Handler (Danish identity broker, F&aelig;lleskommunal Adgangsstyring) by following the [step-by-step guide](howto-saml-2.0-context-handler.md) - FoxIDs handles the SAML 2.0 / OIOSAML3 traffic.  
+
+> By using FoxIDs it become straight forward and easy to connect to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker).
+
+Configure a connection from [FoxIDs](https://www.foxids.com) to Context Handler by following the [step-by-step guide](howto-saml-2.0-context-handler.md) - FoxIDs handles the SAML 2.0 / OIOSAML3 traffic.  
 Then connect your application to FoxIDs with [OpenID Connect](down-party-oidc.md) or [lightweight SAML 2.0](down-party-saml-2.0.md) .
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)

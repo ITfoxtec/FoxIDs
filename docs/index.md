@@ -1,8 +1,8 @@
 **FoxIDs is a free and open-source Identity Services (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
 
-FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
+> Developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.
 
-> FoxIDs version 1.x, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
+FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
 
 FoxIDs is designed as a container with multi-tenant support. Your tenant holds your tracks which correspond to your environments (prod, QA, test, dev) and other elements. 
 Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.

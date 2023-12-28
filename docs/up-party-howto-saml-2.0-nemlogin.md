@@ -154,6 +154,7 @@ NemLog-in requires requests and responses to be logged including the signature p
 [FoxIDs default log](logging.md) errors and events including the time and the IP address.
 
 > With an Enterprise plan on [FoxIDs.com](https://www.foxids.com) log data is stored for 180 days.
+> If you are using a Free or Pro plan, you can send logs to your own Application Insights with a [log stream](logging.md#log-stream) and thereby save the logs for 180 days.
 
 It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 

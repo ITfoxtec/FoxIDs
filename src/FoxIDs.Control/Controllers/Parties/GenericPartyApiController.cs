@@ -63,9 +63,30 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null &&!await apiModelActionAsync(party))) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
 
                 var mParty = mapper.Map<MParty>(party);
+                if (mParty is UpParty)
+                {
+                    var count = await CountParties("party:up");
+                    if (count >= Constants.Models.UpParty.PartiesMax)
+                    {
+                        throw new Exception($"Maximum number of up-parties ({Constants.Models.UpParty.PartiesMax}) per track has been reached.");
+                    }
+                }
+                else if (mParty is DownParty)
+                {
+                    var count = await CountParties("party:down");
+                    if (count >= Constants.Models.DownParty.PartiesMax)
+                    {
+                        throw new Exception($"Maximum number of down-parties ({Constants.Models.UpParty.PartiesMax}) per track has been reached.");
+                    }
+                }
+                else
+                {
+                    throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
+                }
+
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (modelActionAsync != null && !await modelActionAsync(party, mParty)) return BadRequest(ModelState);
@@ -97,6 +118,11 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private async Task<int> CountParties(string dataType)
+        {
+            return await tenantRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
         }
 
         protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> modelActionAsync = null)

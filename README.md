@@ -22,7 +22,7 @@ FoxIDs consist of two services:
 - Identity service called FoxIDs handling user login and all other security traffic.
 - Client and API called FoxIDs Control. The FoxIDs Control Client is used to configure FoxIDs, or alternatively by calling the FoxIDs Control API directly.
 
-> FoxIDs is .NET 7.0 and the FoxIDs Control Client is Blazor .NET 7.0.
+> FoxIDs is .NET 8.0 and the FoxIDs Control Client is Blazor .NET 8.0.
 
 ## Deployment
 

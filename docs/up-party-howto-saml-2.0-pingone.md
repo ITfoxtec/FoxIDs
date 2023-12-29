@@ -1,10 +1,10 @@
-# Up-party - Connect PingIdentity / PingOne with SAML 2.0
+# Connect PingIdentity / PingOne with SAML 2.0 up-party
 
-FoxIDs can be connected to PingOne with a [up-party SAML 2.0](up-party-saml-2.0.md). Where PingOne is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
+FoxIDs can be connected to PingOne with a [SAML 2.0 up-party](up-party-saml-2.0.md). Where PingOne is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
  
 ## Configuring PingOne as Identity Provider (IdP)
 
-**1 - Start by creating an up-party SAML 2.0 in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
  2. Then the SAML 2.0 Metadata is created with the up-party name, copy the metadata URL

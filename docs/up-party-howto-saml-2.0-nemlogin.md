@@ -1,9 +1,9 @@
-# Up-party - Connect NemLog-in with SAML 2.0
+# Connect NemLog-in with SAML 2.0 up-party
 
-You can connect FoxIDs to NemLog-in (Danish IdP) with a [up-party SAML 2.0](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
+You can connect FoxIDs to NemLog-in (Danish IdP) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Conect down-party](down-party-oidc.md) FoxIDs become a bridge between SAML 2.0 and OpenID Connect. 
-FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple up-parties from the same OpenID Connect down-party.
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect down-party.
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)
 
@@ -56,7 +56,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 ## Configuring NemLog-in 3 as Identity Provider (IdP)
 
-> You need to [configure the OCES3 certificate](#certificate) before following this configuration.
+> You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
 **1) - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -128,7 +128,7 @@ First you need to create an NemLog-in IT-system or have someone else creating an
 
 *Optionally, if you are using the privilege claim.*
 
-FoxIDs can transforms the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
+FoxIDs can transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens. 
 Furthermore, it makes the tokens readable.
 
 1. Add the DK privilege claim transformer. 
@@ -154,6 +154,7 @@ NemLog-in requires requests and responses to be logged including the signature p
 [FoxIDs default log](logging.md) errors and events including the time and the IP address.
 
 > With an Enterprise plan on [FoxIDs.com](https://www.foxids.com) log data is stored for 180 days.
+> If you are using a Free or Pro plan, you can send logs to your own Application Insights with a [log stream](logging.md#log-stream) and thereby save the logs for 180 days.
 
 It can be configured which logs should be logged to the Application Insights which is part of the FoxIDs installation or to an external repository with a [log stream](logging.md#log-stream).
 

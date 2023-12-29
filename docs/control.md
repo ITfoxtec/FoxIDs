@@ -6,6 +6,8 @@ FoxIDs Control API contain all the configuration functionality. Therefore, it is
 ## FoxIDs Control Client
 FoxIDs Control Client is a Blazor WebAssembly (WASM) app.
 
+> Open your [FoxIDs Control Client on FoxIDs.com](https://www.foxids.com/action/login). 
+
 ### Tenant and master track
 If you use FoxIDs at [FoxIDs.com](https://foxids.com). Your one tenant will be pre created on registration.
 

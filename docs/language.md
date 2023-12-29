@@ -66,7 +66,7 @@ It is possible to contribute either by creating a pull request in the FoxIDs [Gi
 
 It is possible to add track specific translations for each text element in multiple languages in [FoxIDs Control Client](control.md#foxids-control-client).
 
-> If you want to change a text and thereby not using the default text. It can be archived by adding a new text for each supported language.
+> If you want to change a text and thereby not using the default text. It can be archived by adding a new text for each supported language. It is also possible to add new HTML tags in the text and set the related CSS.
 
 Add translation to a track:
 

@@ -1,4 +1,4 @@
-﻿# Up-party - connect Signicat with OpenID Connect
+﻿# Connect Signicat with OpenID Connect up-party
 
 FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.
 

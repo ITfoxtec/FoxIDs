@@ -16,8 +16,8 @@ Token exchange is implemented in the following samples:
 
 ## Down-party configuration
 
-It is possible to configure if token exchange is allowed on the down-party OAuth 2.0 or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
-Default both client credentials grant and token exchange is allowed on down-party OAuth 2.0 and OpenID Connect clients.  
+It is possible to configure if token exchange is allowed on the OAuth 2.0 down-party or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
+Default both client credentials grant and token exchange is allowed on OAuth 2.0 down-party and OpenID Connect clients.  
 Default the client is added as the token exchange actor, this behaviour can be disabled.
 
 ![OAuth 2.0 client config](images/token-exchange-config-down-party.png)
@@ -27,7 +27,7 @@ Default the client is added as the token exchange actor, this behaviour can be d
 It is possible to token exchange an [access token](#access-token-to-access-token-in-the-same-track) issued to a resource and thereby obtain an access token for another resource in the track.  
 A down-party client is configured to handle the token exchange and to whitelist for which resources in the track, it is allowed to do a token exchange.
 
-### Access token to Access token in web application
+### Access Token to Access Token in web application
 
 A web application token exchange JWT access token to JWT access token' in the same track.
 
@@ -100,7 +100,7 @@ Sample JWT access token' body:
 }
 ```
 
-### Access token to Access token in API
+### Access Token to Access Token in API
 
 An API token exchange JWT access token to JWT access token' in the same track.
 
@@ -176,7 +176,7 @@ It is possible to configure if the up-party trust should be allowed for token ex
 
 ![OAuth 2.0 trust config](images/token-exchange-config-up-party.png)
 
-### Access token to Access token by trust
+### Access Token to Access Token by trust
 
 Token exchange external JWT access token to internal JWT access token by external trust.
 
@@ -233,7 +233,7 @@ Cache-Control: no-cache, no-store
 }
 ```
 
-### SAML 2.0 to Access token by trust
+### SAML 2.0 to Access Token by trust
 
 Token exchange external SAML 2.0 token to internal JWT access token by external trust.
 

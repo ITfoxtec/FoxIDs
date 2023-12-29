@@ -1,4 +1,4 @@
-﻿# Up-party - connect Nets eID Broker with OpenID Connect
+﻿# Connect Nets eID Broker with OpenID Connect up-party
 
 FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.
 

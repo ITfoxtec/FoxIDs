@@ -1,12 +1,12 @@
-# Up-party - Connect Microsoft AD FS with SAML 2.0
+# Connect Microsoft AD FS with SAML 2.0 up-party
 
-FoxIDs can be connected to AD FS with a [up-party SAML 2.0](up-party-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
+FoxIDs can be connected to AD FS with a [SAML 2.0 up-party](up-party-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and FoxIDs is acting as an SAML 2.0 Relying Party (RP).
  
 ## Configuring AD FS as Identity Provider (IdP)
 
-**1 - Start by creating an up-party SAML 2.0 in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-The up-party SAML 2.0 can either be configured by using the AD FS metadata `https://...adfs-domain.../federationmetadata/2007-06/federationmetadata.xml` or by manually adding the SAML 2.0 details.
+The SAML 2.0 up-party can either be configured by using the AD FS metadata `https://...adfs-domain.../federationmetadata/2007-06/federationmetadata.xml` or by manually adding the SAML 2.0 details.
 
 Recommended SAML 2.0 bindings:
 - Authn request and response binding: Post
@@ -14,7 +14,7 @@ Recommended SAML 2.0 bindings:
 
 Remark; The authn request redirect binding can result in a long query string which can cause problems I some devices. Therefore post binding is preferable.
 
-The following screen shot show the basic FoxIDs up-party SAML 2.0 configuration using AD FS metadata in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 up-party configuration using AD FS metadata in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > The AD FS metadata endpoint need to be accessible online to do the SAML 2.0 configuration with AD FS metadata. If not, you need to do the configuration manually.
 
@@ -24,12 +24,12 @@ The following screen shot show the basic FoxIDs up-party SAML 2.0 configuration 
 
 **2 - Then go to the AD FS and create the Relying Party (RP)**
 
-In this part of the configuration you need to use the up-party SAML 2.0 metadata. It is possible to call a fictive up-party SAML 2.0 metadata in FoxIDs and thereby if preferred performing step 2 as the first step.
+In this part of the configuration you need to use the SAML 2.0 up-party metadata. It is possible to call a fictive SAML 2.0 up-party metadata in FoxIDs and thereby if preferred performing step 2 as the first step.
 
-> FoxIDs up-party SAML 2.0 metadata `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/spmetadata`  
+> FoxIDs SAML 2.0 up-party metadata `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/spmetadata`  
 > for `tenant-x` and `track-y` with the up-party name `adfs-saml-idp1`.
 
-Configure the Relying Party (RP) on AD FS using the up-party SAML 2.0 metadata.
+Configure the Relying Party (RP) on AD FS using the SAML 2.0 up-party metadata.
 
 Alternatively, the Relying Party (RP) can be configured manually on the AD FS with the following properties:
 

@@ -1,4 +1,4 @@
-﻿# Up-party - connect Azure AD B2C with OpenID Connect
+﻿# Connect Azure AD B2C with OpenID Connect up-party
 
 FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.
 

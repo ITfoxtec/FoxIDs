@@ -1,4 +1,4 @@
-﻿# Up-party - connect Microsoft Entra ID (Azure AD) with OpenID Connect
+﻿# Connect Microsoft Entra ID (Azure AD) with OpenID Connect up-party
 
 FoxIDs can be connected to Microsoft Entra ID with OpenID Connect and thereby authenticating end users in a Microsoft Entra ID tenant.
 

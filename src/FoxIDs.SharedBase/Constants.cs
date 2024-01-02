@@ -329,6 +329,8 @@ namespace FoxIDs
 
             public static class DownParty
             {
+                public const int PartiesMax = 2000;
+
                 public const int AllowUpPartyNamesMin = 0;
                 public const int AllowUpPartyNamesMax = 200;
             }
@@ -408,6 +410,8 @@ namespace FoxIDs
 
             public static class UpParty
             {
+                public const int PartiesMax = 2000;
+
                 public const int IssuersBaseMin = 0;
                 public const int IssuersMin = 1;
                 public const int IssuersMax = 10;

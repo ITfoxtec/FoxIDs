@@ -1,8 +1,8 @@
-﻿# Up-party - OpenID Connect
+﻿# OpenID Connect up-party
 
-FoxIDs up-party [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) which trust an external OpenID Provider (OP) / Identity Provider (IdP).
+FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) up-party which trust an external OpenID Provider (OP) / Identity Provider (IdP).
 
-![FoxIDs up-party OpenID Connect](images/parties-up-party-oidc.svg)
+![FoxIDs OpenID Connect up-party](images/parties-up-party-oidc.svg)
 
 It is possible to configure multiple OpenID Connect up-parties which then can be selected by [down-parties](parties.md#down-party).
 
@@ -21,7 +21,7 @@ How to guides:
 ## Configuration
 How to configure external OpenID Provider (OP) as an authority.
 
-The following screen shot show the basic FoxIDs up-party OpenID Connect configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs OpenID Connect up-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > More configuration options become available by clicking `Show advanced settings`.
 

@@ -1,8 +1,8 @@
 **FoxIDs is a free and open-source Identity Services (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
 
-FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
+> Developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.
 
-> FoxIDs version 1.x, see [releases](https://github.com/ITfoxtec/FoxIDs/releases)
+FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
 
 FoxIDs is designed as a container with multi-tenant support. Your tenant holds your tracks which correspond to your environments (prod, QA, test, dev) and other elements. 
 Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
@@ -39,7 +39,7 @@ A down-party is call by adding the down-party name as the third path element in 
 A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
 If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
-When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify in which up-party the user should authenticate. 
+When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which up-party the user should authenticate. 
 The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
 Selecting multiple up-parties:

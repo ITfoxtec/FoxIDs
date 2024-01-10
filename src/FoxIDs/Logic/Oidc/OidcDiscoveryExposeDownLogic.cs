@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             if (party?.Client != null)
             {
                 oidcDiscovery.ResponseModesSupported = new[] { IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost };
-                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Pairwise };
+                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Public/*, IdentityConstants.SubjectTypes.Pairwise*/ };
                 oidcDiscovery.IdTokenSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 };
                 oidcDiscovery.ResponseTypesSupported = party.Client.ResponseTypes;
                 oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported.ConcatOnce(party.Client.Scopes?.Select(s => s.Scope));
@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
             else
             {
                 oidcDiscovery.ResponseModesSupported = new[] { IdentityConstants.ResponseModes.Fragment, IdentityConstants.ResponseModes.Query, IdentityConstants.ResponseModes.FormPost };
-                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Pairwise };
+                oidcDiscovery.SubjectTypesSupported = new[] { IdentityConstants.SubjectTypes.Public/*, IdentityConstants.SubjectTypes.Pairwise*/ };
                 oidcDiscovery.IdTokenSigningAlgValuesSupported = new[] { IdentityConstants.Algorithms.Asymmetric.RS256 };
                 oidcDiscovery.ResponseTypesSupported = new[] { IdentityConstants.ResponseTypes.Code };
                 oidcDiscovery.ScopesSupported = oidcDiscovery.ScopesSupported;

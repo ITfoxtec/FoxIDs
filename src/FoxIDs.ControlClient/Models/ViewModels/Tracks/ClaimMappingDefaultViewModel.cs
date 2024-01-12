@@ -8,6 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class ClaimMappingDefaultViewModel
     {
         [Display(Name = "Default mappings between JWT and SAML claim types")]
-        public IEnumerable<ClaimMap> DefaultClaimMappings { get; set; } = Constants.DefaultClaimMappings.LockedMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim });
+        public IEnumerable<ClaimMap> DefaultClaimMappings { get; set; } = Constants.DefaultClaimMappings.LockedMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim })
+            .ConcatOnce(Constants.DefaultClaimMappings.ChangeableMappings.Select(cm => new ClaimMap { JwtClaim = cm.JwtClaim, SamlClaim = cm.SamlClaim }), (f, s) => s.JwtClaim == f.JwtClaim);
     }
 }

@@ -1,0 +1,52 @@
+﻿<div class="form-group active-group active">
+    <Label For="@(() => Model.MetadataOrganization)" class="label-control" />
+    @if (Model.MetadataOrganization == null)
+    {
+        <div class="card">
+            <div class="card-body px-3 py-2">
+            </div>
+        </div>
+        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => AddOrganization())"><span class="oi oi-plus" aria-hidden="true"></span> Add Organization</button>
+    }
+    else
+    {
+        <ul class="list-group">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="Model.MetadataOrganization.OrganizationName" For="@(() => Model.MetadataOrganization.OrganizationName)" />
+                    </div>
+                    <div class="col-1 text-right">
+                        <button type="button" class="btn btn-link px-0" title="Remove" @onclick="@(() => RemoveOrganization())"><span class="oi oi-circle-x" aria-hidden="true"></span></button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="Model.MetadataOrganization.OrganizationDisplayName" For="@(() => Model.MetadataOrganization.OrganizationDisplayName)" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-11">
+                        <FInputText @bind-Value="Model.MetadataOrganization.OrganizationUrl" For="@(() => Model.MetadataOrganization.OrganizationUrl)" />
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <ValidationMessage For="@(() => Model.MetadataOrganization)" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public ISamlMetadataOrganizationVievModel Model { get; set; }
+
+    private void AddOrganization()
+    {
+        Model.MetadataOrganization = new Api.SamlMetadataOrganization();
+    }
+
+    private void RemoveOrganization()
+    {
+        Model.MetadataOrganization = null;
+    }
+}

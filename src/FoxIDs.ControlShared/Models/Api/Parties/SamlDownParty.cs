@@ -121,6 +121,9 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.SamlParty.MetadataNameIdFormatsMin, Constants.Models.SamlParty.MetadataNameIdFormatsMax, Constants.Models.Claim.LimitedValueLength, Constants.Models.Claim.SamlTypeRegExPattern)]
         public List<string> MetadataNameIdFormats { get; set; }
 
+        [ValidateComplexType]
+        public SamlMetadataOrganization MetadataOrganization { get; set; }
+
         [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 

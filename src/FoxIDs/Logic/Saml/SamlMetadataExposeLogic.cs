@@ -90,6 +90,11 @@ namespace FoxIDs.Logic
                 entityDescriptor.SPSsoDescriptor.AttributeConsumingServices = attributeConsumingServices;
             }
 
+            if (party?.MetadataOrganization != null)
+            {
+                entityDescriptor.Organization = GetOrganization(party.MetadataOrganization);
+            }
+
             if (party?.MetadataContactPersons?.Count() > 0)
             {
                 entityDescriptor.ContactPersons = GetContactPersons(party.MetadataContactPersons);
@@ -139,6 +144,11 @@ namespace FoxIDs.Logic
             if (party?.MetadataNameIdFormats?.Count > 0)
             {
                 entityDescriptor.IdPSsoDescriptor.NameIDFormats = party.MetadataNameIdFormats.Select(nf => new Uri(nf));
+            }
+
+            if (party?.MetadataOrganization != null)
+            {
+                entityDescriptor.Organization = GetOrganization(party.MetadataOrganization);
             }
 
             if (party?.MetadataContactPersons?.Count() > 0)
@@ -194,6 +204,11 @@ namespace FoxIDs.Logic
                 default:
                     throw new NotSupportedException($"SAML binding '{binding}' not supported.");
             }
+        }
+
+        private Organization GetOrganization(SamlMetadataOrganization metadataOrganization)
+        {
+            return new Organization(metadataOrganization.OrganizationName, metadataOrganization.OrganizationDisplayName, metadataOrganization.OrganizationUrl);
         }
 
         private IEnumerable<ContactPerson> GetContactPersons(List<SamlMetadataContactPerson> metadataContactPersons)

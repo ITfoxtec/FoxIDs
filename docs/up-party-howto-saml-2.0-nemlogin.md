@@ -77,7 +77,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
-11. Remove the `*` and configure claims, the following claims is most often used:
+11. Optionally remove the `*` and configure claims, the following claims is most often used:
     - `https://data.gov.dk/concept/core/nsis/loa`
     - `https://data.gov.dk/model/core/eid/cprNumber`
     - `https://data.gov.dk/model/core/eid/cprUuid`

@@ -324,6 +324,7 @@
                         <FInputToggle @bind-Value="samlUpParty.Form.Model.MetadataIncludeEncryptionCertificates" For="@(() => samlUpParty.Form.Model.MetadataIncludeEncryptionCertificates)" TextType="y.n" />
                         <FInputTextList @bind-ValueList="samlUpParty.Form.Model.MetadataNameIdFormats" For="@(() => samlUpParty.Form.Model.MetadataNameIdFormats)" DynamicFirstRow="true" />
                         <SamlMetadataAttributeConsumingServices Model="samlUpParty.Form.Model" />
+                        <SamlMetadataOrganization Model="samlUpParty.Form.Model" />
                         <SamlMetadataContactPersons Model="samlUpParty.Form.Model" />
                     }
                 }

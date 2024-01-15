@@ -9,7 +9,7 @@ using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataContactPersonVievModel
+    public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
@@ -175,6 +175,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.MetadataAttributeConsumingServicesMin, Constants.Models.SamlParty.MetadataAttributeConsumingServicesMax)]
         public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; } = new List<SamlMetadataAttributeConsumingService>();
+
+        [ValidateComplexType]
+        public SamlMetadataOrganization MetadataOrganization { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]

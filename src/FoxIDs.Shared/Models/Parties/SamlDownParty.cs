@@ -106,6 +106,10 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "metadata_nameid_formats")]
         public List<string> MetadataNameIdFormats { get; set; }
 
+        [ValidateComplexType]
+        [JsonProperty(PropertyName = "metadata_organization")]
+        public SamlMetadataOrganization MetadataOrganization { get; set; }
+
         [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         [JsonProperty(PropertyName = "metadata_contact_persons")]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }

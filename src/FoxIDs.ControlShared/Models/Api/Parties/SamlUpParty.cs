@@ -135,6 +135,9 @@ namespace FoxIDs.Models.Api
         public List<SamlMetadataAttributeConsumingService> MetadataAttributeConsumingServices { get; set; }
 
         [ValidateComplexType]
+        public SamlMetadataOrganization MetadataOrganization { get; set; }
+
+        [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.MetadataContactPersonsMin, Constants.Models.SamlParty.MetadataContactPersonsMax)]
         public List<SamlMetadataContactPerson> MetadataContactPersons { get; set; }
 

@@ -23,7 +23,7 @@ FoxIDs.com is hosted in Europe and mainly in Microsoft Azure Holland, Netherland
 
 > For more information please see the [get started](get-started.md) guide.
 
-## Free and Open Source
+## Free and Open-Source
 
 FoxIDs is free and open-source, see the [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
 The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license only restricts reselling FoxIDs as a IDaaS to third parties, without a supplementary agreement.

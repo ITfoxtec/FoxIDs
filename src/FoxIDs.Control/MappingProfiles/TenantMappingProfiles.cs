@@ -120,6 +120,9 @@ namespace FoxIDs.MappingProfiles
             CreateMap<Api.SamlMetadataRequestedAttribute, SamlMetadataRequestedAttribute>()
                 .ReverseMap();
 
+            CreateMap<Api.SamlMetadataOrganization, SamlMetadataOrganization>()
+                .ReverseMap();
+
             CreateMap<Api.SamlMetadataContactPerson, SamlMetadataContactPerson>()
                 .ReverseMap();
         }

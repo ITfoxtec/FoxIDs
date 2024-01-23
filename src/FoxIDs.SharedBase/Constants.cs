@@ -436,7 +436,8 @@ namespace FoxIDs
                 public const int AuthorityLength = 300;
                 public const int KeysApiMin = 0;
                 public const int KeysMin = 1;
-                public const int KeysMax = 10;   
+                public const int KeysWithX509InfoMax = 10;
+                public const int KeysMax = 50;
                 public const int OidcDiscoveryUpdateRateMin = 14400; // 4 hours
                 public const int OidcDiscoveryUpdateRateMax = 5184000; // 60 days
 

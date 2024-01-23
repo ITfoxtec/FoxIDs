@@ -8,12 +8,15 @@ using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Reflection.Metadata;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace FoxIDs.Logic
 {
@@ -285,7 +288,8 @@ namespace FoxIDs.Logic
 
                     if (string.IsNullOrWhiteSpace(claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.JwtId)))
                     {
-                        throw new OAuthRequestException($"Client credentials assertion {JwtClaimTypes.JwtId} is empty for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                        // TODO
+                        // The "jti" (JWT ID) claim provides a unique identifier for the token. Ensure that JWTs are not replayed by maintaining the set of used "jti" values for the length of time for which the JWT would be considered valid based on the applicable "exp" instant.
                     }
                 }
             }

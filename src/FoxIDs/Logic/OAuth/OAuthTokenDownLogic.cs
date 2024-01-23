@@ -286,7 +286,8 @@ namespace FoxIDs.Logic
                         throw new OAuthRequestException($"Client credentials assertion {JwtClaimTypes.Subject} is invalid for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
                     }
 
-                    if (string.IsNullOrWhiteSpace(claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.JwtId)))
+                    var jwtId = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.JwtId);
+                    if (!jwtId.IsNullOrWhiteSpace())
                     {
                         // TODO
                         // The "jti" (JWT ID) claim provides a unique identifier for the token. Ensure that JWTs are not replayed by maintaining the set of used "jti" values for the length of time for which the JWT would be considered valid based on the applicable "exp" instant.

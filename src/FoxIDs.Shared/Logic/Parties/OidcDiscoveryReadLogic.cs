@@ -49,6 +49,16 @@ namespace FoxIDs.Logic
                 party.Client.EndSessionUrl = oidcDiscovery.EndSessionEndpoint;
             }
             party.Keys = jsonWebKeySet.Keys?.ToList();
+            if(party.Keys?.Count() > Constants.Models.OAuthUpParty.KeysWithX509InfoMax)
+            {
+                foreach (var key in party.Keys)
+                {
+                    key.X5u = null;
+                    key.X5c = null;
+                    key.X5t = null;
+                    key.X5tS256 = null;
+                }
+            }
         }
 
         private async Task<(OidcDiscovery, JsonWebKeySet)> GetOidcDiscoveryAndValidateAsync(string authority)

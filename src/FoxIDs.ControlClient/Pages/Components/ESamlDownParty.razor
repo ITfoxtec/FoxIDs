@@ -10,7 +10,7 @@
         <div>
             SAML 2.0
         </div>
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         @if (samlDownParty.CreateMode)
@@ -225,7 +225,6 @@
         </div>
     }
     <div class="modal-footer">
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!DownParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>

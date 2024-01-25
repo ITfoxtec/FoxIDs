@@ -116,35 +116,35 @@ namespace FoxIDs.Client.Pages
                 var loginUpParty = new GeneralLoginUpPartyViewModel();
                 loginUpParty.CreateMode = true;
                 loginUpParty.Edit = true;
-                upParties.Add(loginUpParty);
+                upParties.Insert(0, loginUpParty);
             }
             else if (type == PartyTypes.OAuth2)
             {
                 var oauthUpParty = new GeneralOAuthUpPartyViewModel();
                 oauthUpParty.CreateMode = true;
                 oauthUpParty.Edit = true;
-                upParties.Add(oauthUpParty);
+                upParties.Insert(0, oauthUpParty);
             }
             else if (type == PartyTypes.Oidc)
             {
                 var oidcUpParty = new GeneralOidcUpPartyViewModel();
                 oidcUpParty.CreateMode = true;
                 oidcUpParty.Edit = true;
-                upParties.Add(oidcUpParty);
+                upParties.Insert(0, oidcUpParty);
             }
             else if (type == PartyTypes.Saml2)
             {
                 var samlUpParty = new GeneralSamlUpPartyViewModel();
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
-                upParties.Add(samlUpParty);
+                upParties.Insert(0, samlUpParty);
             }
             else if (type == PartyTypes.TrackLink)
             {
                 var trackLinkUpParty = new GeneralTrackLinkUpPartyViewModel();
                 trackLinkUpParty.CreateMode = true;
                 trackLinkUpParty.Edit = true;
-                upParties.Add(trackLinkUpParty);
+                upParties.Insert(0, trackLinkUpParty);
             }
         }
 

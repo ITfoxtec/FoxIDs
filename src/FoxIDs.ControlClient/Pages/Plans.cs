@@ -96,7 +96,7 @@ namespace FoxIDs.Client.Pages
             var plan = new GeneralPlanViewModel();
             plan.CreateMode = true;
             plan.Edit = true;
-            plans.Add(plan);
+            plans.Insert(0, plan);
         }
 
         private async Task ShowUpdatePlanAsync(GeneralPlanViewModel generalPlan)

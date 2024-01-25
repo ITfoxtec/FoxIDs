@@ -134,7 +134,7 @@ namespace FoxIDs.Client.Pages
             var logStreamSettings = new GeneralLogStreamSettingsViewModel();
             logStreamSettings.CreateMode = true;
             logStreamSettings.Edit = true;
-            logSreamSettingsList.Add(logStreamSettings);
+            logSreamSettingsList.Insert(0, logStreamSettings);
         }
 
         private void ShowUpdateLogStreamSettings(GeneralLogStreamSettingsViewModel generalLogStreamSettings)

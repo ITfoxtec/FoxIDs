@@ -146,7 +146,7 @@ namespace FoxIDs.Client.Pages.Components
                     model.Client.DisableClientCredentialsGrant = true;
                 }
             }
-        }    
+        }
 
         private void AddOidcScope(MouseEventArgs e, List<OidcDownScopeViewModel> scopesViewModel)
         {

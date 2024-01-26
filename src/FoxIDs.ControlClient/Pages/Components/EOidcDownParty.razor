@@ -39,7 +39,7 @@
                 <hr />
             }
 
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Resource || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
                 <div>Resource Authority and OIDC Discovery</div>
@@ -105,7 +105,7 @@
         <div class="tab-content pt-3">
             @if (oidcDownParty.ShowClientTab)
             {
-                if (oidcDownParty.Form.Model == null)
+                if (oidcDownParty.Form.Model.Client == null)
                 {
                     oidcDownParty.Form.Model.Client = new OidcDownClientViewModel();
                 }
@@ -353,7 +353,7 @@
             }
             else if (oidcDownParty.ShowResourceTab)
             {
-                if (oidcDownParty.Form.Model == null)
+                if (oidcDownParty.Form.Model.Resource == null)
                 {
                     oidcDownParty.Form.Model.Resource = new OAuthDownResource();
                 }
@@ -362,6 +362,8 @@
                 @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client)
                 {
                     oidcDownParty.ShowClientTab = true;
+                    oidcDownParty.ShowResourceTab = false;
+                    oidcDownParty.Form.Model.Resource = null;
                     StateHasChanged();
                 }
                 else 

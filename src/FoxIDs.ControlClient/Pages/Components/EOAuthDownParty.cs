@@ -56,13 +56,24 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
             {
-                if (afterMap.Client == null)
+                if (afterMap.Client != null && afterMap.Resource != null)
                 {
-                    generalOAuthDownParty.EnableClientTab = false;
+                    generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.ClientAndResource;
                 }
                 else
                 {
-                    generalOAuthDownParty.EnableClientTab = true;
+                    if (afterMap.Client != null)
+                    {
+                        generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.Client;
+                    }
+                    else
+                    {
+                        generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.Resource;
+                    }
+                }
+
+                if (afterMap.Client != null)
+                {
                     afterMap.Client.ExistingSecrets = oauthDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
                     var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(afterMap.Name, StringComparison.Ordinal));
                     if (defaultResourceScopeIndex > -1)
@@ -103,15 +114,6 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 }
 
-                if (afterMap.Resource == null)
-                {
-                    generalOAuthDownParty.EnableResourceTab = false;
-                }
-                else
-                {
-                    generalOAuthDownParty.EnableResourceTab = true;
-                }
-
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -125,8 +127,7 @@ namespace FoxIDs.Client.Pages.Components
             {
                 if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.Resource)
                 {
-                    oauthDownParty.EnableClientTab = false;
-                    oauthDownParty.EnableResourceTab = true;
+                    oauthDownParty.DownPartyType = DownPartyOAuthTypes.Resource;
                     oauthDownParty.ShowClientTab = false;
                     oauthDownParty.ShowResourceTab = true;
 
@@ -134,8 +135,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.ClientCredentialsGrant)
                 {
-                    oauthDownParty.EnableClientTab = true;
-                    oauthDownParty.EnableResourceTab = false;
+                    oauthDownParty.DownPartyType = DownPartyOAuthTypes.Client;
                     oauthDownParty.ShowClientTab = true;
                     oauthDownParty.ShowResourceTab = false;
 
@@ -152,10 +152,6 @@ namespace FoxIDs.Client.Pages.Components
                 }
             }
         }
-
-        private void OnOAuthDownPartyClientTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Client = enableTab ? new OAuthDownClientViewModel() : null;
-
-        private void OnOAuthDownPartyResourceTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
 
         private void AddOAuthScope(MouseEventArgs e, List<OAuthDownScopeViewModel> scopesViewModel)
         {

@@ -134,6 +134,46 @@ h4 {
         padding: .5rem 0rem;
     }
 
+.nav-tabs {
+    border-bottom: 1px solid #f19031;
+}
+    .nav-tabs .nav-link {
+        border-top-color: #dee2e6;
+        border-left-color: #dee2e6;
+        border-right-color: #dee2e6;
+        color: #495057;
+        border-bottom-left-radius: unset;
+        border-bottom-right-radius: unset;
+    }
+
+        .nav-tabs .nav-link:hover {
+            color: #d87513;
+            border-bottom-color: #f19031;
+            text-decoration: underline;
+        }
+
+        .nav-tabs .nav-link:focus {
+            color: #d87513;
+            border-bottom-color: #f19031;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #495057;
+            border-top-color: #f19031;
+            border-left-color: #f19031;
+            border-right-color: #f19031;
+            border-bottom-color: #ffffff;
+            text-decoration: none !important;
+        }
+
+        .nav-tabs .nav-link.disabled {
+            color: #6c757d;
+            background-color: transparent;
+            border-top-color: #dee2e6;
+            border-left-color: #dee2e6;
+            border-right-color: #dee2e6;
+        }
+
 .dropdown-item.active, .dropdown-item:active {
     color: #fff;
     background-color: #ea7c0f;

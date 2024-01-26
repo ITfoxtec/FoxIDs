@@ -9,14 +9,6 @@
         <div>
             OpenID Connect
         </div>
-        <div class="header-input-group">
-            <div class="input-toggle">
-                <FInputToggle @bind-Value="oidcDownParty.EnableClientTab" OnValidChange="@(v => OnOidcDownPartyClientTabChange(oidcDownParty, v))" TextType="Client&nbsp;on,Client&nbsp;off" TextWidth="110px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-            </div>
-            <div class="input-toggle">
-                <FInputToggle @bind-Value="oidcDownParty.EnableResourceTab" OnValidChange="@(v => OnOidcDownPartyResourceTabChange(oidcDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-            </div>
-        </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
@@ -34,7 +26,7 @@
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            @if (oidcDownParty.EnableClientTab || (!oidcDownParty.EnableClientTab && !oidcDownParty.EnableResourceTab))
+            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
                 <div>Client Authority and OIDC Discovery<br /><i>Example for a up-party with the name 'login' as the target.</i></div>                 
@@ -42,12 +34,12 @@
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
             }
 
-            @if (oidcDownParty.EnableClientTab && oidcDownParty.EnableResourceTab)
+            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 <hr />
             }
 
-            @if (oidcDownParty.EnableResourceTab)
+            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Resource || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
                 <div>Resource Authority and OIDC Discovery</div>
@@ -63,24 +55,30 @@
                 <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
                 <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
             </FInputSelect>
+
+            <FInputSelect @bind-Value="oidcDownParty.DownPartyType" For="@(() => oidcDownParty.DownPartyType)">
+                <option value="@DownPartyOAuthTypes.Client">OpenID Connect Client</option>
+                <option value="@DownPartyOAuthTypes.ClientAndResource">OpenID Connect Client and OAuth 2.0 Resource</option>
+            </FInputSelect>
         }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                @if (oidcDownParty.EnableClientTab)
+                @if (oidcDownParty.ShowClientTab)
                 {
-                    @if (oidcDownParty.ShowClientTab)
-                    {
-                        <a class="nav-link active">OpenID Connect Client</a>
-                    }
-                    else
-                    {
-                        <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcDownParty, OAuthTabTypes.Client))">OpenID Connect Client</button>
-                    }
+                    <a class="nav-link active">OpenID Connect Client</a>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oidcDownParty, OAuthTabTypes.Client))">OpenID Connect Client</button>
                 }
             </li>
             <li class="nav-item">
-                @if (oidcDownParty.EnableResourceTab)
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client)
+                {
+                    <a class="nav-link disabled">OAuth 2.0 Resource</a>
+                }
+                else
                 {
                     @if (oidcDownParty.ShowResourceTab)
                     {
@@ -107,19 +105,12 @@
         <div class="tab-content pt-3">
             @if (oidcDownParty.ShowClientTab)
             {
-                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
-                @if (!oidcDownParty.EnableClientTab)
+                if (oidcDownParty.Form.Model == null)
                 {
-                    @if (oidcDownParty.EnableResourceTab)
-                    {
-                        oidcDownParty.ShowClientTab = false;
-                        StateHasChanged();
-                    }
-                    else
-                    {
-                        <i>Inactive</i>
-                    }
+                    oidcDownParty.Form.Model.Client = new OidcDownClientViewModel();
                 }
+
+                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Client)" />
                 @if (oidcDownParty.Form.Model.Client != null)
                 {
                     <SelectUpParty @ref="oidcDownParty.SelectAllowUpPartyName" EditDownPartyForm="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
@@ -362,22 +353,23 @@
             }
             else if (oidcDownParty.ShowResourceTab)
             {
-                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Resource)" />
-                @if (!oidcDownParty.EnableResourceTab)
+                if (oidcDownParty.Form.Model == null)
                 {
-                    @if (oidcDownParty.EnableClientTab)
-                    {
-                        oidcDownParty.ShowClientTab = true;
-                        StateHasChanged();
-                    }
-                    else
-                    {
-                        <i>Inactive</i>
-                    }
+                    oidcDownParty.Form.Model.Resource = new OAuthDownResource();
                 }
-                @if (oidcDownParty.Form.Model.Resource != null)
+
+                <ValidationMessage For="@(() => oidcDownParty.Form.Model.Resource)" />
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client)
                 {
-                    <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" />
+                    oidcDownParty.ShowClientTab = true;
+                    StateHasChanged();
+                }
+                else 
+                {
+                    @if (oidcDownParty.Form.Model.Resource != null)
+                    {
+                        <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Resource.Scopes" For="@(() => oidcDownParty.Form.Model.Resource.Scopes)" />
+                    }
                 }
             }
             else if (oidcDownParty.ShowClaimTransformTab)

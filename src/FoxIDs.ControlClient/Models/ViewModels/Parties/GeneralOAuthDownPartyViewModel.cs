@@ -24,6 +24,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public OAuthSubPartyTypes SubPartyType { get; set; }
 
+        // public DownPartyOAuthTypes DownPartyType { get; set; } = DownPartyOAuthTypes.Resource;
         public bool EnableClientTab { get; set; }
 
         public bool EnableResourceTab { get; set; } = true;

@@ -168,10 +168,11 @@ h4 {
 
         .nav-tabs .nav-link.disabled {
             color: #6c757d;
-            background-color: transparent;
+            background-color: #f8f8f8;
             border-top-color: #dee2e6;
             border-left-color: #dee2e6;
             border-right-color: #dee2e6;
+            border-bottom-color: #f19031;
         }
 
 .dropdown-item.active, .dropdown-item:active {

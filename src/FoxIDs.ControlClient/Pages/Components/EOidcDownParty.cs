@@ -58,11 +58,10 @@ namespace FoxIDs.Client.Pages.Components
             {
                 if (afterMap.Client == null)
                 {
-                    generalOidcDownParty.EnableClientTab = false;
+                    afterMap.Client = new OidcDownClientViewModel();
                 }
                 else
                 {
-                    generalOidcDownParty.EnableClientTab = true;
                     afterMap.Client.ExistingSecrets = oidcDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
                     var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(afterMap.Name, StringComparison.Ordinal));
                     if (defaultResourceScopeIndex > -1)
@@ -103,13 +102,9 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 }
 
-                if (afterMap.Resource == null)
+                if (afterMap.Resource != null)
                 {
-                    generalOidcDownParty.EnableResourceTab = false;
-                }
-                else
-                {
-                    generalOidcDownParty.EnableResourceTab = true;
+                    generalOidcDownParty.DownPartyType = DownPartyOAuthTypes.ClientAndResource;
                 }
 
                 if (afterMap.ClaimTransforms?.Count > 0)
@@ -123,8 +118,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oidcDownParty.CreateMode)
             {
-                model.Client = oidcDownParty.EnableClientTab ? new OidcDownClientViewModel() : null;
-                model.Resource = oidcDownParty.EnableResourceTab ? new OAuthDownResource() : null;
+                model.Client = new OidcDownClientViewModel();
+                model.Resource = oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource ? new OAuthDownResource() : null;
 
                 if (model.Client != null)
                 {
@@ -151,11 +146,7 @@ namespace FoxIDs.Client.Pages.Components
                     model.Client.DisableClientCredentialsGrant = true;
                 }
             }
-        }
-
-        private void OnOidcDownPartyClientTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Client = enableTab ? new OidcDownClientViewModel() : null;
-
-        private void OnOidcDownPartyResourceTabChange(GeneralOidcDownPartyViewModel oidcDownParty, bool enableTab) => oidcDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
+        }    
 
         private void AddOidcScope(MouseEventArgs e, List<OidcDownScopeViewModel> scopesViewModel)
         {

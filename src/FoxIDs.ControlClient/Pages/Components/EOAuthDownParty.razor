@@ -28,7 +28,10 @@
         {
             <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
+        @if (DownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
+        }
 
         <div class="mb-3 alert alert-info" role="alert">
             @if (oauthDownParty.EnableClientTab || (!oauthDownParty.EnableClientTab && !oauthDownParty.EnableResourceTab))

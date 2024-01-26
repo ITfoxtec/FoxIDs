@@ -22,7 +22,10 @@
         {
             <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
+        @if (samlUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
+        }
 
         @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
         {

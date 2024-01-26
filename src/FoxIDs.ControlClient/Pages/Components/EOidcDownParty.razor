@@ -28,7 +28,10 @@
         {
             <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="oidcDownParty.Form.Model.Note" For="@(() => oidcDownParty.Form.Model.Note)" />
+        @if (oidcDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oidcDownParty.Form.Model.Note" For="@(() => oidcDownParty.Form.Model.Note)" />
+        }
 
         <div class="mb-3 alert alert-info" role="alert">
             @if (oidcDownParty.EnableClientTab || (!oidcDownParty.EnableClientTab && !oidcDownParty.EnableResourceTab))

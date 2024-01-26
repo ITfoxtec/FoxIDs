@@ -27,7 +27,10 @@
         {
             <FFieldText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
+        @if (oidcUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oidcUpParty.Form.Model.Note" For="@(() => oidcUpParty.Form.Model.Note)" />
+        }
 
         @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
         {

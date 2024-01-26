@@ -23,7 +23,10 @@
         {
             <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="loginUpParty.Form.Model.Note" For="@(() => loginUpParty.Form.Model.Note)" />
+        @if (loginUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="loginUpParty.Form.Model.Note" For="@(() => loginUpParty.Form.Model.Note)" />
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">

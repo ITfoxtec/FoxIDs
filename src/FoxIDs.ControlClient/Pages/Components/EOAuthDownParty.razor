@@ -65,11 +65,7 @@
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource)
-                {
-                    <a class="nav-link disabled">OAuth 2.0 Client</a>
-                }
-                else
+                @if (oauthDownParty.DownPartyType != DownPartyOAuthTypes.Resource)
                 {
                     @if (oauthDownParty.ShowClientTab)
                     {
@@ -82,11 +78,7 @@
                 }
             </li>
             <li class="nav-item">
-                @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client)
-                {
-                    <a class="nav-link disabled">OAuth 2.0 Resource</a>
-                }
-                else
+                @if (oauthDownParty.DownPartyType != DownPartyOAuthTypes.Client)
                 {
                     @if (oauthDownParty.ShowResourceTab)
                     {

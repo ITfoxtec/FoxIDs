@@ -52,15 +52,12 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (ValidationException vex)
             {
-                var errorMessage = $"Failing route request path '{httpContext.Request.Path.Value}'.";
-                scopedLogger.Error(vex, errorMessage);
+                scopedLogger.Error(vex, $"Failing route request path '{httpContext.Request.Path.Value}'.");
                 throw;
             }
             catch (Exception ex)
             {
-                var errorMessage = $"Failing route request path '{httpContext.Request.Path.Value}'.";
-                scopedLogger.Error(ex, errorMessage);
-                throw new Exception(errorMessage, ex);
+                throw new Exception($"Failing route request path '{httpContext.Request.Path.Value}'.", ex);
             }
         }
 

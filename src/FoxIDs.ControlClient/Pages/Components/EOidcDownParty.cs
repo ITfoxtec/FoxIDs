@@ -17,8 +17,6 @@ using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
 using static ITfoxtec.Identity.IdentityConstants;
-using Microsoft.AspNetCore.Components;
-using System.Diagnostics;
 
 namespace FoxIDs.Client.Pages.Components
 {

@@ -17,6 +17,8 @@ using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
 using System.IO;
 using static ITfoxtec.Identity.IdentityConstants;
+using Microsoft.AspNetCore.Components;
+using System.Diagnostics;
 
 namespace FoxIDs.Client.Pages.Components
 {
@@ -127,10 +129,10 @@ namespace FoxIDs.Client.Pages.Components
 
                     model.Client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
 
-                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = IdentityConstants.DefaultOidcScopes.OfflineAccess });
+                    model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = DefaultOidcScopes.OfflineAccess });
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel
                     {
-                        Scope = IdentityConstants.DefaultOidcScopes.Profile,
+                        Scope = DefaultOidcScopes.Profile,
                         VoluntaryClaims = new List<OidcDownClaim>
                         {
                             new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true },
@@ -144,6 +146,29 @@ namespace FoxIDs.Client.Pages.Components
                     model.Client.ScopesViewModel.Add(new OidcDownScopeViewModel { Scope = DefaultOidcScopes.Phone, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } });
 
                     model.Client.DisableClientCredentialsGrant = true;
+                }
+            }
+        }
+
+        private void OnOidcDownPartyTypeChange(GeneralOidcDownPartyViewModel oidcDownParty, DownPartyOAuthTypes downPartyType)
+        {
+            if (downPartyType == DownPartyOAuthTypes.Client)
+            {
+                if (oidcDownParty.Form.Model.Resource != null)
+                {
+                    oidcDownParty.Form.Model.Resource = null;
+                }
+                if (oidcDownParty.ShowResourceTab)
+                {
+                    oidcDownParty.ShowClientTab = true;
+                    oidcDownParty.ShowResourceTab = false;
+                }
+            }
+            else if (downPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                if (oidcDownParty.Form.Model.Resource == null)
+                {
+                    oidcDownParty.Form.Model.Resource = new OAuthDownResource();
                 }
             }
         }

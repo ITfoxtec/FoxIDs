@@ -139,16 +139,80 @@ namespace FoxIDs.Client.Pages.Components
                     oauthDownParty.ShowClientTab = true;
                     oauthDownParty.ShowResourceTab = false;
 
-                    model.Client = new OAuthDownClientViewModel();
-
-                    model.Client.DefaultResourceScope = false;
-
-                    model.Client.RequirePkce = false;
-                    model.Client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
+                    model.Client = GetDefaultOAuthClientViewModel();
                 }
                 else
                 {
                     throw new NotSupportedException("OAuthSubPartyTypes not supported.");
+                }
+            }
+            else
+            {
+                if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource)
+                {
+                    oauthDownParty.ShowClientTab = false;
+                    oauthDownParty.ShowResourceTab = true;
+                }
+                else
+                {
+                    oauthDownParty.ShowClientTab = true;
+                    oauthDownParty.ShowResourceTab = false;
+                }
+            }
+        }
+
+        private OAuthDownClientViewModel GetDefaultOAuthClientViewModel()
+        {
+            var client = new OAuthDownClientViewModel();
+            client.DefaultResourceScope = false;
+            client.RequirePkce = false;
+            client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
+            return client;
+        }
+
+        private void OnOAuthDownPartyTypeChange(GeneralOAuthDownPartyViewModel oauthDownParty, DownPartyOAuthTypes downPartyType)
+        {
+            if (downPartyType == DownPartyOAuthTypes.Client)
+            {
+                if (oauthDownParty.Form.Model.Client == null)
+                {
+                    oauthDownParty.Form.Model.Client = GetDefaultOAuthClientViewModel();
+                }
+                if (oauthDownParty.Form.Model.Resource != null)
+                {
+                    oauthDownParty.Form.Model.Resource = null;
+                }
+                if (oauthDownParty.ShowResourceTab)
+                {
+                    oauthDownParty.ShowClientTab = true;
+                    oauthDownParty.ShowResourceTab = false;
+                }
+            }
+            else if (downPartyType == DownPartyOAuthTypes.Resource)
+            {
+                if (oauthDownParty.Form.Model.Client != null)
+                {
+                    oauthDownParty.Form.Model.Client = null;
+                }
+                if (oauthDownParty.Form.Model.Resource == null)
+                {
+                    oauthDownParty.Form.Model.Resource = new OAuthDownResource();
+                }
+                if (oauthDownParty.ShowClientTab)
+                {
+                    oauthDownParty.ShowClientTab = false;
+                    oauthDownParty.ShowResourceTab = true;
+                }
+            }
+            else if (downPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                if (oauthDownParty.Form.Model.Client == null)
+                {
+                    oauthDownParty.Form.Model.Client = GetDefaultOAuthClientViewModel();
+                }
+                if (oauthDownParty.Form.Model.Resource == null)
+                {
+                    oauthDownParty.Form.Model.Resource = new OAuthDownResource();
                 }
             }
         }

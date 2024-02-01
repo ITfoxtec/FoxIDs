@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Runtime.Versioning;
 
 namespace FoxIDs.Logic
 {
@@ -76,6 +77,17 @@ namespace FoxIDs.Logic
                 {
                     isValid = isValidRtResult;
                 }
+
+                if(party.Resource == null && party.Client.ResourceScopes?.Count() > 0)
+                {
+                    foreach (var rs in party.Client.ResourceScopes)
+                    {
+                        if (rs.Resource == party.Name)
+                        {
+                            rs.Scopes = null;
+                        }
+                    }
+                }
             }
             return isValid;
         }
@@ -93,6 +105,17 @@ namespace FoxIDs.Logic
                 else
                 {
                     isValid = isValidRtResult;
+                }
+
+                if (party.Resource == null && party.Client.ResourceScopes?.Count() > 0)
+                {
+                    foreach (var rs in party.Client.ResourceScopes)
+                    {
+                        if (rs.Resource == party.Name)
+                        {
+                            rs.Scopes = null;
+                        }
+                    }
                 }
             }
             return isValid;
@@ -199,7 +222,7 @@ namespace FoxIDs.Logic
         private string OrderResponseType(string responseType)
         {
             var orderedResponseType = responseType.ToSpaceList()
-                .OrderBy(rt => Array.IndexOf(new string[] { IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken }, rt));
+                .OrderBy(rt => Array.IndexOf([IdentityConstants.ResponseTypes.Code, IdentityConstants.ResponseTypes.Token, IdentityConstants.ResponseTypes.IdToken], rt));
 
             return orderedResponseType.ToSpaceList();
         }
@@ -217,7 +240,7 @@ namespace FoxIDs.Logic
                         throw new ValidationException($"Duplicated resource scope, resource '{duplicatedResourceScope.Key}'.");
                     }
 
-                    foreach (var resourceScope in oauthDownParty.Client.ResourceScopes.Where(rs => !rs.Resource.Equals(oauthDownParty.Name, System.StringComparison.Ordinal)))
+                    foreach (var resourceScope in oauthDownParty.Client.ResourceScopes.Where(rs => !rs.Resource.Equals(oauthDownParty.Name, StringComparison.Ordinal)))
                     {
                         var duplicatedScope = resourceScope.Scopes?.GroupBy(s => s).Where(g => g.Count() > 1).FirstOrDefault();
                         if (duplicatedScope != null)
@@ -232,7 +255,7 @@ namespace FoxIDs.Logic
                             {
                                 foreach (var scope in resourceScope.Scopes)
                                 {
-                                    if (!(resourceDownParty.Resource?.Scopes?.Where(s => s.Equals(scope, System.StringComparison.Ordinal)).Count() > 0))
+                                    if (!(resourceDownParty.Resource?.Scopes?.Where(s => s.Equals(scope, StringComparison.Ordinal)).Count() > 0))
                                     {
                                         throw new ValidationException($"Resource '{resourceScope.Resource}' scope '{scope}' not found.");
                                     }

@@ -139,7 +139,7 @@ namespace FoxIDs.Controllers
                 if(party is Api.OidcDownParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if((tempMParty as OidcDownParty)?.Client?.Secrets?.Count > 0)
+                    if((tempMParty as OidcDownParty)?.Client?.Secrets?.Count > 0 && (mParty as OidcDownParty)?.Client?.Secrets != null)
                     {
                         (mParty as OidcDownParty).Client.Secrets = (tempMParty as OidcDownParty).Client.Secrets;
                     }
@@ -147,7 +147,7 @@ namespace FoxIDs.Controllers
                 else if (party is Api.OAuthDownParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if ((tempMParty as OAuthDownParty)?.Client?.Secrets?.Count > 0)
+                    if ((tempMParty as OAuthDownParty)?.Client?.Secrets?.Count > 0 && (mParty as OAuthDownParty)?.Client?.Secrets != null)
                     {
                         (mParty as OAuthDownParty).Client.Secrets = (tempMParty as OAuthDownParty).Client.Secrets;
                     }
@@ -155,7 +155,7 @@ namespace FoxIDs.Controllers
                 else if (party is Api.OidcUpParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if ((tempMParty as OidcUpParty)?.Client?.ClientKeys?.Count > 0)
+                    if ((tempMParty as OidcUpParty)?.Client?.ClientKeys?.Count > 0 && (mParty as OidcUpParty)?.Client?.ClientKeys != null)
                     {
                         (mParty as OidcUpParty).Client.ClientKeys = (tempMParty as OidcUpParty).Client.ClientKeys;
                     }

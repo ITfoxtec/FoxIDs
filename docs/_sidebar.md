@@ -19,6 +19,7 @@
   - [Email provider](email.md)
   - [Supported standards](standard-support.md)
   - [FoxIDs inside](foxids-inside.md)
+  - [Control Client & API](control#.md)
   - [Plans](plan.md)
 - [Development](development.md)
   - [Samples](samples.md)

@@ -60,13 +60,14 @@ The track properties can be configured by clicking the top right setting icon.
 ![Configure track settings](images/configure-track-setting.png)
 
 ## FoxIDs Control API
-FoxIDs Control API is a REST API. The API expose a Swagger (OpenApi) interface document.
+FoxIDs Control API is a REST API and has a Swagger (OpenApi) interface description.
 
-FoxIDs Control API require that the client calling the API is granted the `foxids:master` scope to access master tenant data or the `foxids:tenant` scope access tenant data in a particular tenant. Normally only tenant data is accessed.
+FoxIDs Control API require that the client calling the API is granted the `foxids:master` scope to access master tenant data or the `foxids:tenant` scope to access tenant data in a particular tenant. Normally only tenant data is accessed.
 
- - The client can be an OAuth 2.0 client. Where the client is granted the administrator role `foxids:tenant.admin` acting as the client itself using client credentials grant.  
- Her is how the [sample seed tool](samples.md#configure-the-sample-seed-tool) client is granted access.
- - Or a OpenID Connect client with an authenticated master track user. Where the user is granted the administrator role `foxids:tenant.admin`. 
+ - The API can be accessed with a OAuth 2.0 client. Where the client is granted the administrator role `foxids:tenant.admin` acting as the client itself using client credentials grant.  
+ It is probably helpful to take a look at how the [sample seed tool](samples.md#configure-the-sample-seed-tool) client is granted access.
+ - Or the API can be accessed with a OpenID Connect client with an authenticated master track user. Where the user is granted the administrator role `foxids:tenant.admin`.  
+ *As an advanced option the mater user can also be granted access via a trust.*
 
 This shows the FoxIDs Control API configuration in a tenants master track with a scope that grants access to tenant data.
 
@@ -76,5 +77,9 @@ FoxIDs Control API is called with an access token as described in the [OAuth 2.0
 
 The Swagger (OpenApi) interface document is exposed on `.../api/swagger/v1/swagger.json`.  
 
-You can also find the FoxIDs.com Swagger (OpenApi) [interface document](https://control.foxids.com/api/swagger/v1/swagger.json) online.
+> FoxIDs.com Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
 
+The FoxIDs Control API URL contains the tenant name and track name on winch you want to operate `.../[tenant_name]/[track_name]/...`. 
+To call the API you replace the `[tenant_name]` element with your tenant name and the `[track_name]` element with the track name of the track you want to call.
+
+If you e.g. want read a OpenID Connect down-party on FoxIDs.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[track_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and track names.

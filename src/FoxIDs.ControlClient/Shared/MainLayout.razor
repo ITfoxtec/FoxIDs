@@ -27,14 +27,13 @@
                                         @selectTrackError
                                     </div>
                                 }
-                                @* <a class="nav-link dropdown-toggle" id="trackNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> *@
                                 <div class=" form-group active-group active">
                                     <label class="label-control">Track</label>
                                     <div class="card">
                                         <div class="nav-link dropdown-toggle card-body px-3 py-2 text-left" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
+                                            <span style="width: 100%">@TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small></span>
                                         </div>
-                                        <div class="dropdown-menu searchDropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
+                                        <div class="dropdown-menu search-dropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
                                                 <div class="form-group mb-1 text-right">
                                                     <button class="btn btn-link pr-0" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</button>
@@ -57,8 +56,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                @*    </a> *@
-
                             </li>
                         }
                     </ul>
@@ -148,8 +145,8 @@
                         <div class="modal-footer">
                             @if (!createTenantDone)
                             {
-                                <button type="submit" class="btn btn-primary">Create</button>
-                                <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+                                <button type="submit" class="btn btn-primary @(createTenantWorking ? "disabled" : "")">Create</button>
+                                <button type="button" class="btn btn-secondary @(createTenantWorking ? "disabled" : "")" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
                             }
                             else
                             {
@@ -174,8 +171,8 @@
                         <div class="modal-footer">
                             @if (!createTrackDone)
                             {
-                                <button type="submit" class="btn btn-primary">Create</button>
-                                <button type="button" class="btn btn-secondary" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
+                                <button type="submit" class="btn btn-primary @(createTrackWorking ? "disabled" : "")">Create</button>
+                                <button type="button" class="btn btn-secondary @(createTrackWorking ? "disabled" : "")" @onclick="@(() => createTrackModal.Hide())">Cancel</button>
                             }
                             else
                             {
@@ -220,7 +217,10 @@
                     <p>Authentication is in progress...</p>
                 </NotAuthorized>
             </AuthorizeView>
-            @Body
+            @if (RouteBindingLogic.IsMasterTenant || TrackSelectedLogic.IsTrackSelected)
+            {
+                @Body
+            }            
         </div>
     </div>
 

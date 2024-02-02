@@ -22,10 +22,12 @@ namespace FoxIDs.Client.Shared
     {
         private Modal createTenantModal;
         private PageEditForm<CreateTenantViewModel> createTenantForm;
+        private bool createTenantWorking;
         private bool createTenantDone;
         private List<string> createTenantReceipt = new List<string>();
         private Modal createTrackModal;
         private PageEditForm<CreateTrackViewModel> createTrackForm;
+        private bool createTrackWorking;
         private bool createTrackDone;
         private List<string> createTrackReceipt = new List<string>();
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
@@ -92,6 +94,7 @@ namespace FoxIDs.Client.Shared
 
         private void ShowCreateTenantModal()
         {
+            createTenantWorking = false;
             createTenantDone = false;
             createTenantReceipt = new List<string>();
             createTenantForm.Init(); 
@@ -102,6 +105,11 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
+                if (createTenantWorking)
+                {
+                    return;
+                }
+                createTenantWorking = true;
                 await TenantService.CreateTenantAsync(createTenantForm.Model.Map<CreateTenantRequest>(afterMap =>
                 {
                     afterMap.ControlClientBaseUri = RouteBindingLogic.GetBaseUri();
@@ -120,6 +128,7 @@ namespace FoxIDs.Client.Shared
             }
             catch (FoxIDsApiException ex)
             {
+                createTenantWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     createTenantForm.SetFieldError(nameof(createTenantForm.Model.Name), ex.Message);
@@ -133,6 +142,7 @@ namespace FoxIDs.Client.Shared
 
         private void ShowCreateTrackModal()
         {
+            createTrackWorking = false;
             createTrackDone = false;
             createTrackReceipt = new List<string>();
             createTrackForm.Init();
@@ -143,6 +153,11 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
+                if(createTrackWorking)
+                {
+                    return;
+                }
+                createTrackWorking = true;
                 var track = createTrackForm.Model.Map<Track>();
                 await TrackService.CreateTrackAsync(track);
                 createTrackDone = true;
@@ -159,6 +174,7 @@ namespace FoxIDs.Client.Shared
             }
             catch (FoxIDsApiException ex)
             {
+                createTrackWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     createTrackForm.SetFieldError(nameof(createTrackForm.Model.Name), ex.Message);

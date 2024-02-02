@@ -21,15 +21,15 @@ namespace FoxIDs.Client.Logic
 
         public event Func<Track, Task> OnTrackSelectedAsync;
 
-        public async Task ShowSelectTrackAsync()
+        public async Task SelectTrackAsync()
         {
             Track = null;
-            if (OnShowSelectTrackAsync != null)
+            if (OnSelectTrackAsync != null)
             {
-                await OnShowSelectTrackAsync();
+                await OnSelectTrackAsync();
             }
         }
 
-        public event Func<Task> OnShowSelectTrackAsync;
+        public event Func<Task> OnSelectTrackAsync;
     }
 }

@@ -40,9 +40,9 @@
                 <span class="oi oi-plus" aria-hidden="true"></span> Add allow up-party
             </button>
 
-            <div class="dropdown-menu searchDropdown" aria-labelledby="allowUpPartyNamesDropdown">
+            <div class="dropdown-menu searchDropdown px-3 pb-3" aria-labelledby="allowUpPartyNamesDropdown">
                 <PageEditForm @ref="upPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyNamesFilterValidSubmitAsync">
-                    <div class="form-group active-group pb-0">
+                    <div class="form-group active-group pb-2">
                         <FInputTextFilter @bind-Value="upPartyNamesFilterForm.Model.FilterName" For="@(() => upPartyNamesFilterForm.Model.FilterName)" IncludeActiveFormGroup="false" />
                     </div>
                 </PageEditForm>
@@ -50,7 +50,7 @@
                 {
                     @foreach (var upPartyFilter in upPartyFilters)
                     {
-                        <button type="button" class="dropdown-item btn btn-link" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
+                        <button type="button" class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
                             @upPartyFilter.Name, type: @upPartyFilter.Type
                         </button>
                     }

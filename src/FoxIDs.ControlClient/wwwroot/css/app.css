@@ -99,10 +99,11 @@ h4 {
 .navbar.navbar-main {
     border-bottom: 3px solid #fc7e01;
     background-color: #ffffff !important;
+   /* padding: 0.8rem 1rem*/
 }
 
 .navbar .navbar-brand {
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: #ef8310 !important;
 }
 
@@ -110,8 +111,29 @@ h4 {
     color: #bbbbbb !important;
 }
 
-.navbar .searchDropdown {
-    min-width: 400px;
+.navbar .dropdown-nav-item {
+    z-index: 100;
+    position: absolute;
+    min-width: 350px;
+    right: auto;
+    left: 50%;
+    top: 13px;
+    -webkit-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+}
+
+.navbar .searchDropdown {    
+    min-width: 350px;
+    right: auto;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0);
+    -o-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+}
+
+.navbar .dropdown-menu {
+    margin: 3px 0;
 }
 
 .navbar-light .navbar-nav .nav-link {
@@ -264,7 +286,7 @@ h4 {
     width: 2.2rem;
 }
 */
-    .form-control:focus {
+.form-control:focus {
     border-color: #df8935;
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
 }
@@ -296,6 +318,13 @@ h4 {
 .card-body.active, .card-body:active {
     color: inherit;
     background-color: #fff;
+    border-radius: 0.25rem;
+    border-color: #df8935;
+    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+}
+
+.card-body:focus {
+    border-radius: 0.25rem;
     border-color: #df8935;
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
 }

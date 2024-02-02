@@ -14,6 +14,7 @@ using System;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
+using System.Linq;
 
 namespace FoxIDs.Client.Shared
 {
@@ -28,7 +29,6 @@ namespace FoxIDs.Client.Shared
         private bool createTrackDone;
         private List<string> createTrackReceipt = new List<string>();
         private PageEditForm<FilterTrackViewModel> selectTrackFilterForm;
-        private Modal selectTrackModal;
         private bool selectTrackInitialized = false;
         private string selectTrackError;
         private IEnumerable<Track> selectTrackTasks;
@@ -67,7 +67,7 @@ namespace FoxIDs.Client.Shared
         {
             await RouteBindingLogic.InitRouteBindingAsync();
             await base.OnInitializedAsync();
-            TrackSelectedLogic.OnShowSelectTrackAsync += OnShowSelectTrackAsync;
+            TrackSelectedLogic.OnSelectTrackAsync += OnSelectTrackAsync;
         }
 
         protected override async Task OnParametersSetAsync()
@@ -75,7 +75,7 @@ namespace FoxIDs.Client.Shared
             var user = (await authenticationStateTask).User;
             if (user.Identity.IsAuthenticated && user.IsInRole(Constants.ControlApi.Role.TenantAdmin))
             {
-                await ShowSelectTrackModalAsync();
+                await LoadAndSelectTracAsync();
                 myProfileClaims = user.Claims;
             }
             else if(notAccessModal != null)
@@ -170,15 +170,15 @@ namespace FoxIDs.Client.Shared
             }
         }
 
-        private async Task OnShowSelectTrackAsync()
+        private async Task OnSelectTrackAsync()
         {
-            await ShowSelectTrackModalAsync(true);
+            await LoadAndSelectTracAsync(true);
             StateHasChanged();
         }
 
-        private async Task ShowSelectTrackModalAsync(bool forceSelect = false)
+        private async Task LoadAndSelectTracAsync(bool forceSelect = false)
         {
-            if (!forceSelect && (selectTrackModal == null || selectTrackInitialized || TrackSelectedLogic.IsTrackSelected))
+            if (!forceSelect && (selectTrackInitialized || TrackSelectedLogic.IsTrackSelected))
             {
                 return;
             }
@@ -198,8 +198,22 @@ namespace FoxIDs.Client.Shared
             else
             {
                 selectTrackError = null;
-                selectTrackModal.Show();
                 await LoadSelectTrackAsync();
+
+                if (await SelectTrackAsync("test") || await SelectTrackAsync("dev") || await SelectTrackAsync("-"))
+                {
+                    return;
+                }
+                else if (selectTrackTasks.Count() > 1)
+                {
+                    await SelectTrackAsync(selectTrackTasks.Where(t => t.Name != Constants.Routes.MasterTrackName).First());
+                    return;
+                }
+                else
+                {
+                    await SelectTrackAsync(selectTrackTasks.First());
+                    return;
+                }
             }
         }
 
@@ -209,6 +223,7 @@ namespace FoxIDs.Client.Shared
             {
                 selectTrackError = null;
                 selectTrackTasks = await TrackService.FilterTrackAsync(null);
+                
             }
             catch (TokenUnavailableException)
             {
@@ -239,10 +254,20 @@ namespace FoxIDs.Client.Shared
             }
         }
 
+        private async Task<bool> SelectTrackAsync(string trackName)
+        {
+            var track = selectTrackTasks.Where(t => t.Name == trackName).FirstOrDefault();
+            if (track != null)
+            {
+                await SelectTrackAsync(track);
+                return true;
+            }
+            return false;
+        }
+
         private async Task SelectTrackAsync(Track track)
         {
             await TrackSelectedLogic.TrackSelectedAsync(track);
-            selectTrackModal.Hide();
         }
     }
 }

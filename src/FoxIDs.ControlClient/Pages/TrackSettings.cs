@@ -99,7 +99,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 await TrackService.DeleteTrackAsync(TrackSelectedLogic.Track.Name);
-                await TrackSelectedLogic.SelectTrackAsync();
+                await TrackSelectedLogic.StartSelectTrackAsync();
             }
             catch (TokenUnavailableException)
             {

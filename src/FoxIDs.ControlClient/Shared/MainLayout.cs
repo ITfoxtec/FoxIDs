@@ -15,6 +15,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
@@ -216,6 +217,12 @@ namespace FoxIDs.Client.Shared
                 selectTrackError = null;
                 await LoadSelectTrackAsync();
 
+                var trackCookieName = await TrackSelectedLogic.ReadTrackCookieAsync();
+                if (trackCookieName.IsNullOrEmpty() && await SelectTrackAsync(trackCookieName))
+                {
+                    return;
+                }
+
                 if (await SelectTrackAsync("test") || await SelectTrackAsync("dev") || await SelectTrackAsync("-"))
                 {
                     return;
@@ -283,7 +290,7 @@ namespace FoxIDs.Client.Shared
 
         private async Task SelectTrackAsync(Track track)
         {
-            await TrackSelectedLogic.TrackSelectedAsync(track);
+            await TrackSelectedLogic.TrackSelectedAsync(track, RouteBindingLogic.IsMasterTenant);
         }
     }
 }

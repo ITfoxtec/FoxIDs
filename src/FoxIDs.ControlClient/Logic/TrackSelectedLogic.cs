@@ -10,18 +10,23 @@ namespace FoxIDs.Client.Logic
 
         public bool IsTrackSelected => Track != null;
 
-        public async Task TrackSelectedAsync(Track track)
+        public event Func<Track, Task> OnTrackSelectedAsync;
+        public event Func<Task> OnSelectTrackAsync;
+
+        public async Task TrackSelectedAsync(Track track, bool isMasterTenant)
         {
             Track = track;
-            if(OnTrackSelectedAsync != null)
+            if (!isMasterTenant)
+            {
+                await SaveTrackCookieAsync(track.Name);
+            }
+            if (OnTrackSelectedAsync != null)
             {
                 await OnTrackSelectedAsync(track);
             }
         }
 
-        public event Func<Track, Task> OnTrackSelectedAsync;
-
-        public async Task SelectTrackAsync()
+        public async Task StartSelectTrackAsync()
         {
             Track = null;
             if (OnSelectTrackAsync != null)
@@ -30,6 +35,14 @@ namespace FoxIDs.Client.Logic
             }
         }
 
-        public event Func<Task> OnSelectTrackAsync;
+        public async Task<string> ReadTrackCookieAsync()
+        {
+
+        }
+
+        private async Task SaveTrackCookieAsync(string name)
+        {
+
+        }
     }
 }

@@ -22,7 +22,7 @@ namespace FoxIDs.Client.Logic
             }
         }
 
-        public async Task StartSelectTrackAsync()
+        public async Task SelectTrackAsync()
         {
             Track = null;
             if (OnSelectTrackAsync != null)

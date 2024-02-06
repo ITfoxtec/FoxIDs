@@ -1,14 +1,12 @@
 ﻿using FoxIDs.Client.Services;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
-using ITfoxtec.Identity;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Logic
 {
     public class UserProfileLogic
     {
-        private string userSub;
         private UserControlProfile userControlProfile;
         private readonly UserService userService;
 
@@ -17,18 +15,13 @@ namespace FoxIDs.Client.Logic
             userService = UserService;
         }
 
-        public async Task<UserControlProfile> GetUserProfileAsync(string userSub)
+        public async Task<UserControlProfile> GetUserProfileAsync()
         {
-            if (!userSub.IsNullOrWhiteSpace())
-            {
-                this.userSub = userSub;
-            }
-
             if (userControlProfile == null)
             {
                 try
                 {
-                    userControlProfile = await userService.GetUserControlProfileAsync(this.userSub);
+                    userControlProfile = await userService.GetUserControlProfileAsync();
                 }
                 catch (FoxIDsApiException ex)
                 {
@@ -44,7 +37,12 @@ namespace FoxIDs.Client.Logic
 
         public async Task UpdateTrackAsync(string trackName)
         {
-            if(userControlProfile == null)
+            if (userControlProfile != null && userControlProfile.LastTrackName == trackName)
+            {
+                return;
+            }
+
+            if (userControlProfile == null)
             {
                 userControlProfile = new UserControlProfile();
             }
@@ -55,11 +53,7 @@ namespace FoxIDs.Client.Logic
 
         private async Task UpdateUserProfileAsync()
         {
-            var userControlProfileRequest = userControlProfile.Map<UserControlProfileRequest>(afterMap => 
-            {
-                afterMap.UserSub = userSub;
-            });
-            await userService.UpdateUserControlProfileAsync(userControlProfileRequest);
+            await userService.UpdateUserControlProfileAsync(userControlProfile);
         }
     }
 }

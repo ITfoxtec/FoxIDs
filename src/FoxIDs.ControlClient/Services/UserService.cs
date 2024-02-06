@@ -22,8 +22,8 @@ namespace FoxIDs.Client.Services
         public async Task<User> UpdateUserAsync(UserRequest user) => await PutResponseAsync<UserRequest, User>(apiUri, user);
         public async Task DeleteUserAsync(string email) => await DeleteAsync(apiUri, email, parmName: nameof(email));
 
-        public async Task<UserControlProfile> GetUserControlProfileAsync(string userSub) => await GetAsync<UserControlProfile>(userControlProfileApiUri, userSub, parmName: nameof(userSub));
-        public async Task<UserControlProfile> UpdateUserControlProfileAsync(UserControlProfileRequest userControlProfileRequest) => await PutResponseAsync<UserControlProfileRequest, UserControlProfile>(userControlProfileApiUri, userControlProfileRequest);
-        public async Task DeleteUserControlProfileAsync(string email) => await DeleteAsync(userControlProfileApiUri, email, parmName: nameof(email));
+        public async Task<UserControlProfile> GetUserControlProfileAsync() => await GetAsync<UserControlProfile>(userControlProfileApiUri);
+        public async Task<UserControlProfile> UpdateUserControlProfileAsync(UserControlProfile userControlProfile) => await PutResponseAsync<UserControlProfile, UserControlProfile>(userControlProfileApiUri, userControlProfile);
+        public async Task DeleteUserControlProfileAsync() => await DeleteAsync(userControlProfileApiUri);
     }
 }

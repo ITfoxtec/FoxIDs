@@ -28,11 +28,10 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get user control profile.
         /// </summary>
-        /// <param name="userSub">User sub.</param>
         /// <returns>User control profile.</returns>
         [ProducesResponseType(typeof(Api.UserControlProfile), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UserControlProfile>> GetUserControlProfile(string userSub)
+        public async Task<ActionResult<Api.UserControlProfile>> GetUserControlProfile()
         {
             try
             {
@@ -41,9 +40,7 @@ namespace FoxIDs.Controllers
                     throw new Exception("User control profile only supported in master track.");
                 }
 
-                if (!ModelState.TryValidateRequiredParameter(userSub, nameof(userSub))) return BadRequest(ModelState);
-
-                var userHashId = await userSub.ToLower().Sha256HashBase64urlEncodedAsync();
+                var userHashId = await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync();
 
                 var mUserControlProfile = await tenantRepository.GetAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
@@ -52,8 +49,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.UserControlProfile).Name}' by email '{userSub}'.");
-                    return NotFound(typeof(Api.UserControlProfile).Name, userSub);
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
+                    return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
                 }
                 throw;
             }
@@ -62,11 +59,11 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Update user control profile.
         /// </summary>
-        /// <param name="userControlProfileRequest">User control profile.</param>
+        /// <param name="userControlProfile">User control profile.</param>
         /// <returns>User control profile.</returns>
         [ProducesResponseType(typeof(Api.UserControlProfile), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.UserControlProfile>> PutUserControlProfile([FromBody] Api.UserControlProfileRequest userControlProfileRequest)
+        public async Task<ActionResult<Api.UserControlProfile>> PutUserControlProfile([FromBody] Api.UserControlProfile userControlProfile)
         {
             try
             {
@@ -75,10 +72,8 @@ namespace FoxIDs.Controllers
                     throw new Exception("User control profile only supported in master track.");
                 }
 
-                if (!await ModelState.TryValidateObjectAsync(userControlProfileRequest)) return BadRequest(ModelState);
-                userControlProfileRequest.UserSub = userControlProfileRequest.UserSub?.ToLower();
-
-                var mUserControlProfile = mapper.Map<UserControlProfile>(userControlProfileRequest);
+                var mUserControlProfile = mapper.Map<UserControlProfile>(userControlProfile);
+                mUserControlProfile.Id = await UserControlProfile.IdFormatAsync(RouteBinding, await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync());
                 await tenantRepository.SaveAsync(mUserControlProfile);
 
                 return Ok(mapper.Map<Api.UserControlProfile>(mUserControlProfile));
@@ -87,8 +82,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserControlProfile).Name}' by userSub '{userControlProfileRequest.UserSub}'.");
-                    return NotFound(typeof(Api.UserControlProfile).Name, userControlProfileRequest.UserSub, userControlProfileRequest.UserSub);
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
+                    return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
                 }
                 throw;
             }
@@ -97,10 +92,9 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete user control profile.
         /// </summary>
-        /// <param name="email">User control profile email.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> DeleteUserControlProfile(string email)
+        public async Task<IActionResult> DeleteUserControlProfile()
         {
             try
             {
@@ -109,18 +103,17 @@ namespace FoxIDs.Controllers
                     throw new Exception("User control profile only supported in master track.");
                 }
 
-                if (!ModelState.TryValidateRequiredParameter(email, nameof(email))) return BadRequest(ModelState);
-                email = email?.ToLower();
+                var userHashId = await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync();
 
-                await tenantRepository.DeleteAsync<UserControlProfile>(await Models.UserControlProfile.IdFormatAsync(RouteBinding, email));
+                _ = await tenantRepository.DeleteAsync<UserControlProfile>(await UserControlProfile.IdFormatAsync(RouteBinding, userHashId));
                 return NoContent();
             }
             catch (CosmosDataException ex)
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.UserControlProfile).Name}' by email '{email}'.");
-                    return NotFound(typeof(Api.UserControlProfile).Name, email);
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.UserControlProfile).Name}' by user sub '{User?.Identity?.Name}'.");
+                    return NotFound(typeof(Api.UserControlProfile).Name, User?.Identity?.Name);
                 }
                 throw;
             }

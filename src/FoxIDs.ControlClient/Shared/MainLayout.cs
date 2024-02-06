@@ -78,7 +78,7 @@ namespace FoxIDs.Client.Shared
             var user = (await authenticationStateTask).User;
             if (user.Identity.IsAuthenticated && user.IsInRole(Constants.ControlApi.Role.TenantAdmin))
             {
-                await LoadAndSelectTracAsync();
+                await LoadAndSelectTracAsync(userSub: user.Identity.Name);
                 myProfileClaims = user.Claims;
             }
             else if(notAccessModal != null)
@@ -171,7 +171,7 @@ namespace FoxIDs.Client.Shared
                     selectTrackFilterForm.Model.FilterName = null;
                 }
                 await LoadSelectTrackAsync();
-                await TrackSelectedLogic.TrackSelectedAsync(track);
+                await TrackSelectedLogic.TrackSelectedAsync(track, false);
             }
             catch (FoxIDsApiException ex)
             {
@@ -189,11 +189,11 @@ namespace FoxIDs.Client.Shared
 
         private async Task OnSelectTrackAsync()
         {
-            await LoadAndSelectTracAsync(true);
+            await LoadAndSelectTracAsync(forceSelect: true);
             StateHasChanged();
         }
 
-        private async Task LoadAndSelectTracAsync(bool forceSelect = false)
+        private async Task LoadAndSelectTracAsync(string userSub = null, bool forceSelect = false)
         {
             if (!forceSelect && (selectTrackInitialized || TrackSelectedLogic.IsTrackSelected))
             {
@@ -217,8 +217,8 @@ namespace FoxIDs.Client.Shared
                 selectTrackError = null;
                 await LoadSelectTrackAsync();
 
-                var trackCookieName = await TrackSelectedLogic.ReadTrackCookieAsync();
-                if (trackCookieName.IsNullOrEmpty() && await SelectTrackAsync(trackCookieName))
+                var trackNameFromUserProfile = await TrackSelectedLogic.ReadTrackFromUserProfileAsync(userSub);
+                if (trackNameFromUserProfile.IsNullOrEmpty() && await SelectTrackAsync(trackNameFromUserProfile))
                 {
                     return;
                 }

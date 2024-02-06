@@ -271,6 +271,11 @@ namespace FoxIDs
                 public const int TwoFactorAppCodeLength = 50;
             }
 
+            public static class UserControlProfile
+            {
+                public const int UserHashIdLength = 50;
+            }
+
             public static class DynamicElements
             {
                 public const int ElementsMin = 0;

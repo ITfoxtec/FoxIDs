@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Models.Api;
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
@@ -6,6 +7,9 @@ namespace FoxIDs.Client.Logic
 {
     public class TrackSelectedLogic
     {
+        [Inject]
+        public UserProfileLogic UserProfileLogic { get; set; }
+
         public Track Track { get; private set; }
 
         public bool IsTrackSelected => Track != null;
@@ -18,7 +22,7 @@ namespace FoxIDs.Client.Logic
             Track = track;
             if (!isMasterTenant)
             {
-                await SaveTrackCookieAsync(track.Name);
+                await UserProfileLogic.UpdateTrackAsync(track.Name);
             }
             if (OnTrackSelectedAsync != null)
             {
@@ -35,14 +39,10 @@ namespace FoxIDs.Client.Logic
             }
         }
 
-        public async Task<string> ReadTrackCookieAsync()
+        public async Task<string> ReadTrackFromUserProfileAsync(string userSub)
         {
-
-        }
-
-        private async Task SaveTrackCookieAsync(string name)
-        {
-
+            var userProfile = await UserProfileLogic.GetUserProfileAsync(userSub);
+            return userProfile?.LastTrackName;
         }
     }
 }

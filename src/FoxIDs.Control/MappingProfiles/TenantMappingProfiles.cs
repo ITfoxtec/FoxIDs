@@ -55,6 +55,12 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormatAsync(RouteBinding, s.Email.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<UserControlProfile, Api.UserControlProfile>();
+
+            CreateMap<UserControlProfile, Api.UserControlProfileRequest>()
+                .ReverseMap()
+                .ForMember(d => d.Id, opt => opt.MapFrom(s => UserControlProfile.IdFormatAsync(RouteBinding, s.UserSub.ToLower().Sha256HashBase64urlEncoded()).GetAwaiter().GetResult()));
+
             CreateMap<ClaimAndValues, Api.ClaimAndValues>()
                 .ReverseMap();
 

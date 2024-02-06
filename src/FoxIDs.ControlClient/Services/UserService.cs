@@ -10,6 +10,7 @@ namespace FoxIDs.Client.Services
     {
         private const string apiUri = "api/{tenant}/{track}/!user";
         private const string filterApiUri = "api/{tenant}/{track}/!filteruser";
+        private const string userControlProfileApiUri = "api/{tenant}/{track}/!usercontrolprofile";
 
         public UserService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
@@ -21,5 +22,8 @@ namespace FoxIDs.Client.Services
         public async Task<User> UpdateUserAsync(UserRequest user) => await PutResponseAsync<UserRequest, User>(apiUri, user);
         public async Task DeleteUserAsync(string email) => await DeleteAsync(apiUri, email, parmName: nameof(email));
 
+        public async Task<UserControlProfile> GetUserControlProfileAsync(string email) => await GetAsync<UserControlProfile>(userControlProfileApiUri, email, parmName: nameof(email));
+        public async Task<UserControlProfile> UpdateUserControlProfileAsync(UserControlProfileRequest userControlProfileRequest) => await PutResponseAsync<UserControlProfileRequest, UserControlProfile>(userControlProfileApiUri, userControlProfileRequest);
+        public async Task DeleteUserControlProfileAsync(string email) => await DeleteAsync(userControlProfileApiUri, email, parmName: nameof(email));
     }
 }

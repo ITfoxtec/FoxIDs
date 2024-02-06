@@ -174,7 +174,7 @@ namespace FoxIDs.Client.Shared
                 }
                 await LoadSelectTrackAsync();
                 await TrackSelectedLogic.TrackSelectedAsync(track);
-                //await UserProfileLogic.UpdateTrackAsync(track.Name);
+                await UserProfileLogic.UpdateTrackAsync(track.Name);
             }
             catch (FoxIDsApiException ex)
             {
@@ -220,18 +220,11 @@ namespace FoxIDs.Client.Shared
                 selectTrackError = null;
                 await LoadSelectTrackAsync();
 
-                //try
-                //{
-                //    var userProfile = await UserProfileLogic.GetUserProfileAsync();
-                //    if (!string.IsNullOrWhiteSpace(userProfile?.LastTrackName) && await SelectTrackAsync(userProfile.LastTrackName))
-                //    {
-                //        return;
-                //    }
-                //}
-                //catch (TokenUnavailableException)
-                //{
-                //    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                //}
+                var userProfile = await UserProfileLogic.GetUserProfileAsync();
+                if (!string.IsNullOrWhiteSpace(userProfile?.LastTrackName) && await SelectTrackAsync(userProfile.LastTrackName))
+                {
+                    return;
+                }
 
                 if (await SelectTrackAsync("test") || await SelectTrackAsync("dev") || await SelectTrackAsync("-"))
                 {
@@ -302,15 +295,9 @@ namespace FoxIDs.Client.Shared
         {
             if (!RouteBindingLogic.IsMasterTenant)
             {
-                //try
-                //{
-                //    await UserProfileLogic.UpdateTrackAsync(track.Name);
-                //}
-                //catch (TokenUnavailableException)
-                //{
-                //    await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
-                //}
+                await UserProfileLogic.UpdateTrackAsync(track.Name);
             }
+            await TrackSelectedLogic.TrackSelectedAsync(track);
         }
     }
 }

@@ -15,7 +15,6 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
-using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
@@ -56,6 +55,9 @@ namespace FoxIDs.Client.Shared
 
         [Inject]
         public NotificationLogic NotificationLogic { get; set; }
+
+        [Inject]
+        public UserProfileLogic UserProfileLogic { get; set; }
 
         [Inject]
         public TrackSelectedLogic TrackSelectedLogic { get; set; }
@@ -171,7 +173,8 @@ namespace FoxIDs.Client.Shared
                     selectTrackFilterForm.Model.FilterName = null;
                 }
                 await LoadSelectTrackAsync();
-                await TrackSelectedLogic.TrackSelectedAsync(track, false);
+                await TrackSelectedLogic.TrackSelectedAsync(track);
+                await UserProfileLogic.UpdateTrackAsync(track.Name);
             }
             catch (FoxIDsApiException ex)
             {
@@ -217,8 +220,8 @@ namespace FoxIDs.Client.Shared
                 selectTrackError = null;
                 await LoadSelectTrackAsync();
 
-                var trackNameFromUserProfile = await TrackSelectedLogic.ReadTrackFromUserProfileAsync(userSub);
-                if (trackNameFromUserProfile.IsNullOrEmpty() && await SelectTrackAsync(trackNameFromUserProfile))
+                var userProfile = await UserProfileLogic.GetUserProfileAsync(userSub);
+                if (!string.IsNullOrWhiteSpace(userProfile?.LastTrackName) && await SelectTrackAsync(userProfile.LastTrackName))
                 {
                     return;
                 }
@@ -290,7 +293,10 @@ namespace FoxIDs.Client.Shared
 
         private async Task SelectTrackAsync(Track track)
         {
-            await TrackSelectedLogic.TrackSelectedAsync(track, RouteBindingLogic.IsMasterTenant);
+            if (!RouteBindingLogic.IsMasterTenant)
+            {
+                await UserProfileLogic.UpdateTrackAsync(track.Name);
+            }
         }
     }
 }

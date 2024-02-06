@@ -1,5 +1,4 @@
 ﻿using FoxIDs.Models.Api;
-using Microsoft.AspNetCore.Components;
 using System;
 using System.Threading.Tasks;
 
@@ -7,9 +6,6 @@ namespace FoxIDs.Client.Logic
 {
     public class TrackSelectedLogic
     {
-        [Inject]
-        public UserProfileLogic UserProfileLogic { get; set; }
-
         public Track Track { get; private set; }
 
         public bool IsTrackSelected => Track != null;
@@ -17,13 +13,9 @@ namespace FoxIDs.Client.Logic
         public event Func<Track, Task> OnTrackSelectedAsync;
         public event Func<Task> OnSelectTrackAsync;
 
-        public async Task TrackSelectedAsync(Track track, bool isMasterTenant)
+        public async Task TrackSelectedAsync(Track track)
         {
             Track = track;
-            if (!isMasterTenant)
-            {
-                await UserProfileLogic.UpdateTrackAsync(track.Name);
-            }
             if (OnTrackSelectedAsync != null)
             {
                 await OnTrackSelectedAsync(track);
@@ -37,12 +29,6 @@ namespace FoxIDs.Client.Logic
             {
                 await OnSelectTrackAsync();
             }
-        }
-
-        public async Task<string> ReadTrackFromUserProfileAsync(string userSub)
-        {
-            var userProfile = await UserProfileLogic.GetUserProfileAsync(userSub);
-            return userProfile?.LastTrackName;
         }
     }
 }

@@ -2,31 +2,33 @@
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
 using ITfoxtec.Identity;
-using Microsoft.AspNetCore.Components;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Logic
 {
     public class UserProfileLogic
     {
-        [Inject]
-        public UserService UserService { get; set; }
-
-        public string userSub { get; set; }
+        private string userSub;
         private UserControlProfile userControlProfile;
+        private readonly UserService userService;
 
-        public async Task<UserControlProfile> GetUserProfileAsync(string changeUserSub)
+        public UserProfileLogic(UserService UserService)
         {
-            if (!changeUserSub.IsNullOrWhiteSpace())
+            userService = UserService;
+        }
+
+        public async Task<UserControlProfile> GetUserProfileAsync(string userSub)
+        {
+            if (!userSub.IsNullOrWhiteSpace())
             {
-                userSub = changeUserSub;
+                this.userSub = userSub;
             }
 
             if (userControlProfile == null)
             {
                 try
                 {
-                    userControlProfile = await UserService.GetUserControlProfileAsync(userSub);
+                    userControlProfile = await userService.GetUserControlProfileAsync(this.userSub);
                 }
                 catch (FoxIDsApiException ex)
                 {
@@ -55,9 +57,9 @@ namespace FoxIDs.Client.Logic
         {
             var userControlProfileRequest = userControlProfile.Map<UserControlProfileRequest>(afterMap => 
             {
-                userSub = userSub;
+                afterMap.UserSub = userSub;
             });
-            await UserService.UpdateUserControlProfileAsync(userControlProfileRequest);
+            await userService.UpdateUserControlProfileAsync(userControlProfileRequest);
         }
     }
 }

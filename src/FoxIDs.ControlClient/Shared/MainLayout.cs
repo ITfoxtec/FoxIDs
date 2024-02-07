@@ -171,7 +171,7 @@ namespace FoxIDs.Client.Shared
                     selectTrackFilterForm.Model.FilterName = null;
                 }
                 await LoadSelectTrackAsync();
-                await TrackSelectedLogic.TrackSelectedAsync(track);
+                //await TrackSelectedLogic.TrackSelectedAsync(track);
             }
             catch (FoxIDsApiException ex)
             {
@@ -217,11 +217,11 @@ namespace FoxIDs.Client.Shared
                 selectTrackError = null;
                 await LoadSelectTrackAsync();
 
-                var trackCookieName = await TrackSelectedLogic.ReadTrackCookieAsync();
-                if (trackCookieName.IsNullOrEmpty() && await SelectTrackAsync(trackCookieName))
-                {
-                    return;
-                }
+                //var trackCookieName = await TrackSelectedLogic.ReadTrackCookieAsync();
+                //if (trackCookieName.IsNullOrEmpty() && await SelectTrackAsync(trackCookieName))
+                //{
+                //    return;
+                //}
 
                 if (await SelectTrackAsync("test") || await SelectTrackAsync("dev") || await SelectTrackAsync("-"))
                 {

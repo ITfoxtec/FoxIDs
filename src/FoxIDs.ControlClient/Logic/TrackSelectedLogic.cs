@@ -16,10 +16,10 @@ namespace FoxIDs.Client.Logic
         public async Task TrackSelectedAsync(Track track, bool isMasterTenant)
         {
             Track = track;
-            if (!isMasterTenant)
-            {
-                await SaveTrackCookieAsync(track.Name);
-            }
+            //if (!isMasterTenant)
+            //{
+            //    await SaveTrackCookieAsync(track.Name);
+            //}
             if (OnTrackSelectedAsync != null)
             {
                 await OnTrackSelectedAsync(track);
@@ -35,14 +35,14 @@ namespace FoxIDs.Client.Logic
             }
         }
 
-        public async Task<string> ReadTrackCookieAsync()
-        {
+        //public async Task<string> ReadTrackCookieAsync()
+        //{
 
-        }
+        //}
 
-        private async Task SaveTrackCookieAsync(string name)
-        {
+        //private async Task SaveTrackCookieAsync(string name)
+        //{
 
-        }
+        //}
     }
 }

@@ -213,8 +213,8 @@
 
         <div class="container-lg main-container">
             <AuthorizeView>
-                <NotAuthorized>
-                    <p>Authentication is in progress...</p>
+                <NotAuthorized >
+                    <ActivateLogin />
                 </NotAuthorized>
             </AuthorizeView>
             @if (RouteBindingLogic.IsMasterTenant || TrackSelectedLogic.IsTrackSelected)

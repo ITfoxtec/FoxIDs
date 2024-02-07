@@ -14,6 +14,9 @@ namespace FoxIDs.Models.Sequences
         [JsonProperty(PropertyName = "lr")]
         public bool PostLogoutRedirect { get; set; }
 
+        [JsonProperty(PropertyName = "srl")]
+        public bool DoSessionUserRequireLogin { get; set; }
+
         [JsonProperty(PropertyName = "e")]
         public string Email { get; set; }
 
@@ -43,6 +46,5 @@ namespace FoxIDs.Models.Sequences
 
         [JsonProperty(PropertyName = "frc")]
         public string TwoFactorAppRecoveryCode { get; set; }
-
     }
 }

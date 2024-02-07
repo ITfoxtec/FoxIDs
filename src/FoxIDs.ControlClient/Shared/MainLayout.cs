@@ -15,6 +15,7 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using FoxIDs.Client.Models.Config;
 using System.Linq;
+using ITfoxtec.Identity;
 
 namespace FoxIDs.Client.Shared
 {
@@ -35,6 +36,8 @@ namespace FoxIDs.Client.Shared
         private string selectTrackError;
         private IEnumerable<Track> selectTrackTasks;
         private Modal myProfileModal;
+        private bool myProfileMasterMasterLogin;
+        private bool showMyProfileClaims;
         private IEnumerable<Claim> myProfileClaims;
         private Modal notAccessModal;
 
@@ -68,6 +71,9 @@ namespace FoxIDs.Client.Shared
         [Inject]
         public TrackService TrackService { get; set; }
 
+        [Inject]
+        public UserService UserService { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
             await RouteBindingLogic.InitRouteBindingAsync();
@@ -82,6 +88,12 @@ namespace FoxIDs.Client.Shared
             {
                 await LoadAndSelectTracAsync();
                 myProfileClaims = user.Claims;
+                if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.UpPartyType && c.Value == Constants.DefaultLogin.Name).Any() &&
+                    user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.UpParty && c.Value == Constants.DefaultLogin.Name).Any() &&
+                    user.Claims.Where(c => c.Type == JwtClaimTypes.Email).Any())
+                {
+                    myProfileMasterMasterLogin = true;
+                }
             }
             else if(notAccessModal != null)
             {
@@ -298,6 +310,18 @@ namespace FoxIDs.Client.Shared
                 await UserProfileLogic.UpdateTrackAsync(track.Name);
             }
             await TrackSelectedLogic.TrackSelectedAsync(track);
+        }
+
+        public async Task ChangeMyPasswordAsync()
+        {
+            var email = myProfileClaims.Where(c => c.Type == JwtClaimTypes.Email).First().Value;
+            var user = await UserService.GetUserAsync(email);
+
+            user.ChangePassword = true;
+
+            await UserService.UpdateUserAsync(user.Map<UserRequest>());
+
+            await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
         }
     }
 }

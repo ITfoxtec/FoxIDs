@@ -568,7 +568,7 @@ namespace FoxIDs
             public static class Role
             {
                 public readonly static string Tenant = $"foxids{AccessElement.Tenant}";
-                public readonly static string TenantAdmin = $"{Tenant}{AccessElement.Admin}";
+                public readonly static string TenantAdmin = $"{Tenant}{AccessElement.AdminRole}";
             }
 
             public static class AccessElement
@@ -576,8 +576,8 @@ namespace FoxIDs
                 public const string Master = ":master";
                 public const string Tenant = ":tenant";
                 public const string Track = ":track";
-                public const string Admin = ".admin";
-                public const string Read = ".read";
+                public const string AdminRole = ".admin";
+                public const string ReadRole = ".read";
             }
 
             public static class Segment

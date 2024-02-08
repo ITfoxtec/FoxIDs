@@ -84,7 +84,7 @@ namespace FoxIDs.Client.Shared
         protected override async Task OnParametersSetAsync()
         {
             var user = (await authenticationStateTask).User;
-            if (user.Identity.IsAuthenticated && user.IsInRole(Constants.ControlApi.Role.TenantAdmin))
+            if (user.Identity.IsAuthenticated)
             {
                 await LoadAndSelectTracAsync();
                 myProfileClaims = user.Claims;

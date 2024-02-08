@@ -44,7 +44,7 @@ namespace FoxIDs.Infrastructure.Security
             acceptedRoles.Add(role);
             if (isHttpGet)
             {
-                acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.Read}");
+                acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.ReadRole}");
             }
         }
     }

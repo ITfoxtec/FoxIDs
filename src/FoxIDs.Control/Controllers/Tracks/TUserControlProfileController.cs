@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using System.Net;
 using ITfoxtec.Identity;
 using System;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TUserControlProfileController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Base)]
+    public class TUserControlProfileController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

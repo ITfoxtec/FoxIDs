@@ -12,10 +12,12 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackResourceController : TenantApiController
+    [TenantScopeAuthorize]
+    public class TTrackResourceController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

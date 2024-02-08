@@ -9,10 +9,14 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class MRiskPasswordController : MasterApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize]
+    public class MRiskPasswordController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

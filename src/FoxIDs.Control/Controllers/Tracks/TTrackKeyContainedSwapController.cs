@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using System.Net;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackKeyContainedSwapController : TenantApiController
+    [TenantScopeAuthorize]
+    public class TTrackKeyContainedSwapController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

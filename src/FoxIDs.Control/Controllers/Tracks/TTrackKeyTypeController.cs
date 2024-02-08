@@ -12,10 +12,12 @@ using ITfoxtec.Identity;
 using FoxIDs.Models.Config;
 using System.Collections.Generic;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackKeyTypeController : TenantApiController
+    [TenantScopeAuthorize]
+    public class TTrackKeyTypeController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly FoxIDsControlSettings settings;

@@ -8,14 +8,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System;
 using FoxIDs.Logic;
-using System.ComponentModel.DataAnnotations;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
     /// <summary>
     /// Abstract party API.
     /// </summary>
-    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : TenantApiController where AParty : Api.INameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

@@ -8,7 +8,7 @@ namespace FoxIDs
     /// <summary>
     /// Extension methods for arrays and dictionary's.
     /// </summary>
-    public static class ListExtensions
+    public static class List
     {
         /// <summary>
         /// Converts a string list to a dot separated list.

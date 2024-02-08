@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogUsageController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    public class TTrackLogUsageController : ApiController
     {
         private readonly UsageLogLogic usageLogLogic;
 

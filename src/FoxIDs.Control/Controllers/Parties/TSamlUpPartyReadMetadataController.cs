@@ -8,10 +8,12 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using FoxIDs.Logic;
 using FoxIDs.Models;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TSamlUpPartyReadMetadataController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    public class TSamlUpPartyReadMetadataController : ApiController
     {
         private readonly IMapper mapper;
         private readonly SamlMetadataReadLogic samlMetadataReadLogic;

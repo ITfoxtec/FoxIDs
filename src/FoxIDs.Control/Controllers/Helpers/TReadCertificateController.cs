@@ -9,10 +9,12 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.ComponentModel.DataAnnotations;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TReadCertificateController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Base, Constants.ControlApi.Segment.Party)]
+    public class TReadCertificateController : ApiController
     {
         private readonly IMapper mapper;
 

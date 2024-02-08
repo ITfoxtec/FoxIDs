@@ -83,3 +83,72 @@ The FoxIDs Control API URL contains the tenant name and track name on winch you 
 To call the API you replace the `[tenant_name]` element with your tenant name and the `[track_name]` element with the track name of the track you want to call.
 
 If you e.g. want read a OpenID Connect down-party on FoxIDs.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[track_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and track names.
+
+### API access rights
+Access to FoxIDs Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to all master tenant data and `foxids:tenant` which grant access to all tenant data. 
+A scopes access is limited by adding a dot and a limitation to the scope. The dot and limitations relates to the roles one to one. To have access the caller is required to possess one or more scope(s) and one or more role(s).
+
+Roles are defined as tenant roles `foxids:tenant.*` for both the master tenant scopes `foxids:master.*` and all other tenants scopes `foxids:tenant.*`. 
+
+The administrator role `foxids:tenant.admin` grants access to all data in a tenant.
+
+// Access to everything in the tenant
+foxids:tenant            - then you can read, create, update and delete
+foxids:tenant.read
+
+// Access to basic tenant elements 
+//    - My profile used in the Control Client - read, update and delete
+//    - Read the ReadCertificate API to read JWT with certificate information from a X509 Certificate.
+foxids:tenant:basic
+foxids:tenant:basic.read
+
+// All tracks in a tenant, not including the master track. The tracks but not elements in the track like parties or users
+foxids:tenant:track            - then you can read, create, update and delete
+foxids:tenant:track.read
+
+// A specific track in a tenant. The tracks but not elements in the track like parties or users
+foxids:tenant:track[xxxx]
+foxids:tenant:track[xxxx].read
+
+// All logs in all tracks in a tenant, not including the master track. 
+foxids:tenant:track:log
+foxids:tenant:track:log.read
+
+// All logs in a specific track in a tenant. 
+foxids:tenant:track[xxxx]:log
+foxids:tenant:track[xxxx]:log.read
+
+// All users in all tracks in a tenant, not including the master track. 
+foxids:tenant:track:user
+foxids:tenant:track:user.read
+
+// All users in a specific track in a tenant. 
+foxids:tenant:track[xxxx]:user
+foxids:tenant:track[xxxx]:user.read
+
+// All down-parties and up-parties in all tracks in a tenant, not including the master track. 
+foxids:tenant:track:party
+foxids:tenant:track:party.read
+
+// All down-parties and up-parties in a specific track in a tenant. 
+foxids:tenant:track[xxxx]:party
+foxids:tenant:track[xxxx]:party.read
+
+
+
+// Access to everything in the master tenant, not any other tenant
+// Can create and delete tenants but not look into other tenants
+foxids:master            - then you can read, create, update and delete
+foxids:master.read
+
+// Logs in the master tenant. 
+foxids:master:log
+foxids:master:log.read
+
+// Users in the master tenant. 
+foxids:master:user
+foxids:master:user.read
+
+// Down-parties and up-parties in the master tenant.
+foxids:master:party
+foxids:master:party.read

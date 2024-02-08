@@ -1,25 +1,19 @@
-﻿using ITfoxtec.Identity;
-using ITfoxtec.Identity.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace FoxIDs.Infrastructure.Security
 {
-    public class TenantScopeAuthorizeAttribute : AuthorizeAttribute
+    public class TenantScopeAuthorizeAttribute : BaseScopeAuthorizeAttribute
     {
         public const string Name = nameof(TenantScopeAuthorizeAttribute);
 
-        public TenantScopeAuthorizeAttribute() : base(Name)
-        {
-            AuthenticationSchemes = JwtBearerMultipleTenantsHandler.AuthenticationScheme;
-        }
+        public TenantScopeAuthorizeAttribute(params string[] segments) : base(Name, segments)
+        { }
 
         public static void AddPolicy(AuthorizationOptions options)
         {
             options.AddPolicy(Name, policy =>
             {
-                policy.RequireScopeAndRoles(
-                   new ScopeAndRoles { Scope = Constants.ControlApi.ResourceAndScope.Tenant, Roles = new [] { Constants.ControlApi.Role.TenantAdmin } }
-                );
+                policy.Requirements.Add(new TenantAuthorizationRequirement());
             });
         }
     }

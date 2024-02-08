@@ -85,70 +85,178 @@ To call the API you replace the `[tenant_name]` element with your tenant name an
 If you e.g. want read a OpenID Connect down-party on FoxIDs.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[track_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and track names.
 
 ### API access rights
-Access to FoxIDs Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to all master tenant data and `foxids:tenant` which grant access to all tenant data. 
-A scopes access is limited by adding a dot and a limitation to the scope. The dot and limitations relates to the roles one to one. To have access the caller is required to possess one or more scope(s) and one or more role(s).
+Access to FoxIDs Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  
+The Control API resource `foxids_control_api` is defined in each tenant's master track and the configured set of scopes only grant access the tenants data in the Control API.
 
-Roles are defined as tenant roles `foxids:tenant.*` for both the master tenant scopes `foxids:master.*` and all other tenants scopes `foxids:tenant.*`. 
+A scopes access is limited by adding more elements separated with semicolon and dot. The dot notation limits or grant a sub role, both used in scopes and roles. To have access the caller is required to possess one or more matching scope(s) and role(s).
 
-The administrator role `foxids:tenant.admin` grants access to all data in a tenant.
+Each access right is both defined as a scope and a role. This makes it possible to limit or grant access on both client and user level. The access rights is a hierarchy and the client and user do not need to be granted matching scopes and roles. 
 
-// Access to everything in the tenant
-foxids:tenant            - then you can read, create, update and delete
-foxids:tenant.read
+The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data, it is the same as having the role `foxids:tenant` and `foxids:master`.
 
-// Access to basic tenant elements 
-//    - My profile used in the Control Client - read, update and delete
-//    - Read the ReadCertificate API to read JWT with certificate information from a X509 Certificate.
-foxids:tenant:basic
-foxids:tenant:basic.read
+#### Tenant access rights
+The tenant access rights is at the same time both scopes and roles.
 
-// All tracks in a tenant, not including the master track. The tracks but not elements in the track like parties or users
-foxids:tenant:track            - then you can read, create, update and delete
-foxids:tenant:track.read
+<table>
+    <tr>
+        <th>Scope / role</th>
+        <th>Access</th>
+    </tr>
+    <tr>
+        <td colspan=2><i>Access to everything in the tenant, not master tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Access to basic tenant elements: 
+        <lu>
+            <li>My profile used in the Control Client - read, update and delete.</li>
+            <li>Read the ReadCertificate API to read JWT with certificate information from a X509 Certificate.</li>
+        </lu>
+        </i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:basic</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:basic.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Access to everything in all tracks in a tenant, not including the master track.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Access to everything in a specific track in a tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx].read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>All usage logs in all tracks in a tenant, not including the master track. Not applicable in the master tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:usage</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Usage logs in a specific track in a tenant. Not applicable in the master tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:usage</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>All logs in all tracks in a tenant, not including the master track. </i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:log</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:log.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Logs in a specific tenant, not including the master track.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:log</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:log.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>All users in all tracks in a tenant, not including the master track.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:user</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:user.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>All users in a specific track in a tenant. </i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:user</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:user.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>All down-parties and up-parties in all tracks in a tenant, not including the master track.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:party</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:party.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>All down-parties and up-parties in a specific track in a tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:party</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:party.read</code></td>
+        <td>read</td>
+    </tr>
+</table>
 
-// A specific track in a tenant. The tracks but not elements in the track like parties or users
-foxids:tenant:track[xxxx]
-foxids:tenant:track[xxxx].read
+#### Master tenant access rights
+The master tenant access rights is at the same time both scopes and roles.
 
-// All logs in all tracks in a tenant, not including the master track. 
-foxids:tenant:track:log
-foxids:tenant:track:log.read
+<table>
+    <tr>
+        <td colspan=2><i>Access to the master tenant<br />
+            Can list, create and delete tenants but not look into other tenants
+        </i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:master</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+    <tr>
+        <td><code>foxids:master.read</code></td>
+        <td>read</td>
+    </tr>
+    <tr>
+        <td colspan=2><i>Usage log in the master tenant.</i></td>
+    </tr>
+    <tr>
+        <td><code>foxids:master:usage</code></td>
+        <td>read, create, update, delete</td>
+    </tr>
+</table>
 
-// All logs in a specific track in a tenant. 
-foxids:tenant:track[xxxx]:log
-foxids:tenant:track[xxxx]:log.read
-
-// All users in all tracks in a tenant, not including the master track. 
-foxids:tenant:track:user
-foxids:tenant:track:user.read
-
-// All users in a specific track in a tenant. 
-foxids:tenant:track[xxxx]:user
-foxids:tenant:track[xxxx]:user.read
-
-// All down-parties and up-parties in all tracks in a tenant, not including the master track. 
-foxids:tenant:track:party
-foxids:tenant:track:party.read
-
-// All down-parties and up-parties in a specific track in a tenant. 
-foxids:tenant:track[xxxx]:party
-foxids:tenant:track[xxxx]:party.read
-
-
-
-// Access to everything in the master tenant, not any other tenant
-// Can create and delete tenants but not look into other tenants
-foxids:master            - then you can read, create, update and delete
-foxids:master.read
-
-// Logs in the master tenant. 
-foxids:master:log
-foxids:master:log.read
-
-// Users in the master tenant. 
-foxids:master:user
-foxids:master:user.read
-
-// Down-parties and up-parties in the master tenant.
-foxids:master:party
-foxids:master:party.read
+If the scope you need is not defined on the Control API `foxids_control_api` you can add the scope. The same goes for roles which has to be defined on the user or the calling client.

@@ -103,7 +103,7 @@ namespace FoxIDs.Logic
 
         public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount)
         {
-            var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Role.TenantAdmin) };
+            var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Access.TenantAdminRole) };
             await accountLogic.CreateUser(email, password, changePassword: changePassword, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, confirmAccount: confirmAccount);
         }
 
@@ -116,10 +116,36 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlApi.ResourceName };
             await mControlApiResourceDownParty.SetIdAsync(partyIdKey);
            
-            var scopes = new List<string> { Constants.ControlApi.Scope.Tenant };
+            var scopes = new List<string>
+            {
+                Constants.ControlApi.Access.Tenant,
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Read}",
+
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Base}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Base}{Constants.ControlApi.AccessElement.Read}",
+
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.AccessElement.Read}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.AccessElement.Read}",
+
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Usage}",
+
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Log}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Log}{Constants.ControlApi.AccessElement.Read}",
+
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.User}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.User}{Constants.ControlApi.AccessElement.Read}",
+
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Party}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Party}{Constants.ControlApi.AccessElement.Read}"
+            };
+
             if (includeMasterTenantScope)
             {
-                scopes.Add(Constants.ControlApi.Scope.Master);
+                scopes.Add(Constants.ControlApi.Access.Master);
+                scopes.Add($"{Constants.ControlApi.Access.Master}{Constants.ControlApi.AccessElement.Read}");
+                scopes.Add($"{Constants.ControlApi.Access.Master}{Constants.ControlApi.Segment.Usage}");
             }
             mControlApiResourceDownParty.Resource = new OAuthDownResource()
             {
@@ -142,10 +168,10 @@ namespace FoxIDs.Logic
             mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
             mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
 
-            var scopes = new List<string> { Constants.ControlApi.Scope.Tenant };
+            var scopes = new List<string> { Constants.ControlApi.Access.Tenant };
             if (includeMasterTenantScope)
             {
-                scopes.Add(Constants.ControlApi.Scope.Master);
+                scopes.Add(Constants.ControlApi.Access.Master);
             }
             mControlClientDownParty.Client = new OidcDownClient
             {

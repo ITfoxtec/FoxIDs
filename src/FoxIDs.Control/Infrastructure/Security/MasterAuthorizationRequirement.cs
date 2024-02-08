@@ -4,23 +4,19 @@ namespace FoxIDs.Infrastructure.Security
 {
     public class MasterAuthorizationRequirement : BaseAuthorizationRequirement<MasterAuthorizationRequirement, MasterScopeAuthorizeAttribute>
     {
-        protected override (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string tenantName, string trackName, bool isHttpGet)
+        protected override (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string trackName, bool isHttpGet)
         {
             var acceptedScopes = new List<string>();
             var acceptedRoles = new List<string>();
 
-            acceptedScopes.Add(Constants.ControlApi.ResourceAndScope.Master);
-            acceptedRoles.Add(Constants.ControlApi.Role.TenantAdmin);
+            AddScopeAndRole(acceptedScopes, acceptedRoles, isHttpGet, Constants.ControlApi.ResourceAndScope.Master, Constants.ControlApi.Access.Master);
+            acceptedRoles.Add(Constants.ControlApi.Access.TenantAdminRole);
 
             foreach (var segment in segments)
             {
-                acceptedScopes.Add($"{Constants.ControlApi.ResourceAndScope.Master}{segment}");
-                var role = $"{Constants.ControlApi.Role.Tenant}{segment}";
-                acceptedRoles.Add(role);
-                if (isHttpGet)
-                {
-                    acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.ReadRole}");
-                }
+                var scope = $"{Constants.ControlApi.ResourceAndScope.Master}{segment}";
+                var role = $"{Constants.ControlApi.Access.Tenant}{segment}";
+                AddScopeAndRole(acceptedScopes, acceptedRoles, isHttpGet, scope, role, segment);
             }
 
             return (acceptedScopes, acceptedRoles);

@@ -347,7 +347,7 @@ namespace FoxIDs
                 public const int AllowCorsOriginLength = 200;
 
                 public const int ScopeLength = 50;
-                public const string ScopeRegExPattern = @"^[\w:\-.]*$";
+                public const string ScopeRegExPattern = @"^[\w:;.,=\[\]\-_]*$";
 
                 public static class Grant
                 {
@@ -555,20 +555,15 @@ namespace FoxIDs
 
             public static class ResourceAndScope
             {
-                public readonly static string Master = $"{ResourceName}:{Scope.Master}";
-                public readonly static string Tenant = $"{ResourceName}:{Scope.Tenant}";
+                public readonly static string Master = $"{ResourceName}:{Access.Master}";
+                public readonly static string Tenant = $"{ResourceName}:{Access.Tenant}";
             }
 
-            public static class Scope
+            public static class Access
             {
                 public readonly static string Master = $"foxids{AccessElement.Master}";
                 public readonly static string Tenant = $"foxids{AccessElement.Tenant}";
-            }
-
-            public static class Role
-            {
-                public readonly static string Tenant = $"foxids{AccessElement.Tenant}";
-                public readonly static string TenantAdmin = $"{Tenant}{AccessElement.AdminRole}";
+                public readonly static string TenantAdminRole = $"{Tenant}{AccessElement.Admin}";
             }
 
             public static class AccessElement
@@ -576,13 +571,14 @@ namespace FoxIDs
                 public const string Master = ":master";
                 public const string Tenant = ":tenant";
                 public const string Track = ":track";
-                public const string AdminRole = ".admin";
-                public const string ReadRole = ".read";
+                public const string Admin = ".admin";
+                public const string Read = ".read";
             }
 
             public static class Segment
             {
-                public const string Base = ":base";
+                public const string Base = ":base"; 
+                public const string Usage = ":usage";
                 public const string Log = ":log";
                 public const string User = ":user";
                 public const string Party = ":party";

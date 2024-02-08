@@ -11,7 +11,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     [RequireMasterTenant]
-    [MasterScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    [MasterScopeAuthorize(Constants.ControlApi.Segment.Usage)]
     public class TTenantLogUsageController : ApiController
     {
         private readonly UsageLogLogic usageLogLogic;

@@ -9,7 +9,7 @@ using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Usage)]
     public class TMyTenantLogUsageController : ApiController
     {
         private readonly UsageLogLogic usageLogLogic;

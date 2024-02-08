@@ -38,27 +38,5 @@ namespace FoxIDs.Infrastructure.Security
         }
 
         protected abstract (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string tenantName, string trackName, bool isHttpGet);
-
-        protected (List<string> acceptedScopes, List<string> acceptedRoles) GetMasterAcceptedScopesAndRoles(IEnumerable<string> segments, bool isHttpGet)
-        {
-            var acceptedScopes = new List<string>();
-            var acceptedRoles = new List<string>();
-
-            acceptedScopes.Add(Constants.ControlApi.ResourceAndScope.Master);
-            acceptedRoles.Add(Constants.ControlApi.Role.TenantAdmin);
-
-            foreach (var segment in segments)
-            {
-                acceptedScopes.Add($"{Constants.ControlApi.ResourceAndScope.Master}{segment}");
-                var role = $"{Constants.ControlApi.Role.Tenant}{segment}";
-                acceptedRoles.Add(role);
-                if (isHttpGet)
-                {
-                    acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.ReadRole}");
-                }
-            }
-
-            return (acceptedScopes, acceptedRoles);
-        }
     }
 }

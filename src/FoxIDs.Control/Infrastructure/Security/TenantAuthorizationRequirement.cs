@@ -7,11 +7,6 @@ namespace FoxIDs.Infrastructure.Security
     {
         protected override (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string tenantName, string trackName, bool isHttpGet)
         {
-            if (tenantName == Constants.Routes.MasterTenantName && trackName == Constants.Routes.MasterTrackName)
-            {
-                return GetMasterAcceptedScopesAndRoles(segments, isHttpGet);
-            }
-
             var acceptedScopes = new List<string>();
             var acceptedRoles = new List<string>();
 

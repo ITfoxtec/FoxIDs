@@ -50,7 +50,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string SpIssuer { get; set; }
 
         [Display(Name = "Keys")]
-        public List<JwtWithCertificateInfo> Keys { get; set; }
+        public List<JwkWithCertificateInfo> Keys { get; set; }
 
         /// <summary>
         /// Default 10 hours.

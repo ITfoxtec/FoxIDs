@@ -2,7 +2,7 @@
 
 namespace FoxIDs.Models.Api
 {
-    public class JwtWithCertificateInfo : JsonWebKey
+    public class JwkWithCertificateInfo : JsonWebKey
     {
         public CertificateInfo CertificateInfo { get; set; }
     }

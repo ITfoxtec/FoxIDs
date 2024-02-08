@@ -359,7 +359,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalOAuthDownParty.Form.Model.Client.ClientKeys == null)
             {
-                generalOAuthDownParty.Form.Model.Client.ClientKeys = new List<JwtWithCertificateInfo>();
+                generalOAuthDownParty.Form.Model.Client.ClientKeys = new List<JwkWithCertificateInfo>();
             }
             generalOAuthDownParty.Form.ClearFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys));
             foreach (var file in files)
@@ -379,9 +379,9 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
-                        if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.X5t.Equals(jwtWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
+                        if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.X5t.Equals(jwkWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
                             generalOAuthDownParty.Form.SetFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys), "Client certificates has duplicates.");
                             return;
@@ -389,14 +389,14 @@ namespace FoxIDs.Client.Pages.Components
 
                         generalOAuthDownParty.ClientKeyInfoList.Add(new KeyInfoViewModel
                         {
-                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
-                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
-                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
-                            IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid(),
-                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwtWithCertificateInfo
+                            Subject = jwkWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
+                            IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid(),
+                            Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwkWithCertificateInfo
                         });
-                        generalOAuthDownParty.Form.Model.Client.ClientKeys.Add(jwtWithCertificateInfo);
+                        generalOAuthDownParty.Form.Model.Client.ClientKeys.Add(jwkWithCertificateInfo);
                     }
                     catch (Exception ex)
                     {

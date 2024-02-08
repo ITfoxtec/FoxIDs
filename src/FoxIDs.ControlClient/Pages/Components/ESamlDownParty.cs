@@ -122,17 +122,17 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
                         generalSamlDownParty.EncryptionKeyInfo = new KeyInfoViewModel
                         {
-                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
-                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
-                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
-                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwtWithCertificateInfo
+                            Subject = jwkWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
+                            Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwkWithCertificateInfo
                         };
-                        generalSamlDownParty.Form.Model.EncryptionKey = jwtWithCertificateInfo;
+                        generalSamlDownParty.Form.Model.EncryptionKey = jwkWithCertificateInfo;
                     }
                     catch (Exception ex)
                     {
@@ -156,7 +156,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalSamlDownParty.Form.Model.Keys == null)
             {
-                generalSamlDownParty.Form.Model.Keys = new List<JwtWithCertificateInfo>();
+                generalSamlDownParty.Form.Model.Keys = new List<JwkWithCertificateInfo>();
             }
             generalSamlDownParty.Form.ClearFieldError(nameof(generalSamlDownParty.Form.Model.Keys));
             foreach (var file in files)
@@ -176,9 +176,9 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
-                        if (generalSamlDownParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwtWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
+                        if (generalSamlDownParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwkWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
                             generalSamlDownParty.Form.SetFieldError(nameof(generalSamlDownParty.Form.Model.Keys), "Signature validation keys (certificates) has duplicates.");
                             return;
@@ -186,13 +186,13 @@ namespace FoxIDs.Client.Pages.Components
 
                         generalSamlDownParty.KeyInfoList.Add(new KeyInfoViewModel
                         {
-                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
-                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
-                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
-                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwtWithCertificateInfo
+                            Subject = jwkWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
+                            Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwkWithCertificateInfo
                         });
-                        generalSamlDownParty.Form.Model.Keys.Add(jwtWithCertificateInfo);
+                        generalSamlDownParty.Form.Model.Keys.Add(jwkWithCertificateInfo);
                     }
                     catch (Exception ex)
                     {

@@ -36,7 +36,7 @@ namespace FoxIDs.Models.Api
 
         [ListLength(Constants.Models.OAuthDownParty.Client.ClientKeysMin, Constants.Models.OAuthDownParty.Client.ClientKeysMax)]
         [Display(Name = "Client certificates")]
-        public List<JwtWithCertificateInfo> ClientKeys { get; set; }
+        public List<JwkWithCertificateInfo> ClientKeys { get; set; }
 
         /// <summary>
         /// Require PKCE, default true.

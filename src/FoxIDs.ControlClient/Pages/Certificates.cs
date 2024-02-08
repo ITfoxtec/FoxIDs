@@ -195,9 +195,9 @@ namespace FoxIDs.Client.Pages
                     }
 
                     var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(certificateBytes);
-                    var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
+                    var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate, Password = generalCertificate.Form.Model.Password });
                     
-                    if (!jwtWithCertificateInfo.HasPrivateKey())
+                    if (!jwkWithCertificateInfo.HasPrivateKey())
                     {
                         generalCertificate.Form.Model.Subject = null;
                         generalCertificate.Form.Model.Key = null;
@@ -206,12 +206,12 @@ namespace FoxIDs.Client.Pages
                         return;
                     }
 
-                    generalCertificate.Form.Model.Subject = jwtWithCertificateInfo.CertificateInfo.Subject;
-                    generalCertificate.Form.Model.ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom;
-                    generalCertificate.Form.Model.ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo;
-                    generalCertificate.Form.Model.IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid();
-                    generalCertificate.Form.Model.Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint;
-                    generalCertificate.Form.Model.Key = jwtWithCertificateInfo;
+                    generalCertificate.Form.Model.Subject = jwkWithCertificateInfo.CertificateInfo.Subject;
+                    generalCertificate.Form.Model.ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom;
+                    generalCertificate.Form.Model.ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo;
+                    generalCertificate.Form.Model.IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid();
+                    generalCertificate.Form.Model.Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint;
+                    generalCertificate.Form.Model.Key = jwkWithCertificateInfo;
 
                     generalCertificate.CertificateFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                 }

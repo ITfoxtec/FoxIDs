@@ -12,6 +12,6 @@ namespace FoxIDs.Client.Services
         public HelpersService(IHttpClientFactory httpClientFactory, RouteBindingLogic routeBindingLogic, TrackSelectedLogic trackSelectedLogic) : base(httpClientFactory, routeBindingLogic, trackSelectedLogic)
         { }
 
-        public async Task<JwtWithCertificateInfo> ReadCertificateAsync(CertificateAndPassword certificateAndPassword) => await PostResponseAsync<CertificateAndPassword, JwtWithCertificateInfo>(readcertificateApiUri, certificateAndPassword);
+        public async Task<JwkWithCertificateInfo> ReadCertificateAsync(CertificateAndPassword certificateAndPassword) => await PostResponseAsync<CertificateAndPassword, JwkWithCertificateInfo>(readcertificateApiUri, certificateAndPassword);
     }
 }

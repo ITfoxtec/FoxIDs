@@ -81,7 +81,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 
-            CreateMap<JsonWebKey, Api.JwtWithCertificateInfo>()
+            CreateMap<JsonWebKey, Api.JwkWithCertificateInfo>()
                 .ForMember(d => d.CertificateInfo, opt => opt.MapFrom(s => GetCertificateInfo(s)));
 
             CreateMap<ClientKey, Api.ClientKey>();

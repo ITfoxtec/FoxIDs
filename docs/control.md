@@ -86,16 +86,19 @@ If you e.g. want read a OpenID Connect down-party on FoxIDs.com with the name `s
 
 ### API access rights
 Access to FoxIDs Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  
-The Control API resource `foxids_control_api` is defined in each tenant's master track and the configured set of scopes only grant access the tenants data in the Control API.
+The Control API resource `foxids_control_api` is defined in each tenant's master track and the configured set of scopes grant access the tenants data in the Control API.
 
-A scopes access is limited by adding more elements separated with semicolon and dot. The dot notation limits or grant a sub role, both used in scopes and roles. To have access the caller is required to possess one or more matching scope(s) and role(s).
+A scopes access is limited by adding more elements separated with semicolon and dot. The dot notation limits or grant a sub role, the notation is both used in scopes and roles. 
+To be granted access the caller is required to possess one or more matching scope(s) and role(s).
 
-Each access right is both defined as a scope and a role. This makes it possible to limit or grant access on both client and user level. The access rights is a hierarchy and the client and user do not need to be granted matching scopes and roles. 
+Each access right is both defined as a scope and a role. This makes it possible to limit or grant access on both client and user level. The access rights are a hierarchy and the client and user do not need to be granted matching scopes and roles. 
 
 The administrator role `foxids:tenant.admin` grants access to all data in a tenant and the master tenant data, it is the same as having the role `foxids:tenant` and `foxids:master`.
 
 #### Tenant access rights
 The tenant access rights is at the same time both scopes and roles.
+
+The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
 
 <table>
     <tr>
@@ -103,7 +106,7 @@ The tenant access rights is at the same time both scopes and roles.
         <th>Access</th>
     </tr>
     <tr>
-        <td colspan=2><i>Access to everything in the tenant, not master tenant.</i></td>
+        <td colspan=2><i>Access to everything in the tenant, not master tenant data.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant</code></td>
@@ -116,8 +119,8 @@ The tenant access rights is at the same time both scopes and roles.
     <tr>
         <td colspan=2><i>Access to basic tenant elements: 
         <lu>
-            <li>My profile used in the Control Client - read, update and delete.</li>
-            <li>Read the ReadCertificate API to read JWT with certificate information from a X509 Certificate.</li>
+            <li>My profile used in the Control Client.</li>
+            <li>Call the ReadCertificate API to get a JWT with certificate information from a X509 Certificate.</li>
         </lu>
         </i></td>
     </tr>
@@ -144,7 +147,7 @@ The tenant access rights is at the same time both scopes and roles.
         <td colspan=2><i>Access to everything in a specific track in a tenant.</i></td>
     </tr>
     <tr>
-        <td><code>foxids:tenant:track[xxxx</code></td>
+        <td><code>foxids:tenant:track[xxxx]</code></td>
         <td>read, create, update, delete</td>
     </tr>
     <tr>
@@ -177,7 +180,7 @@ The tenant access rights is at the same time both scopes and roles.
         <td>read</td>
     </tr>
     <tr>
-        <td colspan=2><i>Logs in a specific tenant, not including the master track.</i></td>
+        <td colspan=2><i>Logs in a specific tenant.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track[xxxx]:log</code></td>
@@ -238,8 +241,8 @@ The master tenant access rights is at the same time both scopes and roles.
 
 <table>
     <tr>
-        <td colspan=2><i>Access to the master tenant<br />
-            Can list, create and delete tenants but not look into other tenants
+        <td colspan=2><i>Access to the master tenant data<br />
+            Can list, create and delete tenants but not look into other tenants.
         </i></td>
     </tr>
     <tr>

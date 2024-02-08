@@ -12,6 +12,6 @@ namespace FoxIDs.Models.Api
         public string ExternalName { get; set; }
 
         [Required]
-        public JwtWithCertificateInfo PublicKey { get; set; }
+        public JwkWithCertificateInfo PublicKey { get; set; }
     }
 }

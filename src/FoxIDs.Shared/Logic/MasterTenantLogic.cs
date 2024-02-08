@@ -101,13 +101,13 @@ namespace FoxIDs.Logic
             return mLoginUpParty;
         }
 
-        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount)
+        public async Task CreateFirstAdminUserDocumentAsync(string tenantName, string email, string password, bool changePassword, bool checkUserAndPasswordPolicy, bool confirmAccount, bool isMasterTenant = false)
         {
-            var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, Constants.ControlApi.Access.TenantAdminRole) };
+            var claims = new List<Claim> { new Claim(JwtClaimTypes.Role, isMasterTenant ? Constants.ControlApi.Access.TenantAdminRole : Constants.ControlApi.Access.Tenant) };
             await accountLogic.CreateUser(email, password, changePassword: changePassword, claims: claims, tenantName: tenantName?.ToLower(), trackName: Constants.Routes.MasterTrackName, checkUserAndPasswordPolicy: checkUserAndPasswordPolicy, confirmAccount: confirmAccount);
         }
 
-        public async Task CreateMasterFoxIDsControlApiResourceDocumentAsync(string tenantName, bool includeMasterTenantScope = false)
+        public async Task CreateMasterFoxIDsControlApiResourceDocumentAsync(string tenantName, bool isMasterTenant = false)
         {
             var mControlApiResourceDownParty = new OAuthDownParty
             {
@@ -124,24 +124,39 @@ namespace FoxIDs.Logic
                 $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Base}",
                 $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.Segment.Base}{Constants.ControlApi.AccessElement.Read}",
 
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}",
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.AccessElement.Read}",
+
                 $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]",
                 $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.AccessElement.Read}",
 
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Usage}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.Usage}",
 
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Log}",
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Log}{Constants.ControlApi.AccessElement.Read}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.Log}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.Log}{Constants.ControlApi.AccessElement.Read}",
 
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.User}",
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.User}{Constants.ControlApi.AccessElement.Read}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.User}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.User}{Constants.ControlApi.AccessElement.Read}",
 
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Party}",
-                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Party}{Constants.ControlApi.AccessElement.Read}"
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.Party}",
+                $"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}[{Constants.Routes.MasterTrackName}]{Constants.ControlApi.Segment.Party}{Constants.ControlApi.AccessElement.Read}"
             };
 
-            if (includeMasterTenantScope)
+            if (!isMasterTenant)
+            {
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}");
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.AccessElement.Read}");
+
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Usage}");
+
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Log}");
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Log}{Constants.ControlApi.AccessElement.Read}");
+
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.User}");
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.User}{Constants.ControlApi.AccessElement.Read}");
+
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Party}");
+                scopes.Add($"{Constants.ControlApi.Access.Tenant}{Constants.ControlApi.AccessElement.Track}{Constants.ControlApi.Segment.Party}{Constants.ControlApi.AccessElement.Read}");
+            }
+            else
             {
                 scopes.Add(Constants.ControlApi.Access.Master);
                 scopes.Add($"{Constants.ControlApi.Access.Master}{Constants.ControlApi.AccessElement.Read}");

@@ -21,10 +21,19 @@ namespace FoxIDs.Infrastructure.Security
                 {
                     foreach (var segment in segments)
                     {
-                        AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, isHttpGet, 
-                            $"{Constants.ControlApi.ResourceAndScope.Tenant}{(segment == Constants.ControlApi.Segment.Base ? string.Empty : Constants.ControlApi.AccessElement.Track)}", 
-                            Constants.ControlApi.Access.Tenant,
-                            segment);
+                        if (segment == Constants.ControlApi.Segment.Base)
+                        {
+                            AddScopeAndRole(acceptedScopes, acceptedRoles, isHttpGet,
+                                $"{Constants.ControlApi.ResourceAndScope.Tenant}{segment}",
+                                $"{Constants.ControlApi.Access.Tenant}{segment}");
+                        }
+                        else
+                        {
+                            AddScopeAndRoleByTrack(acceptedScopes, acceptedRoles, trackName, isHttpGet, 
+                                    $"{Constants.ControlApi.ResourceAndScope.Tenant}{Constants.ControlApi.AccessElement.Track}", 
+                                    Constants.ControlApi.Access.Tenant,
+                                    segment);
+                        }       
                     }
                 }
                 else

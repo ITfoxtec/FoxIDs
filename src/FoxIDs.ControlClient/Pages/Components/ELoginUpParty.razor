@@ -9,7 +9,7 @@
         <div>
             Login
         </div>
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         @if (loginUpParty.CreateMode)
@@ -23,7 +23,10 @@
         {
             <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="loginUpParty.Form.Model.Note" For="@(() => loginUpParty.Form.Model.Note)" />
+        @if (loginUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="loginUpParty.Form.Model.Note" For="@(() => loginUpParty.Form.Model.Note)" />
+        }
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -138,7 +141,6 @@
         </div>
     }
     <div class="modal-footer">
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => loginUpParty.ShowAdvanced = !loginUpParty.ShowAdvanced)">@(loginUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!loginUpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => loginUpParty.DeleteAcknowledge = true)">Delete</button>

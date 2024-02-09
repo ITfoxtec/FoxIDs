@@ -9,15 +9,7 @@
         <div>
             OAuth 2.0
         </div>
-        <div class="header-input-group">
-            <div class="input-toggle">
-                <FInputToggle @bind-Value="oauthDownParty.EnableClientTab" OnValidChange="@(v => OnOAuthDownPartyClientTabChange(oauthDownParty, v))" TextType="Client&nbsp;on,Client&nbsp;off" TextWidth="110px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-            </div>
-            <div class="input-toggle">
-                <FInputToggle @bind-Value="oauthDownParty.EnableResourceTab" OnValidChange="@(v => OnOAuthDownPartyResourceTabChange(oauthDownParty, v))" TextType="Resource&nbsp;on,Resource&nbsp;off" TextWidth="120px" IncludeActiveFormGroup="false" IncludeLabelAndValidationMessage="false" />
-            </div>
-        </div>
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         @if (oauthDownParty.CreateMode)
@@ -28,10 +20,13 @@
         {
             <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
+        @if (DownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
+        }
 
         <div class="mb-3 alert alert-info" role="alert">
-            @if (oauthDownParty.EnableClientTab || (!oauthDownParty.EnableClientTab && !oauthDownParty.EnableResourceTab))
+            @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
                 <div>Client Authority and OIDC Discovery<br /><i>You can selecting all up-parties with '*'. Or you can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i></div>                 
@@ -39,12 +34,12 @@
                 <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
             }
             
-            @if (oauthDownParty.EnableClientTab && oauthDownParty.EnableResourceTab)
+            @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 <hr />
             }
 
-            @if (oauthDownParty.EnableResourceTab)
+            @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
             {
                 (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, false);
                 <div>Resource Authority and OIDC Discovery</div>
@@ -60,12 +55,18 @@
                 <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
                 <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
             </FInputSelect>
+
+            <FInputSelect TValue="DownPartyOAuthTypes" @bind-Value="oauthDownParty.DownPartyType" For="@(() => oauthDownParty.DownPartyType)" OnValidChange="@((type) => OnOAuthDownPartyTypeChange(oauthDownParty, type))">
+                <option value="@DownPartyOAuthTypes.Client">OAuth 2.0 Client</option>
+                <option value="@DownPartyOAuthTypes.Resource">OAuth 2.0 Resource</option>
+                <option value="@DownPartyOAuthTypes.ClientAndResource">OAuth 2.0 Client and Resource</option>
+            </FInputSelect>
         }
 
         <ul class="nav nav-tabs">
-            <li class="nav-item">
-                @if (oauthDownParty.EnableClientTab)
-                {
+            @if (oauthDownParty.DownPartyType != DownPartyOAuthTypes.Resource)
+            {
+                <li class="nav-item">
                     @if (oauthDownParty.ShowClientTab)
                     {
                         <a class="nav-link active">OAuth 2.0 Client</a>
@@ -74,11 +75,11 @@
                     {
                         <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthDownParty, OAuthTabTypes.Client))">OAuth 2.0 Client</button>
                     }
-                }
-            </li>
-            <li class="nav-item">
-                @if (oauthDownParty.EnableResourceTab)
-                {
+                </li>
+            }
+            @if (oauthDownParty.DownPartyType != DownPartyOAuthTypes.Client)
+            {
+                <li class="nav-item">
                     @if (oauthDownParty.ShowResourceTab)
                     {
                         <a class="nav-link active">OAuth 2.0 Resource</a>
@@ -87,8 +88,8 @@
                     {
                         <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowOAuthTab(oauthDownParty, OAuthTabTypes.Resource))">OAuth 2.0 Resource</button>
                     }
-                }
-            </li>
+                </li>
+            }
             <li class="nav-item">
                 @if (oauthDownParty.ShowClaimTransformTab)
                 {
@@ -104,18 +105,7 @@
         <div class="tab-content pt-3">
             @if (oauthDownParty.ShowClientTab)
             {
-                @if (!oauthDownParty.EnableClientTab)
-                {
-                    @if (oauthDownParty.EnableResourceTab)
-                    {
-                        oauthDownParty.ShowClientTab = false;
-                        StateHasChanged();
-                    }
-                    else
-                    {
-                        <i>Inactive</i>
-                    }
-                }
+                <ValidationMessage For="@(() => oauthDownParty.Form.Model.Client)" />
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
                     <div class="mb-3 alert alert-info" role="alert">
@@ -319,18 +309,7 @@
             }
             else if (oauthDownParty.ShowResourceTab)
             {
-                @if (!oauthDownParty.EnableResourceTab)
-                {
-                    @if (oauthDownParty.EnableClientTab)
-                    {
-                        oauthDownParty.ShowClientTab = true;
-                        StateHasChanged();
-                    }
-                    else
-                    {
-                        <i>Inactive</i>
-                    }
-                }
+                <ValidationMessage For="@(() => oauthDownParty.Form.Model.Resource)" />
                 @if (oauthDownParty.Form.Model.Resource != null)
                 {
                     <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Resource.Scopes" For="@(() => oauthDownParty.Form.Model.Resource.Scopes)" />
@@ -361,7 +340,6 @@
         </div>
     }
     <div class="modal-footer">
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!DownParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>

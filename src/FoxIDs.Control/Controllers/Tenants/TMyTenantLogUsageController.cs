@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using FoxIDs.Logic;
 using ITfoxtec.Identity;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TMyTenantLogUsageController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Usage)]
+    public class TMyTenantLogUsageController : ApiController
     {
         private readonly UsageLogLogic usageLogLogic;
 

@@ -55,6 +55,11 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormatAsync(RouteBinding, s.Email.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<User, Api.MyUser>();
+
+            CreateMap<UserControlProfile, Api.UserControlProfile>()
+                .ReverseMap();
+
             CreateMap<ClaimAndValues, Api.ClaimAndValues>()
                 .ReverseMap();
 
@@ -78,7 +83,7 @@ namespace FoxIDs.MappingProfiles
             CreateMap<TrackKey, Api.TrackKey>()
                 .ReverseMap();
 
-            CreateMap<JsonWebKey, Api.JwtWithCertificateInfo>()
+            CreateMap<JsonWebKey, Api.JwkWithCertificateInfo>()
                 .ForMember(d => d.CertificateInfo, opt => opt.MapFrom(s => GetCertificateInfo(s)));
 
             CreateMap<ClientKey, Api.ClientKey>();

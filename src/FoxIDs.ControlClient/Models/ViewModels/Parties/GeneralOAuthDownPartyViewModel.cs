@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -24,9 +25,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public OAuthSubPartyTypes SubPartyType { get; set; }
 
-        public bool EnableClientTab { get; set; }
-
-        public bool EnableResourceTab { get; set; } = true;
+        [Display(Name = "Down-party type")]
+        public DownPartyOAuthTypes DownPartyType { get; set; } = DownPartyOAuthTypes.Resource;
 
         public bool ShowClientTab { get; set; }
         public bool ShowResourceTab { get; set; } = true;

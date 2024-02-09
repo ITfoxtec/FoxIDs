@@ -11,10 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
 using System;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TFilterUserController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
+    public class TFilterUserController : ApiController
     {
         private const string dataType = "user";
         private readonly TelemetryScopedLogger logger;

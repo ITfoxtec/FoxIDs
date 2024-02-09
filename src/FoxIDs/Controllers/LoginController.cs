@@ -183,10 +183,19 @@ namespace FoxIDs.Controllers
                 securityHeaderLogic.AddImgSrc(loginUpParty.IconUrl);
                 securityHeaderLogic.AddImgSrcFromCss(loginUpParty.Css);
 
-                var redirectAction = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+                (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
                 if (redirectAction != null)
                 {
                     return redirectAction;
+                }
+
+                if (validSession && sequenceData.LoginAction == LoginAction.SessionUserRequireLogin)
+                {
+                    sequenceData.DoLoginIdentifierStep = false;
+                    sequenceData.Email = email;
+                    sequenceData.DoSessionUserRequireLogin = true;
+                    await sequenceLogic.SaveSequenceDataAsync(sequenceData);
+                    return await PasswordInternalAsync();
                 }
 
                 logger.ScopeTrace(() => "Show identifier dialog.");
@@ -197,7 +206,7 @@ namespace FoxIDs.Controllers
                     IconUrl = loginUpParty.IconUrl,
                     Css = loginUpParty.Css,
                     EnableCancelLogin = loginUpParty.EnableCancelLogin,
-                    EnableCreateUser = loginUpParty.EnableCreateUser,
+                    EnableCreateUser = loginUpParty.EnableCreateUser,                    
                     Email = sequenceData.Email.IsNullOrWhiteSpace() ? string.Empty : sequenceData.Email,
                     ShowEmailSelection = ShowEmailSelection(loginUpParty.Name, sequenceData),
                     UpPatries = GetToUpPartiesToShow(loginUpParty.Name, sequenceData)
@@ -354,7 +363,7 @@ namespace FoxIDs.Controllers
 
         private async Task<IActionResult> StartPasswordInternal(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
-            var redirectAction = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
+            (var validSession, var email, var redirectAction) = await CheckSessionReturnRedirectAction(sequenceData, loginUpParty);
             if (redirectAction != null)
             {
                 return redirectAction;
@@ -374,26 +383,27 @@ namespace FoxIDs.Controllers
                 Css = loginUpParty.Css,
                 EnableCancelLogin = loginUpParty.EnableCancelLogin,
                 EnableResetPassword = !loginUpParty.DisableResetPassword,
-                EnableCreateUser = loginUpParty.EnableCreateUser,
+                EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
+                DisableChangeEmail = sequenceData.DoSessionUserRequireLogin,
                 Email = sequenceData.Email,
             });
         }
 
-        private async Task<IActionResult> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
+        private async Task<(bool validSession, string email, IActionResult actionResult)> CheckSessionReturnRedirectAction(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty)
         {
             (var session, var user) = await sessionLogic.GetAndUpdateSessionCheckUserAsync(loginUpParty, loginPageLogic.GetDownPartyLink(loginUpParty, sequenceData));
             var validSession = session != null && ValidSessionUpAgainstSequence(sequenceData, session, loginPageLogic.GetRequereMfa(user, loginUpParty, sequenceData));
-            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin)
+            if (validSession && sequenceData.LoginAction != LoginAction.RequireLogin && sequenceData.LoginAction != LoginAction.SessionUserRequireLogin)
             {
-                return await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session);
+                return (validSession, user?.Email, await loginPageLogic.LoginResponseUpdateSessionAsync(loginUpParty, sequenceData.DownPartyLink, session));
             }
 
             if (sequenceData.LoginAction == LoginAction.ReadSession)
             {
-                return await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired);
+                return (validSession, user?.Email, await loginUpLogic.LoginResponseErrorAsync(sequenceData, LoginSequenceError.LoginRequired));
             }
 
-            return null;
+            return (validSession, user?.Email, null);
         }        
 
         private bool ValidSessionUpAgainstSequence(LoginUpSequenceData sequenceData, SessionLoginUpPartyCookie session, bool requereMfa = false)
@@ -446,7 +456,8 @@ namespace FoxIDs.Controllers
                         Css = loginUpParty.Css,
                         EnableCancelLogin = loginUpParty.EnableCancelLogin,
                         EnableResetPassword = !loginUpParty.DisableResetPassword,
-                        EnableCreateUser = loginUpParty.EnableCreateUser,
+                        EnableCreateUser = !sequenceData.DoSessionUserRequireLogin && loginUpParty.EnableCreateUser,
+                        DisableChangeEmail = sequenceData.DoSessionUserRequireLogin,
                         Email = sequenceData.Email
                     };
                     return View("Password", password);

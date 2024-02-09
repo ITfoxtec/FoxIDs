@@ -11,10 +11,12 @@ using System.Linq;
 using ITfoxtec.Identity;
 using FoxIDs.Logic;
 using System;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TFilterResourceNameController : TenantApiController
+    [TenantScopeAuthorize]
+    public class TFilterResourceNameController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

@@ -12,6 +12,8 @@ namespace FoxIDs.Models.ViewModels
 
         public bool EnableCreateUser { get; set; }
 
+        public bool DisableChangeEmail { get; set; }
+
         [Display(Name = "Email")]
         [MaxLength(Constants.Models.User.EmailLength)]
         [EmailAddress]

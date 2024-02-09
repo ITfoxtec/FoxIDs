@@ -12,7 +12,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool IsValid { get; set; }
         public string Thumbprint { get; set; }
         public string KeyId { get; set; }
-        public JwtWithCertificateInfo Key { get; set; }
+        public JwkWithCertificateInfo Key { get; set; }
 
         [Display(Name = "Optional certificate password")]
         public string Password { get; set; }

@@ -1,5 +1,4 @@
-﻿using ITfoxtec.Identity.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
@@ -11,8 +10,8 @@ namespace FoxIDs.Models.Api
         public string Name { get; set; }
 
         [Required]
-        public JwtWithCertificateInfo PrimaryKey { get; set; }
+        public JwkWithCertificateInfo PrimaryKey { get; set; }
 
-        public JwtWithCertificateInfo SecondaryKey { get; set; }
+        public JwkWithCertificateInfo SecondaryKey { get; set; }
     }
 }

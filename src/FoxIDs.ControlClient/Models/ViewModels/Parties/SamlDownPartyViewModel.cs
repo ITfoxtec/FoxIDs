@@ -128,10 +128,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
         [Display(Name = "Optional one or more signature validation certificates")]
-        public List<JwtWithCertificateInfo> Keys { get; set; }
+        public List<JwkWithCertificateInfo> Keys { get; set; }
 
         [Display(Name = "Optional encryption certificate")]
-        public JwtWithCertificateInfo EncryptionKey { get; set; }
+        public JwkWithCertificateInfo EncryptionKey { get; set; }
         
         [Display(Name = "Add logout response location URL in metadata")]
         public bool MetadataAddLogoutResponseLocation { get; set; }

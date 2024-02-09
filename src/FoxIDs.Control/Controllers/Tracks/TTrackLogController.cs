@@ -13,10 +13,12 @@ using ITfoxtec.Identity;
 using Azure.Monitor.Query;
 using Azure.Monitor.Query.Models;
 using Azure;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    public class TTrackLogController : ApiController
     {
         private const int maxQueryLogItems = 200;
         private const int maxResponseLogItems = 300;

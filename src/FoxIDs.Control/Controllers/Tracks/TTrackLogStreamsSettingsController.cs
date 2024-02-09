@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using System.Net;
 using System.Collections.Generic;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogStreamsSettingsController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    public class TTrackLogStreamsSettingsController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

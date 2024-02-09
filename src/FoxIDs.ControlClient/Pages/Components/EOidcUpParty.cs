@@ -82,6 +82,11 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     afterMap.Client.Party = afterMap;
 
+                    if (afterMap.Client.ClientSecret != null)
+                    {
+                        afterMap.Client.ClientSecret = afterMap.Client.ClientSecretLoaded = afterMap.Client.ClientSecret.Length == 3 ? $"{afterMap.Client.ClientSecret}..." : afterMap.Client.ClientSecret;
+                    }
+
                     afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
 
                     if (clientKeyResponse?.PrimaryKey?.PublicKey != null)
@@ -187,6 +192,21 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
+                    if (oidcUpParty.Client != null)
+                    {
+                        if (oidcUpParty.Client.ClientSecret != generalOidcUpParty.Form.Model.Client.ClientSecretLoaded)
+                        {
+                            if (string.IsNullOrWhiteSpace(oidcUpParty.Client.ClientSecret))
+                            {
+                                await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name);
+                            }
+                            else
+                            {
+                                await UpPartyService.UpdateOidcClientSecretUpPartyAsync(new OAuthClientSecretSingleRequest { PartyName = UpParty.Name, Secret = oidcUpParty.Client.ClientSecret });
+                            }
+                        }
+                        oidcUpParty.Client.ClientSecret = null;
+                    }
                     var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
                     var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));

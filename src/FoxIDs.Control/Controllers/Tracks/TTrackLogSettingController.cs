@@ -8,10 +8,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Net;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackLogSettingController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Log)]
+    public class TTrackLogSettingController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

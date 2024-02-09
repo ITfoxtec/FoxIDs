@@ -92,14 +92,7 @@ namespace FoxIDs.Models.Api
                 {
                     results.Add(new ValidationResult($"Require '{IdentityConstants.ResponseTypes.Code}' response type with PKCE.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(EnablePkce)}" }));
                 }
-                if (ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
-                {
-                    if (ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt && ClientSecret.IsNullOrEmpty())
-                    {
-                        results.Add(new ValidationResult($"Require '{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}' or '{nameof(OidcUpParty.Client)}.{nameof(ClientAuthenticationMethod)}={ClientAuthenticationMethods.PrivateKeyJwt}' to execute '{IdentityConstants.ResponseTypes.Code}' response type.", new[] { $"{nameof(OidcUpParty.Client)}.{nameof(ClientSecret)}" }));
-                    }
-                }
-
+   
                 if (updateState == PartyUpdateStates.Manual && ResponseType.Contains(IdentityConstants.ResponseTypes.Code) == true)
                 {
                     if (TokenUrl.IsNullOrEmpty())

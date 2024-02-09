@@ -9,10 +9,12 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.WebUtilities;
 using System;
 using System.ComponentModel.DataAnnotations;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TReadCertificateController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Base, Constants.ControlApi.Segment.Party)]
+    public class TReadCertificateController : ApiController
     {
         private readonly IMapper mapper;
 
@@ -22,12 +24,12 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Read JWT with certificate information.
+        /// Read JWK with certificate information.
         /// </summary>
         /// <param name="certificateAndPassword">Base64 URL encode certificate and optionally password.</param>
         /// <returns>User.</returns>
-        [ProducesResponseType(typeof(Api.JwtWithCertificateInfo), StatusCodes.Status200OK)]
-        public async Task<ActionResult<Api.JwtWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
+        [ProducesResponseType(typeof(Api.JwkWithCertificateInfo), StatusCodes.Status200OK)]
+        public async Task<ActionResult<Api.JwkWithCertificateInfo>> PostReadCertificate([FromBody] Api.CertificateAndPassword certificateAndPassword)
         {
             if (!await ModelState.TryValidateObjectAsync(certificateAndPassword)) return BadRequest(ModelState);
 
@@ -45,7 +47,7 @@ namespace FoxIDs.Controllers
                 }
 
                 var jwt = await certificate.ToFTJsonWebKeyAsync(includePrivateKey: true);
-                return Ok(mapper.Map<Api.JwtWithCertificateInfo>(jwt));
+                return Ok(mapper.Map<Api.JwkWithCertificateInfo>(jwt));
             }
             catch (ValidationException)
             {

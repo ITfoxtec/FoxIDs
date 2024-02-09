@@ -129,9 +129,9 @@ namespace FoxIDs.Logic
         {
             var loginRequest = new LoginRequest { DownPartyLink = new DownPartySessionLink { SupportSingleLogout = !string.IsNullOrWhiteSpace(party.Client?.FrontChannelLogoutUri), Id = party.Id, Type = party.Type } };
 
-            loginRequest.LoginAction = !authenticationRequest.Prompt.IsNullOrWhiteSpace() && authenticationRequest.Prompt.Contains(IdentityConstants.AuthorizationServerPrompt.None) ? LoginAction.ReadSession : LoginAction.ReadSessionOrLogin;
+            loginRequest.LoginAction = GetLoginAction(authenticationRequest);
 
-            if(authenticationRequest.MaxAge.HasValue)
+            if (authenticationRequest.MaxAge.HasValue)
             {
                 loginRequest.MaxAge = authenticationRequest.MaxAge.Value;
             }
@@ -157,6 +157,27 @@ namespace FoxIDs.Logic
             }
 
             return loginRequest;
+        }
+
+        private LoginAction GetLoginAction(AuthenticationRequest authenticationRequest)
+        {
+            if (!authenticationRequest.Prompt.IsNullOrWhiteSpace())
+            {
+                if (authenticationRequest.Prompt.Contains(IdentityConstants.AuthorizationServerPrompt.None))
+                {
+                    return LoginAction.ReadSession;
+                }
+                else if (authenticationRequest.Prompt.Contains(IdentityConstants.AuthorizationServerPrompt.Login))
+                {
+                    return LoginAction.SessionUserRequireLogin;
+                }
+                else if (authenticationRequest.Prompt.Contains(IdentityConstants.AuthorizationServerPrompt.SelectAccount))
+                {
+                    return LoginAction.RequireLogin;
+                }
+            }
+
+            return LoginAction.ReadSessionOrLogin;
         }
 
         private void ValidateAuthenticationRequest(OidcDownClient client, AuthenticationRequest authenticationRequest, CodeChallengeSecret codeChallengeSecret)

@@ -70,7 +70,7 @@ namespace FoxIDs.Infrastructure.Hosting
             scopedLogger.Error(ex);
             if (environment.IsDevelopment())
             {
-                Debug.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
             }
         }
     }

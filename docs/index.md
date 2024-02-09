@@ -17,7 +17,7 @@ FoxIDs consist of two services:
 FoxIDs can be deployed and used by a single company or deployed as a shared cloud container and used by multiple organisations. 
 You can select to use a shared cloud or a private cloud setup.
 
-- FoxIDs is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
+- FoxIDs SaaS is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
 FoxIDs.com is hosted in Europe and mainly in Microsoft Azure Holland, Netherlands.
 - You are free to [deploy](deployment.md) FoxIDs as your own private cloud on Microsoft Azure.
 

@@ -7,10 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class MRiskPasswordFirstController : MasterApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize]
+    public class MRiskPasswordFirstController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

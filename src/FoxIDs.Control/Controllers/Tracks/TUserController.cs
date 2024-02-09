@@ -13,10 +13,12 @@ using System.Collections.Generic;
 using ITfoxtec.Identity;
 using System;
 using System.Linq.Expressions;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TUserController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.User)]
+    public class TUserController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

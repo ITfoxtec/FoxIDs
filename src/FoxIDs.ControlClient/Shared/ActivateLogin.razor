@@ -1,0 +1,14 @@
+﻿@inherits PageBase
+
+<p>Authentication is in progress...</p>
+
+@code {
+    [Inject]
+    public OpenidConnectPkce OpenidConnectPkce { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+        await base.OnParametersSetAsync();
+    }
+}

@@ -108,6 +108,11 @@ namespace FoxIDs.Logic
 
         private async Task<SessionLoginUpPartyCookie> ValidateSessionAndRequestedUserAsync(LoginUpSequenceData sequenceData, LoginUpParty loginUpParty, User user)
         {
+            if (sequenceData.LoginAction == LoginAction.RequireLogin)
+            {
+                return null;
+            }
+
             var session = await sessionLogic.GetSessionAsync(loginUpParty);
             if (session != null && user.UserId != session.UserId)
             {

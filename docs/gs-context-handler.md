@@ -18,7 +18,7 @@ Test Context Handler with the <a href="https://aspnetcoreoidcallupsample.itfoxte
 The OpenID Connect test app call FoxIDs and FoxIDs call Context Handler to let the user authenticate.
 
 ## Context Handler details
-FoxIDs support Context Handler including OIOSAML3, login, single logout, logging, issuer naming, OCES3 certificates and NSIS.
+FoxIDs support Context Handler including OIOSAML3, login, single logout, logging, issuer naming, OCES3 (RSASSA-PSS) certificates and NSIS.
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 

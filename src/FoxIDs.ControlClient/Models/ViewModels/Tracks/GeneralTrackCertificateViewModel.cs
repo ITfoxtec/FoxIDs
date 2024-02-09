@@ -13,7 +13,7 @@ namespace FoxIDs.Client.Models.ViewModels
             IsPrimary = isPrimary;
         }
 
-        public GeneralTrackCertificateViewModel(JwtWithCertificateInfo key, bool isPrimary) : this(isPrimary)
+        public GeneralTrackCertificateViewModel(JwkWithCertificateInfo key, bool isPrimary) : this(isPrimary)
         {
             Subject = key.CertificateInfo.Subject;
             ValidFrom = key.CertificateInfo.ValidFrom;

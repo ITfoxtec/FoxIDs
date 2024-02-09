@@ -10,10 +10,14 @@ using AutoMapper;
 using System.Linq;
 using System;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class MPlanController : MasterApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize]
+    public class MPlanController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

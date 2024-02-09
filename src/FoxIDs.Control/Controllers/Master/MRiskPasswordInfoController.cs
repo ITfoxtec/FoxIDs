@@ -5,10 +5,14 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class MRiskPasswordInfoController : MasterApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize]
+    public class MRiskPasswordInfoController : ApiController
     {
         private readonly IMasterRepository masterRepository;
 

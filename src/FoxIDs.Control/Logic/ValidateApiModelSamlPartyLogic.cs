@@ -46,7 +46,7 @@ namespace FoxIDs.Logic
                 ValidateSigningKeys(modelState, nameof(samlDownParty.Keys), samlDownParty.Keys);
         }
 
-        private bool ValidateSigningKeys(ModelStateDictionary modelState, string propertyName, List<Api.JwtWithCertificateInfo> keys)
+        private bool ValidateSigningKeys(ModelStateDictionary modelState, string propertyName, List<Api.JwkWithCertificateInfo> keys)
         {
             var isValid = true;
             try

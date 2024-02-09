@@ -10,10 +10,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using ITfoxtec.Identity;
 using System.Linq;
+using FoxIDs.Infrastructure.Filters;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class MFilterPlanController : MasterApiController
+    [RequireMasterTenant]
+    [MasterScopeAuthorize]
+
+    public class MFilterPlanController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

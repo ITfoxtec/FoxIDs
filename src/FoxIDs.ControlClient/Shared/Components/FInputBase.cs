@@ -20,12 +20,15 @@ namespace FoxIDs.Client.Shared.Components
         [Parameter]
         public Expression<Func<object>> For { get; set; }
 
+        public event Func<TValue, Task> OnValueParsedAsync;
+
         protected override bool TryParseValueFromString(string value, out TValue result, out string validationErrorMessage)
         {
             if (typeof(TValue) == typeof(string))
             {
                 result = (TValue)Convert.ChangeType(value, typeof(TValue));
                 validationErrorMessage = null;
+                OnValueParsedAsync.Invoke(result);
                 return true;
             }
             else if (typeof(TValue) == typeof(int))
@@ -35,6 +38,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     result = (TValue)Convert.ChangeType(intResult, typeof(TValue));
                     validationErrorMessage = null;
+                    OnValueParsedAsync.Invoke(result);
                     return true;
                 }
                 else
@@ -51,6 +55,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     result = (TValue)Convert.ChangeType(boolResult, typeof(TValue));
                     validationErrorMessage = null;
+                    OnValueParsedAsync.Invoke(result);
                     return true;
                 }
                 else
@@ -66,6 +71,7 @@ namespace FoxIDs.Client.Shared.Components
                 {
                     result = (TValue)Enum.Parse(typeof(TValue), value);
                     validationErrorMessage = null;
+                    OnValueParsedAsync.Invoke(result);
                     return true;
                 }
                 catch (ArgumentException)

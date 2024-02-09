@@ -156,7 +156,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
     
                 generalSamlUpParty.KeyInfoList = new List<KeyInfoViewModel>();
-                generalSamlUpParty.Form.Model.Keys = new List<JwtWithCertificateInfo>();
+                generalSamlUpParty.Form.Model.Keys = new List<JwkWithCertificateInfo>();
 
                 if (samlUpParty.Keys?.Count() > 0)
                 {
@@ -187,7 +187,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalSamlUpParty.Form.Model.Keys == null)
             {
-                generalSamlUpParty.Form.Model.Keys = new List<JwtWithCertificateInfo>();
+                generalSamlUpParty.Form.Model.Keys = new List<JwkWithCertificateInfo>();
             }
             generalSamlUpParty.Form.ClearFieldError(nameof(generalSamlUpParty.Form.Model.Keys));
             foreach (var file in files)
@@ -207,9 +207,9 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
-                        if (generalSamlUpParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwtWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
+                        if (generalSamlUpParty.Form.Model.Keys.Any(k => k.X5t.Equals(jwkWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
                             generalSamlUpParty.Form.SetFieldError(nameof(generalSamlUpParty.Form.Model.Keys), "Signature validation keys (certificates) has duplicates.");
                             return;
@@ -217,14 +217,14 @@ namespace FoxIDs.Client.Pages.Components
 
                         generalSamlUpParty.KeyInfoList.Add(new KeyInfoViewModel
                         {
-                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
-                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
-                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
-                            IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid(),
-                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwtWithCertificateInfo
+                            Subject = jwkWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
+                            IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid(),
+                            Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwkWithCertificateInfo
                         });
-                        generalSamlUpParty.Form.Model.Keys.Add(jwtWithCertificateInfo);
+                        generalSamlUpParty.Form.Model.Keys.Add(jwkWithCertificateInfo);
                     }
                     catch (Exception ex)
                     {

@@ -108,9 +108,9 @@ namespace FoxIDs.Models.Api
         public string LoggedOutUrl { get; set; }
 
         [ListLength(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]
-        public List<JwtWithCertificateInfo> Keys { get; set; }
+        public List<JwkWithCertificateInfo> Keys { get; set; }
 
-        public JwtWithCertificateInfo EncryptionKey { get; set; }
+        public JwkWithCertificateInfo EncryptionKey { get; set; }
 
         public bool MetadataAddLogoutResponseLocation { get; set; }
 

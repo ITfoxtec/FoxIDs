@@ -11,10 +11,12 @@ using System.Collections.Generic;
 using System.Linq;
 using ITfoxtec.Identity;
 using System;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TFilterUpPartyController : TenantApiController
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    public class TFilterUpPartyController : ApiController
     {
         private const string dataType = "party:up";
         private readonly TelemetryScopedLogger logger;

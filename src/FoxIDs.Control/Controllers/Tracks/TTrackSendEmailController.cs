@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 using System.Net;
 using System;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
-    public class TTrackSendEmailController : TenantApiController
+    [TenantScopeAuthorize]
+    public class TTrackSendEmailController : ApiController
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

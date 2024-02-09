@@ -9,7 +9,7 @@
         <div>
             Track link
         </div>
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         @if (trackLinkDownParty.CreateMode)
@@ -20,7 +20,10 @@
         {
             <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="trackLinkDownParty.Form.Model.Note" For="@(() => trackLinkDownParty.Form.Model.Note)" />
+        @if (trackLinkDownParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="trackLinkDownParty.Form.Model.Note" For="@(() => trackLinkDownParty.Form.Model.Note)" />
+        }
 
         <div class="mb-3 alert alert-info" role="alert">
             <div>Please add a corresponding up-party track link in the track you want to connect to.</div>
@@ -123,7 +126,6 @@
         </div>
     }
     <div class="modal-footer">
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => DownParty.ShowAdvanced = !DownParty.ShowAdvanced)">@(DownParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!DownParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>

@@ -56,13 +56,24 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
             {
-                if (afterMap.Client == null)
+                if (afterMap.Client != null && afterMap.Resource != null)
                 {
-                    generalOAuthDownParty.EnableClientTab = false;
+                    generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.ClientAndResource;
                 }
                 else
                 {
-                    generalOAuthDownParty.EnableClientTab = true;
+                    if (afterMap.Client != null)
+                    {
+                        generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.Client;
+                    }
+                    else
+                    {
+                        generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.Resource;
+                    }
+                }
+
+                if (afterMap.Client != null)
+                {
                     afterMap.Client.ExistingSecrets = oauthDownSecrets.Select(s => new OAuthClientSecretViewModel { Name = s.Name, Info = s.Info }).ToList();
                     var defaultResourceScopeIndex = afterMap.Client.ResourceScopes.FindIndex(r => r.Resource.Equals(afterMap.Name, StringComparison.Ordinal));
                     if (defaultResourceScopeIndex > -1)
@@ -103,15 +114,6 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 }
 
-                if (afterMap.Resource == null)
-                {
-                    generalOAuthDownParty.EnableResourceTab = false;
-                }
-                else
-                {
-                    generalOAuthDownParty.EnableResourceTab = true;
-                }
-
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -125,8 +127,7 @@ namespace FoxIDs.Client.Pages.Components
             {
                 if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.Resource)
                 {
-                    oauthDownParty.EnableClientTab = false;
-                    oauthDownParty.EnableResourceTab = true;
+                    oauthDownParty.DownPartyType = DownPartyOAuthTypes.Resource;
                     oauthDownParty.ShowClientTab = false;
                     oauthDownParty.ShowResourceTab = true;
 
@@ -134,28 +135,87 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.ClientCredentialsGrant)
                 {
-                    oauthDownParty.EnableClientTab = true;
-                    oauthDownParty.EnableResourceTab = false;
+                    oauthDownParty.DownPartyType = DownPartyOAuthTypes.Client;
                     oauthDownParty.ShowClientTab = true;
                     oauthDownParty.ShowResourceTab = false;
 
-                    model.Client = new OAuthDownClientViewModel();
-
-                    model.Client.DefaultResourceScope = false;
-
-                    model.Client.RequirePkce = false;
-                    model.Client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
+                    model.Client = GetDefaultOAuthClientViewModel();
                 }
                 else
                 {
                     throw new NotSupportedException("OAuthSubPartyTypes not supported.");
                 }
             }
+            else
+            {
+                if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource)
+                {
+                    oauthDownParty.ShowClientTab = false;
+                    oauthDownParty.ShowResourceTab = true;
+                }
+                else
+                {
+                    oauthDownParty.ShowClientTab = true;
+                    oauthDownParty.ShowResourceTab = false;
+                }
+            }
         }
 
-        private void OnOAuthDownPartyClientTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Client = enableTab ? new OAuthDownClientViewModel() : null;
+        private OAuthDownClientViewModel GetDefaultOAuthClientViewModel()
+        {
+            var client = new OAuthDownClientViewModel();
+            client.DefaultResourceScope = false;
+            client.RequirePkce = false;
+            client.Secrets = new List<string> { SecretGenerator.GenerateNewSecret() };
+            return client;
+        }
 
-        private void OnOAuthDownPartyResourceTabChange(GeneralOAuthDownPartyViewModel oauthDownParty, bool enableTab) => oauthDownParty.Form.Model.Resource = enableTab ? new OAuthDownResource() : null;
+        private void OnOAuthDownPartyTypeChange(GeneralOAuthDownPartyViewModel oauthDownParty, DownPartyOAuthTypes downPartyType)
+        {
+            if (downPartyType == DownPartyOAuthTypes.Client)
+            {
+                if (oauthDownParty.Form.Model.Client == null)
+                {
+                    oauthDownParty.Form.Model.Client = GetDefaultOAuthClientViewModel();
+                }
+                if (oauthDownParty.Form.Model.Resource != null)
+                {
+                    oauthDownParty.Form.Model.Resource = null;
+                }
+                if (oauthDownParty.ShowResourceTab)
+                {
+                    oauthDownParty.ShowClientTab = true;
+                    oauthDownParty.ShowResourceTab = false;
+                }
+            }
+            else if (downPartyType == DownPartyOAuthTypes.Resource)
+            {
+                if (oauthDownParty.Form.Model.Client != null)
+                {
+                    oauthDownParty.Form.Model.Client = null;
+                }
+                if (oauthDownParty.Form.Model.Resource == null)
+                {
+                    oauthDownParty.Form.Model.Resource = new OAuthDownResource();
+                }
+                if (oauthDownParty.ShowClientTab)
+                {
+                    oauthDownParty.ShowClientTab = false;
+                    oauthDownParty.ShowResourceTab = true;
+                }
+            }
+            else if (downPartyType == DownPartyOAuthTypes.ClientAndResource)
+            {
+                if (oauthDownParty.Form.Model.Client == null)
+                {
+                    oauthDownParty.Form.Model.Client = GetDefaultOAuthClientViewModel();
+                }
+                if (oauthDownParty.Form.Model.Resource == null)
+                {
+                    oauthDownParty.Form.Model.Resource = new OAuthDownResource();
+                }
+            }
+        }
 
         private void AddOAuthScope(MouseEventArgs e, List<OAuthDownScopeViewModel> scopesViewModel)
         {
@@ -299,7 +359,7 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (generalOAuthDownParty.Form.Model.Client.ClientKeys == null)
             {
-                generalOAuthDownParty.Form.Model.Client.ClientKeys = new List<JwtWithCertificateInfo>();
+                generalOAuthDownParty.Form.Model.Client.ClientKeys = new List<JwkWithCertificateInfo>();
             }
             generalOAuthDownParty.Form.ClearFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys));
             foreach (var file in files)
@@ -319,9 +379,9 @@ namespace FoxIDs.Client.Pages.Components
                     try
                     {
                         var base64UrlEncodeCertificate = WebEncoders.Base64UrlEncode(memoryStream.ToArray());
-                        var jwtWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
+                        var jwkWithCertificateInfo = await HelpersService.ReadCertificateAsync(new CertificateAndPassword { EncodeCertificate = base64UrlEncodeCertificate });
 
-                        if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.X5t.Equals(jwtWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
+                        if (generalOAuthDownParty.Form.Model.Client.ClientKeys.Any(k => k.X5t.Equals(jwkWithCertificateInfo.X5t, StringComparison.OrdinalIgnoreCase)))
                         {
                             generalOAuthDownParty.Form.SetFieldError(nameof(generalOAuthDownParty.Form.Model.Client.ClientKeys), "Client certificates has duplicates.");
                             return;
@@ -329,14 +389,14 @@ namespace FoxIDs.Client.Pages.Components
 
                         generalOAuthDownParty.ClientKeyInfoList.Add(new KeyInfoViewModel
                         {
-                            Subject = jwtWithCertificateInfo.CertificateInfo.Subject,
-                            ValidFrom = jwtWithCertificateInfo.CertificateInfo.ValidFrom,
-                            ValidTo = jwtWithCertificateInfo.CertificateInfo.ValidTo,
-                            IsValid = jwtWithCertificateInfo.CertificateInfo.IsValid(),
-                            Thumbprint = jwtWithCertificateInfo.CertificateInfo.Thumbprint,
-                            Key = jwtWithCertificateInfo
+                            Subject = jwkWithCertificateInfo.CertificateInfo.Subject,
+                            ValidFrom = jwkWithCertificateInfo.CertificateInfo.ValidFrom,
+                            ValidTo = jwkWithCertificateInfo.CertificateInfo.ValidTo,
+                            IsValid = jwkWithCertificateInfo.CertificateInfo.IsValid(),
+                            Thumbprint = jwkWithCertificateInfo.CertificateInfo.Thumbprint,
+                            Key = jwkWithCertificateInfo
                         });
-                        generalOAuthDownParty.Form.Model.Client.ClientKeys.Add(jwtWithCertificateInfo);
+                        generalOAuthDownParty.Form.Model.Client.ClientKeys.Add(jwkWithCertificateInfo);
                     }
                     catch (Exception ex)
                     {

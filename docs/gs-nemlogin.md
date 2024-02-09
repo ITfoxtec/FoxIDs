@@ -18,7 +18,7 @@ Test NemLog-in with the <a href="https://aspnetcoreoidcallupsample.itfoxtec.com/
 The OpenID Connect test app call FoxIDs and FoxIDs call NemLog-in to let the user authenticate with MitID.
 
 ## NemLog-in details
-FoxIDs support NemLog-in including OIOSAML3, login, single logout, logging, issuer naming, OCES3 certificates and NSIS.
+FoxIDs support NemLog-in including OIOSAML3, login, single logout, logging, issuer naming, OCES3 (RSASSA-PSS) certificates and NSIS.
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 

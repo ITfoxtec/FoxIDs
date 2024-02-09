@@ -96,7 +96,7 @@ namespace FoxIDs
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapFallbackToFile("index.html");
+                endpoints.MapFallbackToController("Index", "W");
             });
         }
     }

@@ -46,8 +46,8 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(name, nameof(name))) return BadRequest(ModelState);
                 name = name?.ToLower();
 
-                var MParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
-                return Ok(mapper.Map<AParty>(MParty));
+                var mParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name));
+                return base.Ok(ModelToApiMap(mParty));
             }
             catch (CosmosDataException ex)
             {
@@ -108,7 +108,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
                 }
 
-                return Created(mapper.Map<AParty>(mParty));
+                return Created(ModelToApiMap(mParty));
             }
             catch (CosmosDataException ex)
             {
@@ -140,7 +140,7 @@ namespace FoxIDs.Controllers
                 if(party is Api.OidcDownParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if((tempMParty as OidcDownParty)?.Client?.Secrets?.Count > 0 && (mParty as OidcDownParty)?.Client?.Secrets != null)
+                    if((tempMParty as OidcDownParty).Client != null && (mParty as OidcDownParty).Client != null)
                     {
                         (mParty as OidcDownParty).Client.Secrets = (tempMParty as OidcDownParty).Client.Secrets;
                     }
@@ -148,7 +148,7 @@ namespace FoxIDs.Controllers
                 else if (party is Api.OAuthDownParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if ((tempMParty as OAuthDownParty)?.Client?.Secrets?.Count > 0 && (mParty as OAuthDownParty)?.Client?.Secrets != null)
+                    if ((tempMParty as OAuthDownParty).Client != null && (mParty as OAuthDownParty).Client != null)
                     {
                         (mParty as OAuthDownParty).Client.Secrets = (tempMParty as OAuthDownParty).Client.Secrets;
                     }
@@ -156,10 +156,8 @@ namespace FoxIDs.Controllers
                 else if (party is Api.OidcUpParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if ((tempMParty as OidcUpParty)?.Client?.ClientKeys?.Count > 0 && (mParty as OidcUpParty)?.Client?.ClientKeys != null)
-                    {
-                        (mParty as OidcUpParty).Client.ClientKeys = (tempMParty as OidcUpParty).Client.ClientKeys;
-                    }
+                    (mParty as OidcUpParty).Client.ClientSecret = (tempMParty as OidcUpParty).Client.ClientSecret;
+                    (mParty as OidcUpParty).Client.ClientKeys = (tempMParty as OidcUpParty).Client.ClientKeys;
                 }
 
                 var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;
@@ -179,7 +177,7 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
                 }
 
-                return Ok(mapper.Map<AParty>(mParty));
+                return Ok(ModelToApiMap(mParty));
             }
             catch (CosmosDataException ex)
             {
@@ -228,6 +226,22 @@ namespace FoxIDs.Controllers
                 }
                 throw;
             }
+        }
+
+        private AParty ModelToApiMap(MParty mParty)
+        {
+            var arParty = mapper.Map<AParty>(mParty);
+            if (arParty is Api.OidcUpParty arOidcUpParty)
+            {
+                if (arOidcUpParty.Client?.ClientSecret != null)
+                {
+                    if (arOidcUpParty.Client.ClientSecret.Length > 20)
+                    {
+                        arOidcUpParty.Client.ClientSecret = arOidcUpParty.Client.ClientSecret.Substring(0, 3);
+                    }
+                }
+            }
+            return arParty;
         }
 
         private bool IsUpParty()

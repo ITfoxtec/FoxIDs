@@ -14,7 +14,7 @@ namespace FoxIDs.Controllers
     /// <summary>
     /// OIDC import client key for up-party API.
     /// </summary>
-    public class TOidcClientKeyUpPartyController : GenericOAuthClientKeyUpPartyController<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>
+    public class TOidcClientKeyUpPartyController : GenericOAuthClientKeyUpPartyController<OidcUpParty, OidcUpClient>
     {
         public TOidcClientKeyUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger, mapper, tenantRepository, planCacheLogic, externalKeyLogic)
         { }

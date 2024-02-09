@@ -21,7 +21,7 @@ namespace FoxIDs.Controllers
     /// Abstract OAuth 2.0 import client key for up-party API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
-    public abstract class GenericOAuthClientKeyUpPartyController<TParty, TClient, TScope, TClaim> : ApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    public abstract class GenericOAuthClientKeyUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;
@@ -45,7 +45,7 @@ namespace FoxIDs.Controllers
                 if (!ModelState.TryValidateRequiredParameter(partyName, nameof(partyName))) return BadRequest(ModelState);
                 partyName = partyName?.ToLower();
 
-                var oauthUpParty = await tenantRepository.GetAsync<OAuthUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
                 if (oauthUpParty.Client.ClientKeys?.Count() > 0 && oauthUpParty.Client.ClientKeys.First().Type == ClientKeyTypes.KeyVaultImport)
                 {
                     var clientKey = oauthUpParty.Client.ClientKeys.First();
@@ -64,8 +64,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(OAuthUpParty).Name}' client key by name '{partyName}'.");
-                    return NotFound(typeof(OAuthUpParty).Name, partyName);
+                    logger.Warning(ex, $"NotFound, Get '{typeof(TParty).Name}' client key by name '{partyName}'.");
+                    return NotFound(typeof(TParty).Name, partyName);
                 }
                 throw;
             }
@@ -84,7 +84,7 @@ namespace FoxIDs.Controllers
                     throw new Exception($"Key Vault and thereby client certificates is not supported in the '{plan.Name}' plan.");
                 }
 
-                var oauthUpParty = await tenantRepository.GetAsync<OAuthUpParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
+                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, keyRequest.PartyName));
 
                 (var externalName, var publicCertificate, var externalId) = await externalKeyLogic.ImportExternalKeyAsync(WebEncoders.Base64UrlDecode(keyRequest.Certificate), keyRequest.Password, upPartyName: keyRequest.PartyName);
                 var publicKey = new X509Certificate2(publicCertificate).ToFTJsonWebKey();
@@ -119,8 +119,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.Conflict)
                 {
-                    logger.Warning(ex, $"Conflict, Create client key on client '{typeof(OAuthUpParty).Name}' by name '{keyRequest.PartyName}'.");
-                    return Conflict(typeof(OAuthUpParty).Name, keyRequest.PartyName, nameof(keyRequest.PartyName));
+                    logger.Warning(ex, $"Conflict, Create client key on client '{typeof(TParty).Name}' by name '{keyRequest.PartyName}'.");
+                    return Conflict(typeof(TParty).Name, keyRequest.PartyName, nameof(keyRequest.PartyName));
                 }
                 throw;
             }
@@ -137,7 +137,7 @@ namespace FoxIDs.Controllers
                 var externalName = name.GetLastInDotList();
                 if (!ModelState.TryValidateRequiredParameter(externalName, $"{nameof(name)}[1]")) return BadRequest(ModelState);
 
-                var oauthUpParty = await tenantRepository.GetAsync<OAuthUpParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
+                var oauthUpParty = await tenantRepository.GetAsync<TParty>(await UpParty.IdFormatAsync(RouteBinding, partyName));
 
                 var key = oauthUpParty.Client.ClientKeys?.Where(k => k.Type == ClientKeyTypes.KeyVaultImport && k.ExternalName == externalName).FirstOrDefault();
                 if (key != null)
@@ -153,8 +153,8 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete client key from client '{typeof(OAuthUpParty).Name}' by name '{name}'.");
-                    return NotFound(typeof(OAuthUpParty).Name, name);
+                    logger.Warning(ex, $"NotFound, Delete client key from client '{typeof(TParty).Name}' by name '{name}'.");
+                    return NotFound(typeof(TParty).Name, name);
                 }
                 throw;
             }

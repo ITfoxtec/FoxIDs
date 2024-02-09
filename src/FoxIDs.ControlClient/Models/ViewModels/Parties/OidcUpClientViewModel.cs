@@ -67,6 +67,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Client secret")]
         public string ClientSecret { get; set; }
+        public string ClientSecretLoaded { get; set; }
 
         [Display(Name = "Client certificate")]
         public KeyInfoViewModel PublicClientKeyInfo { get; set; }

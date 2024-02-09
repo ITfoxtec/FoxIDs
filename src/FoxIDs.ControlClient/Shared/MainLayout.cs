@@ -314,12 +314,7 @@ namespace FoxIDs.Client.Shared
 
         public async Task ChangeMyPasswordAsync()
         {
-            var email = myProfileClaims.Where(c => c.Type == JwtClaimTypes.Email).First().Value;
-            var user = await UserService.GetUserAsync(email);
-
-            user.ChangePassword = true;
-
-            await UserService.UpdateUserAsync(user.Map<UserRequest>());
+            await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
 
             await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
         }

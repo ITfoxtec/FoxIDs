@@ -55,6 +55,8 @@ namespace FoxIDs.MappingProfiles
                 .ForMember(d => d.Email, opt => opt.MapFrom(s => s.Email.ToLower()))
                 .ForMember(d => d.Id, opt => opt.MapFrom(s => User.IdFormatAsync(RouteBinding, s.Email.ToLower()).GetAwaiter().GetResult()));
 
+            CreateMap<User, Api.MyUser>();
+
             CreateMap<UserControlProfile, Api.UserControlProfile>()
                 .ReverseMap();
 

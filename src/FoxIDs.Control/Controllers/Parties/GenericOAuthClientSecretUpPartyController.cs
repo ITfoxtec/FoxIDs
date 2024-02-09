@@ -5,8 +5,6 @@ using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 using System.Threading.Tasks;
-using AutoMapper;
-using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
@@ -17,10 +15,16 @@ namespace FoxIDs.Controllers
     /// Abstract OAuth 2.0 import client secret for up-party API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
-    public abstract class GenericOAuthClientSecretUpPartyController<TParty, TClient>(TelemetryScopedLogger logger, ITenantRepository tenantRepository) : ApiController(logger) where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
+    public abstract class GenericOAuthClientSecretUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient
     {
-        private readonly TelemetryScopedLogger logger = logger;
-        private readonly ITenantRepository tenantRepository = tenantRepository;
+        private readonly TelemetryScopedLogger logger;
+        private readonly ITenantRepository tenantRepository;
+
+        public GenericOAuthClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantRepository tenantRepository) : base(logger)
+        {
+            this.logger = logger;
+            this.tenantRepository = tenantRepository;
+        }
 
         protected async Task<ActionResult<Api.OAuthClientSecretSingleResponse>> Get(string partyName)
         {

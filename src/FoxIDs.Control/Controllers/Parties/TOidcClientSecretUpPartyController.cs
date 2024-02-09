@@ -4,9 +4,7 @@ using Api = FoxIDs.Models.Api;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using AutoMapper;
 using System.Collections.Generic;
-using FoxIDs.Logic;
 using Microsoft.AspNetCore.Http;
 
 namespace FoxIDs.Controllers
@@ -16,7 +14,7 @@ namespace FoxIDs.Controllers
     /// </summary>
     public class TOidcClientSecretUpPartyController : GenericOAuthClientSecretUpPartyController<OidcUpParty, OidcUpClient>
     {
-        public TOidcClientSecretUpPartyController(TelemetryScopedLogger logger, IMapper mapper, ITenantRepository tenantRepository, PlanCacheLogic planCacheLogic, ExternalKeyLogic externalKeyLogic) : base(logger, mapper, tenantRepository, planCacheLogic, externalKeyLogic)
+        public TOidcClientSecretUpPartyController(TelemetryScopedLogger logger, ITenantRepository tenantRepository) : base(logger, tenantRepository)
         { }
 
         /// <summary>

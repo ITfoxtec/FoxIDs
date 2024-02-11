@@ -23,7 +23,7 @@ namespace FoxIDs.Infrastructure.Security
                     var userRoles = context.User.Claims.Where(c => string.Equals(c.Type, JwtClaimTypes.Role, StringComparison.OrdinalIgnoreCase)).Select(c => c.Value).ToList();
                     if (userScopes?.Count() > 0 && userRoles?.Count > 0)
                     {
-                        (var acceptedScopes, var acceptedRoles) = GetAcceptedScopesAndRoles(scopeAuthorizeAttribute.Segments, httpContext.GetRouteBinding()?.TrackName, httpContext.Request?.Method == HttpMethod.Get.Method);
+                        (var acceptedScopes, var acceptedRoles) = GetAcceptedScopesAndRoles(scopeAuthorizeAttribute.Segments, httpContext.GetRouteBinding()?.TrackName, httpContext.Request?.Method);
 
                         if (userScopes.Where(us => acceptedScopes.Any(s => s.Equals(us, StringComparison.Ordinal))).Any() && userRoles.Where(ur => acceptedRoles.Any(r => r.Equals(ur, StringComparison.Ordinal))).Any())
                         {
@@ -36,17 +36,37 @@ namespace FoxIDs.Infrastructure.Security
             return Task.CompletedTask;
         }
 
-        protected abstract (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string trackName, bool isHttpGet);
+        protected abstract (List<string> acceptedScopes, List<string> acceptedRoles) GetAcceptedScopesAndRoles(IEnumerable<string> segments, string trackName, string httpMethod);
 
-        protected void AddScopeAndRole(List<string> acceptedScopes, List<string> acceptedRoles, bool isHttpGet, string scope, string role, string segment = "")
+        protected void AddScopeAndRole(List<string> acceptedScopes, List<string> acceptedRoles, string httpMethod, string scope, string role, string segment = "")
         {
             acceptedScopes.Add(scope);
             acceptedRoles.Add(role);
 
-            if (segment != Constants.ControlApi.Segment.Usage && isHttpGet)
+            if (segment != Constants.ControlApi.Segment.Usage)
             {
-                acceptedScopes.Add($"{scope}{Constants.ControlApi.AccessElement.Read}");
-                acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.Read}");
+                if (httpMethod == HttpMethod.Get.Method)
+                {
+                    acceptedScopes.Add($"{scope}{Constants.ControlApi.AccessElement.Read}");
+                    acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.Read}");
+                }
+                else if (httpMethod == HttpMethod.Post.Method)
+                {
+                    acceptedScopes.Add($"{scope}{Constants.ControlApi.AccessElement.Create}");
+                    acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.Create}");
+
+                }
+                else if (httpMethod == HttpMethod.Put.Method)
+                {
+                    acceptedScopes.Add($"{scope}{Constants.ControlApi.AccessElement.Update}");
+                    acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.Update}");
+
+                }
+                else if (httpMethod == HttpMethod.Delete.Method)
+                {
+                    acceptedScopes.Add($"{scope}{Constants.ControlApi.AccessElement.Delete}");
+                    acceptedRoles.Add($"{role}{Constants.ControlApi.AccessElement.Delete}");
+                }
             }
         }
     }

@@ -117,6 +117,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:tenant.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>Access to basic tenant elements: 
         <lu>
             <li>My profile used in the Control Client.</li>
@@ -133,6 +145,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:tenant:basic.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:basic.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:basic.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>Access to everything in all tracks in a tenant, not including the master track.</i></td>
     </tr>
     <tr>
@@ -144,6 +168,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:tenant:track.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>Access to everything in a specific track in a tenant.</i></td>
     </tr>
     <tr>
@@ -153,6 +189,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
     <tr>
         <td><code>foxids:tenant:track[xxxx].read</code></td>
         <td>read</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx].create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx].update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx].delete</code></td>
+        <td>delete</td>
     </tr>
     <tr>
         <td colspan=2><i>All usage logs in all tracks in a tenant, not including the master track. Not applicable in the master tenant.</i></td>
@@ -180,6 +228,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:tenant:track:log.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:log.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:log.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>Logs in a specific tenant.</i></td>
     </tr>
     <tr>
@@ -189,6 +249,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
     <tr>
         <td><code>foxids:tenant:track[xxxx]:log.read</code></td>
         <td>read</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:log.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:log.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:log.delete</code></td>
+        <td>delete</td>
     </tr>
     <tr>
         <td colspan=2><i>All users in all tracks in a tenant, not including the master track.</i></td>
@@ -202,6 +274,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:tenant:track:user.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:user.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:user.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>All users in a specific track in a tenant. </i></td>
     </tr>
     <tr>
@@ -211,6 +295,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
     <tr>
         <td><code>foxids:tenant:track[xxxx]:user.read</code></td>
         <td>read</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:user.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:user.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:user.delete</code></td>
+        <td>delete</td>
     </tr>
     <tr>
         <td colspan=2><i>All down-parties and up-parties in all tracks in a tenant, not including the master track.</i></td>
@@ -224,6 +320,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:tenant:track:party.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:party.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track:party.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>All down-parties and up-parties in a specific track in a tenant.</i></td>
     </tr>
     <tr>
@@ -233,6 +341,18 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
     <tr>
         <td><code>foxids:tenant:track[xxxx]:party.read</code></td>
         <td>read</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:party.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:party.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:tenant:track[xxxx]:party.delete</code></td>
+        <td>delete</td>
     </tr>
 </table>
 
@@ -254,11 +374,23 @@ The master tenant access rights is at the same time both scopes and roles.
         <td>read</td>
     </tr>
     <tr>
+        <td><code>foxids:master.create</code></td>
+        <td>create</td>
+    </tr>
+    <tr>
+        <td><code>foxids:master.update</code></td>
+        <td>update</td>
+    </tr>
+    <tr>
+        <td><code>foxids:master.delete</code></td>
+        <td>delete</td>
+    </tr>
+    <tr>
         <td colspan=2><i>Usage log in the master tenant.</i></td>
     </tr>
     <tr>
         <td><code>foxids:master:usage</code></td>
-        <td>read, create, update, delete</td>
+        <td>read</td>
     </tr>
 </table>
 

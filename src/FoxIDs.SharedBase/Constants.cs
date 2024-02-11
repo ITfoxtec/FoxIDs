@@ -1,6 +1,7 @@
 ﻿using FoxI = ITfoxtec.Identity;
 using System.Security.Claims;
 using ITfoxtec.Identity.Saml2.Claims;
+using System.Net.Http;
 
 namespace FoxIDs
 {
@@ -549,7 +550,7 @@ namespace FoxIDs
         public static class ControlApi
         {
             public const string Version = "v1";
-            public readonly static string[] SupportedApiHttpMethods = { "GET", "PUT", "POST", "DELETE" };
+            public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 
             public const string ResourceName = "foxids_control_api";
 
@@ -573,6 +574,9 @@ namespace FoxIDs
                 public const string Track = ":track";
                 public const string Admin = ".admin";
                 public const string Read = ".read";
+                public const string Create = ".create";
+                public const string Update = ".update";
+                public const string Delete = ".delete";
             }
 
             public static class Segment

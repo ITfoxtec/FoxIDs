@@ -79,6 +79,12 @@ Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/N
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
+### NetFramework4.7ClientCredentialGrantAssertionConsoleSample
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/NetFramework4.7ClientCredentialGrantAssertionConsoleSample)) .NET Framework 4.7 console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).
+
+Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
+
 ### BlazorBFFAspNetCoreOidcSample
 
 Sample (code link [client](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorBFFAspNetOidcSample.Client) and [server](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorBFFAspNetOidcSample.Server)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow in a Blazor BFF (Backend For Frontend) application with a ASP.NET Core backend.  

@@ -6,7 +6,7 @@ The test tenant `test-corp`
 
 
 Take a look at the `test-corp` tenant in FoxIDs Control Client: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)
-Get access with the user xxx and password xxx
+Get access with the user `reader@foxids.com` and password `TestAccess!`
 
 
 Online test samples:  

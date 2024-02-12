@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
             }
         }
 
-        protected async Task<ActionResult<AParty>> Post(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> modelActionAsync = null)
+        protected async Task<ActionResult<AParty>> Post(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> preLoadModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> postLoadModelActionAsync = null)
         {
             try
             {
@@ -90,7 +90,8 @@ namespace FoxIDs.Controllers
 
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
-                if (modelActionAsync != null && !await modelActionAsync(party, mParty)) return BadRequest(ModelState);
+                if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
+                if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 await tenantRepository.CreateAsync(mParty);
 
@@ -126,7 +127,7 @@ namespace FoxIDs.Controllers
             return await tenantRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
         }
 
-        protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> modelActionAsync = null)
+        protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> preLoadModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> postLoadModelActionAsync = null)
         {
             try
             {
@@ -135,9 +136,9 @@ namespace FoxIDs.Controllers
                 var mParty = mapper.Map<MParty>(party);
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
-                if (modelActionAsync != null && !await modelActionAsync(party, mParty)) return BadRequest(ModelState);
+                if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
-                if(party is Api.OidcDownParty)
+                if (party is Api.OidcDownParty)
                 {
                     var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
                     if((tempMParty as OidcDownParty).Client != null && (mParty as OidcDownParty).Client != null)
@@ -159,6 +160,8 @@ namespace FoxIDs.Controllers
                     (mParty as OidcUpParty).Client.ClientSecret = (tempMParty as OidcUpParty).Client.ClientSecret;
                     (mParty as OidcUpParty).Client.ClientKeys = (tempMParty as OidcUpParty).Client.ClientKeys;
                 }
+
+                if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
                 var oldMUpParty = (mParty is UpParty mUpParty) ? await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(RouteBinding, mParty.Name)) : null;
                 await tenantRepository.UpdateAsync(mParty);

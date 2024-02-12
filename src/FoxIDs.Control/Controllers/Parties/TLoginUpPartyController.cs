@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         /// <returns>Login up-party.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<ActionResult<Api.LoginUpParty>> PostLoginUpParty([FromBody] Api.LoginUpParty party) => await Post(party, async ap => await validateApiModelLoginPartyLogic.ValidateApiModelAsync(ModelState, ap), (ap, mp) => new ValueTask<bool>(true));
+        public async Task<ActionResult<Api.LoginUpParty>> PostLoginUpParty([FromBody] Api.LoginUpParty party) => await Post(party, async ap => await validateApiModelLoginPartyLogic.ValidateApiModelAsync(ModelState, ap));
 
         /// <summary>
         /// Update Login up-party.
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         /// <returns>Login up-party.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<Api.LoginUpParty>> PutLoginUpParty([FromBody] Api.LoginUpParty party) => await Put(party, async ap => await validateApiModelLoginPartyLogic.ValidateApiModelAsync(ModelState, ap), (ap, mp) => new ValueTask<bool>(true));
+        public async Task<ActionResult<Api.LoginUpParty>> PutLoginUpParty([FromBody] Api.LoginUpParty party) => await Put(party, async ap => await validateApiModelLoginPartyLogic.ValidateApiModelAsync(ModelState, ap));
 
         /// <summary>
         /// Delete Login up-party.

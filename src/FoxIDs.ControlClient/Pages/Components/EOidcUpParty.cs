@@ -192,22 +192,26 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 else
                 {
-                    if (oidcUpParty.Client != null)
+                    var deleteClientSecret = false;
+                    if (oidcUpParty.Client != null && oidcUpParty.Client.ClientSecret != generalOidcUpParty.Form.Model.Client.ClientSecretLoaded)
                     {
-                        if (oidcUpParty.Client.ClientSecret != generalOidcUpParty.Form.Model.Client.ClientSecretLoaded)
+                        if (string.IsNullOrWhiteSpace(oidcUpParty.Client.ClientSecret))
                         {
-                            if (string.IsNullOrWhiteSpace(oidcUpParty.Client.ClientSecret))
-                            {
-                                await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name);
-                            }
-                            else
-                            {
-                                await UpPartyService.UpdateOidcClientSecretUpPartyAsync(new OAuthClientSecretSingleRequest { PartyName = UpParty.Name, Secret = oidcUpParty.Client.ClientSecret });
-                            }
+                            deleteClientSecret = true;
+                        }
+                        else
+                        {
+                            await UpPartyService.UpdateOidcClientSecretUpPartyAsync(new OAuthClientSecretSingleRequest { PartyName = UpParty.Name, Secret = oidcUpParty.Client.ClientSecret });
                         }
                         oidcUpParty.Client.ClientSecret = null;
                     }
+
                     var oidcUpPartyResult = await UpPartyService.UpdateOidcUpPartyAsync(oidcUpParty);
+                    if (deleteClientSecret)
+                    {
+                        await UpPartyService.DeleteOidcClientSecretUpPartyAsync(UpParty.Name);
+                        oidcUpPartyResult.Client.ClientSecret = null;
+                    }
                     var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));
                     toastService.ShowSuccess("OpenID Connect up-party updated.");

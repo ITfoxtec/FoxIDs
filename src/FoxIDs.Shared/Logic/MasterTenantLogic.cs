@@ -65,8 +65,8 @@ namespace FoxIDs.Logic
                 Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = false,
                 EnableCancelLogin = false,
-                SessionLifetime = 0,
-                SessionAbsoluteLifetime = 0,
+                SessionLifetime = 36000, // 10 hours
+                SessionAbsoluteLifetime = 36000, // 10 hours
                 PersistentSessionLifetimeUnlimited = false,
                 LogoutConsent = LoginUpPartyLogoutConsent.IfRequired
             };

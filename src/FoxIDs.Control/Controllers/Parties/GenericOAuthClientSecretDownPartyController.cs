@@ -9,13 +9,15 @@ using System.Threading.Tasks;
 using AutoMapper;
 using System.Collections.Generic;
 using FoxIDs.Logic;
+using FoxIDs.Infrastructure.Security;
 
 namespace FoxIDs.Controllers
 {
     /// <summary>
     /// Abstract OAuth 2.0 client secret for down-party API.
     /// </summary>
-    public abstract class GenericOAuthClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : TenantApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+    [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
+    public abstract class GenericOAuthClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : ApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {
         private readonly TelemetryScopedLogger logger;
         private readonly IMapper mapper;

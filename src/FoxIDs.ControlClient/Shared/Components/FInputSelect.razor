@@ -22,4 +22,24 @@
 
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public EventCallback<TValue> OnValidChange { get; set; }
+
+    protected override void OnInitialized()
+    {
+        OnValueParsedAsync += OnValueParsedEventAsync;
+    }
+
+    private async Task OnValueParsedEventAsync(TValue value)
+    {
+        await OnValidChange.InvokeAsync(value);
+        StateHasChanged();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        OnValueParsedAsync -= OnValueParsedEventAsync;
+        base.Dispose(disposing);
+    }
 }

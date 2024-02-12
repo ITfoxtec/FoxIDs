@@ -10,7 +10,7 @@
             SAML 2.0
         </div>
         <div class="d-flex">
-            <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+            <FInputSwitchAdvancedOptions @bind-Value="samlUpParty.ShowAdvanced" />
         </div>
     </div>
     <div class="modal-body">
@@ -22,7 +22,10 @@
         {
             <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
+        @if (samlUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="samlUpParty.Form.Model.Note" For="@(() => samlUpParty.Form.Model.Note)" />
+        }
 
         @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
         {
@@ -362,7 +365,6 @@
         </div>
     }
     <div class="modal-footer">
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => samlUpParty.ShowAdvanced = !samlUpParty.ShowAdvanced)">@(samlUpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!UpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>

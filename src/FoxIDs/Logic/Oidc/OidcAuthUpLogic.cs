@@ -124,8 +124,11 @@ namespace FoxIDs.Logic
                 case LoginAction.ReadSession:
                     authenticationRequest.Prompt = IdentityConstants.AuthorizationServerPrompt.None;
                     break;
-                case LoginAction.RequireLogin:
+                case LoginAction.SessionUserRequireLogin:
                     authenticationRequest.Prompt = IdentityConstants.AuthorizationServerPrompt.Login;
+                    break;
+                case LoginAction.RequireLogin:
+                    authenticationRequest.Prompt = IdentityConstants.AuthorizationServerPrompt.SelectAccount;
                     break;
                 default:
                     break;

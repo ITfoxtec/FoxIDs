@@ -9,7 +9,7 @@
         <div>
             OAuth 2.0
         </div>
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
+        <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
         @if (oauthUpParty.Form.Model.IsManual)
@@ -27,7 +27,10 @@
         {
             <FFieldText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
         }
-        <FInputText @bind-Value="oauthUpParty.Form.Model.Note" For="@(() => oauthUpParty.Form.Model.Note)" />
+        @if (oauthUpParty.ShowAdvanced)
+        {
+            <FInputText @bind-Value="oauthUpParty.Form.Model.Note" For="@(() => oauthUpParty.Form.Model.Note)" />
+        }
 
         <FInputText @bind-Value="oauthUpParty.Form.Model.Authority" For="@(() => oauthUpParty.Form.Model.Authority)" Focus="@(oauthUpParty.CreateMode ? false : true)" />
 
@@ -162,7 +165,6 @@
         </div>
     }
     <div class="modal-footer">
-        <button type="button" class="btn btn-link btn-xs" @onclick="@(() => UpParty.ShowAdvanced = !UpParty.ShowAdvanced)">@(UpParty.ShowAdvanced ? "Hide" : "Show") advanced settings</button>
         @if (!UpParty.CreateMode)
         {
             <button type="button" class="btn btn-link" @onclick="@(() => UpParty.DeleteAcknowledge = true)">Delete</button>

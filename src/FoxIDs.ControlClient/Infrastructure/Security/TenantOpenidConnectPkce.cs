@@ -24,7 +24,7 @@ namespace FoxIDs.Client.Infrastructure.Security
             this.clientSettings = clientSettings;
         }
 
-        public async Task TenantLoginAsync()
+        public async Task TenantLoginAsync(string prompt = null)
         {
             await controlClientSettingLogic.InitLoadAsync();
 
@@ -38,7 +38,7 @@ namespace FoxIDs.Client.Infrastructure.Security
                 LogoutCallBackPath = await ReplaceTenantNameAsync(clientSettings.LogoutCallBackPath)
             };
 
-            await LoginAsync(openidConnectPkceSettings);
+            await LoginAsync(openidConnectPkceSettings, prompt: prompt);
         }
 
         public async Task TenantLogoutAsync()

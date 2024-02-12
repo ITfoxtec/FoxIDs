@@ -1,0 +1,27 @@
+﻿<div>
+    <input type="checkbox" id="@id" @bind="Value" />
+    <label for="@id">Advanced options</label>
+</div>
+
+
+@code {
+    private string id = Guid.NewGuid().ToString().Replace("-", "");
+
+    [Parameter]
+    public EventCallback<bool> ValueChanged { get; set; }
+
+    private bool _value;
+    [Parameter]
+    public bool Value
+    {
+        get { return _value; }
+        set
+        {
+            if (_value != value)
+            {
+                _value = value;
+                ValueChanged.InvokeAsync(_value);
+            }
+        }
+    }
+} 

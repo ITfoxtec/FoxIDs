@@ -19,6 +19,10 @@ namespace FoxIDs.Client.Infrastructure
                 {
                     throw new FoxIDsApiException("Unauthorized", response.StatusCode, await GetResponseTextAsync(response), GetHeaders(response));
                 }
+                else if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    throw new FoxIDsApiException("Forbidden, you do not possess the required scope and role.", response.StatusCode, await GetResponseTextAsync(response), GetHeaders(response));
+                }
                 else if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
                     throw new FoxIDsApiException("Bad request", response.StatusCode, await GetResponseTextAsync(response), GetHeaders(response));

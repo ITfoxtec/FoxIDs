@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Client.Shared.Components;
 using FoxIDs.Models.Api;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
@@ -22,9 +23,8 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string ClientCertificateFileStatus { get; set; } = DefaultClientCertificateFileStatus;
 
-        public bool EnableClientTab { get; set; } = true;
-
-        public bool EnableResourceTab { get; set; }
+        [Display(Name = "Down-party type")]
+        public DownPartyOAuthTypes DownPartyType { get; set; } = DownPartyOAuthTypes.Client;
 
         public bool ShowClientTab { get; set; } = true;
         public bool ShowResourceTab { get; set; }

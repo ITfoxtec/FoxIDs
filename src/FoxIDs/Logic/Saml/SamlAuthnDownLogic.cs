@@ -170,7 +170,7 @@ namespace FoxIDs.Logic
 
             if(saml2AuthnRequest.ForceAuthn.HasValue && saml2AuthnRequest.ForceAuthn.Value)
             {
-                loginRequest.LoginAction = LoginAction.RequireLogin;
+                loginRequest.LoginAction = LoginAction.SessionUserRequireLogin;
             }
             else if(saml2AuthnRequest.IsPassive.HasValue && saml2AuthnRequest.IsPassive.Value)
             {

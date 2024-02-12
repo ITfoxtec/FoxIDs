@@ -3,7 +3,7 @@
 FoxIDs can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
 Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
 
-Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider).  
+Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
@@ -14,7 +14,7 @@ In the test environment, FoxIDs can be connected to Context Handler as a test Id
 
 ![Connect to Context Handler RP](images/how-to-context-handler-rp.svg)
 
-Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 and FoxIDs furthermore support the required certificates and it is possible to support NSIS.
+Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 with OCES3 (RSASSA-PSS) and FoxIDs furthermore support the required certificates and it is possible to support NSIS.
 
 > You can test Context Handler login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment (on `FoxIDs - test-corp` on Context Handler) or `Danish Context Handler` for production.  
 > The sample is configured with a separate tracks for the Context Handler SAML 2.0 integration.  

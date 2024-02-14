@@ -11,6 +11,9 @@
   - [SAML 2.0](saml-2.0.md)
   - [Track link](howto-tracklink-foxids.md)
 - [Token exchange](token-exchange.md)
+- [Development](development.md)
+  - [.NET Samples](samples.md)
+  - [FoxIDs dev in VS](foxids-dev.md)
 - Topics
   - [Users](users.md)
   - [Claims & Claim transforms](claim.md)
@@ -21,8 +24,6 @@
   - [FoxIDs inside](foxids-inside.md)
   - [Control Client & API](control#.md)
   - [Plans](plan.md)
-- [Development](development.md)
-  - [Samples](samples.md)
 - [Customization](customization.md)
   - [Name, title, Icon and CSS](name-title-icon-css.md)
   - [Custom domain](custom-domain.md)

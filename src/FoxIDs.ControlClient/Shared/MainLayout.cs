@@ -39,6 +39,7 @@ namespace FoxIDs.Client.Shared
         private bool myProfileMasterMasterLogin;
         private bool showMyProfileClaims;
         private IEnumerable<Claim> myProfileClaims;
+        private string myProfileError;
         private Modal notAccessModal;
 
         [CascadingParameter]
@@ -314,9 +315,21 @@ namespace FoxIDs.Client.Shared
 
         public async Task ChangeMyPasswordAsync()
         {
-            await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
+            try
+            {
+                await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
 
-            await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
+
+            }
+            catch (TokenUnavailableException)
+            {
+                await(OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                myProfileError = ex.Message;
+            }
         }
     }
 }

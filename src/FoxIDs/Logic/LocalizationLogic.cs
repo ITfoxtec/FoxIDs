@@ -55,10 +55,10 @@ namespace FoxIDs.Logic
                 var value = GetValue(resourceEnvelope, id, culture);
                 if (!value.IsNullOrEmpty())
                 {
-                    return value;
+                    return AddResourceId(id, value);
                 }
 
-                return GetValue(resourceEnvelope, id, Constants.Models.Resource.DefaultLanguage);
+                return AddResourceId(id, GetValue(resourceEnvelope, id, Constants.Models.Resource.DefaultLanguage));
             }
 
             return null;
@@ -71,11 +71,11 @@ namespace FoxIDs.Logic
                 var value = GetValue(RouteBinding.Resources, id, culture);
                 if (!value.IsNullOrEmpty())
                 {
-                    return AddResourceId(id, value);
+                    return value;
                 }
             }
 
-            return AddResourceId(id, GetValue(resourceEnvelope.Resources, id, culture));
+            return GetValue(resourceEnvelope.Resources, id, culture);
         }
 
         private string AddResourceId(int id, string value)

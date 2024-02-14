@@ -98,6 +98,8 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (samlDownParty.CreateMode)
             {
+                model.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+
                 model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
             }
         }

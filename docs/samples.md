@@ -1,21 +1,62 @@
-# Samples
-The FoxIDs samples show user login and logout with OpenID Connect 1.0 and SAML 2.0, client credential grant with secret and certificate, API calls secured with OAuth 2.0 and token exchange. 
-The sample source is located in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
+# .NET Samples
+The FoxIDs .NET samples show:
 
-> Online samples:  
->   - [Web app OpenID Connect sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](#aspnetcoreoidcauthcodealluppartiessample))  
->   - [IdP SAML 2.0 sample](https://aspnetcoresamlidpsample.itfoxtec.com/) ([sample docs](#aspnetcoresamlidpsample))  
->   - [API1 OAuth 2.0 sample](https://aspnetcoreoauthapi1sample.itfoxtec.com/) ([sample docs](#aspnetcoreapi1sample))  
->   - [API2 OAuth 2.0 sample](https://aspnetcoreoauthapi2sample.itfoxtec.com/) ([sample docs](#aspnetcoreapi2sample))
+- User login and logout with OpenID Connect 1.0 and SAML 2.0
+- Client credential grant with secret and certificate
+- API calls secured with OAuth 2.0 
+- Token exchange from access token to access token and SAML 2.0 to access token
 
-The samples are pre-configured in the FoxIDs.com test track and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
-You can also configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
+Find the sample source in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxIDs.Samples) repository.
+
+The samples are pre-configured in the FoxIDs online test tenant `test-corp` and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
+ 
+> Take a look at the FoxIDs test configuration in FoxIDs Control Client: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!`
+
+You can alternatively configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).
+
+**Sample index**
+
+- ASP.NET Core - OpenID Connect - down-party
+    -  [AspNetCoreOidcAuthCodeAllUpPartiesSample](#aspnetcoreoidcauthcodealluppartiessample) ([online](https://aspnetcoreoidcallupsample.itfoxtec.com/)) <- *Good starting point!*
+    -  [AspNetCoreOidcAuthorizationCodeSample](#AspNetCoreOidcAuthorizationCodeSample)
+    -  [AspNetCoreOidcImplicitSample](#aspnetcoreoidcimplicitsample)
+
+- ASP.NET Core - SAML 2.0 - down-party
+
+    -  [AspNetCoreSamlSample](#aspnetcoresamlsample)
+
+- Blazor - OpenID Connect - down-party
+
+    -  [BlazorBFFAspNetCoreOidcSample](#blazorbffaspnetcoreoidcsample)
+    -  [BlazorOidcPkceSample](#blazoroidcpkcesample)
+    -  [BlazorServerOidcSample](#blazorserveroidcsample)
+
+- Console app - OAuth 2.0 Client credential grant - down-party
+
+    -  [NetCoreClientCredentialGrantConsoleSample](#netcoreclientcredentialgrantconsolesample)
+    -  [NetCoreClientCredentialGrantAssertionConsoleSample](#netcoreclientcredentialgrantassertionconsolesample)
+    -  [NetFramework4.7ClientCredentialGrantAssertionConsoleSample](#netframework47clientcredentialgrantassertionconsolesample)
+
+- ASP.NET Core API - OAuth 2.0 - down-party
+
+    -  [AspNetCoreApi1Sample](#aspnetcoreapi1sample) ([online](https://aspnetcoreoauthapi1sample.itfoxtec.com/))
+    -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetcoreoauthapi2sample.itfoxtec.com/))
+    -  [AspNetCoreApiOAuthTwoIdPsSample](#aspnetcoreapioauthtwoidpssample)
+
+- ASP.NET Core - OpenID Connect - up-party - IdP
+
+    -  [IdentityServerOidcOpSample](#identityserveroidcopsample)
+
+- ASP.NET Core - SAML 2.0 - up-party - IdP
+  
+    -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetcoresamlidpsample.itfoxtec.com/))
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
-The sample Visual Studio solution contain the following [down-party](#down-party-sample-applications) and [up-party](#up-party-sample-applications) sample applications.
-
 ## Down-party sample applications
+
+The down-party samples show different applications which trust FoxIDs as an IdP.
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
@@ -79,6 +120,12 @@ Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/N
 
 Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
 
+### NetFramework4.7ClientCredentialGrantAssertionConsoleSample
+
+Sample ([code link](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/NetFramework4.7ClientCredentialGrantAssertionConsoleSample)) .NET Framework 4.7 console application (backend) showing client authentication with OAuth 2.0 Client Credentials Grant using a certificate (client authentication method private_key_jwt).
+
+Show how to call the [API1 sample](#aspnetcoreapi1sample) and [API with two IdPs sample](#AspNetCoreApiOAuthTwoIdPsSample) secured with an access token. 
+
 ### BlazorBFFAspNetCoreOidcSample
 
 Sample (code link [client](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorBFFAspNetOidcSample.Client) and [server](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/BlazorBFFAspNetOidcSample.Server)) application showing user login and logout with OpenID Connect (OIDC) using authorization code flow in a Blazor BFF (Backend For Frontend) application with a ASP.NET Core backend.  
@@ -133,6 +180,8 @@ The sample API can be called by changing comment out code in the [NetCoreClientC
 Local development domain and port: `https://localhost:44350`
 
 ## Up-party sample applications
+
+The up-party samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
 
 ### AspNetCoreSamlIdPSample
 

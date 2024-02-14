@@ -121,6 +121,8 @@ namespace FoxIDs.Client.Pages.Components
                 model.Client = new OidcDownClientViewModel();
                 model.Resource = oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource ? new OAuthDownResource() : null;
 
+                model.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+
                 if (model.Client != null)
                 {
                     model.Client.ResponseTypes.Add("code");

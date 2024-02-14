@@ -183,7 +183,7 @@ namespace FoxIDs
                 public const int SupportedCulturesMax = 50;
                 public const int SupportedCulturesLength = 5;
                 public const int ResourcesMin = 1;
-                public const int ResourcesMax = 100;
+                public const int ResourcesMax = 300;
                 public const int CultureLength = 5;
                 public const int NameLength = 500;
                 public const int ValueLength = 500;

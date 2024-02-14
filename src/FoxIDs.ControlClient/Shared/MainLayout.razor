@@ -65,7 +65,7 @@
                                 <span class="oi oi-person" aria-hidden="true"></span>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="meNavbarDropdown">
-                                <button class="dropdown-item btn btn-link" @onclick="@(() => { showMyProfileClaims = false; myProfileModal.Show(); })">
+                                <button class="dropdown-item btn btn-link" @onclick="@(() => { myProfileError = null; showMyProfileClaims = false; myProfileModal.Show(); })">
                                     My Profile<br />
                                     <small>@context.User.Claims.Where(c => c.Type == JwtClaimTypes.Email).Select(c => c.Value).FirstOrDefault()</small>
                                 </button>
@@ -184,21 +184,27 @@
 
                 <Modal @ref="myProfileModal" Title="My Profile">
                     <div class="modal-body">
+                        @if (!myProfileError.IsNullOrWhiteSpace())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @myProfileError
+                            </div>
+                        }
+                        @if (myProfileMasterMasterLogin)
+                        {
+                            <div class="form-group active-group active">
+                                <button type="button" class="btn btn-secondary" @onclick="ChangeMyPasswordAsync">Change your password</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="alert alert-info" role="alert">
+                                Your user is federated and do not have any profile settings.
+                            </div>
+                        }
+
                         @if (myProfileClaims != null)
                         {
-                            @if (myProfileMasterMasterLogin)
-                            {
-                                <div class="form-group active-group active">
-                                    <button type="button" class="btn btn-secondary" @onclick="ChangeMyPasswordAsync">Change your password</button>
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="alert alert-info" role="alert">
-                                    Your user is federated and do not have any profile settings.
-                                </div>
-                            }
-
                             <div class="pt-3">
                                 <div class="form-group active-group active">
                                     <label class="label-control">My claims</label>

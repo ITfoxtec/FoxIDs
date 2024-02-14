@@ -19,21 +19,20 @@
             </div>
 
             <div asp-validation-summary="ModelOnly"></div>
+            <div class="info-message-sub">@Localizer["First, scan the QR code with your app."]</div>
             <div class="form-group active-group active">
-                <div>
-                    <img src="@Model.QrCodeSetupImageUrl" />
-                </div>
-                <label asp-for="QrCodeSetupImageUrl" class="label-control"></label>
+                <img class="qr-code" src="@Model.QrCodeSetupImageUrl" />
             </div>
+            <div class="info-message-sub">@Localizer["Or, use manual setup key (optional)."]</div>
             <div class="form-group active-group active">
                 <div class="card bg-light">
                     <div class="card-body px-3 py-2">
                         @Model.ManualSetupKey
                     </div>
                 </div>
-                <label asp-for="ManualSetupKey" class="label-control"></label>
                 <button class="btn btn-link btn-xs" type="button" onclick="navigator.clipboard.writeText('@Model.ManualSetupKey')">@Localizer["Click to copy"]</button>
             </div>
+            <div class="info-message-sub">@Localizer["Then, enter the authenticator app code."]</div>
             <div class="form-group active-group">
                 <input asp-for="AppCode" autocomplete="off" class="form-control input-control" autofocus />
                 <label asp-for="AppCode" class="label-control"></label>

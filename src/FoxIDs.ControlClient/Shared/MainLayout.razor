@@ -47,6 +47,10 @@
                                             {
                                                 @foreach (var track in selectTrackTasks)
                                                 {
+                                                    @if (selectTrackTasks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
+                                                    {
+                                                        <div class="dropdown-divider"></div>
+                                                    }
                                                     <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
                                                         @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
                                                     </button>

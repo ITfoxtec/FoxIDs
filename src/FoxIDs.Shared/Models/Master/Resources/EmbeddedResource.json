@@ -297,11 +297,11 @@
       "id": 68
     },
     {
-      "name": "Or, use manual setup key (optional)",
+      "name": "Or, use manual setup key (optional).",
       "id": 69
     },
     {
-      "name": "Then, enter the authenticator app code",
+      "name": "Then, enter the authenticator app code.",
       "id": 70
     },
     {
@@ -317,7 +317,7 @@
       "id": 73
     },
     {
-      "name": "Authenticator app code or a recovery code",
+      "name": "Enter an authenticator app code or a recovery code.",
       "id": 74
     },
     {
@@ -341,7 +341,7 @@
       "id": 79
     },
     {
-      "name": "First, scan the QR code with your app",
+      "name": "First, scan the QR code with your app.",
       "id": 80
     },
     {
@@ -10166,134 +10166,9 @@
       "id": 74,
       "items": [
         {
-          "culture": "bg",
-          "value": "Код на приложението Authenticator или код за възстановяване",
-          "edit_level": 40
-        },
-        {
-          "culture": "ca",
-          "value": "Codi de l&#39;aplicació Authenticator o un codi de recuperació",
-          "edit_level": 30
-        },
-        {
-          "culture": "cs",
-          "value": "Kód aplikace Authenticator nebo kód pro obnovení",
-          "edit_level": 40
-        },
-        {
-          "culture": "da",
-          "value": "Kode fra godkendelses app eller din genoprettelseskode",
-          "edit_level": 100
-        },
-        {
-          "culture": "de",
-          "value": "Code der Authenticator-App oder ein Wiederherstellungscode",
-          "edit_level": 40
-        },
-        {
-          "culture": "el",
-          "value": "Κωδικός εφαρμογής Authenticator ή κωδικός ανάκτησης",
-          "edit_level": 40
-        },
-        {
           "culture": "en",
-          "value": "Authenticator app code or a recovery code",
+          "value": "Enter an authenticator app code or a recovery code.",
           "edit_level": 100
-        },
-        {
-          "culture": "es",
-          "value": "Código de la aplicación Authenticator o un código de recuperación",
-          "edit_level": 40
-        },
-        {
-          "culture": "et",
-          "value": "Autentimisseadme kood või taastamiskood",
-          "edit_level": 40
-        },
-        {
-          "culture": "fi",
-          "value": "Authenticator-sovelluksen koodi tai palautuskoodi",
-          "edit_level": 40
-        },
-        {
-          "culture": "fr",
-          "value": "Code de l'application Authenticator ou code de récupération",
-          "edit_level": 40
-        },
-        {
-          "culture": "hr",
-          "value": "Kod aplikacije autentifikatora ili kod za oporavak",
-          "edit_level": 30
-        },
-        {
-          "culture": "is",
-          "value": "Authenticator app kóða eða endurheimtarkóði",
-          "edit_level": 30
-        },
-        {
-          "culture": "it",
-          "value": "Codice dell'app Authenticator o codice di recupero",
-          "edit_level": 40
-        },
-        {
-          "culture": "lt",
-          "value": "Autentifikatoriaus programėlės kodas arba atkūrimo kodas",
-          "edit_level": 40
-        },
-        {
-          "culture": "lv",
-          "value": "Autentifikatora lietotnes kods vai atkopšanas kods",
-          "edit_level": 40
-        },
-        {
-          "culture": "nb",
-          "value": "Kode for autentiseringsappen eller en gjenopprettingskode",
-          "edit_level": 40
-        },
-        {
-          "culture": "nl",
-          "value": "Authenticator app-code of een herstelcode",
-          "edit_level": 40
-        },
-        {
-          "culture": "pl",
-          "value": "Kod aplikacji uwierzytelniającej lub kod odzyskiwania",
-          "edit_level": 40
-        },
-        {
-          "culture": "pt",
-          "value": "Código da aplicação Authenticator ou um código de recuperação",
-          "edit_level": 40
-        },
-        {
-          "culture": "ro",
-          "value": "Codul aplicației Authenticator sau un cod de recuperare",
-          "edit_level": 40
-        },
-        {
-          "culture": "sk",
-          "value": "Kód aplikácie Authenticator alebo kód na obnovenie",
-          "edit_level": 40
-        },
-        {
-          "culture": "sl",
-          "value": "Koda aplikacije Authenticator ali obnovitvena koda",
-          "edit_level": 40
-        },
-        {
-          "culture": "sv",
-          "value": "Autentiseringsappens kod eller en återställningskod",
-          "edit_level": 40
-        },
-        {
-          "culture": "tr",
-          "value": "Kimlik doğrulayıcı uygulama kodu veya kurtarma kodu",
-          "edit_level": 40
-        },
-        {
-          "culture": "uk",
-          "value": "Код програми-автентифікатора або код відновлення",
-          "edit_level": 40
         }
       ]
     },
@@ -14217,7 +14092,8 @@
       "items": [
         {
           "culture": "en",
-          "value": "Code"
+          "value": "Code",
+          "edit_level": 100
         }
       ]
     }

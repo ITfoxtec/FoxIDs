@@ -435,6 +435,10 @@
     {
       "name": "{0}Email confirmation",
       "id": 103
+    },
+    {
+      "name": "Code",
+      "id": 104
     }
   ],
   "resources": [
@@ -9488,12 +9492,12 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Или използвайте клавиш за ръчна настройка (по избор)",
+          "value": "Или използвайте клавиш за ръчна настройка (по избор).",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "O bé, utilitzeu la clau de configuració manual (opcional)",
+          "value": "O bé, utilitzeu la clau de configuració manual (opcional).",
           "edit_level": 30
         },
         {
@@ -9503,117 +9507,117 @@
         },
         {
           "culture": "da",
-          "value": "Eller benyt manuel setup key (valgfrit)",
+          "value": "Eller benyt manuel setup key (valgfrit).",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Oder verwenden Sie die Taste für die manuelle Einrichtung (optional)",
+          "value": "Oder verwenden Sie die Taste für die manuelle Einrichtung (optional).",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Ή, χρησιμοποιήστε το πλήκτρο χειροκίνητης ρύθμισης (προαιρετικό)",
+          "value": "Ή, χρησιμοποιήστε το πλήκτρο χειροκίνητης ρύθμισης (προαιρετικό).",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Or, use manual setup key (optional)",
+          "value": "Or, use manual setup key (optional).",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "O, utilice la tecla de configuración manual (opcional)",
+          "value": "O, utilice la tecla de configuración manual (opcional).",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Või kasutage käsitsi seadistamise klahvi (valikuline)",
+          "value": "Või kasutage käsitsi seadistamise klahvi (valikuline).",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Tai käytä manuaalista asetusnäppäintä (valinnainen)",
+          "value": "Tai käytä manuaalista asetusnäppäintä (valinnainen).",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Ou utiliser la touche de configuration manuelle (en option)",
+          "value": "Ou utiliser la touche de configuration manuelle (en option).",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Ili upotrijebite ključ za ručno postavljanje (nije obavezno)",
+          "value": "Ili upotrijebite ključ za ručno postavljanje (nije obavezno).",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Eða notaðu handvirka uppsetningarlykil (valfrjálst)",
+          "value": "Eða notaðu handvirka uppsetningarlykil (valfrjálst).",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Oppure, utilizzare il tasto di impostazione manuale (opzionale)",
+          "value": "Oppure, utilizzare il tasto di impostazione manuale (opzionale).",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Arba naudokite rankinio nustatymo klavišą (pasirinktinai)",
+          "value": "Arba naudokite rankinio nustatymo klavišą (pasirinktinai).",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Vai arī izmantojiet manuālās iestatīšanas taustiņu (pēc izvēles)",
+          "value": "Vai arī izmantojiet manuālās iestatīšanas taustiņu (pēc izvēles).",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Eller bruk manuell innstillingstast (valgfritt)",
+          "value": "Eller bruk manuell innstillingstast (valgfritt).",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Of gebruik de handmatige insteltoets (optioneel)",
+          "value": "Of gebruik de handmatige insteltoets (optioneel).",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Lub użyj przycisku konfiguracji ręcznej (opcjonalnie)",
+          "value": "Lub użyj przycisku konfiguracji ręcznej (opcjonalnie).",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Ou, utilizar a tecla de configuração manual (opcional)",
+          "value": "Ou, utilizar a tecla de configuração manual (opcional).",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Sau, utilizați tasta de configurare manuală (opțional)",
+          "value": "Sau, utilizați tasta de configurare manuală (opțional).",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Alebo použite tlačidlo manuálneho nastavenia (voliteľné)",
+          "value": "Alebo použite tlačidlo manuálneho nastavenia (voliteľné).",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Ali uporabite tipko za ročno nastavitev (neobvezno)",
+          "value": "Ali uporabite tipko za ročno nastavitev (neobvezno).",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Eller använd manuell inställningsknapp (tillval)",
+          "value": "Eller använd manuell inställningsknapp (tillval).",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Veya manuel kurulum tuşunu kullanın (isteğe bağlı)",
+          "value": "Veya manuel kurulum tuşunu kullanın (isteğe bağlı).",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Або скористайтеся клавішею ручного налаштування (необов'язково)",
+          "value": "Або скористайтеся клавішею ручного налаштування (необов'язково).",
           "edit_level": 40
         }
       ]
@@ -9623,132 +9627,132 @@
       "items": [
         {
           "culture": "bg",
-          "value": "След това въведете кода на приложението за удостоверяване",
+          "value": "След това въведете кода на приложението за удостоверяване.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "A continuació, introduïu el codi de l&#39;aplicació de l&#39;autenticador",
+          "value": "A continuació, introduïu el codi de l&#39;aplicació de l&#39;autenticador.",
           "edit_level": 30
         },
         {
           "culture": "cs",
-          "value": "Poté zadejte kód aplikace autentizátoru",
+          "value": "Poté zadejte kód aplikace autentizátoru.",
           "edit_level": 40
         },
         {
           "culture": "da",
-          "value": "Indtast derefter koden fra din godkendelses app",
+          "value": "Indtast derefter koden fra din godkendelses app.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Geben Sie dann den Code der Authenticator-App ein",
+          "value": "Geben Sie dann den Code der Authenticator-App ein.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Στη συνέχεια, πληκτρολογήστε τον κωδικό της εφαρμογής αυθεντικοποίησης",
+          "value": "Στη συνέχεια, πληκτρολογήστε τον κωδικό της εφαρμογής αυθεντικοποίησης.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "Then, enter the authenticator app code",
+          "value": "Then, enter the authenticator app code.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "A continuación, introduce el código de la aplicación de autenticación",
+          "value": "A continuación, introduce el código de la aplicación de autenticación.",
           "edit_level": 40
         },
         {
           "culture": "et",
-          "value": "Seejärel sisestage autentimisrakenduse kood",
+          "value": "Seejärel sisestage autentimisrakenduse kood.",
           "edit_level": 40
         },
         {
           "culture": "fi",
-          "value": "Syötä sitten autentikointisovelluksen koodi",
+          "value": "Syötä sitten autentikointisovelluksen koodi.",
           "edit_level": 40
         },
         {
           "culture": "fr",
-          "value": "Ensuite, entrez le code de l'application d'authentification",
+          "value": "Ensuite, entrez le code de l'application d'authentification.",
           "edit_level": 40
         },
         {
           "culture": "hr",
-          "value": "Zatim unesite kôd aplikacije autentifikatora",
+          "value": "Zatim unesite kôd aplikacije autentifikatora.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Sláðu síðan inn auðkenningarforritskóðann",
+          "value": "Sláðu síðan inn auðkenningarforritskóðann.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Quindi, inserire il codice dell'app Autenticatore",
+          "value": "Quindi, inserire il codice dell'app Autenticatore.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Tada įveskite autentifikatoriaus programėlės kodą",
+          "value": "Tada įveskite autentifikatoriaus programėlės kodą.",
           "edit_level": 40
         },
         {
           "culture": "lv",
-          "value": "Pēc tam ievadiet autentifikatora lietotnes kodu",
+          "value": "Pēc tam ievadiet autentifikatora lietotnes kodu.",
           "edit_level": 40
         },
         {
           "culture": "nb",
-          "value": "Skriv deretter inn koden for autentiseringsappen",
+          "value": "Skriv deretter inn koden for autentiseringsappen.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Voer vervolgens de authenticator-appcode in",
+          "value": "Voer vervolgens de authenticator-appcode in.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Następnie wprowadź kod aplikacji uwierzytelniającej",
+          "value": "Następnie wprowadź kod aplikacji uwierzytelniającej.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Em seguida, introduza o código da aplicação de autenticação",
+          "value": "Em seguida, introduza o código da aplicação de autenticação.",
           "edit_level": 40
         },
         {
           "culture": "ro",
-          "value": "Apoi, introduceți codul aplicației de autentificare",
+          "value": "Apoi, introduceți codul aplicației de autentificare.",
           "edit_level": 40
         },
         {
           "culture": "sk",
-          "value": "Potom zadajte kód aplikácie autentifikátora",
+          "value": "Potom zadajte kód aplikácie autentifikátora.",
           "edit_level": 40
         },
         {
           "culture": "sl",
-          "value": "Nato vnesite kodo aplikacije za preverjanje pristnosti",
+          "value": "Nato vnesite kodo aplikacije za preverjanje pristnosti.",
           "edit_level": 40
         },
         {
           "culture": "sv",
-          "value": "Ange sedan koden för autentiseringsappen",
+          "value": "Ange sedan koden för autentiseringsappen.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "Ardından, kimlik doğrulayıcı uygulama kodunu girin",
+          "value": "Ardından, kimlik doğrulayıcı uygulama kodunu girin.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Потім введіть код програми-автентифікатора",
+          "value": "Потім введіть код програми-автентифікатора.",
           "edit_level": 40
         }
       ]
@@ -10973,12 +10977,12 @@
       "items": [
         {
           "culture": "bg",
-          "value": "Първо, сканирайте QR кода с приложението си",
+          "value": "Първо, сканирайте QR кода с приложението си.",
           "edit_level": 40
         },
         {
           "culture": "ca",
-          "value": "Primer, escaneja el codi QR amb la teva aplicació",
+          "value": "Primer, escaneja el codi QR amb la teva aplicació.",
           "edit_level": 30
         },
         {
@@ -10988,27 +10992,27 @@
         },
         {
           "culture": "da",
-          "value": "Skan først QR koden med din app",
+          "value": "Skan først QR koden med din app.",
           "edit_level": 100
         },
         {
           "culture": "de",
-          "value": "Scannen Sie zunächst den QR-Code mit Ihrer App",
+          "value": "Scannen Sie zunächst den QR-Code mit Ihrer App.",
           "edit_level": 40
         },
         {
           "culture": "el",
-          "value": "Πρώτον, σαρώστε τον κωδικό QR με την εφαρμογή σας",
+          "value": "Πρώτον, σαρώστε τον κωδικό QR με την εφαρμογή σας.",
           "edit_level": 40
         },
         {
           "culture": "en",
-          "value": "First, scan the QR code with your app",
+          "value": "First, scan the QR code with your app.",
           "edit_level": 100
         },
         {
           "culture": "es",
-          "value": "Primero, escanea el código QR con tu aplicación",
+          "value": "Primero, escanea el código QR con tu aplicación.",
           "edit_level": 40
         },
         {
@@ -11028,22 +11032,22 @@
         },
         {
           "culture": "hr",
-          "value": "Najprije skenirajte QR kod svojom aplikacijom",
+          "value": "Najprije skenirajte QR kod svojom aplikacijom.",
           "edit_level": 30
         },
         {
           "culture": "is",
-          "value": "Fyrst skaltu skanna QR kóðann með appinu þínu",
+          "value": "Fyrst skaltu skanna QR kóðann með appinu þínu.",
           "edit_level": 30
         },
         {
           "culture": "it",
-          "value": "Per prima cosa, scansionare il codice QR con la propria app",
+          "value": "Per prima cosa, scansionare il codice QR con la propria app.",
           "edit_level": 40
         },
         {
           "culture": "lt",
-          "value": "Pirmiausia nuskaitykite QR kodą naudodami programėlę",
+          "value": "Pirmiausia nuskaitykite QR kodą naudodami programėlę.",
           "edit_level": 40
         },
         {
@@ -11053,22 +11057,22 @@
         },
         {
           "culture": "nb",
-          "value": "Skann først QR-koden med appen din",
+          "value": "Skann først QR-koden med appen din.",
           "edit_level": 40
         },
         {
           "culture": "nl",
-          "value": "Scan eerst de QR-code met je app",
+          "value": "Scan eerst de QR-code met je app.",
           "edit_level": 40
         },
         {
           "culture": "pl",
-          "value": "Najpierw zeskanuj kod QR za pomocą aplikacji",
+          "value": "Najpierw zeskanuj kod QR za pomocą aplikacji.",
           "edit_level": 40
         },
         {
           "culture": "pt",
-          "value": "Primeiro, digitalize o código QR com a sua aplicação",
+          "value": "Primeiro, digitalize o código QR com a sua aplicação.",
           "edit_level": 40
         },
         {
@@ -11078,7 +11082,7 @@
         },
         {
           "culture": "sk",
-          "value": "Najprv naskenujte kód QR pomocou aplikácie",
+          "value": "Najprv naskenujte kód QR pomocou aplikácie.",
           "edit_level": 40
         },
         {
@@ -11088,17 +11092,17 @@
         },
         {
           "culture": "sv",
-          "value": "Skanna först QR-koden med din app",
+          "value": "Skanna först QR-koden med din app.",
           "edit_level": 40
         },
         {
           "culture": "tr",
-          "value": "İlk olarak, QR kodunu uygulamanızla tarayın",
+          "value": "İlk olarak, QR kodunu uygulamanızla tarayın.",
           "edit_level": 40
         },
         {
           "culture": "uk",
-          "value": "Спочатку відскануйте QR-код своїм додатком",
+          "value": "Спочатку відскануйте QR-код своїм додатком.",
           "edit_level": 40
         }
       ]
@@ -14205,6 +14209,15 @@
           "culture": "uk",
           "value": "{0}Підтвердження електронною поштою",
           "edit_level": 40
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "items": [
+        {
+          "culture": "en",
+          "value": "Code"
         }
       ]
     }

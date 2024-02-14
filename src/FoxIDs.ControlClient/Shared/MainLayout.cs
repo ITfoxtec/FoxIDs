@@ -39,6 +39,7 @@ namespace FoxIDs.Client.Shared
         private bool myProfileMasterMasterLogin;
         private bool showMyProfileClaims;
         private IEnumerable<Claim> myProfileClaims;
+        private string myProfileError;
         private Modal notAccessModal;
 
         [CascadingParameter]
@@ -260,7 +261,7 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = await TrackService.FilterTrackAsync(null);
+                selectTrackTasks = OrderTracks(await TrackService.FilterTrackAsync(null));
                 
             }
             catch (TokenUnavailableException)
@@ -277,7 +278,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                selectTrackTasks = await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName);
+                selectTrackTasks = OrderTracks(await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName));
             }
             catch (FoxIDsApiException ex)
             {
@@ -290,6 +291,31 @@ namespace FoxIDs.Client.Shared
                     throw;
                 }
             }
+        }
+
+        private IEnumerable<Track> OrderTracks(IEnumerable<Track> tracks)
+        {
+            var orderedTracks = new List<Track>();
+            if (tracks?.Count() > 0)
+            {
+                Track masterTrack = null;
+                foreach (var track in tracks)
+                {
+                    if (Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
+                    {
+                        masterTrack = track;
+                    }
+                    else
+                    {
+                        orderedTracks.Add(track);
+                    }
+                }
+                if (masterTrack != null)
+                {
+                    orderedTracks.Add(masterTrack);
+                }
+            }
+            return orderedTracks;
         }
 
         private async Task<bool> SelectTrackAsync(string trackName)
@@ -314,9 +340,21 @@ namespace FoxIDs.Client.Shared
 
         public async Task ChangeMyPasswordAsync()
         {
-            await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
+            try
+            {
+                await UserService.UpdateMyUserAsync(new MyUser { ChangePassword = true });
 
-            await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync(prompt: IdentityConstants.AuthorizationServerPrompt.Login);
+
+            }
+            catch (TokenUnavailableException)
+            {
+                await(OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (Exception ex)
+            {
+                myProfileError = ex.Message;
+            }
         }
     }
 }

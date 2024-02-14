@@ -1,6 +1,7 @@
 ﻿using FoxIDs.Client.Services;
 using FoxIDs.Infrastructure;
 using FoxIDs.Models.Api;
+using System;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Client.Logic
@@ -53,7 +54,21 @@ namespace FoxIDs.Client.Logic
 
         private async Task UpdateUserProfileAsync()
         {
-            await userService.UpdateUserControlProfileAsync(userControlProfile);
+            try
+            {
+                await userService.UpdateUserControlProfileAsync(userControlProfile);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Forbidden)
+                {
+                    Console.WriteLine("Forbidden, you do not possess the required scope and role to update the user profile.");
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }

@@ -53,6 +53,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{CB5D86A0-D
 		docs\down-party-saml-2.0.md = docs\down-party-saml-2.0.md
 		docs\email.md = docs\email.md
 		docs\faq.md = docs\faq.md
+		docs\foxids-dev.md = docs\foxids-dev.md
 		docs\foxids-inside.md = docs\foxids-inside.md
 		docs\get-started.md = docs\get-started.md
 		docs\gs-context-handler.md = docs\gs-context-handler.md

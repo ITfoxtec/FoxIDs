@@ -317,7 +317,7 @@
       "id": 73
     },
     {
-      "name": "Enter your authenticator app code or a recovery code.",
+      "name": "Enter your authenticator app code or recovery code.",
       "id": 74
     },
     {
@@ -9642,7 +9642,7 @@
         },
         {
           "culture": "da",
-          "value": "Indtast derefter koden fra din godkendelses app.",
+          "value": "Indtast derefter koden fra din godkendelsesapp.",
           "edit_level": 100
         },
         {
@@ -10166,8 +10166,13 @@
       "id": 74,
       "items": [
         {
+          "culture": "da",
+          "value": "Indtast koden fra din godkendelsesapp eller din genoprettelseskode.",
+          "edit_level": 100
+        },
+        {
           "culture": "en",
-          "value": "Enter your authenticator app code or a recovery code.",
+          "value": "Enter your authenticator app code or recovery code.",
           "edit_level": 100
         }
       ]
@@ -14091,9 +14096,134 @@
       "id": 104,
       "items": [
         {
+          "culture": "bg",
+          "value": "Код",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Codi",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Kód",
+          "edit_level": 40
+        },
+        {
+          "culture": "da",
+          "value": "Kode",
+          "edit_level": 100
+        },
+        {
+          "culture": "de",
+          "value": "Code",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Κωδικός",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Code",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Código",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Kood",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Koodi",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Code",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Kodirati",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Kóði",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Codice",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Kodas",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Kods",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Kode",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Code",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Kod",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Código",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Cod",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Kód",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Koda",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Kod",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kod",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Код",
+          "edit_level": 40
         }
       ]
     }

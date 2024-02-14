@@ -10166,14 +10166,134 @@
       "id": 74,
       "items": [
         {
+          "culture": "bg",
+          "value": "Въведете кода на приложението за удостоверяване или кода за възстановяване.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ca",
+          "value": "Introduïu el codi de l&#39;aplicació d&#39;autenticació o el codi de recuperació.",
+          "edit_level": 30
+        },
+        {
+          "culture": "cs",
+          "value": "Zadejte kód aplikace autentizátoru nebo kód pro obnovení.",
+          "edit_level": 40
+        },
+        {
           "culture": "da",
           "value": "Indtast koden fra din godkendelsesapp eller din genoprettelseskode.",
           "edit_level": 100
         },
         {
+          "culture": "de",
+          "value": "Geben Sie den Code der Authentifizierungs-App oder den Wiederherstellungscode ein.",
+          "edit_level": 40
+        },
+        {
+          "culture": "el",
+          "value": "Εισάγετε τον κωδικό της εφαρμογής ελέγχου ταυτότητας ή τον κωδικό ανάκτησης.",
+          "edit_level": 40
+        },
+        {
           "culture": "en",
           "value": "Enter your authenticator app code or recovery code.",
           "edit_level": 100
+        },
+        {
+          "culture": "es",
+          "value": "Introduce el código de la aplicación de autenticación o el código de recuperación.",
+          "edit_level": 40
+        },
+        {
+          "culture": "et",
+          "value": "Sisestage oma autentimisrakenduse kood või taastamiskood.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fi",
+          "value": "Syötä autentikointisovelluksen koodi tai palautuskoodi.",
+          "edit_level": 40
+        },
+        {
+          "culture": "fr",
+          "value": "Saisissez le code de l'application d'authentification ou le code de récupération.",
+          "edit_level": 40
+        },
+        {
+          "culture": "hr",
+          "value": "Unesite kôd aplikacije autentifikatora ili kôd za oporavak.",
+          "edit_level": 30
+        },
+        {
+          "culture": "is",
+          "value": "Sláðu inn auðkenningarforritskóðann þinn eða endurheimtarkóðann.",
+          "edit_level": 30
+        },
+        {
+          "culture": "it",
+          "value": "Inserire il codice dell'app Autenticatore o il codice di recupero.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lt",
+          "value": "Įveskite autentifikatoriaus programėlės kodą arba atkūrimo kodą.",
+          "edit_level": 40
+        },
+        {
+          "culture": "lv",
+          "value": "Ievadiet autentifikatora lietotnes kodu vai atkopšanas kodu.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nb",
+          "value": "Skriv inn koden for autentiseringsappen eller gjenopprettingskoden.",
+          "edit_level": 40
+        },
+        {
+          "culture": "nl",
+          "value": "Voer je authenticator app-code of herstelcode in.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pl",
+          "value": "Wprowadź kod aplikacji uwierzytelniającej lub kod odzyskiwania.",
+          "edit_level": 40
+        },
+        {
+          "culture": "pt",
+          "value": "Introduza o código da sua aplicação de autenticação ou o código de recuperação.",
+          "edit_level": 40
+        },
+        {
+          "culture": "ro",
+          "value": "Introduceți codul aplicației de autentificare sau codul de recuperare.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sk",
+          "value": "Zadajte kód aplikácie autentifikátora alebo kód obnovenia.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sl",
+          "value": "Vnesite kodo aplikacije za preverjanje pristnosti ali kodo za obnovitev.",
+          "edit_level": 40
+        },
+        {
+          "culture": "sv",
+          "value": "Ange din autentiseringsappkod eller återställningskod.",
+          "edit_level": 40
+        },
+        {
+          "culture": "tr",
+          "value": "Kimlik doğrulayıcı uygulama kodunuzu veya kurtarma kodunuzu girin.",
+          "edit_level": 40
+        },
+        {
+          "culture": "uk",
+          "value": "Введіть код програми-автентифікатора або код відновлення.",
+          "edit_level": 40
         }
       ]
     },

@@ -9,6 +9,9 @@ Each track is an Identity Provider with a [user repository](users.md), a unique 
 Connections to external Identity Provider is configured as [OpenID Connect 1.0](up-party-oidc.md) or [SAML 2.0](up-party-saml-2.0.md) up-parties where applications and APIs is configured as [OAuth 2.0](down-party-oauth-2.0.md), [OpenID Connect 1.0](down-party-oidc.md) or [SAML 2.0](down-party-saml-2.0.md) down-parties.  
 The users [login](login.md) experience is configured as an up-party.
 
+> Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!`
+
 FoxIDs consist of two services:
 
 - The identity service which in short is called FoxIDs. The service handles user login and all other security traffic.
@@ -52,9 +55,3 @@ Selecting multiple up-parties:
 
 A client using client credentials as authorization grant would not specify the up-party. 
 It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.
-
-## Support
-
-If you have questions, please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with `foxids` and I will answer as soon as possible.
-
-You are otherwise welcome to use [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=FoxIDs) e.g., for topics not suitable for Stack Overflow.

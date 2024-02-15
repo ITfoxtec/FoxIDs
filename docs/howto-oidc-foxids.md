@@ -7,8 +7,9 @@ FoxIDs tracks can be interconnect in the same FoxIDs tenant or in different FoxI
 
 The integration between two FoxIDs tracks support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session is invalidated on logout.
 
-> A sample integration to a parallel FoxIDs track is configured in the FoxIDs `test-corp` with the up-party name `foxids_oidcpkce`.  
-> You can test parallel FoxIDs login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md#aspnetcoreoidcauthorizationcodesample) application by clicking `OIDC parallel FoxIDs Log in`.
+> You can test OpenID Connect track connections with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Parallel FoxIDs track`.  
+> Take a look at the track connection configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then take a look at the `parallel` and `- (dash is production)` tracks.
 
 The following describes how to configure a OpenID Connect up-party in your FoxIDs track and trust a parallel FoxIDs track where a OpenID Connect down-party is configured. This will make your FoxIDs track trust the parallel FoxIDs track to authenticate users.
 

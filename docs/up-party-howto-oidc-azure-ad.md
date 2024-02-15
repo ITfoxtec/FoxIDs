@@ -9,6 +9,9 @@ If you configure [App roles](#app-roles) they are returned in the `roles` claim.
 > A sample multitenant Microsoft Entra ID App which support personal accounts is configured in the FoxIDs `test-corp` with the up-party name `azuread_oidcpkce`.  
 > You can test Microsoft Entra ID login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md) application by clicking `OIDC Azure AD Log in`.
 
+> Take a look at the Microsoft Entra ID sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Parties` and `Up-parties` tab.
+
 ## Configure single tenant
 
 This chapter describes how to configure a Microsoft Entra ID single tenant connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.

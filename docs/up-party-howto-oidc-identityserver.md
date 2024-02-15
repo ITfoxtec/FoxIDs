@@ -8,6 +8,9 @@ It is possible to connect an [IdentityServer client](#configure-identityserver-c
 > You can test login (username `alice` and password `alice`) using the `IdentityServerOidcOpSample` and the `AspNetCoreOidcAuthorizationCodeSample` [samples](samples.md). By clicking `OIDC IdentityServer Log in` in the `AspNetCoreOidcAuthorizationCodeSample` application.  
 > The `IdentityServerOidcOpSample` sample is configured with Implicit Flow to enable local testing, please use Authorization Code Flow in production.
 
+> Take a look at the IdentityServer sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Parties` and `Up-parties` tab.
+
 ## Configure IdentityServer client
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.

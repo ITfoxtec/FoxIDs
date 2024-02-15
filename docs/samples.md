@@ -10,7 +10,7 @@ Find the sample source in the [FoxIDs.Samples](https://github.com/ITfoxtec/FoxID
 
 The samples are pre-configured in the FoxIDs online test tenant `test-corp` and can immediately run locally in Visual Studio on the pre-configured localhost ports.   
  
-> Take a look at the FoxIDs test configuration in FoxIDs Control Client: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`
 
 You can alternatively configure the samples in [your one FoxIDs track](#configure-samples-in-foxids-track).

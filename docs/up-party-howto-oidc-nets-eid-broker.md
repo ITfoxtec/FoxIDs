@@ -6,7 +6,9 @@ How to configure Nets eID Broker in
 - [test environment](#configuring-nets-eid-broker-demotest-as-openid-provider-op) using Nets eID Broker demo
 - [production environment](#configuring-nets-eid-broker-as-openid-provider-op) using Nets eID Broker admin portal
 
-> A connection to Nets eID Broker demo can be tested with the [samples](samples.md). E.g., with the [AspNetCoreOidcAuthCodeAllUpPartiesSample](https://github.com/ITfoxtec/FoxIDs.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample) in the [sample solution](https://github.com/ITfoxtec/FoxIDs.Samples). 
+> You can testNets eID Broker demo login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Nets eID Broker TEST`.  
+> Take a look at the Nets eID Broker sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Parties` and `Up-parties` tab.
 
 ## Configuring Nets eID Broker demo/test as OpenID Provider (OP)
 

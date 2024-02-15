@@ -6,6 +6,9 @@ FoxIDs tracks in the same tenant can be connected with track links. A track link
 
 Track links is fast and secure but can only be used in the same tenant. A link based on [OpenID connect connection](howto-oidc-foxids.md) is required if you need to jump between tracks located in different tenants.
 
+> Take a look at the sample track links configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then e.g., take a look at the `nemlogin` and `- (dash is production)` tracks.
+
 Track links support login, RP-initiated logout and front-channel logout. Furthermore, it is possible to configure [claim and claim transforms](claim.md), logout session and home realm discovery (HRD) like all other connecting up-parties and down-parties.
 
 ## Configure integration

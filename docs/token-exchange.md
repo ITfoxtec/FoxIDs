@@ -14,6 +14,10 @@ Token exchange is implemented in the following samples:
 - [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample), show token exchange from SAML 2.0 token to access token
 - [AspNetCoreApi1Sample](samples.md#aspnetcoreapi1sample), show token exchange from access token to access token insight an API
 
+> You can test token exchange with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and log in with an optional IdP. The click `Call API1 which call API2` or `Token Exchange + Call Api2` to call an API using token exchange.  
+> Take a look at the sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!`  
+
 ## Down-party configuration
 
 It is possible to configure if token exchange is allowed on the OAuth 2.0 down-party or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 

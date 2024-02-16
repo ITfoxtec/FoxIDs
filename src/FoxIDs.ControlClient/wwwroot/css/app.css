@@ -365,6 +365,18 @@ h4 {
     box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
 }
 
+.info-text {
+    vertical-align: middle;
+    padding: 0.5rem;
+}
+    .info-text .bi {
+        font-size: 65%;
+        font-weight: 400;
+        position: relative;
+        bottom: 2px;
+        padding-left: 5px;
+    }
+
 .active-group {
     position: relative;
     padding: 15px 0px;

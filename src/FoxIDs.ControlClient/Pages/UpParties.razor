@@ -2,26 +2,12 @@
 @inherits PageBase
 
 <div class="d-flex">
-    <div class="mr-auto p-2">
-    </div>
-    <div class="p-2">
-        <div class="btn-group" role="group">
-            <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="oi oi-plus" aria-hidden="true"></span> Create up-party
-            </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupCreateUpParty">
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.OAuth2))">OAuth 2.0 - Token Exchange</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">SAML 2.0</button>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.TrackLink))">Track link</button>
-            </div>
-        </div>
+    <div class="mr-auto info-text">
+        Configure <DocsLink Page="parties">parties</DocsLink> in the track and connect tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink>.
     </div>
 </div>
 
-<ul class="nav nav-tabs">
+<ul class="nav nav-tabs my-3">
     <li class="nav-item">
         <a class="nav-link" href="@downPartyHref">Down-parties</a>
     </li>
@@ -31,6 +17,26 @@
 </ul>
 
 <div class="tab-content">
+    <div class="d-flex">
+        <div class="mr-auto info-text">
+            Add a up-party to connect an Identity Provider...
+        </div>
+        <div class="p-2">
+            <div class="btn-group" role="group">
+                <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="oi oi-plus" aria-hidden="true"></span> Create up-party
+                </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupCreateUpParty">
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Oidc))">OpenID Connect</button>
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.OAuth2))">OAuth 2.0 - Token Exchange</button>
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Saml2))">SAML 2.0</button>
+                    <div class="dropdown-divider"></div>
+                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.TrackLink))">Track link</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <PageEditForm @ref="upPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
         <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" />
     </PageEditForm>

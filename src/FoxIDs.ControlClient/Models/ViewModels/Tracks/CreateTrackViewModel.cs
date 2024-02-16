@@ -9,8 +9,8 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
-        [RegularExpression(Constants.Models.Track.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Track name (use '-' for production track)")]
+        [RegularExpression(Constants.Models.Track.NameRegExPattern, ErrorMessage = "The field {0} can only contain letters, numbers, '-' and '_'.")]
+        [Display(Name = "Track name")]
         public string Name { get; set; }
     }
 }

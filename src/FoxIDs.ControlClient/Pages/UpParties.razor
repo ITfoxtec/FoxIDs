@@ -3,7 +3,9 @@
 
 <div class="d-flex">
     <div class="mr-auto info-text">
-        Configure <DocsLink Page="parties">parties</DocsLink> in the track and connect tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink>.
+        Orchestrate by configuring connections to <DocsLink Page="parties">parties</DocsLink> in the track and connecting tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink> to compose elements and connections.
+        <br />
+        | <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink>
     </div>
 </div>
 
@@ -19,9 +21,13 @@
 <div class="tab-content">
     <div class="d-flex">
         <div class="mr-auto info-text">
-            Add a up-party to connect an Identity Provider...
+            Add a up-party to connect an OpenID Provider (OP) / Identity Provider (IdP). Connect OPs / IdPs with <DocsLink Page="up-party-oidc">OpenID Connect</DocsLink> and <DocsLink Page="up-party-saml-2.0">SAML 2.0</DocsLink>.
+            <br />
+            Configure <DocsLink Page="login">Login and MFA</DocsLink> in the existing login up-party or optionally add more.
+            <br />
+            | <DocsLink Page="token-exchange" Fragment="token-exchange-by-trust">Token exchange by trust</DocsLink> | <DocsLink Page="howto-tracklink-foxids">Track link</DocsLink>
         </div>
-        <div class="p-2">
+        <div class="py-2">
             <div class="btn-group" role="group">
                 <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="oi oi-plus" aria-hidden="true"></span> Create up-party

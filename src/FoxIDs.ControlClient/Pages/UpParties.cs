@@ -16,7 +16,7 @@ namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
-        private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
+        private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties = new List<GeneralUpPartyViewModel>();
         private string downPartyHref;
      

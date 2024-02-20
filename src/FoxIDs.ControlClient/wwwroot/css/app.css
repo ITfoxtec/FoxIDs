@@ -122,19 +122,14 @@ h4 {
     }
 }
 
-.navbar .nav-item {
+.navbar .nav-item .nav-link {
     white-space: nowrap;
 }
 
 .navbar .navbar-brand {
-    font-size: 2rem;
-    color: #ef8310 !important;
-    padding-top: 0.2125rem;
-    padding-bottom: 0.4125rem;
-}
-
-.navbar .navbar-subbrand {
-    color: #bbbbbb !important;
+    height: 58px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 .navbar .card {

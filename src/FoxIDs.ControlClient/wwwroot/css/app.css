@@ -122,6 +122,10 @@ h4 {
     }
 }
 
+.navbar .nav-item {
+    white-space: nowrap;
+}
+
 .navbar .navbar-brand {
     font-size: 2rem;
     color: #ef8310 !important;
@@ -450,6 +454,7 @@ h4 {
 }
 
 .info-text {
+    color: #6f797e;
     vertical-align: middle;
     padding: 0.5rem 0.5rem 0.7rem 0.5rem;
 }
@@ -460,6 +465,14 @@ h4 {
         bottom: 2px;
         padding-left: 5px;
     }
+
+.nav-item .bi {
+    font-size: 75%;
+    font-weight: 400;
+    position: relative;
+    bottom: 1px;
+    padding-left: 5px;
+}
 
 .active-group {
     position: relative;

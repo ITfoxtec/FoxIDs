@@ -38,10 +38,10 @@
 
                                                 <div class="d-flex">
                                                     <div class="mr-auto info-text">
-                                                        A configuration is an <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdPs, each with a unique ID, certificate and user store.
+                                                        A configuration is an <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdP with a unique ID, certificate and user store.
                                                     </div>
                                                     <div class="py-2">
-                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New Configuration</button>
+                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New configuration</button>
                                                     </div>
                                                 </div>
                                                 <div class="form-group active-group pb-2">
@@ -57,7 +57,7 @@
                                                     {
                                                         <div class="dropdown-divider"></div>
                                                         <div class="info-text pl-1 pb-1">
-                                                            The tenant access is configured in the master configuration.
+                                                            Your tenant access is configured in the master configuration.
                                                         </div>
                                                     }
                                                     <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
@@ -102,8 +102,11 @@
                                     Tenants
                                 </TenantLiNavLink>
                             }
-                            <TenantLiNavLink Href="downparties" SubPages="upparties">
-                                Parties
+                            <TenantLiNavLink Href="applications">
+                                Applications
+                            </TenantLiNavLink>
+                            <TenantLiNavLink Href="authentication">
+                                Authentication
                             </TenantLiNavLink>
                             <TenantLiNavLink Href="users">
                                 Users
@@ -172,11 +175,11 @@
                     </PageEditForm>
                 </Modal>
 
-                <Modal @ref="createTrackModal" Title="Create Track">
+                <Modal @ref="createTrackModal" Title="Create Configuration">
                     <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
                         <div class="modal-body">
                             <div class="mr-auto info-text">
-                                Create a track with a meaningful name in lowercase and without spaces (optionally use '-' for the production track).
+                                Create a configuration with a meaningful name in lowercase and without spaces (optionally use '-' for the production track).
                             </div>
                             <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
 

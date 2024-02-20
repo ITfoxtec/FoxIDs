@@ -1,22 +1,13 @@
-﻿@page "/{tenantName}/upparties"
+﻿@page "/{tenantName}/authentication"
 @inherits PageBase
 
-<div class="d-flex">
+@* <div class="d-flex">
     <div class="mr-auto info-text">
         Add connections to <DocsLink Page="parties">parties</DocsLink> in the track and connecting tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink> to compose elements and connections.
         <br />
         | <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink>
     </div>
-</div>
-
-<ul class="nav nav-tabs my-3">
-    <li class="nav-item">
-        <a class="nav-link" href="@downPartyHref">Applications</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active">Authentication</a>
-    </li>
-</ul>
+</div> *@
 
 <div class="tab-content">
     <div class="d-flex">
@@ -30,7 +21,7 @@
         <div class="py-2">
             <div class="btn-group" role="group">
                 <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="oi oi-plus" aria-hidden="true"></span> New Method
+                    <span class="oi oi-plus" aria-hidden="true"></span> New method
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupCreateUpParty">
                     <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>

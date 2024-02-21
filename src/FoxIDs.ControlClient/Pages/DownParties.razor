@@ -1,34 +1,25 @@
-﻿@page "/{tenantName}/downparties"
+﻿@page "/{tenantName}/applications"
 @inherits PageBase
 
-<div class="d-flex">
+@* <div class="d-flex">
     <div class="mr-auto info-text">
-        Orchestrate by configuring connections to <DocsLink Page="parties">parties</DocsLink> in the track and connecting tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink> to compose elements and connections.
+        Add connections to <DocsLink Page="parties">parties</DocsLink> in the track and connecting tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink> to compose elements and connections.
         <br />
         | <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink>
     </div>
-</div>
-
-<ul class="nav nav-tabs my-3">
-    <li class="nav-item">
-        <a class="nav-link active">Down-parties</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@upPartyHref">Up-parties</a>
-    </li>
-</ul>
+</div> *@
 
 <div class="tab-content">
     <div class="d-flex">
         <div class="mr-auto info-text">
-            Add a down-party to connect an application. Connect web apps with <DocsLink Page="down-party-oidc">OpenID Connect</DocsLink> and <DocsLink Page="down-party-saml-2.0">SAML 2.0</DocsLink>, connect APIs with <DocsLink Page="down-party-oauth-2.0" Fragment="oauth-20-resource">OAuth 2.0 Resource</DocsLink> and connect services with <DocsLink Page="down-party-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0 Client Credentials Grant</DocsLink>.
+            Connect web apps with <DocsLink Page="down-party-oidc">OpenID Connect</DocsLink> and <DocsLink Page="down-party-saml-2.0">SAML 2.0</DocsLink>, connect APIs with <DocsLink Page="down-party-oauth-2.0" Fragment="oauth-20-resource">OAuth 2.0 Resource</DocsLink> and connect services with <DocsLink Page="down-party-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0 Client Credentials Grant</DocsLink>.
             <br />
-            | <DocsLink Page="token-exchange">Token exchange</DocsLink> | <DocsLink Page="howto-tracklink-foxids">Track link</DocsLink>
+            | <DocsLink Page="token-exchange">Token exchange</DocsLink> | <DocsLink Page="howto-tracklink-foxids">Configuration link</DocsLink>
         </div>
         <div class="py-2">
             <div class="btn-group" role="group">
                 <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="oi oi-plus" aria-hidden="true"></span> Create Down-party
+                    <span class="oi oi-plus" aria-hidden="true"></span> New registration
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupCreateDownParty">
                     <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Oidc))">OpenID Connect</button>
@@ -41,7 +32,7 @@
             </div>
         </div>
     </div>
-    <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
+    <PageEditForm @ref="downPartyFilterForm" TModel="FilterDownPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
         <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" />
     </PageEditForm>
 

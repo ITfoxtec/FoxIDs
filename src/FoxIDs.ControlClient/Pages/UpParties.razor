@@ -1,36 +1,27 @@
-﻿@page "/{tenantName}/upparties"
+﻿@page "/{tenantName}/authentication"
 @inherits PageBase
 
-<div class="d-flex">
+@* <div class="d-flex">
     <div class="mr-auto info-text">
-        Orchestrate by configuring connections to <DocsLink Page="parties">parties</DocsLink> in the track and connecting tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink> to compose elements and connections.
+        Add connections to <DocsLink Page="parties">parties</DocsLink> in the track and connecting tracks with <DocsLink Page="howto-tracklink-foxids">track links</DocsLink> to compose elements and connections.
         <br />
         | <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink>
     </div>
-</div>
-
-<ul class="nav nav-tabs my-3">
-    <li class="nav-item">
-        <a class="nav-link" href="@downPartyHref">Down-parties</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active">Up-parties</a>
-    </li>
-</ul>
+</div> *@
 
 <div class="tab-content">
     <div class="d-flex">
         <div class="mr-auto info-text">
-            Add a up-party to connect an OpenID Provider (OP) / Identity Provider (IdP). Connect OPs / IdPs with <DocsLink Page="up-party-oidc">OpenID Connect</DocsLink> and <DocsLink Page="up-party-saml-2.0">SAML 2.0</DocsLink>.
+            Connect an OpenID Provider (OP) / Identity Provider (IdP) with <DocsLink Page="up-party-oidc">OpenID Connect</DocsLink> and <DocsLink Page="up-party-saml-2.0">SAML 2.0</DocsLink>.
             <br />
-            Configure <DocsLink Page="login">Login and MFA</DocsLink> in the existing login up-party or optionally add more.
+            Configure <DocsLink Page="login">Login and MFA</DocsLink> in the existing login authentication method or optionally add more.
             <br />
-            | <DocsLink Page="token-exchange" Fragment="token-exchange-by-trust">Token exchange by trust</DocsLink> | <DocsLink Page="howto-tracklink-foxids">Track link</DocsLink>
+            | <DocsLink Page="token-exchange" Fragment="token-exchange-by-trust">Token exchange by trust</DocsLink> | <DocsLink Page="howto-tracklink-foxids">Configuration link</DocsLink>
         </div>
         <div class="py-2">
             <div class="btn-group" role="group">
                 <button id="btnGroupCreateUpParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="oi oi-plus" aria-hidden="true"></span> Create up-party
+                    <span class="oi oi-plus" aria-hidden="true"></span> New method
                 </button>
                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupCreateUpParty">
                     <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateUpParty(PartyTypes.Login))">Login</button>
@@ -43,7 +34,7 @@
             </div>
         </div>
     </div>
-    <PageEditForm @ref="upPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
+    <PageEditForm @ref="upPartyFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyFilterValidSubmitAsync">
         <FInputTextFilter @bind-Value="upPartyFilterForm.Model.FilterName" For="@(() => upPartyFilterForm.Model.FilterName)" />
     </PageEditForm>
 

@@ -238,7 +238,7 @@
                                     @if (!showMyProfileClaims)
                                     {
                                         <div class="info-text pl-3">
-                                            <a href="" type="button" @onclick="@(() => { showMyProfileClaims = true; })" @onclick:preventDefault>Show my claims</a> <span>issued to this Control Client by FOXIDS.</span>
+                                            <a href="" type="button" @onclick="@(() => { showMyProfileClaims = true; })" @onclick:preventDefault>Show my claims</a> <span>issued to this Control Client by Foxids.</span>
                                         </div>
                                     }
                                     else
@@ -285,7 +285,7 @@
     </div>
 
     <footer class="footer-container">
-        <span class="footer-content">&copy; @DateTime.Now.Year FoxIDs<small title="@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {clientSettings.FullVersion}")">@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {clientSettings.Version}")</small></span>
+        <span class="footer-content">&copy; @DateTime.Now.Year Foxids<small title="@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $"Version {clientSettings.FullVersion}")">@(clientSettings.Version.IsNullOrEmpty() ? string.Empty : $", version {clientSettings.Version}")</small></span>
     </footer>
 </div>
 

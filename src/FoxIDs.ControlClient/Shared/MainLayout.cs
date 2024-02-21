@@ -132,13 +132,13 @@ namespace FoxIDs.Client.Shared
                 }));
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
-                createTenantReceipt.Add("Master track with user repository created.");
-                createTenantReceipt.Add("Master track default login up-party created.");
-                createTenantReceipt.Add("First master track administrator user created.");
-                createTenantReceipt.Add("Master track FoxIDs Control API down-party created.");
-                createTenantReceipt.Add("Master track FoxIDs Control client down-party created.");
-                createTenantReceipt.Add("Test track with user repository created.");
-                createTenantReceipt.Add("Production track with user repository created.");
+                createTenantReceipt.Add("Master configuration with user repository created.");
+                createTenantReceipt.Add("Master login authentication method created.");
+                createTenantReceipt.Add("First master administrator user created.");
+                createTenantReceipt.Add("Master Control API registration created.");
+                createTenantReceipt.Add("Master Control client registration created.");
+                createTenantReceipt.Add("Test configuration with user repository created.");
+                createTenantReceipt.Add("Production configuration with user repository created.");
 
                 await NotificationLogic.TenantUpdatedAsync();
             }
@@ -177,9 +177,10 @@ namespace FoxIDs.Client.Shared
                 var track = createTrackForm.Model.Map<Track>();
                 await TrackService.CreateTrackAsync(track);
                 createTrackDone = true;
-                createTrackReceipt.Add("Track created.");
+                createTrackReceipt.Add("Configuration created.");
                 createTrackReceipt.Add("User repository created.");
-                createTrackReceipt.Add("Default login up-party created.");
+                createTrackReceipt.Add("Certificate created.");
+                createTrackReceipt.Add("Login authentication method created.");
 
                 if (selectTrackFilterForm.Model != null)
                 {

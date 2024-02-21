@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Search by track name.
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
-        [Display(Name = "Search track")]
+        [Display(Name = "Filter configurations")]
         public string FilterName { get; set; }
     }
 }

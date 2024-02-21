@@ -7,7 +7,7 @@
     <div class=container-fluid>
 
         <nav class="navbar navbar-expand navbar-light bg-light navbar-main nav-fill">
-            <a class="navbar-brand mr-auto">Fox<span class="navbar-subbrand">ID</span>s</a>
+            <a class="navbar-brand mr-auto"><img src="images/foxids_logo.svg" /></a>
             <AuthorizeView>
                 <Authorized>
                     <ul class="navbar-nav nav-item dropdown-nav-item">
@@ -28,7 +28,7 @@
                                     </div>
                                 }
                                 <div class=" form-group active-group active">
-                                    <label class="label-control">Track</label>
+                                    <label class="label-control">Configuration</label>
                                     <div class="card">
                                         <div class="nav-link dropdown-toggle card-body px-3 py-2 text-left" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <span style="width: 100%">@TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small></span>
@@ -38,10 +38,10 @@
 
                                                 <div class="d-flex">
                                                     <div class="mr-auto info-text">
-                                                        Tracks are <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdPs, each with a unique ID, certificate and user store. The track is <DocsLink Page="" Fragment="selection-by-url">selected</DocsLink> by the calling URL.
+                                                        A configuration is an <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdP with a unique ID, certificate and user store.
                                                     </div>
                                                     <div class="py-2">
-                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> Create Track</button>
+                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New configuration</button>
                                                     </div>
                                                 </div>
                                                 <div class="form-group active-group pb-2">
@@ -56,6 +56,9 @@
                                                     @if (selectTrackTasks.Count() > 1 && Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
                                                     {
                                                         <div class="dropdown-divider"></div>
+                                                        <div class="info-text pl-1 pb-1">
+                                                            Your tenant access is configured in the master configuration.
+                                                        </div>
                                                     }
                                                     <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
                                                         @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
@@ -90,8 +93,13 @@
 
         <AuthorizeView>
             <Authorized>
-                <nav class="navbar navbar-expand navbar-second">
-                    <div class="container-lg">
+                <nav class="navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-conf") navbar-light navbar-second">
+                    <div class="align-text-top py-2 pr-3">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav">
                             @if (RouteBindingLogic.IsMasterTenant)
                             {
@@ -99,8 +107,11 @@
                                     Tenants
                                 </TenantLiNavLink>
                             }
-                            <TenantLiNavLink Href="downparties" SubPages="upparties">
-                                Parties
+                            <TenantLiNavLink Href="applications">
+                                Applications
+                            </TenantLiNavLink>
+                            <TenantLiNavLink Href="authentication">
+                                Authentication
                             </TenantLiNavLink>
                             <TenantLiNavLink Href="users">
                                 Users
@@ -169,11 +180,11 @@
                     </PageEditForm>
                 </Modal>
 
-                <Modal @ref="createTrackModal" Title="Create Track">
+                <Modal @ref="createTrackModal" Title="Create Configuration">
                     <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
                         <div class="modal-body">
                             <div class="mr-auto info-text">
-                                Create a track with a meaningful name in lowercase and without spaces (optionally use '-' for the production track).
+                                Create a configuration with a meaningful name in lowercase and without spaces (optionally use '-' for the production track).
                             </div>
                             <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
 
@@ -226,7 +237,9 @@
                                     <label class="label-control">My claims</label>
                                     @if (!showMyProfileClaims)
                                     {
-                                        <button class="btn btn-link" type="button" @onclick="@(() => { showMyProfileClaims = true; })">Show my claims</button>
+                                        <div class="info-text pl-3">
+                                            <a href="" type="button" @onclick="@(() => { showMyProfileClaims = true; })" @onclick:preventDefault>Show my claims</a> <span>issued to this Control Client by FOXIDS.</span>
+                                        </div>
                                     }
                                     else
                                     {

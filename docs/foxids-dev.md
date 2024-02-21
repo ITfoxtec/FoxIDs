@@ -1,6 +1,6 @@
 # FoxIDs development / code contribution 
 
-You can rune FoxIDs locally in Visual Studio on your development machine. 
+You can run FoxIDs locally in Visual Studio on your development machine. 
 
 **You can clone the [FoxIDs GitHub repository](https://github.com/ITfoxtec/FoxIDs) and possibly do pull requests.**
  

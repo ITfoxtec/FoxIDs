@@ -2,13 +2,13 @@
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class FilterPartyViewModel
+    public class FilterDownPartyViewModel
     {
         /// <summary>
         /// Search by party name.
         /// </summary>
         [MaxLength(Constants.Models.Party.NameLength)]
-        [Display(Name = "Search party")]
+        [Display(Name = "Filter applications")]
         public string FilterName { get; set; }
     }
 }

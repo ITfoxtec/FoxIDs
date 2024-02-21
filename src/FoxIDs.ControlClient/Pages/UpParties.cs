@@ -16,9 +16,8 @@ namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
-        private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
+        private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties = new List<GeneralUpPartyViewModel>();
-        private string downPartyHref;
      
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -31,7 +30,6 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            downPartyHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/downparties";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

@@ -104,19 +104,19 @@ h4 {
 /*Extra small*/
 @media (max-width: 768px) {
     .navbar.navbar-main {
-        padding-bottom: 54px;
+        padding-bottom: 69px;
     }
 }
 
 /*Small*/
 @media (min-width: 576px) {
     .navbar.navbar-main {
-        padding-bottom: 54px;
+        padding-bottom: 69px;
     }
 }
 
-/*Medium*/
-@media (min-width: 768px) {
+/*Medium + 4*/
+@media (min-width: 774px) {
     .navbar.navbar-main {
         padding-bottom: 8px;
     }
@@ -127,10 +127,13 @@ h4 {
 }
 
 .navbar .navbar-brand {
-    height: 58px;
     padding-top: 2px;
     padding-bottom: 2px;
 }
+
+    .navbar .navbar-brand img {
+        height: 54px;
+    }
 
 .navbar .card {
     border-bottom-left-radius: unset;
@@ -170,7 +173,7 @@ h4 {
 @media (max-width: 576px) {
     .navbar .dropdown-nav-item {
         width: 95%;
-        top: 60px;
+        top: 75px;
     }
 
     .navbar .search-dropdown {
@@ -181,15 +184,15 @@ h4 {
 @media (min-width: 576px) {
     .navbar .dropdown-nav-item {
         width: 90%;
-        top: 60px;
+        top: 75px;
     }
 
     .navbar .search-dropdown {
     }
 }
 
-/*Medium*/
-@media (min-width: 768px) {
+/*Medium + 6*/
+@media (min-width: 774px) {
     .navbar .dropdown-nav-item {
         width: auto;
         min-width: 460px;
@@ -239,7 +242,12 @@ h4 {
 .navbar.navbar-second {
     padding: 0rem 1rem;
     border-bottom: 1px solid #dee2e6;
+    flex-wrap: nowrap;
+    align-items: normal;
 }
+    .navbar.navbar-second .nav-link {
+        color: #d87513;
+    }
 
     .navbar.navbar-second .active {
         border-bottom: 1px solid #fc7e01;
@@ -270,6 +278,76 @@ h4 {
             .navbar.navbar-second .nav-item.active .nav-link {
                 color: #495057;
             }
+
+.navbar-expand-master .navbar-nav {
+    max-width: 150px;
+}
+
+/*Large -30*/
+@media (min-width: 962px) {
+    .navbar-expand-master {
+        -ms-flex-flow: row nowrap;
+        flex-flow: row nowrap;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+        .navbar-expand-master .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-master .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+            .navbar-expand-master .navbar-nav .nav-link {
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
+            }
+
+        .navbar-expand-master .navbar-toggler {
+            display: none;
+        }
+}
+
+.navbar-expand-conf .navbar-nav {
+    max-width: 150px;
+}
+
+/*Medium -50*/
+@media (min-width: 718px) {
+    .navbar-expand-conf {
+        -ms-flex-flow: row nowrap;
+        flex-flow: row nowrap;
+        -ms-flex-pack: start;
+        justify-content: flex-start;
+    }
+
+        .navbar-expand-conf .navbar-collapse {
+            display: -ms-flexbox !important;
+            display: flex !important;
+            -ms-flex-preferred-size: auto;
+            flex-basis: auto;
+        }
+
+        .navbar-expand-conf .navbar-nav {
+            -ms-flex-direction: row;
+            flex-direction: row;
+        }
+
+            .navbar-expand-conf .navbar-nav .nav-link {
+                padding-right: 0.5rem;
+                padding-left: 0.5rem;
+            }
+
+        .navbar-expand-conf .navbar-toggler {
+            display: none;
+        }
+}
 
 .nav-tabs {
     border-bottom: 1px solid #f19031;

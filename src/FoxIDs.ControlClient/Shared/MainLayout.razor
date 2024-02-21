@@ -7,7 +7,7 @@
     <div class=container-fluid>
 
         <nav class="navbar navbar-expand navbar-light bg-light navbar-main nav-fill">
-            <a class="navbar-brand mr-auto"><img class="navbar-brand" src="images/foxids_logo.svg" /></a>
+            <a class="navbar-brand mr-auto"><img src="images/foxids_logo.svg" /></a>
             <AuthorizeView>
                 <Authorized>
                     <ul class="navbar-nav nav-item dropdown-nav-item">
@@ -93,8 +93,13 @@
 
         <AuthorizeView>
             <Authorized>
-                <nav class="navbar navbar-expand navbar-second">
-                    <div class="container-lg">
+                <nav class="navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-conf") navbar-light navbar-second">
+                    <div class="align-text-top py-2 pr-3">
+                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                            <span class="navbar-toggler-icon"></span>
+                        </button>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <ul class="navbar-nav">
                             @if (RouteBindingLogic.IsMasterTenant)
                             {

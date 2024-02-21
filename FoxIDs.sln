@@ -96,6 +96,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB88126F-3F28-4511-93E1-2454E239E9C7}"
 	ProjectSection(SolutionItems) = preProject
 		docs\images\bridge.vsdx = docs\images\bridge.vsdx
+		docs\images\configuration.svg = docs\images\configuration.svg
+		docs\images\configuration.vsdx = docs\images\configuration.vsdx
 		docs\images\configure-authorization-code-flow-pkce.png = docs\images\configure-authorization-code-flow-pkce.png
 		docs\images\configure-authorization-code-flow.png = docs\images\configure-authorization-code-flow.png
 		docs\images\configure-certificate.png = docs\images\configure-certificate.png
@@ -220,8 +222,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "images", "images", "{CB8812
 		docs\images\token-exchange-saml-by-trust-up-party.png = docs\images\token-exchange-saml-by-trust-up-party.png
 		docs\images\token-exchange-saml-by-trust.svg = docs\images\token-exchange-saml-by-trust.svg
 		docs\images\token-exchange.vsdx = docs\images\token-exchange.vsdx
-		docs\images\track.svg = docs\images\track.svg
-		docs\images\track.vsdx = docs\images\track.vsdx
 		docs\images\upload-risk-passwords-seed-client.png = docs\images\upload-risk-passwords-seed-client.png
 	EndProjectSection
 EndProject

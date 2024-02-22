@@ -42,7 +42,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             tenantSettingsHref = $"{TenantName}/tenantsettings";
-            trackSettingsHref = $"{TenantName}/tracksettings";
+            trackSettingsHref = $"{TenantName}/confsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;

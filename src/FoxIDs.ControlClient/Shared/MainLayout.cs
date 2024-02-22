@@ -28,6 +28,7 @@ namespace FoxIDs.Client.Shared
         private List<string> createTenantReceipt = new List<string>();
         private Modal createTrackModal;
         private PageEditForm<CreateTrackViewModel> createTrackForm;
+        private bool createTrackShowAdvanced;
         private bool createTrackWorking;
         private bool createTrackDone;
         private List<string> createTrackReceipt = new List<string>();
@@ -175,7 +176,7 @@ namespace FoxIDs.Client.Shared
                 }
                 createTrackWorking = true;
                 var track = createTrackForm.Model.Map<Track>();
-                await TrackService.CreateTrackAsync(track);
+                var trackResponse = await TrackService.CreateTrackAsync(track);
                 createTrackDone = true;
                 createTrackReceipt.Add("Configuration created.");
                 createTrackReceipt.Add("User repository created.");
@@ -187,8 +188,8 @@ namespace FoxIDs.Client.Shared
                     selectTrackFilterForm.Model.FilterName = null;
                 }
                 await LoadSelectTrackAsync();
-                await TrackSelectedLogic.TrackSelectedAsync(track);
-                await UserProfileLogic.UpdateTrackAsync(track.Name);
+                await TrackSelectedLogic.TrackSelectedAsync(trackResponse);
+                await UserProfileLogic.UpdateTrackAsync(trackResponse.Name);
             }
             catch (FoxIDsApiException ex)
             {

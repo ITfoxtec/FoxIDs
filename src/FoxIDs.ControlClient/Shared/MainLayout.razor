@@ -31,7 +31,16 @@
                                     <label class="label-control">Configuration</label>
                                     <div class="card">
                                         <div class="nav-link dropdown-toggle card-body px-3 py-2 text-left" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <span style="width: 100%">@TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small></span>
+                                            <span style="width: 100%">
+                                                @if (TrackSelectedLogic.Track.DisplayName.IsNullOrWhiteSpace())
+                                                {
+                                                    @TrackSelectedLogic.Track.Name <small class="text-muted">@TrackSelectedLogic.Track.Name.GetProdTrackName()</small>
+                                                }
+                                                else
+                                                {
+                                                    @TrackSelectedLogic.Track.DisplayName
+                                                }
+                                            </span>
                                         </div>
                                         <div class="dropdown-menu search-dropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
@@ -61,7 +70,14 @@
                                                         </div>
                                                     }
                                                     <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
-                                                        @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
+                                                        @if (track.DisplayName.IsNullOrWhiteSpace()) 
+                                                        {
+                                                            @track.Name <small class="text-muted">@track.Name.GetProdTrackName()</small>
+                                                        }
+                                                        else
+                                                        {
+                                                            @track.DisplayName
+                                                        }
                                                     </button>
                                                 }
                                             }
@@ -134,7 +150,7 @@
                                     Risk Passwords
                                 </TenantLiNavLink>
                             }
-                            <TenantLiNavLink Href="tracksettings" SubPages="tenantsettings,mailsettings,claimmappings">
+                            <TenantLiNavLink Href="confsettings" SubPages="tenantsettings,mailsettings,claimmappings">
                                 Settings
                             </TenantLiNavLink>
                             <li class="nav-item">
@@ -180,13 +196,25 @@
                     </PageEditForm>
                 </Modal>
 
-                <Modal @ref="createTrackModal" Title="Create Configuration">
+                <Modal @ref="createTrackModal" Title="Create New Configuration">
                     <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
                         <div class="modal-body">
-                            <div class="mr-auto info-text">
-                                Create a configuration with a meaningful name in lowercase and without spaces (optionally use '-' for the production track).
+                            <div class="text-right pb-2">
+                                <FInputSwitchAdvancedOptions @bind-Value="createTrackShowAdvanced" />
                             </div>
-                            <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" Focus="true" />
+
+                            <div class="mr-auto info-text">
+                                Create a configuration with a meaningful name.
+                            </div>
+                            <FInputText @bind-Value="createTrackForm.Model.DisplayName" For="@(() => createTrackForm.Model.DisplayName)" Focus="true" />
+
+                            @if (createTrackShowAdvanced)
+                            {
+                                <div class="mr-auto info-text">
+                                    Technical name in lowercase and without spaces.
+                                </div>
+                                <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" />
+                            }
 
                             <ul class="list-group list-group-flush">
                                 @foreach (var receipt in createTrackReceipt)

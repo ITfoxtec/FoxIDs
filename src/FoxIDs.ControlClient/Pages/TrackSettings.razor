@@ -1,4 +1,4 @@
-﻿@page "/{tenantName}/tracksettings"
+﻿@page "/{tenantName}/confsettings"
 @inherits PageBase
 
 <ul class="nav nav-tabs">
@@ -9,7 +9,7 @@
         </li>
     }
     <li class="nav-item">
-        <a class="nav-link active">Track settings</a>
+        <a class="nav-link active">Configuration settings</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="@mailSettingsHref">Mail settings</a>
@@ -20,7 +20,7 @@
 </ul>
 
 <div class="tab-content">
-    <PageEditForm @ref="trackSettingsForm" TModel="TrackSettingsViewModel" OnAfterInit="UpdateTrackViewModelAfterInit" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
+    <PageEditForm @ref="trackSettingsForm" TModel="TrackSettingsViewModel" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
         @if (TrackSelectedLogic.IsTrackSelected)
         {
             <div class="modal-body">
@@ -30,8 +30,8 @@
                         @deleteTrackError
                     </div>
                 }
-                <FFieldText @bind-Value="trackSettingsForm.Model.FormattedName" For="@(() => trackSettingsForm.Model.Name)" />
                 <FInputText @bind-Value="trackSettingsForm.Model.DisplayName" For="@(() => trackSettingsForm.Model.DisplayName)" />
+                <FFieldText @bind-Value="trackSettingsForm.Model.Name" For="@(() => trackSettingsForm.Model.Name)" />
                 <FInputNumber @bind-Value="trackSettingsForm.Model.SequenceLifetime" For="@(() => trackSettingsForm.Model.SequenceLifetime)" Focus="true" />
 
                 <div class="mr-auto">
@@ -57,7 +57,7 @@
                 {
                     <div class="alert alert-danger" role="alert">
                         <div>
-                            You are about to delete track "@trackSettingsForm.Model.FormattedName" including the user repository, are you sure?
+                            You are about to delete track "@(trackSettingsForm.Model.DisplayName ?? trackSettingsForm.Model.Name)" including the user repository, are you sure?
                         </div>
 
                         <div class="mt-3">

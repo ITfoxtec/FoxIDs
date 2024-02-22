@@ -5,12 +5,22 @@ namespace FoxIDs.Client.Models.ViewModels
     public class CreateTrackViewModel
     {
         /// <summary>
-        /// Track name.
+        /// Configuration name.
         /// </summary>
-        [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern, ErrorMessage = "The field {0} can only contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Track name")]
+        [Display(Name = "Name")]
         public string Name { get; set; }
+
+        /// <summary>
+        /// Display name.
+        /// </summary>
+        [Required]
+        [MaxLength(Constants.Models.Track.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
+        [Display(Name = "Display name")]
+        public string DisplayName { get; set; }
+
+        public bool ShowAdvanced { get; set; }
     }
 }

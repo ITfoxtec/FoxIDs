@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -6,13 +7,18 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class Track : INameValue
+    public class Track : INameValue, IValidatableObject
     {
-        [Required]
+        /// <summary>
+        /// Name of the track. If empty the name is auto generated.
+        /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]
         public string Name { get; set; }
 
+        /// <summary>
+        /// Display name.
+        /// </summary>
         [MaxLength(Constants.Models.Track.DisplayNameLength)]
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
         public string DisplayName { get; set; }
@@ -40,5 +46,15 @@ namespace FoxIDs.Models.Api
 
         [ListLength(Constants.Models.Track.AllowIframeOnDomainsMin, Constants.Models.Track.AllowIframeOnDomainsMax, Constants.Models.Track.AllowIframeOnDomainsLength)]
         public List<string> AllowIframeOnDomains { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+            }
+            return results;
+        }
     }
 }

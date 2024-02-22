@@ -8,11 +8,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class TrackLinkDownPartyViewModel : IDownPartyName, IValidatableObject, IAllowUpPartyNames, IOAuthClaimTransformViewModel
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Down-party name (client ID / resource name)")]
+        [Display(Name = "Client ID / Resource name)")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]

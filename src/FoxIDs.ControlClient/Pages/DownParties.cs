@@ -152,29 +152,26 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnStateHasChangedAsync(GeneralDownPartyViewModel downParty)
         {
-            await InvokeAsync(() =>
-            {
-                StateHasChanged();
-            });
+            await InvokeAsync(StateHasChanged);
         }
 
         private string DownPartyInfoText(GeneralDownPartyViewModel downParty)
         {
             if (downParty.Type == PartyTypes.Oidc)
             {
-                return $"OpenID Connect - {downParty.Name}";
+                return $"{downParty.DisplayName ?? downParty.Name} (OpenID Connect)";
             }
             else if (downParty.Type == PartyTypes.OAuth2)
             {
-                return $"OAuth 2.0 - {downParty.Name}";
+                return $"{downParty.DisplayName ?? downParty.Name} (OAuth 2.0)";
             }
             else if (downParty.Type == PartyTypes.Saml2)
             {
-                return $"SAML 2.0 - {downParty.Name}";
+                return $"{downParty.DisplayName ?? downParty.Name} (SAML 2.0)";
             } 
             else if (downParty.Type == PartyTypes.TrackLink)
             {
-                return $"Track link - {downParty.Name}";
+                return $"{downParty.DisplayName ?? downParty.Name} (Configuration link)";
             }
 
             throw new NotSupportedException();

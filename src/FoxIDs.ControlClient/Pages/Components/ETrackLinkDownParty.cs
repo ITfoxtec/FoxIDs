@@ -118,12 +118,13 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     generalTrackLinkDownParty.CreateMode = false;
                     toastService.ShowSuccess("Track link down-party created.");
+                    generalTrackLinkDownParty.Name = trackLinkDownPartyResult.Name;
                 }
                 else
                 {
                     toastService.ShowSuccess("Track link down-party updated.");
                 }
-                generalTrackLinkDownParty.Name = generalTrackLinkDownParty.Form.Model.Name;
+                generalTrackLinkDownParty.DisplayName = trackLinkDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

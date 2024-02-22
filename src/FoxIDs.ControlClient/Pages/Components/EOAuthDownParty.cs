@@ -268,7 +268,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 var oauthDownParty = generalOAuthDownParty.Form.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
-                    if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true)
+                    if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true && !generalOAuthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                     {
                         afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOAuthDownParty.Form.Model.Name, Scopes = generalOAuthDownParty.Form.Model.Client.DefaultResourceScopeScopes });
                     }
@@ -308,7 +308,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 if (oauthDownParty.Client != null && generalOAuthDownParty.Form.Model.Client.Secrets.Count() > 0)
                 {
-                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOAuthDownParty.Form.Model.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
+                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
                 }
 
                 var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oauthDownPartyResult.Name);
@@ -317,12 +317,13 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     generalOAuthDownParty.CreateMode = false;
                     toastService.ShowSuccess("OAuth down-party created.");
+                    generalOAuthDownParty.Name = oauthDownPartyResult.Name;
                 }
                 else
                 {
                     toastService.ShowSuccess("OAuth down-party updated.");
                 }
-                generalOAuthDownParty.Name = generalOAuthDownParty.Form.Model.Name;
+                generalOAuthDownParty.DisplayName = oauthDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

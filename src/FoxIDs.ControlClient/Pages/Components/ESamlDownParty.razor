@@ -15,23 +15,34 @@
     <div class="modal-body">
         @if (samlDownParty.CreateMode)
         {
-            <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" Focus="true" />
+            @if (samlDownParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
+            <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" Focus="true" />
+            @if (samlDownParty.ShowAdvanced)
+            {
+                <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
+            }
         }
         @if (samlDownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="samlDownParty.Form.Model.Note" For="@(() => samlDownParty.Form.Model.Note)" />
         }
 
-        <div class="mb-3 alert alert-info" role="alert">
-            <i>SAML 2.0 Metadata selecting all up-parties with '*'. You can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i>
-            @{ var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern); }
-            <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
-        </div>
-
+        @if (!samlDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+        {
+            <div class="mb-3 alert alert-info" role="alert">
+                @{
+                    var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern);
+                }
+                <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
+            </div>
+        }
         @if (DownParty.ShowAdvanced)
         {
             <FInputSelect @bind-Value="samlDownParty.Form.Model.PartyBindingPattern" For="@(() => samlDownParty.Form.Model.PartyBindingPattern)">
@@ -70,26 +81,27 @@
                 <SelectUpParty @ref="samlDownParty.SelectAllowUpPartyName" EditDownPartyForm="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                 <FInputText @bind-Value="samlDownParty.Form.Model.Issuer" For="@(() => samlDownParty.Form.Model.Issuer)" />
                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
-                <div class="row active-group-outline">
-                    <div class="col">
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
-                        </div>
-                    </div>
-                    <div class="col">
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
-                        </div>
-                    </div>
-                </div>
                 @if (samlDownParty.ShowAdvanced)
                 {
+                    <div class="row active-group-outline">
+                        <div class="col">
+                            <div class="form-group active-group">
+                                <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnRequestBinding" For="@(() => samlDownParty.Form.Model.AuthnRequestBinding)" IncludeActiveFormGroup="false">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group active-group">
+                                <FInputSelect @bind-Value="samlDownParty.Form.Model.AuthnResponseBinding" For="@(() => samlDownParty.Form.Model.AuthnResponseBinding)" IncludeActiveFormGroup="false">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            </div>
+                        </div>
+                    </div>
+
                     <FInputToggle @bind-Value="samlDownParty.Form.Model.EncryptAuthnResponse" For="@(() => samlDownParty.Form.Model.EncryptAuthnResponse)" TextType="y.n" />
                     @if (samlDownParty.Form.Model.EncryptAuthnResponse)
                     {
@@ -123,25 +135,28 @@
                 }
 
                 <FInputText @bind-Value="samlDownParty.Form.Model.LoggedOutUrl" For="@(() => samlDownParty.Form.Model.LoggedOutUrl)" />
-                <FInputText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
-                <div class="row active-group-outline">
-                    <div class="col">
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
+                @if (samlDownParty.ShowAdvanced)
+                {
+                    <FInputText @bind-Value="samlDownParty.Form.Model.SingleLogoutUrl" For="@(() => samlDownParty.Form.Model.SingleLogoutUrl)" />
+                    <div class="row active-group-outline">
+                        <div class="col">
+                            <div class="form-group active-group">
+                                <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutRequestBinding" For="@(() => samlDownParty.Form.Model.LogoutRequestBinding)" IncludeActiveFormGroup="false">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group active-group">
+                                <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
+                                    <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
+                                    <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
+                                </FInputSelect>
+                            </div>
                         </div>
                     </div>
-                    <div class="col">
-                        <div class="form-group active-group">
-                            <FInputSelect @bind-Value="samlDownParty.Form.Model.LogoutResponseBinding" For="@(() => samlDownParty.Form.Model.LogoutResponseBinding)" IncludeActiveFormGroup="false">
-                                <option value="@SamlBindingTypes.Redirect">@SamlBindingTypes.Redirect</option>
-                                <option value="@SamlBindingTypes.Post">@SamlBindingTypes.Post</option>
-                            </FInputSelect>
-                        </div>
-                    </div>
-                </div>
+                }
                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.Claims" For="@(() => samlDownParty.Form.Model.Claims)" DynamicFirstRow="true" />
                 <div class="form-group active-group active">
                     <div class="drag-drop-zone input-control">
@@ -217,7 +232,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete SAML 2.0 Down-party "@DownParty.Name", are you sure?
+                    You are about to delete SAML 2.0 Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

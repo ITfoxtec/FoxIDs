@@ -8,7 +8,7 @@ namespace FoxIDs.Models.Api
     public class OidcDownClient : IValidatableObject
     {
         [ValidateComplexType]
-        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesApiMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 

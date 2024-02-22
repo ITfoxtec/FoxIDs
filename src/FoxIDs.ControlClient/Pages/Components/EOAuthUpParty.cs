@@ -161,15 +161,16 @@ namespace FoxIDs.Client.Pages.Components
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     generalOAuthUpParty.CreateMode = false;
                     toastService.ShowSuccess("OpenID Connect up-party created.");
+                    generalOAuthUpParty.Name = oauthUpPartyResult.Name;
+                    generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
                 else
                 {
                     var oauthUpPartyResult = await UpPartyService.UpdateOAuthUpPartyAsync(oauthUpParty);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     toastService.ShowSuccess("OpenID Connect up-party updated.");
+                    generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
-
-                generalOAuthUpParty.Name = generalOAuthUpParty.Form.Model.Name;
             }
             catch (FoxIDsApiException ex)
             {

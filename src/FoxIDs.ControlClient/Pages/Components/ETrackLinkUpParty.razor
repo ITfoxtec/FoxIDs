@@ -14,11 +14,19 @@
     <div class="modal-body">
         @if (trackLinkUpParty.CreateMode)
         {
-            <FInputText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="trackLinkUpParty.Form.Model.DisplayName" For="@(() => trackLinkUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (trackLinkUpParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
+            <FInputText @bind-Value="trackLinkUpParty.Form.Model.DisplayName" For="@(() => trackLinkUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (trackLinkUpParty.ShowAdvanced)
+            {
+                <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
+            }
         }
         @if (trackLinkUpParty.ShowAdvanced)
         {
@@ -110,7 +118,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Track link Up-party "@UpParty.Name", are you sure?
+                    You are about to delete Track link Up-party "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

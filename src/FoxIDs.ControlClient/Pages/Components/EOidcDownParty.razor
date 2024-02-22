@@ -14,39 +14,46 @@
     <div class="modal-body">
         @if (oidcDownParty.CreateMode)
         {
-            <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="oidcDownParty.Form.Model.DisplayName" For="@(() => oidcDownParty.Form.Model.DisplayName)" Focus="true" />
+            @if (oidcDownParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oidcDownParty.Form.Model.DisplayName" For="@(() => oidcDownParty.Form.Model.DisplayName)" Focus="true" />
+            <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
         }
         @if (oidcDownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oidcDownParty.Form.Model.Note" For="@(() => oidcDownParty.Form.Model.Note)" />
         }
 
-        <div class="mb-3 alert alert-info" role="alert">
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
-                <div>Client Authority and OIDC Discovery<br /><i>Example for a up-party with the name 'login' as the target.</i></div>                 
-                <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
-                <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
-            }
+        @if (!oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+        {
+            <div class="mb-3 alert alert-info" role="alert">
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
+                    <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
+                    <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
+                }
 
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                <hr />
-            }
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    <hr />
+                }
 
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
-                <div>Resource Authority and OIDC Discovery</div>
-                <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
-                <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
-            }
-        </div>
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
+                    <div>Resource Authority and OIDC Discovery</div>
+                    <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
+                    <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>
+                }
+            </div>
+        }
 
         @if (DownParty.ShowAdvanced)
         {
@@ -115,8 +122,8 @@
                     {
                         <FInputText @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutUri" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutUri)" />
                         <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
+                        <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     }
-                    <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
                     @if (DownParty.ShowAdvanced)
                     {
@@ -163,7 +170,7 @@
                         @if (oidcDownParty.Form.Model.Client.ScopesViewModel.Count() <= 0)
                         {
                             <div class="card">
-                                <div class="card-body px-3 py-2">
+                                <div class="card-body">
                                 </div>
                             </div>
                         }
@@ -197,7 +204,7 @@
                                                                 else
                                                                 {
                                                                     <div class="card">
-                                                                        <div class="card-body px-3 py-2">
+                                                                        <div class="card-body">
                                                                         </div>
                                                                     </div>
                                                                 }
@@ -221,7 +228,7 @@
                                                                 else
                                                                 {
                                                                     <div class="card">
-                                                                        <div class="card-body px-3 py-2">
+                                                                        <div class="card-body">
                                                                         </div>
                                                                     </div>
                                                                 }
@@ -284,7 +291,7 @@
                             @if (oidcDownParty.Form.Model.Client.Claims.Count() <= 0)
                             {
                                 <div class="card">
-                                    <div class="card-body px-3 py-2">
+                                    <div class="card-body">
                                     </div>
                                 </div>
                             }
@@ -364,7 +371,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OpenID Connect Down-party "@DownParty.Name", are you sure?
+                    You are about to delete OpenID Connect Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

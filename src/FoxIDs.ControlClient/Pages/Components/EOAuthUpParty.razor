@@ -21,18 +21,23 @@
 
         @if (oauthUpParty.CreateMode)
         {
-            <FInputText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="oauthUpParty.Form.Model.DisplayName" For="@(() => oauthUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (UpParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oauthUpParty.Form.Model.DisplayName" For="@(() => oauthUpParty.Form.Model.DisplayName)" Focus="true" />
+            <FFieldTextClipboard @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
         }
         @if (oauthUpParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oauthUpParty.Form.Model.Note" For="@(() => oauthUpParty.Form.Model.Note)" />
         }
 
-        <FInputText @bind-Value="oauthUpParty.Form.Model.Authority" For="@(() => oauthUpParty.Form.Model.Authority)" Focus="@(oauthUpParty.CreateMode ? false : true)" />
+        <FInputText @bind-Value="oauthUpParty.Form.Model.Authority" For="@(() => oauthUpParty.Form.Model.Authority)" />
 
         @if (UpParty.ShowAdvanced)
         {
@@ -130,6 +135,12 @@
                 {
                     @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oauthUpParty.Form.Model.DisableUserAuthenticationTrust))
                     {
+                        @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust)
+                        {
+                            <div class="info-text">
+                                Custom SP issuer / audience used in token exchange trust.
+                            </div>
+                        }
                         <FInputText @bind-Value="oauthUpParty.Form.Model.SpIssuer" For="@(() => oauthUpParty.Form.Model.SpIssuer)" />
                     }
 
@@ -154,7 +165,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OpenID Connect Up-party "@UpParty.Name", are you sure?
+                    You are about to delete OpenID Connect Up-party "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

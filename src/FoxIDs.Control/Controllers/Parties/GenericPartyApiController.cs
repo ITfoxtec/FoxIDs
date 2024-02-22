@@ -9,6 +9,9 @@ using AutoMapper;
 using System;
 using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
+using ITfoxtec.Identity.Util;
+using ITfoxtec.Identity;
+using System.Collections.Generic;
 
 namespace FoxIDs.Controllers
 {
@@ -65,6 +68,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
+                party.Name = await GetPartyNameAsync(party.Name);
 
                 var mParty = mapper.Map<MParty>(party);
                 if (mParty is UpParty)
@@ -122,43 +126,40 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task<int> CountParties(string dataType)
-        {
-            return await tenantRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
-        }
-
         protected async Task<ActionResult<AParty>> Put(AParty party, Func<AParty, ValueTask<bool>> apiModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> preLoadModelActionAsync = null, Func<AParty, MParty, ValueTask<bool>> postLoadModelActionAsync = null)
         {
             try
             {
-               if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
+                if (!await ModelState.TryValidateObjectAsync(party) || !validateApiModelGenericPartyLogic.ValidateApiModelClaimTransforms(ModelState, party.ClaimTransforms) || (apiModelActionAsync != null && !await apiModelActionAsync(party))) return BadRequest(ModelState);
+                party.Name = await GetPartyNameAsync(party.Name);
 
                 var mParty = mapper.Map<MParty>(party);
+
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
 
-                if (party is Api.OidcDownParty)
+                if (mParty is OidcDownParty mOidcDownParty)
                 {
-                    var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if((tempMParty as OidcDownParty).Client != null && (mParty as OidcDownParty).Client != null)
+                    var tempMParty = await tenantRepository.GetAsync<OidcDownParty>(mParty.Id);
+                    if(tempMParty.Client != null && mOidcDownParty.Client != null)
                     {
-                        (mParty as OidcDownParty).Client.Secrets = (tempMParty as OidcDownParty).Client.Secrets;
+                        mOidcDownParty.Client.Secrets = tempMParty.Client.Secrets;
                     }
                 }
-                else if (party is Api.OAuthDownParty)
+                else if (mParty is OAuthDownParty mOAuthDownParty)
                 {
-                    var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    if ((tempMParty as OAuthDownParty).Client != null && (mParty as OAuthDownParty).Client != null)
+                    var tempMParty = await tenantRepository.GetAsync<OAuthDownParty>(mParty.Id);
+                    if (tempMParty.Client != null && mOAuthDownParty.Client != null)
                     {
-                        (mParty as OAuthDownParty).Client.Secrets = (tempMParty as OAuthDownParty).Client.Secrets;
+                        mOAuthDownParty.Client.Secrets = tempMParty.Client.Secrets;
                     }
                 }
-                else if (party is Api.OidcUpParty)
+                else if (mParty is OidcUpParty mOidcUpParty)
                 {
-                    var tempMParty = await tenantRepository.GetAsync<MParty>(mParty.Id);
-                    (mParty as OidcUpParty).Client.ClientSecret = (tempMParty as OidcUpParty).Client.ClientSecret;
-                    (mParty as OidcUpParty).Client.ClientKeys = (tempMParty as OidcUpParty).Client.ClientKeys;
+                    var tempMParty = await tenantRepository.GetAsync<OidcUpParty>(mParty.Id);
+                    mOidcUpParty.Client.ClientSecret = tempMParty.Client.ClientSecret;
+                    mOidcUpParty.Client.ClientKeys = tempMParty.Client.ClientKeys;
                 }
 
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
@@ -284,6 +285,33 @@ namespace FoxIDs.Controllers
 
             recursivCount++;
             return EqualsBaseType(recursivCount, bt, baseType);
+        }
+
+        private async Task<int> CountParties(string dataType)
+        {
+            return await tenantRepository.CountAsync<Party>(new Party.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName }, whereQuery: p => p.DataType.Equals(dataType));
+        }
+
+        private async Task<string> GetPartyNameAsync(string name = null, int count = 0)
+        {
+            if (name.IsNullOrWhiteSpace())
+            {
+                name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
+                if (count < 3)
+                {
+                    var mParty = await tenantRepository.GetAsync<MParty>(await GetId(IsUpParty(), name), required: false);
+                    if (mParty != null)
+                    {
+                        count++;
+                        return await GetPartyNameAsync(count: count);
+                    }
+                }
+                return name;
+            }
+            else
+            {
+                return name.ToLower();
+            }
         }
     }
 }

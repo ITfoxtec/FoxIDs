@@ -224,7 +224,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 var oidcDownParty = generalOidcDownParty.Form.Model.Map<OidcDownParty>(afterMap: afterMap =>
                 {
-                    if (generalOidcDownParty.Form.Model.Client?.DefaultResourceScope == true)
+                    if (generalOidcDownParty.Form.Model.Client?.DefaultResourceScope == true && !generalOidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                     {
                         afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOidcDownParty.Form.Model.Name, Scopes = generalOidcDownParty.Form.Model.Client.DefaultResourceScopeScopes });
                     }
@@ -264,7 +264,7 @@ namespace FoxIDs.Client.Pages.Components
                 }
                 if (oidcDownParty.Client != null && generalOidcDownParty.Form.Model.Client.Secrets.Count() > 0)
                 {
-                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOidcDownParty.Form.Model.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets });
+                    await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oidcDownPartyResult.Name, Secrets = generalOidcDownParty.Form.Model.Client.Secrets });
                 }
 
                 var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oidcDownPartyResult.Name);
@@ -273,12 +273,13 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     generalOidcDownParty.CreateMode = false;
                     toastService.ShowSuccess("OpenID Connect down-party created.");
+                    generalOidcDownParty.Name = oidcDownPartyResult.Name;
                 }
                 else
                 {
                     toastService.ShowSuccess("OpenID Connect down-party updated.");
                 }
-                generalOidcDownParty.Name = generalOidcDownParty.Form.Model.Name;
+                generalOidcDownParty.DisplayName = oidcDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

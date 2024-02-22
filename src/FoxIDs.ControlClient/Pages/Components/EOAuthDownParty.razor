@@ -14,39 +14,46 @@
     <div class="modal-body">
         @if (oauthDownParty.CreateMode)
         {
-            <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" Focus="true" />
+            @if (DownParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" Focus="true" />
+            <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         }
         @if (DownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
         }
 
-        <div class="mb-3 alert alert-info" role="alert">
-            @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
-                <div>Client Authority and OIDC Discovery<br /><i>You can selecting all up-parties with '*'. Or you can alternatively select a up-party by name e.g., 'login' or up to 4 up-party divided by comma e.g., 'login,xx,yy,xx'.</i></div>                 
-                <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
-                <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
-            }
+        @if (!oauthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+        {
+            <div class="mb-3 alert alert-info" role="alert">
+                @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Client || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, true, oauthDownParty.Form.Model.PartyBindingPattern);
+                    <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
+                    <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
+                }
             
-            @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                <hr />
-            }
+                @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    <hr />
+                }
 
-            @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, false);
-                <div>Resource Authority and OIDC Discovery</div>
-                <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
-                <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
-            }
-        </div>
+                @if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource || oauthDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oauthDownParty.Form.Model.Name, false);
+                    <div>Resource Authority and OIDC Discovery</div>
+                    <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
+                    <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
+                }
+            </div>
+        }
 
         @if (DownParty.ShowAdvanced)
         {
@@ -109,7 +116,7 @@
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
                     <div class="mb-3 alert alert-info" role="alert">
-                        OAuth 2.0 client currently only supported client credential grant. Please use OpenID Connect for other client types.
+                        The OAuth 2.0 client only supported client credential grant. Please use OpenID Connect for other client types.
                     </div>
                     <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                     @if (DownParty.ShowAdvanced)
@@ -117,7 +124,10 @@
                         <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.AllowCorsOrigins" For="@(() => oauthDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true" />
                     }
                     <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" DynamicFirstRow="true" />
-                    <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
+                    @if (DownParty.ShowAdvanced)
+                    {
+                        <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
+                    }
                     <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
                     @if (DownParty.ShowAdvanced)
                     {
@@ -164,7 +174,7 @@
                         @if (oauthDownParty.Form.Model.Client.ScopesViewModel.Count() <= 0)
                         {
                             <div class="card">
-                                <div class="card-body px-3 py-2">
+                                <div class="card-body">
                                 </div>
                             </div>
                         }
@@ -198,7 +208,7 @@
                                                                 else
                                                                 {
                                                                     <div class="card">
-                                                                        <div class="card-body px-3 py-2">
+                                                                        <div class="card-body">
                                                                         </div>
                                                                     </div>
                                                                 }
@@ -262,7 +272,7 @@
                             @if (oauthDownParty.Form.Model.Client.Claims.Count() <= 0)
                             {
                                 <div class="card">
-                                    <div class="card-body px-3 py-2">
+                                    <div class="card-body">
                                     </div>
                                 </div>
                             }
@@ -329,7 +339,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OAuth 2.0 Down-party "@DownParty.Name", are you sure?
+                    You are about to delete OAuth 2.0 Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

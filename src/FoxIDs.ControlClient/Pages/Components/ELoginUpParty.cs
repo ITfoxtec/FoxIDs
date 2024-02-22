@@ -158,6 +158,8 @@ namespace FoxIDs.Client.Pages.Components
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
                     generalLoginUpParty.CreateMode = false;
                     toastService.ShowSuccess("Login up-party created.");
+                    generalLoginUpParty.Name = loginUpPartyResult.Name;
+                    generalLoginUpParty.DisplayName = loginUpPartyResult.DisplayName;
                 }
                 else
                 {
@@ -196,8 +198,8 @@ namespace FoxIDs.Client.Pages.Components
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
                     toastService.ShowSuccess("Login up-party updated.");
+                    generalLoginUpParty.DisplayName = loginUpParty.DisplayName;
                 }
-                generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;             
             }
             catch (FoxIDsApiException ex)
             {

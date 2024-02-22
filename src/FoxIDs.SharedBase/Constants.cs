@@ -326,6 +326,8 @@ namespace FoxIDs
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const int DisplayNameLength = 100;
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
                 public const int NoteLength = 200;
 
                 public const int IssuerLength = 300;
@@ -359,6 +361,7 @@ namespace FoxIDs
 
                 public static class Client
                 {
+                    public const int ResourceScopesApiMin = 0;
                     public const int ResourceScopesMin = 1;
                     public const int ResourceScopesMax = 50;
                     public const int ScopesMin = 0;
@@ -549,6 +552,8 @@ namespace FoxIDs
 
         public static class ControlApi
         {
+            public const int DefaultNameLength = 8;
+
             public const string Version = "v1";
             public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 

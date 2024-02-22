@@ -512,19 +512,27 @@ h4 {
     background-color: #f8f9fa;
 }
 
-.card-body.active, .card-body:active {
-    color: inherit;
-    background-color: #fff;
-    border-radius: 0.25rem;
-    border-color: #df8935;
-    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+.card-row {
+    flex-direction: row;
 }
 
-.card-body:focus {
-    border-radius: 0.25rem;
-    border-color: #df8935;
-    box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+.card-body {
+    padding: 0.375rem 0.75rem;
 }
+
+    .card-body.active, .card-body:active {
+        color: inherit;
+        background-color: #fff;
+        border-radius: 0.25rem;
+        border-color: #df8935;
+        box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+    }
+
+    .card-body:focus {
+        border-radius: 0.25rem;
+        border-color: #df8935;
+        box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
+    }
 
 .info-text {
     color: #6f797e;

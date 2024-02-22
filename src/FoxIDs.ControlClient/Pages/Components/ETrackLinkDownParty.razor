@@ -14,11 +14,19 @@
     <div class="modal-body">
         @if (trackLinkDownParty.CreateMode)
         {
-            <FInputText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
+            @if (trackLinkDownParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
+            <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
+            @if (trackLinkDownParty.ShowAdvanced)
+            {
+                <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
+            }
         }
         @if (trackLinkDownParty.ShowAdvanced)
         {
@@ -67,7 +75,7 @@
                         @if (trackLinkDownParty.Form.Model.Claims.Count() <= 0)
                         {
                             <div class="card">
-                                <div class="card-body px-3 py-2">
+                                <div class="card-body">
                                 </div>
                             </div>
                         }
@@ -115,7 +123,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Track link Down-party "@DownParty.Name", are you sure?
+                    You are about to delete Track link Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

@@ -13,10 +13,13 @@ namespace FoxIDs.Models.Api
 {
     public class SamlDownParty : IDownParty, INameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
@@ -130,6 +133,10 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+            }
             if (AllowUpPartyNames?.Count <= 0)
             {
                 results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required.", new[] { nameof(AllowUpPartyNames) }));

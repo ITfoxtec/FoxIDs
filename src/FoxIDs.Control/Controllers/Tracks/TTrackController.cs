@@ -205,7 +205,7 @@ namespace FoxIDs.Controllers
         {
             if (name.IsNullOrWhiteSpace())
             {
-                name = RandomGenerator.GenerateCode(10).ToLower();
+                name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
                 if (count < 3)
                 {
                     var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);

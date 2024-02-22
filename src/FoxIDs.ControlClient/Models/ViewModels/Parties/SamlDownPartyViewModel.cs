@@ -12,11 +12,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, ISamlClaimTransformViewModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Down-party name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]

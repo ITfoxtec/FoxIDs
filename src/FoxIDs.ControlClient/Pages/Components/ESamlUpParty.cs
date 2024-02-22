@@ -295,14 +295,16 @@ namespace FoxIDs.Client.Pages.Components
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     generalSamlUpParty.CreateMode = false;
                     toastService.ShowSuccess("SAML 2.0 up-party created.");
+                    generalSamlUpParty.Name = samlUpPartyResult.Name;
+                    generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
                 }
                 else
                 {
                     var samlUpPartyResult = await UpPartyService.UpdateSamlUpPartyAsync(samlUpParty);
                     generalSamlUpParty.Form.UpdateModel(ToViewModel(generalSamlUpParty, samlUpPartyResult));
                     toastService.ShowSuccess("SAML 2.0 up-party updated.");
-                }
-                generalSamlUpParty.Name = generalSamlUpParty.Form.Model.Name;
+                    generalSamlUpParty.DisplayName = samlUpPartyResult.DisplayName;
+                }                
             }
             catch (FoxIDsApiException ex)
             {

@@ -14,7 +14,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public OAuthUpPartyViewModel Party { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
-        [Display(Name = "Optional custom SP client ID (default the party name)")]
+        [Display(Name = "Optional custom SP client ID")]
         public string SpClientId { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]

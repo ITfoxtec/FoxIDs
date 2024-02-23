@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
             }
             else
             {
-                throw new OAuthRequestException($"Require at least one allowed up-party with matching issuer '{subjectTokenIssuer}' and a audience '{string.Join(", ", subjectTokenAudiences)}'. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                throw new OAuthRequestException($"Require at least one allowed authentication method with matching issuer '{subjectTokenIssuer}' and a audience '{string.Join(", ", subjectTokenAudiences)}'. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
             }
         }
 
@@ -173,17 +173,17 @@ namespace FoxIDs.Logic
             }
             if (subjectUpParties.Count() > 1)
             {
-                throw new OAuthRequestException($"More then one matching issuer '{subjectTokenIssuer}' and a audience '{string.Join(", ", subjectTokenAudiences)}' in allowed up-party. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                throw new OAuthRequestException($"More then one matching issuer '{subjectTokenIssuer}' and a audience '{string.Join(", ", subjectTokenAudiences)}' in allowed authentication method. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
             }
 
             var subjectUpPartie = subjectUpParties.First();
             if ((subjectUpPartie.Type == PartyTypes.OAuth2 || subjectUpPartie.Type == PartyTypes.Oidc) && subjectTokenType != IdentityConstants.TokenTypeIdentifiers.AccessToken)
             {
-                throw new NotSupportedException($"Subject token type not supported for up-party type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}'].");
+                throw new NotSupportedException($"Subject token type not supported for authentication method type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.AccessToken}'].");
             }
             if ((subjectUpPartie.Type == PartyTypes.Saml2) && subjectTokenType != IdentityConstants.TokenTypeIdentifiers.Saml2)
             {
-                throw new NotSupportedException($"Subject token type not supported for up-party type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
+                throw new NotSupportedException($"Subject token type not supported for authentication method type {subjectUpPartie.Type}. Supported types ['{IdentityConstants.TokenTypeIdentifiers.Saml2}'].");
             }
 
             switch (subjectUpPartie.Type)

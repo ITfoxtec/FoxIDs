@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OAuth up-party API.
+    /// OAuth authentication method API.
     /// </summary>
     public class TOAuthUpPartyController : GenericPartyApiController<Api.OAuthUpParty, Api.OAuthClaimTransform, OAuthUpParty>
     {
@@ -25,34 +25,34 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get OAuth up-party.
+        /// Get OAuth authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>OAuth up-party.</returns>
+        /// <returns>OAuth authentication method.</returns>
         [ProducesResponseType(typeof(Api.OAuthUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.OAuthUpParty>> GetOAuthUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create OAuth up-party.
+        /// Create OAuth authentication method.
         /// </summary>
-        /// <param name="party">OAuth up-party.</param>
-        /// <returns>OAuth up-party.</returns>
+        /// <param name="party">OAuth authentication method.</param>
+        /// <returns>OAuth authentication method.</returns>
         [ProducesResponseType(typeof(Api.OAuthUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.OAuthUpParty>> PostOAuthUpParty([FromBody] Api.OAuthUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidchDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
-        /// Update OAuth up-party.
+        /// Update OAuth authentication method.
         /// </summary>
-        /// <param name="party">OAuth up-party.</param>
-        /// <returns>OAuth up-party.</returns>
+        /// <param name="party">OAuth authentication method.</param>
+        /// <returns>OAuth authentication method.</returns>
         [ProducesResponseType(typeof(Api.OAuthUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.OAuthUpParty>> PutOAuthUpParty([FromBody] Api.OAuthUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidchDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
-        /// Delete OAuth up-party.
+        /// Delete OAuth authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

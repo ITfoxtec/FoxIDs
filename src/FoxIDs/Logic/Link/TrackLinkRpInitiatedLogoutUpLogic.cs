@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
             var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
 
@@ -85,7 +85,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: true);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             return await LogoutResponseDownAsync(sequenceData);
         }

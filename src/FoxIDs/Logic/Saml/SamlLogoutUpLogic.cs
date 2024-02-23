@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
 
             if (samlUpSequenceData.RequireLogoutConsent)
@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
             {
                 if (!samlUpSequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
                 {
-                    throw new Exception("Requested session ID do not match up-party session ID.");
+                    throw new Exception("Requested session ID do not match authentication method session ID.");
                 }
             }
             catch (Exception ex)
@@ -279,7 +279,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: true);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             if (!sequenceData.ExternalInitiatedSingleLogout)
             {
@@ -442,7 +442,7 @@ namespace FoxIDs.Logic
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!sequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);

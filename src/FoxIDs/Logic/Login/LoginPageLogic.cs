@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
         {
             if (!sequenceData.UpPartyId.Equals(RouteBinding.UpParty.Id, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 

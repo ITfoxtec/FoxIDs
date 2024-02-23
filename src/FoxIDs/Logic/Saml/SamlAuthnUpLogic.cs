@@ -86,7 +86,7 @@ namespace FoxIDs.Logic
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);

@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
                 TrackName = routeBinding.TrackName,
                 Logging = routeBinding.Logging,
                 LogicClassTypeFullName = GetType().FullName,
-                Info = remove ? $"Remove up-party '{upParty.Name}' from down-parties allow up-party list" : $"Update up-party '{upParty.Name}' in down-parties allow up-party list",
+                Info = remove ? $"Remove authentication method '{upParty.Name}' from down-parties allow authentication method list" : $"Update authentication method '{upParty.Name}' in down-parties allow authentication method list",
                 Message = message.ToJson(),
             };
             if (routeBinding.TelemetryClient != null)

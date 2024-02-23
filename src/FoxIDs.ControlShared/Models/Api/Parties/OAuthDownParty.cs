@@ -22,7 +22,7 @@ namespace FoxIDs.Models.Api
         public string Note { get; set; }
 
         /// <summary>
-        /// Allow up-party names.
+        /// Allow authentication method names.
         /// </summary>
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
         public List<string> AllowUpPartyNames { get; set; }

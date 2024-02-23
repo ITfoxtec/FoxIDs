@@ -23,7 +23,7 @@ namespace FoxIDs.Models.Config
         public int TrackLifetime { get; set; } = 86400;
 
         /// <summary>
-        /// Time to cache up-parties in seconds (default 6 hours).
+        /// Time to cache authentication methods in seconds (default 6 hours).
         /// </summary>
         [Required] 
         public int UpPartyLifetime { get; set; } = 21600;

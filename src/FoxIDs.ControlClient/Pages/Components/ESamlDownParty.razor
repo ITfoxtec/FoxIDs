@@ -46,9 +46,9 @@
         @if (DownParty.ShowAdvanced)
         {
             <FInputSelect @bind-Value="samlDownParty.Form.Model.PartyBindingPattern" For="@(() => samlDownParty.Form.Model.PartyBindingPattern)">
-                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
-                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
-                <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
+                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../application(auth-method)/... - default</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../application~auth-method~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../application.auth-method./...</option>
             </FInputSelect>
         }
 

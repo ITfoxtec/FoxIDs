@@ -12,7 +12,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Abstract OAuth 2.0 import client secret for up-party API.
+    /// Abstract OAuth 2.0 import client secret for authentication method API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public abstract class GenericOAuthClientSecretUpPartyController<TParty, TClient> : ApiController where TParty : OAuthUpParty<TClient> where TClient : OAuthUpClient

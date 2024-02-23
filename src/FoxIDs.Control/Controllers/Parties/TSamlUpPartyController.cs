@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// SAML 2.0 up-party API.
+    /// SAML 2.0 authentication method API.
     /// </summary>
     public class TSamlUpPartyController : GenericPartyApiController<Api.SamlUpParty, Api.SamlClaimTransform, SamlUpParty>
     {
@@ -25,34 +25,34 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get SAML 2.0 up-party.
+        /// Get SAML 2.0 authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>SAML 2.0 up-party.</returns>
+        /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.SamlUpParty>> GetSamlUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create SAML 2.0 up-party.
+        /// Create SAML 2.0 authentication method.
         /// </summary>
-        /// <param name="party">SAML 2.0 up-party.</param>
-        /// <returns>SAML 2.0 up-party.</returns>
+        /// <param name="party">SAML 2.0 authentication method.</param>
+        /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpParty([FromBody] Api.SamlUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await samlMetadataReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
-        /// Update SAML 2.0 up-party.
+        /// Update SAML 2.0 authentication method.
         /// </summary>
-        /// <param name="party">SAML 2.0 up-party.</param>
-        /// <returns>SAML 2.0 up-party.</returns>
+        /// <param name="party">SAML 2.0 authentication method.</param>
+        /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.SamlUpParty>> PutSamlUpParty([FromBody] Api.SamlUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelSamlPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await samlMetadataReadUpLogic.PopulateModelAsync(ModelState, mp));
 
         /// <summary>
-        /// Delete SAML 2.0 up-party.
+        /// Delete SAML 2.0 authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

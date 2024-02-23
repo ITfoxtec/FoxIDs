@@ -304,7 +304,7 @@ namespace FoxIDs.Client.Pages.Components
 
                     importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                     importClientKeyModal.Hide();
-                    toastService.ShowSuccess("Up-party client key imported.");
+                    toastService.ShowSuccess("Authentication method client key imported.");
                 }
             }
             catch (TokenUnavailableException)
@@ -328,7 +328,7 @@ namespace FoxIDs.Client.Pages.Components
             await UpPartyService.DeleteOidcClientKeyUpPartyAsync($"{oidcUpParty.Name}.{keyName}");
 
             oidcUpParty.Form.Model.Client.PublicClientKeyInfo = null;
-            toastService.ShowSuccess("Up-party client key removed.");
+            toastService.ShowSuccess("Authentication method client key removed.");
         }
 
         private async Task DownloadPublicCertificateFileAsync(KeyInfoViewModel publicClientKeyInfo)

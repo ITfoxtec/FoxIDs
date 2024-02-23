@@ -9,12 +9,12 @@ using System.Linq;
 namespace FoxIDs.Models
 {
     /// <summary>
-    /// OAuth 2.0 up-party.
+    /// OAuth 2.0 authentication method.
     /// </summary>
     public class OAuthUpParty : OAuthUpParty<OAuthUpClient> { }
 
     /// <summary>
-    /// OAuth 2.0 up-party.
+    /// OAuth 2.0 authentication method.
     /// </summary>
     public class OAuthUpParty<TClient> : UpParty, IValidatableObject where TClient : OAuthUpClient
     {

@@ -199,7 +199,7 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up-party not configured.");
+                    throw new NotSupportedException("Authentication method not configured.");
                 }
 
                 logger.ScopeTrace(() => $"SAML Authn request, Down type '{RouteBinding.DownParty.Type}'");
@@ -223,7 +223,7 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up-party not configured.");
+                    throw new NotSupportedException("Authentication method not configured.");
                 }
 
                 var samlHttpRequest = Request.ToGenericHttpRequest(validate: true);

@@ -76,7 +76,7 @@ namespace FoxIDs.Controllers
                     var count = await CountParties("party:up");
                     if (count >= Constants.Models.UpParty.PartiesMax)
                     {
-                        throw new Exception($"Maximum number of up-parties ({Constants.Models.UpParty.PartiesMax}) per environment has been reached.");
+                        throw new Exception($"Maximum number of authentication methods ({Constants.Models.UpParty.PartiesMax}) per environment has been reached.");
                     }
                 }
                 else if (mParty is DownParty)

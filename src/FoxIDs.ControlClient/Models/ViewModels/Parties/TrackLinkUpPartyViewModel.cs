@@ -34,7 +34,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string ToDownPartyName { get; set; }
 
         [ListLength(Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin, Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax, Constants.Models.Party.NameLength, Constants.Models.TrackLinkDownParty.SelectedUpPartiesNameRegExPattern)]
-        [Display(Name = "Selected up-parties (use * to select all up-parties)")]
+        [Display(Name = "Selected authentication methods (use * to select all authentication methods)")]
         public List<string> SelectedUpParties { get; set; } = new List<string>(new[] { "*" });
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]

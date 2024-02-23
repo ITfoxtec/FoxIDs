@@ -38,18 +38,18 @@ The [structure](foxids-inside.md#structure) of Foxids separates the different te
 If Foxids is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
 The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/environment-y/`.
 
-A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/app-reg-z/`.  
+A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/application-z/`.  
 A authentication method is call by adding the authentication method name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/(auth-method-v)/`. 
 If Foxids handles a authentication method sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
 When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which authentication method the user should authenticate. 
-The authentication method is selected by adding the authentication method name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/app-reg-z(auth-method-v)/`.  
+The authentication method is selected by adding the authentication method name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-v)/`.  
 
 Selecting multiple authentication methods:
 
-- Select all allowed authentication methods for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/app-reg-z(*)/`
+- Select all allowed authentication methods for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(*)/`
 - Select a maximum of 4 allowed authentication methods for a application registration by adding the authentication methods as a comma separated list in round brackets 
-  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/app-reg-z(auth-method-v1,auth-method-v2,auth-method-v3,auth-method-v4)/`
+  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-v1,auth-method-v2,auth-method-v3,auth-method-v4)/`
 
 > The allowed authentication methods is configured in each [application registration](parties.md#application-registration).
 

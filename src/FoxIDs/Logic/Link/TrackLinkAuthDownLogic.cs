@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false);
             if (party.ToUpPartyName != keySequenceData.KeyName)
             {
-                throw new Exception($"Incorrect up-party name '{keySequenceData.KeyName}', expected up-party name '{party.ToUpPartyName}'.");
+                throw new Exception($"Incorrect authentication method name '{keySequenceData.KeyName}', expected authentication method name '{party.ToUpPartyName}'.");
             }
 
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyName = party.Name, UpPartySequenceString = keySequenceString });

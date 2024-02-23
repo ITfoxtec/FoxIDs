@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Login up-party API.
+    /// Login authentication method API.
     /// </summary>
     public class TLoginUpPartyController : GenericPartyApiController<Api.LoginUpParty, Api.OAuthClaimTransform, LoginUpParty>
     {
@@ -23,34 +23,34 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get Login up-party.
+        /// Get Login authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Login up-party.</returns>
+        /// <returns>Login authentication method.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LoginUpParty>> GetLoginUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create Login up-party.
+        /// Create Login authentication method.
         /// </summary>
-        /// <param name="party">Login up-party.</param>
-        /// <returns>Login up-party.</returns>
+        /// <param name="party">Login authentication method.</param>
+        /// <returns>Login authentication method.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.LoginUpParty>> PostLoginUpParty([FromBody] Api.LoginUpParty party) => await Post(party, async ap => await validateApiModelLoginPartyLogic.ValidateApiModelAsync(ModelState, ap));
 
         /// <summary>
-        /// Update Login up-party.
+        /// Update Login authentication method.
         /// </summary>
-        /// <param name="party">Login up-party.</param>
-        /// <returns>Login up-party.</returns>
+        /// <param name="party">Login authentication method.</param>
+        /// <returns>Login authentication method.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.LoginUpParty>> PutLoginUpParty([FromBody] Api.LoginUpParty party) => await Put(party, async ap => await validateApiModelLoginPartyLogic.ValidateApiModelAsync(ModelState, ap));
 
         /// <summary>
-        /// Delete Login up-party.
+        /// Delete Login authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Environment link up-party API.
+    /// Environment link authentication method API.
     /// </summary>
     public class TTrackLinkUpPartyController : GenericPartyApiController<Api.TrackLinkUpParty, Api.OAuthClaimTransform, TrackLinkUpParty>
     {
@@ -19,34 +19,34 @@ namespace FoxIDs.Controllers
         { }
 
         /// <summary>
-        /// Get environment link up-party.
+        /// Get environment link authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Track link up-party.</returns>
+        /// <returns>Track link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackLinkUpParty>> GetTrackLinkUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create environment link up-party.
+        /// Create environment link authentication method.
         /// </summary>
-        /// <param name="party">Track link up-party.</param>
-        /// <returns>Track link up-party.</returns>
+        /// <param name="party">Track link authentication method.</param>
+        /// <returns>Track link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.TrackLinkUpParty>> PostTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Post(party);
 
         /// <summary>
-        /// Update environment link up-party.
+        /// Update environment link authentication method.
         /// </summary>
-        /// <param name="party">Track link up-party.</param>
-        /// <returns>Track link up-party.</returns>
+        /// <param name="party">Track link authentication method.</param>
+        /// <returns>Track link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackLinkUpParty>> PutTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Put(party);
 
         /// <summary>
-        /// Delete environment link up-party.
+        /// Delete environment link authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

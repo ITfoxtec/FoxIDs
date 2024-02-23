@@ -727,12 +727,12 @@ namespace FoxIDs
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] { FoxI.JwtClaimTypes.Actor }).ToArray();
 
             /// <summary>
-            /// Default JWT Token up-party claims.
+            /// Default JWT Token authentication method claims.
             /// </summary>
             public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
-            /// Exclude JWT Token up-party claims.
+            /// Exclude JWT Token authentication method claims.
             /// </summary>
             public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 

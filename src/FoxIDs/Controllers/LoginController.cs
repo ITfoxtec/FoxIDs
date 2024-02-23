@@ -121,7 +121,7 @@ namespace FoxIDs.Controllers
                 var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name == name).FirstOrDefault();
                 if (selectedUpParty == null)
                 {
-                    throw new InvalidOperationException($"Selected up-party '{name}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
+                    throw new InvalidOperationException($"Selected authentication method '{name}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
                 }
 
                 return await GoToUpParty(sequenceData, ToUpPartyLink(selectedUpParty));
@@ -148,11 +148,11 @@ namespace FoxIDs.Controllers
 
             if (sequenceData.HrdLoginUpPartyName.IsNullOrEmpty())
             {
-                throw new InvalidOperationException("Sequence data HRD login up-party name is null or empty.");
+                throw new InvalidOperationException("Sequence data HRD login authentication method name is null or empty.");
             }
             if (selectedUpParty.Name == sequenceData.HrdLoginUpPartyName)
             {
-                throw new InvalidOperationException("Selected up-party name is the same as HRD login up-party name.");
+                throw new InvalidOperationException("Selected authentication method name is the same as HRD login authentication method name.");
             }
 
             switch (selectedUpParty.Type)
@@ -542,7 +542,7 @@ namespace FoxIDs.Controllers
 
                 if (!sequenceData.SessionId.IsNullOrEmpty() && !sequenceData.SessionId.Equals(session.SessionId, StringComparison.Ordinal))
                 {
-                    throw new Exception("Requested session ID do not match Login up-party session ID.");
+                    throw new Exception("Requested session ID do not match Login authentication method session ID.");
                 }
 
                 if (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.Always || (loginUpParty.LogoutConsent == LoginUpPartyLogoutConsent.IfRequired && sequenceData.RequireLogoutConsent))

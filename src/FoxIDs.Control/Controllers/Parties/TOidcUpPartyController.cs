@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// OIDC up-party API.
+    /// OIDC authentication method API.
     /// </summary>
     public class TOidcUpPartyController : GenericPartyApiController<Api.OidcUpParty, Api.OAuthClaimTransform, OidcUpParty>
     {
@@ -27,35 +27,35 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get OIDC up-party.
+        /// Get OIDC authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>OIDC up-party.</returns>
+        /// <returns>OIDC authentication method.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.OidcUpParty>> GetOidcUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create OIDC up-party.
+        /// Create OIDC authentication method.
         /// </summary>
-        /// <param name="party">OIDC up-party.</param>
-        /// <returns>OIDC up-party.</returns>
+        /// <param name="party">OIDC authentication method.</param>
+        /// <returns>OIDC authentication method.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.OidcUpParty>> PostOidcUpParty([FromBody] Api.OidcUpParty party) => await Post(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp), async (ap, mp) => validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp));
 
         /// <summary>
-        /// Update OIDC up-party.
+        /// Update OIDC authentication method.
         /// You cannot update the ClientSecret in this method.
         /// </summary>
-        /// <param name="party">OIDC up-party.</param>
-        /// <returns>OIDC up-party.</returns>
+        /// <param name="party">OIDC authentication method.</param>
+        /// <returns>OIDC authentication method.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.OidcUpParty>> PutOidcUpParty([FromBody] Api.OidcUpParty party) => await Put(party, ap => new ValueTask<bool>(validateApiModelOAuthOidcPartyLogic.ValidateApiModel(ModelState, ap)), async (ap, mp) => await oidcDiscoveryReadUpLogic.PopulateModelAsync(ModelState, mp), async (ap, mp) => validateModelOAuthOidcPartyLogic.ValidateModel(ModelState, mp));
 
         /// <summary>
-        /// Delete OIDC up-party.
+        /// Delete OIDC authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

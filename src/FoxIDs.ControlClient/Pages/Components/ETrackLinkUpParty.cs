@@ -102,7 +102,7 @@ namespace FoxIDs.Client.Pages.Components
                     var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
                     generalTrackLinkUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect Up-party created.");
+                    toastService.ShowSuccess("OpenID Connect authentication method created.");
                     generalTrackLinkUpParty.Name = trackLinkUpPartyResult.Name;
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
                 }
@@ -110,7 +110,7 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
-                    toastService.ShowSuccess("OpenID Connect Up-party updated.");
+                    toastService.ShowSuccess("OpenID Connect authentication method updated.");
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
                 }
             }

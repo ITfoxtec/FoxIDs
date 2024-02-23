@@ -191,14 +191,14 @@ namespace FoxIDs.Client.Pages.Components
 
         public (string, string, string) GetRedirectAndLogoutUrls(string partyName, PartyBindingPatterns partyBindingPattern)
         {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--up-party-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
+            var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
             var oauthUrl = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.OAuthController}/";
             return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse, oauthUrl + Constants.Endpoints.FrontChannelLogout);
         }
 
         public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--up-party-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
+            var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
             return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlSPMetadata}";
         }
 

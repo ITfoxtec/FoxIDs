@@ -53,9 +53,9 @@
             @if (UpParty.ShowAdvanced)
             {
                 <FInputSelect @bind-Value="oidcUpParty.Form.Model.PartyBindingPattern" For="@(() => oidcUpParty.Form.Model.PartyBindingPattern)">
-                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
-                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
-                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
+                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(auth-method)/... - default</option>
+                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~auth-method~/...</option>
+                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../.auth-method./...</option>
                 </FInputSelect>
             }
         }
@@ -340,7 +340,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OpenID Connect Up-party "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
+                    You are about to delete OpenID Connect authentication method "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

@@ -80,7 +80,7 @@ namespace FoxIDs
         {
             if (upPartyNames?.Count > Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax)
             {
-                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to up-party names.", nameof(upPartyNames));
+                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to authentication method names.", nameof(upPartyNames));
             }
 
             var elements = new List<string> { $"{downPartyName}({string.Join(',', upPartyNames)})", controller, action };

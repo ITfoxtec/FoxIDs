@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => $"Up, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} up-party link).");
+            logger.ScopeTrace(() => $"Up, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginRedirectAsync(LoginRequest loginRequest)
         {
-            logger.ScopeTrace(() => "Up, Login redirect (multiple up-party links).");
+            logger.ScopeTrace(() => "Up, Login redirect (multiple authentication method links).");
             (var loginName, var toUpParties) = hrdLogic.GetLoginUpPartyNameAndToUpParties();
             var partyId = await UpParty.IdFormatAsync(RouteBinding, loginName);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
@@ -116,7 +116,7 @@ namespace FoxIDs.Logic
 
         public async Task<UpPartyLink> AutoSelectUpPartyAsync(IEnumerable<HrdUpPartySequenceData> toUpParties, string email)
         {
-            // 1) Select specified up-party
+            // 1) Select specified authentication method
             if (!email.IsNullOrWhiteSpace())
             {
                 var emailSplit = email.Split('@');
@@ -131,7 +131,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            // 2) Select up-party by HRD
+            // 2) Select authentication method by HRD
             var hrdUpParties = await hrdLogic.GetHrdSelectionAsync();
             if (hrdUpParties?.Count() > 0)
             {
@@ -142,7 +142,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            // 3) Select up-party by star
+            // 3) Select authentication method by star
             var starUpParty = toUpParties.Where(up => up.HrdDomains?.Where(d => d == "*").Count() > 0).FirstOrDefault();
             if (starUpParty != null)
             {

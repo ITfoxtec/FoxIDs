@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestRedirectAsync(UpPartyLink partyLink, LogoutRequest logoutRequest)
         {
-            logger.ScopeTrace(() => "Up, Environment link RP initiated logout request redirect.");
+            logger.ScopeTrace(() => "Up, Environment Link RP initiated logout request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -54,7 +54,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, Environment link RP initiated logout request.");
+            logger.ScopeTrace(() => "Up, Environment Link RP initiated logout request.");
             var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<TrackLinkUpSequenceData>(remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Environment link RP initiated logout response.");
+            logger.ScopeTrace(() => "Down, Environment Link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 

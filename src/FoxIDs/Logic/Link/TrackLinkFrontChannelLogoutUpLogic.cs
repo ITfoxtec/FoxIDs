@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, Environment link front channel logout.");
+            logger.ScopeTrace(() => "Up, Environment Link front channel logout.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 

@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthRequestAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => "Up, Environment link auth request.");
+            logger.ScopeTrace(() => "Up, Environment Link auth request.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Environment link auth response.");
+            logger.ScopeTrace(() => "Down, Environment Link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 
@@ -95,7 +95,7 @@ namespace FoxIDs.Logic
 
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 claims = claimValidationLogic.ValidateUpPartyClaims(party.Claims, transformedClaims);
-                logger.ScopeTrace(() => $"Up, Environment link output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"Up, Environment Link output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, claims, externalSessionId);
                 if (!sessionId.IsNullOrEmpty())

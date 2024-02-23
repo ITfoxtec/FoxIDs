@@ -7,7 +7,7 @@
 <PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(m => TrackLinkDownPartyViewModelAfterInit(trackLinkDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
     <div class="modal-header">
         <div>
-            Environment link
+            Environment Link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -123,7 +123,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Environment link Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
+                    You are about to delete Environment Link Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

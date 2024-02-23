@@ -7,7 +7,7 @@
 <PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(m => TrackLinkUpPartyViewModelAfterInit(trackLinkUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
     <div class="modal-header">
         <div>
-            Environment link
+            Environment Link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
@@ -118,7 +118,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Environment link authentication method "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
+                    You are about to delete Environment Link authentication method "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

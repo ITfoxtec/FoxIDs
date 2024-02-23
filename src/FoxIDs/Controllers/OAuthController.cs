@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationResponseAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionResponseAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -72,7 +72,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcFrontChannelLogoutUpLogic<OidcUpParty, OidcUpClient>>().FrontChannelLogoutAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -92,7 +92,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDone(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -119,7 +119,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -140,7 +140,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcTokenDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().TokenRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -161,7 +161,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().UserInfoRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -187,7 +187,7 @@ namespace FoxIDs.Controllers
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionRequestAsync(RouteBinding.DownParty.Id);
 
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
 
             }
@@ -209,7 +209,7 @@ namespace FoxIDs.Controllers
                         return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutDoneAsync();
 
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
 
             }

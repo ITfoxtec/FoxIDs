@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlAuthnUpLogic>().AuthnRequestAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Saml2:
                         return await serviceProvider.GetService<SamlLogoutUpLogic>().LogoutRequestAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)

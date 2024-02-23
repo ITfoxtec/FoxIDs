@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationRequestAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionRequestAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)

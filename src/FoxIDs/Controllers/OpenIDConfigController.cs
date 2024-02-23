@@ -34,7 +34,7 @@ namespace FoxIDs.Controllers
                         return Json(await serviceProvider.GetService<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().OpenidConfiguration(RouteBinding.DownParty?.Id), JsonExtensions.SettingsIndented);
 
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty?.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty?.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -57,7 +57,7 @@ namespace FoxIDs.Controllers
                         return Json(serviceProvider.GetService<OidcDiscoveryExposeDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().Keys(RouteBinding.DownParty?.Id), JsonExtensions.SettingsIndented);
 
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty?.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty?.Type}' not supported.");
                 }
             }
             catch (Exception ex)

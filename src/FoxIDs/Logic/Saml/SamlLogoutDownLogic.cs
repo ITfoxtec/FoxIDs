@@ -125,7 +125,7 @@ namespace FoxIDs.Logic
                         return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, saml2LogoutRequest));
 
                     default:
-                        throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
                 }
             }
             catch (SamlRequestException ex)

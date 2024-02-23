@@ -195,7 +195,7 @@ namespace FoxIDs.Logic
                 case PartyTypes.Saml2:
                     return await serviceProvider.GetService<SamlAuthnUpLogic>().ValidateTokenExchangeSubjectTokenAsync(subjectUpPartie, subjectToken);
                 default:
-                    throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                    throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
             }
         }
 

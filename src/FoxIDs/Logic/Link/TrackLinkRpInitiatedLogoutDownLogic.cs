@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, keySequenceData.SessionId, keySequenceData.RequireLogoutConsent));
 
                 default:
-                    throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                    throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
             }
         }
 

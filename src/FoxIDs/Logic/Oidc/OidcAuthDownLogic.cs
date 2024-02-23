@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
                         case PartyTypes.TrackLink:
                             return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
                         default:
-                            throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                            throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
                     }
                 }
                 else

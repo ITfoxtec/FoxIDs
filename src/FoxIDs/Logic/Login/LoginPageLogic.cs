@@ -42,7 +42,7 @@ namespace FoxIDs.Logic
 
             if (RouteBinding.UpParty.Type != PartyTypes.Login)
             {
-                throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
             }
         }
 

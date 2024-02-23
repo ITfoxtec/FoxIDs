@@ -219,7 +219,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
-        <td colspan=2><i>All logs in all tracks in a tenant, not including the master environment. </i></td>
+        <td colspan=2><i>All logs in all tracks in a tenant, not including the master environment.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track:log</code></td>

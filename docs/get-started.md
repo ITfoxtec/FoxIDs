@@ -1,18 +1,18 @@
 # Get started
-FoxIDs is available at [FoxIDs.com](https://foxids.com) or you can [deploy](deployment.md) FoxIDs in your Microsoft Azure tenant as your own private cloud.
+Foxids is available at [Foxids.com](https://foxids.com) or you can [deploy](deployment.md) Foxids in your Microsoft Azure tenant as your own private cloud.
 
-#### FoxIDs.com 
-[FoxIDs.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
+#### Foxids.com 
+[Foxids.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
 
-a. [Register on FoxIDs.com](https://foxids.com/action/createtenant), where you get access to your one FoxIDs tenant. The tenant will hold your organizations entire security service.  
+a. [Register on Foxids.com](https://foxids.com/action/createtenant), where you get access to your one Foxids tenant. The tenant will hold your organizations entire security service.  
 You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#up-party---how-to-connect-identity-provider-idp) in the `master` track to authorize external admin users.
 
 ---
 
-#### FoxIDs Private Cloud
-FoxIDs is [open-source](index.md#free-and-open-source) and you are free to deploy FoxIDs as your own private cloud in your Microsoft Azure tenant.
+#### Foxids Private Cloud
+Foxids is [open-source](index.md#free-and-open-source) and you are free to deploy Foxids as your own private cloud in your Microsoft Azure tenant.
 
-a. [Deploy](deployment.md) FoxIDs in your Microsoft Azure tenant.
+a. [Deploy](deployment.md) Foxids in your Microsoft Azure tenant.
 b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  
 You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#up-party---how-to-connect-identity-provider-idp) to authorize external admin users.
 c. Create the tenant for your organizations security services. Applications, APIs and connections in general is configured in this tenant.  
@@ -23,7 +23,7 @@ You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master`
 ## 1) First login
 You are presented with a list of your tracks when you login.
 
-![FoxIDs first login](images/get-started-first-access.png)
+![Foxids first login](images/get-started-first-access.png)
 
 The default tracks in a tenant:
 
@@ -68,7 +68,7 @@ A web based applications (client / relaying party) can be configured with [OpenI
 
 
 ### Sample application
-The [sample applications](samples.md) can be found in the [samples repository](https://github.com/ITfoxtec/FoxIDs.Samples).
+The [sample applications](samples.md) can be found in the [samples repository](https://github.com/ITfoxtec/Foxids.Samples).
 
 The samples contains a configuration [seed tool](samples.md#configure-the-sample-seed-tool) which is used to configure all the samples in the `test` track or another track.
 

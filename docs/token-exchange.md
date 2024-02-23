@@ -1,6 +1,6 @@
 # Token exchange
 
-FoxIDs support two different sceneries of token exchange: [token exchange in the same track](#token-exchange-in-the-same-track) and [token exchange by trust to external IdP/OP](#token-exchange-by-trust). 
+Foxids support two different sceneries of token exchange: [token exchange in the same track](#token-exchange-in-the-same-track) and [token exchange by trust to external IdP/OP](#token-exchange-by-trust). 
 
 In the same track it is possible to do token exchange of access tokens in a [web application](#access-token-to-access-token-in-web-application) or [API/resource](#access-token-to-access-token-in-api) to another resource.
 
@@ -15,7 +15,7 @@ Token exchange is implemented in the following samples:
 - [AspNetCoreApi1Sample](samples.md#aspnetcoreapi1sample), show token exchange from access token to access token insight an API
 
 > You can test token exchange with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and log in with an optional IdP. The click `Call API1 which call API2` or `Token Exchange + Call Api2` to call an API using token exchange.  
-> Take a look at the sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Take a look at the sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`  
 
 ## Application registration configuration
@@ -50,7 +50,7 @@ The OpenID Connect client is configured with a secret as client credentials used
 
 During the token exchange sequence the claims transformations and limitations is executed on the OpenID Connect application registration. 
 
-The OpenID Connect client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
+The OpenID Connect client does a token exchange call to Foxids authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
 If success, the resource client gets back an access token' and can now call the second resource with the access token'.
 
 Sample token exchange POST request to the token endpoint:
@@ -120,7 +120,7 @@ The flowing client on the first resource is configured with a certificate as cli
 
 During the token exchange sequence the claims transformations and limitations is executed on the application registration. 
 
-The OpenID Connect client call the first resource with the obtained access token. The resource client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
+The OpenID Connect client call the first resource with the obtained access token. The resource client does a token exchange call to Foxids authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
 If success, the resource client gets back an access token' and can now call the second resource with the access token'.
 
 Sample token exchange POST request to the token endpoint:
@@ -173,7 +173,7 @@ Sample JWT access token' body:
 
 ## Token exchange by trust
 
-By external trust to IdP/OP it is possible to token exchange an [access token](#access-token-to-access-token-by-trust) or [SAML 2.0 token](#saml-20-to-access-token-by-trust) issued by an external party (or another FoxIDs track) and thereby obtain an access token for a resource in the track.  
+By external trust to IdP/OP it is possible to token exchange an [access token](#access-token-to-access-token-by-trust) or [SAML 2.0 token](#saml-20-to-access-token-by-trust) issued by an external party (or another Foxids track) and thereby obtain an access token for a resource in the track.  
 A up-party trust is configured and a application registration client is configured to allow token exchange based on the up-party trust(s). The application registration client furthermore whitelists for which resources in the track, it is allowed to do a token exchange.
 
 It is possible to configure if the up-party trust should be allowed for token exchange and user authentication. Default both is allowed on a OAuth 2.0, OpenID Connect and SAML 2.0 up-party trusts. 
@@ -191,7 +191,7 @@ The client could also be an OAuth 2.0 client using [client credentials grant](ap
 
 There is a resource in the track but the external defined OpenID Connect client is NOT allowed to call the resource directly.  
 First an OAuth 2.0 or OpenID Connect up-party is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the external OpenID Connect client's audience.  
-The flowing external trust example is a trust to another FoxIDs track.
+The flowing external trust example is a trust to another Foxids track.
 
 ![OAuth 2.0 up-party trust](images/token-exchange-oauth-by-trust-up-party.png)
 
@@ -204,7 +204,7 @@ It is thereby possible to token exchange an external access token to an internal
 
 During the token exchange sequence both the claims' transformations and limitations is executed firs on the up-party and then on the application registration. 
 
-The OpenID Connect client backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external access token while asking (with a scope) for an access token to the resource. 
+The OpenID Connect client backend application do a token exchange call to Foxids. Authenticating the internal OAuth 2.0 client and passing the external access token while asking (with a scope) for an access token to the resource. 
 If success, the OpenID Connect client backend application get back an access token and can now call the resource.
 
 Sample token exchange POST request to the token endpoint:
@@ -247,7 +247,7 @@ In this scenario an SAML 2.0 application trust an external Identity Provider (Id
 
 There is a resource in the track but the external defined SAML 2.0 application is NOT allowed to call the resource directly.  
 First an SAML 2.0 up-party is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
-The flowing external trust example is a trust to a FoxIDs SAML 2.0 application registration.
+The flowing external trust example is a trust to a Foxids SAML 2.0 application registration.
 
 ![SAML 2.0 up-party trust](images/token-exchange-saml-by-trust-up-party.png)
 
@@ -260,7 +260,7 @@ It is thereby possible to token exchange an external SAML 2.0 token to an intern
 
 During the token exchange sequence both the claims transformations and limitations is executed firs on the up-party and then on the application registration. 
 
-The SAML 2.0 backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external SAML 2.0 token while asking (with a scope) for an access token to the resource. 
+The SAML 2.0 backend application do a token exchange call to Foxids. Authenticating the internal OAuth 2.0 client and passing the external SAML 2.0 token while asking (with a scope) for an access token to the resource. 
 If success, the SAML 2.0 backend application get back an access token and can now call the resource.
 
 Sample token exchange POST request to the token endpoint:

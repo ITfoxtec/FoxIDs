@@ -1,25 +1,25 @@
 ﻿# Connect Nets eID Broker with OpenID Connect up-party
 
-FoxIDs can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.
+Foxids can be connected to Nets eID Broker with OpenID Connect and thereby authenticating end users with MitID and other credentials supported by Nets eID Broker.
 
 How to configure Nets eID Broker in
 - [test environment](#configuring-nets-eid-broker-demotest-as-openid-provider-op) using Nets eID Broker demo
 - [production environment](#configuring-nets-eid-broker-as-openid-provider-op) using Nets eID Broker admin portal
 
 > You can testNets eID Broker demo login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Nets eID Broker TEST`.  
-> Take a look at the Nets eID Broker sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Take a look at the Nets eID Broker sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Parties` and `Up-parties` tab.
 
 ## Configuring Nets eID Broker demo/test as OpenID Provider (OP)
 
-This guide describes how to connect a FoxIDs up-party to Nets eID Broker demo in the test environment.
+This guide describes how to connect a Foxids up-party to Nets eID Broker demo in the test environment.
 
 Nets eID Broker has a [MitID demo](https://broker.signaturgruppen.dk/en/technical-documentation/open-oidc-clients) where all clients can connect without prior registration. All redirect URIs are accepted. 
 Her you can find all needed to register a client with Nets eID Broker. 
 
 This connection use OpenID Connect Authorization Code flow with PKCE, which is the recommended OpenID Connect flow.
 
-**Create an OpenID Connect up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**Create an OpenID Connect up-party client in [Foxids Control Client](control.md#foxids-control-client)**
 
 1. Add the name
 2. Add the Nets eID Broker demo authority `https://pp.netseidbroker.dk/op` in the Authority field
@@ -38,7 +38,7 @@ That's it, you are done.
 
 ## Configuring Nets eID Broker as OpenID Provider (OP)
 
-This guide describes how to connect a FoxIDs up-party to the Nets eID Broker in the production environment.
+This guide describes how to connect a Foxids up-party to the Nets eID Broker in the production environment.
 
 You are granted access to the [Nets eID Broker admin portal](https://netseidbroker.dk/admin) by Nets. The Nets eID Broker [documentation](https://broker.signaturgruppen.dk/en/technical-documentation).  
 
@@ -64,7 +64,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  16. Click the Advanced tab
  17. Set PKCE to Active
   
-**2 - Then create an OpenID Connect up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
+**2 - Then create an OpenID Connect up-party client in [Foxids Control Client](control.md#foxids-control-client)**
 
 1. Add the name
 2. Add the Nets eID Broker demo authority `https://netseidbroker.dk/op` in the Authority field
@@ -80,7 +80,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  **3 - Go back to [Nets eID Broker admin portal](https://netseidbroker.dk/admin)**
 
  1. Click the Endpoints tab
- 2. Add the two URLs from the FoxIDs up-party client: `Redirect URL` and `Post logout redirect URL` in the fields `Login redirects` and `Logout redirects`.
+ 2. Add the two URLs from the Foxids up-party client: `Redirect URL` and `Post logout redirect URL` in the fields `Login redirects` and `Logout redirects`.
 
 That's it, you are done. 
 
@@ -88,7 +88,7 @@ That's it, you are done.
 > The application registration can read the claims from the up-party. You can optionally add a `*` in the application registration Issue claims list to issue all the claims to your application. Or optionally define a [scope to issue claims](#scope-and-claims).
 
 ## Scope and claims
-You can optionally create a scope on the application registration with the Nets eID Broker claims as voluntary claims. The scope can then be used by a OpenID Connect client or another FoxIDs up-party acting as a OpenID Connect client.
+You can optionally create a scope on the application registration with the Nets eID Broker claims as voluntary claims. The scope can then be used by a OpenID Connect client or another Foxids up-party acting as a OpenID Connect client.
 
 The name of the scope can e.g, be `nets_eid_broker`
 

@@ -1,23 +1,23 @@
 # Connect to Context Handler with SAML 2.0
 
-FoxIDs can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
+Foxids can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
 Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
 
 Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
-FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect application registration.
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect application registration.
 
-In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
+In the test environment, Foxids can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
 
 ![Connect to Context Handler RP](images/how-to-context-handler-rp.svg)
 
-Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 with OCES3 (RSASSA-PSS) and FoxIDs furthermore support the required certificates and it is possible to support NSIS.
+Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 with OCES3 (RSASSA-PSS) and Foxids furthermore support the required certificates and it is possible to support NSIS.
 
-> You can test Context Handler login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment (select `FoxIDs - test-corp` on the Context Handler log in page) or `Danish Context Handler` for production.  
-> Take a look at the Context Handler sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> You can test Context Handler login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment (select `Foxids - test-corp` on the Context Handler log in page) or `Danish Context Handler` for production.  
+> Take a look at the Context Handler sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `context-handler`, `context-handler-test` or `context-handler-idp-test` track.  
 > *The sample is configured with a separate tracks for the Context Handler SAML 2.0 integration.*
 
@@ -45,9 +45,9 @@ Context Handler requires all requests (authn and logout) to be signed with real 
 
 A OCES3 certificate is valid for three years. After that, it must be updated manually.
 
-> If the `.P12` file fails to load, you can convert it to a `.PFX` file with the [FoxIDs.ConvertCertificateTool](https://github.com/ITfoxtec/FoxIDs/tree/master/tools/FoxIDs.ConvertCertificateTool).
+> If the `.P12` file fails to load, you can convert it to a `.PFX` file with the [Foxids.ConvertCertificateTool](https://github.com/ITfoxtec/Foxids/tree/master/tools/Foxids.ConvertCertificateTool).
 
-Add the `.P12` OCES3 certificate in [FoxIDs Control Client](control.md#foxids-control-client):
+Add the `.P12` OCES3 certificate in [Foxids Control Client](control.md#foxids-control-client):
 1. Select (or create) a [separate track](#separate-track) to be used for Context Handler as [Identity Provider](#configuring-context-handler-as-identity-provider) or [test Relying Party](#configuring-context-handler-as-test-relying-party)
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
@@ -62,7 +62,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 
 > You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1 - Start by creating an SAML 2.0 up-party in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 up-party in [Foxids Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Up-parties
 2. Click Create up-party and then SAML 2.0
@@ -118,9 +118,9 @@ The following claims is most often used:
 7. Add the SAML 2.0 up-party SP-metadata URL, in this case `https://foxids.com/test-corp/context-handler-test/(cp-rp)/saml/spmetadata`.
 8. Fill out the rest, accept the terms and click Save (DK: Gem)
 
- **3 - Add privilege claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3 - Add privilege claim transformation in [Foxids Control Client](control.md#foxids-control-client)**
 
-FoxIDs can transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens.
+Foxids can transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim. It is recommended to add the transformation in order to obtain smaller claims and tokens.
 Furthermore, it makes the tokens readable.
 
 1. Select the Claim transform tab
@@ -134,9 +134,9 @@ Furthermore, it makes the tokens readable.
 
 > Remember to add a claim mapping from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` please see next section 4).
 
- **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **4 - Add SAML 2.0 claim to JWT claim mappings in [Foxids Control Client](control.md#foxids-control-client)**
 
- FoxIDs internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the track.
+ Foxids internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the track.
 
  1. Go to Settings tab and Claim mappings
  2. Add mappings for all the claims configured in step 1.14, you can create you own short JWT claim names if no standard name exists
@@ -155,7 +155,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 test Relying Part
 
 > You need to use a [separate track](#separate-track) to have a place for the test users and to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1 - Start by creating an SAML 2.0 application registration in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 application registration in [Foxids Control Client](control.md#foxids-control-client)**
 
 1. Select the Applications tab
 2. Click Create application registration and then SAML 2.0
@@ -163,7 +163,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 test Relying Part
 4. Click Add allow up-party and click login, to let the user login with test users in the track
 5. Download the Context Handler RP metadata where you can find endpoints and the certificate to trust.  
    Test metadata: `https://n2adgangsstyring.eksterntest-stoettesystemerne.dk/runtime/saml2auth/metadata.idp`  
-   The certificate is base64 encoded and can be converted into a certificate .cer file with the [FoxIDs certificate tool](https://www.foxids.com/tools/Certificate). 
+   The certificate is base64 encoded and can be converted into a certificate .cer file with the [Foxids certificate tool](https://www.foxids.com/tools/Certificate). 
 6. Add the issuer and endpoints from the metadata
 7. Set the bindings to redirect with the exception of the Authn response binding which is set to post
 8. Set the OIOSAML3 claims which should be issued to Context Handler
@@ -211,7 +211,7 @@ The following claims is most often used:
 > You are required to be registered as your own test authority (DK: egen test myndighed) in the test environment to add a federation agreement. 
 > A federation agreement (DK: f&oslash;derationsaftaler) is required to enable the identity provider in Context Handler. 
 
- **3 - Add claim transformation in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **3 - Add claim transformation in [Foxids Control Client](control.md#foxids-control-client)**
 
 Create the claims which has to be issued to Context Handler in claim transforms.
 
@@ -226,17 +226,17 @@ Create the claims which has to be issued to Context Handler in claim transforms.
 
 4. Click update
 
- **4 - Add SAML 2.0 claim to JWT claim mappings in [FoxIDs Control Client](control.md#foxids-control-client)**
+ **4 - Add SAML 2.0 claim to JWT claim mappings in [Foxids Control Client](control.md#foxids-control-client)**
 
- FoxIDs internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the track.
+ Foxids internally converts SAML 2.0 clams to JWT claims. Context Handler use a OIOSAML3 defined set of SAML 2.0 claims where corresponding JWT mappings need to be added in the track.
 
  1. Go to Settings tab and Claim mappings
  2. Add mappings for all the claims configured in step 1.8, you can create you own short JWT claim names if no standard name exists - please see step 4 in section [Configuring Context Handler as Identity Provider](#configuring-context-handler-as-identity-provider)
  3. Click update
 
-**5 - Add test users in [FoxIDs Control Client](control.md#foxids-control-client)**
+**5 - Add test users in [Foxids Control Client](control.md#foxids-control-client)**
 
-You can add test uses in the FoxIDs test track and add claims to each user.  
+You can add test uses in the Foxids test track and add claims to each user.  
 A claim with a CVR claim, given name, family name and optionally a base64 encoded DK privilege XML string.
 
 ![Test user 1](images/howto-saml-context-handler-test-user1.png)

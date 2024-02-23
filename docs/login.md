@@ -1,5 +1,5 @@
 # Login, Home Realm Discovery (HRD) and 2FA / MFA
-FoxIDs handle user login in the login up-party user interface (UI). There can be configured a number of login up-parties per track with different configurations and look and feel.
+Foxids handle user login in the login up-party user interface (UI). There can be configured a number of login up-parties per track with different configurations and look and feel.
 
 A track contains one [user repository](users.md#user-repository) and all login up-parties configured in a track authenticate users with the same user repository.
 
@@ -8,7 +8,7 @@ A user session is only established in the login up-party if the session lifetime
 
 A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 application registration](app-reg-saml-2.0.md) can authenticate users by selecting an login up-party.
 
-![FoxIDs login](images/parties-login.svg)
+![Foxids login](images/parties-login.svg)
 
 The login up-party user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
 
@@ -45,7 +45,7 @@ A default login up-party is created in each track.
 The [title, icon and CSS](title-icon-css.md) configured on the default login up-party is use in the case where no login up-party is selected e.g., on the error page or during [HRD](#home-realm-discovery-hrd) selection without a login up-party.
 
 ### Configure login options
-It can be configured whether users should be allowed to cancel login and whether users are allowed to create a new user online through the login user interface. New users can alternatively be created by the administrator through [FoxIDs Control Client](control.md#foxids-control-client) or be provisioned through [FoxIDs Control API](control.md#foxids-control-api).
+It can be configured whether users should be allowed to cancel login and whether users are allowed to create a new user online through the login user interface. New users can alternatively be created by the administrator through [Foxids Control Client](control.md#foxids-control-client) or be provisioned through [Foxids Control API](control.md#foxids-control-api).
 
 ![Configure Login](images/configure-login.png)
 

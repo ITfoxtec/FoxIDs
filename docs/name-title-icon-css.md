@@ -2,9 +2,9 @@
 
 ## Display name
 
-A display name for you organisation, company or system can be configured on each track. When FoxIDs send an email to a user the email text is customized by adding the display name.
+A display name for you organisation, company or system can be configured on each track. When Foxids send an email to a user the email text is customized by adding the display name.
 
-The name is configured in the track settings in [FoxIDs Control Client](control.md#foxids-control-client).
+The name is configured in the track settings in [Foxids Control Client](control.md#foxids-control-client).
 
 1. Select Settings
 2. Add the name in the Display name field
@@ -12,11 +12,11 @@ The name is configured in the track settings in [FoxIDs Control Client](control.
 
 ## Add browser title, browser icon and CSS
 
-The FoxIDs user interface can be customized per [login up-party](login). This means that a single FoxIDs track can support multiple user interface designs with different browser titles, browser icons and CSS.
+The Foxids user interface can be customized per [login up-party](login). This means that a single Foxids track can support multiple user interface designs with different browser titles, browser icons and CSS.
 
-> FoxIDs use Bootstrap 4.6 and Flexbox CSS.
+> Foxids use Bootstrap 4.6 and Flexbox CSS.
 
-Find the login up-party in [FoxIDs Control Client](control.md#foxids-control-client) that you want to configure.
+Find the login up-party in [Foxids Control Client](control.md#foxids-control-client) that you want to configure.
 
  1. Select show advanced settings
  4. Add the browser title text

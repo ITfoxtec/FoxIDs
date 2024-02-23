@@ -13,7 +13,7 @@
 - [Token exchange](token-exchange.md)
 - [Development](development.md)
   - [.NET Samples](samples.md)
-  - [FoxIDs dev in VS](foxids-dev.md)
+  - [Foxids dev in VS](foxids-dev.md)
 - Topics
   - [Users](users.md)
   - [Claims & Claim transforms](claim.md)
@@ -21,7 +21,7 @@
   - [Logging](logging.md)
   - [Email provider](email.md)
   - [Supported standards](standard-support.md)
-  - [FoxIDs inside](foxids-inside.md)
+  - [Foxids inside](foxids-inside.md)
   - [Control Client & API](control#.md)
   - [Plans](plan.md)
 - [Customization](customization.md)

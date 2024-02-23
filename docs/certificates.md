@@ -6,7 +6,7 @@ There are tree different certificate container types:
 
 **Contained certificates (default)**
 - Certificates is stored in Cosmos DB including private key.
-- Self-signed certificates is created by FoxIDs or you can upload your one certificates.
+- Self-signed certificates is created by Foxids or you can upload your one certificates.
 - Support primary and secondary certificates, and certificate swap.
 - Not automatically renewed.
 - No cost per signing.

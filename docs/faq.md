@@ -8,7 +8,7 @@ Navigating to the application registration then click Show advanced settings and
 ![Make the application registration issue all claims](images/faq-pass-through-all-claims-app-reg.png)
 
 ##### Is it possible to avoid the "Pick an account" dialog?
-Yes FoxIDs support to forward the login hint from an up-party to an external IdP or another FoxIDs application registration. In OpenID Connect the login hint is forwarded in the `login_hint` parameter. 
+Yes Foxids support to forward the login hint from an up-party to an external IdP or another Foxids application registration. In OpenID Connect the login hint is forwarded in the `login_hint` parameter. 
 In SAML 2.0 the login hint is forwarded as a `NameID` with the Email Format `urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress` in the `Subject` element.
 
 ##### Way am I unable to login for a moment when I change the certificate container types to 'Key Vault renewed self-signed certificates'?

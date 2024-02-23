@@ -1,24 +1,24 @@
-# Connect to NemLog-in with FoxIDs
+# Connect to NemLog-in with Foxids
 
-> By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).
+> By using Foxids it become straight forward and easy to connect to NemLog-in (Danish IdP).
 
-Configure a connection from [FoxIDs](https://www.foxids.com) to NemLog-in by following the [step-by-step guide](up-party-howto-saml-2.0-nemlogin.md) - FoxIDs handles the SAML 2.0 / OIOSAML3 traffic.  
-Then connect your application to FoxIDs with [OpenID Connect](app-reg-oidc.md) or [lightweight SAML 2.0](app-reg-saml-2.0.md) .
+Configure a connection from [Foxids](https://www.foxids.com) to NemLog-in by following the [step-by-step guide](up-party-howto-saml-2.0-nemlogin.md) - Foxids handles the SAML 2.0 / OIOSAML3 traffic.  
+Then connect your application to Foxids with [OpenID Connect](app-reg-oidc.md) or [lightweight SAML 2.0](app-reg-saml-2.0.md) .
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)
 
-By default, FoxIDs is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
+By default, Foxids is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 
-## About FoxIDs
-FoxIDs is developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.  
+## About Foxids
+Foxids is developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.  
 You can [get started](https://www.foxids.com/action/createtenant) for free and optionally continue to use a Free plan.
 
 ## Online test
 Test NemLog-in with the <a href="https://aspnetcoreoidcallupsample.itfoxtec.com/auth/login" target="_blank">online test app</a>, select `Danish NemLog-in` or `Danish NemLog-in TEST` for the test environment.  
-The OpenID Connect test app call FoxIDs and FoxIDs call NemLog-in to let the user authenticate with MitID.
+The OpenID Connect test app call Foxids and Foxids call NemLog-in to let the user authenticate with MitID.
 
 ## NemLog-in details
-FoxIDs support NemLog-in including OIOSAML3, login, single logout, logging, issuer naming, OCES3 (RSASSA-PSS) certificates and NSIS.
+Foxids support NemLog-in including OIOSAML3, login, single logout, logging, issuer naming, OCES3 (RSASSA-PSS) certificates and NSIS.
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 

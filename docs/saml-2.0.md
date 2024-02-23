@@ -1,8 +1,8 @@
 # SAML 2.0
 
-FoxIDs support SAML 2.0 as both up-party and application registration.
+Foxids support SAML 2.0 as both up-party and application registration.
 
-![FoxIDs SAML 2.0](images/parties-saml.svg)
+![Foxids SAML 2.0](images/parties-saml.svg)
 
 ## Up-party
 
@@ -25,7 +25,7 @@ How to guides:
 - Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#app-reg---connect-to-context-handler)
 
 ## Claim mappings
-Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md). The claim mappings is global for the track.
+Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [Foxids Control](control.md). The claim mappings is global for the track.
 
 > SAML 2.0 claims are internally [converted to JWT claims](parties.md#jwt-and-saml) between up-party and application registration.
 

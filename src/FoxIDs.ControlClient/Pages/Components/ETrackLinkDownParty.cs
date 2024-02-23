@@ -122,12 +122,12 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalTrackLinkDownParty.CreateMode)
                 {
                     generalTrackLinkDownParty.CreateMode = false;
-                    toastService.ShowSuccess("Track link authentication method created.");
+                    toastService.ShowSuccess("Environment Link authentication method created.");
                     generalTrackLinkDownParty.Name = trackLinkDownPartyResult.Name;
                 }
                 else
                 {
-                    toastService.ShowSuccess("Track link authentication method updated.");
+                    toastService.ShowSuccess("Environment Link authentication method updated.");
                 }
                 generalTrackLinkDownParty.DisplayName = trackLinkDownPartyResult.DisplayName;
             }

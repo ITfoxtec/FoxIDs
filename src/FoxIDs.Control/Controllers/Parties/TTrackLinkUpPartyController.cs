@@ -22,7 +22,7 @@ namespace FoxIDs.Controllers
         /// Get environment link authentication method.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Track link authentication method.</returns>
+        /// <returns>Environment Link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackLinkUpParty>> GetTrackLinkUpParty(string name) => await Get(name);
@@ -30,8 +30,8 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Create environment link authentication method.
         /// </summary>
-        /// <param name="party">Track link authentication method.</param>
-        /// <returns>Track link authentication method.</returns>
+        /// <param name="party">Environment Link authentication method.</param>
+        /// <returns>Environment Link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.TrackLinkUpParty>> PostTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Post(party);
@@ -39,8 +39,8 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Update environment link authentication method.
         /// </summary>
-        /// <param name="party">Track link authentication method.</param>
-        /// <returns>Track link authentication method.</returns>
+        /// <param name="party">Environment Link authentication method.</param>
+        /// <returns>Environment Link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackLinkUpParty>> PutTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Put(party);

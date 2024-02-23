@@ -21,7 +21,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get environment link application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         /// <returns>Environment Link application registration.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete environment link application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTrackLinkDownParty(string name) => await Delete(name);

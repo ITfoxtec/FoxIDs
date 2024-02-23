@@ -21,7 +21,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get environment link authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         /// <returns>Environment Link authentication method.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -48,7 +48,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete environment link authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteTrackLinkUpParty(string name) => await Delete(name);

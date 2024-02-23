@@ -8,7 +8,7 @@ namespace FoxIDs.Models.Api
     public class OAuthDownParty : IValidatableObject, IDownParty, INameValue, IClaimTransform<OAuthClaimTransform>
     {
         /// <summary>
-        /// Party name.
+        /// Application name.
         /// </summary>
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]

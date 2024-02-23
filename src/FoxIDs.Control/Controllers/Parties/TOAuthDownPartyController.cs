@@ -25,7 +25,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get OAuth 2.0 application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         /// <returns>OAuth 2.0 application registration.</returns>
         [ProducesResponseType(typeof(Api.OAuthDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete OAuth 2.0 application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOAuthDownParty(string name) => await Delete(name);

@@ -25,7 +25,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get SAML 2.0 application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         /// <returns>SAML 2.0 application registration.</returns>
         [ProducesResponseType(typeof(Api.SamlDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete SAML 2.0 application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteSamlDownParty(string name) => await Delete(name);

@@ -77,7 +77,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Party client JWT not valid. Client id '{client.ClientId}', Route '{RouteBinding.Route}'.");
+                logger.Error(ex, $"Application client JWT not valid. Client id '{client.ClientId}', Route '{RouteBinding.Route}'.");
                 return null;
             }
         }

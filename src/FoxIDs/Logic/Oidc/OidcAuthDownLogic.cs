@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if(party.Client == null)
             {
-                throw new NotSupportedException("Party Client not configured.");
+                throw new NotSupportedException("Application Client not configured.");
             }
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
@@ -275,7 +275,7 @@ namespace FoxIDs.Logic
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException("Party Client not configured.");
+                throw new NotSupportedException("Application Client not configured.");
             }
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);

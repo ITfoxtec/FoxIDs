@@ -25,7 +25,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get OIDC application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         /// <returns>OIDC application registration.</returns>
         [ProducesResponseType(typeof(Api.OidcDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete OIDC application registration.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Application name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOidcDownParty(string name) => await Delete(name);

@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get OIDC authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         /// <returns>OIDC authentication method.</returns>
         [ProducesResponseType(typeof(Api.OidcUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -57,7 +57,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete OIDC authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOidcUpParty(string name) => await Delete(name);

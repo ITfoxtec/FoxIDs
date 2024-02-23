@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete OIDC client secret for application registration.
         /// </summary>
-        /// <param name="name">Party name and secret id.</param>
+        /// <param name="name">Application name and secret id.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteOidcClientSecretDownParty(string name) => await Delete(name);

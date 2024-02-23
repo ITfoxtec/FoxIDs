@@ -25,7 +25,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get Login authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         /// <returns>Login authentication method.</returns>
         [ProducesResponseType(typeof(Api.LoginUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete Login authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteLoginUpParty(string name) => await Delete(name);

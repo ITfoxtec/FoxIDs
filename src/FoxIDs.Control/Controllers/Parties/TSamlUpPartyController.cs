@@ -27,7 +27,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get SAML 2.0 authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete SAML 2.0 authentication method.
         /// </summary>
-        /// <param name="name">Party name.</param>
+        /// <param name="name">Authentication method name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteSamlUpParty(string name) => await Delete(name);

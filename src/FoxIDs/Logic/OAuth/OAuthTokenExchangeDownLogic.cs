@@ -132,7 +132,7 @@ namespace FoxIDs.Logic
                 claims = await ValidateSameTrackSubjectTokenAsync(party, subjectToken);
                 if (claims == null)
                 {
-                    throw new OAuthRequestException($"Subject token not accepted in the same track. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                    throw new OAuthRequestException($"Subject token not accepted in the same environment. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
                 }
                 return (claims, true);
             }
@@ -206,7 +206,7 @@ namespace FoxIDs.Logic
             var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(subjectToken, audience: party.Name);
             if (claimsPrincipal == null)
             {
-                throw new OAuthRequestException($"Subject token not accepted in the same track. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+                throw new OAuthRequestException($"Subject token not accepted in the same environment. Client id '{party.Client.ClientId}'") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
             }
 
             var claims = claimsPrincipal.Claims?.ToList();

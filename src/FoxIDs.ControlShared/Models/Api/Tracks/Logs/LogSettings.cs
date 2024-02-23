@@ -3,7 +3,7 @@
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Log settings in track.
+    /// Log settings in environment.
     /// </summary>
     public class LogSettings
     {

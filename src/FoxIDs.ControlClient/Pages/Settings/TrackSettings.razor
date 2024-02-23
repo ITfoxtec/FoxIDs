@@ -73,7 +73,7 @@
                         </div>
 
                         <div class="mt-3">
-                            <button type="button" class="btn btn-secondary" @onclick="DeleteTrackAsync">Yes delete track</button>
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteTrackAsync">Yes delete environment</button>
                             <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTrackAcknowledge = false)">No</button>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
             <div class="modal-footer px-0">
                 @if (!IsMasterTrack)
                 {
-                    <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete track</button>
+                    <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete environment</button>
                 }
                 <button type="submit" class="btn btn-primary">Update</button>
             </div>

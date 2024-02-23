@@ -26,17 +26,17 @@ namespace FoxIDs.SeedTool.Model
         [Required]
         public string MasterTenant { get; set; }
         /// <summary>
-        /// Seed tool master track.
+        /// Seed tool master environment.
         /// </summary>
         [Required]
         public string MasterTrack { get; set; }
         /// <summary>
-        /// Seed tool down-party (client id).
+        /// Seed tool application registration (client id).
         /// </summary>
         [Required]
         public string DownParty { get; set; }
         /// <summary>
-        /// FoxIDs tenant/track/down-party authority.
+        /// FoxIDs tenant/environment/app-reg authority.
         /// </summary>
         public string Authority => UrlCombine.Combine(FoxIDsEndpoint, MasterTenant, MasterTrack, DownParty);
 

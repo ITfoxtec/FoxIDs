@@ -45,14 +45,14 @@
 		<v:layer v:name="Connector" v:index="0"/>
 		<g id="shape30-1" v:mID="30" v:groupContext="shape" transform="translate(30.5129,-104.041)">
 			<title>Rectangle.13</title>
-			<desc>FoxIDs - track</desc>
+			<desc>Environment</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="180.567" cy="174.709" width="361.14" height="139.336"/>
 			<rect x="0" y="105.041" width="361.134" height="139.336" class="st1"/>
-			<text x="131.28" y="180.11" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>FoxIDs - track</text>		</g>
+			<text x="131.28" y="180.11" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 		<g id="shape32-4" v:mID="32" v:groupContext="shape" transform="translate(34.9066,-107.606)">
 			<title>Rectangle.15</title>
 			<desc>Down-party OpenID Connect (OAuth 2.0 Resource)</desc>
@@ -227,11 +227,11 @@
 						x="33.93" dy="1.2em" class="st5">SAML 2.0</tspan></text>		</g>
 		<g id="shape56-90" v:mID="56" v:groupContext="shape" v:layerMember="0" transform="translate(34.4488,-166.599)">
 			<title>Dynamic connector.53</title>
-			<desc>FoxIDs - track</desc>
+			<desc>Environment</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="176.457" cy="237.29" width="108.4" height="29.6036"/>
 			<path d="M0 237.29 L352.91 237.29" class="st17"/>
 			<rect v:rectContext="textBkgnd" x="127.168" y="226.491" width="98.5781" height="21.5999" class="st11"/>
-			<text x="127.17" y="242.69" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>FoxIDs - track</text>		</g>
+			<text x="127.17" y="242.69" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 	</g>
 </svg>

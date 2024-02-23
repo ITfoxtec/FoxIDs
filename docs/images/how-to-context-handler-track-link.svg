@@ -58,12 +58,12 @@
 		</g>
 		<g id="shape53-8" v:mID="53" v:groupContext="shape" v:layerMember="0" transform="translate(5.22873,-136.917)">
 			<title>Dynamic connector.53</title>
-			<desc>FoxIDs - track</desc>
+			<desc>Environment</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="116.007" cy="346.895" width="108.4" height="29.6036"/>
 			<path d="M0 346.89 L232.01 346.89" class="st3"/>
 			<rect v:rectContext="textBkgnd" x="66.7178" y="336.095" width="98.5781" height="21.5999" class="st4"/>
-			<text x="66.72" y="352.29" class="st5" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>FoxIDs - track</text>		</g>
+			<text x="66.72" y="352.29" class="st5" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 		<g id="shape1-13" v:mID="1" v:groupContext="shape" transform="translate(1,-73.6268)">
 			<title>Rectangle.17</title>
 			<v:userDefs>
@@ -221,12 +221,12 @@
 						x="22.39" dy="1.2em" class="st13" v:langID="2057">SAML 2.0</tspan></text>		</g>
 		<g id="shape93-83" v:mID="93" v:groupContext="shape" v:layerMember="0" transform="translate(257.154,-221.372)">
 			<title>Dynamic connector.93</title>
-			<desc>FoxIDs - track</desc>
+			<desc>Environment</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="45.5098" cy="346.895" width="75.08" height="22.4037"/>
 			<path d="M0 346.89 L91.02 346.89" class="st3"/>
 			<rect v:rectContext="textBkgnd" x="12.6505" y="339.695" width="65.7188" height="14.4001" class="st21"/>
-			<text x="12.65" y="350.49" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>FoxIDs - track</text>		</g>
+			<text x="12.65" y="350.49" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 		<g id="shape94-88" v:mID="94" v:groupContext="shape" v:layerMember="0" transform="translate(236.984,-181.212)">
 			<title>Dynamic connector.94</title>
 			<path d="M0 346.97 L20.62 346.82" class="st2"/>

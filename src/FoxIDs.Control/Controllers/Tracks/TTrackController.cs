@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track.
+        /// Get environment.
         /// </summary>
         /// <param name="name">Track name.</param>
         /// <returns>Track.</returns>
@@ -66,7 +66,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Create track.
+        /// Create environment.
         /// </summary>
         /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
@@ -121,7 +121,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Update track.
+        /// Update environment.
         /// </summary>
         /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
@@ -163,7 +163,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Delete track.
+        /// Delete environment.
         /// </summary>
         /// <param name="name">Track name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

@@ -46,14 +46,14 @@
 		<v:layer v:name="Connector" v:index="0"/>
 		<g id="shape13-1" v:mID="13" v:groupContext="shape" transform="translate(41.3596,-89.5608)">
 			<title>Rectangle.13</title>
-			<desc>FoxIDs - track</desc>
+			<desc>Environment</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="180.567" cy="254.28" width="361.14" height="139.336"/>
 			<rect x="0" y="184.612" width="361.134" height="139.336" class="st1"/>
-			<text x="131.28" y="259.68" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>FoxIDs - track</text>		</g>
+			<text x="131.28" y="259.68" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 		<g id="shape17-4" v:mID="17" v:groupContext="shape" transform="translate(8.30343,-1)">
 			<title>Rectangle.29</title>
 			<desc>External SAML 2.0 Relying Party (RP) and internal OAuth 2.0 c...</desc>
@@ -235,11 +235,11 @@
 		</g>
 		<g id="shape40-95" v:mID="40" v:groupContext="shape" v:layerMember="0" transform="translate(45.4373,-152.118)">
 			<title>Dynamic connector.49</title>
-			<desc>FoxIDs - track</desc>
+			<desc>Environment</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="176.457" cy="316.862" width="108.4" height="29.6036"/>
 			<path d="M0 316.86 L352.91 316.86" class="st18"/>
 			<rect v:rectContext="textBkgnd" x="127.168" y="306.062" width="98.5781" height="21.5999" class="st8"/>
-			<text x="127.17" y="322.26" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>FoxIDs - track</text>		</g>
+			<text x="127.17" y="322.26" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 	</g>
 </svg>

@@ -10,7 +10,7 @@ namespace FoxIDs.Models.Api
     public class Track : INameValue, IValidatableObject
     {
         /// <summary>
-        /// Name of the track. If empty the name is auto generated.
+        /// Name of the environment. If empty the name is auto generated.
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]

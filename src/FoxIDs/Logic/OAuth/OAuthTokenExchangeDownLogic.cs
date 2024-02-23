@@ -201,7 +201,7 @@ namespace FoxIDs.Logic
 
         private async Task<List<Claim>> ValidateSameTrackSubjectTokenAsync(TParty party, string subjectToken)
         {
-            logger.ScopeTrace(() => "Down, OAuth validate same track token exchange subject token.");
+            logger.ScopeTrace(() => "Down, OAuth validate same environment token exchange subject token.");
 
             var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(subjectToken, audience: party.Name);
             if (claimsPrincipal == null)
@@ -210,12 +210,12 @@ namespace FoxIDs.Logic
             }
 
             var claims = claimsPrincipal.Claims?.ToList();
-            logger.ScopeTrace(() => "Down, OAuth same track subject token valid.", triggerEvent: true);
-            logger.ScopeTrace(() => $"Down, OAuth same track received JWT claims '{claims}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => "Down, OAuth same environment subject token valid.", triggerEvent: true);
+            logger.ScopeTrace(() => $"Down, OAuth same environment received JWT claims '{claims}'", traceType: TraceTypes.Claim);
 
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(new List<string> { "*" }, claims);
 
-            logger.ScopeTrace(() => $"Up, OAuth same track output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"Up, OAuth same environment output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return validClaims;
         }
     }

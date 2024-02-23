@@ -31,7 +31,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
         {
-            logger.ScopeTrace(() => "Down, Track link front channel logout request.");
+            logger.ScopeTrace(() => "Down, Environment link front channel logout request.");
 
             TrackLinkDownParty firstParty = null;
             var partyNames = new List<string>();
@@ -74,7 +74,7 @@ namespace FoxIDs.Logic
 
         public Task<IActionResult> LogoutDoneAsync()
         {
-            logger.ScopeTrace(() => "Down, Track link front channel logout done.");
+            logger.ScopeTrace(() => "Down, Environment link front channel logout done.");
             return singleLogoutDownLogic.HandleSingleLogoutAsync();
         }
     }

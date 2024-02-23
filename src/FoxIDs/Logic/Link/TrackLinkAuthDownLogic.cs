@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link auth request.");
+            logger.ScopeTrace(() => "Down, Environment link auth request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.TrackLink);
@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthResponseAsync(string partyId, List<Claim> claims, string error = null, string errorDescription = null)
         {
-            logger.ScopeTrace(() => "Down, Track link auth response.");
+            logger.ScopeTrace(() => "Down, Environment link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 
@@ -104,9 +104,9 @@ namespace FoxIDs.Logic
 
             if (error.IsNullOrEmpty())
             {
-                logger.ScopeTrace(() => $"Down, Track link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"Down, Environment link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                logger.ScopeTrace(() => $"Down, Track link output / Up, Track link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"Down, Environment link output / Up, Environment link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
 

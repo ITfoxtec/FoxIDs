@@ -7,7 +7,7 @@
 <PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(m => TrackLinkDownPartyViewModelAfterInit(trackLinkDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
     <div class="modal-header">
         <div>
-            Track link
+            Environment link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
@@ -22,7 +22,7 @@
         }
         else
         {
-            <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" />
+            <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
             @if (trackLinkDownParty.ShowAdvanced)
             {
                 <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
@@ -123,7 +123,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Track link Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
+                    You are about to delete Environment link Down-party "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

@@ -152,7 +152,7 @@
 		</g>
 		<g id="shape10-54" v:mID="10" v:groupContext="shape" transform="translate(119.205,-167.414)">
 			<title>Rectangle.18</title>
-			<desc>Up-party Track link</desc>
+			<desc>Up-party Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -182,7 +182,7 @@
 		</g>
 		<g id="shape12-68" v:mID="12" v:groupContext="shape" transform="translate(356.039,-167.414)">
 			<title>Rectangle.41</title>
-			<desc>Up-party Track link</desc>
+			<desc>Up-party Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -222,7 +222,7 @@
 		</g>
 		<g id="shape80-85" v:mID="80" v:groupContext="shape" transform="translate(9.4221,-167.394)">
 			<title>Rectangle.80</title>
-			<desc>Down-party Track link</desc>
+			<desc>Down-party Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
@@ -289,7 +289,7 @@
 		</g>
 		<g id="shape90-117" v:mID="90" v:groupContext="shape" transform="translate(490.188,-167.476)">
 			<title>Rectangle.90</title>
-			<desc>Down-party Track link</desc>
+			<desc>Down-party Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>

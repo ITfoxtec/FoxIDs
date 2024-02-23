@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track resource.
+        /// Get environment resource.
         /// </summary>
         /// <param name="resourceId">Resource id.</param>
         /// <returns>Resource item.</returns>
@@ -52,7 +52,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get Track.Resource by track name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
+                    logger.Warning(ex, $"NotFound, Get Track.Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
                     return NotFound("Track.Resource", Convert.ToString(resourceId));
                 }
                 throw;
@@ -60,7 +60,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Update track resource.
+        /// Update environment resource.
         /// </summary>
         /// <param name="trackResourceItem">Resource item.</param>
         /// <returns>Resource item.</returns>
@@ -114,7 +114,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by track name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackResourceItem).Name}' by environment name '{RouteBinding.TrackName}' and resource id '{trackResourceItem.Id}'.");
                     return NotFound(typeof(Api.TrackResourceItem).Name, Convert.ToString(trackResourceItem.Id), nameof(trackResourceItem.Id));
                 }
                 throw;
@@ -122,7 +122,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Delete track resource.
+        /// Delete environment resource.
         /// </summary>
         /// <param name="resourceId">Resource id.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -151,7 +151,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete Track.Resource by track name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
+                    logger.Warning(ex, $"NotFound, Delete Track.Resource by environment name '{RouteBinding.TrackName}' and resource id '{resourceId}'.");
                     return NotFound("Track.Resource", Convert.ToString(resourceId));
                 }
                 throw;

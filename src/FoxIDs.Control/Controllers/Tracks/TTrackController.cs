@@ -88,7 +88,7 @@ namespace FoxIDs.Controllers
                         // included + master track
                         if (count > plan.Tracks.Included) 
                         {
-                            throw new Exception($"Maximum number of tracks ({plan.Tracks.Included}) included in the '{plan.Name}' plan has been reached. Master track not counted.");
+                            throw new Exception($"Maximum number of tracks ({plan.Tracks.Included}) included in the '{plan.Name}' plan has been reached. Master environment not counted.");
                         }
                     }
                 }

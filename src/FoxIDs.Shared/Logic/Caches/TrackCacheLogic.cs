@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
                 var routeBinding = RouteBinding;
                 if (routeBinding == null)
                 {
-                    throw new InvalidOperationException("RouteBinding is null in Track cache.");
+                    throw new InvalidOperationException("RouteBinding is null in Environment cache.");
                 }
                 tenantName = routeBinding.TenantName;
             }

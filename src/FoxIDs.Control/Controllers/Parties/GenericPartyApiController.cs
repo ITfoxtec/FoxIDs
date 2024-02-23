@@ -76,7 +76,7 @@ namespace FoxIDs.Controllers
                     var count = await CountParties("party:up");
                     if (count >= Constants.Models.UpParty.PartiesMax)
                     {
-                        throw new Exception($"Maximum number of up-parties ({Constants.Models.UpParty.PartiesMax}) per track has been reached.");
+                        throw new Exception($"Maximum number of up-parties ({Constants.Models.UpParty.PartiesMax}) per environment has been reached.");
                     }
                 }
                 else if (mParty is DownParty)
@@ -84,7 +84,7 @@ namespace FoxIDs.Controllers
                     var count = await CountParties("party:down");
                     if (count >= Constants.Models.DownParty.PartiesMax)
                     {
-                        throw new Exception($"Maximum number of down-parties ({Constants.Models.UpParty.PartiesMax}) per track has been reached.");
+                        throw new Exception($"Maximum number of down-parties ({Constants.Models.UpParty.PartiesMax}) per environment has been reached.");
                     }
                 }
                 else

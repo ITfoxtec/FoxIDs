@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Track link up-party API.
+    /// Environment link up-party API.
     /// </summary>
     public class TTrackLinkUpPartyController : GenericPartyApiController<Api.TrackLinkUpParty, Api.OAuthClaimTransform, TrackLinkUpParty>
     {
@@ -19,7 +19,7 @@ namespace FoxIDs.Controllers
         { }
 
         /// <summary>
-        /// Get track link up-party.
+        /// Get environment link up-party.
         /// </summary>
         /// <param name="name">Party name.</param>
         /// <returns>Track link up-party.</returns>
@@ -28,7 +28,7 @@ namespace FoxIDs.Controllers
         public async Task<ActionResult<Api.TrackLinkUpParty>> GetTrackLinkUpParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create track link up-party.
+        /// Create environment link up-party.
         /// </summary>
         /// <param name="party">Track link up-party.</param>
         /// <returns>Track link up-party.</returns>
@@ -37,7 +37,7 @@ namespace FoxIDs.Controllers
         public async Task<ActionResult<Api.TrackLinkUpParty>> PostTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Post(party);
 
         /// <summary>
-        /// Update track link up-party.
+        /// Update environment link up-party.
         /// </summary>
         /// <param name="party">Track link up-party.</param>
         /// <returns>Track link up-party.</returns>
@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
         public async Task<ActionResult<Api.TrackLinkUpParty>> PutTrackLinkUpParty([FromBody] Api.TrackLinkUpParty party) => await Put(party);
 
         /// <summary>
-        /// Delete track link up-party.
+        /// Delete environment link up-party.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

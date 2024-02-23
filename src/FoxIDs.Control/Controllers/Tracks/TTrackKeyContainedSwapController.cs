@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Swap track key contained.
+        /// Swap environment key contained.
         /// </summary>
         /// <param name="trackKeySwap">Track to swap.</param>
         /// <returns>Track keys.</returns>
@@ -89,7 +89,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Swap Track key contained '{typeof(Api.TrackKeyItemContainedSwap).Name}' by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Swap Environment key contained '{typeof(Api.TrackKeyItemContainedSwap).Name}' by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContainedSwap).Name, RouteBinding.TrackName);
                 }
                 throw;

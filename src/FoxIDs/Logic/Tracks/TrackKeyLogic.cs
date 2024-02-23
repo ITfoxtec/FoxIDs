@@ -123,7 +123,7 @@ namespace FoxIDs.Logic
                         mTrack.Key.Keys = new List<TrackKeyItem> { new TrackKeyItem { Key = await ContainedCertificate.ToFTJsonWebKeyAsync(true) } };
                         await tenantRepository.UpdateAsync(mTrack);
 
-                        throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary track key certificate has been created, please try one more time.", ex);
+                        throw new ExternalKeyIsNotReadyException("The old primary master environment key certificate is invalid. A new primary environment key certificate has been created, please try one more time.", ex);
                     }
                     else
                     {
@@ -132,7 +132,7 @@ namespace FoxIDs.Logic
                         mTrack.Key.ExternalName = await externalKeyLogic.CreateExternalKeyAsync(mTrack);
                         await tenantRepository.UpdateAsync(mTrack);
 
-                        throw new ExternalKeyIsNotReadyException("The old primary master track key certificate is invalid. A new primary external track key certificate is under construction in Key Vault, it is ready in a little while.", ex);
+                        throw new ExternalKeyIsNotReadyException("The old primary master environment key certificate is invalid. A new primary external environment key certificate is under construction in Key Vault, it is ready in a little while.", ex);
                     }
                 }
 

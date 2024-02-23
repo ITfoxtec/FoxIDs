@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link RP initiated logout request.");
+            logger.ScopeTrace(() => "Down, Environment link RP initiated logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link RP initiated logout response.");
+            logger.ScopeTrace(() => "Down, Environment link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 

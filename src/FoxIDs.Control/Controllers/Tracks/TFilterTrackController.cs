@@ -33,7 +33,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Filter track.
         /// </summary>
-        /// <param name="filterName">Filter track name.</param>
+        /// <param name="filterName">Filter environment name.</param>
         /// <returns>Tracks.</returns>
         [ProducesResponseType(typeof(HashSet<Api.Track>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                if (!client.RedirectUris.Any(u => u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
+                if (!client.RedirectUris.Any(u => client.DisableAbsoluteUris ? authenticationRequest.RedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     throw new OAuthRequestException($"Invalid redirect URI '{authenticationRequest.RedirectUri}' (maybe the request URL do not match the expected client).") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                 }

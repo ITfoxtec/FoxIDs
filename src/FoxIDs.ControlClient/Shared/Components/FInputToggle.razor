@@ -1,8 +1,8 @@
 ﻿@inherits FInputBase<bool>
 
 <div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
-    <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-outline-secondary off") @(Disabled ? "disabled" : string.Empty)" @onclick="@(async () => await ToggleCurrentValueAsync())" data-toggle="toggle" role="button" style="width: @TextWidth; height: 38px;">
-        <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
+    <div class="toggle btn @(CurrentValueAccessor == true ? "btn-outline-primary" : "btn-outline-secondary off") @(Disabled ? "disabled" : string.Empty)" @onclick="@(async () => await ToggleCurrentValueAsync())" data-toggle="toggle" role="button" style="width: @TextWidth; height: 38px;">
+        <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValueAccessor" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
         <div class="toggle-group">
             <label class="btn btn-outline-primary toggle-on">@onText</label>
             <label class="btn btn-outline-secondary toggle-off">@offText</label>
@@ -17,8 +17,8 @@
 </div>
 
 @code {
-    private string onText = "On";
-    private string offText = "Off";
+    private string onText = "Yes";
+    private string offText = "No";
 
     [Parameter]
     public bool Disabled { get; set; } = false;
@@ -30,6 +30,9 @@
     public bool IncludeLabelAndValidationMessage { get; set; } = true;
 
     [Parameter]
+    public bool Negation { get; set; }
+
+    [Parameter]
     public string TextWidth { get; set; } = "65px";
 
     [Parameter]
@@ -37,6 +40,12 @@
 
     [Parameter]
     public EventCallback<bool> OnValidChange { get; set; }
+
+    private bool CurrentValueAccessor
+    {
+        get { return Negation ? !CurrentValue : CurrentValue; }
+        set { CurrentValue = Negation ? !value : value; }
+    }
 
     protected override void OnInitialized()
     {

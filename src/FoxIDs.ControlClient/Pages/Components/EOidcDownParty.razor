@@ -22,7 +22,7 @@
         }
         else
         {
-            <FInputText @bind-Value="oidcDownParty.Form.Model.DisplayName" For="@(() => oidcDownParty.Form.Model.DisplayName)" Focus="true" />
+            <FInputText @bind-Value="oidcDownParty.Form.Model.DisplayName" For="@(() => oidcDownParty.Form.Model.DisplayName)" />
             <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
         }
         @if (oidcDownParty.ShowAdvanced)
@@ -122,6 +122,7 @@
                     {
                         <FInputText @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutUri" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutUri)" />
                         <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oidcDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                         <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     }
                     <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
@@ -343,9 +344,9 @@
                             <option value="@IdentityConstants.ResponseModes.Query">query</option>
                         </FInputSelect>
 
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant)" TextType="y.n" />
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant)" TextType="y.n" />
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" Negation="true" TextType="e.d" />
                     }
                 }
             }

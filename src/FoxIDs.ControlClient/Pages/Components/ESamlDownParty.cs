@@ -55,6 +55,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return samlDownParty.Map<SamlDownPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 generalSamlDownParty.KeyInfoList.Clear();
                 if (afterMap.Keys?.Count() > 0)
                 {

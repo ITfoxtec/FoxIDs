@@ -150,7 +150,7 @@ namespace FoxIDs.Logic
 
         private void ValidateAuthnRequest(SamlDownParty party, Saml2AuthnRequest saml2AuthnRequest)
         {
-            if (saml2AuthnRequest.AssertionConsumerServiceUrl != null && !party.AcsUrls.Any(u => u.Equals(saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString, StringComparison.InvariantCultureIgnoreCase)))
+            if (saml2AuthnRequest.AssertionConsumerServiceUrl != null && !party.AcsUrls.Any(u => party.DisableAbsoluteUrls ? saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) : u.Equals(saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString, StringComparison.InvariantCultureIgnoreCase)))
             {
                 throw new EndpointException($"Invalid assertion consumer service URL '{saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString}' (maybe the request URL do not match the expected relaying party).") { RouteBinding = RouteBinding };
             }

@@ -47,6 +47,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return trackLinkUpParty.Map<TrackLinkUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 afterMap.EnableSingleLogout = !trackLinkUpParty.DisableSingleLogout;
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {

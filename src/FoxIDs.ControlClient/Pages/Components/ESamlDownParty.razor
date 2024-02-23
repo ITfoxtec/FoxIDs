@@ -23,7 +23,7 @@
         }
         else
         {
-            <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" Focus="true" />
+            <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" />
             @if (samlDownParty.ShowAdvanced)
             {
                 <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
@@ -83,6 +83,8 @@
                 <FInputTextList @bind-ValueList="samlDownParty.Form.Model.AcsUrls" For="@(() => samlDownParty.Form.Model.AcsUrls)" />
                 @if (samlDownParty.ShowAdvanced)
                 {
+                    <FInputToggle @bind-Value="samlDownParty.Form.Model.DisableAbsoluteUrls" For="@(() => samlDownParty.Form.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
+
                     <div class="row active-group-outline">
                         <div class="col">
                             <div class="form-group active-group">

@@ -22,7 +22,7 @@
         }
         else
         {
-            <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" Focus="true" />
+            <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" />
             <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         }
         @if (DownParty.ShowAdvanced)
@@ -126,6 +126,7 @@
                     <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" DynamicFirstRow="true" />
                     @if (DownParty.ShowAdvanced)
                     {
+                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oauthDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                         <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                     }
                     <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
@@ -311,9 +312,9 @@
                         <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenUseOneTime" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenUseOneTime)" TextType="e.d" />
                         <FInputToggleN @bind-Value="oauthDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited" For="@(() => oauthDownParty.Form.Model.Client.RefreshTokenLifetimeUnlimited)" TextType="e.d" />
 
-                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oauthDownParty.Form.Model.Client.DisableClientCredentialsGrant)" TextType="y.n" />
-                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oauthDownParty.Form.Model.Client.DisableTokenExchangeGrant)" TextType="y.n" />
-                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oauthDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oauthDownParty.Form.Model.Client.DisableClientCredentialsGrant)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oauthDownParty.Form.Model.Client.DisableTokenExchangeGrant)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oauthDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" Negation="true" TextType="e.d" />
                     }
                 }
             }

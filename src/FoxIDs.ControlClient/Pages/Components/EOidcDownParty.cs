@@ -56,6 +56,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oidcDownParty.Map<OidcDownPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (afterMap.Client == null)
                 {
                     afterMap.Client = new OidcDownClientViewModel();

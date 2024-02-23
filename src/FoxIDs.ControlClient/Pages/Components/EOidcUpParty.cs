@@ -63,6 +63,11 @@ namespace FoxIDs.Client.Pages.Components
 
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (oidcUpParty.UpdateState == PartyUpdateStates.Manual)
                 {
                     afterMap.IsManual = true;

@@ -29,7 +29,7 @@
         }
         else
         {
-            <FInputText @bind-Value="oauthUpParty.Form.Model.DisplayName" For="@(() => oauthUpParty.Form.Model.DisplayName)" Focus="true" />
+            <FInputText @bind-Value="oauthUpParty.Form.Model.DisplayName" For="@(() => oauthUpParty.Form.Model.DisplayName)" />
             <FFieldTextClipboard @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
         }
         @if (oauthUpParty.ShowAdvanced)
@@ -92,8 +92,8 @@
             <FInputNumber @bind-Value="oauthUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oauthUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
         }
 
-        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oauthUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
-        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oauthUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
+        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oauthUpParty.Form.Model.DisableUserAuthenticationTrust)" Negation="true" TextType="e.d" />
+        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oauthUpParty.Form.Model.DisableTokenExchangeTrust)" Negation="true" TextType="e.d" />
 
         @if (oauthUpParty.Form.Model.AutomaticStopped)
         {

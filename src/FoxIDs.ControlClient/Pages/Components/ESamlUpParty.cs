@@ -61,6 +61,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return samlUpParty.Map<SamlUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (samlUpParty.UpdateState == PartyUpdateStates.Manual)
                 {
                     afterMap.IsManual = true;

@@ -30,6 +30,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
+        [Display(Name = "Disable absolute URIs")]
+        public bool DisableAbsoluteUris { get; set; }
+
         [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [Display(Name = "Post logout redirect URI")]
         public string PostLogoutRedirectUri { get; set; }

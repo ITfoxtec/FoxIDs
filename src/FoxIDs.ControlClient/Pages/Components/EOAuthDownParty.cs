@@ -56,6 +56,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (afterMap.Client != null && afterMap.Resource != null)
                 {
                     generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.ClientAndResource;

@@ -24,7 +24,7 @@
         }
         else
         {
-            <FInputText @bind-Value="samlUpParty.Form.Model.DisplayName" For="@(() => samlUpParty.Form.Model.DisplayName)" Focus="true" />
+            <FInputText @bind-Value="samlUpParty.Form.Model.DisplayName" For="@(() => samlUpParty.Form.Model.DisplayName)" />
             @if (samlUpParty.ShowAdvanced)
             {
                 <FFieldText @bind-Value="samlUpParty.Form.Model.Name" For="@(() => samlUpParty.Form.Model.Name)" />

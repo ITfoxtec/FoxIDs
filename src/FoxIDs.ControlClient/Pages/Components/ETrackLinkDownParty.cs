@@ -48,6 +48,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return trackLinkDownParty.Map<TrackLinkDownPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();

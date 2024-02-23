@@ -96,6 +96,9 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         public List<string> AcsUrls { get; set; }
 
+        [Display(Name = "Disable absolute URLs")]
+        public bool DisableAbsoluteUrls { get; set; }
+
         public bool EncryptAuthnResponse { get; set; }
 
         public string NameIdFormat { get; set; }

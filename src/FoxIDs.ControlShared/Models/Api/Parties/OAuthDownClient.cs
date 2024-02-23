@@ -31,6 +31,9 @@ namespace FoxIDs.Models.Api
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
+        [Display(Name = "Disable absolute URIs")]
+        public bool DisableAbsoluteUris { get; set; }
+
         [Display(Name = "Client authentication method")]
         public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;
 

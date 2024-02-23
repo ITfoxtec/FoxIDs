@@ -29,7 +29,7 @@
         }
         else
         {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="true" />
+            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" />
             <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
         @if (oidcUpParty.ShowAdvanced)
@@ -121,11 +121,11 @@
 
         @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oidcUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
+            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oidcUpParty.Form.Model.DisableUserAuthenticationTrust)" Negation="true" TextType="e.d" />
         }
         @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oidcUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
+            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oidcUpParty.Form.Model.DisableTokenExchangeTrust)" Negation="true" TextType="e.d" />
         }
 
         @if (oidcUpParty.Form.Model.AutomaticStopped)
@@ -314,7 +314,7 @@
                         </FInputSelect>
 
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnableFrontChannelLogout" For="@(() => oidcUpParty.Form.Model.Client.EnableFrontChannelLogout)" TextType="e.d" />
-                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" TextType="y.n" />
                     }
                 }
             }

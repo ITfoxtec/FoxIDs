@@ -70,10 +70,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
-        [Display(Name = "Disable user authentication trust")]
+        [Display(Name = "User authentication trust")]
         public bool DisableUserAuthenticationTrust { get; set; }
 
-        [Display(Name = "Disable token exchange trust")]
+        [Display(Name = "Token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

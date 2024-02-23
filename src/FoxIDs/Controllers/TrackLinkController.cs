@@ -24,7 +24,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link auth response, Up party name '{RouteBinding.UpParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link auth response, Authentication method name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthResponseAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
@@ -38,7 +38,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link RP initiated logout request, Up party name '{RouteBinding.UpParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link RP initiated logout request, Authentication method name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link RP initiated logout response, Up party name '{RouteBinding.UpParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link RP initiated logout response, Authentication method name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutResponseAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link front channel logout request, Up party name '{RouteBinding.UpParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link front channel logout request, Authentication method name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkFrontChannelLogoutUpLogic>().FrontChannelLogoutAsync(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link single Logout done, Up party name '{RouteBinding.UpParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link single Logout done, Authentication method name '{RouteBinding.UpParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().SingleLogoutDone(RouteBinding.UpParty.Id);
             }
             catch (Exception ex)
@@ -107,7 +107,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link auth request, Down party name '{RouteBinding.DownParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link auth request, Application registration name '{RouteBinding.DownParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkAuthDownLogic>().AuthRequestAsync(RouteBinding.DownParty.Id);
             }
             catch (Exception ex)
@@ -121,7 +121,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link RP initiated logout request, Down party name '{RouteBinding.DownParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link RP initiated logout request, Application registration name '{RouteBinding.DownParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutDownLogic>().LogoutRequestAsync(RouteBinding.DownParty.Id);
             }
             catch (Exception ex)

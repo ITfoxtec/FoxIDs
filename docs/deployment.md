@@ -69,7 +69,7 @@ The seed tool is configured in the `appsettings.json` file.
 Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
 
 1. Login to the `master` track and select the Parties tab
-2. Create a OAuth 2.0 down-party, click `OAuth 2.0 - Client Credentials Grant`.
+2. Create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 3. Set the client id to `foxids_seed`.
 4. Remember the client secret.
 5. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:master`.

@@ -18,7 +18,7 @@ Token exchange is implemented in the following samples:
 > Take a look at the sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`  
 
-## Down-party configuration
+## Application registration configuration
 
 It is possible to configure if token exchange is allowed on the OAuth 2.0 application registration or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
 Default both client credentials grant and token exchange is allowed on OAuth 2.0 application registration and OpenID Connect clients.  
@@ -48,7 +48,7 @@ And subsequently get an access token for the second resource when it's needed.
 The first access token is issued with a scope/audience for the OpenID Connect client and the client is thereby allowed to exchange the access tokens to an access token' valid for the second resource.  
 The OpenID Connect client is configured with a secret as client credentials used both in the OpenID Connect communication and token exchange.
 
-During the token exchange sequence the claims transformations and limitations is executed on the OpenID Connect down-party. 
+During the token exchange sequence the claims transformations and limitations is executed on the OpenID Connect application registration. 
 
 The OpenID Connect client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
 If success, the resource client gets back an access token' and can now call the second resource with the access token'.
@@ -118,7 +118,7 @@ The flowing client on the first resource is configured with a certificate as cli
 
 ![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-track-down-party.png)
 
-During the token exchange sequence the claims transformations and limitations is executed on the down-party. 
+During the token exchange sequence the claims transformations and limitations is executed on the application registration. 
 
 The OpenID Connect client call the first resource with the obtained access token. The resource client does a token exchange call to FoxIDs authenticating the client and passing the access token while asking (with a scope) for an access token' to the second resource. 
 If success, the resource client gets back an access token' and can now call the second resource with the access token'.
@@ -202,7 +202,7 @@ The flowing client is configured with a secret as client credentials.
 
 It is thereby possible to token exchange an external access token to an internal access token valid for the resource.
 
-During the token exchange sequence both the claims' transformations and limitations is executed firs on the up-party and then on the down-party. 
+During the token exchange sequence both the claims' transformations and limitations is executed firs on the up-party and then on the application registration. 
 
 The OpenID Connect client backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external access token while asking (with a scope) for an access token to the resource. 
 If success, the OpenID Connect client backend application get back an access token and can now call the resource.
@@ -247,7 +247,7 @@ In this scenario an SAML 2.0 application trust an external Identity Provider (Id
 
 There is a resource in the track but the external defined SAML 2.0 application is NOT allowed to call the resource directly.  
 First an SAML 2.0 up-party is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
-The flowing external trust example is a trust to a FoxIDs SAML 2.0 down-party.
+The flowing external trust example is a trust to a FoxIDs SAML 2.0 application registration.
 
 ![SAML 2.0 up-party trust](images/token-exchange-saml-by-trust-up-party.png)
 
@@ -258,7 +258,7 @@ The flowing client is configured with a certificate as client credentials.
 
 It is thereby possible to token exchange an external SAML 2.0 token to an internal access token valid for the resource.
 
-During the token exchange sequence both the claims transformations and limitations is executed firs on the up-party and then on the down-party. 
+During the token exchange sequence both the claims transformations and limitations is executed firs on the up-party and then on the application registration. 
 
 The SAML 2.0 backend application do a token exchange call to FoxIDs. Authenticating the internal OAuth 2.0 client and passing the external SAML 2.0 token while asking (with a scope) for an access token to the resource. 
 If success, the SAML 2.0 backend application get back an access token and can now call the resource.

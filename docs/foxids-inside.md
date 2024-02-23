@@ -8,7 +8,7 @@ FoxIDs is divided into logical elements.
 - **Track** is a production, QA, test etc. environment. Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and a track contains the up-parties and down-parties.  
 In some cases, it can be an advantage to place external connections in a separate tracks to configure connections specific certificates or log levels or just generalize the connections.
 - **Up-party** is a upwards trust / federation with [OpenID Connect 1.0](up-party-oidc.md) and [SAML 2.0](up-party-saml-2.0.md) or [login](login.md) configuration.
-- **Down-party** is a downward application configuration with [OAuth 2.0](down-party-oauth-2.0.md), [OpenID Connect 1.0](down-party-oidc.md) and [SAML 2.0](down-party-saml-2.0.md).
+- **Application registration** is a application configuration with [OAuth 2.0](down-party-oauth-2.0.md), [OpenID Connect 1.0](down-party-oidc.md) and [SAML 2.0](down-party-saml-2.0.md).
 
 ![FoxIDs structure](images/structure.svg)
 

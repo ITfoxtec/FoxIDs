@@ -36,7 +36,7 @@ The following describes how to connect two tracks called `track_x` and `track_y`
 6. Select which up-parties in the `track_y` track the user is allowed to use for authentication
 6. Click Create
 
-![Create track link down-party](images/howto-tracklink-foxids-down-party.png)
+![Create track link application registration](images/howto-tracklink-foxids-down-party.png)
 
 That's it, you are done. 
 

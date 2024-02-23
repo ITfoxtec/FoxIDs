@@ -17,28 +17,28 @@ You can alternatively configure the samples in [your one FoxIDs track](#configur
 
 **Sample index**
 
-- ASP.NET Core - OpenID Connect - down-party
+- ASP.NET Core - OpenID Connect - application registration
     -  [AspNetCoreOidcAuthCodeAllUpPartiesSample](#aspnetcoreoidcauthcodealluppartiessample) ([online](https://aspnetcoreoidcallupsample.itfoxtec.com/)) <- *Good starting point!*
     -  [AspNetCoreOidcAuthorizationCodeSample](#AspNetCoreOidcAuthorizationCodeSample)
     -  [AspNetCoreOidcImplicitSample](#aspnetcoreoidcimplicitsample)
 
-- ASP.NET Core - SAML 2.0 - down-party
+- ASP.NET Core - SAML 2.0 - application registration
 
     -  [AspNetCoreSamlSample](#aspnetcoresamlsample)
 
-- Blazor - OpenID Connect - down-party
+- Blazor - OpenID Connect - application registration
 
     -  [BlazorBFFAspNetCoreOidcSample](#blazorbffaspnetcoreoidcsample)
     -  [BlazorOidcPkceSample](#blazoroidcpkcesample)
     -  [BlazorServerOidcSample](#blazorserveroidcsample)
 
-- Console app - OAuth 2.0 Client credential grant - down-party
+- Console app - OAuth 2.0 Client credential grant - application registration
 
     -  [NetCoreClientCredentialGrantConsoleSample](#netcoreclientcredentialgrantconsolesample)
     -  [NetCoreClientCredentialGrantAssertionConsoleSample](#netcoreclientcredentialgrantassertionconsolesample)
     -  [NetFramework4.7ClientCredentialGrantAssertionConsoleSample](#netframework47clientcredentialgrantassertionconsolesample)
 
-- ASP.NET Core API - OAuth 2.0 - down-party
+- ASP.NET Core API - OAuth 2.0 - application registration
 
     -  [AspNetCoreApi1Sample](#aspnetcoreapi1sample) ([online](https://aspnetcoreoauthapi1sample.itfoxtec.com/))
     -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetcoreoauthapi2sample.itfoxtec.com/))
@@ -54,9 +54,9 @@ You can alternatively configure the samples in [your one FoxIDs track](#configur
 
 > You can use the [JWT tool](https://www.foxids.com/tools/Jwt) and [SAML 2.0 tool](https://www.foxids.com/tools/Saml) to decode tokens and create self-signed certificates with the [certificate tool](https://www.foxids.com/tools/Certificate).
 
-## Down-party sample applications
+## Sample applications
 
-The application registration samples show different applications which trust FoxIDs as an IdP.
+The samples show different applications which trust FoxIDs as an IdP.
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
@@ -179,9 +179,9 @@ The sample API can be called by changing comment out code in the [NetCoreClientC
 
 Local development domain and port: `https://localhost:44350`
 
-## Up-party sample applications
+## Identity Provider sample applications
 
-The up-party samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
+The Identity Provider samples show different IdPs connected to FoxIDs, where FoxIDs trust the IdP samples.
 
 ### AspNetCoreSamlIdPSample
 
@@ -220,7 +220,7 @@ Add the FoxIDs and FoxIDs Control API endpoints to the sample seed tool configur
 
 Create a sample seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
 
-1. Select the `master` track and create a OAuth 2.0 down-party, click `OAuth 2.0 - Client Credentials Grant`.
+1. Select the `master` track and create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 2. Set the client id to `sample_seed`.
 3. Remember the client secret.
 4. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:tenant`.

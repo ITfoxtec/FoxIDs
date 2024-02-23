@@ -7,10 +7,10 @@ Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configurin
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect down-party](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
-FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect down-party.
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect application registration.
 
-In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 down-party](down-party-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
+In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](down-party-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
 
 ![Connect to Context Handler RP](images/how-to-context-handler-rp.svg)
 
@@ -179,7 +179,7 @@ The following claims is most often used:
 9. Add the certificate from the metadata as a signature validation certificate
 10. Click Create
 
-![Context Handler SAML 2.0 down-party](images/howto-saml-context-handler-down-base-config.png)
+![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-down-base-config.png)
 
 11. Select Show advanced settings
 12. Select Encrypt authn response
@@ -193,7 +193,7 @@ The following claims is most often used:
 19. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName`
 20. Add an administrative contact person
 20. Click Update
-21. Go to the top of the SAML 2.0 down-party
+21. Go to the top of the SAML 2.0 application registration
 22. Find the SAML 2.0 application registration IdP-metadata, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`. 
 23. The IdP-metadata is used to configure the Context Handler identity provider.
  
@@ -218,11 +218,11 @@ Create the claims which has to be issued to Context Handler in claim transforms.
 1. Add the spec. ver. claims
 2. Optionally add the levels of assurance (loa) claim or read it through the claims pipeline
 
-![Context Handler SAML 2.0 down-party](images/howto-saml-context-handler-down-ct1.png)
+![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-down-ct1.png)
 
 3. Replace the NameID / NameIdentifier claim which a concatenated version of the CVR number, display name and unique user ID. Format string `C=DK,O={0},CN={1} {2},Serial={3}`
 
-![Context Handler SAML 2.0 down-party](images/howto-saml-context-handler-down-ct2.png)
+![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-down-ct2.png)
 
 4. Click update
 

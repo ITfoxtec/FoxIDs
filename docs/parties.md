@@ -27,16 +27,16 @@ A login up-party create a [user session](login.md#configure-user-session). An Op
 Both session types lifetime, absolute lifetime and persistence (if the session should be saved when the browser is closed) can be configured.
 
 
-## Down-party
+## Application registration
 
 FoxIDs support tree different application registration types:
 
-- [OpenID Connect down-party](down-party-oidc.md)
-- [OAuth 2.0 down-party](down-party-oauth-2.0.md)
-- [SAML 2.0 down-party](down-party-saml-2.0.md)
+- [OpenID Connect application registration](down-party-oidc.md)
+- [OAuth 2.0 application registration](down-party-oauth-2.0.md)
+- [SAML 2.0 application registration](down-party-saml-2.0.md)
 
 ## JWT and SAML 
 OpenID Connect, OAuth 2.0, JWT and JWT claims are first class citizens in FoxIDs. Internally claims are always represented as JWT claims and request / response properties are described with OAuth 2.0 and OpenID Connect attributes. 
 
 FoxIDs converts between standards where attributes are converted to the same internal representation using JWT claims and OAuth 2.0 / OpenID Connect attributes.  
-Therefor, SAML 2.0 claims is internally converted to JWT claims between up-party and down-party.
+Therefor, SAML 2.0 claims is internally converted to JWT claims between up-party and application registration.

@@ -1,8 +1,8 @@
-﻿# OpenID Connect down-party
+﻿# OpenID Connect application registration
 
 FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) application registration enable you to connect an OpenID Connect based application. 
 
-![FoxIDs OpenID Connect down-party](images/parties-down-party-oidc.svg)
+![FoxIDs OpenID Connect application registration](images/parties-down-party-oidc.svg)
 
 Your application become a Relying Party (RP) and FoxIDs acts as an OpenID Provider (OP).
 

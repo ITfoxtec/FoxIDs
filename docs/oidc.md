@@ -1,6 +1,6 @@
 ﻿# OpenID Connect
 
-FoxIDs support OpenID Connect as both up-party and down-party.
+FoxIDs support OpenID Connect as both up-party and application registration.
 
 ![FoxIDs OpenID Connect](images/parties-oidc.svg)
 
@@ -20,10 +20,10 @@ How to guides:
 - Connect [Signicat](up-party-howto-oidc-signicat.md)
 - Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
 
-## Down-party
+## Application registration
 
-Configure your application as a [OpenID Connect down-party](down-party-oidc.md).
+Configure your application as a [OpenID Connect application registration](down-party-oidc.md).
 
 Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 application registration resources](down-party-oauth-2.0.md#oauth-20-resource).  
-An OAuth 2.0 resource can optionally be defined in a OpenID Connect application registration or a OAuth 2.0 down-party.
+An OAuth 2.0 resource can optionally be defined in a OpenID Connect application registration or a OAuth 2.0 application registration.
 

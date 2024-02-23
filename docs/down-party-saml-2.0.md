@@ -1,8 +1,8 @@
-# SAML 2.0 down-party
+# SAML 2.0 application registration
 
 FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) application registration enable you to connect an SAML 2.0 based application. 
 
-![FoxIDs SAML 2.0 down-party](images/parties-down-party-saml.svg)
+![FoxIDs SAML 2.0 application registration](images/parties-down-party-saml.svg)
 
 Your application become a SAML 2.0 Relying Party (RP) and FoxIDs acts as an SAML 2.0 Identity Provider (IdP).
 
@@ -12,7 +12,7 @@ A application registration expose [SAML 2.0 metadata](https://docs.oasis-open.or
 
 Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf) are supported. The Artifact profile is not supported.
 
-> The FoxIDs SAML 2.0 metadata do only include logout and single logout information if logout is configured in the SAML 2.0 down-party.
+> The FoxIDs SAML 2.0 metadata do only include logout and single logout information if logout is configured in the SAML 2.0 application registration.
 
 How to guides:
 

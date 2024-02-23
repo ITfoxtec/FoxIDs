@@ -1,6 +1,6 @@
 # DK privilege - claim transforms
 
-Foxids support claim transforms of DK privilege used in Danish [NemLog-in](auth-met-howto-saml-2.0-nemlogin.md) and [Context Handler](howto-saml-2.0-context-Handler.md) IdPs.
+Foxids support claim transforms of DK privilege used in Danish [NemLog-in](auth-method-howto-saml-2.0-nemlogin.md) and [Context Handler](howto-saml-2.0-context-Handler.md) IdPs.
 
 Supported privilege standard: 
 
@@ -25,7 +25,7 @@ Configure the DK privilege claim transformer on SAML 2.0 authentication method i
 ![Context Handler SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
 
-> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 authentication method](auth-met-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md).
+> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md).
 
 ## Model 2
 The DK privilege claim is transformed into a list of claims, one claim for each group. The XML PrivilegeGroup element is transformed into a JSON object and serialized as a string.
@@ -96,7 +96,7 @@ Is translated into one claims with JSON values:
     }
 
 ## Using JSON privilege claim in an application
-The [application registration](parties.md#application-registration) application receives the privilege claim with the privilege serialized as a JSON string.  
+The [application registration](connections.md#application-registration) application receives the privilege claim with the privilege serialized as a JSON string.  
 The following C# code example show how to deserialize the JSON claim to an object in ASP.NET Core application using `Newtonsoft.Json`.
 
 Create privilege group class

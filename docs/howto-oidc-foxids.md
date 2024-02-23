@@ -1,15 +1,15 @@
 # Interconnect Foxids with OpenID Connect
 
-Foxids can be connected to another Foxids with OpenID Connect and thereby authenticating end users in another Foxids environment or an external Identity Provider (IdP) configured as an authentication method.  
-Foxids tracks can be interconnect in the same Foxids tenant or in different Foxids tenants. Interconnections can also be configured between Foxids tracks in different Foxids deployments.
+Foxids environments can be connected with OpenID Connect and thereby authenticating end users in another Foxids environment or an external Identity Provider (IdP) configured as an authentication method.  
+Foxids environments can be interconnect in the same Foxids tenant or in different Foxids tenants. Interconnections can also be configured between Foxids environments in different Foxids deployments.
 
-> You can easily connect two tracks in the same tenant with a [environment link](howto-tracklink-foxids.md).
+> You can easily connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
 
-The integration between two Foxids tracks support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session is invalidated on logout.
+The integration between two Foxids environments support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session is invalidated on logout.
 
 > You can test OpenID Connect environment connections with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Parallel Foxids environment`.  
 > Take a look at the environment connection configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then take a look at the `parallel` and `- (dash is production)` tracks.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then take a look at the `parallel` and `- (dash is production)` environments.
 
 The following describes how to configure a OpenID Connect authentication method in your Foxids environment and trust a parallel Foxids environment where a OpenID Connect application registration is configured. This will make your Foxids environment trust the parallel Foxids environment to authenticate users.
 
@@ -19,7 +19,7 @@ The following describes how to configure a OpenID Connect authentication method 
 
 1. Add the name
 
-![Read the redirect URLs](images/howto-oidc-foxids-auth-met-readredirect.png)
+![Read the redirect URLs](images/howto-oidc-foxids-auth-method-readredirect.png)
 
 It is now possible to read the `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL`.
 
@@ -47,12 +47,12 @@ The client is a confidential client using Authorization Code Flow and PKCE.
      > It is possible to select another authentication method in the parallel environment. E.g. `azure_ad` with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(azure_ad)/` authority.
  2. Add the profile and email scopes (possible other or more scopes).
  3. Add the parallel Foxids environment application registration client's client secret.
- 6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel Foxids tracks access token.
+ 6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel Foxids environments access token.
  7. Click create.
 
- ![Parallel Foxids application registration client](images/howto-oidc-foxids-auth-met.png)
+ ![Parallel Foxids application registration client](images/howto-oidc-foxids-auth-method.png)
 
 That's it, you are done. 
 
 > Your new authentication method can now be selected as an allowed authentication method in the application registrations in you environment.  
-> The application registrations in you environment can read the claims from your authentication method. It is possible to add the access_token claim to include the parallel Foxids tracks access token as a claim in the issued access token.
+> The application registrations in you environment can read the claims from your authentication method. It is possible to add the access_token claim to include the parallel Foxids environments access token as a claim in the issued access token.

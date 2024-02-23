@@ -10,7 +10,7 @@ The Azure ARM deployment include:
 - Two App Services one for Foxids and one for the Foxids Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
 - Foxids is deployed to the two App Services test slots from the `master` branch with Kudu. [Updates](update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
 - Key Vault. Certificates and secrets are saved and handled in Key Vault.
-- Cosmos DB. Contain all data including tenants, tracks and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
+- Cosmos DB. Contain all data including tenants, environments and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
 - Redis cache. Holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks.
 - Application Insights and Log Analytics workspace. Logs are send to Application Insights and queries in Log Analytics workspace.
 - VLAN with subnets.
@@ -35,7 +35,7 @@ Create more admin users with a valid email addresses and grant the users the adm
 
 ![Foxids Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
 
-> You should generally not change the parties configuration or add applications in the master tenant, unless you are sure about what you are doing.
+> You should generally not change the application registrations and authentication methods configuration or add applications in the master tenant, unless you are sure about what you are doing.
 
 ### Troubleshooting deployent errors
 
@@ -68,7 +68,7 @@ The seed tool is configured in the `appsettings.json` file.
 
 Create a seed tool OAuth 2.0 client in the [Foxids Control Client](control.md#foxids-control-client):
 
-1. Login to the `master` environment and select the Parties tab
+1. Login to the `master` environment and select the Applications tab
 2. Create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 3. Set the client id to `foxids_seed`.
 4. Remember the client secret.

@@ -4,9 +4,9 @@
 
 Foxids is both an [authentication](login.md) platform and a security broker where Foxids support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
 
-Foxids is designed as a container with multi-tenant support. Your tenant holds your tracks which correspond to your environments (prod, QA, test, dev) and other elements. 
+Foxids is designed as a container with multi-tenant support. Your tenant holds your environments which correspond to your environments (prod, QA, test, dev) and other elements. 
 Each environment is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
-Connections to external Identity Provider is configured as [OpenID Connect 1.0](auth-met-oidc.md) or [SAML 2.0](auth-met-saml-2.0.md) authentication methods where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
+Connections to external Identity Provider is configured as [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
 The users [login](login.md) experience is configured as an authentication method.
 
 > Take a look at the Foxids test configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
@@ -33,10 +33,10 @@ The [license](https://github.com/ITfoxtec/Foxids/blob/master/LICENSE) grant all 
 You are free to use Foxids as a IDaaS for you own products.
 
 ## Selection by URL
-The [structure](foxids-inside.md#structure) of Foxids separates the different tenants, tracks and [parties](parties.md) which is selected with URL elements. 
+The [structure](foxids-inside.md#structure) of Foxids separates the different tenants, environments and [connections](connections.md) which is selected with URL elements. 
 
 If Foxids is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
-The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/environment-y/`.
+The environments are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/environment-y/`.
 
 A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/application-z/`.  
 A authentication method is call by adding the authentication method name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/(auth-method-v)/`. 
@@ -51,7 +51,7 @@ Selecting multiple authentication methods:
 - Select a maximum of 4 allowed authentication methods for a application registration by adding the authentication methods as a comma separated list in round brackets 
   in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-v1,auth-method-v2,auth-method-v3,auth-method-v4)/`
 
-> The allowed authentication methods is configured in each [application registration](parties.md#application-registration).
+> The allowed authentication methods is configured in each [application registration](connections.md#application-registration).
 
 A client using client credentials as authorization grant would not specify the authentication method. 
 It is likewise optional to specify the authentication method when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

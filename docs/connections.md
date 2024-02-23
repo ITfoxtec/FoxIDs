@@ -1,8 +1,8 @@
-﻿# Foxids parties
+﻿# Foxids connections
 
 Foxids is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to Foxids as application registrations.
 
-![Foxids authentication methods and application registrations](images/parties.svg)
+![Foxids authentication methods and application registrations](images/connections.svg)
 
 There are four different connection types:
 
@@ -16,8 +16,8 @@ There are four different connection types:
 Foxids support tree different authentication method types:
 
 - [Login authentication method](login.md)
-- [OpenID Connect authentication method](auth-met-oidc.md)
-- [SAML 2.0 authentication method](auth-met-saml-2.0.md)
+- [OpenID Connect authentication method](auth-method-oidc.md)
+- [SAML 2.0 authentication method](auth-method-saml-2.0.md)
 
 
 ### Authentication method session

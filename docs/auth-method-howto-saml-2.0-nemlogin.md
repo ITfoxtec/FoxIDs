@@ -1,8 +1,8 @@
 # Connect NemLog-in with SAML 2.0 authentication method
 
-You can connect Foxids to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-met-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
+You can connect Foxids to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
-By configuring an [SAML 2.0 authentication method](auth-met-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+By configuring an [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)
@@ -30,16 +30,16 @@ NemLog-in documentation:
 
 NemLog-in requires the Relying Party (RP) to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate environment where the OCES3 certificate and log level can be configured without affecting anything else.
 
-![Connect to NemLog-in and use environment link](images/how-to-nemlogin-environment-link.svg)    
+![Connect to NemLog-in and use Environment Link](images/how-to-nemlogin-environment-link.svg)    
 
-You can connect two tracks in the same tenant with a [environment link](howto-tracklink-foxids.md).
+You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
 
 ## Certificate
 
 NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES3 certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by Foxids.
 
 OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.  
-You will need separate Foxids tracks to handle the test and production environments respectively. The tracks can optionally be combined in an app environment with [environment links](howto-tracklink-foxids.md).
+You will need separate Foxids environments to handle the test and production environments respectively. The environments can optionally be combined in an app environment with [environment links](howto-environmentlink-foxids.md).
 
 > If the `.P12` file fails to load in Foxids, you can convert it to a `.PFX` file with the [Foxids.ConvertCertificateTool](https://github.com/ITfoxtec/Foxids/tree/master/tools/Foxids.ConvertCertificateTool).
 
@@ -70,12 +70,12 @@ It is subsequently possible to add a secondary certificate and to swap between t
 6. Set the session lifetime to 1800 (30 minutes) in the Logout session tab
 7. Go back to the SAML tab
 
-![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-top.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-top.png)
 
 8. Disable automatic update
 9. Click Read metadata from file and select the NemLog-in IdP-metadata
 
-![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-read-metadata.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-read-metadata.png)
 
 10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
@@ -92,22 +92,22 @@ It is subsequently possible to add a secondary certificate and to swap between t
     - `https://data.gov.dk/model/core/specVersion`
     - optionally include the privilege claim, see step 3)
 
-![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-claims.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-claims.png)
 
  12. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
  13. Select to include the encryption certificate in metadata
  14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
- ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-nameidformat.png)
+ ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-nameidformat.png)
 
  15. Add an attribute consuming service in metadata and add the service name.
  16. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
 
-![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-attributes.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-attributes.png)
 
  17. Add at least one technical contact person
  
-![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-contact.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-auth-contact.png)
 
  18. Click create
  19. Go to the top of the SAML 2.0 authentication method

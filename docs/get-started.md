@@ -5,7 +5,7 @@ Foxids is available at [Foxids.com](https://foxids.com) or you can [deploy](depl
 [Foxids.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
 
 a. [Register on Foxids.com](https://foxids.com/action/createtenant), where you get access to your one Foxids tenant. The tenant will hold your organizations entire security service.  
-You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) in the `master` environment to authorize external admin users.
+You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-method---how-to-connect-identity-provider-idp) in the `master` environment to authorize external admin users.
 
 ---
 
@@ -14,26 +14,26 @@ Foxids is [open-source](index.md#free-and-open-source) and you are free to deplo
 
 a. [Deploy](deployment.md) Foxids in your Microsoft Azure tenant.
 b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) to authorize external admin users.
+You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#auth-method---how-to-connect-identity-provider-idp) to authorize external admin users.
 c. Create the tenant for your organizations security services. Applications, APIs and connections in general is configured in this tenant.  
 You can create more [admin users](control.md#create-administrator-users) in the new tenants `master` environment. 
 You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master` environment to the new tenants `master` environment to authorize admin users from the `master` tenant.
 
 
 ## 1) First login
-You are presented with a list of your tracks when you login.
+You are presented with a list of your environments when you login.
 
 ![Foxids first login](images/get-started-first-access.png)
 
-The default tracks in a tenant:
+The default environments in a tenant:
 
-- `master` is the environment responsible for access to the tenant and the subsequently tracks.  
+- `master` is the environment responsible for access to the tenant and the subsequently environments.  
 The [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api) is configured in the `master` environment and admin users is added to the `master` environment. 
 You should normally not add applications in the `master` environment.
 - `-` (dash) is the production environment holding your organizations production security service
-- `test` is a environment meant for testing. You probably need more tracks for dev, test QA etc.
+- `test` is a environment meant for testing. You probably need more environments for dev, test QA etc.
 
-You can add and delete tracks as you wish including deleting the default `-` (dash) and `test` tasks.
+You can add and delete environments as you wish including deleting the default `-` (dash) and `test` tasks.
 
 ## 2) Run the first application
 You can e.g. start by configuring the first application in the `test` environment, add [test user(s)](get-started.md#add-test-users) and login.
@@ -64,7 +64,7 @@ A web based applications (client / relaying party) can be configured with [OpenI
 
 ![Application registration](images/get-started-app.png)
 
-> It is possible to add more authentication methods to federate with [external Identity Providers (IdPs)](howto-connect.md#auth-met---how-to-connect-identity-provider-idp). Thereafter, a new authentication method can be added to your application registration.
+> It is possible to add more authentication methods to federate with [external Identity Providers (IdPs)](howto-connect.md#auth-method---how-to-connect-identity-provider-idp). Thereafter, a new authentication method can be added to your application registration.
 
 
 ### Sample application

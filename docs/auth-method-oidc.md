@@ -2,19 +2,19 @@
 
 Foxids [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) authentication method which trust an external OpenID Provider (OP) / Identity Provider (IdP).
 
-![Foxids OpenID Connect authentication method](images/parties-auth-met-oidc.svg)
+![Foxids OpenID Connect authentication method](images/connections-auth-method-oidc.svg)
 
-It is possible to configure multiple OpenID Connect authentication methods which then can be selected by [application registrations](parties.md#application-registration).
+It is possible to configure multiple OpenID Connect authentication methods which then can be selected by [application registrations](connections.md#application-registration).
 
 How to guides:
 
-- Connect two Foxids tracks in the same tenant with a [environment link](howto-tracklink-foxids.md)
-- Connect two Foxids tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
-- Connect [Microsoft Entra ID (Azure AD)](auth-met-howto-oidc-azure-ad.md) 
-- Connect [Azure AD B2C](auth-met-howto-oidc-azure-ad-b2c.md) 
-- Connect [IdentityServer](auth-met-howto-oidc-identityserver.md)
-- Connect [Signicat](auth-met-howto-oidc-signicat.md)
-- Connect [Nets eID Broker](auth-met-howto-oidc-nets-eid-broker.md)
+- Connect two Foxids environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
+- Connect two Foxids environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
+- Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
+- Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
+- Connect [Signicat](auth-method-howto-oidc-signicat.md)
+- Connect [Nets eID Broker](auth-method-howto-oidc-nets-eid-broker.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -25,7 +25,7 @@ The following screen shot show the basic Foxids OpenID Connect authentication me
 
 > More configuration options become available by clicking `Show advanced settings`.
 
-![Configure OpenID Connect](images/configure-oidc-auth-met.png)
+![Configure OpenID Connect](images/configure-oidc-auth-method.png)
 
 Foxids automatically calls the OpenID Configuration endpoint (`.well-known/openid-configuration`) on create. You can see the added configuration by opening the authentication method again.
 

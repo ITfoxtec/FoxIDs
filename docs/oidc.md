@@ -2,23 +2,23 @@
 
 Foxids support OpenID Connect as both authentication method and application registration.
 
-![Foxids OpenID Connect](images/parties-oidc.svg)
+![Foxids OpenID Connect](images/connections-oidc.svg)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
 ## Authentication method
 
-Configure [OpenID Connect authentication method](auth-met-oidc.md) which trust an external OpenID Provider (OP).
+Configure [OpenID Connect authentication method](auth-method-oidc.md) which trust an external OpenID Provider (OP).
 
 How to guides:
 
-- Connect two Foxids tracks in the same tenant with a [environment link](howto-tracklink-foxids.md)
-- Connect two Foxids tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
-- Connect [Microsoft Entra ID (Azure AD)](auth-met-howto-oidc-azure-ad.md) 
-- Connect [Azure AD B2C](auth-met-howto-oidc-azure-ad-b2c.md) 
-- Connect [IdentityServer](auth-met-howto-oidc-identityserver.md)
-- Connect [Signicat](auth-met-howto-oidc-signicat.md)
-- Connect [Nets eID Broker](auth-met-howto-oidc-nets-eid-broker.md)
+- Connect two Foxids environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
+- Connect two Foxids environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
+- Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
+- Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)
+- Connect [Signicat](auth-method-howto-oidc-signicat.md)
+- Connect [Nets eID Broker](auth-method-howto-oidc-nets-eid-broker.md)
 
 ## Application registration
 

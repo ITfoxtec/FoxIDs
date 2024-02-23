@@ -12,7 +12,7 @@ Please see [claim transform examples](#claim-transform-examples)
 
 Claim transforms can e.g., be configured in a login authentication method.
 
-![Foxids authentication method claim transform](images/configure-claim-transform-auth-met.png)
+![Foxids authentication method claim transform](images/configure-claim-transform-auth-method.png)
 
 And likewise claim transforms can e.g., be configured in a OpenID Connect application registration.
 
@@ -74,7 +74,7 @@ The transformation will split the value in the `sub` claim and replace the claim
 
 Use a `Regex map` claim transformation and select the `Replace claim` action.
 
-![Remove default added post authentication method name](images/example-claim-transform-remove-post-auth-met-name.png)
+![Remove default added post authentication method name](images/example-claim-transform-remove-post-auth-method-name.png)
 
 - Find the ID without the default added post authentication method name with regex `^(nemlogin\|)(?<map>.+)$`
 

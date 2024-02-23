@@ -10,9 +10,9 @@ The custom domain can be configured with [Control Client](control.md#foxids-cont
 ![Configure reverse proxy secret](images/configure-tenant-custom-domain-my-environment.png)
 
 > When a new custom domain is added it needs to be verified. 
-> After verification the domain is enabled in all tracks in the tenant.
+> After verification the domain is enabled in all environments in the tenant.
 
-Custom domains is not supported in the master tenant and master tracks.
+Custom domains is not supported in the master tenant and master environments.
 
 > Please also take a look at [custom primary domains](deployment.md#custom-primary-domains).
 

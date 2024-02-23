@@ -1,13 +1,13 @@
 # Connect to Context Handler with SAML 2.0
 
-Foxids can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 authentication method](auth-met-saml-2.0.md). 
+Foxids can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 authentication method](auth-method-saml-2.0.md). 
 Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
 
 Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
-By configuring an [SAML 2.0 authentication method](auth-met-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+By configuring an [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
 
 In the test environment, Foxids can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
@@ -19,7 +19,7 @@ Context Handler can be configured based on either OIOSAML 2 or OIOSAML 3 with OC
 > You can test Context Handler login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish Context Handler TEST` for the test environment (select `Foxids - test-corp` on the Context Handler log in page) or `Danish Context Handler` for production.  
 > Take a look at the Context Handler sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `context-handler`, `context-handler-test` or `context-handler-idp-test` environment.  
-> *The sample is configured with a separate tracks for the Context Handler SAML 2.0 integration.*
+> *The sample is configured with a separate environments for the Context Handler SAML 2.0 integration.*
 
 Context Handler documentation:
 - Context Handler [guide](https://digitaliseringskataloget.dk/l%C3%B8sninger/adgangsstyring-brugere).
@@ -31,13 +31,13 @@ Context Handler documentation:
 ## Separate environment
 
 Context Handler requires each connection in an environment (test or production) to use a unique OCES3 certificate.  
-Therefore, consider connecting Context Handler in separate tracks where the OCES3 certificates can be configured without affecting any other configurations.
+Therefore, consider connecting Context Handler in separate environments where the OCES3 certificates can be configured without affecting any other configuration.
 
 ![Connect to Context Handler](images/how-to-context-handler-environment-link.svg)
 
-If you both configure a test and production environment, they should be placed in separate tracks. If you set up a [test Relying Party](#configuring-context-handler-as-test-relying-party), it should also be placed in a separate environment and have a unique OCES3 certificate.
+If you both configure a test and production environment, they should be placed in separate environments. If you set up a [test Relying Party](#configuring-context-handler-as-test-relying-party), it should also be placed in a separate environment and have a unique OCES3 certificate.
 
-You can easily connect two tracks in the same tenant with a [environment link](howto-tracklink-foxids.md).
+You can easily connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
 
 ## Certificate
 
@@ -73,7 +73,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 5. Click Create
 6. Change Logout response binding to Redirect
 
-![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-up-read-metadata.png)
+![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-auth-read-metadata.png)
 
 7. Select Show advanced settings
 8. Configure a custom SP issuer, the issuer can optionally start with `https://saml.` The issuer in this example is `https://saml.foxids.com/test-corp/context-handler-test/`
@@ -82,7 +82,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 11. Select to include the encryption certificate in metadata
 12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
-![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-up-nameidformat.png)
+![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-auth-nameidformat.png)
 
 13. Add an attribute consuming service in metadata and add the service name.
 14. Add all the claims you want to receive as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
@@ -99,7 +99,7 @@ The following claims is most often used:
   - `https://data.gov.dk/model/core/eid/lastName`
   - `https://data.gov.dk/model/core/eid/privilegesIntermediate`
 
-![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-up-attributes.png)
+![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-auth-attributes.png)
 
 15. Add an administrative contact person
 16. Click Update
@@ -179,7 +179,7 @@ The following claims is most often used:
 9. Add the certificate from the metadata as a signature validation certificate
 10. Click Create
 
-![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-down-base-config.png)
+![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-app-base-config.png)
 
 11. Select Show advanced settings
 12. Select Encrypt authn response
@@ -218,11 +218,11 @@ Create the claims which has to be issued to Context Handler in claim transforms.
 1. Add the spec. ver. claims
 2. Optionally add the levels of assurance (loa) claim or read it through the claims pipeline
 
-![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-down-ct1.png)
+![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-app-ct1.png)
 
 3. Replace the NameID / NameIdentifier claim which a concatenated version of the CVR number, display name and unique user ID. Format string `C=DK,O={0},CN={1} {2},Serial={3}`
 
-![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-down-ct2.png)
+![Context Handler SAML 2.0 application registration](images/howto-saml-context-handler-app-ct2.png)
 
 4. Click update
 

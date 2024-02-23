@@ -2,7 +2,7 @@
 
 Foxids [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) application registration enable you to connect an OpenID Connect based application. 
 
-![Foxids OpenID Connect application registration](images/parties-app-reg-oidc.svg)
+![Foxids OpenID Connect application registration](images/connections-app-reg-oidc.svg)
 
 Your application become a Relying Party (RP) and Foxids acts as an OpenID Provider (OP).
 
@@ -26,7 +26,7 @@ Foxids support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/o
 
 How to guides:
 
-- Connect two Foxids tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
+- Connect two Foxids environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -50,7 +50,7 @@ How to configure your application as a OpenID Connect application registration R
 > The clients Foxids discovery document is `https://foxids.com/tenant-x/environment-y/application-client1/.well-known/openid-configuration`  
 > if the client is configured in tenant `tenant-x` and environment `environment-y` with the application registration client name `application-client1`.
 
-> A application registration client can possibly support login through multiple [authentication methods](parties.md#authentication-method) by adding the authentication method name to the URL.  
+> A application registration client can possibly support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  
 > An authentication method name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/environment-y/application-client1(login)/.well-known/openid-configuration`
 
 During RP-initiated logout the authentication method name can be omitted in the URL if the ID Token is provided in the request.

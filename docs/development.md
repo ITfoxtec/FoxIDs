@@ -1,6 +1,6 @@
 # Development
 
-FoxIds.com (SaaS) is configured with the test tenant `test-corp`. The tenant is configured with the [.NET samples](samples.md) and connected to multiple [OpenID Connect](auth-met-oidc.md) and [SAML 2.0](auth-met-saml-2.0.md) IdPs.
+FoxIds.com (SaaS) is configured with the test tenant `test-corp`. The tenant is configured with the [.NET samples](samples.md) and connected to multiple [OpenID Connect](auth-method-oidc.md) and [SAML 2.0](auth-method-saml-2.0.md) IdPs.
 
 You can take a look at the `test-corp` tenant in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 Get read access with the user `reader@foxids.com` and password `TestAccess!`

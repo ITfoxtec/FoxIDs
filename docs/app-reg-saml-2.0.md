@@ -2,7 +2,7 @@
 
 Foxids [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) application registration enable you to connect an SAML 2.0 based application. 
 
-![Foxids SAML 2.0 application registration](images/parties-app-reg-saml.svg)
+![Foxids SAML 2.0 application registration](images/connections-app-reg-saml.svg)
 
 Your application become a SAML 2.0 Relying Party (RP) and Foxids acts as an SAML 2.0 Identity Provider (IdP).
 
@@ -53,7 +53,7 @@ How to configure your application as an SAML 2.0 Relying Party (RP).
 > The Foxids SAML 2.0 application registration metadata endpoint is `https://foxids.com/tenant-x/environment-y/application-saml-pr1/saml/idpmetadata`  
 > if the application is configured in tenant `tenant-x` and environment `environment-y` with the application registration name `application-saml-pr1`.
 
-> A application registration can possibly support login through multiple [authentication methods](parties.md#authentication-method) by adding the authentication method name to the URL.  
+> A application registration can possibly support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  
 > An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/environment-y/application-saml-pr1(login)/saml/idpmetadata`
 
 The following screen shot show the basic Foxids SAML 2.0 application registration configuration available in [Foxids Control Client](control.md#foxids-control-client).

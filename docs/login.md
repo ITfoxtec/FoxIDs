@@ -8,7 +8,7 @@ A user session is only established in the login authentication method if the ses
 
 A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 application registration](app-reg-saml-2.0.md) can authenticate users by selecting an login authentication method.
 
-![Foxids login](images/parties-login.svg)
+![Foxids login](images/connections-login.svg)
 
 The login authentication method user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
 

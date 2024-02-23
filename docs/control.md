@@ -32,18 +32,18 @@ Create a user:
 
 ![Configure administrator user](images/configure-tenant-adminuser.png)
 
-### Tracks
-Configure a number of tracks, one for each of your environments e.g. dev, qa and prod.
+### Environments
+Configure a number of environments, one for each of your environments e.g. dev, qa and prod.
 
-> Create one or more tracks, do not place configuration in the master environment.
+> Create one or more environments, do not place configuration in the master environment.
 
-![Configure tracks](images/configure-environment.png)
+![Configure environments](images/configure-environment.png)
 
 Each environment contains a user repository and a default created [login](login.md) authentication method.
 
-You can add [OpenID Connect](oidc.md), [OAuth 2.0](oauth-2.0.md) and [SAML 2.0](saml-2.0.md) application registrations and authentication methods in the Parties tab. 
+You can add [OpenID Connect](oidc.md), [OAuth 2.0](oauth-2.0.md) and [SAML 2.0](saml-2.0.md) application registrations and authentication methods. 
 
-![Configure application registrations and application registrations](images/configure-parties.png)
+![Configure application registrations and application registrations](images/configure-connections.png)
 
 A environment contains a primary certificate and possible a secondary certificate in the Certificates tab. It is possible to swap between the primary and secondary certificate if both is configured, depending on the [certificate](certificates.md) container type.
 
@@ -79,10 +79,10 @@ The Swagger (OpenApi) interface document is exposed on `.../api/swagger/v1/swagg
 
 > Foxids.com Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
 
-The Control API URL contains the tenant name and environment name on winch you want to operate `.../[tenant_name]/[track_name]/...`. 
-To call the API you replace the `[tenant_name]` element with your tenant name and the `[track_name]` element with the environment name of the environment you want to call.
+The Control API URL contains the tenant name and environment name on winch you want to operate `.../[tenant_name]/[environment_name]/...`. 
+To call the API you replace the `[tenant_name]` element with your tenant name and the `[environment_name]` element with the environment name of the environment you want to call.
 
-If you e.g. want read a OpenID Connect application registration on Foxids.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[track_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and environment names.
+If you e.g. want read a OpenID Connect application registration on Foxids.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[environment_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and environment names.
 
 ### API access rights
 Access to Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  
@@ -159,7 +159,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>Access to everything in all tracks in a tenant, not including the master environment.</i></td>
+        <td colspan=2><i>Access to everything in all environments in a tenant, not including the master environment.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track</code></td>
@@ -205,7 +205,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>All usage logs in all tracks in a tenant, not including the master environment. Not applicable in the master tenant.</i></td>
+        <td colspan=2><i>All usage logs in all environments in a tenant, not including the master environment. Not applicable in the master tenant.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track:usage</code></td>
@@ -219,7 +219,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>read</td>
     </tr>
     <tr>
-        <td colspan=2><i>All logs in all tracks in a tenant, not including the master environment.</i></td>
+        <td colspan=2><i>All logs in all environments in a tenant, not including the master environment.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track:log</code></td>
@@ -265,7 +265,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>All users in all tracks in a tenant, not including the master environment.</i></td>
+        <td colspan=2><i>All users in all environments in a tenant, not including the master environment.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track:user</code></td>
@@ -311,7 +311,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>All application registrations and authentication methods in all tracks in a tenant, not including the master environment.</i></td>
+        <td colspan=2><i>All application registrations and authentication methods in all environments in a tenant, not including the master environment.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track:party</code></td>

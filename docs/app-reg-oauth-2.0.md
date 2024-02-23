@@ -2,7 +2,7 @@
 
 Foxids OAuth 2.0 application registration enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
 
-![Foxids OAuth 2.0 application registration](images/parties-app-reg-oauth.svg)
+![Foxids OAuth 2.0 application registration](images/connections-app-reg-oauth.svg)
 
 ## OAuth 2.0 Resource
 An API is configured as a OAuth 2.0 application registration resource.

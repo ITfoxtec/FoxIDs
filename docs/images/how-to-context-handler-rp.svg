@@ -67,14 +67,14 @@
 		</g>
 		<g id="shape126-15" v:mID="126" v:groupContext="shape" transform="translate(125.724,-163.162)">
 			<title>Rectangle.126</title>
-			<desc>Up-party Login</desc>
+			<desc>Authentication method Login</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="55.9842" cy="189.525" width="111.97" height="41.7891"/>
 			<rect x="0" y="168.63" width="111.968" height="41.7891" class="st7"/>
-			<text x="34.3" y="185.92" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="34.3" y="185.92" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="42.94" dy="1.2em" class="st9">Login</tspan></text>		</g>
 		<g id="shape132-19" v:mID="132" v:groupContext="shape" transform="translate(126.575,-1)">
 			<title>Rectangle.25</title>
@@ -101,14 +101,14 @@
 		</g>
 		<g id="shape135-32" v:mID="135" v:groupContext="shape" transform="translate(124.024,-73.9986)">
 			<title>Rectangle.47</title>
-			<desc>Down-party SAML 2.0</desc>
+			<desc>Application SAML 2.0</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="186.407" width="113.53" height="48.0253"/>
 			<rect x="0" y="162.394" width="113.528" height="48.0253" class="st14"/>
-			<text x="27.79" y="182.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="182.81" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="33.93" dy="1.2em" class="st9">SAML 2.0</tspan></text>		</g>
 		<g id="group138-36" transform="translate(13.7559,-117.655)" v:mID="138" v:groupContext="group">
 			<v:userDefs>

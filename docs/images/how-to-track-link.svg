@@ -109,14 +109,14 @@
 						x="27.51" dy="1.44em" class="st9">(API)</tspan></text>		</g>
 		<g id="shape3-34" v:mID="3" v:groupContext="shape" transform="translate(238.402,-77.9007)">
 			<title>Rectangle.21</title>
-			<desc>Down-party OAuth 2.0 Client OAuth 2.0 Resource</desc>
+			<desc>Application OAuth 2.0 Client OAuth 2.0 Resource</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="330.009" width="113.53" height="48.0253"/>
 			<rect x="0" y="305.997" width="113.528" height="48.0253" class="st11"/>
-			<text x="27.79" y="319.21" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="319.21" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="16.59" dy="1.2em" class="st12">OAuth 2.0 Client<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
 						class="st13">OAuth 2.0 Resource</tspan></text>		</g>
 		<g id="shape49-39" v:mID="49" v:groupContext="shape" v:layerMember="0" transform="translate(183.87,-142.65)">
@@ -125,26 +125,26 @@
 		</g>
 		<g id="shape2-42" v:mID="2" v:groupContext="shape" transform="translate(119.205,-77.9007)">
 			<title>Rectangle.20</title>
-			<desc>Down-party OpenID Connect OAuth 2.0 Resource</desc>
+			<desc>Application OpenID Connect OAuth 2.0 Resource</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="330.009" width="113.53" height="48.0253"/>
 			<rect x="0" y="305.997" width="113.528" height="48.0253" class="st11"/>
-			<text x="27.79" y="319.21" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="319.21" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="16.74" dy="1.2em" class="st13">OpenID Connect<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
 						class="st12">OAuth 2.0 Resource</tspan></text>		</g>
 		<g id="shape29-47" v:mID="29" v:groupContext="shape" transform="translate(238.543,-167.414)">
 			<title>Rectangle.39</title>
-			<desc>Up-party Login</desc>
+			<desc>Authentication method Login</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="55.9842" cy="333.127" width="111.97" height="41.7891"/>
 			<path d="M0 354.02 L111.97 354.02 L111.97 312.23 L0 312.23 L0 354.02 Z" class="st14"/>
-			<text x="34.3" y="329.53" class="st15" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="34.3" y="329.53" class="st15" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="42.94" dy="1.2em" class="st13">Login</tspan></text>		</g>
 		<g id="shape37-51" v:mID="37" v:groupContext="shape" v:layerMember="0" transform="translate(172.078,-167.414)">
 			<title>Dynamic connector.37</title>
@@ -152,14 +152,14 @@
 		</g>
 		<g id="shape10-54" v:mID="10" v:groupContext="shape" transform="translate(119.205,-167.414)">
 			<title>Rectangle.18</title>
-			<desc>Up-party Environment link</desc>
+			<desc>Authentication method Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="333.127" width="113.53" height="41.7891"/>
 			<rect x="0" y="312.233" width="113.528" height="41.7891" class="st16"/>
-			<text x="35.08" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="35.08" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="33.62" dy="1.2em" class="st13" v:langID="2057">Track link</tspan></text>		</g>
 		<g id="shape68-58" v:mID="68" v:groupContext="shape" v:layerMember="0" transform="translate(406.54,-142.6)">
 			<title>Dynamic connector.68</title>
@@ -167,14 +167,14 @@
 		</g>
 		<g id="shape9-61" v:mID="9" v:groupContext="shape" transform="translate(357.598,-77.9007)">
 			<title>Rectangle.47</title>
-			<desc>Down-party SAML 2.0</desc>
+			<desc>Application SAML 2.0</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="330.009" width="113.53" height="48.0253"/>
 			<path d="M0 354.02 L113.53 354.02 L113.53 306 L0 306 L0 354.02 Z" class="st14"/>
-			<text x="27.79" y="326.41" class="st17" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="326.41" class="st17" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="33.93" dy="1.2em" class="st13">SAML 2.0</tspan></text>		</g>
 		<g id="shape71-65" v:mID="71" v:groupContext="shape" v:layerMember="0" transform="translate(418.182,-167.363)">
 			<title>Dynamic connector.71</title>
@@ -182,14 +182,14 @@
 		</g>
 		<g id="shape12-68" v:mID="12" v:groupContext="shape" transform="translate(356.039,-167.414)">
 			<title>Rectangle.41</title>
-			<desc>Up-party Environment link</desc>
+			<desc>Authentication method Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="333.127" width="113.53" height="41.7891"/>
 			<rect x="0" y="312.233" width="113.528" height="41.7891" class="st16"/>
-			<text x="35.08" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="35.08" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="33.62" dy="1.2em" class="st13" v:langID="2057">Track link</tspan></text>		</g>
 		<g id="shape74-72" v:mID="74" v:groupContext="shape" transform="translate(5.81891,-163.586)">
 			<title>Rectangle.74</title>
@@ -222,14 +222,14 @@
 		</g>
 		<g id="shape80-85" v:mID="80" v:groupContext="shape" transform="translate(9.4221,-167.394)">
 			<title>Rectangle.80</title>
-			<desc>Down-party Environment link</desc>
+			<desc>Application Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="45.0964" cy="333.127" width="90.2" height="41.7892"/>
 			<rect x="0" y="312.233" width="90.1928" height="41.7892" class="st16"/>
-			<text x="16.12" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="16.12" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="21.95" dy="1.2em" class="st13" v:langID="2057">Track link</tspan></text>		</g>
 		<g id="shape81-89" v:mID="81" v:groupContext="shape" v:layerMember="0" transform="translate(47.4733,-251.46)">
 			<title>Dynamic connector.81</title>
@@ -237,14 +237,14 @@
 		</g>
 		<g id="shape82-92" v:mID="82" v:groupContext="shape" transform="translate(9.42205,-247.775)">
 			<title>Rectangle.82</title>
-			<desc>Up-party OpenID Connect</desc>
+			<desc>Authentication method OpenID Connect</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="45.0964" cy="333.127" width="90.2" height="41.7891"/>
 			<rect x="0" y="312.233" width="90.1928" height="41.7891" class="st19"/>
-			<text x="23.41" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="23.41" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="5.07" dy="1.2em" class="st13">OpenID Connect</tspan></text>		</g>
 		<g id="shape73-96" v:mID="73" v:groupContext="shape" v:layerMember="0" transform="translate(8.97172,-221.413)">
 			<title>Dynamic connector.73</title>
@@ -289,14 +289,14 @@
 		</g>
 		<g id="shape90-117" v:mID="90" v:groupContext="shape" transform="translate(490.188,-167.476)">
 			<title>Rectangle.90</title>
-			<desc>Down-party Environment link</desc>
+			<desc>Application Environment link</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="45.2275" cy="333.127" width="90.46" height="41.7892"/>
 			<rect x="0" y="312.233" width="90.455" height="41.7892" class="st16"/>
-			<text x="16.25" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="16.25" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="22.08" dy="1.2em" class="st13" v:langID="2057">Track link</tspan></text>		</g>
 		<g id="shape91-121" v:mID="91" v:groupContext="shape" v:layerMember="0" transform="translate(528.371,-251.419)">
 			<title>Dynamic connector.91</title>
@@ -304,14 +304,14 @@
 		</g>
 		<g id="shape92-124" v:mID="92" v:groupContext="shape" transform="translate(490.188,-247.734)">
 			<title>Rectangle.92</title>
-			<desc>Up-party SAML 2.0</desc>
+			<desc>Authentication method SAML 2.0</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="45.2275" cy="333.127" width="90.46" height="41.7891"/>
 			<rect x="0" y="312.233" width="90.455" height="41.7891" class="st19"/>
-			<text x="23.54" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="23.54" y="329.53" class="st8" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="22.39" dy="1.2em" class="st13" v:langID="2057">SAML 2.0</tspan></text>		</g>
 		<g id="shape93-128" v:mID="93" v:groupContext="shape" v:layerMember="0" transform="translate(489.737,-221.372)">
 			<title>Dynamic connector.93</title>

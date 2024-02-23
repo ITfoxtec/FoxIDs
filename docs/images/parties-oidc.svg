@@ -46,37 +46,37 @@
 			<text x="131.28" y="248.73" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
 		<g id="shape18-4" v:mID="18" v:groupContext="shape" transform="translate(37.5314,-182.639)">
 			<title>Rectangle.18</title>
-			<desc>Up-party OpenID Connect</desc>
+			<desc>Authentication method OpenID Connect</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="292.104" width="113.53" height="41.7891"/>
 			<rect x="0" y="271.21" width="113.528" height="41.7891" class="st3"/>
-			<text x="35.08" y="288.5" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="35.08" y="288.5" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="16.74" dy="1.2em" class="st5">OpenID Connect</tspan></text>		</g>
 		<g id="shape20-8" v:mID="20" v:groupContext="shape" transform="translate(37.3898,-93.126)">
 			<title>Rectangle.20</title>
-			<desc>Down-party OpenID Connect (OAuth 2.0 Resource)</desc>
+			<desc>Application OpenID Connect (OAuth 2.0 Resource)</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="288.986" width="113.53" height="48.0253"/>
 			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st3"/>
-			<text x="27.79" y="278.19" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="278.19" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="16.74" dy="1.2em" class="st5">OpenID Connect<v:newlineChar/></tspan><tspan x="4.54" dy="1.2em"
 						class="st5">(OAuth 2.0 Resource)</tspan></text>		</g>
 		<g id="shape21-13" v:mID="21" v:groupContext="shape" transform="translate(156.728,-93.126)">
 			<title>Rectangle.21</title>
-			<desc>Down-party OAuth 2.0 Client OAuth 2.0 Resource</desc>
+			<desc>Application OAuth 2.0 Client OAuth 2.0 Resource</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="288.986" width="113.53" height="48.0253"/>
 			<path d="M0 313 L113.53 313 L113.53 264.97 L0 264.97 L0 313 Z" class="st6"/>
-			<text x="27.79" y="278.19" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="278.19" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="16.59" dy="1.2em" class="st5">OAuth 2.0 Client<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
 						class="st5">OAuth 2.0 Resource</tspan></text>		</g>
 		<g id="shape22-18" v:mID="22" v:groupContext="shape" transform="translate(9.752,-263.973)">
@@ -189,36 +189,36 @@
 		</g>
 		<g id="shape39-76" v:mID="39" v:groupContext="shape" transform="translate(156.728,-182.639)">
 			<title>Rectangle.39</title>
-			<desc>Up-party Login</desc>
+			<desc>Authentication method Login</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="292.104" width="113.53" height="41.7891"/>
 			<path d="M0 313 L113.53 313 L113.53 271.21 L0 271.21 L0 313 Z" class="st6"/>
-			<text x="35.08" y="288.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="35.08" y="288.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="43.72" dy="1.2em" class="st5">Login</tspan></text>		</g>
 		<g id="shape41-80" v:mID="41" v:groupContext="shape" transform="translate(275.925,-182.639)">
 			<title>Rectangle.41</title>
-			<desc>Up-party SAML 2.0</desc>
+			<desc>Authentication method SAML 2.0</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="292.104" width="113.53" height="41.7891"/>
 			<path d="M0 313 L113.53 313 L113.53 271.21 L0 271.21 L0 313 Z" class="st6"/>
-			<text x="35.08" y="288.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Up-party <v:newlineChar/><tspan
+			<text x="35.08" y="288.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
 						x="33.93" dy="1.2em" class="st5">SAML 2.0</tspan></text>		</g>
 		<g id="shape47-84" v:mID="47" v:groupContext="shape" transform="translate(275.925,-93.126)">
 			<title>Rectangle.47</title>
-			<desc>Down-party SAML 2.0</desc>
+			<desc>Application SAML 2.0</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="288.986" width="113.53" height="48.0253"/>
 			<path d="M0 313 L113.53 313 L113.53 264.97 L0 264.97 L0 313 Z" class="st6"/>
-			<text x="27.79" y="285.39" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Down-party <v:newlineChar/><tspan
+			<text x="27.79" y="285.39" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
 						x="33.93" dy="1.2em" class="st5">SAML 2.0</tspan></text>		</g>
 	</g>
 </svg>

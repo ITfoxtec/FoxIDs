@@ -174,9 +174,9 @@ Sample JWT access token' body:
 ## Token exchange by trust
 
 By external trust to IdP/OP it is possible to token exchange an [access token](#access-token-to-access-token-by-trust) or [SAML 2.0 token](#saml-20-to-access-token-by-trust) issued by an external party (or another Foxids track) and thereby obtain an access token for a resource in the track.  
-A up-party trust is configured and a application registration client is configured to allow token exchange based on the up-party trust(s). The application registration client furthermore whitelists for which resources in the track, it is allowed to do a token exchange.
+A authentication method trust is configured and a application registration client is configured to allow token exchange based on the authentication method trust(s). The application registration client furthermore whitelists for which resources in the track, it is allowed to do a token exchange.
 
-It is possible to configure if the up-party trust should be allowed for token exchange and user authentication. Default both is allowed on a OAuth 2.0, OpenID Connect and SAML 2.0 up-party trusts. 
+It is possible to configure if the authentication method trust should be allowed for token exchange and user authentication. Default both is allowed on a OAuth 2.0, OpenID Connect and SAML 2.0 authentication method trusts. 
 
 ![OAuth 2.0 trust config](images/token-exchange-config-up-party.png)
 
@@ -190,19 +190,19 @@ The client could also be an OAuth 2.0 client using [client credentials grant](ap
 ![Token exchange, Access token to Access token by trust](images/token-exchange-access-token-by-trust.svg)
 
 There is a resource in the track but the external defined OpenID Connect client is NOT allowed to call the resource directly.  
-First an OAuth 2.0 or OpenID Connect up-party is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the external OpenID Connect client's audience.  
+First an OAuth 2.0 or OpenID Connect authentication method is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the external OpenID Connect client's audience.  
 The flowing external trust example is a trust to another Foxids track.
 
-![OAuth 2.0 up-party trust](images/token-exchange-oauth-by-trust-up-party.png)
+![OAuth 2.0 authentication method trust](images/token-exchange-oauth-by-trust-up-party.png)
 
-Then an OAuth 2.0 application registration client is configured to accept external access tokens by the up-party trust. It is possible to have one or more up-party trusts.  
+Then an OAuth 2.0 application registration client is configured to accept external access tokens by the authentication method trust. It is possible to have one or more authentication method trusts.  
 The flowing client is configured with a secret as client credentials.
 
 ![OAuth 2.0 application registration client for OIDC application](images/token-exchange-oauth-by-trust-app-reg-client.png)
 
 It is thereby possible to token exchange an external access token to an internal access token valid for the resource.
 
-During the token exchange sequence both the claims' transformations and limitations is executed firs on the up-party and then on the application registration. 
+During the token exchange sequence both the claims' transformations and limitations is executed firs on the authentication method and then on the application registration. 
 
 The OpenID Connect client backend application do a token exchange call to Foxids. Authenticating the internal OAuth 2.0 client and passing the external access token while asking (with a scope) for an access token to the resource. 
 If success, the OpenID Connect client backend application get back an access token and can now call the resource.
@@ -246,19 +246,19 @@ In this scenario an SAML 2.0 application trust an external Identity Provider (Id
 ![Token exchange, SAML 2.0 to Access token by trust](images/token-exchange-saml-by-trust.svg)
 
 There is a resource in the track but the external defined SAML 2.0 application is NOT allowed to call the resource directly.  
-First an SAML 2.0 up-party is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
+First an SAML 2.0 authentication method is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
 The flowing external trust example is a trust to a Foxids SAML 2.0 application registration.
 
-![SAML 2.0 up-party trust](images/token-exchange-saml-by-trust-up-party.png)
+![SAML 2.0 authentication method trust](images/token-exchange-saml-by-trust-up-party.png)
 
-Then an OAuth 2.0 application registration client is configured to accept external SAML 2.0 tokens by the up-party trust. It is possible to have one or more up-party trusts.  
+Then an OAuth 2.0 application registration client is configured to accept external SAML 2.0 tokens by the authentication method trust. It is possible to have one or more authentication method trusts.  
 The flowing client is configured with a certificate as client credentials.
 
 ![OAuth 2.0 application registration client for SAML 2.0 application](images/token-exchange-saml-by-trust-app-reg-client.png)
 
 It is thereby possible to token exchange an external SAML 2.0 token to an internal access token valid for the resource.
 
-During the token exchange sequence both the claims transformations and limitations is executed firs on the up-party and then on the application registration. 
+During the token exchange sequence both the claims transformations and limitations is executed firs on the authentication method and then on the application registration. 
 
 The SAML 2.0 backend application do a token exchange call to Foxids. Authenticating the internal OAuth 2.0 client and passing the external SAML 2.0 token while asking (with a scope) for an access token to the resource. 
 If success, the SAML 2.0 backend application get back an access token and can now call the resource.

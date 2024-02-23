@@ -17,7 +17,7 @@ Otherwise if Foxids is [deployed](development.md) in your one Azure tenant you g
 
 A tenant contains a master track, from where the entire tenant is configured. The master track contains a user repository and on creation only one administrator user.
 
-Normally you should not change the master track configuration or add new up-parties or application registrations, but it is possible. You can e.g., by adding an up-party gain single sign-on (SSO) to the master track. 
+Normally you should not change the master track configuration or add new authentication methods or application registrations, but it is possible. You can e.g., by adding an authentication method gain single sign-on (SSO) to the master track. 
 
 ### Create administrator user(s)
 
@@ -39,9 +39,9 @@ Configure a number of tracks, one for each of your environments e.g. dev, qa and
 
 ![Configure tracks](images/configure-track.png)
 
-Each track contains a user repository and a default created [login](login.md) up-party.
+Each track contains a user repository and a default created [login](login.md) authentication method.
 
-You can add [OpenID Connect](oidc.md), [OAuth 2.0](oauth-2.0.md) and [SAML 2.0](saml-2.0.md) application registrations and up-parties in the Parties tab. 
+You can add [OpenID Connect](oidc.md), [OAuth 2.0](oauth-2.0.md) and [SAML 2.0](saml-2.0.md) application registrations and authentication methods in the Parties tab. 
 
 ![Configure application registrations and application registrations](images/configure-parties.png)
 
@@ -311,7 +311,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>All application registrations and up-parties in all tracks in a tenant, not including the master track.</i></td>
+        <td colspan=2><i>All application registrations and authentication methods in all tracks in a tenant, not including the master track.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track:party</code></td>
@@ -334,7 +334,7 @@ The `:track[xxxx]` specifies a tenant e.g., the `dev` tenant is `:track[dev]`.
         <td>delete</td>
     </tr>
     <tr>
-        <td colspan=2><i>All application registrations and up-parties in a specific track in a tenant.</i></td>
+        <td colspan=2><i>All application registrations and authentication methods in a specific track in a tenant.</i></td>
     </tr>
     <tr>
         <td><code>foxids:tenant:track[xxxx]:party</code></td>

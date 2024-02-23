@@ -53,8 +53,8 @@ How to configure your application as an SAML 2.0 Relying Party (RP).
 > The Foxids SAML 2.0 application registration metadata endpoint is `https://foxids.com/tenant-x/track-y/party-saml-pr1/saml/idpmetadata`  
 > if the application is configured in tenant `tenant-x` and track `track-y` with the application registration name `party-saml-pr1`.
 
-> A application registration can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
-> An up-party name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/party-saml-pr1(login)/saml/idpmetadata`
+> A application registration can possibly support login through multiple [authentication methods](parties.md#up-party) by adding the authentication method name to the URL.  
+> An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/party-saml-pr1(login)/saml/idpmetadata`
 
 The following screen shot show the basic Foxids SAML 2.0 application registration configuration available in [Foxids Control Client](control.md#foxids-control-client).
 

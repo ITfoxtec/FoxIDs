@@ -1,5 +1,5 @@
 # Users
-Users are saved in [user repositories](#user-repository) where each track contains exactly one user repository. Users are authenticated using the [login up-party](login.md) user interface (UI).
+Users are saved in [user repositories](#user-repository) where each track contains exactly one user repository. Users are authenticated using the [login authentication method](login.md) user interface (UI).
 
 ## Configuration
 New users can be created by the administrator through [Foxids Control Client](control.md#foxids-control-client) or be provisioned through [Foxids Control API](control.md#foxids-control-api).
@@ -7,7 +7,7 @@ New users can be created by the administrator through [Foxids Control Client](co
 ![Configure Login](images/configure-user.png)
 
 ### Configure multi-factor authentication (MFA)
-Multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor authenticator app in a [login up-party](login.md#two-factor-authentication-2famfa) and to configure the authenticator app if not already configured.
+Multi-factor authentication can be required per user. The user will then be required to authenticate with a two-factor authenticator app in a [login authentication method](login.md#two-factor-authentication-2famfa) and to configure the authenticator app if not already configured.
 
 It is possible to see whether a two-factor authenticator app is configured for the user, and the administrator can deactivate the configured two-factor authenticator app.
 

@@ -1,8 +1,8 @@
 ﻿# Foxids parties
 
-Foxids is configured with up-parties and application registrations. Up-parties authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to Foxids as application registrations.
+Foxids is configured with authentication methods and application registrations. Authentication methods authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to Foxids as application registrations.
 
-![Foxids up-parties and application registrations](images/parties.svg)
+![Foxids authentication methods and application registrations](images/parties.svg)
 
 There are four different party types:
 
@@ -11,18 +11,18 @@ There are four different party types:
 - [OAuth 2.0](oauth-2.0.md)
 - [SAML 2.0](saml-2.0.md)
 
-## Up-party
+## Authentication method
 
-Foxids support tree different up-party types:
+Foxids support tree different authentication method types:
 
-- [Login up-party](login.md)
-- [OpenID Connect up-party](up-party-oidc.md)
-- [SAML 2.0 up-party](up-party-saml-2.0.md)
+- [Login authentication method](login.md)
+- [OpenID Connect authentication method](up-party-oidc.md)
+- [SAML 2.0 authentication method](up-party-saml-2.0.md)
 
 
-### Up-party session
-Each up-party creates a session when a user is authenticated. All sessions are separately connected to an up-party. There are two different kinds of sessions.
-A login up-party create a [user session](login.md#configure-user-session). An OpenID Connect up-party and SAML 2.0 up-party create an up-party session which only holds information to enable logout. 
+### Authentication method session
+Each authentication method creates a session when a user is authenticated. All sessions are separately connected to an authentication method. There are two different kinds of sessions.
+A login authentication method create a [user session](login.md#configure-user-session). An OpenID Connect authentication method and SAML 2.0 authentication method create an authentication method session which only holds information to enable logout. 
 
 Both session types lifetime, absolute lifetime and persistence (if the session should be saved when the browser is closed) can be configured.
 
@@ -39,4 +39,4 @@ Foxids support tree different application registration types:
 OpenID Connect, OAuth 2.0, JWT and JWT claims are first class citizens in Foxids. Internally claims are always represented as JWT claims and request / response properties are described with OAuth 2.0 and OpenID Connect attributes. 
 
 Foxids converts between standards where attributes are converted to the same internal representation using JWT claims and OAuth 2.0 / OpenID Connect attributes.  
-Therefor, SAML 2.0 claims is internally converted to JWT claims between up-party and application registration.
+Therefor, SAML 2.0 claims is internally converted to JWT claims between authentication method and application registration.

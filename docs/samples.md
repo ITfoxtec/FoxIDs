@@ -44,11 +44,11 @@ You can alternatively configure the samples in [your one Foxids track](#configur
     -  [AspNetCoreApi2Sample](#aspnetcoreapi2sample) ([online](https://aspnetcoreoauthapi2sample.itfoxtec.com/))
     -  [AspNetCoreApiOAuthTwoIdPsSample](#aspnetcoreapioauthtwoidpssample)
 
-- ASP.NET Core - OpenID Connect - up-party - IdP
+- ASP.NET Core - OpenID Connect - authentication method - IdP
 
     -  [IdentityServerOidcOpSample](#identityserveroidcopsample)
 
-- ASP.NET Core - SAML 2.0 - up-party - IdP
+- ASP.NET Core - SAML 2.0 - authentication method - IdP
   
     -  [AspNetCoreSamlIdPSample](#aspnetcoresamlidpsample) ([online](https://aspnetcoresamlidpsample.itfoxtec.com/))
 
@@ -60,16 +60,16 @@ The samples show different applications which trust Foxids as an IdP.
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
-Sample ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all up-parties.  
+Sample ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/master/src/AspNetCoreOidcAuthCodeAllUpPartiesSample))  application showing user login and logout with OpenID Connect (OIDC) using authorization code flow as a service provider and requesting login by all authentication methods.  
 
 You can test this [sample online](https://aspnetcoreoidcallupsample.itfoxtec.com/).
 
 > This sample is a good starting point!
 
-The possible up-parties is configured in the application registration as allowed up-parties. There can be configured one to many allowed up-parties. 
-All the configured up-parties is selected with a star instead of an up-party name.
+The possible authentication methods is configured in the application registration as allowed authentication methods. There can be configured one to many allowed authentication methods. 
+All the configured authentication methods is selected with a star instead of an authentication method name.
 
-Support login/logout with Foxids login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and all other up-parties.
+Support login/logout with Foxids login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and all other authentication methods.
 
 API calls:
 
@@ -185,7 +185,7 @@ The Identity Provider samples show different IdPs connected to Foxids, where Fox
 
 ### AspNetCoreSamlIdPSample
 
-Sample ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/master/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 up-party in Foxids.
+Sample ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/master/src/AspNetCoreSamlIdPSample)) application implementing a SAML 2.0 identity provider (IdP) connected as a SAML 2.0 authentication method in Foxids.
 
 You can test this [sample online](https://aspnetcoresamlidpsample.itfoxtec.com/).
 
@@ -193,7 +193,7 @@ Local development domain and port: `https://localhost:44342`
 
 ### IdentityServerOidcOpSample
 
-Identity Server ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/master/src/IdentityServerOidcOpSample)) implementing OpenID Connect (OIDC) exposing a OpenID Provider (OP) / identity provider (IdP) connected as a OpenID Connect up-party in Foxids.
+Identity Server ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/master/src/IdentityServerOidcOpSample)) implementing OpenID Connect (OIDC) exposing a OpenID Provider (OP) / identity provider (IdP) connected as a OpenID Connect authentication method in Foxids.
 
 Local development domain and port: `https://localhost:44346`
 
@@ -255,4 +255,4 @@ Run the sample seed tool executable SampleSeedTool.exe or run the seed tool dire
 
 The sample seed tool will create and delete configurations for all samples.
 
-The sample applications require a login up-party with the name `login` (handles user login). It is created by the sample seed tool if it do not exists. The login up-party is not deleted if the sample configuration is deleted.
+The sample applications require a login authentication method with the name `login` (handles user login). It is created by the sample seed tool if it do not exists. The login authentication method is not deleted if the sample configuration is deleted.

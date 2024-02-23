@@ -1,24 +1,24 @@
 # Claim transforms
 
-Each Foxids up-party and application registration handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
-First executing any claim transforms on the up-party and then any claim transforms on the application registration. 
+Each Foxids authentication method and application registration handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
+First executing any claim transforms on the authentication method and then any claim transforms on the application registration. 
 
-If you create a new claim in a claim transform the claim is per default not send from the up-party to the application registration or to the application / API. 
-In a up-party you have to add the claim to the `Forward claims` list to forward the claim and in a application registration to the `Issue claims` list or alternative add the claim to a scope's `Voluntary claims` list. 
+If you create a new claim in a claim transform the claim is per default not send from the authentication method to the application registration or to the application / API. 
+In a authentication method you have to add the claim to the `Forward claims` list to forward the claim and in a application registration to the `Issue claims` list or alternative add the claim to a scope's `Voluntary claims` list. 
 
 Please see [claim transform examples](#claim-transform-examples)
 
 > Enable `Log claim trace` in the [log settings](logging.md#log-settings) to see the claims before and after transformation in [logs](logging.md). 
 
-Claim transforms can e.g., be configured in a login up-party.
+Claim transforms can e.g., be configured in a login authentication method.
 
-![Foxids up-party claim transform](images/configure-claim-transform-up-party.png)
+![Foxids authentication method claim transform](images/configure-claim-transform-up-party.png)
 
 And likewise claim transforms can e.g., be configured in a OpenID Connect application registration.
 
 ![Foxids application registration claim transform](images/configure-claim-transform-app-reg.png)
 
-> Claims are by default represented as JWT claims. If the up-party or application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
+> Claims are by default represented as JWT claims. If the authentication method or application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
 
 A claim transform will do one of op to five different actions depending on the particular claim transform type.
 
@@ -64,9 +64,9 @@ Use two `Regex map` claim transformations.
 - Find the `given_name` claim value with regex `^(?<map>\S+)\s\S+$`
 
 
-### Remove the default added up-party name from sub
+### Remove the default added authentication method name from sub
 
-The up-party name is default added to the `sub` claim ID value as a post name divided by a pipe e.g., `some-up-party|my-external-user-id`.
+The authentication method name is default added to the `sub` claim ID value as a post name divided by a pipe e.g., `some-up-party|my-external-user-id`.
 
 You can do a transform replace claim on the `sub` claim to remove the default added post value.
 
@@ -74,8 +74,8 @@ The transformation will split the value in the `sub` claim and replace the claim
 
 Use a `Regex map` claim transformation and select the `Replace claim` action.
 
-![Remove default added post up-party name](images/example-claim-transform-remove-post-up-party-name.png)
+![Remove default added post authentication method name](images/example-claim-transform-remove-post-up-party-name.png)
 
-- Find the ID without the default added post up-party name with regex `^(nemlogin\|)(?<map>.+)$`
+- Find the ID without the default added post authentication method name with regex `^(nemlogin\|)(?<map>.+)$`
 
-You can do the same in a SAML 2.0 up-party using the `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim instead of the `sub` claim.
+You can do the same in a SAML 2.0 authentication method using the `http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier` claim instead of the `sub` claim.

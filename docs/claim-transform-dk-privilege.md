@@ -9,12 +9,12 @@ Supported privilege standard:
 - Foxids support both to read the base64-encoded privilege string from the standard claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` and a custom defined claim.
 
 ## Configuring DK privilege - claim transforms
-The DK privilege can both be configured in a SAML 2.0 up-party and application registration and likewise in a OpenID Connect up-party and application registration.
+The DK privilege can both be configured in a SAML 2.0 authentication method and application registration and likewise in a OpenID Connect authentication method and application registration.
 
 - In SAML 2.0 the DK privilege claim transformer default read the standard claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` and issue the transformed claim `http://schemas.foxids.com/identity/claims/privilege`.
 - In OpenID Connect the DK privilege claim transformer default read the standard claim `privileges_intermediate` and issue the transformed claim `privilege`.
 
-Configure the DK privilege claim transformer on SAML 2.0 up-party in [Foxids Control Client](control.md#foxids-control-client):
+Configure the DK privilege claim transformer on SAML 2.0 authentication method in [Foxids Control Client](control.md#foxids-control-client):
 
 1. Select the Claim transform tab
 1. Click Add claim transform and click DK XML privilege to JSON. 
@@ -22,10 +22,10 @@ Configure the DK privilege claim transformer on SAML 2.0 up-party in [Foxids Con
 2. Select to remove the original privilege claim `https://data.gov.dk/model/core/eid/privilegesIntermediate` from the claims pipeline.
 3. Click update
 
-![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
+![Context Handler SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
 
-> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md).
+> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 authentication method](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md).
 
 ## Model 2
 The DK privilege claim is transformed into a list of claims, one claim for each group. The XML PrivilegeGroup element is transformed into a JSON object and serialized as a string.

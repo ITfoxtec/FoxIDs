@@ -2,7 +2,7 @@
 
 Foxids can be connected to AD FS with a [SAML 2.0 application registration](app-reg-saml-2.0.md). Where AD FS is a SAML 2.0 Relying Party (RP) and Foxids is acting as an SAML 2.0 Identity Provider (IdP).
 
-This example do login through the up-party `login`, which can be changed depending on the scenario.
+This example do login through the authentication method `login`, which can be changed depending on the scenario.
  
 ## Configuring AD FS as Relying Party (RP)
 
@@ -19,8 +19,8 @@ In this part of the configuration you need to use the SAML 2.0 application regis
 > Foxids SAML 2.0 application registration metadata `https://foxids.com/tenant-x/track-y/adfs-saml-rp1/saml/idpmetadata`  
 > for 'tenant-x' and 'track-y' with the application registration name 'adfs-saml-rp1'.
 
-> A application registration can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
-> An up-party name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/idpmetadata`
+> A application registration can possibly support login through multiple [authentication methods](parties.md#up-party) by adding the authentication method name to the URL.  
+> An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/idpmetadata`
 
 Configure the Identity Provider (IdP) on AD FS using the SAML 2.0 application registration metadata.
 
@@ -32,7 +32,7 @@ Alternatively, the Identity Provider (IdP) can be configured manually on the AD 
 - Single sign-on service endpoint `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/authn`
 - Single logout service endpoint `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/logout`
 
-> An up-party name e.g. `login` can possible be added to the single sign-on and single logout service endpoint.
+> An authentication method name e.g. `login` can possible be added to the single sign-on and single logout service endpoint.
 
 **3 - Then go to the AD FS Identity Provider (IdP) issuances claims configuration**
 

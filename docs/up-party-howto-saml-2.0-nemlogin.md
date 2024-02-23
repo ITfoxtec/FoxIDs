@@ -1,9 +1,9 @@
-# Connect NemLog-in with SAML 2.0 up-party
+# Connect NemLog-in with SAML 2.0 authentication method
 
-You can connect Foxids to NemLog-in (Danish IdP) with a [SAML 2.0 up-party](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
+You can connect Foxids to NemLog-in (Danish IdP) with a [SAML 2.0 authentication method](up-party-saml-2.0.md) and let the users authenticate with MitID. NemLog-in is connected as a SAML 2.0 Identity Provider (IdP).
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
-Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect application registration.
+By configuring an [SAML 2.0 authentication method](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)
 
@@ -60,22 +60,22 @@ It is subsequently possible to add a secondary certificate and to swap between t
 
 > You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1) - Start by creating an SAML 2.0 up-party in [Foxids Control Client](control.md#foxids-control-client)**
+**1) - Start by creating an SAML 2.0 authentication method in [Foxids Control Client](control.md#foxids-control-client)**
 
-1. Select the Parties tab and then the Up-parties
-2. Click Create up-party and then SAML 2.0
+1. Select the Authentication methods tab
+2. Click Create authentication method and then SAML 2.0
 3. Add the name
 4. Select show advanced settings
 5. Select the dot URL binding pattern
 6. Set the session lifetime to 1800 (30 minutes) in the Logout session tab
 7. Go back to the SAML tab
 
-![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-top.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-top.png)
 
 8. Disable automatic update
 9. Click Read metadata from file and select the NemLog-in IdP-metadata
 
-![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-read-metadata.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-read-metadata.png)
 
 10. Configure a custom SP issuer, the issuer can optionally start with `https://saml.`
     - The issuer in this example is `https://saml.foxids.com/test-corp/nemlogin-test/`
@@ -92,26 +92,26 @@ It is subsequently possible to add a secondary certificate and to swap between t
     - `https://data.gov.dk/model/core/specVersion`
     - optionally include the privilege claim, see step 3)
 
-![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-claims.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-claims.png)
 
  12. In production only! Set certificate validation mode to `Chain trust` (if the OCES3 certificate is global trusted) and revocation mode to `Online`
  13. Select to include the encryption certificate in metadata
  14. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
- ![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-nameidformat.png)
+ ![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-nameidformat.png)
 
  15. Add an attribute consuming service in metadata and add the service name.
  16. Add all the claims configured in step 11 as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
 
-![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-attributes.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-attributes.png)
 
  17. Add at least one technical contact person
  
-![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-up-contact.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-up-contact.png)
 
  18. Click create
- 19. Go to the top of the SAML 2.0 up-party
- 20. Download the SAML 2.0 up-party SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
+ 19. Go to the top of the SAML 2.0 authentication method
+ 20. Download the SAML 2.0 authentication method SP-metadata, in this case https://foxids.com/test-corp/nemlogin-test/.nemlogin./saml/spmetadata. 
  21. The SP-metadata file is used to configure the NemLog-in IT system.
  
  **2) - Then go to the [NemLog-in adminstration protal](https://administration.nemlog-in.dk/)**
@@ -119,7 +119,7 @@ It is subsequently possible to add a secondary certificate and to swap between t
 First you need to create an NemLog-in IT-system or have someone else creating an NemLog-in IT-system and assign you access.
 
 1. Select the IT-system
-2. Click upload metadata file and upload the SAML 2.0 up-party SP-metadata file
+2. Click upload metadata file and upload the SAML 2.0 authentication method SP-metadata file
 3. Go back to the IT-system
 4. Click the button Save the technical details
 5. Click Provision to integrationtest and then click Apply for integration test
@@ -136,7 +136,7 @@ Furthermore, it makes the tokens readable.
 1. Add the DK privilege claim transformer. 
 2. Remove the original privilege claim from the claims pipeline.
 
-![NemLog-in SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
+![NemLog-in SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
  **4 - Add SAML 2.0 claim to JWT claim mappings in [Foxids Control Client](control.md#foxids-control-client)**
 
@@ -148,7 +148,7 @@ Furthermore, it makes the tokens readable.
 
 ![Claim mappings](images/howto-saml-nemlogin3-claim-mappings.png)
 
-The SAML 2.0 up-party can now be used as an up-party for application registrations in the track.
+The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the track.
 
 ## Logging
 
@@ -167,13 +167,13 @@ The log level NemLog-in require is configured in the Foxids log settings:
  3. Enable `log message trace`
  4. Click update
 
-![NemLog-in SAML 2.0 up-party](images/howto-saml-nemlogin3-log.png)
+![NemLog-in SAML 2.0 authentication method](images/howto-saml-nemlogin3-log.png)
 
 ## Request authentication context
 
 You can request a desired NSIS assurance level as an authn context class reference.
 
-![NSIS assurance level in SAML 2.0 up-party](images/howto-saml-nemlogin3-nsis-level.png)
+![NSIS assurance level in SAML 2.0 authentication method](images/howto-saml-nemlogin3-nsis-level.png)
 
 Possible NSIS assurance levels:
  - `https://data.gov.dk/concept/core/nsis/loa/Low`
@@ -182,7 +182,7 @@ Possible NSIS assurance levels:
 
 You can likewise specify ID type as an authn context class reference.
 
-![ID type in SAML 2.0 up-party](images/howto-saml-nemlogin3-id-type.png)
+![ID type in SAML 2.0 authentication method](images/howto-saml-nemlogin3-id-type.png)
 
 Possible ID types:
  - `https://data.gov.dk/eid/Person`
@@ -196,5 +196,5 @@ And possible credential types:
  - `https://nemlogin.dk/internal/credential/type/test`
 
 
-In the case you need to provide different sets of authn context class references. You need to create multiple SAML 2.0 up-parties connected to NemLog-in as different IT systems.  
-E.g., if you need to support step-up authentication. Then you would create one SAML 2.0 up-party with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another SAML 2.0 up-party with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.
+In the case you need to provide different sets of authn context class references. You need to create multiple SAML 2.0 authentication methods connected to NemLog-in as different IT systems.  
+E.g., if you need to support step-up authentication. Then you would create one SAML 2.0 authentication method with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/Substantial` and another SAML 2.0 authentication method with authn context class reference `https://data.gov.dk/concept/core/nsis/loa/High`.

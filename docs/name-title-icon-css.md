@@ -12,11 +12,11 @@ The name is configured in the track settings in [Foxids Control Client](control.
 
 ## Add browser title, browser icon and CSS
 
-The Foxids user interface can be customized per [login up-party](login). This means that a single Foxids track can support multiple user interface designs with different browser titles, browser icons and CSS.
+The Foxids user interface can be customized per [login authentication method](login). This means that a single Foxids track can support multiple user interface designs with different browser titles, browser icons and CSS.
 
 > Foxids use Bootstrap 4.6 and Flexbox CSS.
 
-Find the login up-party in [Foxids Control Client](control.md#foxids-control-client) that you want to configure.
+Find the login authentication method in [Foxids Control Client](control.md#foxids-control-client) that you want to configure.
 
  1. Select show advanced settings
  4. Add the browser title text

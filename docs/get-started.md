@@ -52,9 +52,9 @@ Then click `Create User`, fill out the page and click `Create`.
 ![Create test user](images/get-started-test-user-new.png)
 
 ### Default login UI
-In the `test` track go to the `Parties` tab and `Up-parties` subtab where you find the default [login](login.md) up-party which handles the user login and logout.
+In the `test` track go to the `Authentication methods` tab where you find the default [login](login.md) authentication method which handles the user login and logout.
 
-![Login up-party](images/get-started-login.png)
+![Login authentication method](images/get-started-login.png)
 
 
 ### Configure your own application 
@@ -64,7 +64,7 @@ A web based applications (client / relaying party) can be configured with [OpenI
 
 ![Application registration](images/get-started-app.png)
 
-> It is possible to add more up-parties to federate with [external Identity Providers (IdPs)](howto-connect.md#up-party---how-to-connect-identity-provider-idp). Thereafter, a new up-party can be added to your application registration.
+> It is possible to add more authentication methods to federate with [external Identity Providers (IdPs)](howto-connect.md#up-party---how-to-connect-identity-provider-idp). Thereafter, a new authentication method can be added to your application registration.
 
 
 ### Sample application

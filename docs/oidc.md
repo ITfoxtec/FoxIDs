@@ -1,14 +1,14 @@
 ﻿# OpenID Connect
 
-Foxids support OpenID Connect as both up-party and application registration.
+Foxids support OpenID Connect as both authentication method and application registration.
 
 ![Foxids OpenID Connect](images/parties-oidc.svg)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
-## Up-party
+## Authentication method
 
-Configure [OpenID Connect up-party](up-party-oidc.md) which trust an external OpenID Provider (OP).
+Configure [OpenID Connect authentication method](up-party-oidc.md) which trust an external OpenID Provider (OP).
 
 How to guides:
 

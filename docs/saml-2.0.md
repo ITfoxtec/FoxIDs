@@ -1,12 +1,12 @@
 # SAML 2.0
 
-Foxids support SAML 2.0 as both up-party and application registration.
+Foxids support SAML 2.0 as both authentication method and application registration.
 
 ![Foxids SAML 2.0](images/parties-saml.svg)
 
-## Up-party
+## Authentication method
 
-Configure [SAML 2.0 up-party](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
+Configure [SAML 2.0 authentication method](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
 
 How to guides:
 
@@ -27,7 +27,7 @@ How to guides:
 ## Claim mappings
 Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [Foxids Control](control.md). The claim mappings is global for the track.
 
-> SAML 2.0 claims are internally [converted to JWT claims](parties.md#jwt-and-saml) between up-party and application registration.
+> SAML 2.0 claims are internally [converted to JWT claims](parties.md#jwt-and-saml) between authentication method and application registration.
 
 ![Configure JWT and SAML 2.0 mappings](images/configure-jwt-saml-mappings.png)
 

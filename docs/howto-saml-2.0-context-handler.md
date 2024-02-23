@@ -1,14 +1,14 @@
 # Connect to Context Handler with SAML 2.0
 
-Foxids can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 up-party](up-party-saml-2.0.md). 
+Foxids can be connected to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker) with a [SAML 2.0 authentication method](up-party-saml-2.0.md). 
 Context Handler is a Danish identity broker connecting the Danish municipalities in a common federation.
 
 Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configuring-context-handler-as-identity-provider) based on OIOSAML 3 and OCES3 (RSASSA-PSS).  
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
-Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect application registration.
+By configuring an [SAML 2.0 authentication method](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (authentication methods) from the same OpenID Connect application registration.
 
 In the test environment, Foxids can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
 
@@ -62,10 +62,10 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 
 > You need to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1 - Start by creating an SAML 2.0 up-party in [Foxids Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 authentication method in [Foxids Control Client](control.md#foxids-control-client)**
 
-1. Select the Parties tab and then the Up-parties
-2. Click Create up-party and then SAML 2.0
+1. Select the Authentication methods tab
+2. Click Create authentication method and then SAML 2.0
 3. Add the name
 4. Add the Context Handler IdP metadata in the Metadata URL field  
    Test metadata: `https://n2adgangsstyring.eksterntest-stoettesystemerne.dk/runtime/saml2/metadata.idp`  
@@ -73,7 +73,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 5. Click Create
 6. Change Logout response binding to Redirect
 
-![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-read-metadata.png)
+![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-up-read-metadata.png)
 
 7. Select Show advanced settings
 8. Configure a custom SP issuer, the issuer can optionally start with `https://saml.` The issuer in this example is `https://saml.foxids.com/test-corp/context-handler-test/`
@@ -82,7 +82,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 Identity Provider
 11. Select to include the encryption certificate in metadata
 12. Set the NameID format in metadata to `urn:oasis:names:tc:SAML:2.0:nameid-format:persistent`
 
-![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-nameidformat.png)
+![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-up-nameidformat.png)
 
 13. Add an attribute consuming service in metadata and add the service name.
 14. Add all the claims you want to receive as requested attributes with the format `urn:oasis:names:tc:SAML:2.0:attrname-format:uri`. Optionally set each attribute as required.
@@ -99,12 +99,12 @@ The following claims is most often used:
   - `https://data.gov.dk/model/core/eid/lastName`
   - `https://data.gov.dk/model/core/eid/privilegesIntermediate`
 
-![Context Handler SAML 2.0 up-party](images/howto-saml-context-handler-up-attributes.png)
+![Context Handler SAML 2.0 authentication method](images/howto-saml-context-handler-up-attributes.png)
 
 15. Add an administrative contact person
 16. Click Update
-17. Go to the top of the SAML 2.0 up-party
-18. Find the SAML 2.0 up-party SP-metadata URL, in this case https://foxids.com/test-corp/context-handler-test/(cp-rp)/saml/spmetadata. 
+17. Go to the top of the SAML 2.0 authentication method
+18. Find the SAML 2.0 authentication method SP-metadata URL, in this case https://foxids.com/test-corp/context-handler-test/(cp-rp)/saml/spmetadata. 
 19. The SP-metadata URL is used to configure a Context Handler user system (DK: brugervendt system).
  
 **2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
@@ -115,7 +115,7 @@ The following claims is most often used:
 4. Go to the User system tab (DK: Brugervendt system)
 5. Select Context Handler with NSIS and remove the selection of Context Handler (without NSIS)
 6. Select OIOSAML3 as OIOSAML profile and NSIS level
-7. Add the SAML 2.0 up-party SP-metadata URL, in this case `https://foxids.com/test-corp/context-handler-test/(cp-rp)/saml/spmetadata`.
+7. Add the SAML 2.0 authentication method SP-metadata URL, in this case `https://foxids.com/test-corp/context-handler-test/(cp-rp)/saml/spmetadata`.
 8. Fill out the rest, accept the terms and click Save (DK: Gem)
 
  **3 - Add privilege claim transformation in [Foxids Control Client](control.md#foxids-control-client)**
@@ -130,7 +130,7 @@ Furthermore, it makes the tokens readable.
 5. In the Remove claim field add `https://data.gov.dk/model/core/eid/privilegesIntermediate` 
 3. Click update
 
-![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
+![Context Handler SAML 2.0 authentication method privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
 > Remember to add a claim mapping from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` please see next section 4).
 
@@ -144,7 +144,7 @@ Furthermore, it makes the tokens readable.
 
  ![Context Handler SAML 2.0 claim mappings](images/howto-saml-claim-mappings.png)
 
-You are done. The SAML 2.0 up-party can now be used as an up-party for application registrations in the track.
+You are done. The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the track.
 
 > A application registration will only issue added claims.  
 > Therefore, remember to add the JWT claims to OpenID Connect application registrations or use the `*` notation.
@@ -160,7 +160,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 test Relying Part
 1. Select the Applications tab
 2. Click Create application registration and then SAML 2.0
 3. Add the name
-4. Click Add allow up-party and click login, to let the user login with test users in the track
+4. Click Add allow authentication method and click login, to let the user login with test users in the track
 5. Download the Context Handler RP metadata where you can find endpoints and the certificate to trust.  
    Test metadata: `https://n2adgangsstyring.eksterntest-stoettesystemerne.dk/runtime/saml2auth/metadata.idp`  
    The certificate is base64 encoded and can be converted into a certificate .cer file with the [Foxids certificate tool](https://www.foxids.com/tools/Certificate). 

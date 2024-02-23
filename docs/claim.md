@@ -9,14 +9,14 @@ Then the claims process continues in the [application registration](parties.md#a
 
 In a [Client Credentials Grant](app-reg-oauth-2.0.md#client-credentials-grant) scenario, the claims process is only done in the application registration. The same goes for the claim transforms and the configuration of which claims have to be issued to the application / API.
 
-## Up-party
-In both an [OpenID Connect](up-party-oidc.md) and [SAML 2.0](up-party-saml-2.0.md) up-party claims are carried forward by adding them to the `Forward claims` list. All claims are carried forward if a wildcard `*` is added to the `Forward claims` list.
+## Authentication method
+In both an [OpenID Connect](up-party-oidc.md) and [SAML 2.0](up-party-saml-2.0.md) authentication method claims are carried forward by adding them to the `Forward claims` list. All claims are carried forward if a wildcard `*` is added to the `Forward claims` list.
 
-An up-party issues two claims which can be read in the application registration and used in [claim transforms](claim-transform.md). The claims always apply to the last up-party.  
-The up-party issued claims (default forward):
+An authentication method issues two claims which can be read in the application registration and used in [claim transforms](claim-transform.md). The claims always apply to the last authentication method.  
+The authentication method issued claims (default forward):
 
-- `up_party` contain the the up-party name, the name is unique in a track.
-- `up_party_type` contain the the up-party type: `login`, `oidc` or `saml`.
+- `up_party` contain the the authentication method name, the name is unique in a track.
+- `up_party_type` contain the the authentication method type: `login`, `oidc` or `saml`.
 
 A `sub` claim and an access token revived from an external Identity Provider is nested with a pipe symbol (|) after the up_party name.  
 Examples: 

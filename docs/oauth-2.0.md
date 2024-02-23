@@ -1,6 +1,6 @@
 ﻿# OAuth 2.0
 
-Foxids support OAuth 2.0 as a application registration. OAuth 2.0 is not supported as an up-party.
+Foxids support OAuth 2.0 as a application registration. OAuth 2.0 is not supported as an authentication method.
 
 ![Foxids OAuth 2.0](images/parties-oauth.svg)
 

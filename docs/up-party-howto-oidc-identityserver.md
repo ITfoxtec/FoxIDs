@@ -1,21 +1,21 @@
-﻿# Connect IdentityServer with OpenID Connect up-party
+﻿# Connect IdentityServer with OpenID Connect authentication method
 
 Foxids can be connected to an IdentityServer with OpenID Connect and thereby authenticating end users in an IdentityServer.
 
 It is possible to connect an [IdentityServer client](#configure-identityserver-client) and read claims from the ID token or select a more complex case where claims is [read form the access token](#read-claims-from-access-token).
 
-> The [sample](samples.md) `IdentityServerOidcOpSample` is configured in the Foxids `test-corp` with the up-party name `identityserver_oidc_op_sample`.  
+> The [sample](samples.md) `IdentityServerOidcOpSample` is configured in the Foxids `test-corp` with the authentication method name `identityserver_oidc_op_sample`.  
 > You can test login (username `alice` and password `alice`) using the `IdentityServerOidcOpSample` and the `AspNetCoreOidcAuthorizationCodeSample` [samples](samples.md). By clicking `OIDC IdentityServer Log in` in the `AspNetCoreOidcAuthorizationCodeSample` application.  
 > The `IdentityServerOidcOpSample` sample is configured with Implicit Flow to enable local testing, please use Authorization Code Flow in production.
 
 > Take a look at the IdentityServer sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Parties` and `Up-parties` tab.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Authentication methods` tab.
 
 ## Configure IdentityServer client
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
 
-**1 - Start by creating an OpenID Connect up-party client in [Foxids Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method client in [Foxids Control Client](control.md#foxids-control-client)**
 
  1. Add the name
 
@@ -51,20 +51,20 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 
 *Code from the `IdentityServerOidcOpSample` [sample configuration]( https://github.com/ITfoxtec/Foxids.Samples/blob/master/src/IdentityServerOidcOpSample/Config.cs).*
 
-**3 - Go back to the Foxids up-party client in [Foxids Control Client](control.md#foxids-control-client)**
+**3 - Go back to the Foxids authentication method client in [Foxids Control Client](control.md#foxids-control-client)**
 
  1. Add the IdentityServer's authority
  2. Add the profile and email scopes (possible other or more scopes)
  3. Add the IdentityServer client's client secret value as the client secret
  4. Select show advanced settings
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
+ 6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
  7. Click create
 
 That's it, you are done. 
 
-> The new up-party can now be selected as an allowed up-party in a application registration.  
-> The application registration can read the claims from the up-party. It is possible to add the access_token claim to include the IdentityServer access token as a claim in the issued access token.
+> The new authentication method can now be selected as an allowed authentication method in a application registration.  
+> The application registration can read the claims from the authentication method. It is possible to add the access_token claim to include the IdentityServer access token as a claim in the issued access token.
 
 ## Read claims from access token
 
@@ -96,6 +96,6 @@ You can remove the `AlwaysIncludeUserClaimsInIdToken = true` from the client.
 
 **2 - Then go to [Foxids Control Client](control.md#foxids-control-client)**
 
-1. Add the API scope `some.api.access` as a scope in the Foxids up-party client
+1. Add the API scope `some.api.access` as a scope in the Foxids authentication method client
 2. Read claims from access token by not selecting to use claims from ID token
 

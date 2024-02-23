@@ -6,8 +6,8 @@ Foxids is both an [authentication](login.md) platform and a security broker wher
 
 Foxids is designed as a container with multi-tenant support. Your tenant holds your tracks which correspond to your environments (prod, QA, test, dev) and other elements. 
 Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
-Connections to external Identity Provider is configured as [OpenID Connect 1.0](up-party-oidc.md) or [SAML 2.0](up-party-saml-2.0.md) up-parties where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
-The users [login](login.md) experience is configured as an up-party.
+Connections to external Identity Provider is configured as [OpenID Connect 1.0](up-party-oidc.md) or [SAML 2.0](up-party-saml-2.0.md) authentication methods where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
+The users [login](login.md) experience is configured as an authentication method.
 
 > Take a look at the Foxids test configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`
@@ -39,19 +39,19 @@ If Foxids is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated
 The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/track-y/`.
 
 A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z/`.  
-A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
-If Foxids handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
+A authentication method is call by adding the authentication method name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
+If Foxids handles a authentication method sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
-When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which up-party the user should authenticate. 
-The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(up-party-v)/`.  
+When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which authentication method the user should authenticate. 
+The authentication method is selected by adding the authentication method name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(up-party-v)/`.  
 
-Selecting multiple up-parties:
+Selecting multiple authentication methods:
 
-- Select all allowed up-parties for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(*)/`
-- Select a maximum of 4 allowed up-parties for a application registration by adding the up-parties as a comma separated list in round brackets 
+- Select all allowed authentication methods for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(*)/`
+- Select a maximum of 4 allowed authentication methods for a application registration by adding the authentication methods as a comma separated list in round brackets 
   in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
 
-> The allowed up-parties is configured in each [application registration](parties.md#application-registration).
+> The allowed authentication methods is configured in each [application registration](parties.md#application-registration).
 
-A client using client credentials as authorization grant would not specify the up-party. 
-It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.
+A client using client credentials as authorization grant would not specify the authentication method. 
+It is likewise optional to specify the authentication method when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

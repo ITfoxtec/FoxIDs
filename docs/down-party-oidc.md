@@ -50,16 +50,16 @@ How to configure your application as a OpenID Connect application registration R
 > The clients Foxids discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
 > if the client is configured in tenant `tenant-x` and track `track-y` with the application registration client name `party-client1`.
 
-> A application registration client can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
-> An up-party name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
+> A application registration client can possibly support login through multiple [authentication methods](parties.md#up-party) by adding the authentication method name to the URL.  
+> An authentication method name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
 
-During RP-initiated logout the up-party name can be omitted in the URL if the ID Token is provided in the request.
+During RP-initiated logout the authentication method name can be omitted in the URL if the ID Token is provided in the request.
 
 ### Configure Authorization Code Flow for a confidential client
 A confidential client could be a web application where the security is handled by the webserver which also stores the client secret.
 
 - Specify client name in application registration name.
-- Select allowed up-parties.
+- Select allowed authentication methods.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
 - Select `code` as response type or possible but not recommended `code token` or `code token id_token`.
@@ -72,7 +72,7 @@ A confidential client could be a web application where the security is handled b
 A public client could be a browser-based riches client, Blazor client or mobile app. The application should use PKCE and not a client secret.
 
 - Specify client name in application registration name.
-- Select allowed up-parties.
+- Select allowed authentication methods.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
 - Select `code` as response type.
@@ -87,7 +87,7 @@ A public client could be a web application where the security is handled by the 
 *It is not recommended to use Implicit Code Flow because it is insecure.*
 
 - Specify client name in application registration name.
-- Select allowed up-parties.
+- Select allowed authentication methods.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
 - Select `token id_token` as response type or possible only `token`.

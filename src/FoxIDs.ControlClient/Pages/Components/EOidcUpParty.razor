@@ -15,7 +15,7 @@
         @if (oidcUpParty.Form.Model.IsManual)
         {
             <div class="mb-3 alert alert-warning" role="alert">
-                The OpenID Connect up-party is configured with manual update, which can only be updated through the Control API.
+                The OpenID Connect application is configured with manual update, which can only be updated through the Control API.
             </div>
         }
 
@@ -131,8 +131,8 @@
         @if (oidcUpParty.Form.Model.AutomaticStopped)
         {
             <div class="mb-3 alert alert-warning" role="alert">
-                <i>Automatic configuration update is currently stopped.</i>
-                <div>Restart the automatic configuration update process by clicking the update button.</div>
+                <i>Automatic environment update is currently stopped.</i>
+                <div>Restart the automatic environment update process by clicking the update button.</div>
             </div>
         }
 
@@ -226,7 +226,7 @@
                                 <div class="form-group active-group active">
                                     <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
                                     <div class="font-italic alert alert-secondary" role="alert">
-                                        You need to create the up-party before it is possible to add a client certificate.
+                                        You need to create the application before it is possible to add a client certificate.
                                     </div>
                                 </div>
                             }

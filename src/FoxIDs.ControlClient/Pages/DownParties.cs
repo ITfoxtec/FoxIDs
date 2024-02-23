@@ -171,7 +171,7 @@ namespace FoxIDs.Client.Pages
             } 
             else if (downParty.Type == PartyTypes.TrackLink)
             {
-                return $"{downParty.DisplayName ?? downParty.Name} (Configuration link)";
+                return $"{downParty.DisplayName ?? downParty.Name} (Environment link)";
             }
 
             throw new NotSupportedException();

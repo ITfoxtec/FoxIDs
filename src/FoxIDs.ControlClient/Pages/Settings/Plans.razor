@@ -1,8 +1,38 @@
 ﻿@page "/{tenantName}/plans"
 @inherits PageBase
 
-<div class="d-flex">
-    <div class="mr-auto p-2">
+<ul class="nav nav-tabs">
+    @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tenantSettingsHref">Tenant</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    @if (IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link active">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
+</ul>
+
+<div class="d-flex pt-2">
+    <div class="mr-auto">
     </div>
     <div class="p-2">
         <button type="button" class="btn btn-primary" @onclick="@(() => ShowCreatePlan())">

@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class CreateTrackViewModel
     {
         /// <summary>
-        /// Configuration name.
+        /// Environment name.
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern, ErrorMessage = "The field {0} can only contain letters, numbers, '-' and '_'.")]

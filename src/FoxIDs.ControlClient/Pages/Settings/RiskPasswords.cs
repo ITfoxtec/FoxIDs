@@ -8,14 +8,25 @@ using System;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Models.Api;
+using FoxIDs.Client.Logic;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Settings
 {
     public partial class RiskPasswords
     {
+        private string tenantSettingsHref;
+        private string trackSettingsHref;
+        private string mailSettingsHref;
+        private string claimMappingsHref;
+        private string textsHref;
+        private string plansHref;
+
         private string riskPasswordLoadError;
         private RiskPasswordInfo uploadRiskPassword { get; set; }
         private PageEditForm<TestRiskPasswordViewModel> testRiskPasswordForm { get; set; }
+
+        [Inject]
+        public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
         public RiskPasswordService RiskPasswordService { get; set; }
@@ -23,8 +34,18 @@ namespace FoxIDs.Client.Pages
         [Parameter]
         public string TenantName { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+
         protected override async Task OnInitializedAsync()
         {
+            tenantSettingsHref = $"{TenantName}/tenantsettings";
+            trackSettingsHref = $"{TenantName}/envsettings";
+            mailSettingsHref = $"{TenantName}/mailsettings";
+            claimMappingsHref = $"{TenantName}/claimmappings";
+            textsHref = $"{TenantName}/texts";
+            plansHref = $"{TenantName}/plans";
             await base.OnInitializedAsync();
             await DefaultRiskPasswordLoadAsync();
         }

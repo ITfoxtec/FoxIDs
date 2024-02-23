@@ -272,12 +272,12 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalOidcDownParty.CreateMode)
                 {
                     generalOidcDownParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect down-party created.");
+                    toastService.ShowSuccess("OpenID Connect authentication method created.");
                     generalOidcDownParty.Name = oidcDownPartyResult.Name;
                 }
                 else
                 {
-                    toastService.ShowSuccess("OpenID Connect down-party updated.");
+                    toastService.ShowSuccess("OpenID Connect authentication method updated.");
                 }
                 generalOidcDownParty.DisplayName = oidcDownPartyResult.DisplayName;
             }

@@ -12,13 +12,16 @@ using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
 using ITfoxtec.Identity;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Settings
 {
     public partial class TenantSettings
     {
         private string trackSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
+        private string textsHref;
+        private string plansHref;
+        private string riskPasswordsHref;
         private PageEditForm<TenantSettingsViewModel> tenantSettingsForm;
         private string deleteTenantError;
         private bool deleteTenantAcknowledge = false;
@@ -26,7 +29,10 @@ namespace FoxIDs.Client.Pages
         private Modal tenantDeletedModal;
 
         [Inject]
-        public IToastService toastService { get; set; }
+        public NavigationManager NavigationManager { get; set; }
+
+        [Inject]
+        public IToastService ToastService { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -48,13 +54,16 @@ namespace FoxIDs.Client.Pages
             set { }
         }
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
 
         protected override async Task OnInitializedAsync()
         {
-            trackSettingsHref = $"{TenantName}/confsettings";
+            trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
+            textsHref = $"{TenantName}/texts";
+            plansHref = $"{TenantName}/plans";
+            riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
@@ -66,6 +75,10 @@ namespace FoxIDs.Client.Pages
         private async Task OnTrackSelectedAsync(Track track)
         {
             await DefaultLoadAsync();
+            if (!IsMasterTrack)
+            {
+                NavigationManager.NavigateTo(trackSettingsHref);
+            }
             StateHasChanged();
         }
 
@@ -95,7 +108,7 @@ namespace FoxIDs.Client.Pages
             try
             {
                 var myTenant = await MyTenantService.UpdateTenantAsync(tenantSettingsForm.Model.Map<MyTenantRequest>());
-                toastService.ShowSuccess("Tenant settings updated.");
+                ToastService.ShowSuccess("Tenant settings updated.");
                 savedCustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomain = myTenant.CustomDomain;
                 tenantSettingsForm.Model.CustomDomainVerified = myTenant.CustomDomainVerified;

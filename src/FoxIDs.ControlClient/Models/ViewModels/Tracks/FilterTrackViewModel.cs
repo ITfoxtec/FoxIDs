@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
     public class FilterTrackViewModel
     {
         /// <summary>
-        /// Search by track name.
+        /// Search by environment name.
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [Display(Name = "Filter configurations")]

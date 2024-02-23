@@ -5,18 +5,30 @@
     @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
     {
         <li class="nav-item">
-            <a class="nav-link" href="@tenantSettingsHref">Tenant settings</a>
+            <a class="nav-link" href="@tenantSettingsHref">Tenant</a>
         </li>
     }
     <li class="nav-item">
-        <a class="nav-link" href="@trackSettingsHref">Configuration settings</a>
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link active">Mail settings</a>
+        <a class="nav-link active">Mail</a>
     </li>
     <li class="nav-item">
         <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    @if (IsMasterTenant)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@plansHref">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
 </ul>
 
 <div class="tab-content">

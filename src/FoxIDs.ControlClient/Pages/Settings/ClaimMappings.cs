@@ -13,13 +13,16 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Components.Web;
 using Blazored.Toast.Services;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Settings
 {
     public partial class ClaimMappings
     {
         private string tenantSettingsHref;
         private string trackSettingsHref;
         private string mailSettingsHref;
+        private string textsHref;
+        private string plansHref;
+        private string riskPasswordsHref;
         private PageEditForm<ClaimMappingViewModel> trackClaimMappingForm;
         private PageEditForm<ClaimMappingDefaultViewModel> trackClaimMappingDefaultForm;
 
@@ -37,13 +40,16 @@ namespace FoxIDs.Client.Pages
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
 
         protected override async Task OnInitializedAsync()
         {
             tenantSettingsHref = $"{TenantName}/tenantsettings";
-            trackSettingsHref = $"{TenantName}/confsettings";
+            trackSettingsHref = $"{TenantName}/envsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
+            textsHref = $"{TenantName}/texts";
+            plansHref = $"{TenantName}/plans";
+            riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

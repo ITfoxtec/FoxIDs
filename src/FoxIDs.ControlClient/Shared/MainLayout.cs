@@ -133,13 +133,13 @@ namespace FoxIDs.Client.Shared
                 }));
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
-                createTenantReceipt.Add("Master configuration with user repository created.");
+                createTenantReceipt.Add("Master environment with user repository created.");
                 createTenantReceipt.Add("Master login authentication method created.");
                 createTenantReceipt.Add("First master administrator user created.");
                 createTenantReceipt.Add("Master Control API registration created.");
                 createTenantReceipt.Add("Master Control client registration created.");
-                createTenantReceipt.Add("Test configuration with user repository created.");
-                createTenantReceipt.Add("Production configuration with user repository created.");
+                createTenantReceipt.Add("Test environment with user repository created.");
+                createTenantReceipt.Add("Production environment with user repository created.");
 
                 await NotificationLogic.TenantUpdatedAsync();
             }
@@ -178,7 +178,7 @@ namespace FoxIDs.Client.Shared
                 var track = createTrackForm.Model.Map<Track>();
                 var trackResponse = await TrackService.CreateTrackAsync(track);
                 createTrackDone = true;
-                createTrackReceipt.Add("Configuration created.");
+                createTrackReceipt.Add("Environment created.");
                 createTrackReceipt.Add("User repository created.");
                 createTrackReceipt.Add("Certificate created.");
                 createTrackReceipt.Add("Login authentication method created.");

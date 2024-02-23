@@ -11,13 +11,16 @@ using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
 using Blazored.Toast.Services;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Settings
 {
     public partial class TrackSettings
     {
         private string tenantSettingsHref;
         private string mailSettingsHref;
         private string claimMappingsHref;
+        private string textsHref;
+        private string plansHref;
+        private string riskPasswordsHref;
         private PageEditForm<TrackSettingsViewModel> trackSettingsForm;
         private string deleteTrackError;
         private bool deleteTrackAcknowledge = false;
@@ -36,13 +39,16 @@ namespace FoxIDs.Client.Pages
 
         private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
 
-        private bool IsMasterTrack => trackSettingsForm != null && Constants.Routes.MasterTrackName.Equals(trackSettingsForm.Model.Name, StringComparison.OrdinalIgnoreCase);
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
 
         protected override async Task OnInitializedAsync()
         {
             tenantSettingsHref = $"{TenantName}/tenantsettings";
             mailSettingsHref = $"{TenantName}/mailsettings";
             claimMappingsHref = $"{TenantName}/claimmappings";
+            textsHref = $"{TenantName}/texts";
+            plansHref = $"{TenantName}/plans";
+            riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

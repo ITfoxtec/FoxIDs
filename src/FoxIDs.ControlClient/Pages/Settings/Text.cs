@@ -13,14 +13,27 @@ using System.Net.Http;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using System.Threading.Tasks;
 using FoxIDs.Client.Logic;
+using Blazored.Toast.Services;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Settings
 {
-    public partial class Texts
+    public partial class Text
     {
+        private string tenantSettingsHref;
+        private string trackSettingsHref;
+        private string mailSettingsHref;
+        private string claimMappingsHref;
+        private string plansHref;
+        private string riskPasswordsHref;
+
         private PageEditForm<FilterResourceViewModel> resourceFilterForm;
         private List<GeneralResourceViewModel> resources = new List<GeneralResourceViewModel>();
-        private string textSettingsHref;
+
+        private GeneralResourceSettingsViewModel generalTextSettings = new GeneralResourceSettingsViewModel();
+        private Modal textSettingsModal;
+
+        [Inject]
+        public IToastService toastService { get; set; }
 
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -31,9 +44,18 @@ namespace FoxIDs.Client.Pages
         [Parameter]
         public string TenantName { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+
         protected override async Task OnInitializedAsync()
         {
-            textSettingsHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/textsettings";
+            tenantSettingsHref = $"{TenantName}/tenantsettings";
+            trackSettingsHref = $"{TenantName}/envsettings";
+            mailSettingsHref = $"{TenantName}/mailsettings";
+            claimMappingsHref = $"{TenantName}/claimmappings";
+            plansHref = $"{TenantName}/plans";
+            riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
@@ -156,6 +178,7 @@ namespace FoxIDs.Client.Pages
                 await TrackService.UpdateTrackResourceAsync(resource.Form.Model.Map<TrackResourceItem>());
                 resource.CreateMode = false;
                 resource.Edit = false;
+                toastService.ShowSuccess("Test updated.");
             }
             catch (FoxIDsApiException ex)
             {
@@ -178,6 +201,7 @@ namespace FoxIDs.Client.Pages
                 resource.CreateMode = true;
                 resource.Edit = false;
                 resource.Form.Model.Name = null;
+                toastService.ShowSuccess("Text deleted.");
             }
             catch (TokenUnavailableException)
             {
@@ -186,6 +210,42 @@ namespace FoxIDs.Client.Pages
             catch (Exception ex)
             {
                 resource.Form.SetError(ex.Message);
+            }
+        }
+
+        private async Task ShowUpdateTextSettingsModalAsync()
+        {
+            generalTextSettings.Error = null;
+            generalTextSettings.Edit = true;
+
+            try
+            {
+                var textSettings = await TrackService.GetTrackResourceSettingAsync();
+                await generalTextSettings.Form.InitAsync(textSettings);
+                textSettingsModal.Show();
+            }
+            catch (TokenUnavailableException)
+            {
+                await (OpenidConnectPkce as TenantOpenidConnectPkce).TenantLoginAsync();
+            }
+            catch (HttpRequestException ex)
+            {
+                generalTextSettings.Error = ex.Message;
+            }
+        }
+
+        private async Task OnUpdateTextSettingsValidSubmitAsync(EditContext editContext)
+        {
+            try
+            {
+                await TrackService.SaveTrackResourceSettingAsync(generalTextSettings.Form.Model);
+                generalTextSettings.Edit = false;
+                textSettingsModal.Hide();
+                toastService.ShowSuccess("Text settings updated.");
+            }
+            catch (Exception ex)
+            {
+                generalTextSettings.Form.SetError(ex.Message);
             }
         }
     }

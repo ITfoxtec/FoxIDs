@@ -316,12 +316,12 @@ namespace FoxIDs.Client.Pages.Components
                 if (generalOAuthDownParty.CreateMode)
                 {
                     generalOAuthDownParty.CreateMode = false;
-                    toastService.ShowSuccess("OAuth down-party created.");
+                    toastService.ShowSuccess("OAuth authentication method created.");
                     generalOAuthDownParty.Name = oauthDownPartyResult.Name;
                 }
                 else
                 {
-                    toastService.ShowSuccess("OAuth down-party updated.");
+                    toastService.ShowSuccess("OAuth authentication method updated.");
                 }
                 generalOAuthDownParty.DisplayName = oauthDownPartyResult.DisplayName;
             }

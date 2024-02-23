@@ -29,7 +29,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow up-party names")]
+        [Display(Name = "Allow application names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [MaxLength(Constants.Models.Party.IssuerLength)]

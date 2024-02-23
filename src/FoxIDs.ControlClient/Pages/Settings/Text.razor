@@ -2,13 +2,40 @@
 @inherits PageBase
 
 <ul class="nav nav-tabs">
+    @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@tenantSettingsHref">Tenant</a>
+        </li>
+    }
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
     <li class="nav-item">
         <a class="nav-link active">Texts</a>
     </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@textSettingsHref">Settings</a>
-    </li>
+    @if (IsMasterTenant)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@plansHref">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
 </ul>
+
+<div class="text-sm-right pt-2">
+    <button class="btn btn-link text-left pr-0" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
+        Change text settings
+    </button>
+</div>
 
 <PageEditForm @ref="resourceFilterForm" TModel="FilterResourceViewModel" OnValidSubmit="OnResourceFilterValidSubmitAsync">
     <FInputTextFilter @bind-Value="resourceFilterForm.Model.FilterName" For="@(() => resourceFilterForm.Model.FilterName)" />
@@ -127,4 +154,32 @@
         </li>
     }
 </ul>
+
+<Modal @ref="textSettingsModal" Title="Text Settings">
+    <div class="info-text">
+        Each text element in Foxids has its unique ID. It is possible to change the settings so that the ID's are displayed together with the text, making it possible to search the text elements by ID.
+    </div>
+
+    @if (!generalTextSettings.Error.IsNullOrWhiteSpace())
+    {
+        <div class="alert alert-danger" role="alert">
+            @generalTextSettings.Error
+        </div>
+    }
+    <PageEditForm @ref="generalTextSettings.Form" TModel="Api.ResourceSettings" OnValidSubmit="OnUpdateTextSettingsValidSubmitAsync">
+        @if (generalTextSettings.Form?.Model != null)
+        {
+            <div class="modal-header">
+                Text settings
+            </div>
+            <div class="modal-body">
+                <FInputToggle @bind-Value="generalTextSettings.Form.Model.ShowResourceId" For="@(() => generalTextSettings.Form.Model.ShowResourceId)" TextType="e.d" />
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-secondary" @onclick="@(() => { generalTextSettings.Edit = false; textSettingsModal.Hide(); })">Cancel</button>
+            </div>
+        }
+    </PageEditForm>
+</Modal>
 

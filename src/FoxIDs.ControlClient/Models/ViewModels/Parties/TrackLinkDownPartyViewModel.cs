@@ -26,18 +26,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        [Display(Name = "To track name")]
+        [Display(Name = "To environment")]
         public string ToUpTrackName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "To up-party name")]
+        [Display(Name = "To application")]
         public string ToUpPartyName { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow up-party names")]
+        [Display(Name = "Allow applications")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [ValidateComplexType]

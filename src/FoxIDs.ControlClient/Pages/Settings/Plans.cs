@@ -7,17 +7,24 @@ using FoxIDs.Models.Api;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Blazored.Toast.Services;
+using FoxIDs.Client.Logic;
 
-namespace FoxIDs.Client.Pages
+namespace FoxIDs.Client.Pages.Settings
 {
     public partial class Plans
     {
+        private string tenantSettingsHref;
+        private string trackSettingsHref;
+        private string mailSettingsHref;
+        private string claimMappingsHref;
+        private string textsHref;
+        private string riskPasswordsHref;
+
         private PageEditForm<FilterPlanViewModel> planFilterForm;
         private List<GeneralPlanViewModel> plans = new List<GeneralPlanViewModel>();
 
@@ -25,13 +32,26 @@ namespace FoxIDs.Client.Pages
         public IToastService toastService { get; set; }
 
         [Inject]
+        public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
         public PlanService PlanService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
 
+        private bool IsMasterTenant => RouteBindingLogic.IsMasterTenant;
+
+        private bool IsMasterTrack => Constants.Routes.MasterTrackName.Equals(TrackSelectedLogic.Track?.Name, StringComparison.OrdinalIgnoreCase);
+
         protected override async Task OnInitializedAsync()
         {
+            tenantSettingsHref = $"{TenantName}/tenantsettings";
+            trackSettingsHref = $"{TenantName}/envsettings";
+            mailSettingsHref = $"{TenantName}/mailsettings";
+            claimMappingsHref = $"{TenantName}/claimmappings";
+            textsHref = $"{TenantName}/texts";
+            riskPasswordsHref = $"{TenantName}/riskpasswords";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)

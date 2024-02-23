@@ -180,7 +180,7 @@ namespace FoxIDs.Client.Pages
             }
             else if (upParty.Type == PartyTypes.TrackLink)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (Configuration link)";
+                return $"{upParty.DisplayName ?? upParty.Name} (Environment link)";
             }
             throw new NotSupportedException();
         }

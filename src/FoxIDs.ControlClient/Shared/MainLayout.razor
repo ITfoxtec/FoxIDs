@@ -28,7 +28,7 @@
                                     </div>
                                 }
                                 <div class=" form-group active-group active">
-                                    <label class="label-control">Configuration</label>
+                                    <label class="label-control">Environments</label>
                                     <div class="card">
                                         <div class="nav-link dropdown-toggle card-body px-3 py-2 text-left" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <span style="width: 100%">
@@ -47,10 +47,10 @@
 
                                                 <div class="d-flex">
                                                     <div class="mr-auto info-text">
-                                                        A configuration is an <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdP with a unique ID, certificate and user store.
+                                                        A environment is an <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdP with a unique ID, certificate and user store.
                                                     </div>
                                                     <div class="py-2">
-                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New configuration</button>
+                                                        <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New environment</button>
                                                     </div>
                                                 </div>
                                                 <div class="form-group active-group pb-2">
@@ -66,7 +66,7 @@
                                                     {
                                                         <div class="dropdown-divider"></div>
                                                         <div class="info-text pl-1 pb-1">
-                                                            Your tenant access is configured in the master configuration.
+                                                            Your tenant access is configured in the master environment.
                                                         </div>
                                                     }
                                                     <button class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => SelectTrackAsync(track))">
@@ -138,19 +138,7 @@
                             <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
                                 Logs
                             </TenantLiNavLink>
-                            <TenantLiNavLink Href="texts">
-                                Text
-                            </TenantLiNavLink>
-                            @if (RouteBindingLogic.IsMasterTenant)
-                            {
-                                <TenantLiNavLink Href="plans">
-                                    Plans
-                                </TenantLiNavLink>
-                                <TenantLiNavLink Href="riskpasswords">
-                                    Risk Passwords
-                                </TenantLiNavLink>
-                            }
-                            <TenantLiNavLink Href="confsettings" SubPages="tenantsettings,mailsettings,claimmappings">
+                            <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings">
                                 Settings
                             </TenantLiNavLink>
                             <li class="nav-item">
@@ -204,7 +192,7 @@
                             </div>
 
                             <div class="mr-auto info-text">
-                                Create a configuration with a meaningful name.
+                                Create a environment with a meaningful name.
                             </div>
                             <FInputText @bind-Value="createTrackForm.Model.DisplayName" For="@(() => createTrackForm.Model.DisplayName)" Focus="true" />
 

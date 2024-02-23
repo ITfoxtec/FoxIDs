@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => "Up, OIDC Authentication request redirect.");
+            logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, OIDC Authentication request.");
+            logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request.");
             var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
@@ -149,7 +149,7 @@ namespace FoxIDs.Logic
             //TODO add AcrValues
             //authenticationRequest.AcrValues = "urn:federation:authentication:windows";
 
-            logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
             if (party.Client.AdditionalParameters?.Count() > 0)
@@ -158,7 +158,7 @@ namespace FoxIDs.Logic
                 {
                     nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
                 }
-                logger.ScopeTrace(() => $"Up, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }
 
             if (party.Client.EnablePkce)
@@ -169,20 +169,20 @@ namespace FoxIDs.Logic
                     CodeChallengeMethod = IdentityConstants.CodeChallengeMethods.S256,
                 };
 
-                logger.ScopeTrace(() => $"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            logger.ScopeTrace(() => $"Up, Authentication request URL '{party.Client.AuthorizeUrl}'.");
-            logger.ScopeTrace(() => "Up, Sending OIDC Authentication request.", triggerEvent: true);
+            logger.ScopeTrace(() => $"AuthMethod, Authentication request URL '{party.Client.AuthorizeUrl}'.");
+            logger.ScopeTrace(() => "AuthMethod, Sending OIDC Authentication request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl, RouteBinding.DisplayName);            
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => $"Up, OIDC Authentication response.");
+            logger.ScopeTrace(() => $"AuthMethod, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<TParty>(partyId);
@@ -191,7 +191,7 @@ namespace FoxIDs.Logic
             (var formOrQueryDictionary, var onlyAcceptGetResponseWithError) = GetFormOrQueryDictionary(party);
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
-            logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
             OidcUpSequenceData sequenceData = null;
@@ -209,12 +209,12 @@ namespace FoxIDs.Logic
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)
             {
-                logger.ScopeTrace(() => $"Up, Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             try
             {
-                logger.ScopeTrace(() => "Up, OIDC Authentication response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AuthMethod, OIDC Authentication response.", triggerEvent: true);
 
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
                 ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow, onlyAcceptGetResponseWithError);
@@ -224,8 +224,8 @@ namespace FoxIDs.Logic
                     true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
-                logger.ScopeTrace(() => "Up, Successful OIDC Authentication response.", triggerEvent: true);
-                logger.ScopeTrace(() => $"Up, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => "AuthMethod, Successful OIDC Authentication response.", triggerEvent: true);
+                logger.ScopeTrace(() => $"AuthMethod, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
@@ -247,7 +247,7 @@ namespace FoxIDs.Logic
                     await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
                 }
 
-                logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }
             catch (StopSequenceException)
@@ -327,7 +327,7 @@ namespace FoxIDs.Logic
 
         private async Task<TokenResponse> TokenRequestAsync(TClient client, string code, OidcUpSequenceData sequenceData)
         {
-            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
             var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
 
             var tokenRequest = new TokenRequest
@@ -337,7 +337,7 @@ namespace FoxIDs.Logic
                 ClientId = !client.SpClientId.IsNullOrWhiteSpace() ? client.SpClientId : client.ClientId,
                 RedirectUri = sequenceData.RedirectUri,
             };
-            logger.ScopeTrace(() => $"Up, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var requestDictionary = tokenRequest.ToDictionary();
 
             requestDictionary = await AddClientAuthenticationAsync(client, tokenRequest.ClientId, request, requestDictionary);
@@ -348,7 +348,7 @@ namespace FoxIDs.Logic
                 {
                     CodeVerifier = sequenceData.CodeVerifier,
                 };
-                logger.ScopeTrace(() => $"Up, Code verifier secret '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Code verifier secret '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
@@ -360,7 +360,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var tokenResponse = result.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"Up, Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     tokenResponse.Validate(true);
                     if (tokenResponse.AccessToken.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenResponse.AccessToken), tokenResponse.GetTypeName());
                     if (tokenResponse.ExpiresIn <= 0) throw new ArgumentNullException(nameof(tokenResponse.ExpiresIn), tokenResponse.GetTypeName());
@@ -369,7 +369,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.BadRequest:
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var tokenResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"Up, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     try
                     {
                         tokenResponseBadRequest.Validate(true);
@@ -385,7 +385,7 @@ namespace FoxIDs.Logic
                     {
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                         var tokenResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
-                        logger.ScopeTrace(() => $"Up, Unexpected status code token response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AuthMethod, Unexpected status code token response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         try
                         {
                             tokenResponseUnexpectedStatus.Validate(true);
@@ -413,7 +413,7 @@ namespace FoxIDs.Logic
             {
                 if (!client.ClientSecret.IsNullOrEmpty())
                 {
-                    logger.ScopeTrace(() => $"Up, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
                     request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, $"{WebUtility.UrlEncode(clientId)}:{WebUtility.UrlEncode(client.ClientSecret)}".Base64Encode());
                 }
             }
@@ -425,7 +425,7 @@ namespace FoxIDs.Logic
                     {
                         ClientSecret = client.ClientSecret,
                     };
-                    logger.ScopeTrace(() => $"Up, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
                     requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
                 }
             }
@@ -442,8 +442,8 @@ namespace FoxIDs.Logic
                     ClientAssertionType = IdentityConstants.ClientAssertionTypes.JwtBearer,
                     ClientAssertion = await oidcJwtUpLogic.CreateClientAssertionAsync(client, clientId, algorithm)
                 };
-                logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => $"Up, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(clientAssertionCredentials);
             }
             else

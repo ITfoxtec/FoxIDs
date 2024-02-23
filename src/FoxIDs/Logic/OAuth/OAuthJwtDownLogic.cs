@@ -54,7 +54,7 @@ namespace FoxIDs.Logic
 
             accessTokenClaims.AddClaim(JwtClaimTypes.ClientId, client.ClientId);
 
-            logger.ScopeTrace(() => $"Down, JWT access token claims '{accessTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AppReg, JWT access token claims '{accessTokenClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var token = JwtHandler.CreateToken(await trackKeyLogic.GetPrimarySecurityKeyAsync(RouteBinding.Key), trackIssuerLogic.GetIssuer(), audiences, accessTokenClaims, expiresIn: client.AccessTokenLifetime, algorithm: algorithm, typ: IdentityConstants.JwtHeaders.MediaTypes.AtJwt);
             return await token.ToJwtString();
         }

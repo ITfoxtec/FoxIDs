@@ -33,7 +33,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(IEnumerable<string> partyIds, SingleLogoutSequenceData sequenceData, bool hostedInIframe, bool doSamlLogoutInIframe)
         {
-            logger.ScopeTrace(() => "Down, OIDC Front Channel logout request.");
+            logger.ScopeTrace(() => "AppReg, OIDC Front Channel logout request.");
             var frontChannelLogoutRequest = new FrontChannelLogoutRequest
             {
                 Issuer = trackIssuerLogic.GetIssuer(),

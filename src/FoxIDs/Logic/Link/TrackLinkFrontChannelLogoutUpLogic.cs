@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, Environment Link front channel logout.");
+            logger.ScopeTrace(() => "AuthMethod, Environment Link front channel logout.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 
@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
-            logger.ScopeTrace(() => "Up, Successful environment link front channel logout request.", triggerEvent: true);
+            logger.ScopeTrace(() => "AuthMethod, Successful environment link front channel logout request.", triggerEvent: true);
             if (session != null)
             {
                 var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);

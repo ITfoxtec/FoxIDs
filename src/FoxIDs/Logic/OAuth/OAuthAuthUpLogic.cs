@@ -100,7 +100,7 @@ namespace FoxIDs.Logic
         protected virtual async Task<List<Claim>> UserInforRequestAsync(TClient client, string accessToken)
         {
             ValidateClientUserInfoSupport(client);
-            logger.ScopeTrace(() => $"Up, OIDC UserInfo request URL '{client.UserInfoUrl}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, OIDC UserInfo request URL '{client.UserInfoUrl}'.", traceType: TraceTypes.Message);
 
             var httpClient = httpClientFactory.CreateClient(nameof(HttpClient));
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, accessToken);
@@ -111,7 +111,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var userInfoResponse = result.ToObject<Dictionary<string, string>>();
-                    logger.ScopeTrace(() => $"Up, UserInfo response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, UserInfo response '{userInfoResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
 
                     var claims = userInfoResponse.Select(c => new Claim(c.Key, c.Value)).ToList();
                     if (!claims.Any(c => c.Type == JwtClaimTypes.Subject))
@@ -123,7 +123,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.BadRequest:
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var userInfoResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"Up, Bad userinfo response '{userInfoResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Bad userinfo response '{userInfoResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     try
                     {
                         userInfoResponseBadRequest.Validate(true);
@@ -139,7 +139,7 @@ namespace FoxIDs.Logic
                     {
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                         var userInfoResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
-                        logger.ScopeTrace(() => $"Up, Unexpected status code userinfo response '{userInfoResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AuthMethod, Unexpected status code userinfo response '{userInfoResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         try
                         {
                             userInfoResponseUnexpectedStatus.Validate(true);
@@ -171,7 +171,7 @@ namespace FoxIDs.Logic
 
         public async Task<List<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
         {
-            logger.ScopeTrace(() => "Up, OAuth validate token exchange subject token.");
+            logger.ScopeTrace(() => "AuthMethod, OAuth validate token exchange subject token.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -179,8 +179,8 @@ namespace FoxIDs.Logic
 
             var claims = await ValidateTokenAsync(party, subjectToken, ResolveAudience(party));
 
-            logger.ScopeTrace(() => "Up, OAuth token exchange subject token valid.", triggerEvent: true);
-            logger.ScopeTrace(() => $"Up, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => "AuthMethod, OAuth token exchange subject token valid.", triggerEvent: true);
+            logger.ScopeTrace(() => $"AuthMethod, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
@@ -189,7 +189,7 @@ namespace FoxIDs.Logic
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
 
-            logger.ScopeTrace(() => $"Up, OAuth output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, OAuth output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return validClaims;
         }
 

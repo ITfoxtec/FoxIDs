@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)
         {
-            logger.ScopeTrace(() => "Down, SAML Logout request.");
+            logger.ScopeTrace(() => "AppReg, SAML Logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             ValidatePartyLogoutSupport(party);
@@ -91,7 +91,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     samlHttpRequest.Binding.Unbind(samlHttpRequest, saml2LogoutRequest);
-                    logger.ScopeTrace(() => "Down, SAML Logout request accepted.", triggerEvent: true);
+                    logger.ScopeTrace(() => "AppReg, SAML Logout request accepted.", triggerEvent: true);
                 }
                 catch (Exception ex)
                 {
@@ -182,7 +182,7 @@ namespace FoxIDs.Logic
 
         private Task<IActionResult> LogoutResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, Saml2StatusCodes status, string sessionIndex = null) 
         {
-            logger.ScopeTrace(() => $"Down, SAML Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
+            logger.ScopeTrace(() => $"AppReg, SAML Logout response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 
             var binding = party.LogoutBinding.ResponseBinding;
             logger.ScopeTrace(() => $"Binding '{binding}'");
@@ -212,7 +212,7 @@ namespace FoxIDs.Logic
             binding.Bind(saml2LogoutResponse);
             logger.ScopeTrace(() => $"SAML Logout response '{saml2LogoutResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Logged out URL '{party.LoggedOutUrl}'.");
-            logger.ScopeTrace(() => "Down, SAML Logout response.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, SAML Logout response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<SamlDownSequenceData>();
             if (party.RestrictFormAction)
@@ -239,7 +239,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutRequestAsync(string partyId, SingleLogoutSequenceData sequenceData)
         {
-            logger.ScopeTrace(() => "Down, SAML Single Logout request.");
+            logger.ScopeTrace(() => "AppReg, SAML Single Logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             if (!ValidatePartySingleLogoutSupport(party))
@@ -286,7 +286,7 @@ namespace FoxIDs.Logic
             binding.Bind(saml2LogoutRequest);
             logger.ScopeTrace(() => $"SAML Single Logout request '{saml2LogoutRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Single logged out URL '{party.SingleLogoutUrl}'.");
-            logger.ScopeTrace(() => "Down, SAML Single Logout request.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, SAML Single Logout request.", triggerEvent: true);
 
             if (party.RestrictFormAction)
             {
@@ -312,7 +312,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SingleLogoutResponseAsync(string partyId, Saml2Http.HttpRequest samlHttpRequest)
         {
-            logger.ScopeTrace(() => "Down, SAML Single Logout response.");
+            logger.ScopeTrace(() => "AppReg, SAML Single Logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
 
@@ -341,7 +341,7 @@ namespace FoxIDs.Logic
             try
             {
                 samlHttpRequest.Binding.Unbind(samlHttpRequest, saml2LogoutResponse);
-                logger.ScopeTrace(() => "Down, SAML Single Logout response accepted.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, SAML Single Logout response accepted.", triggerEvent: true);
 
             }
             catch (Exception ex)

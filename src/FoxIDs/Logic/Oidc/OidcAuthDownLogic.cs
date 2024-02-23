@@ -44,7 +44,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OIDC Authentication request.");
+            logger.ScopeTrace(() => "AppReg, OIDC Authentication request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if(party.Client == null)
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
             try
             {
                 ValidateAuthenticationRequest(party.Client, authenticationRequest, codeChallengeSecret);
-                logger.ScopeTrace(() => "Down, OIDC Authentication request accepted.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OIDC Authentication request accepted.", triggerEvent: true);
 
                 if(!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
                 {
@@ -270,7 +270,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims)
         {
-            logger.ScopeTrace(() => "Down, OIDC Authentication response.");
+            logger.ScopeTrace(() => "AppReg, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
@@ -280,9 +280,9 @@ namespace FoxIDs.Logic
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
-            logger.ScopeTrace(() => $"Down, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AppReg, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Down, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AppReg, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
 
@@ -353,7 +353,7 @@ namespace FoxIDs.Logic
                 }
 
                 logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");
-                logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OIDC Authentication response.", triggerEvent: true);
                 return nameValueCollection;
             }
             catch (KeyException kex)
@@ -385,7 +385,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null)
         {
-            logger.ScopeTrace(() => "Down, OIDC Authentication error response.");
+            logger.ScopeTrace(() => "AppReg, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);

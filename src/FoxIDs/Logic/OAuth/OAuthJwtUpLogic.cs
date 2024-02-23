@@ -64,7 +64,7 @@ namespace FoxIDs.Logic
                 new Claim(JwtClaimTypes.JwtId, Guid.NewGuid().ToString())
             };
 
-            logger.ScopeTrace(() => $"Up, JWT client assertion claims '{clientAssertionClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, JWT client assertion claims '{clientAssertionClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var claims = clientAssertionClaims.Where(c => c.Type != JwtClaimTypes.Issuer && c.Type != JwtClaimTypes.Audience);
             var token = JwtHandler.CreateToken(clientKeySecretLogic.GetClientKey(client), clientAssertionClaims.Single(c => c.Type == JwtClaimTypes.Issuer).Value, clientAssertionClaims.Single(c => c.Type == JwtClaimTypes.Audience).Value, 
                 claims, expiresIn: client.ClientAssertionLifetime, algorithm: algorithm);

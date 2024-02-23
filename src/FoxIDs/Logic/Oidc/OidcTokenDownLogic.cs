@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
 
         public override async Task<IActionResult> TokenRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OIDC Token request.");
+            logger.ScopeTrace(() => "AppReg, OIDC Token request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
@@ -47,13 +47,13 @@ namespace FoxIDs.Logic
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
             if (tokenRequest.GrantType != IdentityConstants.GrantTypes.TokenExchange)
             {
-                logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AppReg, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             var codeVerifierSecret = party.Client.RequirePkce ? formDictionary.ToObject<CodeVerifierSecret>() : null;
             if (codeVerifierSecret != null)
             {
-                logger.ScopeTrace(() => $"Down, Code verifier secret (PKCE) '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AppReg, Code verifier secret (PKCE) '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             try
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
-                        logger.ScopeTrace(() => $"Down, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AppReg, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
@@ -99,7 +99,7 @@ namespace FoxIDs.Logic
             {
                 await ValidatePkceAsync(client, authCodeGrant.CodeChallenge, authCodeGrant.CodeChallengeMethod, codeVerifierSecret);
             }
-            logger.ScopeTrace(() => "Down, OIDC Authorization code grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OIDC Authorization code grant accepted.", triggerEvent: true);
 
             try
             {
@@ -126,7 +126,7 @@ namespace FoxIDs.Logic
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.AuthorizationCode);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OIDC Token response.", triggerEvent: true);
                 return new JsonResult(tokenResponse);
             }
             catch (KeyException kex)
@@ -138,7 +138,7 @@ namespace FoxIDs.Logic
         protected override async Task<IActionResult> RefreshTokenGrantAsync(TClient client, TokenRequest tokenRequest)
         {
             (var refreshTokenGrant, var newRefreshToken) = await oauthRefreshTokenGrantDownLogic.ValidateAndUpdateRefreshTokenGrantAsync(client, tokenRequest.RefreshToken);
-            logger.ScopeTrace(() => "Down, OIDC Refresh Token grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OIDC Refresh Token grant accepted.", triggerEvent: true);
 
             var scopes = refreshTokenGrant.Scope.ToSpaceList();
             if (!tokenRequest.Scope.IsNullOrEmpty())
@@ -177,7 +177,7 @@ namespace FoxIDs.Logic
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.RefreshToken);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => "Down, OIDC Token response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OIDC Token response.", triggerEvent: true);
                 return new JsonResult(tokenResponse);
             }
             catch (KeyException kex)

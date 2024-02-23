@@ -45,7 +45,7 @@ namespace FoxIDs.Logic
 
         public virtual async Task<IActionResult> TokenRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OAuth Token request.");
+            logger.ScopeTrace(() => "AppReg, OAuth Token request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
@@ -58,7 +58,7 @@ namespace FoxIDs.Logic
             var tokenRequest = formDictionary.ToObject<TokenRequest>();
             if (tokenRequest.GrantType != IdentityConstants.GrantTypes.TokenExchange)
             {
-                logger.ScopeTrace(() => $"Down, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AppReg, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             try
@@ -76,7 +76,7 @@ namespace FoxIDs.Logic
                         return await ClientCredentialsGrantAsync(party, tokenRequest);
                     case IdentityConstants.GrantTypes.TokenExchange:
                         var tokenExchangeRequest = formDictionary.ToObject<TokenExchangeRequest>();
-                        logger.ScopeTrace(() => $"Down, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AppReg, Token exchange request '{tokenExchangeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         oauthTokenExchangeDownLogic.ValidateTokenExchangeRequest(party.Client, tokenExchangeRequest);
                         await ValidateClientAuthenticationAsync(party.Client, tokenRequest, HttpContext.Request.Headers, formDictionary);
                         return await oauthTokenExchangeDownLogic.TokenExchangeAsync(party, tokenExchangeRequest);
@@ -187,7 +187,7 @@ namespace FoxIDs.Logic
                 }
             }
 
-            logger.ScopeTrace(() => $"Down, Client credentials basic '{new { ClientId = clientId, ClientSecret = $"{(clientSecret?.Length > 10 ? clientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AppReg, Client credentials basic '{new { ClientId = clientId, ClientSecret = $"{(clientSecret?.Length > 10 ? clientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             try
             {
                 if (clientId.IsNullOrEmpty() || clientSecret.IsNullOrEmpty()) throw new ArgumentException("Client id or secret is null or empty.");
@@ -221,7 +221,7 @@ namespace FoxIDs.Logic
             }
 
             var clientCredentials = formDictionary.ToObject<ClientCredentials>();
-            logger.ScopeTrace(() => $"Down, Client credentials post '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AppReg, Client credentials post '{new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             try
             {
                 clientCredentials.Validate();
@@ -242,7 +242,7 @@ namespace FoxIDs.Logic
             }
 
             var clientAssertionCredentials = formDictionary.ToObject<ClientAssertionCredentials>();
-            logger.ScopeTrace(() => $"Down, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AppReg, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             try
             {
                 clientAssertionCredentials.Validate();
@@ -315,7 +315,7 @@ namespace FoxIDs.Logic
                 {
                     if (await secretHashLogic.ValidateSecretAsync(secret, clientSecret))
                     {
-                        logger.ScopeTrace(() => $"Down, OAuth client id '{client.ClientId}. Client secret valid.", triggerEvent: true);
+                        logger.ScopeTrace(() => $"AppReg, OAuth client id '{client.ClientId}. Client secret valid.", triggerEvent: true);
                         return;
                     }
                 }
@@ -361,7 +361,7 @@ namespace FoxIDs.Logic
 
         protected virtual async Task<IActionResult> ClientCredentialsGrantAsync(TParty party, TokenRequest tokenRequest)
         {
-            logger.ScopeTrace(() => "Down, OAuth Client Credentials grant accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OAuth Client Credentials grant accepted.", triggerEvent: true);
 
             try
             {
@@ -379,9 +379,9 @@ namespace FoxIDs.Logic
                 //TODO should the amr claim be included???
                 //claims.AddClaim(JwtClaimTypes.Amr, IdentityConstants.AuthenticationMethodReferenceValues.Pwd);
 
-                logger.ScopeTrace(() => $"Down, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, OAuth created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, OAuth output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 logger.SetUserScopeProperty(claims);
 
                 var scopes = tokenRequest.Scope.ToSpaceList();
@@ -390,7 +390,7 @@ namespace FoxIDs.Logic
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.ClientCredentials);
 
                 logger.ScopeTrace(() => $"Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);
                 return new JsonResult(tokenResponse);
             }
             catch (KeyException kex)

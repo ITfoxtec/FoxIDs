@@ -59,7 +59,7 @@ namespace FoxIDs.Logic
 
         public virtual async Task<IActionResult> TokenExchangeAsync(TParty party, TokenExchangeRequest tokenExchangeRequest)
         {
-            logger.ScopeTrace(() => "Down, OAuth Token Exchange accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OAuth Token Exchange accepted.", triggerEvent: true);
 
             try
             {
@@ -84,13 +84,13 @@ namespace FoxIDs.Logic
                 string algorithm = IdentityConstants.Algorithms.Asymmetric.RS256;
 
                 claims = claims.Where(c => c.Type != JwtClaimTypes.ClientId && c.Type != JwtClaimTypes.Actor && (!sameTrack || c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType)).ToList();
-                logger.ScopeTrace(() => $"Down, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 if (!party.Client.DisableClientAsTokenExchangeActor)
                 {
                     claims.AddClaim(JwtClaimTypes.Actor, GetPartyActorClaims(party).ToJson());
                 }
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                logger.ScopeTrace(() => $"Down, OAuth output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, OAuth output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 logger.SetUserScopeProperty(transformedClaims);
 
                 var scopes = tokenExchangeRequest.Scope.ToSpaceList();
@@ -99,7 +99,7 @@ namespace FoxIDs.Logic
                 planUsageLogic.LogTokenRequestEvent(UsageLogTokenTypes.TokenExchange);
 
                 logger.ScopeTrace(() => $"Token response '{tokenExchangeResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => "Down, OAuth Token response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OAuth Token response.", triggerEvent: true);
                 return new JsonResult(tokenExchangeResponse);
             }
             catch (KeyException kex)
@@ -201,7 +201,7 @@ namespace FoxIDs.Logic
 
         private async Task<List<Claim>> ValidateSameTrackSubjectTokenAsync(TParty party, string subjectToken)
         {
-            logger.ScopeTrace(() => "Down, OAuth validate same environment token exchange subject token.");
+            logger.ScopeTrace(() => "AppReg, OAuth validate same environment token exchange subject token.");
 
             var claimsPrincipal = await oauthJwtDownLogic.ValidateTokenAsync(subjectToken, audience: party.Name);
             if (claimsPrincipal == null)
@@ -210,12 +210,12 @@ namespace FoxIDs.Logic
             }
 
             var claims = claimsPrincipal.Claims?.ToList();
-            logger.ScopeTrace(() => "Down, OAuth same environment subject token valid.", triggerEvent: true);
-            logger.ScopeTrace(() => $"Down, OAuth same environment received JWT claims '{claims}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => "AppReg, OAuth same environment subject token valid.", triggerEvent: true);
+            logger.ScopeTrace(() => $"AppReg, OAuth same environment received JWT claims '{claims}'", traceType: TraceTypes.Claim);
 
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(new List<string> { "*" }, claims);
 
-            logger.ScopeTrace(() => $"Up, OAuth same environment output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, OAuth same environment output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return validClaims;
         }
     }

@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, bool isAutoRedirect = false, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => $"Up, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
+            logger.ScopeTrace(() => $"AuthMethod, Login redirect ({(!isAutoRedirect ? "one" : "auto selected")} authentication method link).");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -65,7 +65,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginRedirectAsync(LoginRequest loginRequest)
         {
-            logger.ScopeTrace(() => "Up, Login redirect (multiple authentication method links).");
+            logger.ScopeTrace(() => "AuthMethod, Login redirect (multiple authentication method links).");
             (var loginName, var toUpParties) = hrdLogic.GetLoginUpPartyNameAndToUpParties();
             var partyId = await UpParty.IdFormatAsync(RouteBinding, loginName);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
@@ -164,7 +164,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LoginResponseAsync(List<Claim> claims)
         {
-            logger.ScopeTrace(() => "Up, Login response.");
+            logger.ScopeTrace(() => "AuthMethod, Login response.");
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);

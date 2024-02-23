@@ -41,7 +41,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> EndSessionRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, End session request.");
+            logger.ScopeTrace(() => "AppReg, End session request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
@@ -75,7 +75,7 @@ namespace FoxIDs.Logic
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
 
             ValidateEndSessionRequest(party.Client, rpInitiatedLogoutRequest);
-            logger.ScopeTrace(() => "Down, OIDC End session request accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OIDC End session request accepted.", triggerEvent: true);
 
             if (!rpInitiatedLogoutRequest.UiLocales.IsNullOrWhiteSpace())
             {
@@ -206,7 +206,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> EndSessionResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, End session response.");
+            logger.ScopeTrace(() => "AppReg, End session response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
@@ -220,7 +220,7 @@ namespace FoxIDs.Logic
             var nameValueCollection = rpInitiatedLogoutResponse.ToDictionary();
 
             logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");
-            logger.ScopeTrace(() => "Down, OIDC End session response.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, OIDC End session response.", triggerEvent: true);
 
             await sequenceLogic.RemoveSequenceDataAsync<OidcDownSequenceData>();
             if (sequenceData.RestrictFormAction)

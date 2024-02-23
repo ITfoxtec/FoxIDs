@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpClientViewModel : IClientAdditionalParameters, IValidatableObject
     {
-        // Link to referring party.
+        // Link to referring authentication method.
         [JsonIgnore]
         public OidcUpPartyViewModel Party { get; set; }
 

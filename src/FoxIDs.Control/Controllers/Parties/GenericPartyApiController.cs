@@ -11,12 +11,11 @@ using FoxIDs.Logic;
 using FoxIDs.Infrastructure.Security;
 using ITfoxtec.Identity.Util;
 using ITfoxtec.Identity;
-using System.Collections.Generic;
 
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Abstract party API.
+    /// Abstract connection API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public abstract class GenericPartyApiController<AParty, AClaimTransform, MParty> : ApiController where AParty : Api.INameValue, Api.IClaimTransform<AClaimTransform> where MParty : Party where AClaimTransform : Api.ClaimTransform

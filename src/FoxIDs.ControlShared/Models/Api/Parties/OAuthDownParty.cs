@@ -46,7 +46,7 @@ namespace FoxIDs.Models.Api
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 

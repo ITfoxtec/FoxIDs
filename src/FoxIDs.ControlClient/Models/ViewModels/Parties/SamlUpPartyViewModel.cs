@@ -127,9 +127,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string SingleLogoutResponseUrl { get; set; }
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
-        [Display(Name = "URL party binding pattern")]
+        [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>

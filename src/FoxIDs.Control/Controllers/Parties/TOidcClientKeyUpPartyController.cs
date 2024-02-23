@@ -22,7 +22,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get OIDC client key for authentication method.
         /// </summary>
-        /// <param name="partyName">OIDC party name.</param>
+        /// <param name="partyName">OIDC authentication method name.</param>
         /// <returns>OIDC client key for authentication method.</returns>
         [ProducesResponseType(typeof(List<Api.OAuthClientKeyResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

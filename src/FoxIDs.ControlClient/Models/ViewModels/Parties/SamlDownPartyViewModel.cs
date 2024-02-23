@@ -70,9 +70,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string SignatureAlgorithm { get; set; } = Saml2SecurityAlgorithms.RsaSha256Signature;
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
-        [Display(Name = "URL party binding pattern")]
+        [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>

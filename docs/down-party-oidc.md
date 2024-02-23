@@ -47,11 +47,11 @@ See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetco
 ## Configuration
 How to configure your application as a OpenID Connect application registration Relaying Party (RP) / client.
 
-> The clients Foxids discovery document is `https://foxids.com/tenant-x/environment-y/party-client1/.well-known/openid-configuration`  
-> if the client is configured in tenant `tenant-x` and environment `environment-y` with the application registration client name `party-client1`.
+> The clients Foxids discovery document is `https://foxids.com/tenant-x/environment-y/application-client1/.well-known/openid-configuration`  
+> if the client is configured in tenant `tenant-x` and environment `environment-y` with the application registration client name `application-client1`.
 
 > A application registration client can possibly support login through multiple [authentication methods](parties.md#authentication-method) by adding the authentication method name to the URL.  
-> An authentication method name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/environment-y/party-client1(login)/.well-known/openid-configuration`
+> An authentication method name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/environment-y/application-client1(login)/.well-known/openid-configuration`
 
 During RP-initiated logout the authentication method name can be omitted in the URL if the ID Token is provided in the request.
 
@@ -109,7 +109,7 @@ It is possible to configure both client and API ([OAuth 2.0 resource](app-reg-oa
 
 
 ## Resource and Scopes
-An API is defined as a resource under which it is possible to define scopes. Such scopes are defined as the resource name dot scope e.g. `party-api1.read1` or `party-api1.read2`.
+An API is defined as a resource under which it is possible to define scopes. Such scopes are defined as the resource name dot scope e.g. `application-api1.read1` or `application-api1.read2`.
 
 In the client configuration tab, the scopes are defined underneath the resource name field.
 

@@ -45,7 +45,7 @@ Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 
 > Change the claims the authentication method pass on with [claim transforms](claim-transform.md).
 
-Foxids default use the brackets party pattern `.../(auth-method)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes party pattern `.../~auth-method~/...` or dot party pattern `.../.auth-method./...`.
+Foxids default use the brackets connection pattern `.../(auth-method)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes connection pattern `.../~auth-method~/...` or dot connection pattern `.../.auth-method./...`.
 
 If necessary, a custom client ID can be configured, otherwise the authentication method name is used as the client ID.
 

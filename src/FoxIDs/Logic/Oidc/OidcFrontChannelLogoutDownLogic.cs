@@ -69,7 +69,7 @@ namespace FoxIDs.Logic
                 }
                 catch (Exception ex)
                 {
-                    logger.Warning(ex, $"Unable to get front channel logout for party ID '{partyId}'.");
+                    logger.Warning(ex, $"Unable to get front channel logout for application ID '{partyId}'.");
                 }
             }
 

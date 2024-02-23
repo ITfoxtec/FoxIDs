@@ -163,7 +163,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 var partyNameBindingMatch = partyNameBindingRegex.Match(partyNameAndBinding);
                 if (!partyNameBindingMatch.Success)
                 {
-                    throw new ArgumentException($"Invalid party name and binding match. PartyNameAndBinding '{partyNameAndBinding}'");
+                    throw new ArgumentException($"Invalid connection name and binding match. PartyNameAndBinding '{partyNameAndBinding}'");
                 }
 
                 if (partyNameBindingMatch.Groups["upparty"].Success)
@@ -189,7 +189,7 @@ namespace FoxIDs.Infrastructure.Hosting
                 }
                 else
                 {
-                    throw new ArgumentException($"Invalid party name and binding group match. PartyNameAndBinding '{partyNameAndBinding}'");
+                    throw new ArgumentException($"Invalid connection name and binding group match. PartyNameAndBinding '{partyNameAndBinding}'");
                 }
             }
 

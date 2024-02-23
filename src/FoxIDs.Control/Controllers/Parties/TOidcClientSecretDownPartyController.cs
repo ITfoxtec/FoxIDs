@@ -22,7 +22,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Get OIDC client secrets for application registration.
         /// </summary>
-        /// <param name="partyName">OIDC party name.</param>
+        /// <param name="partyName">OIDC application name.</param>
         /// <returns>OIDC client secrets for application registration.</returns>
         [ProducesResponseType(typeof(List<Api.OAuthClientSecretResponse>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

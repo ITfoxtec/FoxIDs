@@ -46,9 +46,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
-        [Display(Name = "URL party binding pattern")]
+        [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>

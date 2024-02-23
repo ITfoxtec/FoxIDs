@@ -1,6 +1,4 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
-using FoxIDs.Models.Api;
-using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
@@ -9,7 +7,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OAuthUpClientViewModel 
     {
-        // Link to referring party.
+        // Link to referring authentication method.
         [JsonIgnore]
         public OAuthUpPartyViewModel Party { get; set; }
 

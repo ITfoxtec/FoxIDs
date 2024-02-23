@@ -4,7 +4,7 @@ Foxids is configured with authentication methods and application registrations. 
 
 ![Foxids authentication methods and application registrations](images/parties.svg)
 
-There are four different party types:
+There are four different connection types:
 
 - [Login](login.md)
 - [OpenID Connect](oidc.md)

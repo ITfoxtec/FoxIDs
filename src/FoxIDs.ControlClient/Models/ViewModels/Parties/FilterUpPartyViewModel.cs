@@ -5,10 +5,10 @@ namespace FoxIDs.Client.Models.ViewModels
     public class FilterUpPartyViewModel
     {
         /// <summary>
-        /// Search by party name.
+        /// Search by authentication method name.
         /// </summary>
         [MaxLength(Constants.Models.Party.NameLength)]
-        [Display(Name = "Filter authentications")]
+        [Display(Name = "Filter authentication methods")]
         public string FilterName { get; set; }
     }
 }

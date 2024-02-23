@@ -58,7 +58,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
  3. Add the IdentityServer client's client secret value as the client secret
  4. Select show advanced settings
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
+ 6. Add the claims which will be transferred from the up-party to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the IdentityServer access token 
  7. Click create
 
 That's it, you are done. 

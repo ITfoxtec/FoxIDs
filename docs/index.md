@@ -6,7 +6,7 @@ FoxIDs is both an [authentication](login.md) platform and a security broker wher
 
 FoxIDs is designed as a container with multi-tenant support. Your tenant holds your tracks which correspond to your environments (prod, QA, test, dev) and other elements. 
 Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
-Connections to external Identity Provider is configured as [OpenID Connect 1.0](up-party-oidc.md) or [SAML 2.0](up-party-saml-2.0.md) up-parties where applications and APIs is configured as [OAuth 2.0](down-party-oauth-2.0.md), [OpenID Connect 1.0](down-party-oidc.md) or [SAML 2.0](down-party-saml-2.0.md) down-parties.  
+Connections to external Identity Provider is configured as [OpenID Connect 1.0](up-party-oidc.md) or [SAML 2.0](up-party-saml-2.0.md) up-parties where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
 The users [login](login.md) experience is configured as an up-party.
 
 > Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
@@ -38,20 +38,20 @@ The [structure](foxids-inside.md#structure) of FoxIDs separates the different te
 If FoxIDs is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
 The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/track-y/`.
 
-A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
+A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z/`.  
 A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
 If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
 When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which up-party the user should authenticate. 
-The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
+The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(up-party-v)/`.  
 
 Selecting multiple up-parties:
 
-- Select all allowed up-parties for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
+- Select all allowed up-parties for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(*)/`
 - Select a maximum of 4 allowed up-parties for a application registration by adding the up-parties as a comma separated list in round brackets 
-  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
+  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/app-reg-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
 
-> The allowed up-parties is configured in each [down-party](parties.md#down-party).
+> The allowed up-parties is configured in each [application registration](parties.md#application-registration).
 
 A client using client credentials as authorization grant would not specify the up-party. 
 It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

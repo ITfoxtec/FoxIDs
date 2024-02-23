@@ -37,7 +37,7 @@ When the authority is registered in FoxIDs as an up-party. FoxIDs will call the 
  3. Add the Azure AD B2C client ID as a scope
  4. Add the Azure AD B2C client secret value as the client secret
  5. You probably / maybe need to select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD B2C access token to down-parties
+ 6. Add the claims which will be transferred from the up-party to the application registrations. E.g., preferred_username, email, name, given_name, family_name, oid, ipaddr and possible the access_token claim to transfer the Azure AD B2C access token to application registrations
  7. Click create
 
 That's it, you are done. 

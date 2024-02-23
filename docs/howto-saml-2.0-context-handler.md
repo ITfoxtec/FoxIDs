@@ -7,10 +7,10 @@ Context Handler is connected as a SAML 2.0 [Identity Provider (IdP)](#configurin
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
-By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+By configuring an [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application. If needed, you can possibly select multiple login option (up-parties) from the same OpenID Connect application registration.
 
-In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](down-party-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
+In the test environment, FoxIDs can be connected to Context Handler as a test Identity Provider with a [SAML 2.0 application registration](app-reg-saml-2.0.md) and authenticate test users. Context Handler is connected as a SAML 2.0 [test Relying Party (RP)](#configuring-context-handler-as-test-relying-party).
 
 ![Connect to Context Handler RP](images/how-to-context-handler-rp.svg)
 
@@ -144,10 +144,10 @@ Furthermore, it makes the tokens readable.
 
  ![Context Handler SAML 2.0 claim mappings](images/howto-saml-claim-mappings.png)
 
-You are done. The SAML 2.0 up-party can now be used as an up-party for down-parties in the track.
+You are done. The SAML 2.0 up-party can now be used as an up-party for application registrations in the track.
 
 > A application registration will only issue added claims.  
-> Therefore, remember to add the JWT claims to OpenID Connect down-parties or use the `*` notation.
+> Therefore, remember to add the JWT claims to OpenID Connect application registrations or use the `*` notation.
 
 ## Configuring Context Handler as test Relying Party
 
@@ -157,7 +157,7 @@ This guide describe how to setup Context Handler as a SAML 2.0 test Relying Part
 
 **1 - Start by creating an SAML 2.0 application registration in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Select the Parties tab and then the Down-parties
+1. Select the Applications tab
 2. Click Create application registration and then SAML 2.0
 3. Add the name
 4. Click Add allow up-party and click login, to let the user login with test users in the track

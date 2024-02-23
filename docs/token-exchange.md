@@ -24,7 +24,7 @@ It is possible to configure if token exchange is allowed on the OAuth 2.0 applic
 Default both client credentials grant and token exchange is allowed on OAuth 2.0 application registration and OpenID Connect clients.  
 Default the client is added as the token exchange actor, this behaviour can be disabled.
 
-![OAuth 2.0 client config](images/token-exchange-config-down-party.png)
+![OAuth 2.0 client config](images/token-exchange-config-app-reg.png)
 
 ## Token exchange in the same track
 
@@ -36,14 +36,14 @@ A application registration client is configured to handle the token exchange and
 A web application token exchange JWT access token to JWT access token' in the same track.
 
 In this scenario an OpenID Connect client has obtained an access token after user authentication.  
-The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant).
+The client could also be an OAuth 2.0 client using [client credentials grant](app-reg-oauth-2.0.md#client-credentials-grant).
 
 ![Token exchange, Access token to Access token in web application](images/token-exchange-access-token-in-web-app.svg)
 
 The track includes two resources and the OpenID Connect client is allowed to call both the first and second resource directly. To achieve lease privileges the OpenID Connect client only get an access token for the first resource after user authentication. 
 And subsequently get an access token for the second resource when it's needed. 
 
-![OpenID Connect client client - resource scopes](images/token-exchange-oidc-same-track-down-party.png)
+![OpenID Connect client client - resource scopes](images/token-exchange-oidc-same-track-app-reg.png)
 
 The first access token is issued with a scope/audience for the OpenID Connect client and the client is thereby allowed to exchange the access tokens to an access token' valid for the second resource.  
 The OpenID Connect client is configured with a secret as client credentials used both in the OpenID Connect communication and token exchange.
@@ -109,14 +109,14 @@ Sample JWT access token' body:
 An API token exchange JWT access token to JWT access token' in the same track.
 
 In this scenario an OpenID Connect client has obtained an access token after user authentication.  
-The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant).
+The client could also be an OAuth 2.0 client using [client credentials grant](app-reg-oauth-2.0.md#client-credentials-grant).
 
 ![Token exchange, Access token to Access token in API](images/token-exchange-access-token-in-api.svg)
 
 The track includes two resources and the OpenID Connect client is allowed to call the first resource directly. The OpenID Connect client is NOT allowed to call the second resource directly. On the first resource a client is configured allowing access tokens with the client/resource audience to be exchange to an access token' valid for the second resource.  
 The flowing client on the first resource is configured with a certificate as client credentials.
 
-![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-track-down-party.png)
+![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-track-app-reg.png)
 
 During the token exchange sequence the claims transformations and limitations is executed on the application registration. 
 
@@ -185,7 +185,7 @@ It is possible to configure if the up-party trust should be allowed for token ex
 Token exchange external JWT access token to internal JWT access token by external trust.
 
 In this scenario an OpenID Connect client trust an external OpenID Provider (OP) / Identity Provider (IdP) and has obtained an access token after user authentication.  
-The client could also be an OAuth 2.0 client using [client credentials grant](down-party-oauth-2.0.md#client-credentials-grant) to obtain the external access token.
+The client could also be an OAuth 2.0 client using [client credentials grant](app-reg-oauth-2.0.md#client-credentials-grant) to obtain the external access token.
 
 ![Token exchange, Access token to Access token by trust](images/token-exchange-access-token-by-trust.svg)
 
@@ -198,7 +198,7 @@ The flowing external trust example is a trust to another FoxIDs track.
 Then an OAuth 2.0 application registration client is configured to accept external access tokens by the up-party trust. It is possible to have one or more up-party trusts.  
 The flowing client is configured with a secret as client credentials.
 
-![OAuth 2.0 application registration client for OIDC application](images/token-exchange-oauth-by-trust-down-party-client.png)
+![OAuth 2.0 application registration client for OIDC application](images/token-exchange-oauth-by-trust-app-reg-client.png)
 
 It is thereby possible to token exchange an external access token to an internal access token valid for the resource.
 
@@ -254,7 +254,7 @@ The flowing external trust example is a trust to a FoxIDs SAML 2.0 application r
 Then an OAuth 2.0 application registration client is configured to accept external SAML 2.0 tokens by the up-party trust. It is possible to have one or more up-party trusts.  
 The flowing client is configured with a certificate as client credentials.
 
-![OAuth 2.0 application registration client for SAML 2.0 application](images/token-exchange-saml-by-trust-down-party-client.png)
+![OAuth 2.0 application registration client for SAML 2.0 application](images/token-exchange-saml-by-trust-app-reg-client.png)
 
 It is thereby possible to token exchange an external SAML 2.0 token to an internal access token valid for the resource.
 

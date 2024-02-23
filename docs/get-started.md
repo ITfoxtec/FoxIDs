@@ -58,9 +58,9 @@ In the `test` track go to the `Parties` tab and `Up-parties` subtab where you fi
 
 
 ### Configure your own application 
-In the `test` track go to the `Parties` tab and `Down-parties` subtab to configure your application. 
+In the `test` track go to the `Applications` tab to configure your application. 
 
-A web based applications (client / relaying party) can be configured with [OpenID Connect](down-party-oidc.md) or [SAML 2.0](down-party-saml-2.0.md).
+A web based applications (client / relaying party) can be configured with [OpenID Connect](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md).
 
 ![Application registration](images/get-started-app.png)
 

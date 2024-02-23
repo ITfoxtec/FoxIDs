@@ -30,4 +30,4 @@ FoxIDs can be connected to PingOne with a [SAML 2.0 up-party](up-party-saml-2.0.
 1. Add the PingOne metadata URL in the Metadata URL field.
 2. Click Create
 
-You are done. The SAML 2.0 up-party can now be used as an up-party for down-parties in the track.
+You are done. The SAML 2.0 up-party can now be used as an up-party for application registrations in the track.

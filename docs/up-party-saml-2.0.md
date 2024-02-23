@@ -4,10 +4,10 @@ FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-o
 
 ![FoxIDs SAML 2.0 up-party](images/parties-up-party-saml.svg)
 
-By configuring an SAML 2.0 up-party and a [OpenID Connect application registration](down-party-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+By configuring an SAML 2.0 up-party and a [OpenID Connect application registration](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 FoxIDs will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application.
 
-It is possible to configure multiple SAML 2.0 up-parties which can then be selected by [OpenID Connect down-parties](down-party-oidc.md) and [SAML 2.0 down-parties](down-party-saml-2.0.md).
+It is possible to configure multiple SAML 2.0 up-parties which can then be selected by [OpenID Connect application registrations](app-reg-oidc.md) and [SAML 2.0 application registrations](app-reg-saml-2.0.md).
 
 FoxIDs support [SAMl 2.0 redirect and post bindings](https://docs.oasis-open.org/security/saml/v2.0/saml-bindings-2.0-os.pdf). Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf) are supported. The Artifact profile is not supported.
 

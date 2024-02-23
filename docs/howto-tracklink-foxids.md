@@ -9,7 +9,7 @@ Track links is fast and secure but can only be used in the same tenant. A link b
 > Take a look at the sample track links configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then e.g., take a look at the `nemlogin` and `- (dash is production)` tracks.
 
-Track links support login, RP-initiated logout and front-channel logout. Furthermore, it is possible to configure [claim and claim transforms](claim.md), logout session and home realm discovery (HRD) like all other connecting up-parties and down-parties.
+Track links support login, RP-initiated logout and front-channel logout. Furthermore, it is possible to configure [claim and claim transforms](claim.md), logout session and home realm discovery (HRD) like all other connecting up-parties and application registrations.
 
 ## Configure integration
 
@@ -28,7 +28,7 @@ The following describes how to connect two tracks called `track_x` and `track_y`
 
 **2 - Then go to the `track_y` track and create a track link in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-1. Select the Parties tab and then the Down-parties
+1. Select the Applications tab
 2. Click Create application registration and then Track link
 3. Add the name e.g., `track_x-connection` 
 4. Add the `track_x` track name
@@ -36,9 +36,9 @@ The following describes how to connect two tracks called `track_x` and `track_y`
 6. Select which up-parties in the `track_y` track the user is allowed to use for authentication
 6. Click Create
 
-![Create track link application registration](images/howto-tracklink-foxids-down-party.png)
+![Create track link application registration](images/howto-tracklink-foxids-app-reg.png)
 
 That's it, you are done. 
 
-> Your new up-party `track_y-connection` can now be selected as an allowed up-party in the down-parties in you `track_x` track.  
-> The down-parties in you `track_x` track can read the claims from your `track_y-connection` up-party. 
+> Your new up-party `track_y-connection` can now be selected as an allowed up-party in the application registrations in you `track_x` track.  
+> The application registrations in you `track_x` track can read the claims from your `track_y-connection` up-party. 

@@ -25,7 +25,7 @@ Configure the DK privilege claim transformer on SAML 2.0 up-party in [FoxIDs Con
 ![Context Handler SAML 2.0 up-party privilege claim transformation](images/howto-saml-privilege-claim-tf.png)
 
 
-> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](down-party-oidc.md).
+> Remember to add a [claim mapping](saml-2.0.md#claim-mappings) from SAML `http://schemas.foxids.com/identity/claims/privilege` to JWT `privilege` in the settings section. If you e.g. use a [SAML 2.0 up-party](up-party-saml-2.0.md) and a [OpenID Connect application registration](app-reg-oidc.md).
 
 ## Model 2
 The DK privilege claim is transformed into a list of claims, one claim for each group. The XML PrivilegeGroup element is transformed into a JSON object and serialized as a string.
@@ -96,7 +96,7 @@ Is translated into one claims with JSON values:
     }
 
 ## Using JSON privilege claim in an application
-The [down-party](parties.md#down-party) application receives the privilege claim with the privilege serialized as a JSON string.  
+The [application registration](parties.md#application-registration) application receives the privilege claim with the privilege serialized as a JSON string.  
 The following C# code example show how to deserialize the JSON claim to an object in ASP.NET Core application using `Newtonsoft.Json`.
 
 Create privilege group class

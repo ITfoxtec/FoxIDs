@@ -5,7 +5,7 @@ By default an up-party should pass through all claims to the application registr
 ![Up-party default pass through all claims to the application registration](images/faq-pass-through-all-claims-up-party.png)
 You can also make the application registration (in this case a OpenID Connect client) add all claims to the access token issued to the application (not default).  
 Navigating to the application registration then click Show advanced settings and add a `*` in the Issue claims field. Optionally also include all claims in the issued ID token.
-![Make the application registration issue all claims](images/faq-pass-through-all-claims-down-party.png)
+![Make the application registration issue all claims](images/faq-pass-through-all-claims-app-reg.png)
 
 ##### Is it possible to avoid the "Pick an account" dialog?
 Yes FoxIDs support to forward the login hint from an up-party to an external IdP or another FoxIDs application registration. In OpenID Connect the login hint is forwarded in the `login_hint` parameter. 

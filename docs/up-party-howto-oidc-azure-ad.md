@@ -48,7 +48,7 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
  4. Add the Microsoft Entra ID, client secret value as the client secret
     - Optionally, select show advanced settings, change the client authentication method to `private key JWT` and upload the client certificate
  5. Select use claims from ID token
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., `preferred_username`, `email`, `name`, `given_name`, `family_name`, `oid`, `ipaddr` and possible the `access_token` claim to transfer the Microsoft Entra ID access token to down-parties.  
+ 6. Add the claims which will be transferred from the up-party to the application registrations. E.g., `preferred_username`, `email`, `name`, `given_name`, `family_name`, `oid`, `ipaddr` and possible the `access_token` claim to transfer the Microsoft Entra ID access token to application registrations.  
  It is possible to see the claims returned from the Microsoft Entra ID app in the [FoxIDs log](logging.md#log-settings) by changing the [log settings](logging.md#log-settings) to log claim and optionally to log the entire message and thereafter decode the revived JWTs
  7. Click create
 
@@ -103,6 +103,6 @@ If you are [reading claims from access token](#read-claims-from-access-token) th
 
 1. The roles are returned in a `roles` claim which can be changed to a `role` claim (without 's') by adding a map claims transformation.  
 Write `role` in new claim, set action to replace claim and write `roles` in select claim
-2. Add the `role` claim to the claims which will be transferred from the up-party to the down-parties
+2. Add the `role` claim to the claims which will be transferred from the up-party to the application registrations
 
 > Remember to also add the `role` claim in the application registration for it to be issued to the application.

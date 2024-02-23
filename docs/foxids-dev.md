@@ -120,7 +120,7 @@ and Key vault
 
 > If the pre seed fails e.g., because of missing settings. You can re-initiate the pre seed process by deleting the FoxIDs database in Cosmos DB.
 
-After successfully login you have access to the master tenant. You should then create a dev tenant where you can add applications (down-party), APIs (down-party), user login (up-party) and external trust (up-party).  
+After successfully login you have access to the master tenant. You should then create a dev tenant where you can add applications (application registration), APIs (application registration), user login (authentication method) and external trust (authentication method).  
 After having your dev tenant created you can follow the [get started guide](get-started.md#2-first-login).
 
 ## API client proxy

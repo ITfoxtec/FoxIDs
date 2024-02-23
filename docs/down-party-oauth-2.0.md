@@ -2,7 +2,7 @@
 
 FoxIDs OAuth 2.0 application registration enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
 
-![FoxIDs OAuth 2.0 application registration](images/parties-down-party-oauth.svg)
+![FoxIDs OAuth 2.0 application registration](images/parties-app-reg-oauth.svg)
 
 ## OAuth 2.0 Resource
 An API is configured as a OAuth 2.0 application registration resource.
@@ -13,7 +13,7 @@ An API is configured as a OAuth 2.0 application registration resource.
 
 ![Resource with scopes](images/configure-oauth-resource.png)
 
-A client can subsequently be given access by configuring [resource and scopes](down-party-oidc.md#resource-and-scopes) in the client.
+A client can subsequently be given access by configuring [resource and scopes](app-reg-oidc.md#resource-and-scopes) in the client.
 
 ## Client Credentials Grant
 An application using Client Credentials Grant could be a backend service secured by a client id and secret or key.

@@ -1,8 +1,8 @@
 ﻿# FoxIDs parties
 
-FoxIDs is configured with up-parties and down-parties. Up-parties authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to FoxIDs as down-parties.
+FoxIDs is configured with up-parties and application registrations. Up-parties authenticate the internal users or optionally by trust to an external Identity Provider (IdP). Applications and APIs are connected to FoxIDs as application registrations.
 
-![FoxIDs up-parties and down-parties](images/parties.svg)
+![FoxIDs up-parties and application registrations](images/parties.svg)
 
 There are four different party types:
 
@@ -31,9 +31,9 @@ Both session types lifetime, absolute lifetime and persistence (if the session s
 
 FoxIDs support tree different application registration types:
 
-- [OpenID Connect application registration](down-party-oidc.md)
-- [OAuth 2.0 application registration](down-party-oauth-2.0.md)
-- [SAML 2.0 application registration](down-party-saml-2.0.md)
+- [OpenID Connect application registration](app-reg-oidc.md)
+- [OAuth 2.0 application registration](app-reg-oauth-2.0.md)
+- [SAML 2.0 application registration](app-reg-saml-2.0.md)
 
 ## JWT and SAML 
 OpenID Connect, OAuth 2.0, JWT and JWT claims are first class citizens in FoxIDs. Internally claims are always represented as JWT claims and request / response properties are described with OAuth 2.0 and OpenID Connect attributes. 

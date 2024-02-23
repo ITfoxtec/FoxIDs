@@ -6,7 +6,7 @@ A track contains one [user repository](users.md#user-repository) and all login u
 When a user authenticates the user's session is connected to the particular login up-party. Therefore, a user can authenticate in multiple configured login up-parties and have multiple separate user sessions.  
 A user session is only established in the login up-party if the session lifetime is set to more than 0 seconds.
 
-A [OpenID Connect application registration](down-party-oidc.md) or [SAML 2.0 application registration](down-party-saml-2.0.md) can authenticate users by selecting an login up-party.
+A [OpenID Connect application registration](app-reg-oidc.md) or [SAML 2.0 application registration](app-reg-saml-2.0.md) can authenticate users by selecting an login up-party.
 
 ![FoxIDs login](images/parties-login.svg)
 
@@ -33,7 +33,7 @@ The [title, icon and CSS](title-icon-css.md) configured on the first allowed log
 A login up-party support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.
 
 Two-factor authentication with an authenticator app is per default enabled and is initiated if required.  
-Two-factor authentication can be set as a requirement in each [login up-party](login.md#configure-two-factor-authentication-2fa), per [user](users.md#configure-multi-factor-authentication-mfa) or required by the calling [OpenID Connect](down-party-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](down-party-saml-2.0.md#require-multi-factor-authentication-mfa) application registration.  
+Two-factor authentication can be set as a requirement in each [login up-party](login.md#configure-two-factor-authentication-2fa), per [user](users.md#configure-multi-factor-authentication-mfa) or required by the calling [OpenID Connect](app-reg-oidc.md#require-multi-factor-authentication-mfa) or [SAML 2.0](app-reg-saml-2.0.md#require-multi-factor-authentication-mfa) application registration.  
 
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 

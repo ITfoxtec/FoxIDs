@@ -10,6 +10,6 @@ FoxIDs support OAuth 2.0 resource (API) as a application registration.
 
 ## Application registration
 
-Configure your application as a [OAuth 2.0 application registration](down-party-oauth-2.0.md).
+Configure your application as a [OAuth 2.0 application registration](app-reg-oauth-2.0.md).
 
 

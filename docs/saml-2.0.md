@@ -17,12 +17,12 @@ How to guides:
 
 ## Application registration
 
-Configure your application as a [SAML 2.0 application registration](down-party-saml-2.0.md).
+Configure your application as a [SAML 2.0 application registration](app-reg-saml-2.0.md).
 
 How to guides:
 
-- Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
-- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#down-party---connect-to-context-handler)
+- Connect [AD FS](app-reg-howto-saml-2.0-adfs.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#app-reg---connect-to-context-handler)
 
 ## Claim mappings
 Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md). The claim mappings is global for the track.

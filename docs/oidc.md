@@ -22,8 +22,8 @@ How to guides:
 
 ## Application registration
 
-Configure your application as a [OpenID Connect application registration](down-party-oidc.md).
+Configure your application as a [OpenID Connect application registration](app-reg-oidc.md).
 
-Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 application registration resources](down-party-oauth-2.0.md#oauth-20-resource).  
+Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 application registration resources](app-reg-oauth-2.0.md#oauth-20-resource).  
 An OAuth 2.0 resource can optionally be defined in a OpenID Connect application registration or a OAuth 2.0 application registration.
 

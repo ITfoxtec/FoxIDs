@@ -4,7 +4,7 @@ FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) u
 
 ![FoxIDs OpenID Connect up-party](images/parties-up-party-oidc.svg)
 
-It is possible to configure multiple OpenID Connect up-parties which then can be selected by [down-parties](parties.md#down-party).
+It is possible to configure multiple OpenID Connect up-parties which then can be selected by [application registrations](parties.md#application-registration).
 
 How to guides:
 
@@ -39,7 +39,7 @@ The default client authentication method is `client secret post` and can be chan
 
 The scopes the FoxIDs up-party should send in the request to the external OP can be configured. E.g, `profile` or `email`.
 
-The up-party only transfer default claims and configured claim to the down-partis. 
+The up-party only transfer default claims and configured claim to the application registrations. 
 
 Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 

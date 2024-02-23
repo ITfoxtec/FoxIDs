@@ -2,7 +2,7 @@
 
 FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) application registration enable you to connect an SAML 2.0 based application. 
 
-![FoxIDs SAML 2.0 application registration](images/parties-down-party-saml.svg)
+![FoxIDs SAML 2.0 application registration](images/parties-app-reg-saml.svg)
 
 Your application become a SAML 2.0 Relying Party (RP) and FoxIDs acts as an SAML 2.0 Identity Provider (IdP).
 
@@ -16,8 +16,8 @@ Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-
 
 How to guides:
 
-- Connect [AD FS](down-party-howto-saml-2.0-adfs.md)
-- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#down-party---connect-to-context-handler)
+- Connect [AD FS](app-reg-howto-saml-2.0-adfs.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#app-reg---connect-to-context-handler)
 
 ## Require multi-factor authentication (MFA)
 The SAML 2.0 Relying Party (RP) can require multi-factor authentication by specifying the `urn:foxids:mfa` value in the `RequestedAuthnContext.AuthnContextClassRef` property.
@@ -60,6 +60,6 @@ The following screen shot show the basic FoxIDs SAML 2.0 application registratio
 
 > More configuration options become available by clicking `Show advanced settings`.
 
-![Configure SAML 2.0](images/configure-saml-down-party.png)
+![Configure SAML 2.0](images/configure-saml-app-reg.png)
 
 > Change the issued SAML 2.0 claim collection with [claim transforms](claim-transform.md).

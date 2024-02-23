@@ -1,6 +1,6 @@
 # Connect AD FS with SAML 2.0 application registration
 
-FoxIDs can be connected to AD FS with a [SAML 2.0 application registration](down-party-saml-2.0.md). Where AD FS is a SAML 2.0 Relying Party (RP) and FoxIDs is acting as an SAML 2.0 Identity Provider (IdP).
+FoxIDs can be connected to AD FS with a [SAML 2.0 application registration](app-reg-saml-2.0.md). Where AD FS is a SAML 2.0 Relying Party (RP) and FoxIDs is acting as an SAML 2.0 Identity Provider (IdP).
 
 This example do login through the up-party `login`, which can be changed depending on the scenario.
  

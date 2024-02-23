@@ -16,7 +16,7 @@ Claim transforms can e.g., be configured in a login up-party.
 
 And likewise claim transforms can e.g., be configured in a OpenID Connect application registration.
 
-![FoxIDs application registration claim transform](images/configure-claim-transform-down-party.png)
+![FoxIDs application registration claim transform](images/configure-claim-transform-app-reg.png)
 
 > Claims are by default represented as JWT claims. If the up-party or application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
 

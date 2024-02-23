@@ -1,8 +1,8 @@
 ﻿# How to connect
 
-Foxids become an IdP by [registering an application](parties.md#down-party) where you can connect applications and APIs. An external IdP is connected with an [authentication method](parties.md#up-party)
+Foxids become an IdP by [registering an application](parties.md#application-registration) where you can connect applications and APIs. An external IdP is connected with an [authentication method](parties.md#up-party)
 
-By configuring a [SAML 2.0 authentication method](up-party-saml-2.0.md) and a [OpenID Connect application](down-party-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+By configuring a [SAML 2.0 authentication method](up-party-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 Foxids will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly select multiple authentication methods from the same OpenID Connect application.
 
 ![How to connect with applications and authentication methods](images/how-to-connect.svg)
@@ -17,10 +17,10 @@ When you register an application with either OpenID Connect or SAML 2.0, Foxids 
 You would most often connect applications and APIs. But a application registration can also be used as a OP / IdP for an external system where the external system is the relaying party (RP). 
 
 ### OpenID Connect and OAuth 2.0
-It is recommended to secure applications and APIs with [OpenID Connect](down-party-oidc.md) and [OAuth 2.0](down-party-oauth-2.0.md). Please see the [samples](samples.md).
+It is recommended to secure applications and APIs with [OpenID Connect](app-reg-oidc.md) and [OAuth 2.0](app-reg-oauth-2.0.md). Please see the [samples](samples.md).
 
 ### SAML 2.0
-Configure [SAML 2.0](down-party-saml-2.0.md) to be an Identity Provider (IdP).
+Configure [SAML 2.0](app-reg-saml-2.0.md) to be an Identity Provider (IdP).
 
 How to guides:
 

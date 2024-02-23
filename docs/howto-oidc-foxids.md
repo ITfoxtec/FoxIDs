@@ -38,7 +38,7 @@ The client is a confidential client using Authorization Code Flow and PKCE.
 9. Remove / edit the scopes depending on your needs.
 10. Click create.
 
-![Parallel FoxIDs application registration client](images/howto-oidc-foxids-parallel-down-party.png)
+![Parallel FoxIDs application registration client](images/howto-oidc-foxids-parallel-app-reg.png)
 
 **3 - Go back to your FoxIDs up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
@@ -47,12 +47,12 @@ The client is a confidential client using Authorization Code Flow and PKCE.
      > It is possible to select another up-party in the parallel track. E.g. `azure_ad` with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(azure_ad)/` authority.
  2. Add the profile and email scopes (possible other or more scopes).
  3. Add the parallel FoxIDs track application registration client's client secret.
- 6. Add the claims which will be transferred from the up-party to the down-parties. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel FoxIDs tracks access token.
+ 6. Add the claims which will be transferred from the up-party to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel FoxIDs tracks access token.
  7. Click create.
 
  ![Parallel FoxIDs application registration client](images/howto-oidc-foxids-up-party.png)
 
 That's it, you are done. 
 
-> Your new up-party can now be selected as an allowed up-party in the down-parties in you track.  
-> The down-parties in you track can read the claims from your up-party. It is possible to add the access_token claim to include the parallel FoxIDs tracks access token as a claim in the issued access token.
+> Your new up-party can now be selected as an allowed up-party in the application registrations in you track.  
+> The application registrations in you track can read the claims from your up-party. It is possible to add the access_token claim to include the parallel FoxIDs tracks access token as a claim in the issued access token.

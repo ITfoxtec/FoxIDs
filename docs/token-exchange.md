@@ -178,7 +178,7 @@ A authentication method trust is configured and a application registration clien
 
 It is possible to configure if the authentication method trust should be allowed for token exchange and user authentication. Default both is allowed on a OAuth 2.0, OpenID Connect and SAML 2.0 authentication method trusts. 
 
-![OAuth 2.0 trust config](images/token-exchange-config-up-party.png)
+![OAuth 2.0 trust config](images/token-exchange-config-auth-met.png)
 
 ### Access Token to Access Token by trust
 
@@ -193,7 +193,7 @@ There is a resource in the track but the external defined OpenID Connect client 
 First an OAuth 2.0 or OpenID Connect authentication method is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the external OpenID Connect client's audience.  
 The flowing external trust example is a trust to another Foxids track.
 
-![OAuth 2.0 authentication method trust](images/token-exchange-oauth-by-trust-up-party.png)
+![OAuth 2.0 authentication method trust](images/token-exchange-oauth-by-trust-auth-met.png)
 
 Then an OAuth 2.0 application registration client is configured to accept external access tokens by the authentication method trust. It is possible to have one or more authentication method trusts.  
 The flowing client is configured with a secret as client credentials.
@@ -249,7 +249,7 @@ There is a resource in the track but the external defined SAML 2.0 application i
 First an SAML 2.0 authentication method is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
 The flowing external trust example is a trust to a Foxids SAML 2.0 application registration.
 
-![SAML 2.0 authentication method trust](images/token-exchange-saml-by-trust-up-party.png)
+![SAML 2.0 authentication method trust](images/token-exchange-saml-by-trust-auth-met.png)
 
 Then an OAuth 2.0 application registration client is configured to accept external SAML 2.0 tokens by the authentication method trust. It is possible to have one or more authentication method trusts.  
 The flowing client is configured with a certificate as client credentials.

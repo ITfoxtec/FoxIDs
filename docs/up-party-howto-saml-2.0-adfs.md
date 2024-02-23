@@ -1,6 +1,6 @@
 # Connect Microsoft AD FS with SAML 2.0 authentication method
 
-Foxids can be connected to AD FS with a [SAML 2.0 authentication method](up-party-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and Foxids is acting as an SAML 2.0 Relying Party (RP).
+Foxids can be connected to AD FS with a [SAML 2.0 authentication method](auth-met-saml-2.0.md). Where AD FS is a SAML 2.0 Identity Provider (IdP) and Foxids is acting as an SAML 2.0 Relying Party (RP).
  
 ## Configuring AD FS as Identity Provider (IdP)
 
@@ -21,7 +21,7 @@ The following screen shot show the basic Foxids SAML 2.0 authentication method c
 
 > The AD FS metadata endpoint need to be accessible online to do the SAML 2.0 configuration with AD FS metadata. If not, you need to do the configuration manually.
 
-![Configure SAML 2.0 AD FS authentication method](images/configure-saml-adfs-up-party.png)
+![Configure SAML 2.0 AD FS authentication method](images/configure-saml-adfs-auth-met.png)
 
 > More configuration options become available by clicking `Show advanced settings`.
 

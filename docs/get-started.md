@@ -5,7 +5,7 @@ Foxids is available at [Foxids.com](https://foxids.com) or you can [deploy](depl
 [Foxids.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
 
 a. [Register on Foxids.com](https://foxids.com/action/createtenant), where you get access to your one Foxids tenant. The tenant will hold your organizations entire security service.  
-You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#up-party---how-to-connect-identity-provider-idp) in the `master` track to authorize external admin users.
+You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) in the `master` track to authorize external admin users.
 
 ---
 
@@ -14,7 +14,7 @@ Foxids is [open-source](index.md#free-and-open-source) and you are free to deplo
 
 a. [Deploy](deployment.md) Foxids in your Microsoft Azure tenant.
 b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#up-party---how-to-connect-identity-provider-idp) to authorize external admin users.
+You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) to authorize external admin users.
 c. Create the tenant for your organizations security services. Applications, APIs and connections in general is configured in this tenant.  
 You can create more [admin users](control.md#create-administrator-users) in the new tenants `master` track. 
 You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master` track to the new tenants `master` track to authorize admin users from the `master` tenant.
@@ -64,7 +64,7 @@ A web based applications (client / relaying party) can be configured with [OpenI
 
 ![Application registration](images/get-started-app.png)
 
-> It is possible to add more authentication methods to federate with [external Identity Providers (IdPs)](howto-connect.md#up-party---how-to-connect-identity-provider-idp). Thereafter, a new authentication method can be added to your application registration.
+> It is possible to add more authentication methods to federate with [external Identity Providers (IdPs)](howto-connect.md#auth-met---how-to-connect-identity-provider-idp). Thereafter, a new authentication method can be added to your application registration.
 
 
 ### Sample application

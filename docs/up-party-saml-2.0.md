@@ -2,7 +2,7 @@
 
 Foxids [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) authentication method which trust an external SAML 2.0 Identity Provider (IdP).
 
-![Foxids SAML 2.0 authentication method](images/parties-up-party-saml.svg)
+![Foxids SAML 2.0 authentication method](images/parties-auth-met-saml.svg)
 
 By configuring an SAML 2.0 authentication method and a [OpenID Connect application registration](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 Foxids will then handle the SAML 2.0 connection as a Relying Party (RP) / Service Provider (SP) and you only need to care about OpenID Connect in your application.
@@ -17,10 +17,10 @@ A authentication method expose [SAML 2.0 metadata](https://docs.oasis-open.org/s
 
 How to guides:
 
-- Connect [AD FS](up-party-howto-saml-2.0-adfs.md)
-- Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
-- Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
-- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#up-party---connect-to-context-handler)
+- Connect [AD FS](auth-met-howto-saml-2.0-adfs.md)
+- Connect [PingIdentity / PingOne](auth-met-howto-saml-2.0-pingone.md)
+- Connect [NemLog-in (Danish IdP)](auth-met-howto-saml-2.0-nemlogin.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#authentication-method---connect-to-context-handler)
 
 ## Configuration
 How to configure an external SAML 2.0 Identity Provider (IdP).
@@ -33,11 +33,11 @@ Where the configuration is created with the external IdP metadata.
 
 > More configuration options become available by clicking `Show advanced settings`.
 
-![Configure SAML 2.0](images/configure-saml-up-party.png)
+![Configure SAML 2.0](images/configure-saml-auth-met.png)
 
 
 Manual configuration become available by disabling `Automatic update`.
 
-![Manual SAML 2.0 configuration](images/configure-saml-manual-up-party.png)
+![Manual SAML 2.0 configuration](images/configure-saml-manual-auth-met.png)
 
 > Change the issued SAML 2.0 claim collection with [claim transforms](claim-transform.md).

@@ -24,7 +24,7 @@ The following describes how to connect two tracks called `track_x` and `track_y`
 5. Add the application registration name in the `track_y` track e.g., `track_x-connection` 
 6. Click Create
 
-![Create track link authentication method](images/howto-tracklink-foxids-up-party.png)
+![Create track link authentication method](images/howto-tracklink-foxids-auth-met.png)
 
 **2 - Then go to the `track_y` track and create a track link in [Foxids Control Client](control.md#foxids-control-client)**
 

@@ -6,14 +6,14 @@ Foxids support SAML 2.0 as both authentication method and application registrati
 
 ## Authentication method
 
-Configure [SAML 2.0 authentication method](up-party-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
+Configure [SAML 2.0 authentication method](auth-met-saml-2.0.md) which trust an external SAML 2.0 Identity Provider (IdP).
 
 How to guides:
 
-- Connect [AD FS](up-party-howto-saml-2.0-adfs.md)
-- Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
-- Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
-- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#up-party---connect-to-context-handler)
+- Connect [AD FS](auth-met-howto-saml-2.0-adfs.md)
+- Connect [PingIdentity / PingOne](auth-met-howto-saml-2.0-pingone.md)
+- Connect [NemLog-in (Danish IdP)](auth-met-howto-saml-2.0-nemlogin.md)
+- Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#auth-met---connect-to-context-handler)
 
 ## Application registration
 

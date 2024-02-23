@@ -8,17 +8,17 @@ Foxids support OpenID Connect as both authentication method and application regi
 
 ## Authentication method
 
-Configure [OpenID Connect authentication method](up-party-oidc.md) which trust an external OpenID Provider (OP).
+Configure [OpenID Connect authentication method](auth-met-oidc.md) which trust an external OpenID Provider (OP).
 
 How to guides:
 
 - Connect two Foxids tracks in the same tenant with a [track link](howto-tracklink-foxids.md)
 - Connect two Foxids tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
-- Connect [Microsoft Entra ID (Azure AD)](up-party-howto-oidc-azure-ad.md) 
-- Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
-- Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
-- Connect [Signicat](up-party-howto-oidc-signicat.md)
-- Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
+- Connect [Microsoft Entra ID (Azure AD)](auth-met-howto-oidc-azure-ad.md) 
+- Connect [Azure AD B2C](auth-met-howto-oidc-azure-ad-b2c.md) 
+- Connect [IdentityServer](auth-met-howto-oidc-identityserver.md)
+- Connect [Signicat](auth-met-howto-oidc-signicat.md)
+- Connect [Nets eID Broker](auth-met-howto-oidc-nets-eid-broker.md)
 
 ## Application registration
 

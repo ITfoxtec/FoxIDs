@@ -19,7 +19,7 @@ In this part of the configuration you need to use the SAML 2.0 application regis
 > Foxids SAML 2.0 application registration metadata `https://foxids.com/tenant-x/track-y/adfs-saml-rp1/saml/idpmetadata`  
 > for 'tenant-x' and 'track-y' with the application registration name 'adfs-saml-rp1'.
 
-> A application registration can possibly support login through multiple [authentication methods](parties.md#up-party) by adding the authentication method name to the URL.  
+> A application registration can possibly support login through multiple [authentication methods](parties.md#authentication-method) by adding the authentication method name to the URL.  
 > An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/idpmetadata`
 
 Configure the Identity Provider (IdP) on AD FS using the SAML 2.0 application registration metadata.

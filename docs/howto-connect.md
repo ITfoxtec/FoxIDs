@@ -1,8 +1,8 @@
 ﻿# How to connect
 
-Foxids become an IdP by [registering an application](parties.md#application-registration) where you can connect applications and APIs. An external IdP is connected with an [authentication method](parties.md#up-party)
+Foxids become an IdP by [registering an application](parties.md#application-registration) where you can connect applications and APIs. An external IdP is connected with an [authentication method](parties.md#authentication-method)
 
-By configuring a [SAML 2.0 authentication method](up-party-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+By configuring a [SAML 2.0 authentication method](auth-met-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
 Foxids will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly select multiple authentication methods from the same OpenID Connect application.
 
 ![How to connect with applications and authentication methods](images/how-to-connect.svg)
@@ -34,25 +34,25 @@ All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to Foxids
 
 ### OpenID Connect
 
-Configure [OpenID Connect](up-party-oidc.md) which trust an external OpenID Provider (OP) - *an Identity Provider (IdP) is called an OpenID Provider (OP) if configured with OpenID Connect*.
+Configure [OpenID Connect](auth-met-oidc.md) which trust an external OpenID Provider (OP) - *an Identity Provider (IdP) is called an OpenID Provider (OP) if configured with OpenID Connect*.
 
 How to guides:
 
-- Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
-- Connect [Microsoft Entra ID (Azure AD)](up-party-howto-oidc-azure-ad.md) 
-- Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
-- Connect [Signicat](up-party-howto-oidc-signicat.md)
-- Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
+- Connect [IdentityServer](auth-met-howto-oidc-identityserver.md)
+- Connect [Microsoft Entra ID (Azure AD)](auth-met-howto-oidc-azure-ad.md) 
+- Connect [Azure AD B2C](auth-met-howto-oidc-azure-ad-b2c.md) 
+- Connect [Signicat](auth-met-howto-oidc-signicat.md)
+- Connect [Nets eID Broker](auth-met-howto-oidc-nets-eid-broker.md)
 
 ### SAML 2.0
 
-Configure [SAML 2.0](up-party-saml-2.0.md) which trust an external Identity Provider (IdP).
+Configure [SAML 2.0](auth-met-saml-2.0.md) which trust an external Identity Provider (IdP).
 
 How to guides:
 
-- Connect [PingIdentity / PingOne](up-party-howto-saml-2.0-pingone.md)
-- Connect [Microsoft AD FS](up-party-howto-saml-2.0-adfs.md)
-- Connect [NemLog-in (Danish IdP)](up-party-howto-saml-2.0-nemlogin.md)
+- Connect [PingIdentity / PingOne](auth-met-howto-saml-2.0-pingone.md)
+- Connect [Microsoft AD FS](auth-met-howto-saml-2.0-adfs.md)
+- Connect [NemLog-in (Danish IdP)](auth-met-howto-saml-2.0-nemlogin.md)
 - Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
 
 ## Connect Foxids configurations

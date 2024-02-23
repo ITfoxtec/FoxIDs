@@ -19,7 +19,7 @@ The following describes how to configure a OpenID Connect authentication method 
 
 1. Add the name
 
-![Read the redirect URLs](images/howto-oidc-foxids-up-party-readredirect.png)
+![Read the redirect URLs](images/howto-oidc-foxids-auth-met-readredirect.png)
 
 It is now possible to read the `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL`.
 
@@ -50,7 +50,7 @@ The client is a confidential client using Authorization Code Flow and PKCE.
  6. Add the claims which will be transferred from the authentication method to the application registrations. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel Foxids tracks access token.
  7. Click create.
 
- ![Parallel Foxids application registration client](images/howto-oidc-foxids-up-party.png)
+ ![Parallel Foxids application registration client](images/howto-oidc-foxids-auth-met.png)
 
 That's it, you are done. 
 

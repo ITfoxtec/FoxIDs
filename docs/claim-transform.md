@@ -12,7 +12,7 @@ Please see [claim transform examples](#claim-transform-examples)
 
 Claim transforms can e.g., be configured in a login authentication method.
 
-![Foxids authentication method claim transform](images/configure-claim-transform-up-party.png)
+![Foxids authentication method claim transform](images/configure-claim-transform-auth-met.png)
 
 And likewise claim transforms can e.g., be configured in a OpenID Connect application registration.
 
@@ -66,7 +66,7 @@ Use two `Regex map` claim transformations.
 
 ### Remove the default added authentication method name from sub
 
-The authentication method name is default added to the `sub` claim ID value as a post name divided by a pipe e.g., `some-up-party|my-external-user-id`.
+The authentication method name is default added to the `sub` claim ID value as a post name divided by a pipe e.g., `some-auth-method|my-external-user-id`.
 
 You can do a transform replace claim on the `sub` claim to remove the default added post value.
 
@@ -74,7 +74,7 @@ The transformation will split the value in the `sub` claim and replace the claim
 
 Use a `Regex map` claim transformation and select the `Replace claim` action.
 
-![Remove default added post authentication method name](images/example-claim-transform-remove-post-up-party-name.png)
+![Remove default added post authentication method name](images/example-claim-transform-remove-post-auth-met-name.png)
 
 - Find the ID without the default added post authentication method name with regex `^(nemlogin\|)(?<map>.+)$`
 

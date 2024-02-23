@@ -7,7 +7,7 @@ Foxids is divided into logical elements.
 - **Tenant** contain the company, organization, individual etc. security service. A tenant contains tracks.
 - **Track** is a production, QA, test etc. environment. Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and a track contains the authentication methods and application registrations.  
 In some cases, it can be an advantage to place external connections in a separate tracks to configure connections specific certificates or log levels or just generalize the connections.
-- **Authentication method** is a upwards trust / federation with [OpenID Connect 1.0](up-party-oidc.md) and [SAML 2.0](up-party-saml-2.0.md) or [login](login.md) configuration.
+- **Authentication method** is a upwards trust / federation with [OpenID Connect 1.0](auth-met-oidc.md) and [SAML 2.0](auth-met-saml-2.0.md) or [login](login.md) configuration.
 - **Application registration** is a application configuration with [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) and [SAML 2.0](app-reg-saml-2.0.md).
 
 ![Foxids structure](images/structure.svg)

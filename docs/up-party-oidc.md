@@ -2,7 +2,7 @@
 
 Foxids [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) authentication method which trust an external OpenID Provider (OP) / Identity Provider (IdP).
 
-![Foxids OpenID Connect authentication method](images/parties-up-party-oidc.svg)
+![Foxids OpenID Connect authentication method](images/parties-auth-met-oidc.svg)
 
 It is possible to configure multiple OpenID Connect authentication methods which then can be selected by [application registrations](parties.md#application-registration).
 
@@ -10,11 +10,11 @@ How to guides:
 
 - Connect two Foxids tracks in the same tenant with a [track link](howto-tracklink-foxids.md)
 - Connect two Foxids tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
-- Connect [Microsoft Entra ID (Azure AD)](up-party-howto-oidc-azure-ad.md) 
-- Connect [Azure AD B2C](up-party-howto-oidc-azure-ad-b2c.md) 
-- Connect [IdentityServer](up-party-howto-oidc-identityserver.md)
-- Connect [Signicat](up-party-howto-oidc-signicat.md)
-- Connect [Nets eID Broker](up-party-howto-oidc-nets-eid-broker.md)
+- Connect [Microsoft Entra ID (Azure AD)](auth-met-howto-oidc-azure-ad.md) 
+- Connect [Azure AD B2C](auth-met-howto-oidc-azure-ad-b2c.md) 
+- Connect [IdentityServer](auth-met-howto-oidc-identityserver.md)
+- Connect [Signicat](auth-met-howto-oidc-signicat.md)
+- Connect [Nets eID Broker](auth-met-howto-oidc-nets-eid-broker.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -25,7 +25,7 @@ The following screen shot show the basic Foxids OpenID Connect authentication me
 
 > More configuration options become available by clicking `Show advanced settings`.
 
-![Configure OpenID Connect](images/configure-oidc-up-party.png)
+![Configure OpenID Connect](images/configure-oidc-auth-met.png)
 
 Foxids automatically calls the OpenID Configuration endpoint (`.well-known/openid-configuration`) on create. You can see the added configuration by opening the authentication method again.
 
@@ -45,7 +45,7 @@ Default transferred claims are `sub`, `sid`, `acr` and `amr`.
 
 > Change the claims the authentication method pass on with [claim transforms](claim-transform.md).
 
-Foxids default use the brackets party pattern `.../(up-party)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes party pattern `.../~up-party~/...` or dot party pattern `.../.up-party./...`.
+Foxids default use the brackets party pattern `.../(auth-method)/...`. If not supported by the external OP (e.g., like Microsoft Entra ID), the pattern can be changed to the tildes party pattern `.../~auth-method~/...` or dot party pattern `.../.auth-method./...`.
 
 If necessary, a custom client ID can be configured, otherwise the authentication method name is used as the client ID.
 

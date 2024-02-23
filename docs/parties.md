@@ -16,8 +16,8 @@ There are four different party types:
 Foxids support tree different authentication method types:
 
 - [Login authentication method](login.md)
-- [OpenID Connect authentication method](up-party-oidc.md)
-- [SAML 2.0 authentication method](up-party-saml-2.0.md)
+- [OpenID Connect authentication method](auth-met-oidc.md)
+- [SAML 2.0 authentication method](auth-met-saml-2.0.md)
 
 
 ### Authentication method session

@@ -3,7 +3,7 @@
 Foxids can be connected to PingOne with a [SAML 2.0 authentication method](auth-met-saml-2.0.md). Where PingOne is a SAML 2.0 Identity Provider (IdP) and Foxids is acting as an SAML 2.0 Relying Party (RP).
 
 > Take a look at the PingOne sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Authentication methods` tab.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` environment and the `Authentication methods` tab.
  
 ## Configuring PingOne as Identity Provider (IdP)
 
@@ -30,4 +30,4 @@ Foxids can be connected to PingOne with a [SAML 2.0 authentication method](auth-
 1. Add the PingOne metadata URL in the Metadata URL field.
 2. Click Create
 
-You are done. The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the track.
+You are done. The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the environment.

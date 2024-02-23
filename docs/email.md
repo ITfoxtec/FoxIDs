@@ -1,6 +1,6 @@
 ﻿# Email provider
 
-Foxids supports sending email with [SendGrid](#sendgrid) and SMTP. Both can be configured as an email provider in [each track](#configure-email-provider-in-track) or [generally](#configure-email-provider-generally) in the Foxids site configuration.  
+Foxids supports sending email with [SendGrid](#sendgrid) and SMTP. Both can be configured as an email provider in [each environment](#configure-email-provider-in-environment) or [generally](#configure-email-provider-generally) in the Foxids site configuration.  
 Foxids sends emails to the users for e.g., account verification and password reset.  
 
 ## SendGrid
@@ -9,16 +9,16 @@ You can either [create Sendgrid in Azure](https://docs.microsoft.com/en-us/azure
 
 > Remember to setup up [domain authentication](https://sendgrid.com/docs/ui/account-and-settings/how-to-set-up-domain-authentication/) in Sendgrid for the from email.
 
-## Configure email provider in track
+## Configure email provider in environment
 
-The email provider can be configured in each track, where the from email address is required.  
-If an email provider is configured in the track, it is used instead of any [general](#configure-email-provider-generally) configured email provider.
+The email provider can be configured in each environment, where the from email address is required.  
+If an email provider is configured in the environment, it is used instead of any [general](#configure-email-provider-generally) configured email provider.
 
 Configuring SendGrid:
-![Foxids email provider - SendGrid](images/configure-email-provider-track-sendgrid.png)
+![Foxids email provider - SendGrid](images/configure-email-provider-environment-sendgrid.png)
 
 Configuring SMTP:
-![Foxids email provider - SMTP](images/configure-email-provider-track-smtp.png)
+![Foxids email provider - SMTP](images/configure-email-provider-environment-smtp.png)
 
 ## Configure email provider generally
 

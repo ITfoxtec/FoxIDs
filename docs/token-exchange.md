@@ -1,8 +1,8 @@
 # Token exchange
 
-Foxids support two different sceneries of token exchange: [token exchange in the same track](#token-exchange-in-the-same-track) and [token exchange by trust to external IdP/OP](#token-exchange-by-trust). 
+Foxids support two different sceneries of token exchange: [token exchange in the same environment](#token-exchange-in-the-same-environment) and [token exchange by trust to external IdP/OP](#token-exchange-by-trust). 
 
-In the same track it is possible to do token exchange of access tokens in a [web application](#access-token-to-access-token-in-web-application) or [API/resource](#access-token-to-access-token-in-api) to another resource.
+In the same environment it is possible to do token exchange of access tokens in a [web application](#access-token-to-access-token-in-web-application) or [API/resource](#access-token-to-access-token-in-api) to another resource.
 
 By external trust it is possible to do token exchange of external [access tokens](#access-token-to-access-token-by-trust) and [SAML 2.0 tokens](#saml-20-to-access-token-by-trust) to internal access tokens.
 
@@ -26,24 +26,24 @@ Default the client is added as the token exchange actor, this behaviour can be d
 
 ![OAuth 2.0 client config](images/token-exchange-config-app-reg.png)
 
-## Token exchange in the same track
+## Token exchange in the same environment
 
-It is possible to token exchange an [access token](#access-token-to-access-token-in-the-same-track) issued to a resource and thereby obtain an access token for another resource in the track.  
-A application registration client is configured to handle the token exchange and to whitelist for which resources in the track, it is allowed to do a token exchange.
+It is possible to token exchange an [access token](#access-token-to-access-token-in-the-same-environment) issued to a resource and thereby obtain an access token for another resource in the environment.  
+A application registration client is configured to handle the token exchange and to whitelist for which resources in the environment, it is allowed to do a token exchange.
 
 ### Access Token to Access Token in web application
 
-A web application token exchange JWT access token to JWT access token' in the same track.
+A web application token exchange JWT access token to JWT access token' in the same environment.
 
 In this scenario an OpenID Connect client has obtained an access token after user authentication.  
 The client could also be an OAuth 2.0 client using [client credentials grant](app-reg-oauth-2.0.md#client-credentials-grant).
 
 ![Token exchange, Access token to Access token in web application](images/token-exchange-access-token-in-web-app.svg)
 
-The track includes two resources and the OpenID Connect client is allowed to call both the first and second resource directly. To achieve lease privileges the OpenID Connect client only get an access token for the first resource after user authentication. 
+The environment includes two resources and the OpenID Connect client is allowed to call both the first and second resource directly. To achieve lease privileges the OpenID Connect client only get an access token for the first resource after user authentication. 
 And subsequently get an access token for the second resource when it's needed. 
 
-![OpenID Connect client client - resource scopes](images/token-exchange-oidc-same-track-app-reg.png)
+![OpenID Connect client client - resource scopes](images/token-exchange-oidc-same-environment-app-reg.png)
 
 The first access token is issued with a scope/audience for the OpenID Connect client and the client is thereby allowed to exchange the access tokens to an access token' valid for the second resource.  
 The OpenID Connect client is configured with a secret as client credentials used both in the OpenID Connect communication and token exchange.
@@ -106,17 +106,17 @@ Sample JWT access token' body:
 
 ### Access Token to Access Token in API
 
-An API token exchange JWT access token to JWT access token' in the same track.
+An API token exchange JWT access token to JWT access token' in the same environment.
 
 In this scenario an OpenID Connect client has obtained an access token after user authentication.  
 The client could also be an OAuth 2.0 client using [client credentials grant](app-reg-oauth-2.0.md#client-credentials-grant).
 
 ![Token exchange, Access token to Access token in API](images/token-exchange-access-token-in-api.svg)
 
-The track includes two resources and the OpenID Connect client is allowed to call the first resource directly. The OpenID Connect client is NOT allowed to call the second resource directly. On the first resource a client is configured allowing access tokens with the client/resource audience to be exchange to an access token' valid for the second resource.  
+The environment includes two resources and the OpenID Connect client is allowed to call the first resource directly. The OpenID Connect client is NOT allowed to call the second resource directly. On the first resource a client is configured allowing access tokens with the client/resource audience to be exchange to an access token' valid for the second resource.  
 The flowing client on the first resource is configured with a certificate as client credentials.
 
-![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-track-app-reg.png)
+![OAuth 2.0 client on the first resource](images/token-exchange-oauth-same-environment-app-reg.png)
 
 During the token exchange sequence the claims transformations and limitations is executed on the application registration. 
 
@@ -173,8 +173,8 @@ Sample JWT access token' body:
 
 ## Token exchange by trust
 
-By external trust to IdP/OP it is possible to token exchange an [access token](#access-token-to-access-token-by-trust) or [SAML 2.0 token](#saml-20-to-access-token-by-trust) issued by an external party (or another Foxids track) and thereby obtain an access token for a resource in the track.  
-A authentication method trust is configured and a application registration client is configured to allow token exchange based on the authentication method trust(s). The application registration client furthermore whitelists for which resources in the track, it is allowed to do a token exchange.
+By external trust to IdP/OP it is possible to token exchange an [access token](#access-token-to-access-token-by-trust) or [SAML 2.0 token](#saml-20-to-access-token-by-trust) issued by an external party (or another Foxids environment) and thereby obtain an access token for a resource in the environment.  
+A authentication method trust is configured and a application registration client is configured to allow token exchange based on the authentication method trust(s). The application registration client furthermore whitelists for which resources in the environment, it is allowed to do a token exchange.
 
 It is possible to configure if the authentication method trust should be allowed for token exchange and user authentication. Default both is allowed on a OAuth 2.0, OpenID Connect and SAML 2.0 authentication method trusts. 
 
@@ -189,9 +189,9 @@ The client could also be an OAuth 2.0 client using [client credentials grant](ap
 
 ![Token exchange, Access token to Access token by trust](images/token-exchange-access-token-by-trust.svg)
 
-There is a resource in the track but the external defined OpenID Connect client is NOT allowed to call the resource directly.  
+There is a resource in the environment but the external defined OpenID Connect client is NOT allowed to call the resource directly.  
 First an OAuth 2.0 or OpenID Connect authentication method is configured to trust the external OpenID Provider (OP) / Identity Provider (IdP) and the SP issuer is configured to match the external OpenID Connect client's audience.  
-The flowing external trust example is a trust to another Foxids track.
+The flowing external trust example is a trust to another Foxids environment.
 
 ![OAuth 2.0 authentication method trust](images/token-exchange-oauth-by-trust-auth-met.png)
 
@@ -245,7 +245,7 @@ In this scenario an SAML 2.0 application trust an external Identity Provider (Id
 
 ![Token exchange, SAML 2.0 to Access token by trust](images/token-exchange-saml-by-trust.svg)
 
-There is a resource in the track but the external defined SAML 2.0 application is NOT allowed to call the resource directly.  
+There is a resource in the environment but the external defined SAML 2.0 application is NOT allowed to call the resource directly.  
 First an SAML 2.0 authentication method is configured to trust the Identity Provider (IdP) and the SP issuer is configured to match the external SAML 2.0 applications audience.  
 The flowing external trust example is a trust to a Foxids SAML 2.0 application registration.
 

@@ -1,5 +1,5 @@
 # Users
-Users are saved in [user repositories](#user-repository) where each track contains exactly one user repository. Users are authenticated using the [login authentication method](login.md) user interface (UI).
+Users are saved in [user repositories](#user-repository) where each environment contains exactly one user repository. Users are authenticated using the [login authentication method](login.md) user interface (UI).
 
 ## Configuration
 New users can be created by the administrator through [Foxids Control Client](control.md#foxids-control-client) or be provisioned through [Foxids Control API](control.md#foxids-control-api).
@@ -14,7 +14,7 @@ It is possible to see whether a two-factor authenticator app is configured for t
 ![Configure Login](images/configure-user-mfa.png)
 
 ## User repository 
-Each track contains a user repository supporting an unlimited number of users because they are saved in Cosmos DB. The users id, email and other claims are saved as text.  
+Each environment contains a user repository supporting an unlimited number of users because they are saved in Cosmos DB. The users id, email and other claims are saved as text.  
 The password is never saved needer in logs or in Cosmos DB. Instead, a hash of the password is saved along with the rest of the user information.
 
 ### Password hash

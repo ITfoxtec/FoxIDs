@@ -14,11 +14,11 @@ Subsequently, the response is mapped to a SAML 2.0 response.
 
 Foxids support to bridge both log in, logout and single logout between SMAL 2.0 and OpenID Connect.
 
-## One track - one Identity Provider
-All bridge functionality can be combined in the same track. Enables an OpenID Connect app to support log in via both a SAML 2.0 or OpenID Connect authentication method at the same time. 
+## One environment - one Identity Provider
+All bridge functionality can be combined in the same environment. Enables an OpenID Connect app to support log in via both a SAML 2.0 or OpenID Connect authentication method at the same time. 
 The OpenID Connect app can either select the authentication method grammatically or let the user select on a [home realm discovery (HRD)](login.md#home-realm-discovery-hrd) page.
 
-It is recommended to have an application infrastructure with [OpenID Connect](app-reg-oidc.md) enabled clients and [OAuth 2.0](app-reg-oauth-2.0.md) enable APIs. Where all applications (clients and APIs) trust the same Identity Provider (IdP) - one IdP is equal to one track Foxids.
+It is recommended to have an application infrastructure with [OpenID Connect](app-reg-oidc.md) enabled clients and [OAuth 2.0](app-reg-oauth-2.0.md) enable APIs. Where all applications (clients and APIs) trust the same Identity Provider (IdP) - one IdP is equal to one environment Foxids.
 By utilized the bridge functionality in Foxids SAML 2.0 tokens is mapped to ID tokens and access tokens which can be used to authenticate OpenID Connect apps and to call existing APIs.
 
 ## Token exchange

@@ -15,7 +15,7 @@ Recommended SAML 2.0 bindings:
 Remark; The authn request redirect binding can result in a long query string which can cause problems I some devices. Therefore post binding is preferable.
 
 > Take a look at the AD FS sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Authentication methods` tab.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` environment and the `Authentication methods` tab.
 
 The following screen shot show the basic Foxids SAML 2.0 authentication method configuration using AD FS metadata in [Foxids Control Client](control.md#foxids-control-client).
 
@@ -29,18 +29,18 @@ The following screen shot show the basic Foxids SAML 2.0 authentication method c
 
 In this part of the configuration you need to use the SAML 2.0 authentication method metadata. It is possible to call a fictive SAML 2.0 authentication method metadata in Foxids and thereby if preferred performing step 2 as the first step.
 
-> Foxids SAML 2.0 authentication method metadata `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/spmetadata`  
-> for `tenant-x` and `track-y` with the authentication method name `adfs-saml-idp1`.
+> Foxids SAML 2.0 authentication method metadata `https://foxids.com/tenant-x/environment-y/(adfs-saml-idp1)/saml/spmetadata`  
+> for `tenant-x` and `environment-y` with the authentication method name `adfs-saml-idp1`.
 
 Configure the Relying Party (RP) on AD FS using the SAML 2.0 authentication method metadata.
 
 Alternatively, the Relying Party (RP) can be configured manually on the AD FS with the following properties:
 
-- The public Foxids track ('tenant-x' and 'track-y') certificate
+- The public Foxids environment ('tenant-x' and 'environment-y') certificate
 - Hash algorithm, default SHA-256
-- The Foxids track identifier `https://foxids.com/tenant-x/track-y/` or another identifier if configured
-- Assertion consumer service endpoint `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/acs`
-- Single logout (logout) service endpoint `https://foxids.com/tenant-x/track-y/(adfs-saml-idp1)/saml/singlelogout/`
+- The Foxids environment identifier `https://foxids.com/tenant-x/environment-y/` or another identifier if configured
+- Assertion consumer service endpoint `https://foxids.com/tenant-x/environment-y/(adfs-saml-idp1)/saml/acs`
+- Single logout (logout) service endpoint `https://foxids.com/tenant-x/environment-y/(adfs-saml-idp1)/saml/singlelogout/`
 
 **3 - Then go to the AD FS Relying Party (RP) issuances claims configuration**
 

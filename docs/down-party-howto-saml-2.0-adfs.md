@@ -16,21 +16,21 @@ The SAML 2.0 application registration can either be configured by manually addin
 
 In this part of the configuration you need to use the SAML 2.0 application registration metadata. It is possible to call a fictive SAML 2.0 application registration metadata in Foxids and thereby if preferred performing step 2 as the first step.
 
-> Foxids SAML 2.0 application registration metadata `https://foxids.com/tenant-x/track-y/adfs-saml-rp1/saml/idpmetadata`  
-> for 'tenant-x' and 'track-y' with the application registration name 'adfs-saml-rp1'.
+> Foxids SAML 2.0 application registration metadata `https://foxids.com/tenant-x/environment-y/adfs-saml-rp1/saml/idpmetadata`  
+> for 'tenant-x' and 'environment-y' with the application registration name 'adfs-saml-rp1'.
 
 > A application registration can possibly support login through multiple [authentication methods](parties.md#authentication-method) by adding the authentication method name to the URL.  
-> An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/idpmetadata`
+> An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/environment-y/adfs-saml-rp1(login)/saml/idpmetadata`
 
 Configure the Identity Provider (IdP) on AD FS using the SAML 2.0 application registration metadata.
 
 Alternatively, the Identity Provider (IdP) can be configured manually on the AD FS with the following properties:
 
-- The public Foxids track ('tenant-x' and 'track-y') certificate
+- The public Foxids environment ('tenant-x' and 'environment-y') certificate
 - Hash algorithm, default SHA-256
-- The Foxids track identifier `https://foxids.com/tenant-x/track-y/` or another identifier if configured
-- Single sign-on service endpoint `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/authn`
-- Single logout service endpoint `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/logout`
+- The Foxids environment identifier `https://foxids.com/tenant-x/environment-y/` or another identifier if configured
+- Single sign-on service endpoint `https://foxids.com/tenant-x/environment-y/adfs-saml-rp1(login)/saml/authn`
+- Single logout service endpoint `https://foxids.com/tenant-x/environment-y/adfs-saml-rp1(login)/saml/logout`
 
 > An authentication method name e.g. `login` can possible be added to the single sign-on and single logout service endpoint.
 

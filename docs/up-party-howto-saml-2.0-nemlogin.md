@@ -11,8 +11,8 @@ Foxids support NemLog-in and the SAML 2.0 based OIOSAML3 including single logout
 
 > You can test NemLog-in login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Danish NemLog-in TEST` for the test environment or `Danish NemLog-in` for production.  
 > Take a look at the NemLog-in sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `nemlogin` or `nemlogin-test` track.  
-> *The sample is configured with a separate track for the NemLog-in SAML 2.0 integration.*
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `nemlogin` or `nemlogin-test` environment.  
+> *The sample is configured with a separate environment for the NemLog-in SAML 2.0 integration.*
 
 NemLog-in documentation:
 - The [NemLog-in development portal](https://tu.nemlog-in.dk/oprettelse-og-administration-af-tjenester/) with documentation
@@ -26,25 +26,25 @@ NemLog-in documentation:
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 
-## Consider separate track
+## Consider separate environment
 
-NemLog-in requires the Relying Party (RP) to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate track where the OCES3 certificate and log level can be configured without affecting anything else.
+NemLog-in requires the Relying Party (RP) to use a OSES3 certificate and [extensive logging](#logging). Therefore, consider connecting NemLog-in in a separate environment where the OCES3 certificate and log level can be configured without affecting anything else.
 
-![Connect to NemLog-in and use track link](images/how-to-nemlogin-track-link.svg)    
+![Connect to NemLog-in and use environment link](images/how-to-nemlogin-environment-link.svg)    
 
-You can connect two tracks in the same tenant with a [track link](howto-tracklink-foxids.md).
+You can connect two tracks in the same tenant with a [environment link](howto-tracklink-foxids.md).
 
 ## Certificate
 
 NemLog-in requires all requests (authn and logout) from the Relying Party (RP) to be signed. Furthermore, NemLog-in requires the RP to sign with a OCES3 certificate. It is not possible to use a certificate issued by another certificate authority, a self-signed certificate or a certificate issued by Foxids.
 
 OCES3 test certificates are use in the test environment and OCES3 production certificates are used in production. An OCES3 certificate is valid for three years. After that, it must be updated manually.  
-You will need separate Foxids tracks to handle the test and production environments respectively. The tracks can optionally be combined in an app track with [track links](howto-tracklink-foxids.md).
+You will need separate Foxids tracks to handle the test and production environments respectively. The tracks can optionally be combined in an app environment with [environment links](howto-tracklink-foxids.md).
 
 > If the `.P12` file fails to load in Foxids, you can convert it to a `.PFX` file with the [Foxids.ConvertCertificateTool](https://github.com/ITfoxtec/Foxids/tree/master/tools/Foxids.ConvertCertificateTool).
 
 Add the `.P12` OCES3 certificate in [Foxids Control Client](control.md#foxids-control-client):
-1. Select (or create) the track to be used for NemLog-in
+1. Select (or create) the environment to be used for NemLog-in
 2. Select the Certificates tab
 3. Click the arrow down on the Swap certificate button and then in the Contained certificates section click Change container type
 
@@ -148,7 +148,7 @@ Furthermore, it makes the tokens readable.
 
 ![Claim mappings](images/howto-saml-nemlogin3-claim-mappings.png)
 
-The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the track.
+The SAML 2.0 authentication method can now be used as an authentication method for application registrations in the environment.
 
 ## Logging
 

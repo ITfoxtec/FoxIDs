@@ -13,7 +13,7 @@ The samples are pre-configured in the Foxids online test tenant `test-corp` and 
 > Take a look at the Foxids test configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`
 
-You can alternatively configure the samples in [your one Foxids track](#configure-samples-in-foxids-track).
+You can alternatively configure the samples in [your one Foxids environment](#configure-samples-in-foxids-environment).
 
 **Sample index**
 
@@ -197,9 +197,9 @@ Identity Server ([code link](https://github.com/ITfoxtec/Foxids.Samples/tree/mas
 
 Local development domain and port: `https://localhost:44346`
 
-## Configure samples in Foxids track
+## Configure samples in Foxids environment
 
-The samples can be configured in a Foxids track with the sample seed tool or manually through the Foxids Control Client.  
+The samples can be configured in a Foxids environment with the sample seed tool or manually through the Foxids Control Client.  
 
 > The sample seed tool is found in the sample solution: tools/SampleSeedTool.
 
@@ -216,11 +216,11 @@ Add the Foxids and Foxids Control API endpoints to the sample seed tool configur
 }
 ```
 
-> Access to create the sample configuration in a track is granted in the `master` track. The sample configuration should not be added to the `master` track.
+> Access to create the sample configuration in a environment is granted in the `master` environment. The sample configuration should not be added to the `master` environment.
 
 Create a sample seed tool OAuth 2.0 client in the [Foxids Control Client](control.md#foxids-control-client):
 
-1. Select the `master` track and create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
+1. Select the `master` environment and create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 2. Set the client id to `sample_seed`.
 3. Remember the client secret.
 4. In the resource and scopes section. Grant the sample seed client access to the Foxids Control API resource `foxids_control_api` with the scope `foxids:tenant`.
@@ -231,9 +231,9 @@ The sample seed tool client is thereby granted access to update to the tenant.
 
 ![Foxids Control Client - sample_seed client](images/sample_seed-client.png)
 
-Create a new Foxids track for the sample applications or select an existing track.
+Create a new Foxids environment for the sample applications or select an existing environment.
 
-Change the tenant, the track and the sample seed tool client secret in the sample seed tool configured. 
+Change the tenant, the environment and the sample seed tool client secret in the sample seed tool configured. 
 
 ```json
 "SeedSettings": {
@@ -244,7 +244,7 @@ Change the tenant, the track and the sample seed tool client secret in the sampl
 }
 ```
 
-> Change the tenant and the track configuration for all the samples. 
+> Change the tenant and the environment configuration for all the samples. 
 
 ### Run the sample seed tool
 

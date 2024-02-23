@@ -68,7 +68,7 @@ The seed tool is configured in the `appsettings.json` file.
 
 Create a seed tool OAuth 2.0 client in the [Foxids Control Client](control.md#foxids-control-client):
 
-1. Login to the `master` track and select the Parties tab
+1. Login to the `master` environment and select the Parties tab
 2. Create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 3. Set the client id to `foxids_seed`.
 4. Remember the client secret.
@@ -99,9 +99,9 @@ Run the seed tool executable SeedTool.exe or run the seed tool directly from Vis
 
 The risk password upload will take a while.
 
-## Add sample configuration to a track
+## Add sample configuration to a environment
 
-It is possible to run the sample applications after they are configured in a Foxids track. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-track).
+It is possible to run the sample applications after they are configured in a Foxids environment. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-environment).
 
 ## Custom primary domains
 

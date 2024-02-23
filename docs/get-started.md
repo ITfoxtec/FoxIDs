@@ -5,7 +5,7 @@ Foxids is available at [Foxids.com](https://foxids.com) or you can [deploy](depl
 [Foxids.com](https://foxids.com) is deployed in Europe in Microsoft Azure Holland as an Identity Services (IDS) also called Identity as a Service (IDaaS).
 
 a. [Register on Foxids.com](https://foxids.com/action/createtenant), where you get access to your one Foxids tenant. The tenant will hold your organizations entire security service.  
-You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) in the `master` track to authorize external admin users.
+You become the first admin user and you can add more [admin users](control.md#create-administrator-users) later on. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) in the `master` environment to authorize external admin users.
 
 ---
 
@@ -16,8 +16,8 @@ a. [Deploy](deployment.md) Foxids in your Microsoft Azure tenant.
 b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  
 You can create more [admin users](control.md#create-administrator-users) in the `master` tenant. You can optionally configure [external trust](howto-connect.md#auth-met---how-to-connect-identity-provider-idp) to authorize external admin users.
 c. Create the tenant for your organizations security services. Applications, APIs and connections in general is configured in this tenant.  
-You can create more [admin users](control.md#create-administrator-users) in the new tenants `master` track. 
-You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master` track to the new tenants `master` track to authorize admin users from the `master` tenant.
+You can create more [admin users](control.md#create-administrator-users) in the new tenants `master` environment. 
+You can optionally [connect](howto-oidc-foxids.md) the `master` tenants `master` environment to the new tenants `master` environment to authorize admin users from the `master` tenant.
 
 
 ## 1) First login
@@ -27,23 +27,23 @@ You are presented with a list of your tracks when you login.
 
 The default tracks in a tenant:
 
-- `master` is the track responsible for access to the tenant and the subsequently tracks.  
-The [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api) is configured in the `master` track and admin users is added to the `master` track. 
-You should normally not add applications in the `master` track.
-- `-` (dash) is the production track holding your organizations production security service
-- `test` is a track meant for testing. You probably need more tracks for dev, test QA etc.
+- `master` is the environment responsible for access to the tenant and the subsequently tracks.  
+The [Control Client](control.md#foxids-control-client) and [Control API](control.md#foxids-control-api) is configured in the `master` environment and admin users is added to the `master` environment. 
+You should normally not add applications in the `master` environment.
+- `-` (dash) is the production environment holding your organizations production security service
+- `test` is a environment meant for testing. You probably need more tracks for dev, test QA etc.
 
 You can add and delete tracks as you wish including deleting the default `-` (dash) and `test` tasks.
 
 ## 2) Run the first application
-You can e.g. start by configuring the first application in the `test` track, add [test user(s)](get-started.md#add-test-users) and login.
+You can e.g. start by configuring the first application in the `test` environment, add [test user(s)](get-started.md#add-test-users) and login.
 
 You can either configure [your own application](get-started.md#configure-your-own-application) or configure the samples and run a [sample application](get-started.md#sample-application).
 
 > Add a test user to be able to login!
 
 ### Add test user(s)
-Select the `test` track and go to the `Users` tab to create a test user(s).
+Select the `test` environment and go to the `Users` tab to create a test user(s).
 
 ![Test user](images/get-started-test-user.png)
 
@@ -52,13 +52,13 @@ Then click `Create User`, fill out the page and click `Create`.
 ![Create test user](images/get-started-test-user-new.png)
 
 ### Default login UI
-In the `test` track go to the `Authentication methods` tab where you find the default [login](login.md) authentication method which handles the user login and logout.
+In the `test` environment go to the `Authentication methods` tab where you find the default [login](login.md) authentication method which handles the user login and logout.
 
 ![Login authentication method](images/get-started-login.png)
 
 
 ### Configure your own application 
-In the `test` track go to the `Applications` tab to configure your application. 
+In the `test` environment go to the `Applications` tab to configure your application. 
 
 A web based applications (client / relaying party) can be configured with [OpenID Connect](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md).
 
@@ -70,7 +70,7 @@ A web based applications (client / relaying party) can be configured with [OpenI
 ### Sample application
 The [sample applications](samples.md) can be found in the [samples repository](https://github.com/ITfoxtec/Foxids.Samples).
 
-The samples contains a configuration [seed tool](samples.md#configure-the-sample-seed-tool) which is used to configure all the samples in the `test` track or another track.
+The samples contains a configuration [seed tool](samples.md#configure-the-sample-seed-tool) which is used to configure all the samples in the `test` environment or another environment.
 
 After successfully configuring the samples a good starting point is the [AspNetCoreOidcAuthCodeAllUpPartiesSample](samples.md#aspnetcoreoidcauthcodealluppartiessample) web application.  
-You need to update the tenant and track configuration in the `appsettings.json` config file and thereafter the sample should work.
+You need to update the tenant and environment configuration in the `appsettings.json` config file and thereafter the sample should work.

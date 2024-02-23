@@ -1,7 +1,7 @@
 # Login, Home Realm Discovery (HRD) and 2FA / MFA
-Foxids handle user login in the login authentication method user interface (UI). There can be configured a number of login authentication methods per track with different configurations and look and feel.
+Foxids handle user login in the login authentication method user interface (UI). There can be configured a number of login authentication methods per environment with different configurations and look and feel.
 
-A track contains one [user repository](users.md#user-repository) and all login authentication methods configured in a track authenticate users with the same user repository.
+A environment contains one [user repository](users.md#user-repository) and all login authentication methods configured in a environment authenticate users with the same user repository.
 
 When a user authenticates the user's session is connected to the particular login authentication method. Therefore, a user can authenticate in multiple configured login authentication methods and have multiple separate user sessions.  
 A user session is only established in the login authentication method if the session lifetime is set to more than 0 seconds.
@@ -38,7 +38,7 @@ Two-factor authentication can be set as a requirement in each [login authenticat
 You can use a two-factor authenticator app of your choice like [Anthy](https://authy.com/), [Google Authenticator](https://support.google.com/accounts/answer/1066447), [Microsoft Authenticator](https://www.microsoft.com/en-us/security/mobile-authenticator-app) and others.
 
 ## Login configuration
-A default login authentication method is created in each track. 
+A default login authentication method is created in each environment. 
 
 > The default login with the name `login` can be changed but not deleted, be careful as you may lose access.
 

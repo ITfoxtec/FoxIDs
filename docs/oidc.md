@@ -12,7 +12,7 @@ Configure [OpenID Connect authentication method](auth-met-oidc.md) which trust a
 
 How to guides:
 
-- Connect two Foxids tracks in the same tenant with a [track link](howto-tracklink-foxids.md)
+- Connect two Foxids tracks in the same tenant with a [environment link](howto-tracklink-foxids.md)
 - Connect two Foxids tracks in the same or different tenants with [OpenID connect](howto-oidc-foxids.md)
 - Connect [Microsoft Entra ID (Azure AD)](auth-met-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](auth-met-howto-oidc-azure-ad-b2c.md) 

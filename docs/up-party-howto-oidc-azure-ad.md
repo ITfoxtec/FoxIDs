@@ -10,7 +10,7 @@ If you configure [App roles](#app-roles) they are returned in the `roles` claim.
 > You can test Microsoft Entra ID login with the `AspNetCoreOidcAuthorizationCodeSample` [sample](samples.md) application by clicking `OIDC Azure AD Log in`.
 
 > Take a look at the Microsoft Entra ID sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
-> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` track and the `Authentication methods` tab.
+> Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` environment and the `Authentication methods` tab.
 
 ## Configure single tenant
 

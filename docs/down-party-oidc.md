@@ -47,11 +47,11 @@ See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetco
 ## Configuration
 How to configure your application as a OpenID Connect application registration Relaying Party (RP) / client.
 
-> The clients Foxids discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
-> if the client is configured in tenant `tenant-x` and track `track-y` with the application registration client name `party-client1`.
+> The clients Foxids discovery document is `https://foxids.com/tenant-x/environment-y/party-client1/.well-known/openid-configuration`  
+> if the client is configured in tenant `tenant-x` and environment `environment-y` with the application registration client name `party-client1`.
 
 > A application registration client can possibly support login through multiple [authentication methods](parties.md#authentication-method) by adding the authentication method name to the URL.  
-> An authentication method name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
+> An authentication method name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/environment-y/party-client1(login)/.well-known/openid-configuration`
 
 During RP-initiated logout the authentication method name can be omitted in the URL if the ID Token is provided in the request.
 

@@ -47,7 +47,7 @@
 
                                                 <div class="d-flex">
                                                     <div class="mr-auto info-text">
-                                                        A environment is an <DocsLink Page="foxids-inside" Fragment="structure">independent</DocsLink> IdP with a unique ID, certificate and user store.
+                                                        A <DocsLink Page="foxids-inside" Fragment="structure">environment</DocsLink> is an Identity Provider with a unique ID, certificate and user store.
                                                     </div>
                                                     <div class="py-2">
                                                         <button class="btn btn-primary" type="button" @onclick="ShowCreateTrackModal"><span class="oi oi-plus" aria-hidden="true"></span> New environment</button>
@@ -109,7 +109,7 @@
 
         <AuthorizeView>
             <Authorized>
-                <nav class="navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-conf") navbar-light navbar-second">
+                <nav class="navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-env") navbar-light navbar-second">
                     <div class="align-text-top py-2 pr-3">
                         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                             <span class="navbar-toggler-icon"></span>
@@ -138,7 +138,7 @@
                             <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
                                 Logs
                             </TenantLiNavLink>
-                            <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings">
+                            <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings,texts,plans,riskpasswords">
                                 Settings
                             </TenantLiNavLink>
                             <li class="nav-item">

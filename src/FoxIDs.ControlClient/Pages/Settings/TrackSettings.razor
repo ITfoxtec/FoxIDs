@@ -35,7 +35,7 @@
     <PageEditForm @ref="trackSettingsForm" TModel="TrackSettingsViewModel" OnValidSubmit="OnUpdateTrackValidSubmitAsync">
         @if (TrackSelectedLogic.IsTrackSelected)
         {
-            <div class="modal-body">
+            <div class="modal-body px-0">
                 @if (!deleteTrackError.IsNullOrWhiteSpace())
                 {
                     <div class="alert alert-danger" role="alert">
@@ -79,7 +79,7 @@
                     </div>
                 }
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer px-0">
                 @if (!IsMasterTrack)
                 {
                     <button type="button" class="btn btn-link" @onclick="@(() => deleteTrackAcknowledge = true)">Delete track</button>

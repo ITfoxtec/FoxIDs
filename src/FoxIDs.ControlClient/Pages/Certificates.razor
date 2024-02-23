@@ -2,10 +2,10 @@
 @inherits PageBase
 
 <div class="d-flex">
-    <div class="mr-auto p-2">       
+    <div class="info-text mr-auto pt-0">
+        The primary certificate is the environments and thus the Identity Provider's unique <DocsLink Page="certificates">certificate</DocsLink>. The are different certificate container types to choose from.
     </div>
-    <div class="p-2">
-
+    <div class="pb-2">
         <div class="btn-group" role="group">
             @if (trackKey?.Type == TrackKeyTypes.Contained && certificates.Any(c => !c.IsPrimary && !c.CreateMode))
             {
@@ -23,125 +23,127 @@
     </div>
 </div>
 
-@if (!certificateLoadError.IsNullOrWhiteSpace())
-{
-    <div class="alert alert-danger" role="alert">
-        @certificateLoadError
-    </div>
-}
-
-@if (trackKey?.Type == TrackKeyTypes.Contained)
-{
-    @foreach (var certificate in certificates.OrderByDescending(c => c.IsPrimary))
+<div class="pt-4">
+    @if (!certificateLoadError.IsNullOrWhiteSpace())
     {
-        <h4 class="@(certificate.IsPrimary ? "" : "pt-4")">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</h4>
-        <div class="card">
-            <div class="card-body @(certificate.Edit ? "active" : string.Empty)">
-                @if (!certificate.Error.IsNullOrWhiteSpace())
-                {
-                    <div class="alert alert-danger" role="alert">
-                        @certificate.Error
-                    </div>
-                }
-                @if (certificate.Edit)
-                {
-                    <PageEditForm @ref="certificate.Form" TModel="TrackCertificateInfoViewModel" OnAfterInit="@(m => CertificateViewModelAfterInit(certificate, m))" OnValidSubmit="@(async (editContext) => await OnEditCertificateValidSubmitAsync(certificate, editContext))">
-                        <div class="modal-header">
-                            Configure certificate
-                        </div>
-                        <div class="modal-body">
-                            <FInputPassword @bind-Value="certificate.Form.Model.Password" For="@(() => certificate.Form.Model.Password)" />
-                            <div class="form-group active-group active">
-                                <div class="drag-drop-zone input-control">
-                                    <BlazorInputFile.InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
-                                    @certificate.CertificateFileStatus
-                                </div>
-                                <label class="label-control">Certificate</label>
-                                <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
-                                <ul class="list-group">
-                                    <li class="list-group-item p-0">
-                                        @if (!certificate.Form.Model.Subject.IsNullOrWhiteSpace())
-                                        {
-                                            <div class="d-flex">
-                                                <div class="mr-auto p-2">
-                                                    <strong>@certificate.Form.Model.Subject</strong><br />
-                                                    <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
-                                                    <span>Thumbprint: @certificate.Form.Model.Thumbprint</span>
-                                                </div>
-                                            </div>
-                                        }
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                        @if (!certificate.IsPrimary && !certificate.CreateMode && certificate.DeleteAcknowledge)
-                        {
-                            <div class="modal-footer">
-                                <div class="alert alert-danger" role="alert">
-                                    <div>
-                                        You are about to delete Secondary Certificate "@certificate.Subject", are you sure?
-                                    </div>
+        <div class="alert alert-danger" role="alert">
+            @certificateLoadError
+        </div>
+    }
 
-                                    <div class="mt-3">
-                                        <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSecondaryCertificateAsync(certificate))">Yes delete</button>
-                                        <button type="button" class="btn btn-secondary" @onclick="@(() => certificate.DeleteAcknowledge = false)">No</button>
+    @if (trackKey?.Type == TrackKeyTypes.Contained)
+    {
+        @foreach (var certificate in certificates.OrderByDescending(c => c.IsPrimary))
+        {
+            <h4 class="@(certificate.IsPrimary ? "" : "pt-4")">@(certificate.IsPrimary ? "Primary" : "Secondary") certificate</h4>
+            <div class="card">
+                <div class="card-body @(certificate.Edit ? "active" : string.Empty)">
+                    @if (!certificate.Error.IsNullOrWhiteSpace())
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @certificate.Error
+                        </div>
+                    }
+                    @if (certificate.Edit)
+                    {
+                        <PageEditForm @ref="certificate.Form" TModel="TrackCertificateInfoViewModel" OnAfterInit="@(m => CertificateViewModelAfterInit(certificate, m))" OnValidSubmit="@(async (editContext) => await OnEditCertificateValidSubmitAsync(certificate, editContext))">
+                            <div class="modal-header">
+                                Configure certificate
+                            </div>
+                            <div class="modal-body">
+                                <FInputPassword @bind-Value="certificate.Form.Model.Password" For="@(() => certificate.Form.Model.Password)" />
+                                <div class="form-group active-group active">
+                                    <div class="drag-drop-zone input-control">
+                                        <BlazorInputFile.InputFile OnChange="@(async (files) => await OnCertificateFileSelectedAsync(certificate, files))" />
+                                        @certificate.CertificateFileStatus
                                     </div>
+                                    <label class="label-control">Certificate</label>
+                                    <ValidationMessage For="@(() => certificate.Form.Model.Key)" />
+                                    <ul class="list-group">
+                                        <li class="list-group-item p-0">
+                                            @if (!certificate.Form.Model.Subject.IsNullOrWhiteSpace())
+                                            {
+                                                <div class="d-flex">
+                                                    <div class="mr-auto p-2">
+                                                        <strong>@certificate.Form.Model.Subject</strong><br />
+                                                        <span class="@(certificate.Form.Model.IsValid ? "" : "text-danger")">Valid from @certificate.Form.Model.ValidFrom.ToShortDateString() to @certificate.Form.Model.ValidTo.ToShortDateString()</span><br />
+                                                        <span>Thumbprint: @certificate.Form.Model.Thumbprint</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </li>
+                                    </ul>
                                 </div>
                             </div>
-                        }
-                        <div class="modal-footer">
-                            @if (!certificate.IsPrimary && !certificate.CreateMode)
+                            @if (!certificate.IsPrimary && !certificate.CreateMode && certificate.DeleteAcknowledge)
                             {
-                                <button type="button" class="btn btn-link" @onclick="@(() => certificate.DeleteAcknowledge = true)">Delete</button>
+                                <div class="modal-footer">
+                                    <div class="alert alert-danger" role="alert">
+                                        <div>
+                                            You are about to delete Secondary Certificate "@certificate.Subject", are you sure?
+                                        </div>
+
+                                        <div class="mt-3">
+                                            <button type="button" class="btn btn-secondary" @onclick="@(async () => await DeleteSecondaryCertificateAsync(certificate))">Yes delete</button>
+                                            <button type="button" class="btn btn-secondary" @onclick="@(() => certificate.DeleteAcknowledge = false)">No</button>
+                                        </div>
+                                    </div>
+                                </div>
                             }
-                            @if (certificate.Form.Model.Key == null)
-                            {
-                                <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateSelfSignedCertificateAsync(certificate))">Create self-signed certificate</button>
-                            }
-                            else
-                            {
-                                <button type="submit" class="btn btn-primary">@(certificate.CreateMode ? "Save" : "Update")</button>
-                            }
-                            <button type="button" class="btn btn-secondary" @onclick="@(() => CertificateCancel(certificate))">Cancel</button>
-                        </div>
-                    </PageEditForm>
-                }
-                else
-                {
-                    @if (!certificate.IsPrimary && certificate.CreateMode)
-                    {
-                        <button type="button" class="btn btn-link p-0" @onclick="@(() => ShowCreateSecondaryCertificate(certificate))"><span class="oi oi-plus" aria-hidden="true"></span> Add Secondary Certificate</button>
+                            <div class="modal-footer">
+                                @if (!certificate.IsPrimary && !certificate.CreateMode)
+                                {
+                                    <button type="button" class="btn btn-link" @onclick="@(() => certificate.DeleteAcknowledge = true)">Delete</button>
+                                }
+                                @if (certificate.Form.Model.Key == null)
+                                {
+                                    <button type="button" class="btn btn-primary" @onclick="@(async () => await CreateSelfSignedCertificateAsync(certificate))">Create self-signed certificate</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary">@(certificate.CreateMode ? "Save" : "Update")</button>
+                                }
+                                <button type="button" class="btn btn-secondary" @onclick="@(() => CertificateCancel(certificate))">Cancel</button>
+                            </div>
+                        </PageEditForm>
                     }
                     else
                     {
-                        <button class="btn btn-link text-left p-0" @onclick="@(() => ShowUpdateCertificate(certificate))">
-                            <strong>@certificate.Subject</strong>
-                        </button><br />
-                        <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
-                        <span>Thumbprint: @certificate.Thumbprint</span>
+                        @if (!certificate.IsPrimary && certificate.CreateMode)
+                        {
+                            <button type="button" class="btn btn-link p-0" @onclick="@(() => ShowCreateSecondaryCertificate(certificate))"><span class="oi oi-plus" aria-hidden="true"></span> Add Secondary Certificate</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-link text-left p-0" @onclick="@(() => ShowUpdateCertificate(certificate))">
+                                <strong>@certificate.Subject</strong>
+                            </button><br />
+                            <span class="@(certificate.IsValid ? "" : "text-danger")">Valid from @certificate.ValidFrom.ToShortDateString() to @certificate.ValidTo.ToShortDateString()</span><br />
+                            <span>Thumbprint: @certificate.Thumbprint</span>
+                        }
                     }
-                }
+                </div>
+            </div>
+        }
+    }
+    else if (trackKey?.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
+    {
+        <div class="card bg-light">
+            <div class="card-body">
+                <div><strong>Key Vault renewed self-signed certificates</strong></div>
+                <div>The self-signed certificates is automatically renewed by Key Vault.</div>
             </div>
         </div>
     }
-}
-else if (trackKey?.Type == TrackKeyTypes.KeyVaultRenewSelfSigned)
-{
-    <div class="card bg-light">
-        <div class="card-body">
-            <div><strong>Key Vault renewed self-signed certificates</strong></div>
-            <div>The self-signed certificates is automatically renewed by Key Vault.</div>
+    else if (trackKey?.Type == TrackKeyTypes.KeyVaultImport)
+    {
+        <div class="card bg-light">
+            <div class="card-body">
+                <div>Key Vault upload your one certificate - not supported, to be implemented.</div>
+            </div>
         </div>
-    </div>
-}
-else if (trackKey?.Type == TrackKeyTypes.KeyVaultImport)
-{
-    <div class="card bg-light">
-        <div class="card-body">
-            <div>Key Vault upload your one certificate - not supported, to be implemented.</div>
-        </div>
-    </div>
-}
+    }
+</div>
 
 <Modal @ref="swapCertificateModal" Title="Swap certificate">
     <div class="modal-body">

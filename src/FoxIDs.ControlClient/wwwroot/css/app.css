@@ -283,8 +283,7 @@ h4 {
     max-width: 150px;
 }
 
-/*Large -30*/
-@media (min-width: 962px) {
+@media (min-width: 816px) {
     .navbar-expand-master {
         -ms-flex-flow: row nowrap;
         flex-flow: row nowrap;
@@ -314,37 +313,36 @@ h4 {
         }
 }
 
-.navbar-expand-conf .navbar-nav {
-    max-width: 150px;
+.navbar-expand-env .navbar-nav {
+    max-width: 180px;
 }
 
-/*Medium -50*/
-@media (min-width: 718px) {
-    .navbar-expand-conf {
+@media (min-width: 746px) {
+    .navbar-expand-env {
         -ms-flex-flow: row nowrap;
         flex-flow: row nowrap;
         -ms-flex-pack: start;
         justify-content: flex-start;
     }
 
-        .navbar-expand-conf .navbar-collapse {
+        .navbar-expand-env .navbar-collapse {
             display: -ms-flexbox !important;
             display: flex !important;
             -ms-flex-preferred-size: auto;
             flex-basis: auto;
         }
 
-        .navbar-expand-conf .navbar-nav {
+        .navbar-expand-env .navbar-nav {
             -ms-flex-direction: row;
             flex-direction: row;
         }
 
-            .navbar-expand-conf .navbar-nav .nav-link {
+            .navbar-expand-env .navbar-nav .nav-link {
                 padding-right: 0.5rem;
                 padding-left: 0.5rem;
             }
 
-        .navbar-expand-conf .navbar-toggler {
+        .navbar-expand-env .navbar-toggler {
             display: none;
         }
 }
@@ -536,7 +534,7 @@ h4 {
 
 .info-text {
     color: #6f797e;
-    vertical-align: middle;
+    /*vertical-align: middle;*/
     padding: 0.5rem 0.5rem 0.7rem 0.5rem;
 }
     .info-text .bi {

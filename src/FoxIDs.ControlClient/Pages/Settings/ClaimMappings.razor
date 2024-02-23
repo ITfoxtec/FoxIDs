@@ -32,7 +32,7 @@
 </ul>
 
 <div class="tab-content">
-    <div class="card">
+    <div class="card accordion mt-4">
         <div class="card-body">
             <PageEditForm @ref="trackClaimMappingForm" TModel="ClaimMappingViewModel" OnValidSubmit="OnUpdateClaimMappingValidSubmitAsync">
                 @if (TrackSelectedLogic.IsTrackSelected)
@@ -71,7 +71,7 @@
         </div>
     </div>
 
-    <div class="card">
+    <div class="card mt-4">
         <div class="card-body">
             <PageEditForm @ref="trackClaimMappingDefaultForm" TModel="ClaimMappingDefaultViewModel">
                 @if (TrackSelectedLogic.IsTrackSelected)

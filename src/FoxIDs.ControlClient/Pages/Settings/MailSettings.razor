@@ -31,11 +31,17 @@
     }
 </ul>
 
+<div class="pt-3">
+    <div class="info-text">
+        Configure the <DocsLink Page="email">email provider</DocsLink> in the environment.
+    </div>
+</div>
+
 <div class="tab-content">
     <PageEditForm @ref="mailSettingsForm" TModel="MailSettingsViewModel" OnValidSubmit="OnUpdateMailValidSubmitAsync">
         @if (TrackSelectedLogic.IsTrackSelected)
         {
-            <div class="modal-body">
+            <div class="modal-body px-0">
                  @if (!deleteMailError.IsNullOrWhiteSpace())
                 {
                     <div class="alert alert-danger" role="alert">
@@ -76,7 +82,7 @@
                     </div>
                 }
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer px-0">
                 <button type="button" class="btn btn-link" @onclick="@(() => deleteMailAcknowledge = true)">Remove mail settings</button>
                 <button type="submit" class="btn btn-primary">Update</button>
             </div>

@@ -31,10 +31,15 @@
     }
 </ul>
 
-<div class="text-sm-right pt-2">
-    <button class="btn btn-link text-left pr-0" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
-        Change text settings
-    </button>
+<div class="d-flex pt-2">
+    <div class="info-text mr-auto">
+        The texts are used in the Foxids login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
+    </div>
+    <div class="py-2">
+        <button class="btn btn-secondary" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
+            Text settings
+        </button>
+    </div>
 </div>
 
 <PageEditForm @ref="resourceFilterForm" TModel="FilterResourceViewModel" OnValidSubmit="OnResourceFilterValidSubmitAsync">

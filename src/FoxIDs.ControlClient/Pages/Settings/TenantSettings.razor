@@ -32,7 +32,7 @@
     <PageEditForm @ref="tenantSettingsForm" TModel="TenantSettingsViewModel" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
         @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
         {
-            <div class="modal-body">
+            <div class="modal-body px-0">
                 @if (!deleteTenantError.IsNullOrWhiteSpace())
                 {
                     <div class="alert alert-danger" role="alert">
@@ -58,7 +58,7 @@
                     </div>
                 }
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer px-0">
                 <button type="button" class="btn btn-link" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
                 <button type="submit" class="btn btn-primary">Update</button>
             </div>

@@ -174,7 +174,7 @@ namespace FoxIDs.Logic
                 await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Login);
             }
 
-            logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+            logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
 
             planUsageLogic.LogLoginEvent(PartyTypes.Login);
 
@@ -202,7 +202,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.RemoveSequenceDataAsync<LoginUpSequenceData>();
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            logger.ScopeTrace(() => $"Response, Down type '{sequenceData.DownPartyLink.Type}'.");
+            logger.ScopeTrace(() => $"Response, Application type '{sequenceData.DownPartyLink.Type}'.");
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

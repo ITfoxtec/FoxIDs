@@ -79,7 +79,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Environment Link front channel logout Done, Down type '{RouteBinding.DownParty.Name}'");
+                logger.ScopeTrace(() => $"Environment Link front channel logout Done, Application type '{RouteBinding.DownParty.Name}'");
                 return await serviceProvider.GetService<TrackLinkFrontChannelLogoutDownLogic>().LogoutDoneAsync();
             }
             catch (Exception ex)

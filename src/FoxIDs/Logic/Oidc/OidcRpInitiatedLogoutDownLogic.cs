@@ -109,7 +109,7 @@ namespace FoxIDs.Logic
             });
 
             var toUpParty = await GetToUpPartyAsync(idTokenClaims);
-            logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+            logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
             switch (toUpParty.Type)
             {
                 case PartyTypes.Login:

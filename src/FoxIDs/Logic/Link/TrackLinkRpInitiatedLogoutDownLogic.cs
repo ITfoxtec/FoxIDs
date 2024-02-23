@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyName = party.Name, UpPartySequenceString = keySequenceString });
 
             var toUpParty = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
-            logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+            logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
             switch (toUpParty.Type)
             {
                 case PartyTypes.Login:

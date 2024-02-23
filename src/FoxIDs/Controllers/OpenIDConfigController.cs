@@ -24,7 +24,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"OpenID configuration, Down type '{RouteBinding.DownParty?.Type}'");
+                logger.ScopeTrace(() => $"OpenID configuration, Application type '{RouteBinding.DownParty?.Type}'");
                 switch (RouteBinding.DownParty?.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -47,7 +47,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"OpenID configuration keys, Down type '{RouteBinding.DownParty?.Type}'");
+                logger.ScopeTrace(() => $"OpenID configuration keys, Application type '{RouteBinding.DownParty?.Type}'");
                 switch (RouteBinding.DownParty?.Type)
                 {
                     case PartyTypes.OAuth2:

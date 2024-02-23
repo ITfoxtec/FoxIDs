@@ -49,7 +49,7 @@ namespace FoxIDs.Logic
             logger.ScopeTrace(() => "AppReg, Logout response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
-            logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+            logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
             switch (sequenceData.DownPartyLink.Type)
             {
                 case PartyTypes.OAuth2:

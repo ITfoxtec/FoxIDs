@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             if (toUpParties.Count() == 1)
             {
                 var toUpParty = toUpParties.First();
-                logger.ScopeTrace(() => $"Request, Up type '{toUpParty:Type}'.");
+                logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty:Type}'.");
                 switch (toUpParty.Type)
                 {
                     case PartyTypes.Login:

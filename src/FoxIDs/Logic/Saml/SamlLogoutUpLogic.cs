@@ -295,7 +295,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
                 switch (sequenceData.DownPartyLink.Type)
                 {
                     case PartyTypes.OAuth2:

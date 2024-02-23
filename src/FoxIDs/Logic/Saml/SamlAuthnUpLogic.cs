@@ -381,7 +381,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
 
                 if (status == Saml2StatusCodes.Success)
                 {

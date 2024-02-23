@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkDownSequenceData>(keySequence, party.ToDownTrackName, remove: false);
             if (!keySequenceData.KeyNames.Where(k => k == party.ToDownPartyName).Any())
             {
-                throw new Exception($"Incorrect down-party key names, expected down-party name '{party.ToDownPartyName}'.");
+                throw new Exception($"Incorrect application registration key names, expected application registration name '{party.ToDownPartyName}'.");
             }
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);

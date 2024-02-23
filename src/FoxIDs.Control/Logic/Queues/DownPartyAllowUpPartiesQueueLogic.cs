@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
                 TrackName = routeBinding.TrackName,
                 Logging = routeBinding.Logging,
                 LogicClassTypeFullName = GetType().FullName,
-                Info = remove ? $"Remove authentication method '{upParty.Name}' from down-parties allow authentication method list" : $"Update authentication method '{upParty.Name}' in down-parties allow authentication method list",
+                Info = remove ? $"Remove authentication method '{upParty.Name}' from application registrations allow authentication method list" : $"Update authentication method '{upParty.Name}' in application registrations allow authentication method list",
                 Message = message.ToJson(),
             };
             if (routeBinding.TelemetryClient != null)
@@ -162,7 +162,7 @@ namespace FoxIDs.Logic
                     await UpdateDownPartyAsync<OAuthDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
                     break;
                 default:
-                    throw new NotSupportedException($"Down-party type {downParty.Type} not supported.");
+                    throw new NotSupportedException($"Application registration type {downParty.Type} not supported.");
             }
         }
 

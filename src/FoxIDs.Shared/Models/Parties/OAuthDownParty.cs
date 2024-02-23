@@ -6,11 +6,11 @@ using System.ComponentModel.DataAnnotations;
 namespace FoxIDs.Models
 {
     /// <summary>
-    /// OAuth 2.0 down-party.
+    /// OAuth 2.0 application registration.
     /// </summary>
     public class OAuthDownParty : OAuthDownParty<OAuthDownClient, OAuthDownScope, OAuthDownClaim> { }
     /// <summary>
-    /// OAuth 2.0 down-party.
+    /// OAuth 2.0 application registration.
     /// </summary>
     public class OAuthDownParty<TClient, TScope, TClaim> : DownParty, IValidatableObject where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
     {

@@ -108,7 +108,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace(() => $"Sequence down-party added, id '{sequence.Id}', downPartyId '{downPartyId}', downPartyType '{downPartyType}'.");
+                logger.ScopeTrace(() => $"Sequence application registration added, id '{sequence.Id}', downPartyId '{downPartyId}', downPartyType '{downPartyType}'.");
             }
         }
         public async Task SetUiUpPartyIdAsync(string uiUpPartyId)

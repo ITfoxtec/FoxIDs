@@ -101,7 +101,7 @@ namespace FoxIDs.Logic
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkDownSequenceData>(keySequence, party.ToDownTrackName);
             if (party.ToDownPartyName != keySequenceData.KeyName)
             {
-                throw new Exception($"Incorrect down-party name '{keySequenceData.KeyName}', expected down-party name '{party.ToDownPartyName}'.");
+                throw new Exception($"Incorrect application registration name '{keySequenceData.KeyName}', expected application registration name '{party.ToDownPartyName}'.");
             }
 
             await sequenceLogic.ValidateAndSetSequenceAsync(keySequenceData.UpPartySequenceString);

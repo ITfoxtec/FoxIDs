@@ -252,7 +252,7 @@ namespace FoxIDs.Infrastructure.Hosting
             }
             catch (Exception ex)
             {
-                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', environment '{trackIdKey.TrackName}' and down-party '{downPartyGroup.Value}' combination.", ex);
+                throw new RouteCreationException($"Invalid tenant '{trackIdKey.TenantName}', environment '{trackIdKey.TrackName}' and application registration '{downPartyGroup.Value}' combination.", ex);
             }
         }
 
@@ -260,7 +260,7 @@ namespace FoxIDs.Infrastructure.Hosting
         {
             if (toUpPartyGroup.Captures.Count > Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax)
             {
-                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to authentication method for down-party '{downPartyId}'.");
+                throw new ArgumentException($"More then {Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax} to authentication method for application registration '{downPartyId}'.");
             }
 
             var toUpParties = new List<UpPartyLink>();
@@ -286,7 +286,7 @@ namespace FoxIDs.Infrastructure.Hosting
                     {
                         try
                         {
-                            throw new ArgumentException($"Authentication method name '{upPartyCapture.Value}' not allowed for down-party '{downPartyId}',");
+                            throw new ArgumentException($"Authentication method name '{upPartyCapture.Value}' not allowed for application registration '{downPartyId}',");
                         }
                         catch (Exception ex)
                         {

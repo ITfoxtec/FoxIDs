@@ -11,7 +11,7 @@ using FoxIDs.Logic;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Environment Link down-party API.
+    /// Environment Link application registration API.
     /// </summary>
     public class TTrackLinkDownPartyController : GenericPartyApiController<Api.TrackLinkDownParty, Api.OAuthClaimTransform, TrackLinkDownParty>
     {
@@ -19,34 +19,34 @@ namespace FoxIDs.Controllers
         { }
 
         /// <summary>
-        /// Get environment link down-party.
+        /// Get environment link application registration.
         /// </summary>
         /// <param name="name">Party name.</param>
-        /// <returns>Track link down-party.</returns>
+        /// <returns>Track link application registration.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackLinkDownParty>> GetTrackLinkDownParty(string name) => await Get(name);
 
         /// <summary>
-        /// Create environment link down-party.
+        /// Create environment link application registration.
         /// </summary>
-        /// <param name="party">Track link down-party.</param>
-        /// <returns>Track link down-party.</returns>
+        /// <param name="party">Track link application registration.</param>
+        /// <returns>Track link application registration.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkDownParty), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<Api.TrackLinkDownParty>> PostTrackLinkDownParty([FromBody] Api.TrackLinkDownParty party) => await Post(party);
 
         /// <summary>
-        /// Update environment link down-party.
+        /// Update environment link application registration.
         /// </summary>
-        /// <param name="party">Track link down-party.</param>
-        /// <returns>OIDC down-party.</returns>
+        /// <param name="party">Track link application registration.</param>
+        /// <returns>OIDC application registration.</returns>
         [ProducesResponseType(typeof(Api.TrackLinkDownParty), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<Api.TrackLinkDownParty>> PutTrackLinkDownParty([FromBody] Api.TrackLinkDownParty party) => await Put(party);
 
         /// <summary>
-        /// Delete environment link down-party.
+        /// Delete environment link application registration.
         /// </summary>
         /// <param name="name">Party name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]

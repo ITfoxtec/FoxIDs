@@ -165,7 +165,7 @@ namespace FoxIDs.Controllers
                         GetSequenceExceptionErrorDescription(sequenceException));
 
                 default:
-                    throw new NotSupportedException($"Down-party type '{sequence.DownPartyType}' not supported.");
+                    throw new NotSupportedException($"Application registration type '{sequence.DownPartyType}' not supported.");
             }
         }
 

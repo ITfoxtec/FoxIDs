@@ -121,7 +121,7 @@ namespace FoxIDs.Controllers
                 var selectedUpParty = sequenceData.ToUpParties.Where(up => up.Name == name).FirstOrDefault();
                 if (selectedUpParty == null)
                 {
-                    throw new InvalidOperationException($"Selected authentication method '{name}' do not exist as allowed on down-party '{RouteBinding.DownParty?.Name}'.");
+                    throw new InvalidOperationException($"Selected authentication method '{name}' do not exist as allowed on application registration '{RouteBinding.DownParty?.Name}'.");
                 }
 
                 return await GoToUpParty(sequenceData, ToUpPartyLink(selectedUpParty));

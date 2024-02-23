@@ -29,7 +29,7 @@ namespace FoxIDs.Models.Config
         public int UpPartyLifetime { get; set; } = 21600;
 
         /// <summary>
-        /// Time to cache down-parties in seconds (default 6 hours).
+        /// Time to cache application registrations in seconds (default 6 hours).
         /// </summary>
         [Required]
         public int DownPartyLifetime { get; set; } = 21600;

@@ -123,14 +123,14 @@ namespace FoxIDs.Client.Pages.Components
 
         public (string, string) GetAuthorityAndOIDCDiscovery(string partyName, bool addUpParty, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
         {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower()).ToDownPartyBinding(addUpParty, partyBindingPattern);
+            var partyBinding = (partyName.IsNullOrEmpty() ? "--application-name--" : partyName.ToLower()).ToDownPartyBinding(addUpParty, partyBindingPattern);
             var authority = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/";
             return (authority, authority + IdentityConstants.OidcDiscovery.Path);
         }
 
         public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
         {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--down-party-name--" : partyName.ToLower()).ToDownPartyBinding(true, partyBindingPattern);
+            var partyBinding = (partyName.IsNullOrEmpty() ? "--application-name--" : partyName.ToLower()).ToDownPartyBinding(true, partyBindingPattern);
             return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";
         }
 

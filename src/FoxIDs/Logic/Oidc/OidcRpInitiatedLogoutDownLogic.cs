@@ -198,7 +198,7 @@ namespace FoxIDs.Logic
 
             if (!rpInitiatedLogoutRequest.PostLogoutRedirectUri.IsNullOrWhiteSpace() && 
                 !client.RedirectUris.Any(u => u.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase)) &&
-                !rpInitiatedLogoutRequest.PostLogoutRedirectUri.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
+                !client.PostLogoutRedirectUri.Equals(rpInitiatedLogoutRequest.PostLogoutRedirectUri, StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new OAuthRequestException($"Invalid post logout redirect URI '{rpInitiatedLogoutRequest.PostLogoutRedirectUri}'.");
             }

@@ -11,7 +11,7 @@ The integration between two FoxIDs tracks support [OpenID Connect authentication
 > Take a look at the track connection configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then take a look at the `parallel` and `- (dash is production)` tracks.
 
-The following describes how to configure a OpenID Connect up-party in your FoxIDs track and trust a parallel FoxIDs track where a OpenID Connect down-party is configured. This will make your FoxIDs track trust the parallel FoxIDs track to authenticate users.
+The following describes how to configure a OpenID Connect up-party in your FoxIDs track and trust a parallel FoxIDs track where a OpenID Connect application registration is configured. This will make your FoxIDs track trust the parallel FoxIDs track to authenticate users.
 
 ## Configure integration
 
@@ -23,11 +23,11 @@ The following describes how to configure a OpenID Connect up-party in your FoxID
 
 It is now possible to read the `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL`.
 
-**2 - Then go to the parallel FoxIDs track and create the down-party client**
+**2 - Then go to the parallel FoxIDs track and create the application registration client**
 
 The client is a confidential client using Authorization Code Flow and PKCE.
 
-1. Specify client name in down-party name.
+1. Specify client name in application registration name.
 2. Select allowed up-parties. E.g. `login` or some other up-party.
 3. Select show advanced settings.
 4. Specify redirect URI read in your up-party.
@@ -38,19 +38,19 @@ The client is a confidential client using Authorization Code Flow and PKCE.
 9. Remove / edit the scopes depending on your needs.
 10. Click create.
 
-![Parallel FoxIDs down-party client](images/howto-oidc-foxids-parallel-down-party.png)
+![Parallel FoxIDs application registration client](images/howto-oidc-foxids-parallel-down-party.png)
 
 **3 - Go back to your FoxIDs up-party client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
- 1. Add the parallel FoxIDs track down-party client authority.  
+ 1. Add the parallel FoxIDs track application registration client authority.  
      > Default the parallel track use the `login` up-party to authenticate users with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(login)/` authority.  
      > It is possible to select another up-party in the parallel track. E.g. `azure_ad` with the `https://localhost:44330/testcorp/dev2/foxids_oidcpkce(azure_ad)/` authority.
  2. Add the profile and email scopes (possible other or more scopes).
- 3. Add the parallel FoxIDs track down-party client's client secret.
+ 3. Add the parallel FoxIDs track application registration client's client secret.
  6. Add the claims which will be transferred from the up-party to the down-parties. E.g., email, email_verified, name, given_name, family_name, role and possible the access_token claim to transfer the parallel FoxIDs tracks access token.
  7. Click create.
 
- ![Parallel FoxIDs down-party client](images/howto-oidc-foxids-up-party.png)
+ ![Parallel FoxIDs application registration client](images/howto-oidc-foxids-up-party.png)
 
 That's it, you are done. 
 

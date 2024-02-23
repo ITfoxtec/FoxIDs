@@ -34,7 +34,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
 That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
-> The down-party can read the claims from the up-party. You can optionally add a `*` in the down-party Issue claims list to issue all the claims to your application. Or optionally define a [scope to issue claims](#scope-and-claims).
+> The application registration can read the claims from the up-party. You can optionally add a `*` in the application registration Issue claims list to issue all the claims to your application. Or optionally define a [scope to issue claims](#scope-and-claims).
 
 ## Configuring Nets eID Broker as OpenID Provider (OP)
 
@@ -85,10 +85,10 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
 That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
-> The down-party can read the claims from the up-party. You can optionally add a `*` in the down-party Issue claims list to issue all the claims to your application. Or optionally define a [scope to issue claims](#scope-and-claims).
+> The application registration can read the claims from the up-party. You can optionally add a `*` in the application registration Issue claims list to issue all the claims to your application. Or optionally define a [scope to issue claims](#scope-and-claims).
 
 ## Scope and claims
-You can optionally create a scope on the down-party with the Nets eID Broker claims as voluntary claims. The scope can then be used by a OpenID Connect client or another FoxIDs up-party acting as a OpenID Connect client.
+You can optionally create a scope on the application registration with the Nets eID Broker claims as voluntary claims. The scope can then be used by a OpenID Connect client or another FoxIDs up-party acting as a OpenID Connect client.
 
 The name of the scope can e.g, be `nets_eid_broker`
 

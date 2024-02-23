@@ -1,6 +1,6 @@
 # SAML 2.0 down-party
 
-FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) down-party enable you to connect an SAML 2.0 based application. 
+FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) application registration enable you to connect an SAML 2.0 based application. 
 
 ![FoxIDs SAML 2.0 down-party](images/parties-down-party-saml.svg)
 
@@ -8,7 +8,7 @@ Your application become a SAML 2.0 Relying Party (RP) and FoxIDs acts as an SAML
 
 FoxIDs support [SAML 2.0 redirect and post bindings](https://docs.oasis-open.org/security/saml/v2.0/saml-bindings-2.0-os.pdf).
 
-A down-party expose [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf) where your application can discover the SAML 2.0 Identity Provider (IdP).
+A application registration expose [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf) where your application can discover the SAML 2.0 Identity Provider (IdP).
 
 Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf) are supported. The Artifact profile is not supported.
 
@@ -50,13 +50,13 @@ See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and
 ## Configuration
 How to configure your application as an SAML 2.0 Relying Party (RP).
 
-> The FoxIDs SAML 2.0 down-party metadata endpoint is `https://foxids.com/tenant-x/track-y/party-saml-pr1/saml/idpmetadata`  
-> if the application is configured in tenant `tenant-x` and track `track-y` with the down-party name `party-saml-pr1`.
+> The FoxIDs SAML 2.0 application registration metadata endpoint is `https://foxids.com/tenant-x/track-y/party-saml-pr1/saml/idpmetadata`  
+> if the application is configured in tenant `tenant-x` and track `track-y` with the application registration name `party-saml-pr1`.
 
-> A down-party application can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
+> A application registration can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
 > An up-party name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/party-saml-pr1(login)/saml/idpmetadata`
 
-The following screen shot show the basic FoxIDs SAML 2.0 down-party configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 application registration configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > More configuration options become available by clicking `Show advanced settings`.
 

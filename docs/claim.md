@@ -12,7 +12,7 @@ In a [Client Credentials Grant](down-party-oauth-2.0.md#client-credentials-grant
 ## Up-party
 In both an [OpenID Connect](up-party-oidc.md) and [SAML 2.0](up-party-saml-2.0.md) up-party claims are carried forward by adding them to the `Forward claims` list. All claims are carried forward if a wildcard `*` is added to the `Forward claims` list.
 
-An up-party issues two claims which can be read in the down-party and used in [claim transforms](claim-transform.md). The claims always apply to the last up-party.  
+An up-party issues two claims which can be read in the application registration and used in [claim transforms](claim-transform.md). The claims always apply to the last up-party.  
 The up-party issued claims (default forward):
 
 - `up_party` contain the the up-party name, the name is unique in a track.
@@ -25,10 +25,10 @@ Examples:
  - An external access token with the value `eyJhG.cRwczov...nNjb3B.lIjoi` is added in the `access_token` claim with the nested value `the-up-party|eyJhG.cRwczov...nNjb3B.lIjoi`
 
 ## Down-party
-In both an [OpenID Connect](down-party-oidc.md), [OAuth 2.0](down-party-oauth-2.0.md) and [SAML 2.0](down-party-saml-2.0.md) down-party claims are issued to the application / API by adding them to the `Issue claims` list. All claims are issued to the application / API if a wildcard `*` is added to the `Issue claims` list.
+In both an [OpenID Connect](down-party-oidc.md), [OAuth 2.0](down-party-oauth-2.0.md) and [SAML 2.0](down-party-saml-2.0.md) application registration claims are issued to the application / API by adding them to the `Issue claims` list. All claims are issued to the application / API if a wildcard `*` is added to the `Issue claims` list.
 
-An OpenID Connect down-party can differentiate if a claim is only issued in the access token or also in the ID token.   
+An OpenID Connect application registration can differentiate if a claim is only issued in the access token or also in the ID token.   
 
 
-An OpenID Connect and OAuth 2.0 down-party can carry claims forward by a scope as well. This is done by adding the claim or claims to a scope's `Voluntary claims` list. And the claims are then issued if the client application request for the scope.  
-An OpenID Connect down-party can also in the voluntary scope claims differentiate if a claim is only issued in the access token or also in the ID token.
+An OpenID Connect and OAuth 2.0 application registration can carry claims forward by a scope as well. This is done by adding the claim or claims to a scope's `Voluntary claims` list. And the claims are then issued if the client application request for the scope.  
+An OpenID Connect application registration can also in the voluntary scope claims differentiate if a claim is only issued in the access token or also in the ID token.

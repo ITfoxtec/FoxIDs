@@ -24,6 +24,6 @@ How to guides:
 
 Configure your application as a [OpenID Connect down-party](down-party-oidc.md).
 
-Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 down-party resources](down-party-oauth-2.0.md#oauth-20-resource).  
-An OAuth 2.0 resource can optionally be defined in a OpenID Connect down-party or a OAuth 2.0 down-party.
+Besides receiving an ID token the client can request an access token for multiple APIs defined as [OAuth 2.0 application registration resources](down-party-oauth-2.0.md#oauth-20-resource).  
+An OAuth 2.0 resource can optionally be defined in a OpenID Connect application registration or a OAuth 2.0 down-party.
 

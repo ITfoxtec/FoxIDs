@@ -55,7 +55,7 @@ It is now possible to read the `Redirect URL` and `Front channel logout URL`.
 That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
-> The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the Microsoft Entra ID access token as a claim in the issued access token.
+> The application registration can read the claims from the up-party. It is possible to add the access_token claim to include the Microsoft Entra ID access token as a claim in the issued access token.
 
 ## Configure multitenant
 
@@ -105,4 +105,4 @@ If you are [reading claims from access token](#read-claims-from-access-token) th
 Write `role` in new claim, set action to replace claim and write `roles` in select claim
 2. Add the `role` claim to the claims which will be transferred from the up-party to the down-parties
 
-> Remember to also add the `role` claim in the down-party for it to be issued to the down-party application.
+> Remember to also add the `role` claim in the application registration for it to be issued to the application.

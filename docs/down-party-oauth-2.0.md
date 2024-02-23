@@ -1,14 +1,14 @@
 ﻿# OAuth 2.0 down-party
 
-FoxIDs OAuth 2.0 down-party enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
+FoxIDs OAuth 2.0 application registration enable you to connect an APIs as [OAuth 2.0 resources](#oauth-20-resource). And connect your backend service using [Client Credentials Grant](#client-credentials-grant).
 
 ![FoxIDs OAuth 2.0 down-party](images/parties-down-party-oauth.svg)
 
 ## OAuth 2.0 Resource
-An API is configured as a OAuth 2.0 down-party resource.
+An API is configured as a OAuth 2.0 application registration resource.
 
 - Click Create Down-party and then OAuth 2.0 - Resource (API)
-- Specify resource (API) name in down-party name.
+- Specify resource (API) name in application registration name.
 - Specify one or more scopes.
 
 ![Resource with scopes](images/configure-oauth-resource.png)
@@ -19,7 +19,7 @@ A client can subsequently be given access by configuring [resource and scopes](d
 An application using Client Credentials Grant could be a backend service secured by a client id and secret or key.
 
 - Click Create Down-party and then OAuth 2.0 - Client Credentials Grant
-- Specify client name in down-party name.
+- Specify client name in application registration name.
 - Specify client authentication method, default `client secret post`
     - A secret is default generated
     - Optionally change to another client authentication method
@@ -32,7 +32,7 @@ An application using Client Credentials Grant could be a backend service secured
 
 Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as OAuth 2.0 resources.
 
-> Change the claims the down-party pass on with [claim transforms](claim-transform.md).
+> Change the claims the application registration pass on with [claim transforms](claim-transform.md).
 
 ## Resource Owner Password Credentials Grant
 Resource Owner Password Credentials Grant is not supported for security reasons because it is insecure and should not be used.

@@ -21,7 +21,7 @@ The following describes how to connect two tracks called `track_x` and `track_y`
 2. Click Create up-party and then Track link
 3. Add the name e.g., `track_y-connection` 
 4. Add the `track_y` track name
-5. Add the down-party name in the `track_y` track e.g., `track_x-connection` 
+5. Add the application registration name in the `track_y` track e.g., `track_x-connection` 
 6. Click Create
 
 ![Create track link up-party](images/howto-tracklink-foxids-up-party.png)
@@ -29,7 +29,7 @@ The following describes how to connect two tracks called `track_x` and `track_y`
 **2 - Then go to the `track_y` track and create a track link in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Down-parties
-2. Click Create down-party and then Track link
+2. Click Create application registration and then Track link
 3. Add the name e.g., `track_x-connection` 
 4. Add the `track_x` track name
 5. Add the up-party name in the `track_x` track e.g., `track_y-connection` 

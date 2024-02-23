@@ -1,11 +1,11 @@
 # FAQ
 
 ##### Only the `sub`, `sid`, `acr` and `amr` claims are pass through. I get more claims from the up-party by using log claims trace. What am I doing wrong?
-By default an up-party should pass through all claims to the down-party if Forward Claims has a `*`.
+By default an up-party should pass through all claims to the application registration if Forward Claims has a `*`.
 ![Up-party default pass through all claims to the down-party](images/faq-pass-through-all-claims-up-party.png)
-You can also make the down-party (in this case a OpenID Connect client) add all claims to the access token issued to the application (not default).  
-Navigating to the down-party then click Show advanced settings and add a `*` in the Issue claims field. Optionally also include all claims in the issued ID token.
-![Make the down-party issue all claims](images/faq-pass-through-all-claims-down-party.png)
+You can also make the application registration (in this case a OpenID Connect client) add all claims to the access token issued to the application (not default).  
+Navigating to the application registration then click Show advanced settings and add a `*` in the Issue claims field. Optionally also include all claims in the issued ID token.
+![Make the application registration issue all claims](images/faq-pass-through-all-claims-down-party.png)
 
 ##### Is it possible to avoid the "Pick an account" dialog?
 Yes FoxIDs support to forward the login hint from an up-party to an external IdP or another FoxIDs down-party. In OpenID Connect the login hint is forwarded in the `login_hint` parameter. 

@@ -1,10 +1,10 @@
 # Claim transforms
 
-Each FoxIDs up-party and down-party handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
+Each FoxIDs up-party and application registration handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
 First executing any claim transforms on the up-party and then any claim transforms on the down-party. 
 
-If you create a new claim in a claim transform the claim is per default not send from the up-party to the down-party or from the down-party to the application / API. 
-In a up-party you have to add the claim to the `Forward claims` list to forward the claim and in a down-party to the `Issue claims` list or alternative add the claim to a scope's `Voluntary claims` list. 
+If you create a new claim in a claim transform the claim is per default not send from the up-party to the application registration or to the application / API. 
+In a up-party you have to add the claim to the `Forward claims` list to forward the claim and in a application registration to the `Issue claims` list or alternative add the claim to a scope's `Voluntary claims` list. 
 
 Please see [claim transform examples](#claim-transform-examples)
 
@@ -16,9 +16,9 @@ Claim transforms can e.g., be configured in a login up-party.
 
 And likewise claim transforms can e.g., be configured in a OpenID Connect down-party.
 
-![FoxIDs down-party claim transform](images/configure-claim-transform-down-party.png)
+![FoxIDs application registration claim transform](images/configure-claim-transform-down-party.png)
 
-> Claims are by default represented as JWT claims. If the up-party or down-party is SAML 2.0 the claims is represented as SAML 2.0 claims.
+> Claims are by default represented as JWT claims. If the up-party or application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
 
 A claim transform will do one of op to five different actions depending on the particular claim transform type.
 

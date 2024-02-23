@@ -11,7 +11,7 @@
    - [OpenID Connect RP-Initiated Logout 1.0](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
 - Proof Key for Code Exchange (PKCE) supported in OpenID Connect down-parties and up-parties
   - [RFC 7636](https://tools.ietf.org/html/rfc7636)
-- OAuth 2.0 limited to down-party [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4)
+- OAuth 2.0 limited to application registration [Client Credential Grant](https://datatracker.ietf.org/doc/html/rfc6749#section-4.4)
   - [RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)
      - Client Authentication methods: client_secret_basic, client_secret_post and private_key_jwt
 - OAuth 2.0 Client Authentication with Assertion 

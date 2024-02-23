@@ -29,7 +29,7 @@ Both session types lifetime, absolute lifetime and persistence (if the session s
 
 ## Down-party
 
-FoxIDs support tree different down-party types:
+FoxIDs support tree different application registration types:
 
 - [OpenID Connect down-party](down-party-oidc.md)
 - [OAuth 2.0 down-party](down-party-oauth-2.0.md)

@@ -6,23 +6,23 @@ This example do login through the up-party `login`, which can be changed dependi
  
 ## Configuring AD FS as Relying Party (RP)
 
-**1 - Start by creating an SAML 2.0 down-party in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 application registration in [FoxIDs Control Client](control.md#foxids-control-client)**
 
-The SAML 2.0 down-party can either be configured by manually adding the SAML 2.0 details or using the AD FS metadata `https://...adfs-domain.../federationmetadata/2007-06/federationmetadata.xml` *(future support)*.
+The SAML 2.0 application registration can either be configured by manually adding the SAML 2.0 details or using the AD FS metadata `https://...adfs-domain.../federationmetadata/2007-06/federationmetadata.xml` *(future support)*.
 
 **2 - Then go to the AD FS and create the Identity Provider (IdP)**
 
 > An Identity Provider (IdP) is called a Claims Provider in AD FS.
 
-In this part of the configuration you need to use the SAML 2.0 down-party metadata. It is possible to call a fictive SAML 2.0 down-party metadata in FoxIDs and thereby if preferred performing step 2 as the first step.
+In this part of the configuration you need to use the SAML 2.0 application registration metadata. It is possible to call a fictive SAML 2.0 application registration metadata in FoxIDs and thereby if preferred performing step 2 as the first step.
 
-> FoxIDs SAML 2.0 down-party metadata `https://foxids.com/tenant-x/track-y/adfs-saml-rp1/saml/idpmetadata`  
-> for 'tenant-x' and 'track-y' with the down-party name 'adfs-saml-rp1'.
+> FoxIDs SAML 2.0 application registration metadata `https://foxids.com/tenant-x/track-y/adfs-saml-rp1/saml/idpmetadata`  
+> for 'tenant-x' and 'track-y' with the application registration name 'adfs-saml-rp1'.
 
-> A down-party application can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
+> A application registration can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
 > An up-party name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/track-y/adfs-saml-rp1(login)/saml/idpmetadata`
 
-Configure the Identity Provider (IdP) on AD FS using the SAML 2.0 down-party metadata.
+Configure the Identity Provider (IdP) on AD FS using the SAML 2.0 application registration metadata.
 
 Alternatively, the Identity Provider (IdP) can be configured manually on the AD FS with the following properties:
 

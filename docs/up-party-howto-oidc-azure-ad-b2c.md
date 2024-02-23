@@ -43,4 +43,4 @@ When the authority is registered in FoxIDs as an up-party. FoxIDs will call the 
 That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
-> The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the Azure AD B2C access token as a claim in the issued access token.
+> The application registration can read the claims from the up-party. It is possible to add the access_token claim to include the Azure AD B2C access token as a claim in the issued access token.

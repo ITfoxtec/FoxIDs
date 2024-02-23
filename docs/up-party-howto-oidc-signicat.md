@@ -46,4 +46,4 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
 That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
-> The down-party can read the claims from the up-party. You can optionally add a `*` in the down-party Issue claims list to issue all the claims to your application.
+> The application registration can read the claims from the up-party. You can optionally add a `*` in the application registration Issue claims list to issue all the claims to your application.

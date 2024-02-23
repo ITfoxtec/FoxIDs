@@ -64,7 +64,7 @@ It is now possible to read the `Redirect URL` and `Post logout redirect URL`.
 That's it, you are done. 
 
 > The new up-party can now be selected as an allowed up-party in a down-party.  
-> The down-party can read the claims from the up-party. It is possible to add the access_token claim to include the IdentityServer access token as a claim in the issued access token.
+> The application registration can read the claims from the up-party. It is possible to add the access_token claim to include the IdentityServer access token as a claim in the issued access token.
 
 ## Read claims from access token
 

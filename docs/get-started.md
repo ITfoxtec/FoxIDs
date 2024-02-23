@@ -64,10 +64,7 @@ A web based applications (client / relaying party) can be configured with [OpenI
 
 ![Down-party application](images/get-started-app.png)
 
-Add the default `login` as the allowed up-party in your down-party application.
-
-
-> It is possible to add more up-parties to federate with [external Identity Providers (IdPs)](howto-connect.md#up-party---how-to-connect-identity-provider-idp). Thereafter, a new up-party can be added to your down-party application.
+> It is possible to add more up-parties to federate with [external Identity Providers (IdPs)](howto-connect.md#up-party---how-to-connect-identity-provider-idp). Thereafter, a new up-party can be added to your application registration.
 
 
 ### Sample application

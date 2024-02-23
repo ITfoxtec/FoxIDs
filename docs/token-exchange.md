@@ -20,8 +20,8 @@ Token exchange is implemented in the following samples:
 
 ## Down-party configuration
 
-It is possible to configure if token exchange is allowed on the OAuth 2.0 down-party or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
-Default both client credentials grant and token exchange is allowed on OAuth 2.0 down-party and OpenID Connect clients.  
+It is possible to configure if token exchange is allowed on the OAuth 2.0 application registration or OpenID Connect client. Likewise, it is possible to configure if client credentials grant should be allowed. 
+Default both client credentials grant and token exchange is allowed on OAuth 2.0 application registration and OpenID Connect clients.  
 Default the client is added as the token exchange actor, this behaviour can be disabled.
 
 ![OAuth 2.0 client config](images/token-exchange-config-down-party.png)
@@ -29,7 +29,7 @@ Default the client is added as the token exchange actor, this behaviour can be d
 ## Token exchange in the same track
 
 It is possible to token exchange an [access token](#access-token-to-access-token-in-the-same-track) issued to a resource and thereby obtain an access token for another resource in the track.  
-A down-party client is configured to handle the token exchange and to whitelist for which resources in the track, it is allowed to do a token exchange.
+A application registration client is configured to handle the token exchange and to whitelist for which resources in the track, it is allowed to do a token exchange.
 
 ### Access Token to Access Token in web application
 
@@ -174,7 +174,7 @@ Sample JWT access token' body:
 ## Token exchange by trust
 
 By external trust to IdP/OP it is possible to token exchange an [access token](#access-token-to-access-token-by-trust) or [SAML 2.0 token](#saml-20-to-access-token-by-trust) issued by an external party (or another FoxIDs track) and thereby obtain an access token for a resource in the track.  
-A up-party trust is configured and a down-party client is configured to allow token exchange based on the up-party trust(s). The down-party client furthermore whitelists for which resources in the track, it is allowed to do a token exchange.
+A up-party trust is configured and a application registration client is configured to allow token exchange based on the up-party trust(s). The application registration client furthermore whitelists for which resources in the track, it is allowed to do a token exchange.
 
 It is possible to configure if the up-party trust should be allowed for token exchange and user authentication. Default both is allowed on a OAuth 2.0, OpenID Connect and SAML 2.0 up-party trusts. 
 
@@ -195,10 +195,10 @@ The flowing external trust example is a trust to another FoxIDs track.
 
 ![OAuth 2.0 up-party trust](images/token-exchange-oauth-by-trust-up-party.png)
 
-Then an OAuth 2.0 down-party client is configured to accept external access tokens by the up-party trust. It is possible to have one or more up-party trusts.  
+Then an OAuth 2.0 application registration client is configured to accept external access tokens by the up-party trust. It is possible to have one or more up-party trusts.  
 The flowing client is configured with a secret as client credentials.
 
-![OAuth 2.0 down-party client for OIDC application](images/token-exchange-oauth-by-trust-down-party-client.png)
+![OAuth 2.0 application registration client for OIDC application](images/token-exchange-oauth-by-trust-down-party-client.png)
 
 It is thereby possible to token exchange an external access token to an internal access token valid for the resource.
 
@@ -251,10 +251,10 @@ The flowing external trust example is a trust to a FoxIDs SAML 2.0 down-party.
 
 ![SAML 2.0 up-party trust](images/token-exchange-saml-by-trust-up-party.png)
 
-Then an OAuth 2.0 down-party client is configured to accept external SAML 2.0 tokens by the up-party trust. It is possible to have one or more up-party trusts.  
+Then an OAuth 2.0 application registration client is configured to accept external SAML 2.0 tokens by the up-party trust. It is possible to have one or more up-party trusts.  
 The flowing client is configured with a certificate as client credentials.
 
-![OAuth 2.0 down-party client for SAML 2.0 application](images/token-exchange-saml-by-trust-down-party-client.png)
+![OAuth 2.0 application registration client for SAML 2.0 application](images/token-exchange-saml-by-trust-down-party-client.png)
 
 It is thereby possible to token exchange an external SAML 2.0 token to an internal access token valid for the resource.
 

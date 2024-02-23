@@ -146,7 +146,7 @@ Furthermore, it makes the tokens readable.
 
 You are done. The SAML 2.0 up-party can now be used as an up-party for down-parties in the track.
 
-> A down-party will only issue added claims.  
+> A application registration will only issue added claims.  
 > Therefore, remember to add the JWT claims to OpenID Connect down-parties or use the `*` notation.
 
 ## Configuring Context Handler as test Relying Party
@@ -155,10 +155,10 @@ This guide describe how to setup Context Handler as a SAML 2.0 test Relying Part
 
 > You need to use a [separate track](#separate-track) to have a place for the test users and to [configure the OCES3 certificate](#certificate) before following this guide.
 
-**1 - Start by creating an SAML 2.0 down-party in [FoxIDs Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an SAML 2.0 application registration in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Parties tab and then the Down-parties
-2. Click Create down-party and then SAML 2.0
+2. Click Create application registration and then SAML 2.0
 3. Add the name
 4. Click Add allow up-party and click login, to let the user login with test users in the track
 5. Download the Context Handler RP metadata where you can find endpoints and the certificate to trust.  
@@ -194,7 +194,7 @@ The following claims is most often used:
 20. Add an administrative contact person
 20. Click Update
 21. Go to the top of the SAML 2.0 down-party
-22. Find the SAML 2.0 down-party IdP-metadata, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`. 
+22. Find the SAML 2.0 application registration IdP-metadata, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`. 
 23. The IdP-metadata is used to configure the Context Handler identity provider.
  
 **2 - Then go to the [Context Handler administration portal](https://serviceplatformen.dk/administration/)**
@@ -205,7 +205,7 @@ The following claims is most often used:
 4. Go to the Identity Provider tab
 5. Select Context Handler with NSIS and remove the selection of Context Handler (without NSIS)
 6. Select OIOSAML3 as OIOSAML profile and NSIS level
-7. Add the SAML 2.0 down-party IdP-metadata URL, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`.
+7. Add the SAML 2.0 application registration IdP-metadata URL, in this case `https://localhost:44330/testcorp/test-contexthandler-idp/ch-idp(*)/saml/idpmetadata`.
 8. Fill out the rest, accept the terms and click Save (DK: Gem)
 
 > You are required to be registered as your own test authority (DK: egen test myndighed) in the test environment to add a federation agreement. 

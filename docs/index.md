@@ -38,18 +38,18 @@ The [structure](foxids-inside.md#structure) of FoxIDs separates the different te
 If FoxIDs is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
 The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/track-y/`.
 
-A down-party is call by adding the down-party name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
+A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
 A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
 If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
 When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which up-party the user should authenticate. 
-The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
+The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
 
 Selecting multiple up-parties:
 
-- Select all allowed up-parties for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
-- Select a maximum of 4 allowed up-parties for a down-party by adding the up-parties as a comma separated list in round brackets 
-  in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
+- Select all allowed up-parties for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
+- Select a maximum of 4 allowed up-parties for a application registration by adding the up-parties as a comma separated list in round brackets 
+  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
 
 > The allowed up-parties is configured in each [down-party](parties.md#down-party).
 

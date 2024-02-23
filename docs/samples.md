@@ -56,7 +56,7 @@ You can alternatively configure the samples in [your one FoxIDs track](#configur
 
 ## Down-party sample applications
 
-The down-party samples show different applications which trust FoxIDs as an IdP.
+The application registration samples show different applications which trust FoxIDs as an IdP.
 
 ### AspNetCoreOidcAuthCodeAllUpPartiesSample
 
@@ -66,7 +66,7 @@ You can test this [sample online](https://aspnetcoreoidcallupsample.itfoxtec.com
 
 > This sample is a good starting point!
 
-The possible up-parties is configured in the down-party as allowed up-parties. There can be configured one to many allowed up-parties. 
+The possible up-parties is configured in the application registration as allowed up-parties. There can be configured one to many allowed up-parties. 
 All the configured up-parties is selected with a star instead of an up-party name.
 
 Support login/logout with FoxIDs login page, [Identity Server](#identityserveroidcopsample), [SAML 2.0 IdP sample](#aspnetcoresamlidpsample) and all other up-parties.

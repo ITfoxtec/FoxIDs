@@ -1,6 +1,6 @@
 ﻿# OpenID Connect down-party
 
-FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) down-party enable you to connect an OpenID Connect based application. 
+FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) application registration enable you to connect an OpenID Connect based application. 
 
 ![FoxIDs OpenID Connect down-party](images/parties-down-party-oidc.svg)
 
@@ -45,12 +45,12 @@ The `AcrValues` parameter can be set in the `OnRedirectToIdentityProvider` event
 See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetcoreoidcauthorizationcodesample) and [Startup.cs line 141](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreOidcAuthorizationCodeSample/Startup.cs#L141).
 
 ## Configuration
-How to configure your application as a OpenID Connect down-party Relaying Party (RP) / client.
+How to configure your application as a OpenID Connect application registration Relaying Party (RP) / client.
 
 > The clients FoxIDs discovery document is `https://foxids.com/tenant-x/track-y/party-client1/.well-known/openid-configuration`  
-> if the client is configured in tenant `tenant-x` and track `track-y` with the down-party client name `party-client1`.
+> if the client is configured in tenant `tenant-x` and track `track-y` with the application registration client name `party-client1`.
 
-> A down-party client can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
+> A application registration client can possibly support login through multiple [up-parties](parties.md#up-party) by adding the up-party name to the URL.  
 > An up-party name e.g. `login` can possible be added to the discovery URL like this `https://foxids.com/tenant-x/track-y/party-client1(login)/.well-known/openid-configuration`
 
 During RP-initiated logout the up-party name can be omitted in the URL if the ID Token is provided in the request.
@@ -58,7 +58,7 @@ During RP-initiated logout the up-party name can be omitted in the URL if the ID
 ### Configure Authorization Code Flow for a confidential client
 A confidential client could be a web application where the security is handled by the webserver which also stores the client secret.
 
-- Specify client name in down-party name.
+- Specify client name in application registration name.
 - Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
@@ -71,7 +71,7 @@ A confidential client could be a web application where the security is handled b
 ### Configure Authorization Code Flow for a public client
 A public client could be a browser-based riches client, Blazor client or mobile app. The application should use PKCE and not a client secret.
 
-- Specify client name in down-party name.
+- Specify client name in application registration name.
 - Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
@@ -86,7 +86,7 @@ A public client could be a browser-based riches client, Blazor client or mobile 
 A public client could be a web application where the security is handled by the webserver or a browser-based riches client. The application neither use PKCE or client secret.  
 *It is not recommended to use Implicit Code Flow because it is insecure.*
 
-- Specify client name in down-party name.
+- Specify client name in application registration name.
 - Select allowed up-parties.
 - Specify redirect URIs.
 - Specify post logout redirect URI.
@@ -97,7 +97,7 @@ A public client could be a web application where the security is handled by the 
 ![Configure Implicit Code Flow with PKCE](images/configure-implicit-code-flow.png)
 
 ## Client and API
-It is possible to configure both client and API ([OAuth 2.0 resource](down-party-oauth-2.0.md#oauth-20-resource)) in the same OpenID Connect down-party configuration, where both the client and API is defined with the same name. Furthermore, it is possible to configure resource scopes for the API.
+It is possible to configure both client and API ([OAuth 2.0 resource](down-party-oauth-2.0.md#oauth-20-resource)) in the same OpenID Connect application registration configuration, where both the client and API is defined with the same name. Furthermore, it is possible to configure resource scopes for the API.
 
 **Client tap**
 
@@ -119,12 +119,12 @@ In the resource configuration tab, the scopes are defined as a list of scope val
 
 ![Resource and scopes - Resource](images/configure-resource-scopes-resource.png)
 
-Scopes configured in the client is validated if the scopes exist on the API. If the client and API is configured in the same down-party configuration, scopes added to the client is automatically added to the resource.
+Scopes configured in the client is validated if the scopes exist on the API. If the client and API is configured in the same application registration configuration, scopes added to the client is automatically added to the resource.
 
 ## Scopes
 The scopes can be configured in the client configuration tab. It is possible to define a set of claims which should be issued for at scope as voluntary claims.
 
-> Change the claims the down-party pass on with [claim transforms](claim-transform.md).
+> Change the claims the application registration pass on with [claim transforms](claim-transform.md).
 
 A set of default scopes is added to the client configuration, which subsequently can be changed or deleted.
 

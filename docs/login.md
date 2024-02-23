@@ -13,8 +13,8 @@ A [OpenID Connect down-party](down-party-oidc.md) or [SAML 2.0 down-party](down-
 The login up-party user interface authenticates users in a two-step login interface with the username and password input on two separate pages.
 
 ## Home Realm Discovery (HRD)
-When you create a down-party it is in most cases the best solution to use a star `(*)` in round brackets to select the up-parties. 
-If a down-party is configured to only be allowed to use one up-party the user is immediately redirected to that particular up-party. 
+When you create a application registration it is in most cases the best solution to use a star `(*)` in round brackets to select the up-parties. 
+If a application registration is configured to only be allowed to use one up-party the user is immediately redirected to that particular up-party. 
 If more than one up-party is allowed the user is redirected to a login up-party which make it possible to select an up-party either by writing an e-mail (looking at the domain) or by clicking a HRD button.
 
 It is possible to select up to 4 up-parties by name or use the star notation, please see more about [selection](index.md#selection-by-url).
@@ -27,7 +27,7 @@ A HRD button is shown for the up-party if not at least one domain or wildcard is
 An example of how a login screen with HRD looks like, it can be [customized](title-icon-css.md).
 ![Home Realm Discovery configuration](images/configure-login-hrd-example.png)
 
-The [title, icon and CSS](title-icon-css.md) configured on the first allowed login up-party on the down-party is used. Without an allowed login up-party configured the title, icon and CSS from the default login up-party is used.
+The [title, icon and CSS](title-icon-css.md) configured on the first allowed login up-party on the application registration is used. Without an allowed login up-party configured the title, icon and CSS from the default login up-party is used.
 
 ## Two-factor authentication (2FA/MFA)
 A login up-party support multi-factor authentication (MFA) by supporting two-factor authentication (2FA) with an authenticator app.

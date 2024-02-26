@@ -118,11 +118,11 @@
                     }
                     <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
                     <FInputText @bind-Value="oidcDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oidcDownParty.Form.Model.Client.PostLogoutRedirectUri)" />
+                    <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oidcDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                     @if (DownParty.ShowAdvanced)
                     {
                         <FInputText @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutUri" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutUri)" />
                         <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oidcDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                         <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     }
                     <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />

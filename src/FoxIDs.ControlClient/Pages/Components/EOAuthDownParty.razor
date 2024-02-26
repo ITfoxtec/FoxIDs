@@ -124,9 +124,9 @@
                         <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.AllowCorsOrigins" For="@(() => oauthDownParty.Form.Model.AllowCorsOrigins)" DynamicFirstRow="true" />
                     }
                     <FInputTextList @bind-ValueList="oauthDownParty.Form.Model.Client.RedirectUris" For="@(() => oauthDownParty.Form.Model.Client.RedirectUris)" DynamicFirstRow="true" />
+                    <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oauthDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                     @if (DownParty.ShowAdvanced)
                     {
-                        <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oauthDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                         <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oauthDownParty.Form.Model.Client.ResponseTypes" For="@(() => oauthDownParty.Form.Model.Client.ResponseTypes)" />
                     }
                     <FInputToggle @bind-Value="oauthDownParty.Form.Model.Client.RequirePkce" For="@(() => oauthDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />

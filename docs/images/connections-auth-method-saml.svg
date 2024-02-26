@@ -1,31 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<!-- Oprettet af Microsoft Visio, SVG-eksport parties-up-party-saml.svg Side-1 -->
+<!-- Oprettet af Microsoft Visio, SVG-eksport connections-auth-method-saml.svg Side-1 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
 		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="5.81075in" height="4.3472in"
-		viewBox="0 0 418.374 312.999" xml:space="preserve" color-interpolation-filters="sRGB" class="st18">
+		viewBox="0 0 418.374 312.999" xml:space="preserve" color-interpolation-filters="sRGB" class="st20">
 	<v:documentProperties v:langID="1033" v:metric="true" v:viewMarkup="false"/>
 
 	<style type="text/css">
 	<![CDATA[
 		.st1 {fill:none;stroke:#f78f1e;stroke-width:1}
-		.st2 {fill:#000000;font-family:Calibri;font-size:1.5em}
-		.st3 {fill:#fbe5d5;stroke:#7f7f7f;stroke-width:1}
-		.st4 {fill:#000000;font-family:Calibri;font-size:1.00001em}
-		.st5 {font-size:1em}
-		.st6 {fill:none;stroke:#7f7f7f;stroke-width:1}
-		.st7 {font-size:0.83333em}
-		.st8 {stroke:#7f7f7f;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
-		.st9 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
-		.st10 {fill:#000000;font-family:Calibri;font-size:0.666664em}
-		.st11 {fill:#7f7f7f;font-size:1em}
-		.st12 {stroke:#7f7f7f;stroke-dasharray:7,5;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
-		.st13 {fill:#4672c4;stroke:#7f7f7f;stroke-width:0.25}
-		.st14 {stroke:#7f7f7f;stroke-linecap:butt;stroke-width:4.5}
-		.st15 {fill:none;stroke:#bfbfbf;stroke-dasharray:7,5;stroke-width:1}
-		.st16 {fill:#bfbfbf;font-family:Calibri;font-size:1.00001em}
-		.st17 {fill:#7f7f7f;font-family:Calibri;font-size:1.00001em}
-		.st18 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+		.st2 {fill:#fbe5d5;stroke:#7f7f7f;stroke-width:1}
+		.st3 {fill:#000000;font-family:Calibri;font-size:0.833336em;font-style:italic}
+		.st4 {font-size:1.20001em;font-style:normal}
+		.st5 {fill:none;stroke:#7f7f7f;stroke-width:1}
+		.st6 {font-size:1em}
+		.st7 {fill:#000000;font-family:Calibri;font-size:1.00001em}
+		.st8 {font-size:0.83333em}
+		.st9 {stroke:#7f7f7f;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st10 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st11 {fill:#000000;font-family:Calibri;font-size:0.666664em}
+		.st12 {fill:#7f7f7f;font-size:1.20001em;font-style:normal}
+		.st13 {stroke:#7f7f7f;stroke-dasharray:7,5;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st14 {fill:#4672c4;stroke:#7f7f7f;stroke-width:0.25}
+		.st15 {stroke:#7f7f7f;stroke-linecap:butt;stroke-width:4.5}
+		.st16 {fill:#000000;font-family:Calibri;font-size:1.16666em}
+		.st17 {fill:none;stroke:#bfbfbf;stroke-dasharray:7,5;stroke-width:1}
+		.st18 {fill:#7f7f7f;font-family:Calibri;font-size:0.833336em;font-style:italic}
+		.st19 {fill:#bfbfbf;font-size:1.20001em;font-style:normal}
+		.st20 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
 	]]>
 	</style>
 
@@ -36,15 +38,12 @@
 		<v:layer v:name="Connector" v:index="0"/>
 		<g id="shape17-1" v:mID="17" v:groupContext="shape" transform="translate(32.9961,-89.5608)">
 			<title>Rectangle.1</title>
-			<desc>Environment</desc>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
-			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="180.567" cy="243.331" width="361.14" height="139.336"/>
 			<rect x="0" y="173.663" width="361.134" height="139.336" class="st1"/>
-			<text x="131.28" y="248.73" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
-		<g id="shape22-4" v:mID="22" v:groupContext="shape" transform="translate(275.925,-182.639)">
+		</g>
+		<g id="shape22-3" v:mID="22" v:groupContext="shape" transform="translate(275.925,-182.639)">
 			<title>Rectangle.41</title>
 			<desc>Authentication method SAML 2.0</desc>
 			<v:userDefs>
@@ -52,9 +51,9 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="292.104" width="113.53" height="41.7891"/>
-			<rect x="0" y="271.21" width="113.528" height="41.7891" class="st3"/>
-			<text x="35.08" y="288.5" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
-						x="33.93" dy="1.2em" class="st5">SAML 2.0</tspan></text>		</g>
+			<rect x="0" y="271.21" width="113.528" height="41.7891" class="st2"/>
+			<text x="9.81" y="288.5" class="st3" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method<tspan
+						class="st4" v:langID="1033"> </tspan><tspan x="33.93" dy="1.2em" class="st4" v:langID="1033">SAML 2.0</tspan></text>		</g>
 		<g id="shape23-8" v:mID="23" v:groupContext="shape" transform="translate(275.925,-93.126)">
 			<title>Rectangle.47</title>
 			<desc>Application SAML 2.0</desc>
@@ -63,10 +62,11 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="288.986" width="113.53" height="48.0253"/>
-			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st6"/>
-			<text x="27.79" y="285.39" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
-						x="33.93" dy="1.2em" class="st5">SAML 2.0</tspan></text>		</g>
-		<g id="shape24-12" v:mID="24" v:groupContext="shape" transform="translate(312.74,-1)">
+			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st5"/>
+			<text x="33.82" y="285.39" class="st3" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Application<tspan
+						class="st6" v:langID="1033"> </tspan><tspan class="st4" v:langID="1033"> </tspan><tspan x="33.93"
+						dy="1.2em" class="st4" v:langID="1033">SAML 2.0</tspan></text>		</g>
+		<g id="shape24-14" v:mID="24" v:groupContext="shape" transform="translate(312.74,-1)">
 			<title>Rectangle.48</title>
 			<desc>Relying Party (RP) (web application)</desc>
 			<v:userDefs>
@@ -74,18 +74,18 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="49.6063" cy="292.104" width="99.22" height="41.7891"/>
-			<rect x="0" y="271.21" width="99.2126" height="41.7891" class="st6"/>
-			<text x="6.42" y="288.5" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Relying Party (RP)<v:newlineChar/><tspan
-						x="14.22" dy="1.44em" class="st7">(web application)</tspan></text>		</g>
-		<g id="shape25-16" v:mID="25" v:groupContext="shape" v:layerMember="0" transform="translate(340.166,-93.126)">
+			<rect x="0" y="271.21" width="99.2126" height="41.7891" class="st5"/>
+			<text x="6.42" y="288.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Relying Party (RP)<v:newlineChar/><tspan
+						x="14.22" dy="1.44em" class="st8">(web application)</tspan></text>		</g>
+		<g id="shape25-18" v:mID="25" v:groupContext="shape" v:layerMember="0" transform="translate(340.166,-93.126)">
 			<title>Dynamic connector.25</title>
 			<desc>SAML 2.0</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="7.83705" cy="338.167" width="40.26" height="17.6036"/>
-			<path d="M0 313 L15.67 363.34" class="st8"/>
-			<rect v:rectContext="textBkgnd" x="-7.3855" y="333.367" width="30.4453" height="9.59985" class="st9"/>
-			<text x="-7.39" y="340.57" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
-		<g id="shape26-21" v:mID="26" v:groupContext="shape" transform="translate(256.366,-263.973)">
+			<path d="M0 313 L15.67 363.34" class="st9"/>
+			<rect v:rectContext="textBkgnd" x="-7.3855" y="333.367" width="30.4453" height="9.59985" class="st10"/>
+			<text x="-7.39" y="340.57" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
+		<g id="shape26-23" v:mID="26" v:groupContext="shape" transform="translate(256.366,-263.973)">
 			<title>Rectangle.51</title>
 			<desc>External Identity Provider (IdP) (Azure AD, AD FS, Auth0, Key...</desc>
 			<v:userDefs>
@@ -93,19 +93,19 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="80.5039" cy="288.986" width="161.01" height="48.0253"/>
-			<rect x="0" y="264.973" width="161.008" height="48.0253" class="st3"/>
-			<text x="5.43" y="280.59" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External Identity Provider (IdP)<v:newlineChar/><tspan
-						x="9.82" dy="1.26em" class="st7">(Azure AD, AD FS, Auth0, Keycloak, </tspan><tspan x="48.42" dy="1.2em"
-						class="st7">Google Apps ...)</tspan></text>		</g>
-		<g id="shape27-26" v:mID="27" v:groupContext="shape" v:layerMember="0" transform="translate(342.589,-263.973)">
+			<rect x="0" y="264.973" width="161.008" height="48.0253" class="st2"/>
+			<text x="5.43" y="280.59" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>External Identity Provider (IdP)<v:newlineChar/><tspan
+						x="9.82" dy="1.26em" class="st8">(Azure AD, AD FS, Auth0, Keycloak, </tspan><tspan x="48.42" dy="1.2em"
+						class="st8">Google Apps ...)</tspan></text>		</g>
+		<g id="shape27-28" v:mID="27" v:groupContext="shape" v:layerMember="0" transform="translate(342.589,-263.973)">
 			<title>Dynamic connector.52</title>
 			<desc>SAML 2.0</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-7.08661" cy="332.771" width="40.26" height="17.6036"/>
-			<path d="M-5.72 313 L-8.45 352.54" class="st8"/>
-			<rect v:rectContext="textBkgnd" x="-22.3092" y="327.972" width="30.4453" height="9.59985" class="st9"/>
-			<text x="-22.31" y="335.17" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
-		<g id="shape28-31" v:mID="28" v:groupContext="shape" transform="translate(37.3898,-93.126)">
+			<path d="M-5.72 313 L-8.45 352.54" class="st9"/>
+			<rect v:rectContext="textBkgnd" x="-22.3092" y="327.972" width="30.4453" height="9.59985" class="st10"/>
+			<text x="-22.31" y="335.17" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>SAML 2.0</text>		</g>
+		<g id="shape28-33" v:mID="28" v:groupContext="shape" transform="translate(37.3898,-93.126)">
 			<title>Rectangle.20</title>
 			<desc>Application OpenID Connect (OAuth 2.0 Resource)</desc>
 			<v:userDefs>
@@ -113,11 +113,12 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="288.986" width="113.53" height="48.0253"/>
-			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st6"/>
-			<text x="27.79" y="278.19" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
-						x="16.74" dy="1.2em" class="st5">OpenID Connect<v:newlineChar/></tspan><tspan x="4.54" dy="1.2em"
-						class="st5">(OAuth 2.0 Resource)</tspan></text>		</g>
-		<g id="shape29-36" v:mID="29" v:groupContext="shape" transform="translate(156.728,-93.126)">
+			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st5"/>
+			<text x="33.82" y="278.19" class="st3" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Application<tspan
+						class="st6" v:langID="1033"> </tspan><tspan class="st4" v:langID="1033"> </tspan><tspan x="16.74"
+						dy="1.2em" class="st4" v:langID="1033">OpenID Connect<v:newlineChar/></tspan><tspan x="4.54" dy="1.2em"
+						class="st4" v:langID="1033">(OAuth 2.0 Resource)</tspan></text>		</g>
+		<g id="shape29-40" v:mID="29" v:groupContext="shape" transform="translate(156.728,-93.126)">
 			<title>Rectangle.29</title>
 			<desc>Application OAuth 2.0 Client OAuth 2.0 Resource</desc>
 			<v:userDefs>
@@ -125,11 +126,12 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="288.986" width="113.53" height="48.0253"/>
-			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st6"/>
-			<text x="27.79" y="278.19" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Application <v:newlineChar/><tspan
-						x="16.59" dy="1.2em" class="st11">OAuth 2.0 Client<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
-						class="st5">OAuth 2.0 Resource</tspan></text>		</g>
-		<g id="shape30-41" v:mID="30" v:groupContext="shape" transform="translate(1,-1)">
+			<rect x="0" y="264.973" width="113.528" height="48.0253" class="st5"/>
+			<text x="33.82" y="278.19" class="st3" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Application<tspan
+						class="st6" v:langID="1033"> </tspan><tspan class="st4" v:langID="1033"> </tspan><tspan x="16.59"
+						dy="1.2em" class="st12" v:langID="1033">OAuth 2.0 Client<v:newlineChar/></tspan><tspan x="8.17" dy="1.2em"
+						class="st4" v:langID="1033">OAuth 2.0 Resource</tspan></text>		</g>
+		<g id="shape30-47" v:mID="30" v:groupContext="shape" transform="translate(1,-1)">
 			<title>Rectangle.30</title>
 			<desc>Client (web application, JS client, Blazor client ...)</desc>
 			<v:userDefs>
@@ -137,26 +139,26 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="49.6063" cy="292.104" width="99.22" height="41.7891"/>
-			<rect x="0" y="271.21" width="99.2126" height="41.7891" class="st6"/>
-			<text x="35.51" y="282.5" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Client <v:newlineChar/><tspan
-						x="9.46" dy="1.26em" class="st7">(web application, JS </tspan><tspan x="4.65" dy="1.38em" class="st7">client, Blazor client ...)</tspan></text>		</g>
-		<g id="shape31-46" v:mID="31" v:groupContext="shape" v:layerMember="0" transform="translate(83.1745,-93.126)">
+			<rect x="0" y="271.21" width="99.2126" height="41.7891" class="st5"/>
+			<text x="35.51" y="282.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Client <v:newlineChar/><tspan
+						x="9.46" dy="1.26em" class="st8">(web application, JS </tspan><tspan x="4.65" dy="1.38em" class="st8">client, Blazor client ...)</tspan></text>		</g>
+		<g id="shape31-52" v:mID="31" v:groupContext="shape" v:layerMember="0" transform="translate(83.1745,-93.126)">
 			<title>Dynamic connector.28</title>
 			<desc>OpenID Connect</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-11.5074" cy="338.167" width="63.18" height="17.6036"/>
-			<path d="M0 313 L-23.01 363.34" class="st8"/>
-			<rect v:rectContext="textBkgnd" x="-38.1887" y="333.367" width="53.3628" height="9.59985" class="st9"/>
-			<text x="-38.19" y="340.57" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OpenID Connect</text>		</g>
-		<g id="shape32-51" v:mID="32" v:groupContext="shape" v:layerMember="0" transform="translate(195.813,-93.126)">
+			<path d="M0 313 L-23.01 363.34" class="st9"/>
+			<rect v:rectContext="textBkgnd" x="-38.1887" y="333.367" width="53.3628" height="9.59985" class="st10"/>
+			<text x="-38.19" y="340.57" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OpenID Connect</text>		</g>
+		<g id="shape32-57" v:mID="32" v:groupContext="shape" v:layerMember="0" transform="translate(195.813,-93.126)">
 			<title>Dynamic connector.33</title>
 			<desc>OAuth 2.0</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="-18.5299" cy="338.167" width="42.77" height="17.6036"/>
-			<path d="M0 313 L-37.06 363.34" class="st8"/>
-			<rect v:rectContext="textBkgnd" x="-35.0043" y="333.367" width="32.9491" height="9.59985" class="st9"/>
-			<text x="-35" y="340.57" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OAuth 2.0</text>		</g>
-		<g id="shape33-56" v:mID="33" v:groupContext="shape" transform="translate(106.095,-1)">
+			<path d="M0 313 L-37.06 363.34" class="st9"/>
+			<rect v:rectContext="textBkgnd" x="-35.0043" y="333.367" width="32.9491" height="9.59985" class="st10"/>
+			<text x="-35" y="340.57" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OAuth 2.0</text>		</g>
+		<g id="shape33-62" v:mID="33" v:groupContext="shape" transform="translate(106.095,-1)">
 			<title>Rectangle.35</title>
 			<desc>Resource (API)</desc>
 			<v:userDefs>
@@ -164,60 +166,60 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="37.2756" cy="292.104" width="74.56" height="41.7891"/>
-			<rect x="0" y="271.21" width="74.5512" height="41.7891" class="st6"/>
-			<text x="14.75" y="288.5" class="st4" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Resource <v:newlineChar/><tspan
-						x="27.51" dy="1.44em" class="st7">(API)</tspan></text>		</g>
-		<g id="shape34-60" v:mID="34" v:groupContext="shape" v:layerMember="0" transform="translate(106.562,-93.126)">
+			<rect x="0" y="271.21" width="74.5512" height="41.7891" class="st5"/>
+			<text x="14.75" y="288.5" class="st7" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Resource <v:newlineChar/><tspan
+						x="27.51" dy="1.44em" class="st8">(API)</tspan></text>		</g>
+		<g id="shape34-66" v:mID="34" v:groupContext="shape" v:layerMember="0" transform="translate(106.562,-93.126)">
 			<title>Dynamic connector.45</title>
 			<desc>OAuth 2.0</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="13.0056" cy="338.167" width="42.77" height="17.6036"/>
-			<path d="M0 313 L26.01 363.34" class="st12"/>
-			<rect v:rectContext="textBkgnd" x="-3.46887" y="333.367" width="32.9491" height="9.59985" class="st9"/>
-			<text x="-3.47" y="340.57" class="st10" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OAuth 2.0</text>		</g>
-		<g id="shape43-65" v:mID="43" v:groupContext="shape" transform="translate(345.161,-157.825) scale(-1,1)">
+			<path d="M0 313 L26.01 363.34" class="st13"/>
+			<rect v:rectContext="textBkgnd" x="-3.46887" y="333.367" width="32.9491" height="9.59985" class="st10"/>
+			<text x="-3.47" y="340.57" class="st11" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>OAuth 2.0</text>		</g>
+		<g id="shape43-71" v:mID="43" v:groupContext="shape" transform="translate(345.161,-157.825) scale(-1,1)">
 			<title>Rectangle.67</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
-			<rect x="0" y="310.447" width="42.0945" height="2.55117" class="st13"/>
+			<rect x="0" y="310.447" width="42.0945" height="2.55117" class="st14"/>
 		</g>
-		<g id="shape44-67" v:mID="44" v:groupContext="shape" v:layerMember="0" transform="translate(206.289,-182.639)">
+		<g id="shape44-73" v:mID="44" v:groupContext="shape" v:layerMember="0" transform="translate(206.289,-182.639)">
 			<title>Dynamic connector.55</title>
-			<path d="M6.9 313 L7.27 336.41" class="st8"/>
+			<path d="M6.9 313 L7.27 336.41" class="st9"/>
 		</g>
-		<g id="shape45-70" v:mID="45" v:groupContext="shape" transform="translate(81.752,-157.876)">
+		<g id="shape45-76" v:mID="45" v:groupContext="shape" transform="translate(81.752,-157.876)">
 			<title>Rectangle.46</title>
 			<v:userDefs>
 				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
 			</v:userDefs>
-			<rect x="0" y="310.447" width="42.0945" height="2.55117" class="st13"/>
+			<rect x="0" y="310.447" width="42.0945" height="2.55117" class="st14"/>
 		</g>
-		<g id="shape46-72" v:mID="46" v:groupContext="shape" v:layerMember="0" transform="translate(36.9646,-152.142)">
+		<g id="shape46-78" v:mID="46" v:groupContext="shape" v:layerMember="0" transform="translate(36.9646,-152.142)">
 			<title>Dynamic connector.53</title>
 			<desc>Environment</desc>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
-			<v:textRect cx="176.457" cy="305.912" width="108.4" height="29.6036"/>
-			<path d="M0 305.91 L352.91 305.91" class="st14"/>
-			<rect v:rectContext="textBkgnd" x="127.168" y="295.112" width="98.5781" height="21.5999" class="st9"/>
-			<text x="127.17" y="311.31" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
-		<g id="shape47-77" v:mID="47" v:groupContext="shape" v:layerMember="0" transform="translate(102.197,-157.876)">
+			<v:textRect cx="176.457" cy="305.912" width="83.36" height="24.8035"/>
+			<path d="M0 305.91 L352.91 305.91" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="139.686" y="297.512" width="73.5408" height="16.8" class="st10"/>
+			<text x="139.69" y="310.11" class="st16" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Environment</text>		</g>
+		<g id="shape47-83" v:mID="47" v:groupContext="shape" v:layerMember="0" transform="translate(102.197,-157.876)">
 			<title>Dynamic connector.47</title>
-			<path d="M-6.27 313 L-7.9 329.72" class="st8"/>
+			<path d="M-6.27 313 L-7.9 329.72" class="st9"/>
 		</g>
-		<g id="shape48-80" v:mID="48" v:groupContext="shape" v:layerMember="0" transform="translate(90.4048,-182.639)">
+		<g id="shape48-86" v:mID="48" v:groupContext="shape" v:layerMember="0" transform="translate(90.4048,-182.639)">
 			<title>Dynamic connector.37</title>
-			<path d="M1.78 313 L12.39 336.49" class="st8"/>
+			<path d="M1.78 313 L12.39 336.49" class="st9"/>
 		</g>
-		<g id="shape49-83" v:mID="49" v:groupContext="shape" v:layerMember="0" transform="translate(324.866,-157.825)">
+		<g id="shape49-89" v:mID="49" v:groupContext="shape" v:layerMember="0" transform="translate(324.866,-157.825)">
 			<title>Dynamic connector.68</title>
-			<path d="M6.35 313 L7.82 329.67" class="st8"/>
+			<path d="M6.35 313 L7.82 329.67" class="st9"/>
 		</g>
-		<g id="shape50-86" v:mID="50" v:groupContext="shape" v:layerMember="0" transform="translate(336.509,-182.588)">
+		<g id="shape50-92" v:mID="50" v:groupContext="shape" v:layerMember="0" transform="translate(336.509,-182.588)">
 			<title>Dynamic connector.71</title>
-			<path d="M-1.78 313 L-12.39 336.49" class="st8"/>
+			<path d="M-1.78 313 L-12.39 336.49" class="st9"/>
 		</g>
-		<g id="shape18-89" v:mID="18" v:groupContext="shape" transform="translate(37.5314,-182.639)">
+		<g id="shape18-95" v:mID="18" v:groupContext="shape" transform="translate(37.5314,-182.639)">
 			<title>Rectangle.18</title>
 			<desc>Authentication method OpenID Connect</desc>
 			<v:userDefs>
@@ -225,10 +227,10 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="292.104" width="113.53" height="41.7891"/>
-			<path d="M0 313 L113.53 313 L113.53 271.21 L0 271.21 L0 313 Z" class="st15"/>
-			<text x="35.08" y="288.5" class="st16" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
-						x="16.74" dy="1.2em" class="st5">OpenID Connect</tspan></text>		</g>
-		<g id="shape21-93" v:mID="21" v:groupContext="shape" transform="translate(156.728,-182.639)">
+			<path d="M0 313 L113.53 313 L113.53 271.21 L0 271.21 L0 313 Z" class="st17"/>
+			<text x="9.81" y="288.5" class="st18" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method<tspan
+						class="st19" v:langID="1033"> </tspan><tspan x="16.74" dy="1.2em" class="st19" v:langID="1033">OpenID Connect</tspan></text>		</g>
+		<g id="shape21-100" v:mID="21" v:groupContext="shape" transform="translate(156.728,-182.639)">
 			<title>Rectangle.39</title>
 			<desc>Authentication method Login</desc>
 			<v:userDefs>
@@ -236,8 +238,8 @@
 			</v:userDefs>
 			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
 			<v:textRect cx="56.7638" cy="292.104" width="113.53" height="41.7891"/>
-			<path d="M0 313 L113.53 313 L113.53 271.21 L0 271.21 L0 313 Z" class="st15"/>
-			<text x="35.08" y="288.5" class="st17" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method <v:newlineChar/><tspan
-						x="43.72" dy="1.2em" class="st5">Login</tspan></text>		</g>
+			<path d="M0 313 L113.53 313 L113.53 271.21 L0 271.21 L0 313 Z" class="st17"/>
+			<text x="9.81" y="288.5" class="st18" v:langID="2057"><v:paragraph v:horizAlign="1"/><v:tabList/>Authentication method<tspan
+						class="st4" v:langID="1033"> </tspan><tspan x="43.72" dy="1.2em" class="st4" v:langID="1033">Login</tspan></text>		</g>
 	</g>
 </svg>

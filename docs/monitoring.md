@@ -1,5 +1,5 @@
 # Monitoring
-You can collect logs and monitor Foxids through Log Analytics workspace / Application Insights or configure a [log stream](logging.md#log-stream) to your monitoring system.
+You can collect logs and monitor FoxIDs through Log Analytics workspace / Application Insights or configure a [log stream](logging.md#log-stream) to your monitoring system.
 
 You can configure a dashboard in Azure where it is possible to monitor e.g. resources, login events and errors. 
 

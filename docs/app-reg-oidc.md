@@ -1,32 +1,32 @@
 ﻿# OpenID Connect application registration
 
-Foxids [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) application registration enable you to connect an OpenID Connect based application. 
+FoxIDs [OpenID Connect](https://openid.net/specs/openid-connect-core-1_0.html) application registration enable you to connect an OpenID Connect based application. 
 
-![Foxids OpenID Connect application registration](images/connections-app-reg-oidc.svg)
+![FoxIDs OpenID Connect application registration](images/connections-app-reg-oidc.svg)
 
-Your application become a Relying Party (RP) and Foxids acts as an OpenID Provider (OP).
+Your application become a Relying Party (RP) and FoxIDs acts as an OpenID Provider (OP).
 
-Foxids support [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) where your application can discover the OpenID Provider.
+FoxIDs support [OpenID Connect Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) where your application can discover the OpenID Provider.
 
-Foxids support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout.  
-Foxids can show a logout confirmation dialog depending on configuration and rather an ID token is included in the logout request or not.
+FoxIDs support [OpenID Connect authentication](https://openid.net/specs/openid-connect-core-1_0.html#Authentication) (login), [RP-initiated logout](https://openid.net/specs/openid-connect-rpinitiated-1_0.html) and [front-channel logout](https://openid.net/specs/openid-connect-frontchannel-1_0.html). A session is established when the user authenticates and the session id is included in the id token. The session is invalidated on logout.  
+FoxIDs can show a logout confirmation dialog depending on configuration and rather an ID token is included in the logout request or not.
 
-Default both id token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in Foxids Control. 
-Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in Foxids as [OAuth 2.0 resources](app-reg-oauth-2.0.md#oauth-20-resource).  
+Default both id token and access token are issued with the client's client id as the audience. The default resource can be removed from the access token in FoxIDs Control. 
+Access tokens can be issued with a list of audiences and thereby be issued to multiple APIs defined in FoxIDs as [OAuth 2.0 resources](app-reg-oauth-2.0.md#oauth-20-resource).  
 The application can then call an API securing the call with the access token using the [The OAuth 2.0 Authorization Framework: Bearer Token Usage](https://datatracker.ietf.org/doc/html/rfc6750).
 
-Foxids support both client secret and [Proof Key for Code Exchange (PKCE)](https://datatracker.ietf.org/doc/html/rfc7636), and default require PKCE. 
+FoxIDs support both client secret and [Proof Key for Code Exchange (PKCE)](https://datatracker.ietf.org/doc/html/rfc7636), and default require PKCE. 
 If a client is configured with both PKCE and secret/key they will both be validated. PKCE and client secret/key is not validated in implicit flow.  
 
 The default client authentication method is `client secret post` and can be changed to `client secret basic` or `private key JWT`. Client authentication method none is supported with PKCE.
 
 There can be configured a maximum of 10 secrets and 4 keys per client.
 
-Foxids support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
+FoxIDs support the OpenID Connect [UserInfo endpoint](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo).
 
 How to guides:
 
-- Connect two Foxids environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -42,12 +42,12 @@ The `AcrValues` parameter can be set in the `OnRedirectToIdentityProvider` event
         return Task.FromResult(string.Empty);
     };
 
-See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetcoreoidcauthorizationcodesample) and [Startup.cs line 141](https://github.com/ITfoxtec/Foxids.Samples/blob/master/src/AspNetCoreOidcAuthorizationCodeSample/Startup.cs#L141).
+See more code in the [AspNetCoreOidcAuthorizationCodeSample](samples.md#aspnetcoreoidcauthorizationcodesample) and [Startup.cs line 141](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreOidcAuthorizationCodeSample/Startup.cs#L141).
 
 ## Configuration
 How to configure your application as a OpenID Connect application registration Relaying Party (RP) / client.
 
-> The clients Foxids discovery document is `https://foxids.com/tenant-x/environment-y/application-client1/.well-known/openid-configuration`  
+> The clients FoxIDs discovery document is `https://foxids.com/tenant-x/environment-y/application-client1/.well-known/openid-configuration`  
 > if the client is configured in tenant `tenant-x` and environment `environment-y` with the application registration client name `application-client1`.
 
 > A application registration client can possibly support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  

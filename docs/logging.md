@@ -1,14 +1,14 @@
 # Logging
 
-Foxids default log errors and events including the time and the client IP address. The logs are sent to Application Insights which is part of the Foxids cloud instance.
+FoxIDs default log errors and events including the time and the client IP address. The logs are sent to Application Insights which is part of the FoxIDs cloud instance.
 
 ## Usage
 
-Foxids usage can be searched in [Foxids Control Client and API](control.md).  
+FoxIDs usage can be searched in [FoxIDs Control Client and API](control.md).  
 
 - If you look at the usage in a particular environment, the usage of that selected environment is shown.  
 - If you instead look at the usage in the `master` environment it will show the usage for the entire tenant, which can be limited to a particular environment. 
-- Likewise, the `master` tenant `master` environment shows usage for the entire cloud installation of Foxids, which can be limited to a particular tenant and environment.
+- Likewise, the `master` tenant `master` environment shows usage for the entire cloud installation of FoxIDs, which can be limited to a particular tenant and environment.
 
 This screen dump shows the usage view in a environment.
 
@@ -17,13 +17,13 @@ This screen dump shows the usage view in a environment.
 
 ## Logs
 
-Logs can be searched in [Foxids Control Client and API](control.md).
+Logs can be searched in [FoxIDs Control Client and API](control.md).
 
 ![Search logs](images/search-logs.png)
 
 ## Log settings
 
-The log level can be configured per Foxids environment:
+The log level can be configured per FoxIDs environment:
 
  - Enable `Log info trace` - to see details about the login and logout sequences
  - Enable `Log claim trace` - to see the claims authentication methods and application registrations receive and pass on

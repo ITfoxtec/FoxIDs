@@ -1,6 +1,6 @@
 # Claim transforms
 
-Each Foxids authentication method and application registration handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
+Each FoxIDs authentication method and application registration handle [claims](claim.md) and support configuring claim transforms. This means that two sets of claim transforms can be executed on each user authentication. 
 First executing any claim transforms on the authentication method and then any claim transforms on the application registration. 
 
 If you create a new claim in a claim transform the claim is per default not send from the authentication method to the application registration or to the application / API. 
@@ -12,11 +12,11 @@ Please see [claim transform examples](#claim-transform-examples)
 
 Claim transforms can e.g., be configured in a login authentication method.
 
-![Foxids authentication method claim transform](images/configure-claim-transform-auth-method.png)
+![FoxIDs authentication method claim transform](images/configure-claim-transform-auth-method.png)
 
 And likewise claim transforms can e.g., be configured in a OpenID Connect application registration.
 
-![Foxids application registration claim transform](images/configure-claim-transform-app-reg.png)
+![FoxIDs application registration claim transform](images/configure-claim-transform-app-reg.png)
 
 > Claims are by default represented as JWT claims. If the authentication method or application registration is SAML 2.0 the claims is represented as SAML 2.0 claims.
 

@@ -1,12 +1,12 @@
 ﻿# Connect Azure AD B2C with OpenID Connect authentication method
 
-Foxids can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.
+FoxIDs can be connected to Azure AD B2C with OpenID Connect and thereby authenticating end users in an Azure AD B2C tenant.
 
 ## Configure integration
 
 This chapter describes how to configure a connection with OpenID Connect Authorization Code flow and PKCE, which is the recommended OpenID Connect flow.
 
-**1 - Start by creating an OpenID Connect authentication method client in [Foxids Control Client](control.md#foxids-control-client)**
+**1 - Start by creating an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
  2. Select show advanced settings
@@ -21,13 +21,13 @@ It is now possible to read the `Redirect URL`, `Post logout redirect URL` and `F
 1. Create app profile
 2. The profile will result in an authority like this `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/`, including the profile name
 
-When the authority is registered in Foxids as an authentication method. Foxids will call the discovery endpoint on the authority which in this case will be `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/.well-known/openid-configuration`
+When the authority is registered in FoxIDs as an authentication method. FoxIDs will call the discovery endpoint on the authority which in this case will be `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/.well-known/openid-configuration`
 
 > If you receive a discovery endpoint URL formatted with the Azure AD B2C profile name in the query string like this `...?p=B2C_1A_SOME_SIGNIN_PROFILE` you have to change the URL structure.  
 > The full URL would look like this `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1A_SOME_SIGNIN_PROFILE` and 
 > the authority is then `https://some-domain.b2clogin.com/some-domain.onmicrosoft.com/B2C_1A_SOME_SIGNIN_PROFILE/v2.0/` where the Azure AD B2C profile name is moved to be a path element in the URL.
 
-**3 - Go back to the Foxids authentication method client in [Foxids Control Client](control.md#foxids-control-client)**
+**3 - Go back to the FoxIDs authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 > Azure AD B2C is not by default return an access token in the token response and is thereby not OpenID Connect Authorization Code flow compliant. You need to add a Azure AD B2C client ID as a scope to get an access token returned.
 

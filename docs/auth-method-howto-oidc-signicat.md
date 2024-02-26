@@ -1,15 +1,15 @@
 ﻿# Connect Signicat with OpenID Connect authentication method
 
-Foxids can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.
+FoxIDs can be connected to Signicat with OpenID Connect and thereby authenticating end users with MitID and all other credentials supported by Signicat.
 
 > You can test Signicat Express login with the [online web app sample](https://aspnetcoreoidcallupsample.itfoxtec.com) ([sample docs](samples.md#aspnetcoreoidcauthcodealluppartiessample)) by clicking `Log in` and then `Signicat TEST`.  
-> Take a look at the Signicat Express sample configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Take a look at the Signicat Express sample configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then select the `- (dash is production)` environment and the `Authentication methods` tab.
 
 You can create a [free account](https://www.signicat.com/sign-up/express-api-onboarding) on [Signicat Express](https://developer.signicat.com/express/docs/) and get access to the [dashbord](https://dashboard-test.signicat.io/dashboard). 
 Her you have access to the test environment.
 
-This guide describes how to connect a Foxids authentication method to the Signicat Express test environment.
+This guide describes how to connect a FoxIDs authentication method to the Signicat Express test environment.
 
 ## Configuring Signicat as OpenID Provider (OP)
 
@@ -24,7 +24,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  5. Click Create
  6. Copy the Client ID
 
-**2 - Then create an OpenID Connect authentication method client in [Foxids Control Client](control.md#foxids-control-client)**
+**2 - Then create an OpenID Connect authentication method client in [FoxIDs Control Client](control.md#foxids-control-client)**
 
  1. Add the name
  2. Add the Signicat Express test authority `https://login-test.signicat.io` in the Authority field
@@ -40,7 +40,7 @@ This connection use OpenID Connect Authorization Code flow with PKCE, which is t
  1. Click OAuth / OpenID
  2. Click Edit
  3. Find the App URIs section
- 4. Add the three URLs from the Foxids authentication method client: `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL` in the respectively fields 
+ 4. Add the three URLs from the FoxIDs authentication method client: `Redirect URL`, `Post logout redirect URL` and `Front channel logout URL` in the respectively fields 
  5. Click Save
 
 That's it, you are done. 

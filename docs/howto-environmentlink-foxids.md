@@ -1,12 +1,12 @@
 # Connect two environments with Environment Link
 
-Foxids environments in the same tenant can be connected with environment links. A Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster. 
+FoxIDs environments in the same tenant can be connected with environment links. A Environment Link acts mostly like OpenID Connect but it is simpler to configure and the steps it goes through is faster. 
 
 ![Environment Link](images/how-to-environment-link.svg)
 
 Environment links is fast and secure but can only be used in the same tenant. A link based on [OpenID Connect connection](howto-oidc-foxids.md) is required if you need to jump between environments located in different tenants.
 
-> Take a look at the sample environment links configuration in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Take a look at the sample environment links configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!` then e.g., take a look at the `nemlogin` and `- (dash is production)` environments.
 
 Environment links support login, RP-initiated logout and front-channel logout. Furthermore, it is possible to configure [claim and claim transforms](claim.md), logout session and home realm discovery (HRD) like all other connecting authentication methods and application registrations.
@@ -15,7 +15,7 @@ Environment links support login, RP-initiated logout and front-channel logout. F
 
 The following describes how to connect two environments called `track_x` and `track_y` where `track_y` become an authentication method on `track_x`.
 
-**1 - Start in the `track_x` environment by creating a Environment Link in [Foxids Control Client](control.md#foxids-control-client)**
+**1 - Start in the `track_x` environment by creating a Environment Link in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Authentication methods tab
 2. Click Create authentication method and then Environment Link
@@ -26,7 +26,7 @@ The following describes how to connect two environments called `track_x` and `tr
 
 ![Create Environment Link authentication method](images/howto-environmentlink-foxids-auth-method.png)
 
-**2 - Then go to the `track_y` environment and create a Environment Link in [Foxids Control Client](control.md#foxids-control-client)**
+**2 - Then go to the `track_y` environment and create a Environment Link in [FoxIDs Control Client](control.md#foxids-control-client)**
 
 1. Select the Applications tab
 2. Click Create application registration and then Environment Link

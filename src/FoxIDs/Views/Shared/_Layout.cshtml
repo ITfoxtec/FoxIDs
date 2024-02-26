@@ -12,7 +12,7 @@
     </environment>
     @if (Model is ViewModel generalViewModel)
     {
-        var title = !generalViewModel.Title.IsNullOrWhiteSpace() ? generalViewModel.Title : "Foxids";
+        var title = !generalViewModel.Title.IsNullOrWhiteSpace() ? generalViewModel.Title : "FoxIDs";
         <title>@title@(ViewData.ContainsKey("Title") ? " - " : string.Empty)@ViewData["Title"]</title>
 
         if (!generalViewModel.IconUrl.IsNullOrWhiteSpace())

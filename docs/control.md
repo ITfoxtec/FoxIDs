@@ -1,17 +1,17 @@
-# Foxids Control
-Foxids is configured through Foxids Control which consists of [Control Client](#foxids-control-client) and [Control API](#foxids-control-api). Control Client and API is secured by Foxids and Control Client use Control API. 
+# FoxIDs Control
+FoxIDs is configured through FoxIDs Control which consists of [Control Client](#foxids-control-client) and [Control API](#foxids-control-api). Control Client and API is secured by FoxIDs and Control Client use Control API. 
 
 Control API contain all the configuration functionality. Therefore, it is possible to automate the configuration by integrating with Control API.
 
-## Foxids Control Client
+## FoxIDs Control Client
 Control Client is a Blazor WebAssembly (WASM) app.
 
-> Open your [Control Client on Foxids.com](https://www.foxids.com/action/login). 
+> Open your [Control Client on FoxIDs.com](https://www.foxids.com/action/login). 
 
 ### Tenant and master environment
-If you use [Foxids.com](https://foxids.com). Your one tenant will be pre created on registration.
+If you use [FoxIDs.com](https://foxids.com). Your one tenant will be pre created on registration.
 
-Otherwise if Foxids is [deployed](development.md) in your one Azure tenant you get access to the master tenant. In this case you firstly need to create a tenant which will contain your entire security configuration. You probably only need one, but it is possible to configure an unlimited number of tenants.  
+Otherwise if FoxIDs is [deployed](development.md) in your one Azure tenant you get access to the master tenant. In this case you firstly need to create a tenant which will contain your entire security configuration. You probably only need one, but it is possible to configure an unlimited number of tenants.  
 
 ![Configure tenants](images/configure-tenant.png)
 
@@ -52,14 +52,14 @@ A environment contains a primary certificate and possible a secondary certificat
 The environment properties can be configured by clicking the top right setting icon. 
 
 - Sequence lifetime is the max lifetime of a user's login flow from start to end.
-- Foxids protect against password guess. Configured in max failing logins, failing login count lifetime and observation period.
+- FoxIDs protect against password guess. Configured in max failing logins, failing login count lifetime and observation period.
 - Password requirements are configured regarding length, complexity and [password risk](https://haveibeenpwned.com/Passwords).
-- It is possible to host Foxids in an iframe from allowed domains.
+- It is possible to host FoxIDs in an iframe from allowed domains.
 - You can sent emails with you one SendGrid tenant by adding a custom email address and SendGrid key.
 
 ![Configure environment settings](images/configure-environment-setting.png)
 
-## Foxids Control API
+## FoxIDs Control API
 Control API is a REST API and has a Swagger (OpenApi) interface description.
 
 Control API require that the client calling the API is granted the `foxids:master` scope to access master tenant data or the `foxids:tenant` scope to access tenant data in a particular tenant. Normally only tenant data is accessed.
@@ -77,12 +77,12 @@ Control API is called with an access token as described in the [OAuth 2.0 Bearer
 
 The Swagger (OpenApi) interface document is exposed on `.../api/swagger/v1/swagger.json`.  
 
-> Foxids.com Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
+> FoxIDs.com Swagger (OpenApi) [https://control.foxids.com/api/swagger/v1/swagger.json](https://control.foxids.com/api/swagger/v1/swagger.json)
 
 The Control API URL contains the tenant name and environment name on winch you want to operate `.../[tenant_name]/[environment_name]/...`. 
 To call the API you replace the `[tenant_name]` element with your tenant name and the `[environment_name]` element with the environment name of the environment you want to call.
 
-If you e.g. want read a OpenID Connect application registration on Foxids.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[environment_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and environment names.
+If you e.g. want read a OpenID Connect application registration on FoxIDs.com with the name `some_oidc_app` you do a HTTP GET call to `https://control.foxids.com/api/[tenant_name]/[environment_name]/!oidcdownparty?name=some_oidc_app` - replaced with your tenant and environment names.
 
 ### API access rights
 Access to Control API is limited by scopes and roles. There are two sets of scopes based on `foxids:master` which grant access to the master tenant data and `foxids:tenant` which grant access to tenant data.  

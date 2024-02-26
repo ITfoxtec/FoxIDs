@@ -1,8 +1,8 @@
 # SAML 2.0
 
-Foxids support SAML 2.0 as both authentication method and application registration.
+FoxIDs support SAML 2.0 as both authentication method and application registration.
 
-![Foxids SAML 2.0](images/connections-saml.svg)
+![FoxIDs SAML 2.0](images/connections-saml.svg)
 
 ## Authentication method
 
@@ -25,7 +25,7 @@ How to guides:
 - Connect [Context Handler (Danish IdP)](howto-saml-2.0-context-handler.md#app-reg---connect-to-context-handler)
 
 ## Claim mappings
-Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [Foxids Control](control.md). The claim mappings is global for the environment.
+Claim mapping between SAML 2.0 claim types and JWT claim types can be configured in the setting menu in [FoxIDs Control](control.md). The claim mappings is global for the environment.
 
 > SAML 2.0 claims are internally [converted to JWT claims](connections.md#jwt-and-saml) between authentication method and application registration.
 

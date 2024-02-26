@@ -1,18 +1,18 @@
 # SAML 2.0 application registration
 
-Foxids [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) application registration enable you to connect an SAML 2.0 based application. 
+FoxIDs [SAML 2.0](https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf) application registration enable you to connect an SAML 2.0 based application. 
 
-![Foxids SAML 2.0 application registration](images/connections-app-reg-saml.svg)
+![FoxIDs SAML 2.0 application registration](images/connections-app-reg-saml.svg)
 
-Your application become a SAML 2.0 Relying Party (RP) and Foxids acts as an SAML 2.0 Identity Provider (IdP).
+Your application become a SAML 2.0 Relying Party (RP) and FoxIDs acts as an SAML 2.0 Identity Provider (IdP).
 
-Foxids support [SAML 2.0 redirect and post bindings](https://docs.oasis-open.org/security/saml/v2.0/saml-bindings-2.0-os.pdf).
+FoxIDs support [SAML 2.0 redirect and post bindings](https://docs.oasis-open.org/security/saml/v2.0/saml-bindings-2.0-os.pdf).
 
 A application registration expose [SAML 2.0 metadata](https://docs.oasis-open.org/security/saml/v2.0/saml-metadata-2.0-os.pdf) where your application can discover the SAML 2.0 Identity Provider (IdP).
 
 Both the login, logout and single logout [SAML 2.0 profiles](https://docs.oasis-open.org/security/saml/v2.0/saml-profiles-2.0-os.pdf) are supported. The Artifact profile is not supported.
 
-> The Foxids SAML 2.0 metadata do only include logout and single logout information if logout is configured in the SAML 2.0 application registration.
+> The FoxIDs SAML 2.0 metadata do only include logout and single logout information if logout is configured in the SAML 2.0 application registration.
 
 How to guides:
 
@@ -45,18 +45,18 @@ The `AuthnContextClassRef` property can be set in the `Login` method in `SamlCon
         return binding.Bind(saml2AuthnRequest).ToActionResult();
     }
 
-See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and [SamlController.cs line 104](https://github.com/ITfoxtec/Foxids.Samples/blob/master/src/AspNetCoreSamlSample/Controllers/SamlController.cs#L104).
+See more code in the [AspNetCoreSamlSample](samples.md#aspnetcoresamlsample) and [SamlController.cs line 104](https://github.com/ITfoxtec/FoxIDs.Samples/blob/master/src/AspNetCoreSamlSample/Controllers/SamlController.cs#L104).
 
 ## Configuration
 How to configure your application as an SAML 2.0 Relying Party (RP).
 
-> The Foxids SAML 2.0 application registration metadata endpoint is `https://foxids.com/tenant-x/environment-y/application-saml-pr1/saml/idpmetadata`  
+> The FoxIDs SAML 2.0 application registration metadata endpoint is `https://foxids.com/tenant-x/environment-y/application-saml-pr1/saml/idpmetadata`  
 > if the application is configured in tenant `tenant-x` and environment `environment-y` with the application registration name `application-saml-pr1`.
 
 > A application registration can possibly support login through multiple [authentication methods](connections.md#authentication-method) by adding the authentication method name to the URL.  
 > An authentication method name e.g. `login` can possible be added to the metadata URL like this `https://foxids.com/tenant-x/environment-y/application-saml-pr1(login)/saml/idpmetadata`
 
-The following screen shot show the basic Foxids SAML 2.0 application registration configuration available in [Foxids Control Client](control.md#foxids-control-client).
+The following screen shot show the basic FoxIDs SAML 2.0 application registration configuration available in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > More configuration options become available by clicking `Show advanced settings`.
 

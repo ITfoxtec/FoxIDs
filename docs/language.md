@@ -1,5 +1,5 @@
 # Languages
-Foxids has multi-language support with support for the following languages:
+FoxIDs has multi-language support with support for the following languages:
 
 - Bulgarian (bg)
 - Catalan (ca)
@@ -29,9 +29,9 @@ Foxids has multi-language support with support for the following languages:
 - Ukrainian (uk)
 
 A language can be selected with the `ui_locales` parameter in a OpenID Connect request. The language is otherwise selected based on the culture send by the browser. English is the default language if the requested language is not supported.  
-The Foxids Control Client administrative site only supports English.
+The FoxIDs Control Client administrative site only supports English.
 
-The text translations are located in the embedded resource file ([EmbeddedResource.json](https://github.com/ITfoxtec/Foxids/blob/master/src/Foxids.Shared/Models/Master/Resources/EmbeddedResource.json)).
+The text translations are located in the embedded resource file ([EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json)).
 
 **Language examples**
 
@@ -55,16 +55,16 @@ French
 
 ## Contributions
 
-Text translations added to the [EmbeddedResource.json](https://github.com/ITfoxtec/Foxids/blob/master/src/Foxids.Shared/Models/Master/Resources/EmbeddedResource.json) file will become generally available. 
+Text translations added to the [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file will become generally available. 
 Please contribute if you see an error, the text can be improved or you are lacking a language.
 
 > Text translation contributions are greatly appreciated.
 
-It is possible to contribute either by creating a pull request in the Foxids [GitHub repository](https://github.com/ITfoxtec/Foxids) or by sending an updated [EmbeddedResource.json](https://github.com/ITfoxtec/Foxids/blob/master/src/Foxids.Shared/Models/Master/Resources/EmbeddedResource.json) file to [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=Foxids-embedded-resource).
+It is possible to contribute either by creating a pull request in the FoxIDs [GitHub repository](https://github.com/ITfoxtec/FoxIDs) or by sending an updated [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file to [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=FoxIDs-embedded-resource).
 
 ## Translation in environment
 
-It is possible to add environment specific translations for each text element in multiple languages in [Foxids Control Client](control.md#foxids-control-client).
+It is possible to add environment specific translations for each text element in multiple languages in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > If you want to change a text and thereby not using the default text. It can be archived by adding a new text for each supported language. It is also possible to add new HTML tags in the text and set the related CSS.
 

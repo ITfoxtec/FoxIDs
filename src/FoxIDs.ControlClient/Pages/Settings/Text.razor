@@ -33,7 +33,7 @@
 
 <div class="d-flex pt-2">
     <div class="info-text mr-auto">
-        The texts are used in the Foxids login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
+        The texts are used in the FoxIDs login pages. It is possible to <DocsLink Page="language">change the text</DocsLink> shown depending on culture in the environment.
     </div>
     <div class="py-2">
         <button class="btn btn-secondary" @onclick="@(async () => await ShowUpdateTextSettingsModalAsync())">
@@ -162,7 +162,7 @@
 
 <Modal @ref="textSettingsModal" Title="Text Settings">
     <div class="info-text">
-        Each text element in Foxids has its unique ID. It is possible to change the settings so that the ID's are displayed together with the text, making it possible to search the text elements by ID.
+        Each text element in FoxIDs has its unique ID. It is possible to change the settings so that the ID's are displayed together with the text, making it possible to search the text elements by ID.
     </div>
 
     @if (!generalTextSettings.Error.IsNullOrWhiteSpace())

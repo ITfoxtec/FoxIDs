@@ -1,24 +1,24 @@
-# Connect to Context Handler with Foxids
+# Connect to Context Handler with FoxIDs
 
-> By using Foxids it become straight forward and easy to connect to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker).
+> By using FoxIDs it become straight forward and easy to connect to Context Handler / F&aelig;lleskommunal Adgangsstyring (Danish identity broker).
 
-Configure a connection from [Foxids](https://www.foxids.com) to Context Handler by following the [step-by-step guide](howto-saml-2.0-context-handler.md) - Foxids handles the SAML 2.0 / OIOSAML3 traffic.  
-Then connect your application to Foxids with [OpenID Connect](app-reg-oidc.md) or [lightweight SAML 2.0](app-reg-saml-2.0.md) .
+Configure a connection from [FoxIDs](https://www.foxids.com) to Context Handler by following the [step-by-step guide](howto-saml-2.0-context-handler.md) - FoxIDs handles the SAML 2.0 / OIOSAML3 traffic.  
+Then connect your application to FoxIDs with [OpenID Connect](app-reg-oidc.md) or [lightweight SAML 2.0](app-reg-saml-2.0.md) .
 
 ![Connect to Context Handler](images/how-to-context-handler.svg)
 
-By default, Foxids is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
+By default, FoxIDs is a [bridge](bridge.md) between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 
-## About Foxids
-Foxids is developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.  
+## About FoxIDs
+FoxIDs is developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.  
 You can [get started](https://www.foxids.com/action/createtenant) for free and optionally continue to use a Free plan.
 
 ## Online test
 Test Context Handler with the <a href="https://aspnetcoreoidcallupsample.itfoxtec.com/auth/login" target="_blank">online test app</a>, select `Danish Context Handler` or `Danish Context Handler TEST` for the test environment.  
-The OpenID Connect test app call Foxids and Foxids call Context Handler to let the user authenticate.
+The OpenID Connect test app call FoxIDs and FoxIDs call Context Handler to let the user authenticate.
 
 ## Context Handler details
-Foxids support Context Handler including OIOSAML3, login, single logout, logging, issuer naming, OCES3 (RSASSA-PSS) certificates and NSIS.
+FoxIDs support Context Handler including OIOSAML3, login, single logout, logging, issuer naming, OCES3 (RSASSA-PSS) certificates and NSIS.
 
 > Transform the [DK privilege XML claim](claim-transform-dk-privilege.md) to a JSON claim.
 

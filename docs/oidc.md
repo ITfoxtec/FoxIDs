@@ -1,8 +1,8 @@
 ﻿# OpenID Connect
 
-Foxids support OpenID Connect as both authentication method and application registration.
+FoxIDs support OpenID Connect as both authentication method and application registration.
 
-![Foxids OpenID Connect](images/connections-oidc.svg)
+![FoxIDs OpenID Connect](images/connections-oidc.svg)
 
 > It is recommended to use OpenID Connect Authorization Code flow with PKCE, because it is considered a secure flow.
 
@@ -12,8 +12,8 @@ Configure [OpenID Connect authentication method](auth-method-oidc.md) which trus
 
 How to guides:
 
-- Connect two Foxids environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
-- Connect two Foxids environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
+- Connect two FoxIDs environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md)
+- Connect two FoxIDs environments in the same or different tenants with [OpenID Connect](howto-oidc-foxids.md)
 - Connect [Microsoft Entra ID (Azure AD)](auth-method-howto-oidc-azure-ad.md) 
 - Connect [Azure AD B2C](auth-method-howto-oidc-azure-ad-b2c.md) 
 - Connect [IdentityServer](auth-method-howto-oidc-identityserver.md)

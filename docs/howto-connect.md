@@ -1,19 +1,19 @@
 ﻿# How to connect
 
-Foxids become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. An external IdP is connected with an [authentication method](connections.md#authentication-method)
+FoxIDs become an IdP by [registering an application](connections.md#application-registration) where you can connect applications and APIs. An external IdP is connected with an [authentication method](connections.md#authentication-method)
 
-By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) Foxids become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
-Foxids will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly select multiple authentication methods from the same OpenID Connect application.
+By configuring a [SAML 2.0 authentication method](auth-method-saml-2.0.md) and a [OpenID Connect application](app-reg-oidc.md) FoxIDs become a [bridge](bridge.md) between SAML 2.0 and OpenID Connect. 
+FoxIDs will then handle the SAML 2.0 connection and you only need to care about OpenID Connect in your application. You can possibly select multiple authentication methods from the same OpenID Connect application.
 
 ![How to connect with applications and authentication methods](images/how-to-connect.svg)
 
-If needed you can [connect two Foxids environments](#connect-foxids-environments).
+If needed you can [connect two FoxIDs environments](#connect-foxids-environments).
 
-> Take a look at the Foxids test connections in Foxids Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Take a look at the FoxIDs test connections in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
 > Get read access with the user `reader@foxids.com` and password `TestAccess!`
 
 ## How to connect applications
-When you register an application with either OpenID Connect or SAML 2.0, Foxids become an OpenID Provider (OP) / Identity Provider (IdP). 
+When you register an application with either OpenID Connect or SAML 2.0, FoxIDs become an OpenID Provider (OP) / Identity Provider (IdP). 
 You would most often connect applications and APIs. But a application registration can also be used as a OP / IdP for an external system where the external system is the relaying party (RP). 
 
 ### OpenID Connect and OAuth 2.0
@@ -30,7 +30,7 @@ How to guides:
 
 An external OpenID Provider (OP) / Identity Provider (IdP) can be connected with a OpenID Connect or SAML 2.0 authentication method.
 
-All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to Foxids. The following is how to guides for some IdPs; more guides will be added over time.
+All IdPs supporting either OpenID Connect or SAML 2.0 can be connected to FoxIDs. The following is how to guides for some IdPs; more guides will be added over time.
 
 ### OpenID Connect
 
@@ -55,9 +55,9 @@ How to guides:
 - Connect [NemLog-in (Danish IdP)](auth-method-howto-saml-2.0-nemlogin.md)
 - Connect [Context Handler (Danish identity broker)](howto-saml-2.0-context-handler.md)
 
-## Connect Foxids environments
+## Connect FoxIDs environments
 
-It is possible to interconnect Foxids environments with a [Environment Link](howto-environmentlink-foxids.md) or [OpenID Connect](howto-oidc-foxids.md).
+It is possible to interconnect FoxIDs environments with a [Environment Link](howto-environmentlink-foxids.md) or [OpenID Connect](howto-oidc-foxids.md).
 
 You can connect two environments in the same tenant with a [Environment Link](howto-environmentlink-foxids.md).
 Environment Links is fast and secure, but they can only be used in to connect within a tenant.  

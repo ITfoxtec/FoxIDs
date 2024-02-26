@@ -8,7 +8,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Search by environment name.
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
-        [Display(Name = "Filter configurations")]
+        [Display(Name = "Filter environments")]
         public string FilterName { get; set; }
     }
 }

@@ -14,8 +14,8 @@
     <div class="modal-body">
         @if (loginUpParty.CreateMode)
         {
-            <div class="mb-3 alert alert-info" role="alert">
-                Authenticated users in the configurations user store. The user session is connected to this authentication method.
+            <div class="mb-3 info-text">
+                Authenticates <DocsLink Page="users">users</DocsLink> in the environment's user store. The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
             </div>
             <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
             @if (loginUpParty.ShowAdvanced) 

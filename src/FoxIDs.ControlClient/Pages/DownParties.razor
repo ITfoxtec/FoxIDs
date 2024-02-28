@@ -17,7 +17,10 @@
             More about: <DocsLink Page="token-exchange">Token exchange</DocsLink> | <DocsLink Page="howto-environmentlink-foxids">Environment Link</DocsLink>
         </div>
         <div class="pb-2">
-            <div class="btn-group" role="group">
+            <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
+                <span class="oi oi-plus" aria-hidden="true"></span> New registration
+            </button>
+          @*   <div class="btn-group" role="group">
                 <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     <span class="oi oi-plus" aria-hidden="true"></span> New registration
                 </button>
@@ -29,7 +32,7 @@
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.TrackLink))">Environment Link</button>
                 </div>
-            </div>
+            </div> *@
         </div>
     </div>
     <PageEditForm @ref="downPartyFilterForm" TModel="FilterDownPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
@@ -75,3 +78,141 @@
         }
     </ul>
 </div>
+
+@if (newDownPartyModal != null)
+{
+    <Modal @ref="newDownPartyModal.Modal" Title="New Registration">
+        <div class="modal-body">
+            <div class="d-flex">
+                <div class="mr-auto">
+                    @if (newDownPartyModal.Type != null)
+                    {
+                        <button class="btn btn-link" onclick="@(() => { newDownPartyModal.Type = null; })">Back</button>
+                    }
+                </div>
+                <div class="pt-2 pb-3">
+                    @if (newDownPartyModal.Type == null)
+                    {
+                        <FInputSwitch @bind-Value="newDownPartyModal.ShowAll" Text="Show all" />
+                    }
+                    else
+                    {
+                        <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                    }
+                </div>
+            </div>
+            @if (newDownPartyModal.Type == null)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
+                                <h5 class="pt-2">Web Application</h5>
+                                <h6 class="pb-2">& optionally API</h6>
+                                <div class="py-2">Web application with a backend.</div>
+                                <div class="py-2">E.g., ASP.NET Core, Java, Nodes.js, PHP</div>
+                                <div class="mt-auto font-italic pt-2">OpenID Connect</div>
+                            </a>
+                        </div>
+                        @if (newDownPartyModal.ShowAll)
+                        {
+                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Saml2))" @onclick:preventDefault>
+                                    <h5 class="pt-2">Web Application</h5>
+                                    <div class="py-2">Web application with a backend.</div>
+                                    <div class="py-2">E.g., ASP.NET Core, Java, PHP</div>
+                                    <div class="mt-auto font-italic pt-2">SAML 2.0</div>
+                                </a>
+                            </div>
+                        }
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))" @onclick:preventDefault>
+                                <h5 class="pt-2">Single Page Application</h5>
+                                <h6 class="pb-2">& optionally API</h6>
+                                <div class="py-2">Application running in the browser.</div>
+                                <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue</div>
+                                <div class="mt-auto font-italic pt-2">OpenID Connect</div>
+                            </a>
+                        </div>
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))" @onclick:preventDefault>
+                                <h5 class="pt-2">Native Application</h5>
+                                <h6 class="pb-2">& optionally API</h6>
+                                <div class="py-2">Mobile, smart device or desktop applications.</div>
+                                <div class="py-2">E.g., .NET MAUI, React Native, Ionic, IOS, Android</div>
+                                <div class="mt-auto font-italic pt-2">OpenID Connect</div>
+                            </a>
+                        </div>
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
+                                <h5 class="pt-2">Backend Application</h5>
+                                <h6 class="pb-2">& optionally API</h6>
+                                <div class="py-2">Service or daemon applications.</div>
+                                <div class="py-2">E.g., .NET service, Script</div>
+                                <div class="mt-auto font-italic pt-2">OAuth 2.0</div>
+                            </a>
+                        </div>
+                        @if (newDownPartyModal.ShowAll)
+                        {
+                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.OAuth2, DownPartyOAuthTypes.Resource))" @onclick:preventDefault>
+                                    <h5 class="pt-2">API</h5>
+                                    <div class="py-2">APIs and micro services.</div>
+                                    <div class="py-2">E.g., ASP.NET Core, Azure Functions, Java</div>
+                                    <div class="mt-auto font-italic pt-2">OAuth 2.0</div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+@*                 @if (newDownPartyModal.ShowAdvanced)
+                {
+                    <div class="row">
+                        <div class="col-6 py-3">
+                            <button class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary">
+                                <h5 class="pt-0">Environment Link</h5>
+                                <div class="py-2">Connect two FoxIDs environment to reuse functionality and connections.</div>
+                            </button>
+                        </div>
+                    </div>
+                } *@
+            }
+            else if (newDownPartyModal.Type == PartyTypes.Oidc && newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+            {
+                <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal.OidcForm.Model, editContext))">
+                    <div class="info-text">
+                        Add new <DocsLink Page="app-reg-oidc">OpenID Connect registration</DocsLink> for your web application with a backend (called a confidential client).
+                    </div>
+
+     
+                    <div>
+                        <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
+                        @if (newDownPartyModal.ShowAdvanced)
+                        {
+                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                        }
+                        <div class="info-text">
+                            Enter your application URL e.g., 'https://myapp.com/theappsite'. 
+                        </div>
+                        <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.RedirectUris" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUris)" />
+                        <div class="info-text">
+                            Enable absolute URLs if you know the exact URL in your application that FoxIDs need to redirect back to after logging in, and enter the absolute URIs as redirect URL.
+                        </div>
+                        <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                    </div>
+                    @*         <div>
+                    @if (!createTenantDone)
+                    {
+                        <button type="submit" class="btn btn-primary @(createTenantWorking ? "disabled" : "")">Create</button>
+                        <button type="button" class="btn btn-secondary @(createTenantWorking ? "disabled" : "")" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
+                    }
+                </div> *@
+                </PageEditForm>
+            }
+        </div>
+    </Modal>
+}

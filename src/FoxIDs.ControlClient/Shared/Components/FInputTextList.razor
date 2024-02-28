@@ -17,7 +17,7 @@
                         <div class="input-group">
                             <input type="text" value="@item.Effect" @onchange="@(async e => await OnChangeAsync(e, item.Index))" class="form-control input-control" />
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                                <button class="btn btn-c-light btn-outline-secondary" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
                             </div>
                         </div>
                     }

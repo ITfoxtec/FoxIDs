@@ -1,11 +1,11 @@
 ﻿@inherits FInputBase<bool>
 
 <div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
-    <div class="toggle btn @(CurrentValueAccessor == true ? "btn-outline-primary" : "btn-outline-secondary off") @(Disabled ? "disabled" : string.Empty)" @onclick="@(async () => await ToggleCurrentValueAsync())" data-toggle="toggle" role="button" style="width: @TextWidth; height: 38px;">
+    <div class="toggle btn @(CurrentValueAccessor == true ? "btn-outline-primary" : "btn-c-light btn-outline-secondary off") @(Disabled ? "disabled" : string.Empty)" @onclick="@(async () => await ToggleCurrentValueAsync())" data-toggle="toggle" role="button" style="width: @TextWidth; height: 38px;">
         <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValueAccessor" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
         <div class="toggle-group">
             <label class="btn btn-outline-primary toggle-on">@onText</label>
-            <label class="btn btn-outline-secondary toggle-off">@offText</label>
+            <label class="btn btn-c-light btn-outline-secondary toggle-off">@offText</label>
             <span class="toggle-handle btn btn-light"></span>
         </div>
     </div>

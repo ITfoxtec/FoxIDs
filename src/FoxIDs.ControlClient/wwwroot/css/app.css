@@ -391,6 +391,15 @@ h4 {
     white-space: nowrap;
 }
 
+    .btn.btn-wrap {
+        white-space: normal !important;
+    }
+
+    .btn.btn-max {
+        height: 100%;
+        width: 100%;
+    }
+
     .btn:focus, .btn.focus {
         outline: 0;
         box-shadow: 0 0 0 0.2rem rgba(223, 137, 53, 0.25);
@@ -455,12 +464,12 @@ h4 {
     border-color: #f19031 !important;
 }
 
-.btn-outline-secondary {
+.btn-c-light.btn-outline-secondary {
     color: #788489 !important;
     border: 1px solid #ced4da !important;
 }
 
-    .btn-outline-secondary:hover, .btn-outline-secondary.focus, .btn-outline-secondary:focus {
+    .btn-c-light.btn-outline-secondary:hover, .btn-c-light.btn-outline-secondary.focus, .btn-c-light.btn-outline-secondary:focus {
         color: #788489 !important;
         background-color: #fff !important;
     }
@@ -638,6 +647,13 @@ h4 {
 
 .modal-dialog-scrollable .modal-content {
     overflow: auto;
+}
+
+/*Medium to large*/
+@media (min-width: 768px) and (max-width: 991.99px) {
+    .modal-md {
+        max-width: 700px;
+    }
 }
 
 .drag-drop-zone {

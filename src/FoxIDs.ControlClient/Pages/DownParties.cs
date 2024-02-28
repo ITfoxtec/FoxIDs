@@ -17,6 +17,7 @@ namespace FoxIDs.Client.Pages
 {
     public partial class DownParties 
     {
+        private NewDownPartyViewModel newDownPartyModal;    
         private PageEditForm<FilterDownPartyViewModel> downPartyFilterForm;
         private List<GeneralDownPartyViewModel> downParties = new List<GeneralDownPartyViewModel>();
 
@@ -32,6 +33,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
+            newDownPartyModal = new NewDownPartyViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
@@ -104,42 +106,42 @@ namespace FoxIDs.Client.Pages
             }
         }
 
-        private void ShowCreateDownParty(PartyTypes type, OAuthSubPartyTypes? oauthSubPartyType = null)
-        {
-            if (type == PartyTypes.Oidc)
-            {
-                var oidcDownParty = new GeneralOidcDownPartyViewModel();
-                oidcDownParty.CreateMode = true;
-                oidcDownParty.Edit = true;
-                downParties.Add(oidcDownParty);
-            }
-            else if (type == PartyTypes.OAuth2)
-            {
-                var oauthDownParty = new GeneralOAuthDownPartyViewModel();
-                if (!oauthSubPartyType.HasValue)
-                {
-                    throw new ArgumentNullException(nameof(oauthSubPartyType), "Required for OAuth 2.0 down parties.");
-                }
-                oauthDownParty.SubPartyType = oauthSubPartyType.Value;
-                oauthDownParty.CreateMode = true;
-                oauthDownParty.Edit = true;
-                downParties.Add(oauthDownParty);
-            }
-            else if (type == PartyTypes.Saml2)
-            {
-                var samlDownParty = new GeneralSamlDownPartyViewModel();
-                samlDownParty.CreateMode = true;
-                samlDownParty.Edit = true;
-                downParties.Add(samlDownParty); 
-            }
-            else if (type == PartyTypes.TrackLink)
-            {
-                var trackLinkDownParty = new GeneralTrackLinkDownPartyViewModel();
-                trackLinkDownParty.CreateMode = true;
-                trackLinkDownParty.Edit = true;
-                downParties.Add(trackLinkDownParty); 
-            }
-        }
+        //private void ShowCreateDownParty(PartyTypes type, OAuthSubPartyTypes? oauthSubPartyType = null)
+        //{
+        //    if (type == PartyTypes.Oidc)
+        //    {
+        //        var oidcDownParty = new GeneralOidcDownPartyViewModel();
+        //        oidcDownParty.CreateMode = true;
+        //        oidcDownParty.Edit = true;
+        //        downParties.Add(oidcDownParty);
+        //    }
+        //    else if (type == PartyTypes.OAuth2)
+        //    {
+        //        var oauthDownParty = new GeneralOAuthDownPartyViewModel();
+        //        if (!oauthSubPartyType.HasValue)
+        //        {
+        //            throw new ArgumentNullException(nameof(oauthSubPartyType), "Required for OAuth 2.0 down parties.");
+        //        }
+        //        oauthDownParty.SubPartyType = oauthSubPartyType.Value;
+        //        oauthDownParty.CreateMode = true;
+        //        oauthDownParty.Edit = true;
+        //        downParties.Add(oauthDownParty);
+        //    }
+        //    else if (type == PartyTypes.Saml2)
+        //    {
+        //        var samlDownParty = new GeneralSamlDownPartyViewModel();
+        //        samlDownParty.CreateMode = true;
+        //        samlDownParty.Edit = true;
+        //        downParties.Add(samlDownParty); 
+        //    }
+        //    else if (type == PartyTypes.TrackLink)
+        //    {
+        //        var trackLinkDownParty = new GeneralTrackLinkDownPartyViewModel();
+        //        trackLinkDownParty.CreateMode = true;
+        //        trackLinkDownParty.Edit = true;
+        //        downParties.Add(trackLinkDownParty); 
+        //    }
+        //}
 
         private void ShowUpdateDownParty(GeneralDownPartyViewModel downParty)
         {
@@ -174,6 +176,24 @@ namespace FoxIDs.Client.Pages
                 return $"{downParty.DisplayName ?? downParty.Name} (Environment Link)";
             }
 
+            throw new NotSupportedException();
+        }
+
+        private void ShowNewDownParty()
+        {
+            newDownPartyModal.Init();
+            newDownPartyModal.Modal.Show();
+        }
+
+        private void ChangeNewDownPartyState(PartyTypes type, DownPartyOAuthTypes? oauthType = null, DownPartyOAuthClientTypes? oauthClientType = null)
+        {
+            newDownPartyModal.Type = type;
+            newDownPartyModal.OAuthType = oauthType;
+            newDownPartyModal.OAuthClientType = oauthClientType;
+        }
+
+        private async Task OnNewDownPartyOidcModalValidSubmitAsync(NewDownPartyOidcViewModel oidcDownParty, EditContext editContext)
+        {
             throw new NotSupportedException();
         }
     }

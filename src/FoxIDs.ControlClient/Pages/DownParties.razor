@@ -111,7 +111,7 @@
                                 <h6 class="pb-2">& optionally API</h6>
                                 <div class="py-2">Web application with a backend.</div>
                                 <div class="py-2">E.g., ASP.NET Core, Java, Nodes.js, PHP</div>
-                                <div class="mt-auto font-italic pt-2">OpenID Connect</div>
+                                <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
                             </a>
                         </div>
                         @if (newDownPartyModal.ShowAll)
@@ -121,7 +121,7 @@
                                     <h5 class="pt-2">Web Application</h5>
                                     <div class="py-2">Web application with a backend.</div>
                                     <div class="py-2">E.g., ASP.NET Core, Java, PHP</div>
-                                    <div class="mt-auto font-italic pt-2">SAML 2.0</div>
+                                    <div class="mt-auto font-italic border-top pt-2">SAML 2.0</div>
                                 </a>
                             </div>
                         }
@@ -131,7 +131,7 @@
                                 <h6 class="pb-2">& optionally API</h6>
                                 <div class="py-2">Application running in the browser.</div>
                                 <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue</div>
-                                <div class="mt-auto font-italic pt-2">OpenID Connect</div>
+                                <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
                             </a>
                         </div>
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
@@ -140,7 +140,7 @@
                                 <h6 class="pb-2">& optionally API</h6>
                                 <div class="py-2">Mobile, smart device or desktop applications.</div>
                                 <div class="py-2">E.g., .NET MAUI, React Native, Ionic, IOS, Android</div>
-                                <div class="mt-auto font-italic pt-2">OpenID Connect</div>
+                                <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
                             </a>
                         </div>
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
@@ -149,7 +149,7 @@
                                 <h6 class="pb-2">& optionally API</h6>
                                 <div class="py-2">Service or daemon applications.</div>
                                 <div class="py-2">E.g., .NET service, Script</div>
-                                <div class="mt-auto font-italic pt-2">OAuth 2.0</div>
+                                <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
                             </a>
                         </div>
                         @if (newDownPartyModal.ShowAll)
@@ -159,7 +159,7 @@
                                     <h5 class="pt-2">API</h5>
                                     <div class="py-2">APIs and micro services.</div>
                                     <div class="py-2">E.g., ASP.NET Core, Azure Functions, Java</div>
-                                    <div class="mt-auto font-italic pt-2">OAuth 2.0</div>
+                                    <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
                                 </a>
                             </div>
                         }
@@ -184,21 +184,35 @@
                         Add new <DocsLink Page="app-reg-oidc">OpenID Connect registration</DocsLink> for your web application with a backend (called a confidential client).
                     </div>
 
-     
                     <div>
                         <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
                         @if (newDownPartyModal.ShowAdvanced)
                         {
+                            <div class="info-text">Enter the Client ID / Resource name you want, otherwise auto generated.</div>
                             <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
                         }
                         <div class="info-text">
                             Enter your application URL e.g., 'https://myapp.com/theappsite'. 
                         </div>
                         <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.RedirectUris" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUris)" />
+                        @if (newDownPartyModal.ShowAdvanced)
+                        {
+                            <div class="info-text">
+                                Enable absolute URLs if you know the exact URL in your application that FoxIDs should redirect back to after user log in, and enter the absolute URLs as redirect URL.
+                            </div>
+                            <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                        }
                         <div class="info-text">
-                            Enable absolute URLs if you know the exact URL in your application that FoxIDs need to redirect back to after logging in, and enter the absolute URIs as redirect URL.
+                            Optionally add an API along with your web application in the same registration.
                         </div>
-                        <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.AddResource" For="@(() => newDownPartyModal.OidcForm.Model.AddResource)" TextType="y.n" />
+                        @if (newDownPartyModal.OidcForm.Model.AddResource)
+                        {
+                            <div class="info-text">
+                                Define one or more scopes to restrict the web applications access to the API. The API can 
+                            </div>
+                            <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.ResourceScopes" For="@(() => newDownPartyModal.OidcForm.Model.ResourceScopes)" DynamicFirstRow="true" />
+                        }
                     </div>
                     @*         <div>
                     @if (!createTenantDone)

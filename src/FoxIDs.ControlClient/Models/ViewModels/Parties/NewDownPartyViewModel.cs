@@ -17,6 +17,10 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool ShowAdvanced { get; set; }
 
+        public bool CreateWorking { get; set; }
+
+        public bool Created { get; set; }
+
         public PageEditForm<NewDownPartyOidcViewModel> OidcForm { get; set; }
 
         public void Init()
@@ -25,6 +29,8 @@ namespace FoxIDs.Client.Models.ViewModels
             OAuthType = null;
             ShowAll = false;
             ShowAdvanced = false;
+            CreateWorking = false;
+            Created = false;
             OidcForm = new PageEditForm<NewDownPartyOidcViewModel>();
         }
     }

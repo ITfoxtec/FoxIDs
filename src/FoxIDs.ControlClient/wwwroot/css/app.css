@@ -563,6 +563,13 @@ h4 {
     padding-left: 5px;
 }
 
+.bi.bi-left-space {
+    padding-left: 5px;
+}
+.bi.bi-right-space {
+    padding-right: 5px;
+}
+
 .active-group {
     position: relative;
     padding: 15px 0px;

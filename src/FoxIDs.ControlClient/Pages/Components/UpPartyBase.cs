@@ -29,6 +29,9 @@ namespace FoxIDs.Client.Pages.Components
         public TrackSelectedLogic TrackSelectedLogic { get; set; }
 
         [Inject]
+        public MetadataLogic MetadataLogic { get; set; }
+
+        [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
 
         [Inject]
@@ -187,19 +190,6 @@ namespace FoxIDs.Client.Pages.Components
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        public (string, string, string) GetRedirectAndLogoutUrls(string partyName, PartyBindingPatterns partyBindingPattern)
-        {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
-            var oauthUrl = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.OAuthController}/";
-            return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse, oauthUrl + Constants.Endpoints.FrontChannelLogout);
-        }
-
-        public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
-        {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--auth-method-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
-            return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlSPMetadata}";
         }
 
         public async Task UpPartyCancelAsync(GeneralUpPartyViewModel upParty)

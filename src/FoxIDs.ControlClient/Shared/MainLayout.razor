@@ -44,7 +44,6 @@
                                         </div>
                                         <div class="dropdown-menu search-dropdown px-3 pb-3" aria-labelledby="trackNavbarDropdown">
                                             <PageEditForm @ref="selectTrackFilterForm" TModel="FilterTrackViewModel" OnValidSubmit="OnSelectTrackFilterValidSubmitAsync">
-
                                                 <div class="d-flex">
                                                     <div class="mr-auto info-text">
                                                         An <DocsLink Page="foxids-inside" Fragment="structure">environment</DocsLink> is an Identity Provider with a unique ID, certificate and user store.
@@ -184,7 +183,7 @@
                     </PageEditForm>
                 </Modal>
 
-                <Modal @ref="createTrackModal" Title="Create New Configuration">
+                <Modal @ref="createTrackModal" Title="Create New Environment">
                     <PageEditForm @ref="createTrackForm" TModel="CreateTrackViewModel" OnValidSubmit="OnCreateTrackValidSubmitAsync">
                         <div class="modal-body">
                             <div class="text-right pb-2">

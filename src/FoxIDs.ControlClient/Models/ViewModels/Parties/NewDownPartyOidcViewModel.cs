@@ -24,11 +24,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Absolute URLs")]
         public bool DisableAbsoluteUris { get; set; }
 
-        [Display(Name = "Add API")]
-        public bool AddResource { get; set; }
-
-        [ListLength(Constants.Models.OAuthDownParty.Client.ScopesMin, Constants.Models.OAuthDownParty.Client.ScopesMax, Constants.Models.OAuthDownParty.ScopeLength, Constants.Models.OAuthDownParty.ScopeRegExPattern)]
-        [Display(Name = "API scopes")]
-        public List<string> ResourceScopes { get; set; }
+        [Display(Name = "Client secret")]
+        public string secret { get; set; }
     }
 }

@@ -38,7 +38,7 @@
         {
             <div class="mb-3 alert alert-info" role="alert">
                 @{
-                    var samlMetadata = @GetSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern);
+                    var samlMetadata = @MetadataLogic.GetDownSamlMetadata(samlDownParty.Form.Model.Name, samlDownParty.Form.Model.PartyBindingPattern);
                 }
                 <div>SAML 2.0 Metadata: <FTextLinkClipboard Text="@samlMetadata" /></div>
             </div>

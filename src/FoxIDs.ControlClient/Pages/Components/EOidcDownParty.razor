@@ -35,7 +35,7 @@
             <div class="mb-3 alert alert-info" role="alert">
                 @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                 {
-                    (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
+                    (var clientAuthority, var clientOidcDiscovery) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
                     <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
                     <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
                 }
@@ -47,7 +47,7 @@
 
                 @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
                 {
-                    (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
+                    (var resourceAuthority, var resourceOidcDiscovery) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
                     <div>Resource Authority and OIDC Discovery</div>
                     <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
                     <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>

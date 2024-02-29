@@ -11,7 +11,10 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
-using FoxIDs.Client.Models;
+using Blazored.Toast.Services;
+using ITfoxtec.Identity;
+using FoxIDs.Client.Util;
+using static ITfoxtec.Identity.IdentityConstants;
 
 namespace FoxIDs.Client.Pages
 {
@@ -22,7 +25,13 @@ namespace FoxIDs.Client.Pages
         private List<GeneralDownPartyViewModel> downParties = new List<GeneralDownPartyViewModel>();
 
         [Inject]
+        public IToastService toastService { get; set; }
+
+        [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
+        public MetadataLogic MetadataLogic { get; set; }
 
         [Inject]
         public DownPartyService DownPartyService { get; set; }
@@ -192,9 +201,60 @@ namespace FoxIDs.Client.Pages
             newDownPartyModal.OAuthClientType = oauthClientType;
         }
 
-        private async Task OnNewDownPartyOidcModalValidSubmitAsync(NewDownPartyOidcViewModel oidcDownParty, EditContext editContext)
+        private async Task OnNewDownPartyOidcModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOidcViewModel> newDownPartyOidcForm, EditContext editContext)
         {
-            throw new NotSupportedException();
+            try
+            {
+                newDownPartyOidcForm.Model.secret = SecretGenerator.GenerateNewSecret();
+
+                var oidcDownParty = newDownPartyOidcForm.Model.Map<OidcDownParty>(afterMap: afterMap =>
+                {
+                    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+
+                    afterMap.Client = new OidcDownClient
+                    {
+                        RedirectUris = newDownPartyOidcForm.Model.RedirectUris,
+                        DisableAbsoluteUris = newDownPartyOidcForm.Model.DisableAbsoluteUris,
+                        ResponseTypes = new List<string> { "code" },
+                        RequirePkce = false,
+                        DisableClientCredentialsGrant = true
+                };
+                    afterMap.Client.Scopes.Add(new OidcDownScope { Scope = DefaultOidcScopes.OfflineAccess });
+                    afterMap.Client.Scopes.Add(new OidcDownScope
+                    {
+                        Scope = DefaultOidcScopes.Profile,
+                        VoluntaryClaims = new List<OidcDownClaim>
+                    {
+                        new OidcDownClaim { Claim = JwtClaimTypes.Name, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.GivenName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.MiddleName, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.FamilyName, InIdToken = true },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Nickname, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.PreferredUsername, InIdToken = false },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Birthdate, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Gender, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Picture, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Profile, InIdToken = false },
+                        new OidcDownClaim { Claim = JwtClaimTypes.Website, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.Locale, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.Zoneinfo, InIdToken = false }, new OidcDownClaim { Claim = JwtClaimTypes.UpdatedAt, InIdToken = false }
+                    }
+                    });
+                    afterMap.Client.Scopes.Add(new OidcDownScope { Scope = DefaultOidcScopes.Email, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Email, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.EmailVerified, InIdToken = false } } });
+                    afterMap.Client.Scopes.Add(new OidcDownScope { Scope = DefaultOidcScopes.Address, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.Address, InIdToken = true } } });
+                    afterMap.Client.Scopes.Add(new OidcDownScope { Scope = DefaultOidcScopes.Phone, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } });
+                });
+
+                var oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);
+                await DownPartyService.CreateOidcClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oidcDownPartyResult.Name, Secrets = new List<string> { newDownPartyOidcForm.Model.secret } });
+                toastService.ShowSuccess("OpenID Connect authentication method created.");
+
+                newDownPartyOidcForm.Model.Name = oidcDownPartyResult.Name;
+                newDownPartyOidcForm.Model.DisplayName = oidcDownPartyResult.DisplayName;
+                newDownPartyViewModel.Created = true;
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    newDownPartyOidcForm.SetFieldError(nameof(newDownPartyOidcForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
     }
 }

@@ -1,20 +1,12 @@
 ﻿@page "/{tenantName}/applications"
 @inherits PageBase
 
-@* <div class="d-flex">
-    <div class="mr-auto info-text">
-        Add connections to <DocsLink Page="parties">parties</DocsLink> in the environment and connecting tracks with <DocsLink Page="howto-environmentlink-foxids">environment links</DocsLink> to compose elements and connections.
-        <br />
-        | <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink>
-    </div>
-</div> *@
-
 <div class="tab-content">
     <div class="d-flex">
         <div class="mr-auto info-text pt-0">
-            Registration a web application with <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> or <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink>. Registration an API or backend service with <DocsLink Page="app-reg-oauth-2.0">OAuth 2.0</DocsLink>.
+            Register your applications and APIs with <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>, <DocsLink Page="app-reg-oauth-2.0">OAuth 2.0</DocsLink> and <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink>.
             <br />
-            More about: <DocsLink Page="token-exchange">Token exchange</DocsLink> | <DocsLink Page="howto-environmentlink-foxids">Environment Link</DocsLink>
+            More about: <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink> | <DocsLink Page="token-exchange">Token exchange</DocsLink>
         </div>
         <div class="pb-2">
             <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
@@ -84,13 +76,8 @@
     <Modal @ref="newDownPartyModal.Modal" Title="New Registration">
         <div class="modal-body">
             <div class="d-flex">
-                <div class="mr-auto">
-                    @if (newDownPartyModal.Type != null)
-                    {
-                        <button class="btn btn-link" onclick="@(() => { newDownPartyModal.Type = null; })">Back</button>
-                    }
-                </div>
-                <div class="pt-2 pb-3">
+                <div class="mr-auto"></div>
+                <div class="pt-0 pb-2">
                     @if (newDownPartyModal.Type == null)
                     {
                         <FInputSwitch @bind-Value="newDownPartyModal.ShowAll" Text="Show all" />
@@ -108,9 +95,9 @@
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
                                 <h5 class="pt-2">Web Application</h5>
-                                <h6 class="pb-2">& optionally API</h6>
+                                <h6 class="pb-2">& API</h6>
                                 <div class="py-2">Web application with a backend.</div>
-                                <div class="py-2">E.g., ASP.NET Core, Java, Nodes.js, PHP</div>
+                                <div class="py-2">E.g., ASP.NET Core, Blazor Server, Java, Nodes.js, PHP</div>
                                 <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
                             </a>
                         </div>
@@ -128,7 +115,7 @@
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))" @onclick:preventDefault>
                                 <h5 class="pt-2">Single Page Application</h5>
-                                <h6 class="pb-2">& optionally API</h6>
+                                <h6 class="pb-2">& API</h6>
                                 <div class="py-2">Application running in the browser.</div>
                                 <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue</div>
                                 <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
@@ -137,7 +124,7 @@
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))" @onclick:preventDefault>
                                 <h5 class="pt-2">Native Application</h5>
-                                <h6 class="pb-2">& optionally API</h6>
+                                <h6 class="pb-2">& API</h6>
                                 <div class="py-2">Mobile, smart device or desktop applications.</div>
                                 <div class="py-2">E.g., .NET MAUI, React Native, Ionic, IOS, Android</div>
                                 <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
@@ -146,7 +133,7 @@
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
                                 <h5 class="pt-2">Backend Application</h5>
-                                <h6 class="pb-2">& optionally API</h6>
+                                <h6 class="pb-2">& API</h6>
                                 <div class="py-2">Service or daemon applications.</div>
                                 <div class="py-2">E.g., .NET service, Script</div>
                                 <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
@@ -157,7 +144,7 @@
                             <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState(PartyTypes.OAuth2, DownPartyOAuthTypes.Resource))" @onclick:preventDefault>
                                     <h5 class="pt-2">API</h5>
-                                    <div class="py-2">APIs and micro services.</div>
+                                    <div class="py-2">APIs or micro services which can be called by applications.</div>
                                     <div class="py-2">E.g., ASP.NET Core, Azure Functions, Java</div>
                                     <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
                                 </a>
@@ -179,52 +166,73 @@
             }
             else if (newDownPartyModal.Type == PartyTypes.Oidc && newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
             {
-                <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal.OidcForm.Model, editContext))">
-                    <div class="info-text">
-                        Add new <DocsLink Page="app-reg-oidc">OpenID Connect registration</DocsLink> for your web application with a backend (called a confidential client).
-                    </div>
-
-                    <div>
-                        <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
-                        @if (newDownPartyModal.ShowAdvanced)
-                        {
-                            <div class="info-text">Enter the Client ID / Resource name you want, otherwise auto generated.</div>
-                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
-                        }
-                        <div class="info-text">
-                            Enter your application URL e.g., 'https://myapp.com/theappsite'. 
-                        </div>
-                        <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.RedirectUris" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUris)" />
-                        @if (newDownPartyModal.ShowAdvanced)
-                        {
-                            <div class="info-text">
-                                Enable absolute URLs if you know the exact URL in your application that FoxIDs should redirect back to after user log in, and enter the absolute URLs as redirect URL.
-                            </div>
-                            <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
-                        }
-                        <div class="info-text">
-                            Optionally add an API along with your web application in the same registration.
-                        </div>
-                        <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.AddResource" For="@(() => newDownPartyModal.OidcForm.Model.AddResource)" TextType="y.n" />
-                        @if (newDownPartyModal.OidcForm.Model.AddResource)
-                        {
-                            <div class="info-text">
-                                Define one or more scopes to restrict the web applications access to the API. The API can 
-                            </div>
-                            <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.ResourceScopes" For="@(() => newDownPartyModal.OidcForm.Model.ResourceScopes)" DynamicFirstRow="true" />
-                        }
-                    </div>
-                    @*         <div>
-                    @if (!createTenantDone)
+                <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OidcForm, editContext))">
+                    @if (!newDownPartyModal.Created)
                     {
-                        <button type="submit" class="btn btn-primary @(createTenantWorking ? "disabled" : "")">Create</button>
-                        <button type="button" class="btn btn-secondary @(createTenantWorking ? "disabled" : "")" @onclick="@(() => createTenantModal.Hide())">Cancel</button>
+                        <div class="info-text">
+                            Add new <DocsLink Page="app-reg-oidc">OpenID Connect registration</DocsLink> for your web application with a backend (called a confidential client).
+                        </div>
+
+                        <div>
+                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">Enter the Client ID / Resource name you want, otherwise auto generated.</div>
+                                <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                            }
+                            <div class="info-text">
+                                Enter your applications base URL, e.g. 'https://myapp.com/theappsite'.
+                                <br />
+                                You can add absolute URLs later, which is more secure.
+                            </div>
+                            <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.RedirectUris" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUris)" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">
+                                    Enable absolute URLs if you know the exact URL in your application that FoxIDs should redirect back to after user log in, and enter the absolute URLs as redirect URL.
+                                </div>
+                                <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                            }
+                        </div>
                     }
                     else
                     {
-                        <button type="button" class="btn btn-secondary" @onclick="@(() => createTenantModal.Hide())">Close</button>
+                        <div class="info-text">
+                            Your web application is registered and the registration is ready to be used.
+                        </div>
+
+                        <div class="info-text">
+                            Remember the Client ID / Resource name and Client secret. You need them to configure OpenID Connect in your web application.
+                        </div>
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.secret" For="@(() => newDownPartyModal.OidcForm.Model.secret)" />
+
+                        (var clientAuthority, var clientOidcDiscovery) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyModal.OidcForm.Model.Name, true);
+                        <div>
+                            Configure your web application to use the authority: 
+                            <br />
+                            <FTextClipboard Text="@clientAuthority" />
+                        </div>
+                        <div>
+                            The OIDC Discovery for the authority is:
+                            <br />
+                            <FTextLinkClipboard Text="@clientOidcDiscovery" />
+                        </div>
                     }
-                </div> *@
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newDownPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0" onclick="@(() => { newDownPartyModal.Type = null; })"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Create</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                        }
+                        <button type="button" class="btn btn-secondary @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newDownPartyModal.Modal.Hide())">Cancel</button>
+                    </div>
                 </PageEditForm>
             }
         </div>

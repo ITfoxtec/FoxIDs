@@ -81,7 +81,7 @@ namespace FoxIDs.Infrastructure
                 SeverityLevel = severityLevel,
             };
 
-            exceptionTelemetry.Properties.Add("handled", true.ToString());
+            exceptionTelemetry.Properties.Add(Constants.Logs.LoggingHandledKey, true.ToString());
 
             if (!message.IsNullOrEmpty())
             {

@@ -62,6 +62,8 @@ namespace FoxIDs
 
         public static class Logs
         {
+            public const string LoggingHandledKey = "handled";
+
             public const string TenantName = "f_TenantName";
             public const string TrackName = "f_TrackName";
             public const string GrantType = "f_GrantType";

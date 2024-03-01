@@ -396,11 +396,10 @@
 
                         <div>
                             <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.DisplayName" For="@(() => newDownPartyModal.SamlForm.Model.DisplayName)" Focus="true" />
+                            <div class="info-text">Enter the Application issuer, otherwise auto generated.</div>
+                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
                             @if (newDownPartyModal.ShowAdvanced)
                             {
-                                <div class="info-text">Enter the Application issuer, otherwise auto generated.</div>
-                                <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
-
                                 <div class="info-text">Enter the Technical name you want, otherwise auto generated.</div>
                                 <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
                             }

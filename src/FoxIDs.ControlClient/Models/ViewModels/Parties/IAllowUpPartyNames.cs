@@ -5,7 +5,7 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public interface IAllowUpPartyNames
     {
-        [Display(Name = "Allow application names")]
+        [Display(Name = "Allowed authentication methods")]
         List<string> AllowUpPartyNames { get; set; }
     }
 }

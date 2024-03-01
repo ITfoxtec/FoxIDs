@@ -52,8 +52,8 @@
         <div class="tab-content pt-3">
             @if (trackLinkDownParty.ShowTrackLinkTab)
             {
-                <FInputText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
-                <FInputText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
+                <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
+                <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
 
                 <SelectUpParty @ref="trackLinkDownParty.SelectAllowUpPartyName" EditDownPartyForm="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
 

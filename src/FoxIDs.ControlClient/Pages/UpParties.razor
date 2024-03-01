@@ -1,22 +1,13 @@
 ﻿@page "/{tenantName}/authentication"
 @inherits PageBase
 
-@* <div class="d-flex">
-    <div class="mr-auto info-text">
-        Add connections to <DocsLink Page="parties">parties</DocsLink> in the environment and connecting tracks with <DocsLink Page="howto-environmentlink-foxids">environment links</DocsLink> to compose elements and connections.
-        <br />
-        | <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 to OpenID Connect bridge</DocsLink>
-    </div>
-</div> *@
-
 <div class="tab-content">
     <div class="d-flex">
         <div class="mr-auto info-text pt-0">
-            Add an Identity Provider as authentication method with <DocsLink Page="auth-method-oidc">OpenID Connect</DocsLink> or <DocsLink Page="auth-method-saml-2.0">SAML 2.0</DocsLink>.
+            Create authentication methods with <DocsLink Page="auth-method-oidc">OpenID Connect</DocsLink> or <DocsLink Page="auth-method-saml-2.0">SAML 2.0</DocsLink> to external identity providers.
+            And configure user <DocsLink Page="login">log in and MFA</DocsLink>.
             <br />
-            Configure <DocsLink Page="login">Login and MFA</DocsLink> in the existing login authentication method or optionally add more.
-            <br />
-            More about: <DocsLink Page="token-exchange" Fragment="token-exchange-by-trust">Token exchange by trust</DocsLink> | <DocsLink Page="howto-environmentlink-foxids">Environment Link</DocsLink>
+            More about: <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">SAML 2.0 bridge</DocsLink> | <DocsLink Page="token-exchange" Fragment="token-exchange-by-trust">Token exchange by trust</DocsLink> | <DocsLink Page="howto-environmentlink-foxids">Environment Link</DocsLink>
         </div>
         <div class="pb-2">
             <div class="btn-group" role="group">

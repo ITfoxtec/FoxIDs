@@ -48,36 +48,39 @@ namespace FoxIDs.Infrastructure
             {
                 if (exceptionTelemetry.Properties.ContainsKey("handled"))
                 {
-                    if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
+                    // Filter out an item, return without calling the next processor.
+                    return;
+                }
+
+                if (httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.RequestServices != null)
+                {
+                    var routeBinding = httpContextAccessor.HttpContext.GetRouteBinding();
+                    if (routeBinding != null)
                     {
-                        var routeBinding = httpContextAccessor.HttpContext.GetRouteBinding();
-                        if (routeBinding != null)
+                        var telemetryScopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
+                        var telemetryScopedProperties = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedProperties>();
+
+                        ProcessScopeStreamLogs(exceptionTelemetry, routeBinding, telemetryScopedLogger, telemetryScopedProperties);
+
+                        if (exceptionTelemetry.SeverityLevel == SeverityLevel.Warning)
                         {
-                            var telemetryScopedLogger = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedLogger>();
-                            var telemetryScopedProperties = httpContextAccessor.HttpContext.RequestServices.GetService<TelemetryScopedProperties>();
-
-                            ProcessScopeStreamLogs(exceptionTelemetry, routeBinding, telemetryScopedLogger, telemetryScopedProperties);
-
-                            if (exceptionTelemetry.SeverityLevel == SeverityLevel.Warning)
-                            {
-                                telemetryScopedLogger.Warning(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
-                                return;
-                            }
-                            else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Error)
-                            {
-                                telemetryScopedLogger.Error(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
-                                return;
-                            }
-                            else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Critical)
-                            {
-                                telemetryScopedLogger.CriticalError(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
-                                return;
-                            }
+                            telemetryScopedLogger.Warning(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
+                            return;
+                        }
+                        else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Error)
+                        {
+                            telemetryScopedLogger.Error(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
+                            return;
+                        }
+                        else if (exceptionTelemetry.SeverityLevel == SeverityLevel.Critical)
+                        {
+                            telemetryScopedLogger.CriticalError(exceptionTelemetry.Exception, telemetryScopedProperties.Properties, logToScopeStream: false);
+                            return;
                         }
                     }
                 }
             }
-
+            
             next.Process(item);
         }
 

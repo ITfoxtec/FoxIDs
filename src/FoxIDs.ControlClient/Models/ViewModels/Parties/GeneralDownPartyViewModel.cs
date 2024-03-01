@@ -20,8 +20,6 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public bool ShowAdvanced { get; set; }
 
-        public bool CreateMode { get; set; }
-
         public bool DeleteAcknowledge { get; set; }
 
         public string Error { get; set; }

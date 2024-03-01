@@ -4,7 +4,7 @@
     var trackLinkDownParty = DownParty as GeneralTrackLinkDownPartyViewModel;
 }
 
-<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(m => TrackLinkDownPartyViewModelAfterInit(trackLinkDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
+<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
     <div class="modal-header">
         <div>
             Environment Link
@@ -12,21 +12,10 @@
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (trackLinkDownParty.CreateMode)
+        <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
+        @if (trackLinkDownParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
-            @if (trackLinkDownParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
-            }
-        }
-        else
-        {
-            <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
-            @if (trackLinkDownParty.ShowAdvanced)
-            {
-                <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
-            }
+            <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
         }
         @if (trackLinkDownParty.ShowAdvanced)
         {
@@ -118,7 +107,7 @@
             }
         </div>
     </div>
-    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    @if (DownParty.DeleteAcknowledge)
     {
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
@@ -134,11 +123,7 @@
         </div>
     }
     <div class="modal-footer">
-        @if (!DownParty.CreateMode)
-        {
-            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
-        }
-        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>

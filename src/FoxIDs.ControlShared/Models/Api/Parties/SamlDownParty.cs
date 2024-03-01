@@ -83,7 +83,6 @@ namespace FoxIDs.Models.Api
         /// </summary>
         public Saml2AuthnResponseSignTypes AuthnResponseSignType { get; set; } = Saml2AuthnResponseSignTypes.SignResponse;
 
-        [Required]
         [MaxLength(Constants.Models.Party.IssuerLength)]
         public string Issuer { get; set; }
 

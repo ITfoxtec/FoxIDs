@@ -21,7 +21,7 @@ namespace FoxIDs.Client.Logic
             return (authority, authority + IdentityConstants.OidcDiscovery.Path);
         }
 
-        public string GetDownSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
+        public string GetDownSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern = PartyBindingPatterns.Brackets)
         {
             var partyBinding = (partyName.IsNullOrEmpty() ? "--application-name--" : partyName.ToLower()).ToDownPartyBinding(true, partyBindingPattern);
             return $"{routeBindingLogic.GetFoxIDsTenantEndpoint()}/{(routeBindingLogic.IsMasterTenant ? "master" : trackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlIdPMetadata}";

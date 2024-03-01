@@ -5,7 +5,7 @@
     var samlDownParty = DownParty as GeneralSamlDownPartyViewModel;
 }
 
-<PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnAfterInit="@(m => SamlDownPartyViewModelAfterInit(samlDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
+<PageEditForm @ref="samlDownParty.Form" TModel="SamlDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditSamlDownPartyValidSubmitAsync(samlDownParty, editContext))">
     <div class="modal-header">
         <div>
             SAML 2.0
@@ -13,21 +13,10 @@
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (samlDownParty.CreateMode)
+        <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" />
+        @if (samlDownParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" Focus="true" />
-            @if (samlDownParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
-            }
-        }
-        else
-        {
-            <FInputText @bind-Value="samlDownParty.Form.Model.DisplayName" For="@(() => samlDownParty.Form.Model.DisplayName)" />
-            @if (samlDownParty.ShowAdvanced)
-            {
-                <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
-            }
+            <FFieldText @bind-Value="samlDownParty.Form.Model.Name" For="@(() => samlDownParty.Form.Model.Name)" />
         }
         @if (samlDownParty.ShowAdvanced)
         {
@@ -228,7 +217,7 @@
             }
         </div>
     </div>
-    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    @if (DownParty.DeleteAcknowledge)
     {
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
@@ -244,11 +233,8 @@
         </div>
     }
     <div class="modal-footer">
-        @if (!DownParty.CreateMode)
-        {
-            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
-        }
-        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
+        <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>

@@ -12,7 +12,6 @@ using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.IO;
 using BlazorInputFile;
-using System.Security.Claims;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Components;
 using System.Net.Http;
@@ -27,10 +26,7 @@ namespace FoxIDs.Client.Pages.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            if (!DownParty.CreateMode)
-            {
-                await DefaultLoadAsync();
-            }
+            await DefaultLoadAsync();
         }
 
         private async Task DefaultLoadAsync()
@@ -97,16 +93,6 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                 }
             });
-        }
-
-        private void SamlDownPartyViewModelAfterInit(GeneralSamlDownPartyViewModel samlDownParty, SamlDownPartyViewModel model)
-        {
-            if (samlDownParty.CreateMode)
-            {
-                model.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
-
-                model.Claims = new List<string> { ClaimTypes.Email, ClaimTypes.Name, ClaimTypes.GivenName, ClaimTypes.Surname };
-            }
         }
 
         private async Task OnSamlDownPartyEncryptionCertificateFileSelectedAsync(GeneralSamlDownPartyViewModel generalSamlDownParty, IFileListEntry[] files)
@@ -252,22 +238,10 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
-                if (generalSamlDownParty.CreateMode)
-                {
-                    var samlDownPartyResult = await DownPartyService.CreateSamlDownPartyAsync(samlDownParty);
-                    generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
-                    generalSamlDownParty.CreateMode = false;
-                    toastService.ShowSuccess("SAML 2.0 authentication method created.");
-                    generalSamlDownParty.Name = samlDownPartyResult.Name;
-                    generalSamlDownParty.DisplayName = samlDownPartyResult.DisplayName;
-                }
-                else
-                {
-                    var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
-                    generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
-                    toastService.ShowSuccess("SAML 2.0 authentication method updated.");
-                    generalSamlDownParty.DisplayName = samlDownPartyResult.DisplayName;
-                }                
+                var samlDownPartyResult = await DownPartyService.UpdateSamlDownPartyAsync(samlDownParty);
+                generalSamlDownParty.Form.UpdateModel(ToViewModel(generalSamlDownParty, samlDownPartyResult));
+                toastService.ShowSuccess("SAML 2.0 authentication method updated.");
+                generalSamlDownParty.DisplayName = samlDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

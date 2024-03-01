@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Client.Models.ViewModels
 {
-    public class NewDownPartyOidcViewModel
+    public class NewDownPartySamlViewModel
     {
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Client ID / Resource name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
 
         [Required]
@@ -17,17 +17,18 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Name")]
         public string DisplayName { get; set; }
 
-        [ListLength(Constants.Models.OidcDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
-        [Display(Name = "Redirect URLs")]
-        public List<string> RedirectUris { get; set; }
+        [MaxLength(Constants.Models.Party.IssuerLength)]
+        [Display(Name = "Application issuer")]
+        public string Issuer { get; set; }
+
+        [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
+        [Display(Name = "Assertion consumer service (ACS) URL")]
+        public List<string> AcsUrls { get; set; }
 
         [Display(Name = "Absolute URLs")]
-        public bool DisableAbsoluteUris { get; set; } = true;
-       
-        [Display(Name = "Authority")]
-        public string Authority { get; set; }
+        public bool DisableAbsoluteUrls { get; set; } = true;
 
-        [Display(Name = "Client secret")]
-        public string Secret { get; set; }
+        [Display(Name = "Metadata URL")]
+        public string Metadata { get; set; }
     }
 }

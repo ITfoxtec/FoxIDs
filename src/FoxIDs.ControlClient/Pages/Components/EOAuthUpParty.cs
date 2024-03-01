@@ -165,7 +165,7 @@ namespace FoxIDs.Client.Pages.Components
                     var oauthUpPartyResult = await UpPartyService.CreateOAuthUpPartyAsync(oauthUpParty);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     generalOAuthUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect application created.");
+                    toastService.ShowSuccess("OAuth 2.0 application created.");
                     generalOAuthUpParty.Name = oauthUpPartyResult.Name;
                     generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
@@ -173,7 +173,7 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     var oauthUpPartyResult = await UpPartyService.UpdateOAuthUpPartyAsync(oauthUpParty);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
-                    toastService.ShowSuccess("OpenID Connect application updated.");
+                    toastService.ShowSuccess("OAuth 2.0 application updated.");
                     generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
             }

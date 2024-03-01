@@ -12,19 +12,8 @@
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (oauthDownParty.CreateMode)
-        {
-            <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" Focus="true" />
-            @if (DownParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
-            }
-        }
-        else
-        {
-            <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" />
-            <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
-        }
+        <FInputText @bind-Value="oauthDownParty.Form.Model.DisplayName" For="@(() => oauthDownParty.Form.Model.DisplayName)" />
+        <FFieldTextClipboard @bind-Value="oauthDownParty.Form.Model.Name" For="@(() => oauthDownParty.Form.Model.Name)" />
         @if (DownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oauthDownParty.Form.Model.Note" For="@(() => oauthDownParty.Form.Model.Note)" />
@@ -116,7 +105,7 @@
                 @if (oauthDownParty.Form.Model.Client != null)
                 {
                     <div class="mb-3 alert alert-info" role="alert">
-                        The OAuth 2.0 client only supported client credential grant. Please use OpenID Connect for other client types.
+                        The OAuth 2.0 client only supported Client Credential Grant and Token Exchange Grant. Please use OpenID Connect for user authentication.
                     </div>
                     <SelectUpParty @ref="oauthDownParty.SelectAllowUpPartyName" EditDownPartyForm="oauthDownParty.Form" TModel="OAuthDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
                     @if (DownParty.ShowAdvanced)
@@ -335,7 +324,7 @@
             }
         </div>
     </div>
-    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    @if (DownParty.DeleteAcknowledge)
     {
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
@@ -351,11 +340,8 @@
         </div>
     }
     <div class="modal-footer">
-        @if (!DownParty.CreateMode)
-        {
-            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
-        }
-        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
+        <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>

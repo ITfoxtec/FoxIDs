@@ -91,6 +91,11 @@ namespace FoxIDs.Controllers
                     throw new NotSupportedException($"{mParty?.GetType()?.Name} type not supported.");
                 }
 
+                if (mParty is SamlDownParty samlDownParty && samlDownParty.Issuer.IsNullOrWhiteSpace())
+                {
+                    samlDownParty.Issuer = GetSamlIssuer(party.Name);
+                }
+
                 if (!(party is Api.IDownParty downParty ? await validateModelGenericPartyLogic.ValidateModelAllowUpPartiesAsync(ModelState, nameof(downParty.AllowUpPartyNames), mParty as DownParty) : true)) return BadRequest(ModelState);
                 if (!validateModelGenericPartyLogic.ValidateModelClaimTransforms(ModelState, mParty)) return BadRequest(ModelState);
                 if (preLoadModelActionAsync != null && !await preLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
@@ -159,6 +164,11 @@ namespace FoxIDs.Controllers
                     var tempMParty = await tenantRepository.GetAsync<OidcUpParty>(mParty.Id);
                     mOidcUpParty.Client.ClientSecret = tempMParty.Client.ClientSecret;
                     mOidcUpParty.Client.ClientKeys = tempMParty.Client.ClientKeys;
+                }
+
+                if (mParty is SamlDownParty samlDownParty && samlDownParty.Issuer.IsNullOrWhiteSpace())
+                {
+                    samlDownParty.Issuer = GetSamlIssuer(party.Name);
                 }
 
                 if (postLoadModelActionAsync != null && !await postLoadModelActionAsync(party, mParty)) return BadRequest(ModelState);
@@ -311,6 +321,11 @@ namespace FoxIDs.Controllers
             {
                 return name.ToLower();
             }
+        }
+
+        private string GetSamlIssuer(string name)
+        {
+            return $"uri:{name}";
         }
     }
 }

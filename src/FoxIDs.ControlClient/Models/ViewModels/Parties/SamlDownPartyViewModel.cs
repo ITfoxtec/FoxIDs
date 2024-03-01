@@ -99,13 +99,12 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Authn request binding")]
-        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Post;
+        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Redirect;
 
         [Required]
         [Display(Name = "Authn response binding")]
         public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
-        [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) URL")]
         public List<string> AcsUrls { get; set; }

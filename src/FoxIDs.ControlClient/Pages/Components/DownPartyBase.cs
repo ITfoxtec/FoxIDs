@@ -124,14 +124,7 @@ namespace FoxIDs.Client.Pages.Components
 
         public async Task DownPartyCancelAsync(GeneralDownPartyViewModel downParty)
         {
-            if (downParty.CreateMode)
-            {
-                DownParties.Remove(downParty);
-            }
-            else
-            {
-                DownParty.Edit = false;
-            }
+            DownParty.Edit = false;
             await OnStateHasChanged.InvokeAsync(DownParty);
         }
     }

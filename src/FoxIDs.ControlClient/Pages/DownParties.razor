@@ -92,7 +92,7 @@
             {
                 <div class="form-group">
                     <div class="row">
-                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
                                 <h5 class="pt-2">Web Application</h5>
                                 <h6 class="pb-2">& API</h6>
@@ -103,7 +103,7 @@
                         </div>
                         @if (newDownPartyModal.ShowAll)
                         {
-                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Saml2))" @onclick:preventDefault>
                                     <h5 class="pt-2">Web Application</h5>
                                     <div class="py-2">Web application with a backend.</div>
@@ -112,7 +112,7 @@
                                 </a>
                             </div>
                         }
-                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Single Page Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))" @onclick:preventDefault>
                                 <h5 class="pt-2">Single Page Application</h5>
                                 <h6 class="pb-2">& API</h6>
@@ -121,7 +121,7 @@
                                 <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
                             </a>
                         </div>
-                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Native Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))" @onclick:preventDefault>
                                 <h5 class="pt-2">Native Application</h5>
                                 <h6 class="pb-2">& API</h6>
@@ -130,7 +130,7 @@
                                 <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
                             </a>
                         </div>
-                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Backend Application", PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
                                 <h5 class="pt-2">Backend Application</h5>
                                 <h6 class="pb-2">& API</h6>
@@ -141,7 +141,7 @@
                         </div>
                         @if (newDownPartyModal.ShowAll)
                         {
-                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-3" : string.Empty)">
+                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("API", PartyTypes.OAuth2, DownPartyOAuthTypes.Resource))" @onclick:preventDefault>
                                     <h5 class="pt-2">API</h5>
                                     <div class="py-2">APIs or micro services which can be called by applications.</div>
@@ -256,7 +256,7 @@
                         {
                             <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
                         }
-                        <div class="info-text pb-4">
+                        <div class="mt-2 mb-4 alert alert-secondary">
                             You should probably at least request the scopes; 'profile' and 'email', in your application configuration.
                         </div>
                     }

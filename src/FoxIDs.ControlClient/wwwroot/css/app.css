@@ -604,7 +604,7 @@ h4 {
     .active-group .input-control:focus ~ .label-control {
         -webkit-transform: scale(.85) translateY(-2.4rem);
         transform: scale(.85) translateY(-2.4rem);
-        /*color: #df8935;*/
+        color: #df8935;
     }
     .active-group.active .label-control {
         -webkit-transform: scale(.85) translateY(-2.4rem);

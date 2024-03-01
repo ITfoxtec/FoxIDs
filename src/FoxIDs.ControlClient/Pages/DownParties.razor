@@ -12,19 +12,6 @@
             <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
                 <span class="oi oi-plus" aria-hidden="true"></span> New registration
             </button>
-          @*   <div class="btn-group" role="group">
-                <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <span class="oi oi-plus" aria-hidden="true"></span> New registration
-                </button>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupCreateDownParty">
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Oidc))">OpenID Connect</button>
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.Resource))">OAuth 2.0 - Resource (API)</button>
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.ClientCredentialsGrant))">OAuth 2.0 - Client Credentials Grant</button>
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Saml2))">SAML 2.0</button>
-                    <div class="dropdown-divider"></div>
-                    <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.TrackLink))">Environment Link</button>
-                </div>
-            </div> *@
         </div>
     </div>
     <PageEditForm @ref="downPartyFilterForm" TModel="FilterDownPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">

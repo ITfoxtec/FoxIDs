@@ -1,9 +1,9 @@
 ﻿namespace FoxIDs.Client.Models.ViewModels
 {
-    public enum DownPartyOAuthClientTypes
+    public enum DownPartyOAuthTypes
     {
-        Confidential,
-        Public,
-        PublicNative
+        Client,
+        Resource,
+        ClientAndResource
     }
 }

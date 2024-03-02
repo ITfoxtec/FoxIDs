@@ -19,41 +19,51 @@
     </PageEditForm>
 
     <ul class="list-group">
-        @foreach (var downParty in downParties)
+        @if (downParties != null)
         {
-            <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
-                @if (!downParty.Error.IsNullOrWhiteSpace())
+            @if (downParties.Count() > 0)
+            {
+                @foreach (var downParty in downParties)
                 {
-                    <div class="alert alert-danger" role="alert">
-                        @downParty.Error
-                    </div>
+                    <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
+                        @if (!downParty.Error.IsNullOrWhiteSpace())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @downParty.Error
+                            </div>
+                        }
+                        @if (downParty.Edit)
+                        {
+                            if (downParty.Type == PartyTypes.Oidc)
+                            {
+                                <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                            else if (downParty.Type == PartyTypes.OAuth2)
+                            {
+                                <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                            else if (downParty.Type == PartyTypes.Saml2)
+                            {
+                                <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                            else if (downParty.Type == PartyTypes.TrackLink)
+                            {
+                                <ETrackLinkDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                        }
+                        else
+                        {
+                            <button class="btn btn-link" @onclick="@(() => ShowUpdateDownParty(downParty))">
+                                @DownPartyInfoText(downParty)
+                            </button>
+                        }
+                    </li>
                 }
-                @if (downParty.Edit)
-                {
-                    if (downParty.Type == PartyTypes.Oidc)
-                    {
-                        <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                    else if (downParty.Type == PartyTypes.OAuth2)
-                    {
-                        <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                    else if (downParty.Type == PartyTypes.Saml2)
-                    {
-                        <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                    else if (downParty.Type == PartyTypes.TrackLink)
-                    {
-                        <ETrackLinkDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                }
-                else
-                {
-                    <button class="btn btn-link" @onclick="@(() => ShowUpdateDownParty(downParty))">
-                        @DownPartyInfoText(downParty)
-                    </button>
-                }
-            </li>
+            }
+            else if (!downPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+            {
+                <div class="font-italic pl-1">No match</div>
+            }
         }
     </ul>
 </div>
@@ -122,7 +132,7 @@
                                 <h5 class="pt-2">Backend Application</h5>
                                 <h6 class="pb-2">& API</h6>
                                 <div class="py-2">Service or daemon applications.</div>
-                                <div class="py-2">E.g., .NET service, Script</div>
+                                <div class="py-2">E.g., .NET service, Java, Script</div>
                                 <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
                             </a>
                         </div>
@@ -201,7 +211,7 @@
                                     @{
                                         var uriText = newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative ? "URI" : "URL";
                                     }
-                                    Enable Absolute URIs if you know the exact @uriText in your application that FoxIDs should redirect back to after user log in, and enter the absolute @uriText as Redirect URI.
+                                    Enable Absolute URIs if you know the exact @uriText in your application that the user should be redirected back to when logged in, and enter the absolute @uriText as the Redirect URI.                                
                                 </div>
                                 <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                             }
@@ -244,7 +254,7 @@
                             <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
                         }
                         <div class="mt-2 mb-4 alert alert-secondary">
-                            You should probably at least request the scopes; 'profile' and 'email', in your application configuration.
+                            In addition to the scope value 'openid', you should probably request the scope values 'profile' and 'email' in your application configuration.
                         </div>
                     }
                     <div class="d-flex modal-footer px-0 pb-0">
@@ -383,11 +393,11 @@
 
                         <div>
                             <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.DisplayName" For="@(() => newDownPartyModal.SamlForm.Model.DisplayName)" Focus="true" />
-                            <div class="info-text">Enter the Application issuer, otherwise auto generated.</div>
+                            <div class="info-text">Enter the applications issuer, otherwise auto generated.</div>
                             <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
                             @if (newDownPartyModal.ShowAdvanced)
                             {
-                                <div class="info-text">Enter the Technical name you want, otherwise auto generated.</div>
+                                <div class="info-text">Enter the Technical name you want for the registration, otherwise auto generated.</div>
                                 <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
                             }
                             <div class="info-text">
@@ -398,7 +408,7 @@
                             @if (newDownPartyModal.ShowAdvanced)
                             {
                                 <div class="info-text">
-                                    Enable Absolute URLs if you know the exact URL in your application that FoxIDs should redirect back to after user log in, and enter the absolute URL as the Assertion consumer service (ACS) URL.
+                                    Enable Absolute URLs if you know the exact URL in your application that the user should be redirected back to when logged in, and enter the absolute URL as the Assertion consumer service (ACS) URL.
                                 </div>
                                 <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls" For="@(() => newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
                             }

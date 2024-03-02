@@ -17,7 +17,7 @@ namespace FoxIDs.Client.Pages
     public partial class UpParties
     {
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
-        private List<GeneralUpPartyViewModel> upParties = new List<GeneralUpPartyViewModel>();
+        private List<GeneralUpPartyViewModel> upParties;
      
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -81,30 +81,31 @@ namespace FoxIDs.Client.Pages
 
         private void SetGeneralUpParties(IEnumerable<UpParty> dataUpParties)
         {
-            upParties.Clear();
+            var ups = new List<GeneralUpPartyViewModel>();
             foreach (var dp in dataUpParties)
             {
                 if (dp.Type == PartyTypes.Login)
                 {
-                    upParties.Add(new GeneralLoginUpPartyViewModel(dp));
+                    ups.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.OAuth2)
                 {
-                    upParties.Add(new GeneralOAuthUpPartyViewModel(dp));
+                    ups.Add(new GeneralOAuthUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Oidc)
                 {
-                    upParties.Add(new GeneralOidcUpPartyViewModel(dp));
+                    ups.Add(new GeneralOidcUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
-                    upParties.Add(new GeneralSamlUpPartyViewModel(dp));
+                    ups.Add(new GeneralSamlUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.TrackLink)
                 {
-                    upParties.Add(new GeneralTrackLinkUpPartyViewModel(dp));
+                    ups.Add(new GeneralTrackLinkUpPartyViewModel(dp));
                 }
             }
+            upParties = ups;
         }
 
         private void ShowCreateUpParty(PartyTypes type)

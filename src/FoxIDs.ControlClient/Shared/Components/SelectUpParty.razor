@@ -16,7 +16,7 @@
         }
         else
         {
-            @if (upPartys != null)
+            @if (upParties != null)
             {
                 @foreach (var allowUpPartyName in EditDownPartyForm.Model.AllowUpPartyNames)
                 {
@@ -42,7 +42,7 @@
             <button type="button" class="dropdown-toggle btn btn-link btn-xs" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"  @onclick="@(async () => await LoadDefaultUpPartyFilter())">
                 <span class="oi oi-plus" aria-hidden="true"></span> Add allowed authentication methods
             </button>
-
+           
             <div class="dropdown-menu search-dropdown px-3 pb-3" aria-labelledby="allowUpPartyNamesDropdown">
                 <PageEditForm @ref="upPartyNamesFilterForm" TModel="FilterUpPartyViewModel" OnValidSubmit="OnUpPartyNamesFilterValidSubmitAsync">
                     <div class="form-group active-group pb-2">
@@ -51,11 +51,18 @@
                 </PageEditForm>
                 @if (upPartyFilters != null)
                 {
-                    @foreach (var upPartyFilter in upPartyFilters)
+                    @if (upPartyFilters.Count() > 0)
                     {
-                        <button type="button" class="dropdown-item btn btn-link pl-1 pr-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
-                            @UpPartyInfoText(upPartyFilter)
-                        </button>
+                        @foreach (var upPartyFilter in upPartyFilters)
+                        {
+                            <button type="button" class="dropdown-item btn btn-link px-1" @onclick="@(() => OnAddUpPartyNameAsync(upPartyFilter.Name))">
+                                @UpPartyInfoText(upPartyFilter)
+                            </button>
+                        }
+                    }
+                    else if (!upPartyNamesFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+                    {
+                        <div class="font-italic px-1">No match</div>
                     }
                 }
             </div>

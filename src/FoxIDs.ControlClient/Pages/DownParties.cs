@@ -24,7 +24,7 @@ namespace FoxIDs.Client.Pages
     {
         private NewDownPartyViewModel newDownPartyModal;    
         private PageEditForm<FilterDownPartyViewModel> downPartyFilterForm;
-        private List<GeneralDownPartyViewModel> downParties = new List<GeneralDownPartyViewModel>();
+        private List<GeneralDownPartyViewModel> downParties;
 
         [Inject]
         public IToastService toastService { get; set; }
@@ -95,26 +95,28 @@ namespace FoxIDs.Client.Pages
 
         private void SetGeneralDownParties(IEnumerable<DownParty> dataDownParties)
         {
-            downParties.Clear();
+            var dps = new List<GeneralDownPartyViewModel>();
+            dps.Clear();
             foreach (var dp in dataDownParties)
             {
                 if (dp.Type == PartyTypes.Oidc)
                 {
-                    downParties.Add(new GeneralOidcDownPartyViewModel(dp));
+                    dps.Add(new GeneralOidcDownPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.OAuth2)
                 {
-                    downParties.Add(new GeneralOAuthDownPartyViewModel(dp));
+                    dps.Add(new GeneralOAuthDownPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
-                    downParties.Add(new GeneralSamlDownPartyViewModel(dp));
+                    dps.Add(new GeneralSamlDownPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.TrackLink)
                 {
-                    downParties.Add(new GeneralTrackLinkDownPartyViewModel(dp));
+                    dps.Add(new GeneralTrackLinkDownPartyViewModel(dp));
                 }
             }
+            downParties = dps;
         }
 
         private void ShowUpdateDownParty(GeneralDownPartyViewModel downParty)
@@ -170,6 +172,7 @@ namespace FoxIDs.Client.Pages
         {
             try
             {
+                newDownPartyViewModel.CreateWorking = true;
                 if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
                 {
                     newDownPartyOidcForm.Model.Secret = SecretGenerator.GenerateNewSecret();
@@ -226,6 +229,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (FoxIDsApiException ex)
             {
+                newDownPartyViewModel.CreateWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     newDownPartyOidcForm.SetFieldError(nameof(newDownPartyOidcForm.Model.Name), ex.Message);
@@ -235,12 +239,17 @@ namespace FoxIDs.Client.Pages
                     throw;
                 }
             }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
+            }
         }
 
         private async Task OnNewDownPartyOAuthClientModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOAuthClientViewModel> newDownPartyOAuthClientForm, EditContext editContext)
         {
             try
             {
+                newDownPartyViewModel.CreateWorking = true;
                 newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
 
                 var oauthDownParty = newDownPartyOAuthClientForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
@@ -266,6 +275,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (FoxIDsApiException ex)
             {
+                newDownPartyViewModel.CreateWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     newDownPartyOAuthClientForm.SetFieldError(nameof(newDownPartyOAuthClientForm.Model.Name), ex.Message);
@@ -275,12 +285,17 @@ namespace FoxIDs.Client.Pages
                     throw;
                 }
             }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
+            }
         }
 
         private async Task OnNewDownPartyOAuthResourceModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOAuthResourceViewModel> newDownPartyOAuthResourceForm, EditContext editContext)
         {
             try
             {
+                newDownPartyViewModel.CreateWorking = true;
                 var oauthDownParty = newDownPartyOAuthResourceForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
                     afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
@@ -305,6 +320,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (FoxIDsApiException ex)
             {
+                newDownPartyViewModel.CreateWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     newDownPartyOAuthResourceForm.SetFieldError(nameof(newDownPartyOAuthResourceForm.Model.Name), ex.Message);
@@ -314,12 +330,17 @@ namespace FoxIDs.Client.Pages
                     throw;
                 }
             }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
+            }
         }
 
         private async Task OnNewDownPartySamlModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartySamlViewModel> newDownPartySamlForm, EditContext editContext)
         {
             try
             {
+                newDownPartyViewModel.CreateWorking = true;
                 // first map to add default ViewModel values
                 var SamlDownPartyViewModel = newDownPartySamlForm.Model.Map<SamlDownPartyViewModel>();
                 var samlDownParty = SamlDownPartyViewModel.Map<SamlDownParty>(afterMap: afterMap =>
@@ -340,6 +361,7 @@ namespace FoxIDs.Client.Pages
             }
             catch (FoxIDsApiException ex)
             {
+                newDownPartyViewModel.CreateWorking = false;
                 if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
                     newDownPartySamlForm.SetFieldError(nameof(newDownPartySamlForm.Model.Name), ex.Message);
@@ -348,6 +370,10 @@ namespace FoxIDs.Client.Pages
                 {
                     throw;
                 }
+            }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
             }
         }
     }

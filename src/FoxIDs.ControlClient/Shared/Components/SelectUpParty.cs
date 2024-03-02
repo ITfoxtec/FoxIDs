@@ -16,7 +16,7 @@ namespace FoxIDs.Client.Shared.Components
     public partial class SelectUpParty<TModel> where TModel : class, IAllowUpPartyNames, new()
     {
         private PageEditForm<FilterUpPartyViewModel> upPartyNamesFilterForm;
-        private IEnumerable<UpParty> upPartys;
+        private List<UpParty> upParties;
         private IEnumerable<UpParty> upPartyFilters;
 
         [Inject]
@@ -73,8 +73,22 @@ namespace FoxIDs.Client.Shared.Components
         {
             try
             {
-                upPartys = await UpPartyService.FilterUpPartyAsync(filterName);
-                upPartyFilters = upPartys.Where(f => !EditDownPartyForm.Model.AllowUpPartyNames.Where(a => a.Equals(f.Name)).Any());
+                var ups = await UpPartyService.FilterUpPartyAsync(filterName);
+                if (upParties?.Count() > 0)
+                {
+                    foreach(var up in ups)
+                    {
+                        if(!upParties.Where(u => u.Name == up.Name).Any())
+                        {
+                            upParties.Add(up);
+                        }
+                    }
+                }
+                else
+                {
+                    upParties = ups?.ToList();
+                }
+                upPartyFilters = ups.Where(f => !EditDownPartyForm.Model.AllowUpPartyNames.Where(a => a.Equals(f.Name)).Any());
             }
             catch (TokenUnavailableException)
             {
@@ -94,7 +108,7 @@ namespace FoxIDs.Client.Shared.Components
 
         private string UpPartyInfoText(string upPartyName)
         {
-            var upParty = upPartys.Where(f => f.Name.Equals(upPartyName)).FirstOrDefault();
+            var upParty = upParties.Where(f => f.Name.Equals(upPartyName)).FirstOrDefault();
             if (upParty == null)
             {
                 return upPartyName;

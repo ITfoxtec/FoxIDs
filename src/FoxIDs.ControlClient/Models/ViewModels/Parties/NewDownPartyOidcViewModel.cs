@@ -18,10 +18,10 @@ namespace FoxIDs.Client.Models.ViewModels
         public string DisplayName { get; set; }
 
         [ListLength(Constants.Models.OidcDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
-        [Display(Name = "Redirect URLs")]
+        [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
 
-        [Display(Name = "Absolute URLs")]
+        [Display(Name = "Absolute URIs")]
         public bool DisableAbsoluteUris { get; set; } = true;
        
         [Display(Name = "Authority")]

@@ -3,7 +3,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
@@ -12,21 +11,20 @@ namespace FoxIDs.Logic
     public class UpPartyCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly ICacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
 
-        public UpPartyCacheLogic(Settings settings, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public UpPartyCacheLogic(Settings settings, ICacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;
         }
 
         public async Task InvalidateUpPartyCacheAsync(Party.IdKey idKey)
         {
             var key = RadisUpPartyNameKey(idKey);
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(key);
+            await cacheProvider.DeleteAsync(key);
         }
 
         public async Task InvalidateUpPartyCacheAsync(string upPartyName, string tenantName = null, string trackName = null)
@@ -37,9 +35,8 @@ namespace FoxIDs.Logic
         public async Task<UpParty> GetUpPartyAsync(Party.IdKey idKey, bool required = true)
         {
             var key = RadisUpPartyNameKey(idKey);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            var upPartyAsString = (string)await db.StringGetAsync(key);
+            var upPartyAsString = (string)await cacheProvider.GetAsync(key);
             if (!upPartyAsString.IsNullOrEmpty())
             {
                 return upPartyAsString.ToObject<UpParty>();
@@ -48,7 +45,7 @@ namespace FoxIDs.Logic
             var upParty = await tenantRepository.GetAsync<UpParty>(await UpParty.IdFormatAsync(idKey), required: required);
             if (upParty != null)
             {
-                await db.StringSetAsync(key, upParty.ToJson(), TimeSpan.FromSeconds(settings.Cache.UpPartyLifetime));
+                await cacheProvider.SetAsync(key, upParty.ToJson(), settings.Cache.UpPartyLifetime);
             }
             return upParty;
         }

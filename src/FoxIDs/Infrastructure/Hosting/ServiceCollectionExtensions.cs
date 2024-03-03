@@ -18,9 +18,9 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLogic(this IServiceCollection services)
+        public static IServiceCollection AddLogic(this IServiceCollection services, IWebHostEnvironment env)
         {
-            services.AddSharedLogic();
+            services.AddSharedLogic(env);
 
             services.AddSingleton<EmbeddedResourceLogic>();
             services.AddSingleton<LocalizationLogic>();
@@ -141,13 +141,16 @@ namespace FoxIDs.Infrastructure.Hosting
                 });
             }
 
-            services.AddDataProtection()
-                .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
+            if (!env.IsDevelopment())
+            {
+                services.AddDataProtection()
+                    .PersistKeysToStackExchangeRedis(connectionMultiplexer, "data_protection_keys");
 
-            services.AddStackExchangeRedisCache(options => {
-                options.Configuration = settings.RedisCache.ConnectionString;
-                options.InstanceName = "cache";
-            });
+                services.AddStackExchangeRedisCache(options => {
+                    options.Configuration = settings.RedisCache.ConnectionString;
+                    options.InstanceName = "cache";
+                });
+            }
 
             return services;
         }

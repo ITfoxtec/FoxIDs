@@ -13,10 +13,10 @@ namespace FoxIDs.Logic
     public class TenantCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly ICacheProvider cacheProvider;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
 
-        public TenantCacheLogic(Settings settings, ICacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TenantCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

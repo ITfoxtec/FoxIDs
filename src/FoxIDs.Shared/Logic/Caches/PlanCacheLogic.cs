@@ -10,10 +10,10 @@ namespace FoxIDs.Logic
     public class PlanCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly ICacheProvider cacheProvider;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly IMasterRepository masterRepository;
 
-        public PlanCacheLogic(Settings settings, ICacheProvider cacheProvider, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

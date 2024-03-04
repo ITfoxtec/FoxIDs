@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using FoxIDs.Models;
 using System;
 using System.Collections.Generic;
@@ -11,50 +10,50 @@ namespace FoxIDs.Logic
     public class FailingLoginLogic : LogicSequenceBase
     {
         private readonly TelemetryScopedLogger logger;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
 
-        public FailingLoginLogic(TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public FailingLoginLogic(TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.logger = logger;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
         }
 
         public async Task<long> IncreaseFailingLoginCountAsync(string email)
         {
             var key = FailingLoginCountRadisKey(email);
-            var db = redisConnectionMultiplexer.GetDatabase();
-            var loginCount = await db.StringIncrementAsync(key);
-            await db.KeyExpireAsync(key, TimeSpan.FromSeconds(RouteBinding.FailingLoginCountLifetime));
-            return loginCount;
+            
+            var loginCount = await cacheProvider.GetAsync(key);
+            var newLoginCount = long.Parse(loginCount) + 1;
+            await cacheProvider.SetAsync(key, newLoginCount.ToString(), RouteBinding.FailingLoginCountLifetime);
+            return newLoginCount;
         }
 
         public async Task ResetFailingLoginCountAsync(string email)
         {
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(FailingLoginCountRadisKey(email));
+            await cacheProvider.DeleteAsync(FailingLoginCountRadisKey(email));
         }
 
         public async Task<long> VerifyFailingLoginCountAsync(string email)
         {
             var key = FailingLoginCountRadisKey(email);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            if (await db.KeyExistsAsync(FailingLoginLockedRadisKey(email)))
+            if (await cacheProvider.ExistsAsync(FailingLoginLockedRadisKey(email)))
             {
                 logger.ScopeTrace(() => $"User '{email}' locked by observation period.", triggerEvent: true);
                 throw new UserObservationPeriodException($"User '{email}' locked by observation period.");
             }
 
-            var failingLoginCount = (long?)await db.StringGetAsync(key);
-            if (failingLoginCount.HasValue && failingLoginCount.Value >= RouteBinding.MaxFailingLogins)
+            var failingLoginCountString = await cacheProvider.GetAsync(key);
+            var failingLoginCount = failingLoginCountString != null ? long.Parse(failingLoginCountString) : 0;
+            if (failingLoginCount >= RouteBinding.MaxFailingLogins)
             {
-                await db.StringSetAsync(FailingLoginLockedRadisKey(email), true, TimeSpan.FromSeconds(RouteBinding.FailingLoginObservationPeriod));
-                await db.KeyDeleteAsync(key);
+                await cacheProvider.SetAsync(FailingLoginLockedRadisKey(email), "true", RouteBinding.FailingLoginObservationPeriod);
+                await cacheProvider.DeleteAsync(key);
 
-                logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount.Value), triggerEvent: true);
+                logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);
                 throw new UserObservationPeriodException($"Observation period started for user '{email}'.");
             }
-            return failingLoginCount.HasValue ? failingLoginCount.Value : 0;
+            return failingLoginCount;
         }
 
         public Dictionary<string, string> FailingLoginCountDictonary(long failingLoginCount) =>

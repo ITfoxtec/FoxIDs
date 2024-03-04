@@ -11,10 +11,10 @@ namespace FoxIDs.Logic
     public class TrackCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly ICacheProvider cacheProvider;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
 
-        public TrackCacheLogic(Settings settings, ICacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TrackCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.cacheProvider = cacheProvider;

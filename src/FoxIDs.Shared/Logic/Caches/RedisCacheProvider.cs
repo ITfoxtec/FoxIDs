@@ -4,10 +4,13 @@ using StackExchange.Redis;
 
 namespace FoxIDs.Logic;
 
-public class RedisCacheProvider(IConnectionMultiplexer redisConnectionMultiplexer) : ICacheProvider
+public class RedisCacheProvider(IConnectionMultiplexer redisConnectionMultiplexer) : IDistributedCacheProvider
 {
     public async Task<bool> DeleteAsync(string key) =>
         await redisConnectionMultiplexer.GetDatabase().KeyDeleteAsync(key);
+
+    public async Task<bool> ExistsAsync(string key) =>
+        await redisConnectionMultiplexer.GetDatabase().KeyExistsAsync(key);
 
     public async Task<string> GetAsync(string key) =>
         await redisConnectionMultiplexer.GetDatabase().StringGetAsync(key);

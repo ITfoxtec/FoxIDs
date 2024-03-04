@@ -23,10 +23,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<ClaimTransformValidationLogic>();
 
-            if (!env.IsDevelopment())
-                services.AddTransient<ICacheProvider, RedisCacheProvider>();
-            else
-                services.AddTransient<ICacheProvider, MemoryCacheProvider>();
+            services.AddTransient<IDistributedCacheProvider, RedisCacheProvider>();
             services.AddTransient<PlanCacheLogic>();
             services.AddTransient<TenantCacheLogic>();
             services.AddTransient<TrackCacheLogic>();

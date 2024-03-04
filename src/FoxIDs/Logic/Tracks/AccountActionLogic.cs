@@ -8,7 +8,6 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Localization;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
@@ -20,7 +19,7 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         protected readonly TelemetryScopedLogger logger;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly IStringLocalizer localizer;
         private readonly ITenantRepository tenantRepository;
         private readonly SecretHashLogic secretHashLogic;
@@ -28,11 +27,11 @@ namespace FoxIDs.Logic
         private readonly FailingLoginLogic failingLoginLogic;
         private readonly SendEmailLogic sendEmailLogic;
 
-        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public AccountActionLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, IStringLocalizer localizer, ITenantRepository tenantRepository, SecretHashLogic secretHashLogic, AccountLogic accountLogic, FailingLoginLogic failingLoginLogic, SendEmailLogic sendEmailLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.localizer = localizer;
             this.tenantRepository = tenantRepository;
             this.secretHashLogic = secretHashLogic;
@@ -90,25 +89,24 @@ namespace FoxIDs.Logic
 
         private async Task<ConfirmationCodeSendStatus> SendEmailCodeAsync(Func<string, EmailContent> emailContent, string redisKeyElement, string email, bool forceNewCode, string logText)
         {
-            var db = redisConnectionMultiplexer.GetDatabase();
             var key = EmailConfirmationCodeRadisKey(redisKeyElement, email);
-            if (!forceNewCode && await db.KeyExistsAsync(key))
+            if (!forceNewCode && await cacheProvider.ExistsAsync(key))
             {
                 return ConfirmationCodeSendStatus.UseExistingCode;
             }
             else
             {
-                await SaveAndSendEmailCode(db, key, email, emailContent, logText);
+                await SaveAndSendEmailCode(key, email, emailContent, logText);
                 return forceNewCode ? ConfirmationCodeSendStatus.ForceNewCode : ConfirmationCodeSendStatus.NewCode;
             }
         }
 
-        private async Task SaveAndSendEmailCode(IDatabase redisDb, string redisKey, string email, Func<string, EmailContent> emailContent, string logText)
+        private async Task SaveAndSendEmailCode(string redisKey, string email, Func<string, EmailContent> emailContent, string logText)
         {
             var confirmationCode = RandomGenerator.GenerateCode(Constants.Models.User.ConfirmationCodeLength).ToUpper();
             var confirmationCodeObj = new ConfirmationCode();
             await secretHashLogic.AddSecretHashAsync(confirmationCodeObj, confirmationCode);
-            await redisDb.StringSetAsync(redisKey, confirmationCodeObj.ToJson(), TimeSpan.FromSeconds(settings.ConfirmationCodeLifetime));
+            await cacheProvider.SetAsync(redisKey, confirmationCodeObj.ToJson(), settings.ConfirmationCodeLifetime);
 
             var user = await accountLogic.GetUserAsync(email);
             if (user == null || user.DisableAccount)
@@ -125,9 +123,8 @@ namespace FoxIDs.Logic
         {
             var failingConfirmatioCount = await failingLoginLogic.VerifyFailingLoginCountAsync(email);
 
-            var db = redisConnectionMultiplexer.GetDatabase();
             var key = EmailConfirmationCodeRadisKey(redisKeyElement, email);
-            var confirmationCodeValue = (string)await db.StringGetAsync(key);
+            var confirmationCodeValue = await cacheProvider.GetAsync(key);
             if (!confirmationCodeValue.IsNullOrEmpty())
             {
                 var confirmationCode = confirmationCodeValue.ToObject<ConfirmationCode>();
@@ -150,7 +147,7 @@ namespace FoxIDs.Logic
                         await onSuccess(user);
                     }
 
-                    await db.KeyDeleteAsync(key);
+                    await cacheProvider.DeleteAsync(key);
                     logger.ScopeTrace(() => $"User '{user.Email}' {logText} confirmation code verified for user id '{user.UserId}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
                     return user;
                 }
@@ -164,7 +161,7 @@ namespace FoxIDs.Logic
             else
             {
                 logger.ScopeTrace(() => $"There is not a email code to compare with, user '{email}'.", scopeProperties: failingLoginLogic.FailingLoginCountDictonary(failingConfirmatioCount), triggerEvent: true);
-                await SaveAndSendEmailCode(db, key, email, emailContent, logText);
+                await SaveAndSendEmailCode(key, email, emailContent, logText);
                 throw new CodeNotExistsException($"{logText} confirmation code not found."); 
             }
         }

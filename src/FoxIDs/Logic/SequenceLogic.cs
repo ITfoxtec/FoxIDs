@@ -17,10 +17,10 @@ namespace FoxIDs.Logic
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtectionProvider;
-        private readonly ICacheProvider cacheProvider;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly LocalizationLogic localizationLogic;
 
-        public SequenceLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDataProtectionProvider dataProtectionProvider, ICacheProvider cacheProvider, LocalizationLogic localizationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SequenceLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDataProtectionProvider dataProtectionProvider, IDistributedCacheProvider cacheProvider, LocalizationLogic localizationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;

@@ -9,7 +9,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern, ErrorMessage = "The field {0} can only contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
 
         /// <summary>
@@ -18,7 +18,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Track.DisplayNameLength)]
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
-        [Display(Name = "Display name")]
+        [Display(Name = "Name")]
         public string DisplayName { get; set; }
 
         public bool ShowAdvanced { get; set; }

@@ -198,14 +198,14 @@
                             </div>
 
                             <div class="mr-auto info-text">
-                                Create a environment with a meaningful name.
+                                Create a new environment with the name you want.
                             </div>
                             <FInputText @bind-Value="createTrackForm.Model.DisplayName" For="@(() => createTrackForm.Model.DisplayName)" Focus="true" />
 
                             @if (createTrackShowAdvanced)
                             {
                                 <div class="mr-auto info-text">
-                                    Technical name in lowercase and without spaces.
+                                    Enter the Technical name you want for the environment, otherwise auto generated.
                                 </div>
                                 <FInputText @bind-Value="createTrackForm.Model.Name" For="@(() => createTrackForm.Model.Name)" />
                             }

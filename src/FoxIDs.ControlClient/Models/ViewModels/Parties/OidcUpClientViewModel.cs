@@ -9,12 +9,12 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpClientViewModel : IClientAdditionalParameters, IValidatableObject
     {
-        // Link to referring party.
+        // Link to referring authentication method.
         [JsonIgnore]
         public OidcUpPartyViewModel Party { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
-        [Display(Name = "Optional custom SP client ID (default the party name)")]
+        [Display(Name = "Optional custom SP client ID")]
         public string SpClientId { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ScopesMin, Constants.Models.OAuthUpParty.Client.ScopesMax, Constants.Models.OAuthUpParty.ScopeLength, Constants.Models.OAuthUpParty.ScopeRegExPattern)]

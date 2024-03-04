@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track log settings.
+        /// Get environment log settings.
         /// </summary>
         /// <returns>Log settings.</returns>
         [ProducesResponseType(typeof(Api.LogSettings), StatusCodes.Status200OK)]
@@ -53,7 +53,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Get {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)}", RouteBinding.TrackName);
                 }
                 throw;
@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Save track log settings.
+        /// Save environment log settings.
         /// </summary>
         /// <param name="logSettings">Log settings.</param>
         /// <returns>Log settings.</returns>
@@ -90,7 +90,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.Logging)}.{nameof(Track.Logging.ScopedLogger)}", RouteBinding.TrackName);
                 }
                 throw;

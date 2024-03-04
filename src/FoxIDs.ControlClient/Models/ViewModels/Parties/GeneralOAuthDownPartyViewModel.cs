@@ -23,9 +23,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public string ClientCertificateFileStatus { get; set; } = DefaultClientCertificateFileStatus;
 
-        public OAuthSubPartyTypes SubPartyType { get; set; }
-
-        [Display(Name = "Down-party type")]
+        [Display(Name = "Application registration type")]
         public DownPartyOAuthTypes DownPartyType { get; set; } = DownPartyOAuthTypes.Resource;
 
         public bool ShowClientTab { get; set; }

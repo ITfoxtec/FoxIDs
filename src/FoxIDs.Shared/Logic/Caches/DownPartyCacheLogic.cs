@@ -70,7 +70,7 @@ namespace FoxIDs.Logic
                 var routeBinding = RouteBinding;
                 if (routeBinding == null)
                 {
-                    throw new InvalidOperationException("RouteBinding is null in down-party cache.");
+                    throw new InvalidOperationException("RouteBinding is null in application registration cache.");
                 }
                 tenantName = routeBinding.TenantName;
                 trackName = routeBinding.TrackName;

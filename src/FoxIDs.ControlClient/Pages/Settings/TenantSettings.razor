@@ -1,0 +1,75 @@
+﻿@page "/{tenantName}/tenantsettings"
+@inherits PageBase
+
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link active">Tenant</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@trackSettingsHref">Environment</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@mailSettingsHref">Mail</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@claimMappingsHref">Claim mappings</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="@textsHref">Texts</a>
+    </li>
+    @if (IsMasterTenant)
+    {
+        <li class="nav-item">
+            <a class="nav-link" href="@plansHref">Plans</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="@riskPasswordsHref">Risk Passwords</a>
+        </li>
+    }
+</ul>
+
+<div class="tab-content">
+    <PageEditForm @ref="tenantSettingsForm" TModel="TenantSettingsViewModel" OnValidSubmit="OnUpdateTenantValidSubmitAsync">
+        @if (TrackSelectedLogic.IsTrackSelected && !IsMasterTenant && IsMasterTrack)
+        {
+            <div class="modal-body px-0">
+                @if (!deleteTenantError.IsNullOrWhiteSpace())
+                {
+                    <div class="alert alert-danger" role="alert">
+                        @deleteTenantError
+                    </div>
+                }
+                <FFieldText @bind-Value="tenantSettingsForm.Model.Name" For="@(() => tenantSettingsForm.Model.Name)" />
+                <FFieldText @bind-Value="tenantSettingsForm.Model.PlanName" For="@(() => tenantSettingsForm.Model.PlanName)" />
+                <FInputText @bind-Value="tenantSettingsForm.Model.CustomDomain" For="@(() => tenantSettingsForm.Model.CustomDomain)" Focus="true" />
+                <FInputToggle Disabled=true @bind-Value="IsCustomDomainVerified" For="@(() => tenantSettingsForm.Model.CustomDomainVerified)" TextType="y.n" />
+
+                @if (deleteTenantAcknowledge)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        <div>
+                            You are about to delete your tenant. All tracks and user repositories will also be deleted, there is no way back a tenant can not be restored! Are you sure?
+                        </div>
+
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-secondary" @onclick="DeleteTenantAsync">Yes delete tenant</button>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => deleteTenantAcknowledge = false)">No</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="modal-footer px-0">
+                <button type="button" class="btn btn-link" @onclick="@(() => deleteTenantAcknowledge = true)">Delete tenant</button>
+                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+        }
+    </PageEditForm>
+</div>
+
+<Modal @ref="tenantDeletedModal" Title="Deleted" DisableClose="true">
+    <div class="modal-body">
+        <div class="alert alert-info" role="alert">
+            Your tenant including all content has been deleted.
+        </div>
+    </div>
+</Modal>

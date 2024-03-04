@@ -20,10 +20,7 @@ namespace FoxIDs.Client.Pages.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            if (!DownParty.CreateMode)
-            {
-                await DefaultLoadAsync();
-            }
+            await DefaultLoadAsync();
         }
 
         private async Task DefaultLoadAsync()
@@ -48,6 +45,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return trackLinkDownParty.Map<TrackLinkDownPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -55,16 +57,16 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private void TrackLinkDownPartyViewModelAfterInit(GeneralTrackLinkDownPartyViewModel trackLinkDownParty, TrackLinkDownPartyViewModel model)
-        {
-            if (trackLinkDownParty.CreateMode)
-            {
-                model.Claims = new List<OAuthDownClaim>
-                {
-                    new OAuthDownClaim { Claim = "*" }
-                };
-            }
-        }
+        //private void TrackLinkDownPartyViewModelAfterInit(GeneralTrackLinkDownPartyViewModel trackLinkDownParty, TrackLinkDownPartyViewModel model)
+        //{
+        //    if (trackLinkDownParty.CreateMode)
+        //    {
+        //        model.Claims = new List<OAuthDownClaim>
+        //        {
+        //            new OAuthDownClaim { Claim = "*" }
+        //        };
+        //    }
+        //}
 
         private void AddTrackLinkClaim(MouseEventArgs e, List<OAuthDownClaim> claims)
         {
@@ -103,27 +105,11 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
-                TrackLinkDownParty trackLinkDownPartyResult;
-                if (generalTrackLinkDownParty.CreateMode)
-                {
-                    trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(trackLinkDownParty);
-                }
-                else
-                {
-                    trackLinkDownPartyResult = await DownPartyService.UpdateTrackLinkDownPartyAsync(trackLinkDownParty);
-                }
+                var trackLinkDownPartyResult = await DownPartyService.UpdateTrackLinkDownPartyAsync(trackLinkDownParty);
 
                 generalTrackLinkDownParty.Form.UpdateModel(ToViewModel(trackLinkDownPartyResult));
-                if (generalTrackLinkDownParty.CreateMode)
-                {
-                    generalTrackLinkDownParty.CreateMode = false;
-                    toastService.ShowSuccess("Track link down-party created.");
-                }
-                else
-                {
-                    toastService.ShowSuccess("Track link down-party updated.");
-                }
-                generalTrackLinkDownParty.Name = generalTrackLinkDownParty.Form.Model.Name;
+                toastService.ShowSuccess("Environment Link authentication method updated.");
+                generalTrackLinkDownParty.DisplayName = trackLinkDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

@@ -10,7 +10,7 @@ namespace FoxIDs.Models.Api
     public class OAuthClientSecretRequest
     {
         /// <summary>
-        /// OAuth 2.0 or OIDC party name.
+        /// OAuth 2.0 or OIDC application name.
         /// </summary>
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

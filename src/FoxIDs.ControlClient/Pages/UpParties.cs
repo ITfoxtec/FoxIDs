@@ -16,9 +16,8 @@ namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
-        private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
-        private List<GeneralUpPartyViewModel> upParties = new List<GeneralUpPartyViewModel>();
-        private string downPartyHref;
+        private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
+        private List<GeneralUpPartyViewModel> upParties;
      
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
@@ -31,13 +30,18 @@ namespace FoxIDs.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            downPartyHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/downparties";
             await base.OnInitializedAsync();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
                 await DefaultLoadAsync();
             }
+        }
+
+        protected override void OnDispose()
+        {
+            TrackSelectedLogic.OnTrackSelectedAsync -= OnTrackSelectedAsync;
+            base.OnDispose();
         }
 
         private async Task OnTrackSelectedAsync(Track track)
@@ -83,30 +87,31 @@ namespace FoxIDs.Client.Pages
 
         private void SetGeneralUpParties(IEnumerable<UpParty> dataUpParties)
         {
-            upParties.Clear();
+            var ups = new List<GeneralUpPartyViewModel>();
             foreach (var dp in dataUpParties)
             {
                 if (dp.Type == PartyTypes.Login)
                 {
-                    upParties.Add(new GeneralLoginUpPartyViewModel(dp));
+                    ups.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.OAuth2)
                 {
-                    upParties.Add(new GeneralOAuthUpPartyViewModel(dp));
+                    ups.Add(new GeneralOAuthUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Oidc)
                 {
-                    upParties.Add(new GeneralOidcUpPartyViewModel(dp));
+                    ups.Add(new GeneralOidcUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
-                    upParties.Add(new GeneralSamlUpPartyViewModel(dp));
+                    ups.Add(new GeneralSamlUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.TrackLink)
                 {
-                    upParties.Add(new GeneralTrackLinkUpPartyViewModel(dp));
+                    ups.Add(new GeneralTrackLinkUpPartyViewModel(dp));
                 }
             }
+            upParties = ups;
         }
 
         private void ShowCreateUpParty(PartyTypes type)
@@ -159,33 +164,30 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnStateHasChangedAsync(GeneralUpPartyViewModel upParty)
         {
-            await InvokeAsync(() =>
-            {
-                StateHasChanged();
-            });
+            await InvokeAsync(StateHasChanged);
         }
 
         private string UpPartyInfoText(GeneralUpPartyViewModel upParty)
         {
             if (upParty.Type == PartyTypes.Login)
             {
-                return $"Login - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (Login)";
             }
             else if (upParty.Type == PartyTypes.OAuth2)
             {
-                return $"OAuth 2.0 - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (OAuth 2.0)";
             }
             else if (upParty.Type == PartyTypes.Oidc)
             {
-                return $"OpenID Connect - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (OpenID Connect)";
             }
             else if (upParty.Type == PartyTypes.Saml2)
             {
-                return $"SAML 2.0 - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (SAML 2.0)";
             }
             else if (upParty.Type == PartyTypes.TrackLink)
             {
-                return $"Track link - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
             }
             throw new NotSupportedException();
         }

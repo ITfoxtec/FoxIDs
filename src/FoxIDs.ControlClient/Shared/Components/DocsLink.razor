@@ -1,0 +1,20 @@
+﻿<a target="_blank" href="@LinkUrl()" class="docs-link @Class">@ChildContent<i class="bi bi-box-arrow-up-right"></i></a>
+
+@code {
+    [Parameter]
+    public string Class { get; set; }
+
+    [Parameter]
+    public string Page { get; set; }
+
+    [Parameter]
+    public string Fragment { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private string LinkUrl()
+    {
+        return $"https://www.foxids.com/link?p={Page}{(Fragment.IsNullOrWhiteSpace() ? string.Empty : $"&f={Fragment}")}";
+    }
+}

@@ -12,10 +12,13 @@ namespace FoxIDs.Models.Api
 {
     public class SamlUpParty : INameValue, IValidatableObject, IClaimTransform<SamlClaimTransform>
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
@@ -113,7 +116,7 @@ namespace FoxIDs.Models.Api
         public bool DisableSingleLogout { get; set; }
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
@@ -176,6 +179,10 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+            }
             if (DisableUserAuthenticationTrust && DisableTokenExchangeTrust)
             {
                 results.Add(new ValidationResult($"Both the {nameof(DisableUserAuthenticationTrust)} and the {nameof(DisableTokenExchangeTrust)} can not be disabled at the same time.", new[] { nameof(DisableUserAuthenticationTrust), nameof(DisableTokenExchangeTrust) }));

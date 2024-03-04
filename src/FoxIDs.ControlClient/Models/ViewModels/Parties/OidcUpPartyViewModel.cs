@@ -8,11 +8,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, IValidatableObject
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Up-party name (client ID)")]
+        [Display(Name = "Client ID")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
@@ -46,7 +51,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// Only used in relation to token exchange trust.
         /// </summary>
         [MaxLength(Constants.Models.Party.IssuerLength)]
-        [Display(Name = "Optional custom SP issuer / audience used in token exchange trust (default auto generated)")]
+        [Display(Name = "Optional custom SP issuer / audience")]
         public string SpIssuer { get; set; }
 
         [Display(Name = "Keys")]
@@ -92,9 +97,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public List<OAuthClaimTransformViewModel> ClaimTransforms { get; set; } = new List<OAuthClaimTransformViewModel>();
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
-        [Display(Name = "URL party binding pattern")]
+        [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>
@@ -123,10 +128,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
-        [Display(Name = "Disable user authentication trust")]
+        [Display(Name = "User authentication trust")]
         public bool DisableUserAuthenticationTrust { get; set; }
 
-        [Display(Name = "Disable token exchange trust")]
+        [Display(Name = "Token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

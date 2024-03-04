@@ -56,7 +56,7 @@ You can optionally configure a Sendgrid from email address and Sendgrid API key 
 
 > Remember to setup up [domain authentication](https://sendgrid.com/docs/ui/account-and-settings/how-to-set-up-domain-authentication/) in Sendgrid for the from email.
 
-A Sendgrid from email address and API Key can at a later time be configure per track.
+A Sendgrid from email address and API Key can at a later time be configure per environment.
 
 ### First login and admin users
 After successfully deployment open [FoxIDs Control Client](control.md#foxids-control-client) on `https://foxidscontrolxxxxxxxxxx.azurewebsites.net` (the app service starting with foxidscontrol...) which brings you to the master tenant.
@@ -70,9 +70,9 @@ Create more admin users with a valid email addresses and grant the users the adm
 
 ![FoxIDs Control Client - Master tenant admin user](docs/images/master-tenant-admin-user.png)
 
-#### Add sample configuration to a track
+#### Add sample configuration to a environment
 
-It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](docs/samples.md#configure-samples-in-foxids-track).
+It is possible to run the sample applications after they are configured in a FoxIDs environment. The sample configuration can be added with the [sample seed tool](docs/samples.md#configure-samples-in-foxids-environment).
 
 ## Support
 

@@ -66,6 +66,9 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "acs_urls")]
         public List<string> AcsUrls { get; set; }
 
+        [JsonProperty(PropertyName = "disable_absolute_urls")]
+        public bool DisableAbsoluteUrls { get; set; }
+
         [JsonProperty(PropertyName = "encrypt_authn_response")]
         public bool EncryptAuthnResponse { get; set; }
 

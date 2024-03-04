@@ -52,7 +52,7 @@ namespace FoxIDs.Logic.Tracks
             }
 
             await hrdSelectionCookieRepository.SaveAsync(hrdSelectionCookie);
-            logger.ScopeTrace(() => $"HRD selection saved, login up-party name '{loginUpPartyName}', selected up-party name '{selectedUpPartyName}' and type '{selectedType}'.");
+            logger.ScopeTrace(() => $"HRD selection saved, login authentication method name '{loginUpPartyName}', selected authentication method name '{selectedUpPartyName}' and type '{selectedType}'.");
         }
 
         public async Task<IEnumerable<HrdUpPartyCookieData>> GetHrdSelectionAsync()
@@ -77,7 +77,7 @@ namespace FoxIDs.Logic.Tracks
 
         public async Task<UpPartyLink> GetUpPartyAndDeleteHrdSelectionAsync()
         {
-            logger.ScopeTrace(() => $"Get up-party and delete in HRD selection, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Get authentication method and delete in HRD selection, Route '{RouteBinding.Route}'.");
 
             var toUpParties = RouteBinding.ToUpParties;
             var hrdSelectionCookie = await hrdSelectionCookieRepository.GetAsync();
@@ -99,7 +99,7 @@ namespace FoxIDs.Logic.Tracks
 
         public async Task DeleteHrdSelectionBySelectedUpPartyAsync(string selectedUpPartyName, HrdTrackCookie hrdSelectionCookie = null)
         {
-            logger.ScopeTrace(() => $"Delete in HRD selection by selected up-party, Route '{RouteBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete in HRD selection by selected authentication method, Route '{RouteBinding.Route}'.");
 
             hrdSelectionCookie = hrdSelectionCookie ?? await hrdSelectionCookieRepository.GetAsync();
             if (hrdSelectionCookie != null && hrdSelectionCookie.UpParties.Count() > 0)
@@ -108,13 +108,13 @@ namespace FoxIDs.Logic.Tracks
                 if (otherUpPartis.Count() <= 0)
                 {
                     await hrdSelectionCookieRepository.DeleteAsync();
-                    logger.ScopeTrace(() => $"HRD selection deleted, selected up-party name '{selectedUpPartyName}' deleted.");
+                    logger.ScopeTrace(() => $"HRD selection deleted, selected authentication method name '{selectedUpPartyName}' deleted.");
                 }
                 else if (hrdSelectionCookie.UpParties.Count() != otherUpPartis.Count())
                 {
                     hrdSelectionCookie.UpParties = otherUpPartis;
                     await hrdSelectionCookieRepository.SaveAsync(hrdSelectionCookie);
-                    logger.ScopeTrace(() => $"HRD selection updated, selected up-party name '{selectedUpPartyName}' deleted.");
+                    logger.ScopeTrace(() => $"HRD selection updated, selected authentication method name '{selectedUpPartyName}' deleted.");
                 }
             }
         }

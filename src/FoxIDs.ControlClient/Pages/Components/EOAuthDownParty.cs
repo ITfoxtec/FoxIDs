@@ -12,7 +12,6 @@ using FoxIDs.Client.Infrastructure.Security;
 using Microsoft.AspNetCore.Components.Web;
 using ITfoxtec.Identity;
 using System.Net.Http;
-using FoxIDs.Client.Models;
 using FoxIDs.Client.Util;
 using BlazorInputFile;
 using Microsoft.AspNetCore.WebUtilities;
@@ -27,10 +26,7 @@ namespace FoxIDs.Client.Pages.Components
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
-            if (!DownParty.CreateMode)
-            {
-                await DefaultLoadAsync();
-            }
+            await DefaultLoadAsync();
         }
 
         private async Task DefaultLoadAsync()
@@ -56,6 +52,11 @@ namespace FoxIDs.Client.Pages.Components
         {
             return oauthDownParty.Map<OAuthDownPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (afterMap.Client != null && afterMap.Resource != null)
                 {
                     generalOAuthDownParty.DownPartyType = DownPartyOAuthTypes.ClientAndResource;
@@ -123,41 +124,16 @@ namespace FoxIDs.Client.Pages.Components
 
         private void OAuthDownPartyViewModelAfterInit(GeneralOAuthDownPartyViewModel oauthDownParty, OAuthDownPartyViewModel model)
         {
-            if (oauthDownParty.CreateMode)
+
+            if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource)
             {
-                if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.Resource)
-                {
-                    oauthDownParty.DownPartyType = DownPartyOAuthTypes.Resource;
-                    oauthDownParty.ShowClientTab = false;
-                    oauthDownParty.ShowResourceTab = true;
-
-                    model.Resource = new OAuthDownResource();
-                }
-                else if (oauthDownParty.SubPartyType == OAuthSubPartyTypes.ClientCredentialsGrant)
-                {
-                    oauthDownParty.DownPartyType = DownPartyOAuthTypes.Client;
-                    oauthDownParty.ShowClientTab = true;
-                    oauthDownParty.ShowResourceTab = false;
-
-                    model.Client = GetDefaultOAuthClientViewModel();
-                }
-                else
-                {
-                    throw new NotSupportedException("OAuthSubPartyTypes not supported.");
-                }
+                oauthDownParty.ShowClientTab = false;
+                oauthDownParty.ShowResourceTab = true;
             }
             else
             {
-                if (oauthDownParty.DownPartyType == DownPartyOAuthTypes.Resource)
-                {
-                    oauthDownParty.ShowClientTab = false;
-                    oauthDownParty.ShowResourceTab = true;
-                }
-                else
-                {
-                    oauthDownParty.ShowClientTab = true;
-                    oauthDownParty.ShowResourceTab = false;
-                }
+                oauthDownParty.ShowClientTab = true;
+                oauthDownParty.ShowResourceTab = false;
             }
         }
 
@@ -268,7 +244,7 @@ namespace FoxIDs.Client.Pages.Components
 
                 var oauthDownParty = generalOAuthDownParty.Form.Model.Map<OAuthDownParty>(afterMap: afterMap =>
                 {
-                    if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true)
+                    if (generalOAuthDownParty.Form.Model.Client?.DefaultResourceScope == true && !generalOAuthDownParty.Form.Model.Name.IsNullOrWhiteSpace())
                     {
                         afterMap.Client.ResourceScopes.Add(new OAuthDownResourceScope { Resource = generalOAuthDownParty.Form.Model.Name, Scopes = generalOAuthDownParty.Form.Model.Client.DefaultResourceScopeScopes });
                     }
@@ -290,39 +266,23 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
-                OAuthDownParty oauthDownPartyResult;
-                if (generalOAuthDownParty.CreateMode)
+                var oauthDownPartyResult = await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
+                if (oauthDownParty.Client != null)
                 {
-                    oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
-                }
-                else
-                {
-                    oauthDownPartyResult = await DownPartyService.UpdateOAuthDownPartyAsync(oauthDownParty);
-                    if (oauthDownParty.Client != null)
+                    foreach (var existingSecret in generalOAuthDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
                     {
-                        foreach (var existingSecret in generalOAuthDownParty.Form.Model.Client.ExistingSecrets.Where(s => s.Removed))
-                        {
-                            await DownPartyService.DeleteOAuthClientSecretDownPartyAsync(existingSecret.Name);
-                        }
+                        await DownPartyService.DeleteOAuthClientSecretDownPartyAsync(existingSecret.Name);
                     }
                 }
                 if (oauthDownParty.Client != null && generalOAuthDownParty.Form.Model.Client.Secrets.Count() > 0)
                 {
-                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = generalOAuthDownParty.Form.Model.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
+                    await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = generalOAuthDownParty.Form.Model.Client.Secrets });
                 }
 
                 var oauthDownSecrets = await DownPartyService.GetOAuthClientSecretDownPartyAsync(oauthDownPartyResult.Name);
                 generalOAuthDownParty.Form.UpdateModel(ToViewModel(generalOAuthDownParty, oauthDownPartyResult, oauthDownSecrets));
-                if (generalOAuthDownParty.CreateMode)
-                {
-                    generalOAuthDownParty.CreateMode = false;
-                    toastService.ShowSuccess("OAuth down-party created.");
-                }
-                else
-                {
-                    toastService.ShowSuccess("OAuth down-party updated.");
-                }
-                generalOAuthDownParty.Name = generalOAuthDownParty.Form.Model.Name;
+                toastService.ShowSuccess("OAuth 2.0 authentication method updated.");
+                generalOAuthDownParty.DisplayName = oauthDownPartyResult.DisplayName;
             }
             catch (FoxIDsApiException ex)
             {

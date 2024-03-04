@@ -36,13 +36,13 @@ namespace FoxIDs.Logic
         {
             if (!sequenceData.UpPartyId.Equals(RouteBinding.UpParty.Id, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, sequenceData.UpPartyId);
 
             if (RouteBinding.UpParty.Type != PartyTypes.Login)
             {
-                throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
             }
         }
 
@@ -182,18 +182,18 @@ namespace FoxIDs.Logic
             {
                 claims.AddRange(user.Claims.ToClaimList());
             }
-            logger.ScopeTrace(() => $"Up, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, Login created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Up, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, Login output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return transformedClaims;
         }
 
         public async Task<List<Claim>> GetCreateUserTransformedClaimsAsync(LoginUpParty party, List<Claim> claims)
         {
-            logger.ScopeTrace(() => $"Up, Create user created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, Create user created JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             var transformedClaims = await claimTransformLogic.Transform(party.CreateUser.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Up, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, Create user output JWT claims '{transformedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return transformedClaims;
         }
     }

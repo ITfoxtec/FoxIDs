@@ -4,10 +4,13 @@
 
 FoxIDs is both an [authentication](login.md) platform and a security broker where FoxIDs support converting from [OpenID Connect 1.0](oidc.md) to [SAML 2.0](saml-2.0.md).
 
-FoxIDs is designed as a container with multi-tenant support. Your tenant holds your tracks which correspond to your environments (prod, QA, test, dev) and other elements. 
-Each track is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
-Connections to external Identity Provider is configured as [OpenID Connect 1.0](up-party-oidc.md) or [SAML 2.0](up-party-saml-2.0.md) up-parties where applications and APIs is configured as [OAuth 2.0](down-party-oauth-2.0.md), [OpenID Connect 1.0](down-party-oidc.md) or [SAML 2.0](down-party-saml-2.0.md) down-parties.  
-The users [login](login.md) experience is configured as an up-party.
+FoxIDs is designed as a container with multi-tenant support. Your tenant holds your environments which correspond to your environments (prod, QA, test, dev) and other elements. 
+Each environment is an Identity Provider with a [user repository](users.md), a unique [certificate](certificates.md) and connections.
+Connections to external Identity Provider is configured as [OpenID Connect 1.0](auth-method-oidc.md) or [SAML 2.0](auth-method-saml-2.0.md) authentication methods where applications and APIs is configured as [OAuth 2.0](app-reg-oauth-2.0.md), [OpenID Connect 1.0](app-reg-oidc.md) or [SAML 2.0](app-reg-saml-2.0.md) application registrations.  
+The users [login](login.md) experience is configured as an authentication method.
+
+> Take a look at the FoxIDs test configuration in FoxIDs Control: [https://control.foxids.com/test-corp](https://control.foxids.com/test-corp)  
+> Get read access with the user `reader@foxids.com` and password `TestAccess!`
 
 FoxIDs consist of two services:
 
@@ -30,31 +33,25 @@ The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all 
 You are free to use FoxIDs as a IDaaS for you own products.
 
 ## Selection by URL
-The [structure](foxids-inside.md#structure) of FoxIDs separates the different tenants, tracks and [parties](parties.md) which is selected with URL elements. 
+The [structure](foxids-inside.md#structure) of FoxIDs separates the different tenants, environments and [connections](connections.md) which is selected with URL elements. 
 
 If FoxIDs is hosted on e.g., `https://foxidsxxxx.com/` the tenants are separated in the first path element of the URL `https://foxidsxxxx.com/tenant-x/`. 
-The tracks are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/track-y/`.
+The environments are separated under each tenant in the second path element of the URL `https://foxidsxxxx.com/tenant-x/environment-y/`.
 
-A down-party is call by adding the down-party name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/down-party-z/`.  
-A up-party is call by adding the up-party name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/track-y/(up-party-v)/`. 
-If FoxIDs handles a up-party sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
+A application registration is call by adding the application registration name as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/application-z/`.  
+A authentication method is call by adding the authentication method name insight round brackets as the third path element in the URL `https://foxidsxxxx.com/tenant-x/environment-y/(auth-method-v)/`. 
+If FoxIDs handles a authentication method sequence resulting in a session cookie the same URL notation is used to lock the cookie to the URL.
 
-When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which up-party the user should authenticate. 
-The up-party is selected by adding the up-party name in round brackets in the URLs third path element after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v)/`.  
+When a client (application) starts an OpenID Connect or SAML 2.0 login sequence it needs to specify by which authentication method the user should authenticate. 
+The authentication method is selected by adding the authentication method name in round brackets in the URLs third path element after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-v)/`.  
 
-Selecting multiple up-parties:
+Selecting multiple authentication methods:
 
-- Select all allowed up-parties for a down-party by adding a star in round brackets in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(*)/`
-- Select a maximum of 4 allowed up-parties for a down-party by adding the up-parties as a comma separated list in round brackets 
-  in the URL after the down-party name `https://foxidsxxxx.com/tenant-x/track-y/down-party-z(up-party-v1,up-party-v2,up-party-v3,up-party-v4)/`
+- Select all allowed authentication methods for a application registration by adding a star in round brackets in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(*)/`
+- Select a maximum of 4 allowed authentication methods for a application registration by adding the authentication methods as a comma separated list in round brackets 
+  in the URL after the application registration name `https://foxidsxxxx.com/tenant-x/environment-y/application-z(auth-method-v1,auth-method-v2,auth-method-v3,auth-method-v4)/`
 
-> The allowed up-parties is configured in each [down-party](parties.md#down-party).
+> The allowed authentication methods is configured in each [application registration](connections.md#application-registration).
 
-A client using client credentials as authorization grant would not specify the up-party. 
-It is likewise optional to specify the up-party when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.
-
-## Support
-
-If you have questions, please ask them on [Stack Overflow](https://stackoverflow.com/questions/tagged/foxids). Tag your questions with `foxids` and I will answer as soon as possible.
-
-You are otherwise welcome to use [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=FoxIDs) e.g., for topics not suitable for Stack Overflow.
+A client using client credentials as authorization grant would not specify the authentication method. 
+It is likewise optional to specify the authentication method when calling an OpenID Connect discovery document or a SAML 2.0 metadata endpoint.

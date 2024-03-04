@@ -14,14 +14,22 @@
     <div class="modal-body">
         @if (loginUpParty.CreateMode)
         {
-            <div class="mb-3 alert alert-info" role="alert">
-                The user is authenticated with the track's user repository and the user session is connected to this up-party login configuration.
+            <div class="mb-3 info-text">
+                Authenticates <DocsLink Page="users">users</DocsLink> in the environment's user store. The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
             </div>
-            <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (loginUpParty.ShowAdvanced) 
+            {
+                <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+            <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (loginUpParty.ShowAdvanced)
+            {
+                <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+            }
         }
         @if (loginUpParty.ShowAdvanced)
         {
@@ -130,7 +138,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete login up-party "@UpParty.Name", are you sure?
+                    You are about to delete login application "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

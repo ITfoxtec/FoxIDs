@@ -31,10 +31,10 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Filter up-party.
+        /// Filter authentication method.
         /// </summary>
-        /// <param name="filterName">Filter up-party name.</param>
-        /// <returns>Up-parties.</returns>
+        /// <param name="filterName">Filter authentication method name.</param>
+        /// <returns>Authentication methods.</returns>
         [ProducesResponseType(typeof(HashSet<Api.UpParty>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<HashSet<Api.UpParty>>> GetFilterUpParty(string filterName)
@@ -43,7 +43,11 @@ namespace FoxIDs.Controllers
             {
                 var doFilterPartyType = Enum.TryParse<PartyTypes>(filterName, out var filterPartyType);
                 var idKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = RouteBinding.TrackName };
-                (var mUpPartys, _) = filterName.IsNullOrWhiteSpace() ? await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && (p.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
+                (var mUpPartys, _) = filterName.IsNullOrWhiteSpace() ? 
+                    await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType)) : 
+                    await tenantRepository.GetListAsync<UpParty>(idKey, whereQuery: p => p.DataType.Equals(dataType) && 
+                        (p.Name.Contains(filterName, StringComparison.OrdinalIgnoreCase) || p.DisplayName.Contains(filterName, StringComparison.OrdinalIgnoreCase) || (doFilterPartyType && p.Type == filterPartyType)));
+             
                 var aUpPartys = new HashSet<Api.UpParty>(mUpPartys.Count());
                 foreach(var mUpParty in mUpPartys.OrderBy(p => p.Type).ThenBy(p => p.Name))
                 {

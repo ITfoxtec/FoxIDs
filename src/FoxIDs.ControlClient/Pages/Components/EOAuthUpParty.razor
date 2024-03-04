@@ -15,24 +15,29 @@
         @if (oauthUpParty.Form.Model.IsManual)
         {
             <div class="mb-3 alert alert-warning" role="alert">
-                The OAuth 2.0 up-party is configured with manual update, which can only be updated through the Control API.
+                The OAuth 2.0 application is configured with manual update, which can only be updated through the Control API.
             </div>
         }
 
         @if (oauthUpParty.CreateMode)
         {
-            <FInputText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="oauthUpParty.Form.Model.DisplayName" For="@(() => oauthUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (UpParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oauthUpParty.Form.Model.DisplayName" For="@(() => oauthUpParty.Form.Model.DisplayName)" />
+            <FFieldTextClipboard @bind-Value="oauthUpParty.Form.Model.Name" For="@(() => oauthUpParty.Form.Model.Name)" />
         }
         @if (oauthUpParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oauthUpParty.Form.Model.Note" For="@(() => oauthUpParty.Form.Model.Note)" />
         }
 
-        <FInputText @bind-Value="oauthUpParty.Form.Model.Authority" For="@(() => oauthUpParty.Form.Model.Authority)" Focus="@(oauthUpParty.CreateMode ? false : true)" />
+        <FInputText @bind-Value="oauthUpParty.Form.Model.Authority" For="@(() => oauthUpParty.Form.Model.Authority)" />
 
         @if (UpParty.ShowAdvanced)
         {
@@ -87,14 +92,14 @@
             <FInputNumber @bind-Value="oauthUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oauthUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
         }
 
-        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oauthUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
-        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oauthUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
+        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oauthUpParty.Form.Model.DisableUserAuthenticationTrust)" Negation="true" TextType="e.d" />
+        <FInputToggle @bind-Value="oauthUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oauthUpParty.Form.Model.DisableTokenExchangeTrust)" Negation="true" TextType="e.d" />
 
         @if (oauthUpParty.Form.Model.AutomaticStopped)
         {
             <div class="mb-3 alert alert-warning" role="alert">
-                <i>Automatic configuration update is currently stopped.</i>
-                <div>Restart the automatic configuration update process by clicking the update button.</div>
+                <i>Automatic environment update is currently stopped.</i>
+                <div>Restart the automatic environment update process by clicking the update button.</div>
             </div>
         }
 
@@ -130,6 +135,12 @@
                 {
                     @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oauthUpParty.Form.Model.DisableUserAuthenticationTrust))
                     {
+                        @if (!oauthUpParty.Form.Model.DisableTokenExchangeTrust)
+                        {
+                            <div class="info-text">
+                                Custom SP issuer / audience used in token exchange trust.
+                            </div>
+                        }
                         <FInputText @bind-Value="oauthUpParty.Form.Model.SpIssuer" For="@(() => oauthUpParty.Form.Model.SpIssuer)" />
                     }
 
@@ -154,7 +165,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OpenID Connect Up-party "@UpParty.Name", are you sure?
+                    You are about to delete OpenID Connect authentication method "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

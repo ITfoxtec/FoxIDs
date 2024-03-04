@@ -43,7 +43,7 @@ namespace FoxIDs.Logic
             var key = UpdateUpPartyWaitPeriodKey(party.Id);
             if (await db.KeyExistsAsync(key))
             {
-                logger.ScopeTrace(() => $"Up party '{party.Id}' not updated with SAML 2.0 metadata because another update is in progress.");
+                logger.ScopeTrace(() => $"Authentication method '{party.Id}' not updated with SAML 2.0 metadata because another update is in progress.");
                 return;
             }
             else
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
                 }
 
                 await tenantRepository.SaveAsync(party);
-                logger.ScopeTrace(() => $"Up party '{party.Id}' updated by SAML 2.0 metadata.", triggerEvent: true);
+                logger.ScopeTrace(() => $"Authentication method '{party.Id}' updated by SAML 2.0 metadata.", triggerEvent: true);
 
                 await db.KeyDeleteAsync(FailingUpdateUpPartyCountKey(party.Id));
             }

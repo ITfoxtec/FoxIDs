@@ -17,7 +17,7 @@ namespace FoxIDs.Logic
             this.logger = logger;
         }
 
-        public bool ValidateApiModel(ModelStateDictionary modelState, OidcUpParty party)
+        public bool ValidateModel(ModelStateDictionary modelState, OidcUpParty party)
         {
             var isValid = true;
             try

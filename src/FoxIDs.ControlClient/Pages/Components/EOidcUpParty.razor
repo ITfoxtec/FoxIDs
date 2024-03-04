@@ -15,17 +15,22 @@
         @if (oidcUpParty.Form.Model.IsManual)
         {
             <div class="mb-3 alert alert-warning" role="alert">
-                The OpenID Connect up-party is configured with manual update, which can only be updated through the Control API.
+                The OpenID Connect application is configured with manual update, which can only be updated through the Control API.
             </div>
         }
 
         @if (oidcUpParty.CreateMode)
         {
-            <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (oidcUpParty.ShowAdvanced)
+            {
+                <FInputText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
+            <FInputText @bind-Value="oidcUpParty.Form.Model.DisplayName" For="@(() => oidcUpParty.Form.Model.DisplayName)" />
+            <FFieldTextClipboard @bind-Value="oidcUpParty.Form.Model.Name" For="@(() => oidcUpParty.Form.Model.Name)" />
         }
         @if (oidcUpParty.ShowAdvanced)
         {
@@ -34,25 +39,28 @@
 
         @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
         {
-            <div class="mb-3 alert alert-info" role="alert">
-                @{
-                    (var redirect, var postLogoutRedirect, var frontChannelLogout) = GetRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
-                }
-                <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
-                <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
-                <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
-            </div>
+            @if (!oidcUpParty.Form.Model.Name.IsNullOrWhiteSpace())
+            {
+                <div class="mb-3 alert alert-info" role="alert">
+                    @{
+                        (var redirect, var postLogoutRedirect, var frontChannelLogout) = MetadataLogic.GetUpRedirectAndLogoutUrls(oidcUpParty.Form.Model.Name, oidcUpParty.Form.Model.PartyBindingPattern);
+                    }
+                    <div>Redirect URL: <FTextClipboard Text="@redirect" /></div>
+                    <div>Post logout redirect URL: <FTextClipboard Text="@postLogoutRedirect" /></div>
+                    <div>Front channel logout URL: <FTextClipboard Text="@frontChannelLogout" /></div>
+                </div>
+            }
             @if (UpParty.ShowAdvanced)
             {
                 <FInputSelect @bind-Value="oidcUpParty.Form.Model.PartyBindingPattern" For="@(() => oidcUpParty.Form.Model.PartyBindingPattern)">
-                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(up-party)/... - default</option>
-                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~up-party~/...</option>
-                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../.up-party./...</option>
+                    <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../(auth-method)/... - default</option>
+                    <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../~auth-method~/...</option>
+                    <option value="@PartyBindingPatterns.Dot">Dot pattern .../.auth-method./...</option>
                 </FInputSelect>
             }
         }
 
-        <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" Focus="@(oidcUpParty.CreateMode ? false : true)" />
+        <FInputText @bind-Value="oidcUpParty.Form.Model.Authority" For="@(() => oidcUpParty.Form.Model.Authority)" />
 
         @if (UpParty.ShowAdvanced)
         {
@@ -113,18 +121,18 @@
 
         @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oidcUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
+            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => oidcUpParty.Form.Model.DisableUserAuthenticationTrust)" Negation="true" TextType="e.d" />
         }
         @if (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust || oidcUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oidcUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
+            <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => oidcUpParty.Form.Model.DisableTokenExchangeTrust)" Negation="true" TextType="e.d" />
         }
 
         @if (oidcUpParty.Form.Model.AutomaticStopped)
         {
             <div class="mb-3 alert alert-warning" role="alert">
-                <i>Automatic configuration update is currently stopped.</i>
-                <div>Restart the automatic configuration update process by clicking the update button.</div>
+                <i>Automatic environment update is currently stopped.</i>
+                <div>Restart the automatic environment update process by clicking the update button.</div>
             </div>
         }
 
@@ -192,14 +200,14 @@
                         @if (UpParty.ShowAdvanced)
                         {
                             <OAuthAdditionalParameters Model="oidcUpParty.Form.Model.Client" />
+                            <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
+                                <option value="@IdentityConstants.ResponseTypes.Code">@IdentityConstants.ResponseTypes.Code</option>
+                                <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                                <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                                <option value="@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
+                                <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
+                            </FInputSelect>
                         }
-                        <FInputSelect @bind-Value="oidcUpParty.Form.Model.Client.ResponseType" For="@(() => oidcUpParty.Form.Model.Client.ResponseType)">
-                            <option value="@IdentityConstants.ResponseTypes.Code">@IdentityConstants.ResponseTypes.Code</option>
-                            <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.IdToken}")</option>
-                            <option value="@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Code} {IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
-                            <option value="@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")">@($"{IdentityConstants.ResponseTypes.Token} {IdentityConstants.ResponseTypes.IdToken}")</option>
-                            <option value="@IdentityConstants.ResponseTypes.IdToken">@IdentityConstants.ResponseTypes.IdToken</option>
-                        </FInputSelect>
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnablePkce" For="@(() => oidcUpParty.Form.Model.Client.EnablePkce)" TextType="y.n" />
                         @if (UpParty.ShowAdvanced)
                         {
@@ -218,7 +226,7 @@
                                 <div class="form-group active-group active">
                                     <Label For="@(() => oidcUpParty.Form.Model.Client.PublicClientKeyInfo)" class="label-control" />
                                     <div class="font-italic alert alert-secondary" role="alert">
-                                        You need to create the up-party before it is possible to add a client certificate.
+                                        You need to create the application before it is possible to add a client certificate.
                                     </div>
                                 </div>
                             }
@@ -280,6 +288,12 @@
 
                     @if (!oidcUpParty.Form.Model.DisableTokenExchangeTrust && (UpParty.ShowAdvanced || oidcUpParty.Form.Model.DisableUserAuthenticationTrust))
                     {
+                        @if (!oidcUpParty.Form.Model.DisableTokenExchangeTrust)
+                        {
+                            <div class="info-text">
+                                Custom SP issuer / audience used in token exchange trust.
+                            </div>
+                        }
                         <FInputText @bind-Value="oidcUpParty.Form.Model.SpIssuer" For="@(() => oidcUpParty.Form.Model.SpIssuer)" />
                     }
 
@@ -300,7 +314,7 @@
                         </FInputSelect>
 
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnableFrontChannelLogout" For="@(() => oidcUpParty.Form.Model.Client.EnableFrontChannelLogout)" TextType="e.d" />
-                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" TextType="y.n" />
                     }
                 }
             }
@@ -326,7 +340,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OpenID Connect Up-party "@UpParty.Name", are you sure?
+                    You are about to delete OpenID Connect authentication method "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

@@ -6,7 +6,7 @@ namespace FoxIDs.Models.Api
     public class UsageMyTenantLogRequest : UsageLogRequest
     {
         /// <summary>
-        /// Select by full track name. Only possible in master track.
+        /// Select by full environment name. Only possible in master environment.
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]

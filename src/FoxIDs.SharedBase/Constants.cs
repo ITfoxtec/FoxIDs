@@ -62,6 +62,8 @@ namespace FoxIDs
 
         public static class Logs
         {
+            public const string LoggingHandledKey = "handled";
+
             public const string TenantName = "f_TenantName";
             public const string TrackName = "f_TrackName";
             public const string GrantType = "f_GrantType";
@@ -326,6 +328,8 @@ namespace FoxIDs
                 public const string NameRegExPattern = @"^[\w\-]*$";
                 public const int IdLength = 170;
                 public const string IdRegExPattern = @"^[\w:\-]*$";
+                public const int DisplayNameLength = 100;
+                public const string DisplayNameRegExPattern = @"^[\w;:\/\-.,+ ]*$";
                 public const int NoteLength = 200;
 
                 public const int IssuerLength = 300;
@@ -359,6 +363,7 @@ namespace FoxIDs
 
                 public static class Client
                 {
+                    public const int ResourceScopesApiMin = 0;
                     public const int ResourceScopesMin = 1;
                     public const int ResourceScopesMax = 50;
                     public const int ScopesMin = 0;
@@ -549,6 +554,8 @@ namespace FoxIDs
 
         public static class ControlApi
         {
+            public const int DefaultNameLength = 8;
+
             public const string Version = "v1";
             public readonly static string[] SupportedApiHttpMethods = { HttpMethod.Get.Method, HttpMethod.Post.Method, HttpMethod.Put.Method, HttpMethod.Delete.Method };
 
@@ -722,12 +729,12 @@ namespace FoxIDs
             public readonly static string[] AccessToken = FoxI.IdentityConstants.DefaultJwtClaims.AccessToken.ConcatOnce(new string[] { FoxI.JwtClaimTypes.Actor }).ToArray();
 
             /// <summary>
-            /// Default JWT Token up-party claims.
+            /// Default JWT Token authentication method claims.
             /// </summary>
             public readonly static string[] JwtTokenUpParty = { FoxI.JwtClaimTypes.Subject, FoxI.JwtClaimTypes.SessionId, JwtClaimTypes.UpParty, JwtClaimTypes.UpPartyType, FoxI.JwtClaimTypes.AuthTime, FoxI.JwtClaimTypes.Acr, FoxI.JwtClaimTypes.Amr };
 
             /// <summary>
-            /// Exclude JWT Token up-party claims.
+            /// Exclude JWT Token authentication method claims.
             /// </summary>
             public readonly static string[] ExcludeJwtTokenUpParty = { FoxI.JwtClaimTypes.Issuer, FoxI.JwtClaimTypes.Audience, FoxI.JwtClaimTypes.Scope, FoxI.JwtClaimTypes.ExpirationTime, FoxI.JwtClaimTypes.NotBefore, FoxI.JwtClaimTypes.IssuedAt, FoxI.JwtClaimTypes.Nonce, FoxI.JwtClaimTypes.Azp, FoxI.JwtClaimTypes.AtHash, FoxI.JwtClaimTypes.CHash };
 

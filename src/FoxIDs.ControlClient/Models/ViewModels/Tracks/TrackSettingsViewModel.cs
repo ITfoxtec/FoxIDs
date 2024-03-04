@@ -11,21 +11,16 @@ namespace FoxIDs.Client.Models.ViewModels
             AllowIframeOnDomains = new List<string>();
         }
 
-        /// <summary>
-        /// Track name.
-        /// </summary>
-        [Required]
-        [MaxLength(Constants.Models.Track.NameLength)]
-        [RegularExpression(Constants.Models.Track.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Track name")]
-        public string Name { get; set; }
-
-        public string FormattedName { get; set; }
-
         [MaxLength(Constants.Models.Track.DisplayNameLength)]
         [RegularExpression(Constants.Models.Track.DisplayNameRegExPattern)]
-        [Display(Name = "Display name (e.g. company name or system name)")]
+        [Display(Name = "Name")]
         public string DisplayName { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Track.NameLength)]
+        [RegularExpression(Constants.Models.Track.NameRegExPattern)]
+        [Display(Name = "Technical name")]
+        public string Name { get; set; }
 
         [Range(Constants.Models.Track.SequenceLifetimeMin, Constants.Models.Track.SequenceLifetimeMax)] 
         [Display(Name = "Sequence lifetime")]

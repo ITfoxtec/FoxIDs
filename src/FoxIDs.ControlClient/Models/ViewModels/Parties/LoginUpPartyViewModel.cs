@@ -8,11 +8,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class LoginUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Up-party name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]

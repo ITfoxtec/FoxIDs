@@ -6,11 +6,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class TrackLinkUpPartyViewModel : IOAuthClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Up-party name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
@@ -19,17 +24,17 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        [Display(Name = "To track name")]
+        [Display(Name = "To environment")]
         public string ToDownTrackName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "To down-party name")]
+        [Display(Name = "To authentication method")]
         public string ToDownPartyName { get; set; }
 
         [ListLength(Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin, Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax, Constants.Models.Party.NameLength, Constants.Models.TrackLinkDownParty.SelectedUpPartiesNameRegExPattern)]
-        [Display(Name = "Selected up-parties (use * to select all up-parties)")]
+        [Display(Name = "Selected authentication methods (use * to select all authentication methods)")]
         public List<string> SelectedUpParties { get; set; } = new List<string>(new[] { "*" });
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ClaimsMin, Constants.Models.OAuthUpParty.Client.ClaimsMax, Constants.Models.Claim.JwtTypeLength, Constants.Models.Claim.JwtTypeWildcardRegExPattern)]

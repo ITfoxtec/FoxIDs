@@ -3,8 +3,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
-using System;
 using System.Threading.Tasks;
 
 namespace FoxIDs.Logic
@@ -12,29 +10,26 @@ namespace FoxIDs.Logic
     public class PlanCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly IMasterRepository masterRepository;
 
-        public PlanCacheLogic(Settings settings, IConnectionMultiplexer redisConnectionMultiplexer, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public PlanCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, IMasterRepository masterRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.masterRepository = masterRepository;
         }
 
         public async Task InvalidatePlanCacheAsync(string planName)
         {
             var key = RadisPlanNameKey(planName);
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(key);
+            await cacheProvider.DeleteAsync(key);
         }
 
         public async Task<Plan> GetPlanAsync(string planName, bool required = true)
         {
             var key = RadisPlanNameKey(planName);
-            var db = redisConnectionMultiplexer.GetDatabase();
-
-            var planAsString = (string)await db.StringGetAsync(key);
+            var planAsString = (string)await cacheProvider.GetAsync(key);
             if (!planAsString.IsNullOrEmpty())
             {
                 return planAsString.ToObject<Plan>();
@@ -43,7 +38,7 @@ namespace FoxIDs.Logic
             var plan = await masterRepository.GetAsync<Plan>(await Plan.IdFormatAsync(planName), required: required);
             if (plan != null)
             {
-                await db.StringSetAsync(key, plan.ToJson(), TimeSpan.FromSeconds(settings.Cache.PlanLifetime));
+                await cacheProvider.SetAsync(key, plan.ToJson(), settings.Cache.PlanLifetime);
             }
             return plan;
         }

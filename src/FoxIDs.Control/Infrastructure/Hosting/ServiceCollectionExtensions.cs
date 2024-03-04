@@ -23,9 +23,9 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddLogic(this IServiceCollection services)
+        public static IServiceCollection AddLogic(this IServiceCollection services, IWebHostEnvironment env)
         {
-            services.AddSharedLogic();
+            services.AddSharedLogic(env);
 
             services.AddSingleton<EmbeddedResourceLogic>();
 

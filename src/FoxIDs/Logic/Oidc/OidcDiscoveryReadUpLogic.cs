@@ -3,7 +3,6 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
@@ -13,15 +12,15 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic;
 
-        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public OidcDiscoveryReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, OidcDiscoveryReadLogic<TParty, TClient> oidcDiscoveryReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;
             this.oidcDiscoveryReadLogic = oidcDiscoveryReadLogic;
         }
@@ -39,24 +38,24 @@ namespace FoxIDs.Logic
                 return;
             }
 
-            var db = redisConnectionMultiplexer.GetDatabase();
             var key = UpdateWaitPeriodKey(party.Id);
-            if (await db.KeyExistsAsync(key))
+            if (await cacheProvider.ExistsAsync(key))
             {
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' not updated with OIDC discovery because another update is in progress.");
                 return;
             }
             else
             {
-                await db.StringSetAsync(key, true, TimeSpan.FromSeconds(settings.UpPartyUpdateWaitPeriod));
+                await cacheProvider.SetAsync(key, "true", settings.UpPartyUpdateWaitPeriod);
             }
 
-            var failingUpdateCount = (long?)await db.StringGetAsync(FailingUpdateCountKey(party.Id));
-            if (failingUpdateCount.HasValue && failingUpdateCount.Value >= settings.UpPartyMaxFailingUpdate)
+            var failingUpdateCountString = await cacheProvider.GetAsync(FailingUpdateCountKey(party.Id));
+            var failingUpdateCount = failingUpdateCountString != null ? long.Parse(failingUpdateCountString) : 0;
+            if (failingUpdateCount >= settings.UpPartyMaxFailingUpdate)
             {
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
                 await tenantRepository.SaveAsync(party);
-                await db.KeyDeleteAsync(FailingUpdateCountKey(party.Id));
+                await cacheProvider.DeleteAsync(FailingUpdateCountKey(party.Id));
                 return;
             }
 
@@ -74,11 +73,14 @@ namespace FoxIDs.Logic
                 await tenantRepository.SaveAsync(party);
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' updated by OIDC discovery.", triggerEvent: true);
 
-                await db.KeyDeleteAsync(FailingUpdateCountKey(party.Id));
+                await cacheProvider.DeleteAsync(FailingUpdateCountKey(party.Id));
             }
             catch (Exception ex)
             {
-                await db.StringIncrementAsync(FailingUpdateCountKey(party.Id));
+                var failingCountString = await cacheProvider.GetAsync(FailingUpdateCountKey(party.Id));
+                var failingCount = failingCountString != null ? long.Parse(failingCountString) : 0;
+                failingCount++;
+                await cacheProvider.SetAsync(FailingUpdateCountKey(party.Id), failingCount.ToString(), settings.UpPartyMaxFailingUpdate);
                 logger.Warning(ex);
             }
         }

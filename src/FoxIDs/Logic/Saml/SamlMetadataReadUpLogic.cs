@@ -3,7 +3,6 @@ using FoxIDs.Models;
 using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Threading.Tasks;
 
@@ -13,15 +12,15 @@ namespace FoxIDs.Logic
     {
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly SamlMetadataReadLogic samlMetadataReadLogic;
 
-        public SamlMetadataReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, SamlMetadataReadLogic samlMetadataReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SamlMetadataReadUpLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, SamlMetadataReadLogic samlMetadataReadLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;
             this.samlMetadataReadLogic = samlMetadataReadLogic;
         }
@@ -39,24 +38,24 @@ namespace FoxIDs.Logic
                 return;
             }
 
-            var db = redisConnectionMultiplexer.GetDatabase();
             var key = UpdateUpPartyWaitPeriodKey(party.Id);
-            if (await db.KeyExistsAsync(key))
+            if (await cacheProvider.GetAsync(key) != null)
             {
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' not updated with SAML 2.0 metadata because another update is in progress.");
                 return;
             }
             else
             {
-                await db.StringSetAsync(key, true, TimeSpan.FromSeconds(settings.UpPartyUpdateWaitPeriod));
+                await cacheProvider.SetAsync(key, "true", settings.UpPartyUpdateWaitPeriod);
             }
 
-            var failingUpdateCount = (long?)await db.StringGetAsync(FailingUpdateUpPartyCountKey(party.Id));
-            if (failingUpdateCount.HasValue && failingUpdateCount.Value >= settings.UpPartyMaxFailingUpdate)
+            var failingUpdateCountString = await cacheProvider.GetAsync(FailingUpdateUpPartyCountKey(party.Id));
+            var failingUpdateCount = failingUpdateCountString != null ? long.Parse(failingUpdateCountString) : 0;
+            if (failingUpdateCount >= settings.UpPartyMaxFailingUpdate)
             {
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
                 await tenantRepository.SaveAsync(party);
-                await db.KeyDeleteAsync(FailingUpdateUpPartyCountKey(party.Id));
+                await cacheProvider.DeleteAsync(FailingUpdateUpPartyCountKey(party.Id));
                 return;
             }
 
@@ -74,11 +73,14 @@ namespace FoxIDs.Logic
                 await tenantRepository.SaveAsync(party);
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' updated by SAML 2.0 metadata.", triggerEvent: true);
 
-                await db.KeyDeleteAsync(FailingUpdateUpPartyCountKey(party.Id));
+                await cacheProvider.DeleteAsync(FailingUpdateUpPartyCountKey(party.Id));
             }
             catch (Exception ex)
             {
-                await db.StringIncrementAsync(FailingUpdateUpPartyCountKey(party.Id));
+                var failingCountString = await cacheProvider.GetAsync(FailingUpdateUpPartyCountKey(party.Id));
+                var failingCount = failingCountString != null ? long.Parse(failingCountString) : 0;
+                failingCount++;
+                await cacheProvider.SetAsync(FailingUpdateUpPartyCountKey(party.Id), failingCount.ToString(), settings.UpPartyMaxFailingUpdate);
                 logger.Warning(ex);
             }
         }

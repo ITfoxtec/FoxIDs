@@ -3,7 +3,6 @@ using FoxIDs.Models.Config;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Net;
@@ -14,36 +13,33 @@ namespace FoxIDs.Logic
     public class TenantCacheLogic : LogicBase
     {
         private readonly Settings settings;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly ITenantRepository tenantRepository;
 
-        public TenantCacheLogic(Settings settings, IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public TenantCacheLogic(Settings settings, IDistributedCacheProvider cacheProvider, ITenantRepository tenantRepository, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tenantRepository = tenantRepository;
         }
 
         public async Task InvalidateTenantCacheAsync(string tenantName)
         {
             var key = RadisTenantNameKey(tenantName);
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(key);
+            await cacheProvider.DeleteAsync(key);
         }
 
         public async Task InvalidateCustomDomainCacheAsync(string customDomain)
         {
             var key = RadisTenantCustomDomainKey(customDomain);
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.KeyDeleteAsync(key);
+            await cacheProvider.DeleteAsync(key);
         }
 
         public async Task<Tenant> GetTenantAsync(string tenantName, bool required = true)
         {
             var key = RadisTenantNameKey(tenantName);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            var tenantAsString = (string)await db.StringGetAsync(key);
+            var tenantAsString = (string)await cacheProvider.GetAsync(key);
             if (!tenantAsString.IsNullOrEmpty())
             {
                 return tenantAsString.ToObject<Tenant>();
@@ -52,7 +48,7 @@ namespace FoxIDs.Logic
             var tenant = await tenantRepository.GetAsync<Tenant>(await Tenant.IdFormatAsync(tenantName), required: required);
             if (tenant != null)
             {
-                await db.StringSetAsync(key, tenant.ToJson(), TimeSpan.FromSeconds(settings.Cache.TenantLifetime));
+                await cacheProvider.SetAsync(key, tenant.ToJson(), settings.Cache.TenantLifetime);
             }
             return tenant;
         }
@@ -60,16 +56,15 @@ namespace FoxIDs.Logic
         public async Task<Tenant> GetTenantByCustomDomainAsync(string customDomain)
         {
             var key = RadisTenantCustomDomainKey(customDomain);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            var tenantAsString = (string)await db.StringGetAsync(key);
+            var tenantAsString = (string)await cacheProvider.GetAsync(key);
             if (!tenantAsString.IsNullOrEmpty())
             {
                 return tenantAsString.ToObject<Tenant>();
             }
 
             var tenant = await LoadTenantFromDbByCustomDomainAsync(customDomain);
-            await db.StringSetAsync(key, tenant.ToJson(), TimeSpan.FromSeconds(settings.Cache.TenantLifetime));
+            await cacheProvider.SetAsync(key, tenant.ToJson(), settings.Cache.TenantLifetime);
             return tenant;
         }
 

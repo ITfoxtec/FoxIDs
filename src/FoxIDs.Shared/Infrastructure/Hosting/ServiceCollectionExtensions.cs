@@ -2,7 +2,9 @@
 using FoxIDs.Repository;
 using ITfoxtec.Identity.Discovery;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using StackExchange.Redis;
 using System;
@@ -12,7 +14,7 @@ namespace FoxIDs.Infrastructure.Hosting
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddSharedLogic(this IServiceCollection services)
+        public static IServiceCollection AddSharedLogic(this IServiceCollection services, IWebHostEnvironment env)
         {
             services.AddTransient<PlanUsageLogic>();
 
@@ -21,6 +23,7 @@ namespace FoxIDs.Infrastructure.Hosting
 
             services.AddTransient<ClaimTransformValidationLogic>();
 
+            services.AddTransient<IDistributedCacheProvider, RedisCacheProvider>();
             services.AddTransient<PlanCacheLogic>();
             services.AddTransient<TenantCacheLogic>();
             services.AddTransient<TrackCacheLogic>();

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 
@@ -8,9 +9,9 @@ public class RedisQueueProcessor(IConnectionMultiplexer redisConnectionMultiplex
 {
     ChannelMessageQueue ChannelMessageQueue { get; } = channelMessageQueue;
 
-    public event Func<string, Task> ProcessAsync
+    public event Func<string, CancellationToken, Task> ProcessAsync
     {
-        add => ChannelMessageQueue.OnMessage(async channelMessage => await value(await GetEnvelope()));
+        add => ChannelMessageQueue.OnMessage(async channelMessage => await value(await GetEnvelope(), CancellationToken.None));
         remove => throw new Exception(nameof(RedisQueueProcessor) + " does not support removing handlers");
     }
 

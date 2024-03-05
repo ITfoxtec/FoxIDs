@@ -5,7 +5,6 @@ using FoxIDs.Models.Queue;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using Microsoft.AspNetCore.Http;
-using StackExchange.Redis;
 using System;
 using System.Linq;
 using System.Threading;
@@ -16,13 +15,13 @@ namespace FoxIDs.Logic
     public class DownPartyAllowUpPartiesQueueLogic : LogicBase, IQueueProcessingService
     {
         private const string downPartyDataType = "party:down";
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IQueueProvider queueProvider;
         private readonly ITenantRepository tenantRepository;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
 
-        public DownPartyAllowUpPartiesQueueLogic(IConnectionMultiplexer redisConnectionMultiplexer, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public DownPartyAllowUpPartiesQueueLogic(IQueueProvider queueProvider, ITenantRepository tenantRepository, DownPartyCacheLogic downPartyCacheLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.queueProvider = queueProvider;
             this.tenantRepository = tenantRepository;
             this.downPartyCacheLogic = downPartyCacheLogic;
         }
@@ -117,11 +116,8 @@ namespace FoxIDs.Logic
             }
             await envalope.ValidateObjectAsync();
 
-            var db = redisConnectionMultiplexer.GetDatabase();
-            await db.ListLeftPushAsync(BackgroundQueueService.QueueKey, envalope.ToJson());
-
-            var sub = redisConnectionMultiplexer.GetSubscriber();
-            await sub.PublishAsync(BackgroundQueueService.QueueEventKey, string.Empty);
+            await using var sender = await queueProvider.CreateSenderAsync(BackgroundQueueService.QueueEventKey);
+            await sender.SendAsync(envalope.ToJson());
         }
 
         public async Task DoWorkAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, string message, CancellationToken stoppingToken)

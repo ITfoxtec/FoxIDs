@@ -30,6 +30,8 @@ namespace FoxIDs.Infrastructure.Hosting
             services.AddTransient<DownPartyCacheLogic>();
             services.AddTransient<UpPartyCacheLogic>();
 
+            services.AddTransient<IQueueProvider, RedisQueueProvider>();
+
             return services;
         }
 

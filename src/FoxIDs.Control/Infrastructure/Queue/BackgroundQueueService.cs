@@ -4,54 +4,45 @@ using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using StackExchange.Redis;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FoxIDs.Models.Config;
+using FoxIDs.Logic;
 
 namespace FoxIDs.Infrastructure.Queue
 {
     public class BackgroundQueueService : BackgroundService
     {
-        public const string QueueKey = "background_queue_service";
         public const string QueueEventKey = "background_queue_service_event";
         private readonly FoxIDsControlSettings settings;
         private readonly TelemetryLogger logger;
         private readonly IServiceProvider serviceProvider;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IQueueProvider queueProvider;
         private bool isStopped;
 
-        public BackgroundQueueService(FoxIDsControlSettings settings, TelemetryLogger logger, IServiceProvider serviceProvider, IConnectionMultiplexer redisConnectionMultiplexer)
+        public BackgroundQueueService(FoxIDsControlSettings settings, TelemetryLogger logger, IServiceProvider serviceProvider, IQueueProvider queueProvider)
         {
             this.settings = settings;
             this.logger = logger;
             this.serviceProvider = serviceProvider;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.queueProvider = queueProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             if (!settings.DisableBackgroundQueueService)
             {
+                await using var processor = await queueProvider.CreateProcessorAsync(QueueEventKey);
                 if (!stoppingToken.IsCancellationRequested)
                 {
-                    await ReadMessageAndDoWorkAsync(stoppingToken);
-
-                    var sub = redisConnectionMultiplexer.GetSubscriber();
-                    var channel = await sub.SubscribeAsync(QueueEventKey);
-                    channel.OnMessage(async channelMessage =>
-                    {
-                        await ReadMessageAndDoWorkAsync(stoppingToken);
-                    });
+                    processor.ProcessAsync += DoWorkAsync;
                 }
 
                 await Task.Delay(Timeout.Infinite, stoppingToken);
 
                 if (!isStopped)
                 {
-                    var sub = redisConnectionMultiplexer.GetSubscriber();
-                    await sub.UnsubscribeAsync(QueueKey);
                     isStopped = true;
                 }
             }
@@ -61,38 +52,10 @@ namespace FoxIDs.Infrastructure.Queue
             }
         }
 
-        private async Task ReadMessageAndDoWorkAsync(CancellationToken stoppingToken)
-        {
-            try
-            {
-                var db = redisConnectionMultiplexer.GetDatabase();
-                var envelope = await db.ListRightPopAsync(QueueKey);
-                if (!envelope.IsNull)
-                {
-                    await DoWorkAsync(envelope, stoppingToken);
-                    await ReadMessageAndDoWorkAsync(stoppingToken);
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (ObjectDisposedException)
-            {
-                throw;
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Unable read message and to do background queue work.");
-            }
-        }
-
         public override void Dispose()
         {
             if (!isStopped)
             {
-                var sub = redisConnectionMultiplexer.GetSubscriber();
-                sub.Unsubscribe(QueueKey);
                 isStopped = true;
             }
             base.Dispose();

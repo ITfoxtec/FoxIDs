@@ -8,11 +8,6 @@ public class RedisQueueSender(IConnectionMultiplexer redisConnectionMultiplexer,
 {
     string queuekey = queue.Replace("_event", "");
 
-    public ValueTask DisposeAsync()
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task SendAsync(string message)
     {
         var db = redisConnectionMultiplexer.GetDatabase();
@@ -20,4 +15,6 @@ public class RedisQueueSender(IConnectionMultiplexer redisConnectionMultiplexer,
         var sub = redisConnectionMultiplexer.GetSubscriber();
         await sub.PublishAsync(queue, string.Empty);
     }
+
+    public ValueTask DisposeAsync() => throw new NotImplementedException();
 }

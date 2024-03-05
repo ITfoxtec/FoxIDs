@@ -10,14 +10,8 @@ public class RedisQueueProcessor(IConnectionMultiplexer redisConnectionMultiplex
 
     public event Func<string, Task> ProcessAsync
     {
-        add
-        {
-            ChannelMessageQueue.OnMessage(async channelMessage => await value(await GetEnvelope()));
-        }
-        remove
-        {
-            throw new Exception(nameof(RedisQueueProcessor) + " does not support removing handlers");
-        }
+        add => ChannelMessageQueue.OnMessage(async channelMessage => await value(await GetEnvelope()));
+        remove => throw new Exception(nameof(RedisQueueProcessor) + " does not support removing handlers");
     }
 
     private async Task<string> GetEnvelope()
@@ -27,8 +21,5 @@ public class RedisQueueProcessor(IConnectionMultiplexer redisConnectionMultiplex
         return envelope;
     }
 
-    public ValueTask DisposeAsync()
-    {
-        return ValueTask.CompletedTask;
-    }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

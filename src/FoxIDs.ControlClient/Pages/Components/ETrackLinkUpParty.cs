@@ -59,15 +59,6 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private void TrackLinkUpPartyViewModelAfterInit(GeneralTrackLinkUpPartyViewModel trackLinkUpParty, TrackLinkUpPartyViewModel model)
-        {
-            if (trackLinkUpParty.CreateMode)
-            {
-                model.SelectedUpParties = new List<string> { "*" };
-                model.Claims = new List<string> { "*" };
-            }
-        }
-
         private async Task OnEditTrackLinkUpPartyValidSubmitAsync(GeneralTrackLinkUpPartyViewModel generalTrackLinkUpParty, EditContext editContext)
         {
             try
@@ -95,20 +86,11 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
-                if (generalTrackLinkUpParty.CreateMode)
-                {
-                    var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
-                    generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
-                    generalTrackLinkUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect authentication method created.");
-                    generalTrackLinkUpParty.Name = trackLinkUpPartyResult.Name;
-                    generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
-                }
-                else
+                if (!generalTrackLinkUpParty.CreateMode)
                 {
                     var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
-                    toastService.ShowSuccess("OpenID Connect authentication method updated.");
+                    toastService.ShowSuccess("Environment Link authentication method updated.");
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
                 }
             }

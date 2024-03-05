@@ -84,7 +84,7 @@
                     {
                         <FInputSwitch @bind-Value="newUpPartyModal.ShowAll" Text="Show advanced" />
                     }
-                    else if (!newUpPartyModal.Created)
+                    else if (!newUpPartyModal.Created && newUpPartyModal.Type != PartyTypes.TrackLink)
                     {
                         <FInputSwitchAdvancedOptions @bind-Value="newUpPartyModal.ShowAdvanced" />
                     }
@@ -139,7 +139,7 @@
             }
             else if (newUpPartyModal.Type == PartyTypes.TrackLink)
             {
-                <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnAfterInit="@(m => OnNewUpPartyOAuthEnvironmentLinkModalValidAfterInit())" OnValidSubmit="@(async (editContext) => await OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
+                <PageEditForm @ref="newUpPartyModal.EnvironmentLinkForm" TModel="NewUpPartyEnvironmentLinkViewModel" OnValidSubmit="@(async (editContext) => await OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(newUpPartyModal, newUpPartyModal.EnvironmentLinkForm, editContext))">
                     @if (!newUpPartyModal.Created)
                     {
                         <div class="info-text">
@@ -206,12 +206,6 @@
                                 }
                                 <button class="btn btn-link btn-sm pt-0 pb-3" onclick="@(() => ShowSelectTrack(newUpPartyModal.EnvironmentLinkForm.Model))">Link to a different environment</button>
                             }
-
-                            @if (newUpPartyModal.ShowAdvanced)
-                            {
-                                <div class="info-text">Enter the Client ID you want, otherwise auto generated.</div>
-                                <FInputText @bind-Value="newUpPartyModal.EnvironmentLinkForm.Model.Name" For="@(() => newUpPartyModal.EnvironmentLinkForm.Model.Name)" />
-                            }
                         </div>
                     }
                     else
@@ -221,7 +215,7 @@
                         </div>
 
                         <div class="info-text">
-                            Remember the following information, you need them to configure your application.
+                            You can select this authentication method '@newUpPartyModal.EnvironmentLinkForm.Model.DisplayName' in your application registrations.
                         </div>
                     }
                     <div class="d-flex modal-footer px-0 pb-0">

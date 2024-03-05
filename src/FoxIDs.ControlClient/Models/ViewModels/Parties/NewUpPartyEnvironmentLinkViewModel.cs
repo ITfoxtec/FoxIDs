@@ -4,11 +4,6 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class NewUpPartyEnvironmentLinkViewModel
     {
-        [MaxLength(Constants.Models.Party.NameLength)]
-        [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Technical name")]
-        public string Name { get; set; }
-
         [Required]
         [MaxLength(Constants.Models.Party.DisplayNameLength)]
         [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
@@ -21,6 +16,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Link to environment")]
         public string ToDownTrackName { get; set; }
 
+        [Display(Name = "Link to environment")]
         public string ToDownTrackDisplayName { get; set; }
     }
 }

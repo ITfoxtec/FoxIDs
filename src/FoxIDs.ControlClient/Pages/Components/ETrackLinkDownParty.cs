@@ -57,17 +57,6 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        //private void TrackLinkDownPartyViewModelAfterInit(GeneralTrackLinkDownPartyViewModel trackLinkDownParty, TrackLinkDownPartyViewModel model)
-        //{
-        //    if (trackLinkDownParty.CreateMode)
-        //    {
-        //        model.Claims = new List<OAuthDownClaim>
-        //        {
-        //            new OAuthDownClaim { Claim = "*" }
-        //        };
-        //    }
-        //}
-
         private void AddTrackLinkClaim(MouseEventArgs e, List<OAuthDownClaim> claims)
         {
             claims.Add(new OAuthDownClaim());

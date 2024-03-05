@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using System.Linq;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages
 {
@@ -20,7 +21,10 @@ namespace FoxIDs.Client.Pages
         private NewUpPartyViewModel newUpPartyModal;
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties;
-     
+
+        [Inject]
+        public IToastService toastService { get; set; }
+
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
@@ -29,6 +33,9 @@ namespace FoxIDs.Client.Pages
 
         [Inject]
         public UpPartyService UpPartyService { get; set; }
+
+        [Inject]
+        public DownPartyService DownPartyService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
@@ -256,56 +263,44 @@ namespace FoxIDs.Client.Pages
             newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName = track.DisplayName.GetConcatProdTrackName();
         }
 
-        private void OnNewUpPartyOAuthEnvironmentLinkModalValidAfterInit()
-        {
-            var track = newUpPartyModal.SelectTrackTasks.FirstOrDefault();
-            if (track != null)
-            {
-                SelectTrack(track);
-            }
-        }
-
         private async Task OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyOAuthEnvironmentLinkForm, EditContext editContext)
         {
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
 
+                var trackLinkUpParty = newUpPartyOAuthEnvironmentLinkForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
+                {
+                    afterMap.ToDownPartyName = "x";
+                    afterMap.SelectedUpParties = new List<string> { "*" };
+                    afterMap.Claims = new List<string> { "*" };
+                });
+                var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
 
-                //newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
+                var trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(new TrackLinkDownParty
+                {
+                    DisplayName = newUpPartyOAuthEnvironmentLinkForm.Model.DisplayName,
+                    ToUpTrackName = TrackSelectedLogic.Track.Name,
+                    ToUpPartyName = trackLinkUpPartyResult.Name,
+                    AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name },
+                    Claims = new List<OAuthDownClaim>
+                    {
+                        new OAuthDownClaim { Claim = "*" }
+                    }
+                });
 
-                //var oauthDownParty = newDownPartyOAuthClientForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
-                //{
-                //    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+                trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
+                _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);
 
-                //    afterMap.Client = new OAuthDownClient
-                //    {
-                //        RequirePkce = false,
-                //    };
-                //});
+                toastService.ShowSuccess("Environment Link authentication method created.");
+                upParties.Add(new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName }));
 
-                //var oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
-                //await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = new List<string> { newDownPartyOAuthClientForm.Model.Secret } });
-                //toastService.ShowSuccess("OAuth 2.0 authentication method created.");
-
-                //newDownPartyOAuthClientForm.Model.Name = oauthDownPartyResult.Name;
-                //newDownPartyOAuthClientForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
-                //(var clientAuthority, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
-                //newDownPartyOAuthClientForm.Model.Authority = clientAuthority;
-                //downParties.Add(new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthClientForm.Model.Name, DisplayName = newDownPartyOAuthClientForm.Model.DisplayName }));
                 newDownPartyViewModel.Created = true;
             }
             catch (FoxIDsApiException ex)
             {
                 newDownPartyViewModel.CreateWorking = false;
-                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
-                {
-                    newUpPartyOAuthEnvironmentLinkForm.SetFieldError(nameof(newUpPartyOAuthEnvironmentLinkForm.Model.Name), ex.Message);
-                }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
             catch
             {

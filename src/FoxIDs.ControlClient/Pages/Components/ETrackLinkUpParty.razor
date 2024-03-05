@@ -4,7 +4,7 @@
     var trackLinkUpParty = UpParty as GeneralTrackLinkUpPartyViewModel;
 }
 
-<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(m => TrackLinkUpPartyViewModelAfterInit(trackLinkUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
+<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
     <div class="modal-header">
         <div>
             Environment Link
@@ -12,21 +12,10 @@
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (trackLinkUpParty.CreateMode)
+        <FInputText @bind-Value="trackLinkUpParty.Form.Model.DisplayName" For="@(() => trackLinkUpParty.Form.Model.DisplayName)" />
+        @if (trackLinkUpParty.ShowAdvanced)
         {
-            <FInputText @bind-Value="trackLinkUpParty.Form.Model.DisplayName" For="@(() => trackLinkUpParty.Form.Model.DisplayName)" Focus="true" />
-            @if (trackLinkUpParty.ShowAdvanced)
-            {
-                <FInputText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
-            }
-        }
-        else
-        {
-            <FInputText @bind-Value="trackLinkUpParty.Form.Model.DisplayName" For="@(() => trackLinkUpParty.Form.Model.DisplayName)" />
-            @if (trackLinkUpParty.ShowAdvanced)
-            {
-                <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
-            }
+            <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
         }
         @if (trackLinkUpParty.ShowAdvanced)
         {
@@ -88,8 +77,8 @@
         <div class="tab-content pt-3">
             @if (trackLinkUpParty.ShowTrackLinkTab)
             {
-                <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
-                <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
+                <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
+                <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
                 <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" />
                 @if (trackLinkUpParty.ShowAdvanced)
                 {

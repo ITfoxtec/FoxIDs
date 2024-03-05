@@ -6,11 +6,13 @@ namespace FoxIDs.Logic;
 
 public class RedisQueueProcessor(IConnectionMultiplexer redisConnectionMultiplexer, string queue, ChannelMessageQueue channelMessageQueue) : IQueueProcessor
 {
+    ChannelMessageQueue ChannelMessageQueue { get; } = channelMessageQueue;
+
     public event Func<string, Task> ProcessAsync
     {
         add
         {
-            channelMessageQueue.OnMessage(async channelMessage => await value(await GetEnvelope()));
+            ChannelMessageQueue.OnMessage(async channelMessage => await value(await GetEnvelope()));
         }
         remove
         {

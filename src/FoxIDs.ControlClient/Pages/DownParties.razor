@@ -77,7 +77,7 @@
                 <div class="pt-0 pb-2">
                     @if (newDownPartyModal.Type == null)
                     {
-                        <FInputSwitch @bind-Value="newDownPartyModal.ShowAll" Text="Show OAuth 2.0 API and SAML 2.0" />
+                        <FInputSwitch @bind-Value="newDownPartyModal.ShowAll" Text="Show advanced" />
                     }
                     else if (!newDownPartyModal.Created)
                     {
@@ -149,17 +149,6 @@
                         }
                     </div>
                 </div>
-@*                 @if (newDownPartyModal.ShowAdvanced)
-                {
-                    <div class="row">
-                        <div class="col-6 py-3">
-                            <button class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary">
-                                <h5 class="pt-0">Environment Link</h5>
-                                <div class="py-2">Connect two FoxIDs environment to reuse functionality and connections.</div>
-                            </button>
-                        </div>
-                    </div>
-                } *@
             }
             else if (newDownPartyModal.Type == PartyTypes.Oidc)
             {
@@ -201,8 +190,7 @@
                                 else
                                 {
                                     <div>Enter your applications base URL as Redirect URI, e.g. 'https://myapp.com/' or 'https://myapp.com/callback' or 'https://myapp.com/theappsite'.</div>
-                                }
-                                <div class="font-italic small pt-1">You can add absolute URIs later, which is more secure.</div>
+                                }                                
                             </div>
                             <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.RedirectUris" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUris)" />
                             @if (newDownPartyModal.ShowAdvanced)

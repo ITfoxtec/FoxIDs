@@ -11,16 +11,21 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using System.Linq;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
+        private NewUpPartyViewModel newUpPartyModal;
         private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
         private List<GeneralUpPartyViewModel> upParties;
      
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
+
+        [Inject]
+        public TrackService TrackService { get; set; }
 
         [Inject]
         public UpPartyService UpPartyService { get; set; }
@@ -31,6 +36,7 @@ namespace FoxIDs.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
+            newUpPartyModal = new NewUpPartyViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
@@ -190,6 +196,121 @@ namespace FoxIDs.Client.Pages
                 return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
             }
             throw new NotSupportedException();
+        }
+
+        private void ShowNewUpParty()
+        {
+            newUpPartyModal.Init();
+            newUpPartyModal.Modal.Show();
+        }
+
+        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null)
+        {
+            if(type == PartyTypes.TrackLink)
+            {
+                await LoadTracksAsync();
+                newUpPartyModal.AppTitle = appTitle;
+                newUpPartyModal.Type = type;
+            }
+            else if(type.HasValue)
+            {
+                ShowCreateUpParty(type.Value);
+                newUpPartyModal.Modal.Hide();
+            }
+        }
+
+        private void ShowSelectTrack(NewUpPartyEnvironmentLinkViewModel newUpPartyEnvironmentLinkViewModel)
+        {
+            newUpPartyEnvironmentLinkViewModel.ToDownTrackName = null;
+            newUpPartyEnvironmentLinkViewModel.ToDownTrackDisplayName = null;
+        }
+
+        private async Task LoadTracksAsync(string filterName = null)
+        {
+            try
+            {
+                var selectTrackTasks = (await TrackService.FilterTrackAsync(filterName)).OrderTracks();
+                newUpPartyModal.SelectTrackTasks = selectTrackTasks.Where(t => t.Name != TrackSelectedLogic.Track.Name);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    newUpPartyModal.SelectTrackFilterForm.SetFieldError(nameof(newUpPartyModal.SelectTrackFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private Task OnSelectTrackFilterValidSubmitAsync(EditContext editContext)
+        {
+            return LoadTracksAsync(newUpPartyModal.SelectTrackFilterForm.Model.FilterName);
+        }
+
+        private void SelectTrack(Track track)
+        {
+            newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName = track.Name;
+            newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName = track.DisplayName.GetConcatProdTrackName();
+        }
+
+        private void OnNewUpPartyOAuthEnvironmentLinkModalValidAfterInit()
+        {
+            var track = newUpPartyModal.SelectTrackTasks.FirstOrDefault();
+            if (track != null)
+            {
+                SelectTrack(track);
+            }
+        }
+
+        private async Task OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyOAuthEnvironmentLinkForm, EditContext editContext)
+        {
+            try
+            {
+                newDownPartyViewModel.CreateWorking = true;
+
+
+                //newDownPartyOAuthClientForm.Model.Secret = SecretGenerator.GenerateNewSecret();
+
+                //var oauthDownParty = newDownPartyOAuthClientForm.Model.Map<OAuthDownParty>(afterMap: afterMap =>
+                //{
+                //    afterMap.AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name };
+
+                //    afterMap.Client = new OAuthDownClient
+                //    {
+                //        RequirePkce = false,
+                //    };
+                //});
+
+                //var oauthDownPartyResult = await DownPartyService.CreateOAuthDownPartyAsync(oauthDownParty);
+                //await DownPartyService.CreateOAuthClientSecretDownPartyAsync(new OAuthClientSecretRequest { PartyName = oauthDownPartyResult.Name, Secrets = new List<string> { newDownPartyOAuthClientForm.Model.Secret } });
+                //toastService.ShowSuccess("OAuth 2.0 authentication method created.");
+
+                //newDownPartyOAuthClientForm.Model.Name = oauthDownPartyResult.Name;
+                //newDownPartyOAuthClientForm.Model.DisplayName = oauthDownPartyResult.DisplayName;
+                //(var clientAuthority, _) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(newDownPartyOAuthClientForm.Model.Name, false);
+                //newDownPartyOAuthClientForm.Model.Authority = clientAuthority;
+                //downParties.Add(new GeneralOAuthDownPartyViewModel(new DownParty { Type = PartyTypes.OAuth2, Name = newDownPartyOAuthClientForm.Model.Name, DisplayName = newDownPartyOAuthClientForm.Model.DisplayName }));
+                newDownPartyViewModel.Created = true;
+            }
+            catch (FoxIDsApiException ex)
+            {
+                newDownPartyViewModel.CreateWorking = false;
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    newUpPartyOAuthEnvironmentLinkForm.SetFieldError(nameof(newUpPartyOAuthEnvironmentLinkForm.Model.Name), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
+            }
         }
     }
 }

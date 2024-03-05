@@ -35,6 +35,7 @@ namespace FoxIDs.Logic
 
             var mTrack = new Track
             {
+                DisplayName = "Master",
                 Name = trackName,
                 SequenceLifetime = 1800,
                 MaxFailingLogins = 5,

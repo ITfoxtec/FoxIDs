@@ -263,7 +263,7 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = OrderTracks(await TrackService.FilterTrackAsync(null));
+                selectTrackTasks = (await TrackService.FilterTrackAsync(null)).OrderTracks();
                 
             }
             catch (TokenUnavailableException)
@@ -280,7 +280,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                selectTrackTasks = OrderTracks(await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName));
+                selectTrackTasks = (await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName)).OrderTracks();
             }
             catch (FoxIDsApiException ex)
             {
@@ -293,31 +293,6 @@ namespace FoxIDs.Client.Shared
                     throw;
                 }
             }
-        }
-
-        private IEnumerable<Track> OrderTracks(IEnumerable<Track> tracks)
-        {
-            var orderedTracks = new List<Track>();
-            if (tracks?.Count() > 0)
-            {
-                Track masterTrack = null;
-                foreach (var track in tracks)
-                {
-                    if (Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        masterTrack = track;
-                    }
-                    else
-                    {
-                        orderedTracks.Add(track);
-                    }
-                }
-                if (masterTrack != null)
-                {
-                    orderedTracks.Add(masterTrack);
-                }
-            }
-            return orderedTracks;
         }
 
         private async Task<bool> SelectTrackAsync(string trackName)

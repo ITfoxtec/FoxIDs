@@ -36,6 +36,7 @@ namespace FoxIDs.Client.Models.ViewModels
             AppTitle = null;
             Type = null;
             OAuthType = null;
+            OAuthClientType = null;
             ShowAll = false;
             ShowAdvanced = false;
             CreateWorking = false;

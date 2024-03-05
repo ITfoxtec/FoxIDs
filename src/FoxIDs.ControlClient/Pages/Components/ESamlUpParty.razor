@@ -61,7 +61,7 @@
             <FInputNumber @bind-Value="samlUpParty.Form.Model.MetadataUpdateRate" For="@(() => samlUpParty.Form.Model.MetadataUpdateRate)" />
             @if (!samlUpParty.Form.Model.DisableUserAuthenticationTrust)
             {
-                <FInputToggle @bind-Value="samlUpParty.Form.Model.EnableSingleLogout" For="@(() => samlUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+                <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableSingleLogout" For="@(() => samlUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
             }
         }
 

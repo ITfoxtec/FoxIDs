@@ -35,7 +35,7 @@
 
         @if (trackLinkUpParty.ShowAdvanced)
         {
-            <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.EnableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+            <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.DisableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
         }
 
         <div class="mb-3 alert alert-info" role="alert">

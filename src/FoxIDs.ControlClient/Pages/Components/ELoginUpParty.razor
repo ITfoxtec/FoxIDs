@@ -96,7 +96,7 @@
             {
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
                 <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />                
                 @if (loginUpParty.ShowAdvanced)
@@ -106,7 +106,7 @@
                         <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
                         <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
                     </FInputSelect>
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableSingleLogout" For="@(() => loginUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSingleLogout" For="@(() => loginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
                     <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />

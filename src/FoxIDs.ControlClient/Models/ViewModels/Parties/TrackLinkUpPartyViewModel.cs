@@ -72,7 +72,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         [Display(Name = "Single logout")]
-        public bool EnableSingleLogout { get; set; } = true;
+        public bool DisableSingleLogout { get; set; } = true;
 
         /// <summary>
         /// Home realm discovery (HRD) domains.

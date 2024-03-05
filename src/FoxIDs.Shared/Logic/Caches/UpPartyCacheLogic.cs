@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
         {
             var key = RadisUpPartyNameKey(idKey);
 
-            var upPartyAsString = (string)await cacheProvider.GetAsync(key);
+            var upPartyAsString = await cacheProvider.GetAsync(key);
             if (!upPartyAsString.IsNullOrEmpty())
             {
                 return upPartyAsString.ToObject<UpParty>();

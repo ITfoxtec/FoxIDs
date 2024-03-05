@@ -39,7 +39,7 @@ namespace FoxIDs.Logic
         {
             var key = RadisTenantNameKey(tenantName);
 
-            var tenantAsString = (string)await cacheProvider.GetAsync(key);
+            var tenantAsString = await cacheProvider.GetAsync(key);
             if (!tenantAsString.IsNullOrEmpty())
             {
                 return tenantAsString.ToObject<Tenant>();
@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
         {
             var key = RadisTenantCustomDomainKey(customDomain);
 
-            var tenantAsString = (string)await cacheProvider.GetAsync(key);
+            var tenantAsString = await cacheProvider.GetAsync(key);
             if (!tenantAsString.IsNullOrEmpty())
             {
                 return tenantAsString.ToObject<Tenant>();

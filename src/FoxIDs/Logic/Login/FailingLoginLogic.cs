@@ -21,11 +21,8 @@ namespace FoxIDs.Logic
         public async Task<long> IncreaseFailingLoginCountAsync(string email)
         {
             var key = FailingLoginCountRadisKey(email);
-            
-            var loginCount = await cacheProvider.GetAsync(key);
-            var newLoginCount = long.Parse(loginCount) + 1;
-            await cacheProvider.SetAsync(key, newLoginCount.ToString(), RouteBinding.FailingLoginCountLifetime);
-            return newLoginCount;
+
+            return await cacheProvider.IncrementNumberAsync(key, RouteBinding.FailingLoginCountLifetime);
         }
 
         public async Task ResetFailingLoginCountAsync(string email)
@@ -43,11 +40,10 @@ namespace FoxIDs.Logic
                 throw new UserObservationPeriodException($"User '{email}' locked by observation period.");
             }
 
-            var failingLoginCountString = await cacheProvider.GetAsync(key);
-            var failingLoginCount = failingLoginCountString != null ? long.Parse(failingLoginCountString) : 0;
+            var failingLoginCount = await cacheProvider.GetNumberAsync(key);
             if (failingLoginCount >= RouteBinding.MaxFailingLogins)
             {
-                await cacheProvider.SetAsync(FailingLoginLockedRadisKey(email), "true", RouteBinding.FailingLoginObservationPeriod);
+                await cacheProvider.SetFlagAsync(FailingLoginLockedRadisKey(email), RouteBinding.FailingLoginObservationPeriod);
                 await cacheProvider.DeleteAsync(key);
 
                 logger.ScopeTrace(() => $"Observation period started for user '{email}'.", scopeProperties: FailingLoginCountDictonary(failingLoginCount), triggerEvent: true);

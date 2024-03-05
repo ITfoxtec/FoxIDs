@@ -30,7 +30,6 @@
 		<PackageReference Include="Azure.Security.KeyVault.Secrets" Version="4.5.0" />
 		<PackageReference Include="Azure.Security.KeyVault.Certificates" Version="4.5.1" />	
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.1" />
-		<PackageReference Include="System.Runtime.Caching" Version="8.0.0" />
 		<PackageReference Include="SendGrid" Version="9.29.1" />
 	</ItemGroup>
 

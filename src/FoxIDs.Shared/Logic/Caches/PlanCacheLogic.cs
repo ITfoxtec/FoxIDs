@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
         public async Task<Plan> GetPlanAsync(string planName, bool required = true)
         {
             var key = RadisPlanNameKey(planName);
-            var planAsString = (string)await cacheProvider.GetAsync(key);
+            var planAsString = await cacheProvider.GetAsync(key);
             if (!planAsString.IsNullOrEmpty())
             {
                 return planAsString.ToObject<Plan>();

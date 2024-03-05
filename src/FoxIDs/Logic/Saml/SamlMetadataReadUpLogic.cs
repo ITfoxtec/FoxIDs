@@ -39,18 +39,17 @@ namespace FoxIDs.Logic
             }
 
             var key = UpdateUpPartyWaitPeriodKey(party.Id);
-            if (await cacheProvider.GetAsync(key) != null)
+            if (await cacheProvider.ExistsAsync(key))
             {
                 logger.ScopeTrace(() => $"Authentication method '{party.Id}' not updated with SAML 2.0 metadata because another update is in progress.");
                 return;
             }
             else
             {
-                await cacheProvider.SetAsync(key, "true", settings.UpPartyUpdateWaitPeriod);
+                await cacheProvider.SetFlagAsync(key, settings.UpPartyUpdateWaitPeriod);
             }
 
-            var failingUpdateCountString = await cacheProvider.GetAsync(FailingUpdateUpPartyCountKey(party.Id));
-            var failingUpdateCount = failingUpdateCountString != null ? long.Parse(failingUpdateCountString) : 0;
+            var failingUpdateCount = await cacheProvider.GetNumberAsync(FailingUpdateUpPartyCountKey(party.Id));
             if (failingUpdateCount >= settings.UpPartyMaxFailingUpdate)
             {
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
@@ -77,10 +76,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                var failingCountString = await cacheProvider.GetAsync(FailingUpdateUpPartyCountKey(party.Id));
-                var failingCount = failingCountString != null ? long.Parse(failingCountString) : 0;
-                failingCount++;
-                await cacheProvider.SetAsync(FailingUpdateUpPartyCountKey(party.Id), failingCount.ToString(), settings.UpPartyMaxFailingUpdate);
+                await cacheProvider.IncrementNumberAsync(FailingUpdateUpPartyCountKey(party.Id));
                 logger.Warning(ex);
             }
         }

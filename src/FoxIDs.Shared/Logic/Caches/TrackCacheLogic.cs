@@ -36,7 +36,7 @@ namespace FoxIDs.Logic
         {
             var key = RadisTrackNameKey(idKey);
 
-            var trackAsString = (string)await cacheProvider.GetAsync(key);
+            var trackAsString = await cacheProvider.GetAsync(key);
             if (!trackAsString.IsNullOrEmpty())
             {
                 return trackAsString.ToObject<Track>();

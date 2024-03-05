@@ -46,11 +46,10 @@ namespace FoxIDs.Logic
             }
             else
             {
-                await cacheProvider.SetAsync(key, "true", settings.UpPartyUpdateWaitPeriod);
+                await cacheProvider.SetFlagAsync(key, settings.UpPartyUpdateWaitPeriod);
             }
 
-            var failingUpdateCountString = await cacheProvider.GetAsync(FailingUpdateCountKey(party.Id));
-            var failingUpdateCount = failingUpdateCountString != null ? long.Parse(failingUpdateCountString) : 0;
+            var failingUpdateCount = await cacheProvider.GetNumberAsync(FailingUpdateCountKey(party.Id));
             if (failingUpdateCount >= settings.UpPartyMaxFailingUpdate)
             {
                 party.UpdateState = PartyUpdateStates.AutomaticStopped;
@@ -77,10 +76,7 @@ namespace FoxIDs.Logic
             }
             catch (Exception ex)
             {
-                var failingCountString = await cacheProvider.GetAsync(FailingUpdateCountKey(party.Id));
-                var failingCount = failingCountString != null ? long.Parse(failingCountString) : 0;
-                failingCount++;
-                await cacheProvider.SetAsync(FailingUpdateCountKey(party.Id), failingCount.ToString(), settings.UpPartyMaxFailingUpdate);
+                await cacheProvider.IncrementNumberAsync(FailingUpdateCountKey(party.Id));
                 logger.Warning(ex);
             }
         }

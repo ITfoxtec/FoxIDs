@@ -95,6 +95,9 @@
                         }
                     </ul>
                     <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <DocsLink Class="nav-link">Documentation</DocsLink>
+                        </li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="meNavbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="oi oi-person" aria-hidden="true"></span>
@@ -115,44 +118,43 @@
 
         <AuthorizeView>
             <Authorized>
-                <nav class="navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-env") navbar-light navbar-second">
-                    <div class="align-text-top py-2 pr-3">
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                    </div>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav">
-                            @if (RouteBindingLogic.IsMasterTenant)
-                            {
-                                <TenantLiNavLink Href="tenants">
-                                    Tenants
+                <div class="navbar-outline">
+                    <nav class="container-lg navbar @(RouteBindingLogic.IsMasterTenant ? "navbar-expand-master" : "navbar-expand-env") navbar-light navbar-second">
+                        <div class="align-text-top">
+                            <button class="navbar-toggler my-2 mr-3" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+                        </div>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            <ul class="navbar-nav">
+                                @if (RouteBindingLogic.IsMasterTenant)
+                                {
+                                    <TenantLiNavLink Href="tenants">
+                                        Tenants
+                                    </TenantLiNavLink>
+                                }
+                                <TenantLiNavLink Href="applications">
+                                    Applications
                                 </TenantLiNavLink>
-                            }
-                            <TenantLiNavLink Href="applications">
-                                Applications
-                            </TenantLiNavLink>
-                            <TenantLiNavLink Href="authentication">
-                                Authentication Methods
-                            </TenantLiNavLink>
-                            <TenantLiNavLink Href="users">
-                                Users
-                            </TenantLiNavLink>
-                            <TenantLiNavLink Href="certificates">
-                                Certificates
-                            </TenantLiNavLink>
-                            <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
-                                Logs
-                            </TenantLiNavLink>
-                            <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings,texts,plans,riskpasswords">
-                                Settings
-                            </TenantLiNavLink>
-                            <li class="nav-item">
-                                <DocsLink Class="nav-link">Documentation</DocsLink>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
+                                <TenantLiNavLink Href="authentication">
+                                    Authentication Methods
+                                </TenantLiNavLink>
+                                <TenantLiNavLink Href="users">
+                                    Users
+                                </TenantLiNavLink>
+                                <TenantLiNavLink Href="certificates">
+                                    Certificates
+                                </TenantLiNavLink>
+                                <TenantLiNavLink Href="logusages" SubPages="logs,logsettings">
+                                    Logs
+                                </TenantLiNavLink>
+                                <TenantLiNavLink Href="envsettings" SubPages="tenantsettings,mailsettings,claimmappings,texts,plans,riskpasswords">
+                                    Settings
+                                </TenantLiNavLink>
+                            </ul>
+                        </div>
+                    </nav>
+                </div>
             </Authorized>
         </AuthorizeView>
 

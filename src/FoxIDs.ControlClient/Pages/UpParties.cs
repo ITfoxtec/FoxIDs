@@ -184,7 +184,7 @@ namespace FoxIDs.Client.Pages
         {
             if (upParty.Type == PartyTypes.Login)
             {
-                return $"{upParty.DisplayName ?? upParty.Name} (Login)";
+                return $"{upParty.DisplayName ?? (upParty.Name == Constants.DefaultLogin.Name ? "Default" : upParty.Name)} (User login UI)";
             }
             else if (upParty.Type == PartyTypes.OAuth2)
             {
@@ -287,7 +287,7 @@ namespace FoxIDs.Client.Pages
                     {
                         new OAuthDownClaim { Claim = "*" }
                     }
-                });
+                }, trackName: newUpPartyOAuthEnvironmentLinkForm.Model.ToDownTrackName);
 
                 trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
                 _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);

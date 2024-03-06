@@ -4,7 +4,7 @@
     var trackLinkDownParty = DownParty as GeneralTrackLinkDownPartyViewModel;
 }
 
-<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
+<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkDownPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
     <div class="modal-header">
         <div>
             Environment Link
@@ -52,9 +52,22 @@
         <div class="tab-content pt-3">
             @if (trackLinkDownParty.ShowTrackLinkTab)
             {
-                <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
-                <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
-
+                @if (trackLinkDownParty.Form.Model.ToUpTrackDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackDisplayName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackDisplayName)" />
+                }
+                @if (trackLinkDownParty.Form.Model.ToUpPartyDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyDisplayName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyDisplayName)" />
+                }
                 <SelectUpParty @ref="trackLinkDownParty.SelectAllowUpPartyName" EditDownPartyForm="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
 
                 @if (DownParty.ShowAdvanced)
@@ -123,6 +136,7 @@
         </div>
     }
     <div class="modal-footer">
+        <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
         <button type="submit" class="btn btn-primary">Update</button>
         <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>

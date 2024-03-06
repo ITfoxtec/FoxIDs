@@ -26,14 +26,20 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        [Display(Name = "To environment")]
+        [Display(Name = "Link environment")]
         public string ToUpTrackName { get; set; }
+
+        [Display(Name = "Link environment")]
+        public string ToUpTrackDisplayName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "To application")]
+        [Display(Name = "Link authentication method")]
         public string ToUpPartyName { get; set; }
+
+        [Display(Name = "Link authentication method")]
+        public string ToUpPartyDisplayName { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]

@@ -4,7 +4,7 @@
     var trackLinkUpParty = UpParty as GeneralTrackLinkUpPartyViewModel;
 }
 
-<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
+<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkUpPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
     <div class="modal-header">
         <div>
             Environment Link
@@ -77,8 +77,22 @@
         <div class="tab-content pt-3">
             @if (trackLinkUpParty.ShowTrackLinkTab)
             {
-                <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
-                <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
+                @if (trackLinkUpParty.Form.Model.ToDownTrackDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackDisplayName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackDisplayName)" />
+                }
+                @if (trackLinkUpParty.Form.Model.ToDownPartyDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyDisplayName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyDisplayName)" />
+                }
                 <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" />
                 @if (trackLinkUpParty.ShowAdvanced)
                 {

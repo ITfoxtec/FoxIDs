@@ -24,14 +24,20 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        [Display(Name = "To environment")]
+        [Display(Name = "Link environment")]
         public string ToDownTrackName { get; set; }
+  
+        [Display(Name = "Link environment")]
+        public string ToDownTrackDisplayName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "To authentication method")]
+        [Display(Name = "Link application")]
         public string ToDownPartyName { get; set; }
+
+        [Display(Name = "Link application")]
+        public string ToDownPartyDisplayName { get; set; }
 
         [ListLength(Constants.Models.TrackLinkDownParty.SelectedUpPartiesMin, Constants.Models.TrackLinkDownParty.SelectedUpPartiesMax, Constants.Models.Party.NameLength, Constants.Models.TrackLinkDownParty.SelectedUpPartiesNameRegExPattern)]
         [Display(Name = "Selected authentication methods (use * to select all authentication methods)")]

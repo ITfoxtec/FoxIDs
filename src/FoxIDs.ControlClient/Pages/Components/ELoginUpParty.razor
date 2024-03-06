@@ -7,16 +7,18 @@
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="LoginUpPartyViewModelAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
         <div>
-            Login
+            User login UI
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
+        <div class="info-text">
+            <DocsLink Page="users">Users</DocsLink> can authenticate with the environment's user store or choose another authentication method. The user interface is customizable.
+            <br />
+            The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
+        </div>
         @if (loginUpParty.CreateMode)
         {
-            <div class="mb-3 info-text">
-                Authenticates <DocsLink Page="users">users</DocsLink> in the environment's user store. The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
-            </div>
             <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
             @if (loginUpParty.ShowAdvanced) 
             {

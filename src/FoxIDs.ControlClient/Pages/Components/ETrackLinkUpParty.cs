@@ -11,11 +11,19 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class ETrackLinkUpParty : UpPartyBase
     {
+        [Inject]
+        public TrackService TrackService { get; set; }
+
+        [Inject]
+        public DownPartyService DownPartyService { get; set; }
+
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -57,6 +65,19 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
                 }
             });
+        }
+
+        private async Task TrackLinkUpPartyViewModelAfterInitAsync(TrackLinkUpPartyViewModel model)
+        {
+            try
+            {
+                var track = await TrackService.GetTrackAsync(model.ToDownTrackName);
+                model.ToDownTrackDisplayName = track.DisplayName;
+
+                var downParty = await DownPartyService.GetTrackLinkDownPartyAsync(model.ToDownPartyName, trackName: model.ToDownTrackName);
+                model.ToDownPartyDisplayName = downParty.DisplayName;
+            }
+            catch { }
         }
 
         private async Task OnEditTrackLinkUpPartyValidSubmitAsync(GeneralTrackLinkUpPartyViewModel generalTrackLinkUpParty, EditContext editContext)
@@ -112,6 +133,12 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 await UpPartyService.DeleteTrackLinkUpPartyAsync(generalTrackLinkUpParty.Name);
+                try
+                {
+                    await DownPartyService.DeleteTrackLinkDownPartyAsync(generalTrackLinkUpParty.Form.Model.ToDownPartyName, trackName: generalTrackLinkUpParty.Form.Model.ToDownTrackName);
+                }
+                catch
+                { }
                 UpParties.Remove(generalTrackLinkUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }

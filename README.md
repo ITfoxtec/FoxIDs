@@ -1,6 +1,6 @@
 # [FoxIDs](https://www.foxids.com)
 
-FoxIDs is an open-source Identity Services (IDS) supporting [login](https://www.foxids.com/docs/login), [OAuth 2.0](https://www.foxids.com/docs/oauth-2.0), [OpenID Connect 1.0](https://www.foxids.com/docs/oidc), [SAML 2.0](https://www.foxids.com/docs/saml-2.0) and convention between [OpenID Connect and SAML 2.0](https://www.foxids.com/docs/parties).
+FoxIDs is a Identity Services (IDS) supporting [login](https://www.foxids.com/docs/login), [OAuth 2.0](https://www.foxids.com/docs/oauth-2.0), [OpenID Connect 1.0](https://www.foxids.com/docs/oidc), [SAML 2.0](https://www.foxids.com/docs/saml-2.0) and convention between [OpenID Connect and SAML 2.0](https://www.foxids.com/docs/parties).
 
 > Developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.
 

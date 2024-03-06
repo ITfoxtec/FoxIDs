@@ -291,10 +291,14 @@ namespace FoxIDs.Client.Pages
 
                 trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
                 _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);
-
                 toastService.ShowSuccess("Environment Link authentication method created.");
-                upParties.Add(new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName }));
 
+                var generalUpPartyViewModel = new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName });
+                upParties.Add(generalUpPartyViewModel);
+                if (upParties.Count() <= 1)
+                {
+                    ShowUpdateUpParty(generalUpPartyViewModel);
+                }
                 newDownPartyViewModel.Created = true;
             }
             catch (FoxIDsApiException ex)

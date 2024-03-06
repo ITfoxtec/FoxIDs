@@ -91,59 +91,49 @@
                     <div class="row">
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
-                                <h5 class="pt-2">Web Application</h5>
-                                <h6 class="pb-2">& API</h6>
-                                <div class="py-2">Web application with a backend.</div>
-                                <div class="py-2">E.g., ASP.NET Core, Blazor Server, Java, Nodes.js, PHP</div>
-                                <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
+                                <h5 class="py-2">Web Application <div class="small">(OpenID Connect)</div></h5>
+                                <div class="py-2 font-italic">E.g., ASP.NET Core, Blazor Server, Java, Nodes.js, PHP.</div>
+                                <div class="py-2">Web application running on a server, optionally with a backend API.</div>
                             </a>
                         </div>
                         @if (newDownPartyModal.ShowAll)
                         {
                             <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Saml2))" @onclick:preventDefault>
-                                    <h5 class="pt-2">Web Application</h5>
-                                    <div class="py-2">Web application with a backend.</div>
-                                    <div class="py-2">E.g., ASP.NET Core, Java, PHP</div>
-                                    <div class="mt-auto font-italic border-top pt-2">SAML 2.0</div>
+                                    <h5 class="py-2">Web Application <div class="small">(SAML 2.0)</div></h5>
+                                    <div class="py-2 font-italic">E.g., ASP.NET Core, Java, PHP.</div>
+                                    <div class="py-2">Web application running on a server.<br />SAML 2.0 is an old standard with its shortcomings, it is often better to use OpenID Connect.</div>
                                 </a>
                             </div>
                         }
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Single Page Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))" @onclick:preventDefault>
-                                <h5 class="pt-2">Single Page Application</h5>
-                                <h6 class="pb-2">& API</h6>
-                                <div class="py-2">Application running in the browser.</div>
-                                <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue</div>
-                                <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
+                                <h5 class="py-2">Single Page Application <div class="small">(OpenID Connect)</div></h5>
+                                <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue.</div>
+                                <div class="py-2">Application running in the browser, often with an backend API.</div>
                             </a>
                         </div>
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Native Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))" @onclick:preventDefault>
-                                <h5 class="pt-2">Native Application</h5>
-                                <h6 class="pb-2">& API</h6>
-                                <div class="py-2">Mobile, smart device or desktop applications.</div>
-                                <div class="py-2">E.g., .NET MAUI, React Native, Ionic, IOS, Android</div>
-                                <div class="mt-auto font-italic border-top pt-2">OpenID Connect</div>
+                                <h5 class="py-2">Native Application <div class="small">(OpenID Connect)</div></h5>
+                                <div class="py-2">E.g., .NET MAUI, React Native, Ionic, IOS, Android.</div>
+                                <div class="py-2">Mobile, smart device or desktop applications, often with an backend API.</div>
                             </a>
                         </div>
                         <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                             <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Backend Application", PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
-                                <h5 class="pt-2">Backend Application</h5>
-                                <h6 class="pb-2">& API</h6>
-                                <div class="py-2">Service or daemon applications.</div>
-                                <div class="py-2">E.g., .NET service, Java, Script</div>
-                                <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
+                                <h5 class="py-2">Backend Application <div class="small">(OAuth 2.0)</div></h5>
+                                <div class="py-2">E.g., .NET service, Java, Script.</div>
+                                <div class="py-2">Backend service or daemon applications, optionally with a backend API.</div>
                             </a>
                         </div>
                         @if (newDownPartyModal.ShowAll)
                         {
                             <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
                                 <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("API", PartyTypes.OAuth2, DownPartyOAuthTypes.Resource))" @onclick:preventDefault>
-                                    <h5 class="pt-2">API</h5>
-                                    <div class="py-2">APIs or micro services which can be called by applications.</div>
-                                    <div class="py-2">E.g., ASP.NET Core, Azure Functions, Java</div>
-                                    <div class="mt-auto font-italic border-top pt-2">OAuth 2.0</div>
+                                    <h5 class="py-2">API <div class="small">(OAuth 2.0)</div></h5>
+                                    <div class="py-2">E.g., ASP.NET Core, Azure Functions, Java.</div>
+                                    <div class="py-2">APIs or micro services.<br />Used for more advanced solutions where multiple applications need to call the API.</div>
                                 </a>
                             </div>
                         }
@@ -158,19 +148,19 @@
                         @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
                         {
                             <div class="info-text">
-                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application (called a Public Client).
+                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application running in the browser, often with an backend API (called a Public Client).
                             </div>
                         }
                         else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
                         {
                             <div class="info-text">
-                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application (called a Public Client).
+                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application often with an backend API (called a Public Client).
                             </div>
                         }
                         else
                         {
                             <div class="info-text">
-                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application with a backend (called a Confidential Client).
+                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application running on a server, optionally with a backend API (called a Confidential Client).
                             </div>
                         }
 
@@ -212,17 +202,11 @@
                             <div class="info-text">
                                 Your single page application is registered!
                             </div>
-                            <div class="info-text">
-                                Your application is required to use PKCE.
-                            </div>
                         }
                         else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
                         {
                             <div class="info-text">
                                 Your native application is registered!
-                            </div>
-                            <div class="info-text">
-                                Your application is required to use PKCE.
                             </div>
                         }
                         else
@@ -241,9 +225,11 @@
                         {
                             <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
                         }
-                        <div class="mt-2 mb-4 alert alert-secondary">
-                            In addition to the scope value 'openid', you should probably request the scope values 'profile' and 'email' in your application configuration.
-                        </div>
+                        else @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                        {
+                            <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
+                        }
+                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
                     }
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newDownPartyModal.Created)
@@ -268,7 +254,7 @@
                     @if (!newDownPartyModal.Created)
                     {
                         <div class="info-text">
-                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application (called a Confidential Client that request an access token using Client Credential Grant).
+                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application, optionally with a backend API (called a Confidential Client that request an access token using Client Credential Grant).
                         </div>
 
                         <div>
@@ -316,7 +302,7 @@
                     @if (!newDownPartyModal.Created)
                     {
                         <div class="info-text">
-                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource).
+                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource). Used for more advanced solutions where multiple applications need to call the API.
                         </div>
 
                         <div>
@@ -351,7 +337,7 @@
                         <div class="info-text">
                             A client requests scopes as compound scope names that include the API's resource name.                           
                         </div>
-                        <FFieldTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
+                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
                     }
                     <div class="d-flex modal-footer px-0 pb-0">
                         @if (!newDownPartyModal.Created)
@@ -376,7 +362,9 @@
                     @if (!newDownPartyModal.Created)
                     {
                         <div class="info-text">
-                            Add new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application with a backend.
+                            Add new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application running on a server. 
+                            <br />
+                            SAML 2.0 is an old standard with its shortcomings, it is often better to use <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>.
                         </div>
 
                         <div>
@@ -390,7 +378,6 @@
                             }
                             <div class="info-text">
                                 <div>Enter your applications base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
-                                <div class="font-italic small pt-1">You can add absolute URIs later, which is more secure.</div>
                             </div>
                             <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
                             @if (newDownPartyModal.ShowAdvanced)

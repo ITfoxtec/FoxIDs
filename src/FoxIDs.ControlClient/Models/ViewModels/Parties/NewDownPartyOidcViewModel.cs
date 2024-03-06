@@ -27,7 +27,13 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Authority")]
         public string Authority { get; set; }
 
-        [Display(Name = "Client secret")]
-        public string Secret { get; set; }
+        [Display(Name = "Client secret (can only be viewed immediately after creation)")]
+        public string Secret { get; set; } 
+        
+        [Display(Name = "Proof Key for Code Exchange (PKCE)")]
+        public string Pkce { get; set; }
+
+        [Display(Name = "Scopes")]
+        public List<string> Scopes { get; set; }
     }
 }

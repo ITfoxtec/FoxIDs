@@ -83,7 +83,7 @@ namespace FoxIDs.Controllers
                     var count = await CountParties("party:down");
                     if (count >= Constants.Models.DownParty.PartiesMax)
                     {
-                        throw new Exception($"Maximum number of application registrations ({Constants.Models.UpParty.PartiesMax}) per environment has been reached.");
+                        throw new Exception($"Maximum number of application registrations ({Constants.Models.DownParty.PartiesMax}) per environment has been reached.");
                     }
                 }
                 else

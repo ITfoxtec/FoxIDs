@@ -9,7 +9,6 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Security.Cryptography.X509Certificates;
 using FoxIDs.Models.Config;
-using StackExchange.Redis;
 using Azure.Core;
 using Azure.Security.KeyVault.Certificates;
 using FoxIDs.Logic;
@@ -22,15 +21,15 @@ namespace FoxIDs.Infrastructure.Hosting
         private readonly FoxIDsSettings settings;
         private readonly DownPartyCacheLogic downPartyCacheLogic;
         private readonly UpPartyCacheLogic upPartyCacheLogic;
-        private readonly IConnectionMultiplexer redisConnectionMultiplexer;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly TokenCredential tokenCredential;
 
-        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IConnectionMultiplexer redisConnectionMultiplexer, TokenCredential tokenCredential) : base(next, trackCacheLogic)
+        public FoxIDsRouteBindingMiddleware(RequestDelegate next, FoxIDsSettings settings, TrackCacheLogic trackCacheLogic, DownPartyCacheLogic downPartyCacheLogic, UpPartyCacheLogic upPartyCacheLogic, IDistributedCacheProvider cacheProvider, TokenCredential tokenCredential) : base(next, trackCacheLogic)
         {
             this.settings = settings;
             this.downPartyCacheLogic = downPartyCacheLogic;
             this.upPartyCacheLogic = upPartyCacheLogic;
-            this.redisConnectionMultiplexer = redisConnectionMultiplexer;
+            this.cacheProvider = cacheProvider;
             this.tokenCredential = tokenCredential;
         }
 
@@ -302,9 +301,8 @@ namespace FoxIDs.Infrastructure.Hosting
         public async Task<TrackKeyExternal> GetTrackKeyItemsAsync(TelemetryScopedLogger scopedLogger, string tenantName, string trackName, Track track)
         {
             var key = RadisTrackKeyExternalKey(tenantName, trackName, track.Key.ExternalName);
-            var db = redisConnectionMultiplexer.GetDatabase();
 
-            var trackKeyExternalValue = (string)await db.StringGetAsync(key);
+            var trackKeyExternalValue = await cacheProvider.GetAsync(key);
             if (!trackKeyExternalValue.IsNullOrEmpty())
             {
                 return trackKeyExternalValue.ToObject<TrackKeyExternal>();
@@ -313,7 +311,7 @@ namespace FoxIDs.Infrastructure.Hosting
             var trackKeyExternal = await LoadTrackKeyExternalFromKeyVaultAsync(scopedLogger, track);
             if (trackKeyExternal != null)
             {
-                await db.StringSetAsync(key, trackKeyExternal.ToJson(), TimeSpan.FromSeconds(track.KeyExternalCacheLifetime));
+                await cacheProvider.SetAsync(key, trackKeyExternal.ToJson(), track.KeyExternalCacheLifetime);
             }
             return trackKeyExternal;
         }

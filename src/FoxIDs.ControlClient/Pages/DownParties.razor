@@ -182,7 +182,7 @@
                                     <div>Enter your applications base URL as Redirect URI, e.g. 'https://myapp.com/' or 'https://myapp.com/callback' or 'https://myapp.com/theappsite'.</div>
                                 }                                
                             </div>
-                            <FInputTextList @bind-ValueList="newDownPartyModal.OidcForm.Model.RedirectUris" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUris)" />
+                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.RedirectUri" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUri)" />
                             @if (newDownPartyModal.ShowAdvanced)
                             {
                                 <div class="info-text">

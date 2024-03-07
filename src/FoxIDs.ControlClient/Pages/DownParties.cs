@@ -176,6 +176,16 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnNewDownPartyOidcModalValidSubmitAsync(NewDownPartyViewModel newDownPartyViewModel, PageEditForm<NewDownPartyOidcViewModel> newDownPartyOidcForm, EditContext editContext)
         {
+
+            if (newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.PublicNative)
+            {
+                if (!(newDownPartyOidcForm.Model.RedirectUri.StartsWith("https://", StringComparison.OrdinalIgnoreCase) || newDownPartyOidcForm.Model.RedirectUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase)))
+                {
+                    newDownPartyOidcForm.SetFieldError(nameof(newDownPartyOidcForm.Model.RedirectUri), "The Redirect URI must start with 'https://' or optionally 'http://' if the domain is localhost.");
+                    return;
+                }
+            }
+
             try
             {
                 newDownPartyViewModel.CreateWorking = true;
@@ -190,7 +200,7 @@ namespace FoxIDs.Client.Pages
 
                     afterMap.Client = new OidcDownClient
                     {
-                        RedirectUris = newDownPartyOidcForm.Model.RedirectUris,
+                        RedirectUris = new List<string> { newDownPartyOidcForm.Model.RedirectUri },
                         DisableAbsoluteUris = newDownPartyOidcForm.Model.DisableAbsoluteUris,
                         ResponseTypes = new List<string> { "code" },
                         RequirePkce = newDownPartyModal.OAuthClientType != DownPartyOAuthClientTypes.Confidential,

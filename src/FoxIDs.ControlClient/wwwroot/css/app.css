@@ -95,7 +95,22 @@ h4 {
         top: 0.5rem;
     }
 
-/*Navbar*/ 
+.load-spinner {
+    position: absolute;
+    top: 30vh;
+    left: 0px;
+    width: 100%;
+    text-align: center
+}
+
+    .load-spinner div {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center
+    }
+
+/*Navbar*/
 .navbar.navbar-main {
     border-bottom: 2px solid #fc7e01;
     background-color: #ffffff !important;
@@ -131,9 +146,9 @@ h4 {
     padding-bottom: 2px;
 }
 
-    .navbar .navbar-brand img {
-        height: 54px;
-    }
+img.logo {
+    height: 54px;
+}
 
 .navbar .card {
     border-bottom-left-radius: unset;

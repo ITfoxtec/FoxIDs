@@ -156,7 +156,7 @@ namespace FoxIDs.Logic
         {
             return toUpParties.Select(up => new HrdUpPartySequenceData 
             {
-                Name = up.Name, Type = up.Type, Issuers = up.Issuers, 
+                Name = up.Name, DisplayName = up.DisplayName, Type = up.Type, Issuers = up.Issuers, 
                 HrdDomains = up.HrdDomains, HrdShowButtonWithDomain = up.HrdShowButtonWithDomain, HrdDisplayName = up.HrdDisplayName, HrdLogoUrl = up.HrdLogoUrl,
                 DisableUserAuthenticationTrust = up.DisableUserAuthenticationTrust, DisableTokenExchangeTrust = up.DisableTokenExchangeTrust
             });

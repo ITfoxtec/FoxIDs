@@ -24,8 +24,6 @@ namespace FoxIDs.Client.Pages.Components
         public IJSRuntime JSRuntime { get; set; }
 
         protected List<string> responseTypeItems = new List<string> (Constants.OAuth.DefaultResponseTypes);
-        private Modal importClientKeyModal;
-        private PageEditForm<OAuthUpImportClientKeyViewModel> importClientKeyForm;
 
         protected override async Task OnInitializedAsync()
         {
@@ -120,7 +118,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oauthUpParty.CreateMode)
             {
-                model.DisableUserAuthenticationTrust = true;
+                if (oauthUpParty.TokenExchange)
+                {
+                    model.DisableUserAuthenticationTrust = true;
+                }
                 model.Client = new OAuthUpClientViewModel();
                 model.Client.Claims = new List<string> { "*" };
             }

@@ -127,7 +127,7 @@ namespace FoxIDs.Client.Pages
             upParties = ups;
         }
 
-        private void ShowCreateUpParty(PartyTypes type)
+        private void ShowCreateUpParty(PartyTypes type, bool tokenExchange = false)
         {
             if (type == PartyTypes.Login)
             {
@@ -141,6 +141,7 @@ namespace FoxIDs.Client.Pages
                 var oauthUpParty = new GeneralOAuthUpPartyViewModel();
                 oauthUpParty.CreateMode = true;
                 oauthUpParty.Edit = true;
+                oauthUpParty.TokenExchange = tokenExchange;
                 upParties.Add(oauthUpParty);
             }
             else if (type == PartyTypes.Oidc)
@@ -148,6 +149,7 @@ namespace FoxIDs.Client.Pages
                 var oidcUpParty = new GeneralOidcUpPartyViewModel();
                 oidcUpParty.CreateMode = true;
                 oidcUpParty.Edit = true;
+                oidcUpParty.TokenExchange = tokenExchange;
                 upParties.Add(oidcUpParty);
             }
             else if (type == PartyTypes.Saml2)
@@ -155,6 +157,7 @@ namespace FoxIDs.Client.Pages
                 var samlUpParty = new GeneralSamlUpPartyViewModel();
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
+                samlUpParty.TokenExchange = tokenExchange;
                 upParties.Add(samlUpParty);
             }
             else if (type == PartyTypes.TrackLink)
@@ -211,7 +214,7 @@ namespace FoxIDs.Client.Pages
             newUpPartyModal.Modal.Show();
         }
 
-        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null)
+        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false)
         {
             if(type == PartyTypes.TrackLink)
             {
@@ -221,7 +224,7 @@ namespace FoxIDs.Client.Pages
             }
             else if(type.HasValue)
             {
-                ShowCreateUpParty(type.Value);
+                ShowCreateUpParty(type.Value, tokenExchange);
                 newUpPartyModal.Modal.Hide();
             }
         }

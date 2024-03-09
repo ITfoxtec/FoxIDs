@@ -113,10 +113,18 @@
                         @if (newUpPartyModal.ShowAll)
                         {
                             <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
-                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2))" @onclick:preventDefault>
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.OAuth2, true))" @onclick:preventDefault>
                                     <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(OAuth 2.0)</div></h5>
                                     <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, IdentityServer, Google, Auth0, Okta, Ping Identity, Keycloak, Facebook, LinkedIn.</div>
-                                    <div class="py-2">Exchange token issued from Identity Provider to application access token.</div>
+                                    <div class="py-2">Exchange access token issued from Identity Provider to application / API access token.</div>
+                                </a>
+                            </div>
+
+                            <div class="col-6 py-3 @(newUpPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(async () => await ChangeNewUpPartyStateAsync("Identity Provider - Token Exchange", PartyTypes.Saml2, true))" @onclick:preventDefault>
+                                    <h5 class="py-2">Identity Provider - Token Exchange <div class="small">(SAML 2.0)</div></h5>
+                                    <div class="py-2 font-italic">E.g., Microsoft Entra ID, AD FS, Google Workspace, Okta, Ping Identity, National IdPs.</div>
+                                    <div class="py-2">Exchange SAML 2.0 token issued from Identity Provider to application / API access token.</div>
                                 </a>
                             </div>
 

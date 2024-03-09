@@ -16,6 +16,8 @@ namespace FoxIDs.Client.Models.ViewModels
             Type = upParty.Type;
         }
 
+        public bool TokenExchange { get; set; }
+
         public bool Edit { get; set; }
 
         public bool ShowAdvanced { get; set; }

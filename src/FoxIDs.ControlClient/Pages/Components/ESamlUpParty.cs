@@ -114,6 +114,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (samlUpParty.CreateMode)
             {
+                if (samlUpParty.TokenExchange)
+                {
+                    model.DisableUserAuthenticationTrust = true;
+                }
                 model.Claims = new List<string> { "*" };
             }
         }

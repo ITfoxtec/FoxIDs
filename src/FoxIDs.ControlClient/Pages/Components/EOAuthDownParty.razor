@@ -127,8 +127,11 @@
                             <option value="@ClientAuthenticationMethods.PrivateKeyJwt">Private key JWT</option>
                         </FInputSelect>
                     }
-                    <OAuthSecrets ClientSecret="oauthDownParty.Form.Model.Client" />
-                    @if (DownParty.ShowAdvanced)
+                    @if (DownParty.ShowAdvanced || oauthDownParty.Form.Model.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt)
+                    {
+                        <OAuthSecrets ClientSecret="oauthDownParty.Form.Model.Client" />
+                    }
+                    @if (DownParty.ShowAdvanced || oauthDownParty.Form.Model.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
                     {
                         <div class="form-group active-group active">
                             <div class="drag-drop-zone input-control">

@@ -67,11 +67,11 @@
 
         @if (UpParty.ShowAdvanced || samlUpParty.Form.Model.DisableUserAuthenticationTrust || samlUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => samlUpParty.Form.Model.DisableUserAuthenticationTrust)" TextType="e.d" />
+            <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableUserAuthenticationTrust" For="@(() => samlUpParty.Form.Model.DisableUserAuthenticationTrust)" Negation="true" TextType="e.d" />
         }
         @if (UpParty.ShowAdvanced || samlUpParty.Form.Model.DisableUserAuthenticationTrust || samlUpParty.Form.Model.DisableTokenExchangeTrust)
         {
-            <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => samlUpParty.Form.Model.DisableTokenExchangeTrust)" TextType="e.d" />
+            <FInputToggle @bind-Value="samlUpParty.Form.Model.DisableTokenExchangeTrust" For="@(() => samlUpParty.Form.Model.DisableTokenExchangeTrust)" Negation="true" TextType="e.d" />
         }
 
         @if (samlUpParty.Form.Model.AutomaticStopped)

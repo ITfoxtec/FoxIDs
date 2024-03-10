@@ -302,14 +302,7 @@ namespace FoxIDs.Logic
 
         private async Task ValidateClientSecretAsync(TClient client, string clientSecret, bool clientAuthenticationRequired = true)
         {
-            if (client?.Secrets.Count() <= 0)
-            {
-                if (clientAuthenticationRequired)
-                {
-                    throw new OAuthRequestException($"Invalid client secret. Secret not configured for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
-                }
-            }
-            else
+            if (client?.Secrets?.Count() > 0)
             {
                 foreach (var secret in client.Secrets)
                 {
@@ -321,6 +314,13 @@ namespace FoxIDs.Logic
                 }
 
                 throw new OAuthRequestException($"Invalid client secret for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.AccessDenied };
+            }
+            else
+            {
+                if (clientAuthenticationRequired)
+                {
+                    throw new OAuthRequestException($"Invalid client secret. Secret not configured for client id '{client.ClientId}'.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidClient };
+                }
             }
         }
 

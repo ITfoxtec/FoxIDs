@@ -227,6 +227,11 @@ namespace FoxIDs.Client.Pages
                             new OidcDownScope { Scope = DefaultOidcScopes.Phone, VoluntaryClaims = new List<OidcDownClaim> { new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumber, InIdToken = true }, new OidcDownClaim { Claim = JwtClaimTypes.PhoneNumberVerified, InIdToken = false } } }
                         }
                     };
+
+                    if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
+                    {
+                        afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.GetCorsOriginFromUrl() };
+                    }
                 });
 
                 var oidcDownPartyResult = await DownPartyService.CreateOidcDownPartyAsync(oidcDownParty);

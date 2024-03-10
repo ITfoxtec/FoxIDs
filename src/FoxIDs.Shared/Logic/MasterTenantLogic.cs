@@ -182,7 +182,7 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlClient.ClientId };
             await mControlClientDownParty.SetIdAsync(partyIdKey);
             mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
-            mControlClientDownParty.AllowCorsOrigins = new List<string> { controlClientBaseUri.GetCorsOriginFromUrl() };
+            mControlClientDownParty.AllowCorsOrigins = new List<string> { controlClientBaseUri.UrlToOrigin() };
 
             var scopes = new List<string> { Constants.ControlApi.Access.Tenant };
             if (includeMasterTenantScope)

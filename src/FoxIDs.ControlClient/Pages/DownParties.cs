@@ -230,7 +230,7 @@ namespace FoxIDs.Client.Pages
 
                     if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
                     {
-                        afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.GetCorsOriginFromUrl() };
+                        afterMap.AllowCorsOrigins = new List<string> { newDownPartyOidcForm.Model.RedirectUri.UrlToOrigin() };
                     }
                 });
 

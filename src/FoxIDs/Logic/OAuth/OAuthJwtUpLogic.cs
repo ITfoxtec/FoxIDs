@@ -29,7 +29,7 @@ namespace FoxIDs.Logic
             (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, audience: audience, validateAudience: !audience.IsNullOrWhiteSpace()));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(accessToken, issuer, validKeys, audience: audience, validateIssuer: !issuer.IsNullOrWhiteSpace(), validateAudience: !audience.IsNullOrWhiteSpace()));
                 return claimsPrincipal;
             }
             catch (Exception ex)

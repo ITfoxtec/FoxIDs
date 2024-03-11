@@ -13,7 +13,7 @@ namespace FoxIDs.Models.Api
         public string TenantName { get; set; }
 
         /// <summary>
-        /// Select by full track name. 
+        /// Select by full environment name. 
         /// </summary>
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameRegExPattern)]

@@ -30,7 +30,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track send email.
+        /// Get environment send email.
         /// </summary>
         /// <returns>Send email.</returns>
         [ProducesResponseType(typeof(Api.ResourceItem), StatusCodes.Status200OK)]
@@ -51,7 +51,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get Track.SendEmail by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Get Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", RouteBinding.TrackName);
                 }
                 throw;
@@ -59,7 +59,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Update track send email.
+        /// Update environment send email.
         /// </summary>
         /// <param name="sendEmail">Send email.</param>
         /// <returns>Send email.</returns>
@@ -85,7 +85,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update Track.SendEmail by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Update Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", Convert.ToString(RouteBinding.TrackName));
                 }
                 throw;
@@ -93,7 +93,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Delete track send email.
+        /// Delete environment send email.
         /// </summary>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -115,7 +115,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete Track.SendEmail by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Delete Track.SendEmail by environment name '{RouteBinding.TrackName}'.");
                     return NotFound("Track.SendEmail", Convert.ToString(RouteBinding.TrackName));
                 }
                 throw;

@@ -1,16 +1,20 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FoxIDs.Models.Api
 {
-    public class TrackLinkDownParty : IDownParty, INameValue, IClaimTransform<OAuthClaimTransform>
-    {
-        [Required]
+    public class TrackLinkDownParty : IValidatableObject, IDownParty, INameValue, IClaimTransform<OAuthClaimTransform>
+    {        
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
@@ -37,5 +41,15 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.Claim.TransformsMin, Constants.Models.Claim.TransformsMax)]
         [JsonProperty(PropertyName = "claim_transforms")]
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            var results = new List<ValidationResult>();
+            if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+            }
+            return results;
+        }
     }
 }

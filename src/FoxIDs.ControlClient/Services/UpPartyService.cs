@@ -53,9 +53,9 @@ namespace FoxIDs.Client.Services
 
         public async Task<SamlUpParty> ReadSamlUpPartyMetadataAsync(SamlReadMetadataRequest metadata) => await PostResponseAsync<SamlReadMetadataRequest, SamlUpParty>(samlReadMetadataApiUri, metadata);
 
-        public async Task<TrackLinkUpParty> GetTrackLinkUpPartyAsync(string name) => await GetAsync<TrackLinkUpParty>(trackLinkApiUri, name);
+        public async Task<TrackLinkUpParty> GetTrackLinkUpPartyAsync(string name, string trackName = null) => await GetAsync<TrackLinkUpParty>(GetApiUrl(trackLinkApiUri, trackName), name);
         public async Task<TrackLinkUpParty> CreateTrackLinkUpPartyAsync(TrackLinkUpParty party) => await PostResponseAsync<TrackLinkUpParty, TrackLinkUpParty>(trackLinkApiUri, party);
         public async Task<TrackLinkUpParty> UpdateTrackLinkUpPartyAsync(TrackLinkUpParty party) => await PutResponseAsync<TrackLinkUpParty, TrackLinkUpParty>(trackLinkApiUri, party);
-        public async Task DeleteTrackLinkUpPartyAsync(string name) => await DeleteAsync(trackLinkApiUri, name);
+        public async Task DeleteTrackLinkUpPartyAsync(string name, string trackName = null) => await DeleteAsync(GetApiUrl(trackLinkApiUri, trackName), name);
     }
 }

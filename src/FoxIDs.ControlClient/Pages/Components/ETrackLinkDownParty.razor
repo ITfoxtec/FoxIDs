@@ -4,19 +4,16 @@
     var trackLinkDownParty = DownParty as GeneralTrackLinkDownPartyViewModel;
 }
 
-<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(m => TrackLinkDownPartyViewModelAfterInit(trackLinkDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
+<PageEditForm @ref="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkDownPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkDownPartyValidSubmitAsync(trackLinkDownParty, editContext))">
     <div class="modal-header">
         <div>
-            Track link
+            Environment Link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (trackLinkDownParty.CreateMode)
-        {
-            <FInputText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" Focus="true" />
-        }
-        else
+        <FInputText @bind-Value="trackLinkDownParty.Form.Model.DisplayName" For="@(() => trackLinkDownParty.Form.Model.DisplayName)" Focus="true" />
+        @if (trackLinkDownParty.ShowAdvanced)
         {
             <FFieldText @bind-Value="trackLinkDownParty.Form.Model.Name" For="@(() => trackLinkDownParty.Form.Model.Name)" />
         }
@@ -26,18 +23,18 @@
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            <div>Please add a corresponding up-party track link in the track you want to connect to.</div>
+            <div>Please add a corresponding application environment link in the environment you want to connect to.</div>
         </div>
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 @if (trackLinkDownParty.ShowTrackLinkTab)
                 {
-                    <a class="nav-link active">Track link</a>
+                    <a class="nav-link active">Environment Link</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkDownParty, TrackLinkTabTypes.TrackLink))">Track link</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkDownParty, TrackLinkTabTypes.TrackLink))">Environment Link</button>
                 }
             </li>
             <li class="nav-item">
@@ -55,9 +52,22 @@
         <div class="tab-content pt-3">
             @if (trackLinkDownParty.ShowTrackLinkTab)
             {
-                <FInputText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
-                <FInputText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
-
+                @if (trackLinkDownParty.Form.Model.ToUpTrackDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpTrackDisplayName" For="@(() => trackLinkDownParty.Form.Model.ToUpTrackDisplayName)" />
+                }
+                @if (trackLinkDownParty.Form.Model.ToUpPartyDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkDownParty.Form.Model.ToUpPartyDisplayName" For="@(() => trackLinkDownParty.Form.Model.ToUpPartyDisplayName)" />
+                }
                 <SelectUpParty @ref="trackLinkDownParty.SelectAllowUpPartyName" EditDownPartyForm="trackLinkDownParty.Form" TModel="TrackLinkDownPartyViewModel" OnAddUpPartyName="AddAllowUpPartyName" OnRemoveUpPartyName="RemoveAllowUpPartyName" />
 
                 @if (DownParty.ShowAdvanced)
@@ -67,7 +77,7 @@
                         @if (trackLinkDownParty.Form.Model.Claims.Count() <= 0)
                         {
                             <div class="card">
-                                <div class="card-body px-3 py-2">
+                                <div class="card-body">
                                 </div>
                             </div>
                         }
@@ -110,12 +120,12 @@
             }
         </div>
     </div>
-    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    @if (DownParty.DeleteAcknowledge)
     {
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Track link Down-party "@DownParty.Name", are you sure?
+                    You are about to delete Environment Link application registration "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">
@@ -126,11 +136,8 @@
         </div>
     }
     <div class="modal-footer">
-        @if (!DownParty.CreateMode)
-        {
-            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
-        }
-        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
+        <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>

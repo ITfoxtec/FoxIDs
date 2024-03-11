@@ -6,13 +6,16 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Messages;
+using ITfoxtec.Identity.Saml2.Schemas;
 using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -58,7 +61,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => "Up, OIDC Authentication request redirect.");
+            logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -83,11 +86,11 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, OIDC Authentication request.");
+            logger.ScopeTrace(() => "AuthMethod, OIDC Authentication request.");
             var oidcUpSequenceData = await sequenceLogic.GetSequenceDataAsync<OidcUpSequenceData>(remove: false);
             if (!oidcUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
             logger.SetScopeProperty(Constants.Logs.UpPartyId, oidcUpSequenceData.UpPartyId);
 
@@ -149,7 +152,7 @@ namespace FoxIDs.Logic
             //TODO add AcrValues
             //authenticationRequest.AcrValues = "urn:federation:authentication:windows";
 
-            logger.ScopeTrace(() => $"Up, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, Authentication request '{authenticationRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var nameValueCollection = authenticationRequest.ToDictionary();
 
             if (party.Client.AdditionalParameters?.Count() > 0)
@@ -158,7 +161,7 @@ namespace FoxIDs.Logic
                 {
                     nameValueCollection.Add(additionalParameter.Name, additionalParameter.Value);
                 }
-                logger.ScopeTrace(() => $"Up, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, AdditionalParameters request '{{{string.Join(", ", party.Client.AdditionalParameters.Select(p => $"\"{p.Name}\": \"{p.Value}\""))}}}'.", traceType: TraceTypes.Message);
             }
 
             if (party.Client.EnablePkce)
@@ -169,20 +172,20 @@ namespace FoxIDs.Logic
                     CodeChallengeMethod = IdentityConstants.CodeChallengeMethods.S256,
                 };
 
-                logger.ScopeTrace(() => $"Up, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, CodeChallengeSecret request '{codeChallengeRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 nameValueCollection = nameValueCollection.AddToDictionary(codeChallengeRequest);
             }
 
             securityHeaderLogic.AddFormActionAllowAll();
 
-            logger.ScopeTrace(() => $"Up, Authentication request URL '{party.Client.AuthorizeUrl}'.");
-            logger.ScopeTrace(() => "Up, Sending OIDC Authentication request.", triggerEvent: true);
+            logger.ScopeTrace(() => $"AuthMethod, Authentication request URL '{party.Client.AuthorizeUrl}'.");
+            logger.ScopeTrace(() => "AuthMethod, Sending OIDC Authentication request.", triggerEvent: true);
             return await nameValueCollection.ToRedirectResultAsync(party.Client.AuthorizeUrl, RouteBinding.DisplayName);            
         }
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => $"Up, OIDC Authentication response.");
+            logger.ScopeTrace(() => $"AuthMethod, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<TParty>(partyId);
@@ -191,7 +194,7 @@ namespace FoxIDs.Logic
             (var formOrQueryDictionary, var onlyAcceptGetResponseWithError) = GetFormOrQueryDictionary(party);
 
             var authenticationResponse = formOrQueryDictionary.ToObject<AuthenticationResponse>();
-            logger.ScopeTrace(() => $"Up, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, Authentication response '{authenticationResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             if (authenticationResponse.State.IsNullOrEmpty()) throw new ArgumentNullException(nameof(authenticationResponse.State), authenticationResponse.GetTypeName());
 
             OidcUpSequenceData sequenceData = null;
@@ -209,29 +212,41 @@ namespace FoxIDs.Logic
             var sessionResponse = formOrQueryDictionary.ToObject<SessionResponse>();
             if (sessionResponse != null)
             {
-                logger.ScopeTrace(() => $"Up, Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Session response '{sessionResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             }
 
             try
             {
-                logger.ScopeTrace(() => "Up, OIDC Authentication response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AuthMethod, OIDC Authentication response.", triggerEvent: true);
 
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
                 ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow, onlyAcceptGetResponseWithError);
 
-                (var claims, var idToken) = isImplicitFlow switch
+                (var claims, var idToken, List<string> tokenIssuers) = isImplicitFlow switch
                 {
                     true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
                 };
-                logger.ScopeTrace(() => "Up, Successful OIDC Authentication response.", triggerEvent: true);
-                logger.ScopeTrace(() => $"Up, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => "AuthMethod, Successful OIDC Authentication response.", triggerEvent: true);
+                logger.ScopeTrace(() => $"AuthMethod, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
-                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
+                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
+                    c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType && 
+                    c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
+                claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+                claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
                 claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+                if (tokenIssuers?.Count() > 0)
+                {
+                    foreach (var tokenIssuer in tokenIssuers)
+                    {
+                        claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));
+                    }                  
+                }
 
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
@@ -247,7 +262,7 @@ namespace FoxIDs.Logic
                     await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Oidc);
                 }
 
-                logger.ScopeTrace(() => $"Up, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AuthMethod, OIDC output JWT claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 return await AuthenticationResponseDownAsync(sequenceData, claims: validClaims);
             }
             catch (StopSequenceException)
@@ -319,7 +334,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim>, string)> HandleAuthorizationCodeResponseAsync(TParty party, OidcUpSequenceData sequenceData, string code)
+        private async Task<(List<Claim> claims, string idToken, List<string> tokenIssuers)> HandleAuthorizationCodeResponseAsync(TParty party, OidcUpSequenceData sequenceData, string code)
         {
             var tokenResponse = await TokenRequestAsync(party.Client, code, sequenceData);
             return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken, false);
@@ -327,7 +342,7 @@ namespace FoxIDs.Logic
 
         private async Task<TokenResponse> TokenRequestAsync(TClient client, string code, OidcUpSequenceData sequenceData)
         {
-            logger.ScopeTrace(() => $"Up, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, OIDC Token request URL '{client.TokenUrl}'.", traceType: TraceTypes.Message);
             var request = new HttpRequestMessage(HttpMethod.Post, client.TokenUrl);
 
             var tokenRequest = new TokenRequest
@@ -337,7 +352,7 @@ namespace FoxIDs.Logic
                 ClientId = !client.SpClientId.IsNullOrWhiteSpace() ? client.SpClientId : client.ClientId,
                 RedirectUri = sequenceData.RedirectUri,
             };
-            logger.ScopeTrace(() => $"Up, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+            logger.ScopeTrace(() => $"AuthMethod, Token request '{tokenRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
             var requestDictionary = tokenRequest.ToDictionary();
 
             requestDictionary = await AddClientAuthenticationAsync(client, tokenRequest.ClientId, request, requestDictionary);
@@ -348,7 +363,7 @@ namespace FoxIDs.Logic
                 {
                     CodeVerifier = sequenceData.CodeVerifier,
                 };
-                logger.ScopeTrace(() => $"Up, Code verifier secret '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Code verifier secret '{new CodeVerifierSecret { CodeVerifier = $"{(codeVerifierSecret.CodeVerifier?.Length > 10 ? codeVerifierSecret.CodeVerifier.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(codeVerifierSecret);
             }
 
@@ -360,7 +375,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.OK:
                     var result = await response.Content.ReadAsStringAsync();
                     var tokenResponse = result.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"Up, Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Token response '{tokenResponse.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     tokenResponse.Validate(true);
                     if (tokenResponse.AccessToken.IsNullOrEmpty()) throw new ArgumentNullException(nameof(tokenResponse.AccessToken), tokenResponse.GetTypeName());
                     if (tokenResponse.ExpiresIn <= 0) throw new ArgumentNullException(nameof(tokenResponse.ExpiresIn), tokenResponse.GetTypeName());
@@ -369,7 +384,7 @@ namespace FoxIDs.Logic
                 case HttpStatusCode.BadRequest:
                     var resultBadRequest = await response.Content.ReadAsStringAsync();
                     var tokenResponseBadRequest = resultBadRequest.ToObject<TokenResponse>();
-                    logger.ScopeTrace(() => $"Up, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Bad token response '{tokenResponseBadRequest.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                     try
                     {
                         tokenResponseBadRequest.Validate(true);
@@ -385,7 +400,7 @@ namespace FoxIDs.Logic
                     {
                         var resultUnexpectedStatus = await response.Content.ReadAsStringAsync();
                         var tokenResponseUnexpectedStatus = resultUnexpectedStatus.ToObject<TokenResponse>();
-                        logger.ScopeTrace(() => $"Up, Unexpected status code token response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                        logger.ScopeTrace(() => $"AuthMethod, Unexpected status code token response '{tokenResponseUnexpectedStatus.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                         try
                         {
                             tokenResponseUnexpectedStatus.Validate(true);
@@ -413,7 +428,7 @@ namespace FoxIDs.Logic
             {
                 if (!client.ClientSecret.IsNullOrEmpty())
                 {
-                    logger.ScopeTrace(() => $"Up, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Client credentials basic '{ new ClientCredentials { ClientSecret = $"{(client.ClientSecret?.Length > 10 ? client.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
                     request.Headers.Authorization = new AuthenticationHeaderValue(IdentityConstants.TokenTypes.Bearer, $"{WebUtility.UrlEncode(clientId)}:{WebUtility.UrlEncode(client.ClientSecret)}".Base64Encode());
                 }
             }
@@ -425,7 +440,7 @@ namespace FoxIDs.Logic
                     {
                         ClientSecret = client.ClientSecret,
                     };
-                    logger.ScopeTrace(() => $"Up, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
+                    logger.ScopeTrace(() => $"AuthMethod, Client credentials post '{ new ClientCredentials { ClientSecret = $"{(clientCredentials.ClientSecret?.Length > 10 ? clientCredentials.ClientSecret.Substring(0, 3) : string.Empty)}..." }.ToJsonIndented() }'.", traceType: TraceTypes.Message);
                     requestDictionary = requestDictionary.AddToDictionary(clientCredentials);
                 }
             }
@@ -442,8 +457,8 @@ namespace FoxIDs.Logic
                     ClientAssertionType = IdentityConstants.ClientAssertionTypes.JwtBearer,
                     ClientAssertion = await oidcJwtUpLogic.CreateClientAssertionAsync(client, clientId, algorithm)
                 };
-                logger.ScopeTrace(() => $"Up, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
-                logger.ScopeTrace(() => $"Up, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Client credentials private key JWT '{new { client.ClientKeys.First().PublicKey.ToX509Certificate().Thumbprint }.ToJsonIndented()}'.", traceType: TraceTypes.Message);
+                logger.ScopeTrace(() => $"AuthMethod, Client credentials assertion '{clientAssertionCredentials.ToJsonIndented()}'.", traceType: TraceTypes.Message);
                 requestDictionary = requestDictionary.AddToDictionary(clientAssertionCredentials);
             }
             else
@@ -454,9 +469,14 @@ namespace FoxIDs.Logic
             return requestDictionary;
         }
 
-        protected async Task<(List<Claim>, string)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        protected async Task<(List<Claim> claims, string idToken, List<string> tokenIssuers)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
-            var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
+            var tokenIssuers = new List<string>();
+            (var claims, var idTokenIssuer) = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
+            if (!idTokenIssuer.IsNullOrEmpty())
+            {
+                tokenIssuers.Add(idTokenIssuer);
+            }
             if (!accessToken.IsNullOrWhiteSpace())
             {
                 if (party.Client.UseUserInfoClaims)
@@ -466,7 +486,11 @@ namespace FoxIDs.Logic
                 else if (!party.Client.UseIdTokenClaims)
                 {
                     var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
-                    claims = await ValidateAccessTokenAsync(party, accessToken);
+                    (claims, var accessTokenIssuer) = await ValidateAccessTokenAsync(party, accessToken);
+                    if (!accessTokenIssuer.IsNullOrEmpty())
+                    {
+                        tokenIssuers.Add(accessTokenIssuer);
+                    }
                     if (sessionIdClaim != null && !claims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
                     {
                         claims.Add(sessionIdClaim);
@@ -499,21 +523,17 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            return (claims, idToken);
+            return (claims, idToken, tokenIssuers);
         }
 
-        private async Task<List<Claim>> ValidateIdTokenAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        private async Task<(List<Claim> claims, string tokenIssuer)> ValidateIdTokenAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             try
             {
                 var jwtToken = JwtHandler.ReadToken(idToken);
-                var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
-                if (string.IsNullOrEmpty(issuer))
-                {
-                    throw new OAuthRequestException($"{party.Name}|Id token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                }
+                (string issuer, string tokenIssuer) = ValidateIdTokenIssuer(party, jwtToken);
 
-                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);
+                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);              
                 var nonce = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
                 {
@@ -530,7 +550,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                return claimsPrincipal.Claims.ToList();
+                return (claimsPrincipal.Claims.ToList(), !tokenIssuer.IsNullOrEmpty() ? $"id_token|{tokenIssuer}" : null);
             }
             catch (OAuthRequestException)
             {
@@ -542,11 +562,29 @@ namespace FoxIDs.Logic
             }
         }
 
+        private (string issuer, string tokenIssuer) ValidateIdTokenIssuer(TParty party, JwtSecurityToken jwtToken)
+        {
+            var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
+            if (string.IsNullOrEmpty(issuer))
+            {
+                if (party.EditIssuersInAutomatic == true && party.Issuers.Where(i => i == "*").Any())
+                {
+                    return (null, jwtToken.Issuer);
+                }
+                else
+                {
+                    throw new OAuthRequestException($"{party.Name}|Id token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                }
+            }
+
+            return (issuer, null);
+        }
+
         private async Task<IActionResult> AuthenticationResponseDownAsync(OidcUpSequenceData sequenceData, List<Claim> claims = null, string error = null, string errorDescription = null)
         {
             try
             {
-                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
 
                 if (error.IsNullOrEmpty())
                 {

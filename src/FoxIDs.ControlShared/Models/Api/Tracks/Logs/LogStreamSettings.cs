@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Log stream settings in track.
+    /// Log stream settings in environment.
     /// </summary>
     public class LogStreamSettings : LogSettings, IValidatableObject
     {

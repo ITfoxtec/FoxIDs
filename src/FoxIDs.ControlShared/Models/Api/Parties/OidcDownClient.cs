@@ -8,7 +8,7 @@ namespace FoxIDs.Models.Api
     public class OidcDownClient : IValidatableObject
     {
         [ValidateComplexType]
-        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesApiMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
@@ -29,6 +29,9 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.OidcDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
+
+        [Display(Name = "Disable absolute URIs")]
+        public bool DisableAbsoluteUris { get; set; }
 
         [MaxLength(Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [Display(Name = "Post logout redirect URI")]

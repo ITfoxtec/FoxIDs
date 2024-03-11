@@ -8,11 +8,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class TrackLinkDownPartyViewModel : IDownPartyName, IValidatableObject, IAllowUpPartyNames, IOAuthClaimTransformViewModel
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Down-party name (client ID / resource name)")]
+        [Display(Name = "Client ID / Resource name)")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
@@ -21,18 +26,24 @@ namespace FoxIDs.Client.Models.ViewModels
         [Required]
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        [Display(Name = "To track name")]
+        [Display(Name = "Link environment")]
         public string ToUpTrackName { get; set; }
+
+        [Display(Name = "Link environment")]
+        public string ToUpTrackDisplayName { get; set; }
 
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "To up-party name")]
+        [Display(Name = "Link authentication method")]
         public string ToUpPartyName { get; set; }
+
+        [Display(Name = "Link authentication method")]
+        public string ToUpPartyDisplayName { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow up-party names")]
+        [Display(Name = "Allow applications")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [ValidateComplexType]

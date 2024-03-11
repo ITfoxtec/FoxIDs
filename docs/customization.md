@@ -2,8 +2,6 @@
 
 FoxIDs can be customized to support your needs. 
 
-> If you miss a customization option, please contact [support](https://www.foxids.com/support).
-
 ## Title, Icon and CSS
 
 The FoxIDs user interface can be customized with a another [title, icon and CSS](name-title-icon-css.md).

@@ -40,6 +40,12 @@ namespace FoxIDs.Client.Pages
             }
         }
 
+        protected override void OnDispose()
+        {
+            TrackSelectedLogic.OnTrackSelectedAsync -= OnTrackSelectedAsync;
+            base.OnDispose();
+        }
+
         private async Task OnTrackSelectedAsync(Track track)
         {
             await DefaultLoadAsync();

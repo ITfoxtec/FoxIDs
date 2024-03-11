@@ -52,9 +52,6 @@ namespace FoxIDs.Client.Pages.Components
         {
             return loginUpParty.Map<LoginUpPartyViewModel>(afterMap: afterMap =>
             {
-                afterMap.EnableSingleLogout = !loginUpParty.DisableSingleLogout;
-                afterMap.EnableResetPassword = !loginUpParty.DisableResetPassword;
-
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -124,9 +121,6 @@ namespace FoxIDs.Client.Pages.Components
                 {
                     var loginUpPartyResult = await UpPartyService.CreateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
-                        afterMap.DisableSingleLogout = !generalLoginUpParty.Form.Model.EnableSingleLogout;
-                        afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
-
                         if (afterMap.ClaimTransforms?.Count() > 0)
                         {
                             int order = 1;
@@ -157,15 +151,14 @@ namespace FoxIDs.Client.Pages.Components
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpPartyResult));
                     generalLoginUpParty.CreateMode = false;
-                    toastService.ShowSuccess("Login up-party created.");
+                    toastService.ShowSuccess("Login application created.");
+                    generalLoginUpParty.Name = loginUpPartyResult.Name;
+                    generalLoginUpParty.DisplayName = loginUpPartyResult.DisplayName;
                 }
                 else
                 {
                     var loginUpParty = await UpPartyService.UpdateLoginUpPartyAsync(generalLoginUpParty.Form.Model.Map<LoginUpParty>(afterMap: afterMap =>
                     {
-                        afterMap.DisableSingleLogout = !generalLoginUpParty.Form.Model.EnableSingleLogout;
-                        afterMap.DisableResetPassword = !generalLoginUpParty.Form.Model.EnableResetPassword;
-
                         if (afterMap.ClaimTransforms?.Count() > 0)
                         {
                             int order = 1;
@@ -195,9 +188,9 @@ namespace FoxIDs.Client.Pages.Components
                         }
                     }));
                     generalLoginUpParty.Form.UpdateModel(ToViewModel(loginUpParty));
-                    toastService.ShowSuccess("Login up-party updated.");
+                    toastService.ShowSuccess("Login application updated.");
+                    generalLoginUpParty.DisplayName = loginUpParty.DisplayName;
                 }
-                generalLoginUpParty.Name = generalLoginUpParty.Form.Model.Name;             
             }
             catch (FoxIDsApiException ex)
             {

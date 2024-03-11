@@ -42,6 +42,11 @@ namespace FoxIDs.Logic
                 return true;
             }
 
+            if (oldUpParty.DisplayName != newUpParty.DisplayName)
+            {
+                return true;
+            }
+
             var oldHrdIssuers = oldUpParty.ReadIssuers != null ? string.Join(',', oldUpParty.ReadIssuers) : string.Empty;
             var newHrdIssuers = newUpParty.ReadIssuers != null ? string.Join(',', newUpParty.ReadIssuers) : string.Empty;
             if (oldHrdIssuers != newHrdIssuers) 
@@ -89,6 +94,7 @@ namespace FoxIDs.Logic
             var message = new UpPartyHrdQueueMessage
             {
                 Name = upParty.Name,
+                DisplayName = upParty.DisplayName,
                 Issuers = upParty.ReadIssuers,
                 SpIssuer = upParty.SpIssuer,
                 HrdDisplayName = upParty.HrdDisplayName,
@@ -108,7 +114,7 @@ namespace FoxIDs.Logic
                 TrackName = routeBinding.TrackName,
                 Logging = routeBinding.Logging,
                 LogicClassTypeFullName = GetType().FullName,
-                Info = remove ? $"Remove up-party '{upParty.Name}' from down-parties allow up-party list" : $"Update up-party '{upParty.Name}' in down-parties allow up-party list",
+                Info = remove ? $"Remove authentication method '{upParty.Name}' from application registrations allow authentication method list" : $"Update authentication method '{upParty.Name}' in application registrations allow authentication method list",
                 Message = message.ToJson(),
             };
             if (routeBinding.TelemetryClient != null)
@@ -162,7 +168,7 @@ namespace FoxIDs.Logic
                     await UpdateDownPartyAsync<OAuthDownParty>(scopedLogger, tenantName, trackName, downParty, messageObj);
                     break;
                 default:
-                    throw new NotSupportedException($"Down-party type {downParty.Type} not supported.");
+                    throw new NotSupportedException($"Application registration type {downParty.Type} not supported.");
             }
         }
 
@@ -180,6 +186,7 @@ namespace FoxIDs.Logic
             {
                 if (!messageObj.Remove)
                 {
+                    upParty.DisplayName = messageObj.DisplayName;
                     upParty.Issuers = messageObj.Issuers;
                     upParty.SpIssuer = messageObj.SpIssuer;
                     upParty.HrdDomains = messageObj.HrdDomains;

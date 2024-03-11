@@ -28,6 +28,7 @@ namespace FoxIDs.Client.Shared
         private List<string> createTenantReceipt = new List<string>();
         private Modal createTrackModal;
         private PageEditForm<CreateTrackViewModel> createTrackForm;
+        private bool createTrackShowAdvanced;
         private bool createTrackWorking;
         private bool createTrackDone;
         private List<string> createTrackReceipt = new List<string>();
@@ -89,8 +90,8 @@ namespace FoxIDs.Client.Shared
             {
                 await LoadAndSelectTracAsync();
                 myProfileClaims = user.Claims;
-                if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.UpPartyType && c.Value == Constants.DefaultLogin.Name).Any() &&
-                    user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.UpParty && c.Value == Constants.DefaultLogin.Name).Any() &&
+                if (user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethodType && c.Value == Constants.DefaultLogin.Name).Any() &&
+                    user.Claims.Where(c => c.Type == Constants.JwtClaimTypes.AuthMethod && c.Value == Constants.DefaultLogin.Name).Any() &&
                     user.Claims.Where(c => c.Type == JwtClaimTypes.Email).Any())
                 {
                     myProfileMasterMasterLogin = true;
@@ -132,13 +133,13 @@ namespace FoxIDs.Client.Shared
                 }));
                 createTenantDone = true;
                 createTenantReceipt.Add("Tenant created.");
-                createTenantReceipt.Add("Master track with user repository created.");
-                createTenantReceipt.Add("Master track default login up-party created.");
-                createTenantReceipt.Add("First master track administrator user created.");
-                createTenantReceipt.Add("Master track FoxIDs Control API down-party created.");
-                createTenantReceipt.Add("Master track FoxIDs Control client down-party created.");
-                createTenantReceipt.Add("Test track with user repository created.");
-                createTenantReceipt.Add("Production track with user repository created.");
+                createTenantReceipt.Add("Master environment with user repository created.");
+                createTenantReceipt.Add("Master login authentication method created.");
+                createTenantReceipt.Add("First master administrator user created.");
+                createTenantReceipt.Add("Master Control API registration created.");
+                createTenantReceipt.Add("Master Control client registration created.");
+                createTenantReceipt.Add("Test environment with user repository created.");
+                createTenantReceipt.Add("Production environment with user repository created.");
 
                 await NotificationLogic.TenantUpdatedAsync();
             }
@@ -175,19 +176,20 @@ namespace FoxIDs.Client.Shared
                 }
                 createTrackWorking = true;
                 var track = createTrackForm.Model.Map<Track>();
-                await TrackService.CreateTrackAsync(track);
+                var trackResponse = await TrackService.CreateTrackAsync(track);
                 createTrackDone = true;
-                createTrackReceipt.Add("Track created.");
+                createTrackReceipt.Add("Environment created.");
                 createTrackReceipt.Add("User repository created.");
-                createTrackReceipt.Add("Default login up-party created.");
+                createTrackReceipt.Add("Certificate created.");
+                createTrackReceipt.Add("Login authentication method created.");
 
                 if (selectTrackFilterForm.Model != null)
                 {
                     selectTrackFilterForm.Model.FilterName = null;
                 }
                 await LoadSelectTrackAsync();
-                await TrackSelectedLogic.TrackSelectedAsync(track);
-                await UserProfileLogic.UpdateTrackAsync(track.Name);
+                await TrackSelectedLogic.TrackSelectedAsync(trackResponse);
+                await UserProfileLogic.UpdateTrackAsync(trackResponse.Name);
             }
             catch (FoxIDsApiException ex)
             {
@@ -261,7 +263,7 @@ namespace FoxIDs.Client.Shared
             try
             {
                 selectTrackError = null;
-                selectTrackTasks = OrderTracks(await TrackService.FilterTrackAsync(null));
+                selectTrackTasks = (await TrackService.FilterTrackAsync(null)).OrderTracks();
                 
             }
             catch (TokenUnavailableException)
@@ -278,7 +280,7 @@ namespace FoxIDs.Client.Shared
         {
             try
             {
-                selectTrackTasks = OrderTracks(await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName));
+                selectTrackTasks = (await TrackService.FilterTrackAsync(selectTrackFilterForm.Model.FilterName)).OrderTracks();
             }
             catch (FoxIDsApiException ex)
             {
@@ -291,31 +293,6 @@ namespace FoxIDs.Client.Shared
                     throw;
                 }
             }
-        }
-
-        private IEnumerable<Track> OrderTracks(IEnumerable<Track> tracks)
-        {
-            var orderedTracks = new List<Track>();
-            if (tracks?.Count() > 0)
-            {
-                Track masterTrack = null;
-                foreach (var track in tracks)
-                {
-                    if (Constants.Routes.MasterTenantName.Equals(track.Name, StringComparison.OrdinalIgnoreCase))
-                    {
-                        masterTrack = track;
-                    }
-                    else
-                    {
-                        orderedTracks.Add(track);
-                    }
-                }
-                if (masterTrack != null)
-                {
-                    orderedTracks.Add(masterTrack);
-                }
-            }
-            return orderedTracks;
         }
 
         private async Task<bool> SelectTrackAsync(string trackName)

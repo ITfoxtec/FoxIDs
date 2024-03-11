@@ -31,7 +31,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track claim mappings.
+        /// Get environment claim mappings.
         /// </summary>
         /// <returns>Claim mappings.</returns>
         [ProducesResponseType(typeof(List<Api.ClaimMap>), StatusCodes.Status200OK)]
@@ -63,7 +63,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Save track claim mappings.
+        /// Save environment claim mappings.
         /// </summary>
         /// <param name="claimMappings">Claim mappings.</param>
         /// <returns>Claim mappings.</returns>
@@ -96,7 +96,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.ClaimMappings)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Save {nameof(Track)}.{nameof(Track.ClaimMappings)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound($"{nameof(Track)}.{nameof(Track.ClaimMappings)}", RouteBinding.TrackName);
                 }
                 throw;

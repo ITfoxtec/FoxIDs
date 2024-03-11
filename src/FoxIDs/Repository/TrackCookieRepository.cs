@@ -46,7 +46,7 @@ namespace FoxIDs.Repository
             if (RouteBindingDoNotExists(routeBinding)) return null;
             CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Get track cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Get environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
@@ -58,13 +58,13 @@ namespace FoxIDs.Repository
                 }
                 catch (CryptographicException ex)
                 {
-                    logger.Warning(ex, $"Unable to unprotect track cookie '{typeof(TMessage).Name}', deleting cookie.");
+                    logger.Warning(ex, $"Unable to unprotect environment cookie '{typeof(TMessage).Name}', deleting cookie.");
                     DeleteByName(routeBinding, CookieName());
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Unable to read track cookie '{typeof(TMessage).Name}'.", ex);
+                    throw new Exception($"Unable to read environment cookie '{typeof(TMessage).Name}'.", ex);
                 }
             }
             else
@@ -79,7 +79,7 @@ namespace FoxIDs.Repository
             CheckRouteBinding(routeBinding);
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace(() => $"Save track cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Save environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             var cookieOptions = new CookieOptions
             {
@@ -105,7 +105,7 @@ namespace FoxIDs.Repository
             if (RouteBindingDoNotExists(routeBinding)) return;
             CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Delete track cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete environment cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             DeleteByName(routeBinding, CookieName());
         }

@@ -6,7 +6,6 @@ using ITfoxtec.Identity;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Distributed;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,15 +17,15 @@ namespace FoxIDs.Logic
         private readonly FoxIDsSettings settings;
         private readonly TelemetryScopedLogger logger;
         private readonly IDataProtectionProvider dataProtectionProvider;
-        private readonly IDistributedCache distributedCache;
+        private readonly IDistributedCacheProvider cacheProvider;
         private readonly LocalizationLogic localizationLogic;
 
-        public SequenceLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDataProtectionProvider dataProtectionProvider, IDistributedCache distributedCache, LocalizationLogic localizationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
+        public SequenceLogic(FoxIDsSettings settings, TelemetryScopedLogger logger, IDataProtectionProvider dataProtectionProvider, IDistributedCacheProvider cacheProvider, LocalizationLogic localizationLogic, IHttpContextAccessor httpContextAccessor) : base(httpContextAccessor)
         {
             this.settings = settings;
             this.logger = logger;
             this.dataProtectionProvider = dataProtectionProvider;
-            this.distributedCache = distributedCache;
+            this.cacheProvider = cacheProvider;
             this.localizationLogic = localizationLogic;
         }
 
@@ -108,7 +107,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace(() => $"Sequence down-party added, id '{sequence.Id}', downPartyId '{downPartyId}', downPartyType '{downPartyType}'.");
+                logger.ScopeTrace(() => $"Sequence application registration added, id '{sequence.Id}', downPartyId '{downPartyId}', downPartyType '{downPartyType}'.");
             }
         }
         public async Task SetUiUpPartyIdAsync(string uiUpPartyId)
@@ -120,7 +119,7 @@ namespace FoxIDs.Logic
                 HttpContext.Items[Constants.Sequence.Object] = sequence;
                 HttpContext.Items[Constants.Sequence.String] = await CreateSequenceStringAsync(sequence);
 
-                logger.ScopeTrace(() => $"Sequence UI up-party added, id '{sequence.Id}', uiUpPartyId '{uiUpPartyId}'.");
+                logger.ScopeTrace(() => $"Sequence UI authentication method added, id '{sequence.Id}', uiUpPartyId '{uiUpPartyId}'.");
             }
         }
 
@@ -206,12 +205,10 @@ namespace FoxIDs.Logic
             await data.ValidateObjectAsync();
 
             sequence = sequence ?? HttpContext.GetSequence();
-            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime);
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpiration = data is IDownSequenceData ? absoluteExpiration.AddSeconds(settings.SequenceGracePeriod) : absoluteExpiration
-            };
-            await distributedCache.SetStringAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), options);
+            var lifetime = sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime;
+            if (data is IDownSequenceData)
+                lifetime += settings.SequenceGracePeriod;
+            await cacheProvider.SetAsync(DataKey(typeof(T), sequence, trackName), data.ToJson(), lifetime);
             return data;
         }
 
@@ -223,7 +220,7 @@ namespace FoxIDs.Logic
                 return default;
             }
             var key = DataKey(typeof(T), sequence, trackName);
-            var data = await distributedCache.GetStringAsync(key);
+            var data = await cacheProvider.GetAsync(key);
             if(data == null)
             {
                 if(allowNull)
@@ -239,7 +236,7 @@ namespace FoxIDs.Logic
             var sequenceData = data.ToObject<T>();
             if (remove)
             {
-                await distributedCache.RemoveAsync(key);
+                await cacheProvider.DeleteAsync(key);
             }
             return sequenceData;
         }
@@ -269,7 +266,7 @@ namespace FoxIDs.Logic
         {
             var sequence = HttpContext.GetSequence();
             var key = DataKey(typeof(T), sequence);
-            await distributedCache.RemoveAsync(key);
+            await cacheProvider.DeleteAsync(key);
         }
 
         private Task<string> CreateSequenceStringAsync(Sequence sequence)
@@ -316,12 +313,8 @@ namespace FoxIDs.Logic
             var sequenceString = HttpContext.GetSequenceString();
 
             var externalId = RandomGenerator.Generate(50);
-            var absoluteExpiration = DateTimeOffset.FromUnixTimeSeconds(sequence.CreateTime).AddSeconds(sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime).AddSeconds(settings.SequenceGracePeriod);
-            var options = new DistributedCacheEntryOptions
-            {
-                AbsoluteExpiration = absoluteExpiration
-            };
-            await distributedCache.SetStringAsync(ExternalDataKey(externalId), sequenceString, options);
+            var lifetime = sequence.AccountAction == true ? settings.AccountActionSequenceLifetime : HttpContext.GetRouteBinding().SequenceLifetime + settings.SequenceGracePeriod;
+            await cacheProvider.SetAsync(ExternalDataKey(externalId), sequenceString, lifetime);
             return externalId;
         }
 
@@ -332,12 +325,12 @@ namespace FoxIDs.Logic
             try
             {
                 var key = ExternalDataKey(externalId);
-                var sequenceString = await distributedCache.GetStringAsync(key);
+                var sequenceString = await cacheProvider.GetAsync(key);
                 if (sequenceString == null)
                 {
                     throw new SequenceBrowserBackException($"Cache do not contain the sequence string with external sequence id '{externalId}'.");
                 }
-                await distributedCache.RemoveAsync(key);
+                await cacheProvider.DeleteAsync(key);
 
                 var sequence = await Task.FromResult(Unprotect(sequenceString));
                 HttpContext.Items[Constants.Sequence.Object] = sequence;

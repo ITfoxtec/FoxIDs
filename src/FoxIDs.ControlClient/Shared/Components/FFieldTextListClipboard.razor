@@ -1,0 +1,43 @@
+﻿@using System.Linq.Expressions
+
+<div class="active-group active">
+    @foreach (var item in ValueList.Select((e, i) => new { Effect = e, Index = i }))
+    {
+        if (item.Index == 0)
+        {
+            <div class="card card-row bg-light">
+                <div class="card-body">
+                    @item.Effect
+                </div>
+                <div>
+                    <button class="btn btn-link" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                </div>
+            </div>
+            <Label For="@For" class="label-control" />
+        }
+        else
+        {
+            <div class="card card-row bg-light">
+                <div class="card-body">
+                    @item.Effect
+                </div>
+                <div>
+                    <button class="btn btn-link" type="button" @onclick="@(async () => await ClipboardLogic.WriteTextAsync(@item.Effect))"><i class="bi bi-copy" title="Click to copy"></i></button>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    [Inject]
+    public ClipboardLogic ClipboardLogic { get; set; }
+
+    [Parameter]
+    public List<string> ValueList { get; set; }
+    [Parameter]
+    public EventCallback<List<string>> ValueListChanged { get; set; }
+
+    [Parameter]
+    public Expression<Func<object>> For { get; set; }
+}

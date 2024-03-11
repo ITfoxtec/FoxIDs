@@ -12,14 +12,13 @@ namespace FoxIDs.Client.Models.ViewModels
         public GeneralDownPartyViewModel(DownParty downParty)
         {
             Name = downParty.Name;
+            DisplayName = downParty.DisplayName;
             Type = downParty.Type;
         }
 
         public bool Edit { get; set; }
 
         public bool ShowAdvanced { get; set; }
-
-        public bool CreateMode { get; set; }
 
         public bool DeleteAcknowledge { get; set; }
 

@@ -177,9 +177,9 @@ namespace FoxIDs.Logic
             claims.AddClaim(JwtClaimTypes.Email, user.Email);
             claims.AddClaim(JwtClaimTypes.EmailVerified, user.EmailVerified.ToString().ToLower());
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
             if (user.Claims?.Count() > 0)
             {
                 claims.AddRange(user.Claims.ToClaimList());

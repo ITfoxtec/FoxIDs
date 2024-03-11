@@ -201,9 +201,9 @@ namespace FoxIDs.Logic
                 c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
                 c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
             if (!tokenIssuer.IsNullOrEmpty())
             {
                 claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));

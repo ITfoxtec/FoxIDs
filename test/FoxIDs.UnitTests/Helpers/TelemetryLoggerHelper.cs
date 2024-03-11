@@ -15,7 +15,7 @@ namespace FoxIDs.UnitTests.Helpers
 
         public static TelemetryScopedLogger ScopedLoggerObject(IHttpContextAccessor httpContextAccessor)
         {
-            var telemetryClient = new TelemetryClient(new TelemetryConfiguration { ConnectionString = "xxx" });
+            var telemetryClient = new TelemetryClient(new TelemetryConfiguration());
             var telemetryLogger = new TelemetryLogger(telemetryClient);
             var telemetryScopedStreamLogger = new TelemetryScopedStreamLogger();
             var telemetryScopedProperties = new TelemetryScopedProperties();

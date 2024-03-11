@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnRequestRedirectAsync(UpPartyLink partyLink, LoginRequest loginRequest, string hrdLoginUpPartyName = null)
         {
-            logger.ScopeTrace(() => "Up, SAML Authn request redirect.");
+            logger.ScopeTrace(() => "AuthMethod, SAML Authn request redirect.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -81,12 +81,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, SAML Authn request.");
+            logger.ScopeTrace(() => "AuthMethod, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var samlUpSequenceData = await sequenceLogic.GetSequenceDataAsync<SamlUpSequenceData>(remove: false);
             if (!samlUpSequenceData.UpPartyId.Equals(partyId, StringComparison.Ordinal))
             {
-                throw new Exception("Invalid up-party id.");
+                throw new Exception("Invalid authentication method id.");
             }
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(samlUpSequenceData.UpPartyId);
@@ -139,7 +139,7 @@ namespace FoxIDs.Logic
             binding.Bind(saml2AuthnRequest);
             logger.ScopeTrace(() => $"SAML Authn request '{saml2AuthnRequest.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"Authn URL '{samlConfig.SingleSignOnDestination?.OriginalString}'.");
-            logger.ScopeTrace(() => "Up, Sending SAML Authn request.", triggerEvent: true);
+            logger.ScopeTrace(() => "AuthMethod, Sending SAML Authn request.", triggerEvent: true);
 
             securityHeaderLogic.AddFormActionAllowAll();
 
@@ -159,7 +159,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => $"Up, SAML Authn response.");
+            logger.ScopeTrace(() => $"AuthMethod, SAML Authn response.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<SamlUpParty>(partyId);
@@ -219,7 +219,7 @@ namespace FoxIDs.Logic
             {
                 logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
                 logger.SetScopeProperty(Constants.Logs.UpPartyStatus, saml2AuthnResponse.Status.ToString());
-                logger.ScopeTrace(() => "Up, SAML Authn response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AuthMethod, SAML Authn response.", triggerEvent: true);
 
                 if (saml2AuthnResponse.Status != Saml2StatusCodes.Success)
                 {
@@ -229,7 +229,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     samlHttpRequest.Binding.Unbind(samlHttpRequest, saml2AuthnResponse);
-                    logger.ScopeTrace(() => "Up, Successful SAML Authn response.", triggerEvent: true);
+                    logger.ScopeTrace(() => "AuthMethod, Successful SAML Authn response.", triggerEvent: true);
                 }
                 catch (Exception ex)
                 {
@@ -252,17 +252,21 @@ namespace FoxIDs.Logic
                 {
                     claims.Add(nameIdClaim);
                 }
-                logger.ScopeTrace(() => $"Up, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AuthMethod, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == Saml2ClaimTypes.SessionIndex);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session index claim");
-                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+                claims = claims.Where(c => c.Type != Saml2ClaimTypes.SessionIndex &&
+                    c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
+                    c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+                claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
+                claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
                 claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
-                claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+                claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
 
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
-                logger.ScopeTrace(() => $"Up, SAML Authn output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AuthMethod, SAML Authn output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
                 var sessionId = await sessionUpPartyLogic.CreateOrUpdateSessionAsync(party, party.DisableSingleLogout ? null : sequenceData.DownPartyLink, jwtValidClaims, externalSessionId);
@@ -276,7 +280,7 @@ namespace FoxIDs.Logic
                     await hrdLogic.SaveHrdSelectionAsync(sequenceData.HrdLoginUpPartyName, sequenceData.UpPartyId.PartyIdToName(), PartyTypes.Saml2);
                 }
 
-                logger.ScopeTrace(() => $"Up, SAML Authn output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AuthMethod, SAML Authn output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 return await AuthnResponseDownAsync(sequenceData, saml2AuthnResponse.Status, jwtValidClaims);
             }
             catch (StopSequenceException)
@@ -381,7 +385,7 @@ namespace FoxIDs.Logic
         {
             try
             {
-                logger.ScopeTrace(() => $"Response, Down type {sequenceData.DownPartyLink.Type}.");
+                logger.ScopeTrace(() => $"Response, Application type {sequenceData.DownPartyLink.Type}.");
 
                 if (status == Saml2StatusCodes.Success)
                 {
@@ -455,7 +459,7 @@ namespace FoxIDs.Logic
 
         public async Task<List<Claim>> ValidateTokenExchangeSubjectTokenAsync(UpPartyLink partyLink, string subjectToken)
         {
-            logger.ScopeTrace(() => "Up, SAML validate token exchange subject token.");
+            logger.ScopeTrace(() => "AuthMethod, SAML validate token exchange subject token.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, partyLink.Name);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 
@@ -466,7 +470,7 @@ namespace FoxIDs.Logic
             var binding = new FoxIdsSaml2TokenExchangeBinding();
             var saml2TokenExchangeRequest = new FoxIdsSaml2TokenExchangeRequest(samlConfig);
             binding.Unbind(GetHttpRequest(subjectToken), saml2TokenExchangeRequest);
-            logger.ScopeTrace(() => "Up, SAML validate token exchange request accepted.", triggerEvent: true);
+            logger.ScopeTrace(() => "AuthMethod, SAML validate token exchange request accepted.", triggerEvent: true);
 
             var principal = new ClaimsPrincipal(saml2TokenExchangeRequest.ClaimsIdentity);
 
@@ -476,20 +480,22 @@ namespace FoxIDs.Logic
             }
 
             var receivedClaims = principal.Identities.First().Claims;
-            logger.ScopeTrace(() => "Up, SAML token exchange subject token valid.", triggerEvent: true);
-            logger.ScopeTrace(() => $"Up, SAML received JWT claims '{receivedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => "AuthMethod, SAML token exchange subject token valid.", triggerEvent: true);
+            logger.ScopeTrace(() => $"AuthMethod, SAML received JWT claims '{receivedClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
+            claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
+            claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
 
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             var validClaims = ValidateClaims(party, transformedClaims);
-            logger.ScopeTrace(() => $"Up, SAML output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, SAML output SAML claims '{validClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var jwtValidClaims = await claimsOAuthDownLogic.FromSamlToJwtClaimsAsync(validClaims);
 
-            logger.ScopeTrace(() => $"Up, SAML output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AuthMethod, SAML output JWT claims '{jwtValidClaims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             return jwtValidClaims;
         }
 

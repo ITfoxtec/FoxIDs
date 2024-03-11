@@ -123,7 +123,8 @@ namespace FoxIDs.Logic
         public async Task<bool> ValidateModelAsync<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
         {
             return await ValidateClientResourceScopesAsync(modelState, oauthDownParty) &&
-                ValidateClientScopes(modelState, oauthDownParty) && 
+                ValidateClientScopes(modelState, oauthDownParty) &&
+                ValidateClientResourceScopes(modelState, oauthDownParty) &&
                 ValidateResourceScopes(modelState, oauthDownParty);
         }
 
@@ -248,7 +249,7 @@ namespace FoxIDs.Logic
                         }
                         try
                         {
-                            // Test if Down-party exists.
+                            // Test if application registration exists.
                             var resourceDownParty = await tenantService.GetAsync<OAuthDownParty>(await DownParty.IdFormatAsync(RouteBinding, resourceScope.Resource));
                             if (resourceScope.Scopes?.Count > 0)
                             {
@@ -266,7 +267,7 @@ namespace FoxIDs.Logic
                             if (ex.StatusCode == HttpStatusCode.NotFound)
                             {
                                 isValid = false;
-                                var errorMessage = $"Resource scope down-party resource '{resourceScope.Resource}' not found.";
+                                var errorMessage = $"Resource scope application registration resource '{resourceScope.Resource}' not found.";
                                 logger.Warning(ex, errorMessage);
                                 modelState.TryAddModelError($"{nameof(oauthDownParty.Client)}.{nameof(oauthDownParty.Client.ResourceScopes)}".ToCamelCase(), errorMessage);
                             }
@@ -330,6 +331,16 @@ namespace FoxIDs.Logic
                     logger.Warning(vex);
                     modelState.TryAddModelError($"{nameof(oauthDownParty.Resource)}.{nameof(oauthDownParty.Resource.Scopes)}".ToCamelCase(), vex.Message);
                 }
+            }
+            return isValid;
+        }
+
+        private bool ValidateClientResourceScopes<TClient, TScope, TClaim>(ModelStateDictionary modelState, OAuthDownParty<TClient, TScope, TClaim> oauthDownParty) where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
+        {
+            var isValid = true;
+            if (oauthDownParty.Client != null && !(oauthDownParty.Client.ResourceScopes?.Count() > 0))
+            {
+                oauthDownParty.Client.ResourceScopes = new List<OAuthDownResourceScope> { new OAuthDownResourceScope { Resource = oauthDownParty.Name } };
             }
             return isValid;
         }

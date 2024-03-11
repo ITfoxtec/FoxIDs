@@ -44,12 +44,12 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OIDC Authentication request.");
+            logger.ScopeTrace(() => "AppReg, OIDC Authentication request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if(party.Client == null)
             {
-                throw new NotSupportedException("Party Client not configured.");
+                throw new NotSupportedException("Application Client not configured.");
             }
             logger.SetScopeProperty(Constants.Logs.DownPartyClientId, party.Client.ClientId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
@@ -68,7 +68,7 @@ namespace FoxIDs.Logic
             try
             {
                 ValidateAuthenticationRequest(party.Client, authenticationRequest, codeChallengeSecret);
-                logger.ScopeTrace(() => "Down, OIDC Authentication request accepted.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OIDC Authentication request accepted.", triggerEvent: true);
 
                 if(!authenticationRequest.UiLocales.IsNullOrWhiteSpace())
                 {
@@ -92,7 +92,7 @@ namespace FoxIDs.Logic
                 if (toUpParties.Count() == 1)
                 {
                     var toUpParty = toUpParties.First();
-                    logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+                    logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
                     switch (toUpParty.Type)
                     {
                         case PartyTypes.Login:
@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
                         case PartyTypes.TrackLink:
                             return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, await GetLoginRequestAsync(party, authenticationRequest));
                         default:
-                            throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                            throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
                     }
                 }
                 else
@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                if (!client.RedirectUris.Any(u => u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
+                if (!client.RedirectUris.Any(u => client.DisableAbsoluteUris ? authenticationRequest.RedirectUri?.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) == true : u.Equals(authenticationRequest.RedirectUri, StringComparison.InvariantCultureIgnoreCase)))
                 {
                     throw new OAuthRequestException($"Invalid redirect URI '{authenticationRequest.RedirectUri}' (maybe the request URL do not match the expected client).") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidRequest };
                 }
@@ -270,19 +270,19 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationResponseAsync(string partyId, List<Claim> claims)
         {
-            logger.ScopeTrace(() => "Down, OIDC Authentication response.");
+            logger.ScopeTrace(() => "AppReg, OIDC Authentication response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
             if (party.Client == null)
             {
-                throw new NotSupportedException("Party Client not configured.");
+                throw new NotSupportedException("Application Client not configured.");
             }
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);
 
-            logger.ScopeTrace(() => $"Down, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AppReg, OIDC received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
             claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-            logger.ScopeTrace(() => $"Down, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+            logger.ScopeTrace(() => $"AppReg, OIDC output JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
             var nameValueCollection = await CreateAuthenticationAndSessionResponse(party, claims, sequenceData);
 
@@ -353,7 +353,7 @@ namespace FoxIDs.Logic
                 }
 
                 logger.ScopeTrace(() => $"Redirect URI '{sequenceData.RedirectUri}'.");
-                logger.ScopeTrace(() => "Down, OIDC Authentication response.", triggerEvent: true);
+                logger.ScopeTrace(() => "AppReg, OIDC Authentication response.", triggerEvent: true);
                 return nameValueCollection;
             }
             catch (KeyException kex)
@@ -385,7 +385,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthenticationResponseErrorAsync(string partyId, string error, string errorDescription = null)
         {
-            logger.ScopeTrace(() => "Down, OIDC Authentication error response.");
+            logger.ScopeTrace(() => "AppReg, OIDC Authentication error response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var sequenceData = await sequenceLogic.GetSequenceDataAsync<OidcDownSequenceData>(false);

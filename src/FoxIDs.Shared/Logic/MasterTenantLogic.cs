@@ -35,6 +35,7 @@ namespace FoxIDs.Logic
 
             var mTrack = new Track
             {
+                DisplayName = "Master",
                 Name = trackName,
                 SequenceLifetime = 1800,
                 MaxFailingLogins = 5,
@@ -181,7 +182,7 @@ namespace FoxIDs.Logic
             var partyIdKey = new Party.IdKey { TenantName = tenantName?.ToLower(), TrackName = Constants.Routes.MasterTrackName, PartyName = Constants.ControlClient.ClientId };
             await mControlClientDownParty.SetIdAsync(partyIdKey);
             mControlClientDownParty.AllowUpParties = new List<UpPartyLink> { new UpPartyLink { Name = loginUpParty.Name?.ToLower(), Type = loginUpParty.Type } };
-            mControlClientDownParty.AllowCorsOrigins = GetControlClientAllowCorsOrigins(controlClientBaseUri);
+            mControlClientDownParty.AllowCorsOrigins = new List<string> { controlClientBaseUri.UrlToOrigin() };
 
             var scopes = new List<string> { Constants.ControlApi.Access.Tenant };
             if (includeMasterTenantScope)
@@ -210,11 +211,6 @@ namespace FoxIDs.Logic
             await tenantRepository.CreateAsync(mControlClientDownParty);
 
             await downPartyCacheLogic.InvalidateDownPartyCacheAsync(partyIdKey);
-        }
-
-        private List<string> GetControlClientAllowCorsOrigins(string controlClientBaseUri)
-        {
-            return new List<string> { controlClientBaseUri.TrimEnd('/') };
         }
 
         private List<OidcDownScope> GetControlClientScopes()

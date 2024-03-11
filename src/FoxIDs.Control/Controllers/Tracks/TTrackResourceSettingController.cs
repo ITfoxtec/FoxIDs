@@ -29,7 +29,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track resource settings.
+        /// Get environment resource settings.
         /// </summary>
         /// <returns>Resource settings.</returns>
         [ProducesResponseType(typeof(Api.ResourceSettings), StatusCodes.Status200OK)]
@@ -46,7 +46,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get {nameof(Track)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Get {nameof(Track)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(nameof(Track), RouteBinding.TrackName);
                 }
                 throw;
@@ -54,7 +54,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Save track resource settings.
+        /// Save environment resource settings.
         /// </summary>
         /// <param name="resourceSettings">Resource settings.</param>
         /// <returns>Resource settings.</returns>
@@ -82,7 +82,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Save {nameof(Track)} by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Save {nameof(Track)} by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(nameof(Track), RouteBinding.TrackName);
                 }
                 throw;

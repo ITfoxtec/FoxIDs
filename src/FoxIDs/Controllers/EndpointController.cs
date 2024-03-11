@@ -42,7 +42,7 @@ namespace FoxIDs.Controllers
         {
             if (context.Result.IsHtmlContent(typeof(ErrorViewModel)) && RouteBinding.Key.PrimaryKey.ExternalKeyIsNotReady)
             {
-                throw new ExternalKeyIsNotReadyException("Primary external track key certificate is not ready in Key Vault.");
+                throw new ExternalKeyIsNotReadyException("Primary external environment key certificate is not ready in Key Vault.");
             }
 
             base.OnActionExecuted(context);

@@ -9,7 +9,7 @@ namespace FoxIDs.Models.Api
     public class OAuthClientKeyRequest : IValidatableObject
     {
         /// <summary>
-        /// OAuth 2.0 party name.
+        /// OAuth 2.0 authentication method name.
         /// </summary>
         [Required]
         [MaxLength(Constants.Models.Party.NameLength)]

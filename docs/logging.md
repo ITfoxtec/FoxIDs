@@ -6,11 +6,11 @@ FoxIDs default log errors and events including the time and the client IP addres
 
 FoxIDs usage can be searched in [FoxIDs Control Client and API](control.md).  
 
-- If you look at the usage in a particular track, the usage of that selected track is shown.  
-- If you instead look at the usage in the `master` track it will show the usage for the entire tenant, which can be limited to a particular track. 
-- Likewise, the `master` tenant `master` track shows usage for the entire cloud installation of FoxIDs, which can be limited to a particular tenant and track.
+- If you look at the usage in a particular environment, the usage of that selected environment is shown.  
+- If you instead look at the usage in the `master` environment it will show the usage for the entire tenant, which can be limited to a particular environment. 
+- Likewise, the `master` tenant `master` environment shows usage for the entire cloud installation of FoxIDs, which can be limited to a particular tenant and environment.
 
-This screen dump shows the usage view in a track.
+This screen dump shows the usage view in a environment.
 
 ![Search usage logs](images/search-usage-logs.png)
 
@@ -23,10 +23,10 @@ Logs can be searched in [FoxIDs Control Client and API](control.md).
 
 ## Log settings
 
-The log level can be configured per FoxIDs track:
+The log level can be configured per FoxIDs environment:
 
  - Enable `Log info trace` - to see details about the login and logout sequences
- - Enable `Log claim trace` - to see the claims up-parties and down-parties receive and pass on
+ - Enable `Log claim trace` - to see the claims authentication methods and application registrations receive and pass on
  - Enable `Log message trace` - to see the raw messages received and sent
  - Enable `Log metric trace` - to see response times and throughput
 

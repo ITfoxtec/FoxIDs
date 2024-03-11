@@ -44,9 +44,9 @@ namespace FoxIDs.Client.Services
         public async Task<SamlDownParty> UpdateSamlDownPartyAsync(SamlDownParty party) => await PutResponseAsync<SamlDownParty, SamlDownParty>(samlApiUri, party);
         public async Task DeleteSamlDownPartyAsync(string name) => await DeleteAsync(samlApiUri, name);
 
-        public async Task<TrackLinkDownParty> GetTrackLinkDownPartyAsync(string name) => await GetAsync<TrackLinkDownParty>(trackLinkApiUri, name);
-        public async Task<TrackLinkDownParty> CreateTrackLinkDownPartyAsync(TrackLinkDownParty party) => await PostResponseAsync<TrackLinkDownParty, TrackLinkDownParty>(trackLinkApiUri, party);
+        public async Task<TrackLinkDownParty> GetTrackLinkDownPartyAsync(string name, string trackName = null) => await GetAsync<TrackLinkDownParty>(GetApiUrl(trackLinkApiUri, trackName), name);
+        public async Task<TrackLinkDownParty> CreateTrackLinkDownPartyAsync(TrackLinkDownParty party, string trackName = null) => await PostResponseAsync<TrackLinkDownParty, TrackLinkDownParty>(GetApiUrl(trackLinkApiUri, trackName), party);
         public async Task<TrackLinkDownParty> UpdateTrackLinkDownPartyAsync(TrackLinkDownParty party) => await PutResponseAsync<TrackLinkDownParty, TrackLinkDownParty>(trackLinkApiUri, party);
-        public async Task DeleteTrackLinkDownPartyAsync(string name) => await DeleteAsync(trackLinkApiUri, name);
+        public async Task DeleteTrackLinkDownPartyAsync(string name, string trackName = null) => await DeleteAsync(GetApiUrl(trackLinkApiUri, trackName), name);
     }
 }

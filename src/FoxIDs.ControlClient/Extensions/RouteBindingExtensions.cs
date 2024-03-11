@@ -12,7 +12,7 @@ namespace FoxIDs.Client
                 PartyBindingPatterns.Brackets => $"{downPartyName}{(addUpParty ? $"(*)" : string.Empty)}",
                 PartyBindingPatterns.Tildes => $"{downPartyName}{(addUpParty ? $"~*~" : string.Empty)}",
                 PartyBindingPatterns.Dot => $"{downPartyName}{(addUpParty ? $".*." : string.Empty)}",
-                _ => throw new NotImplementedException($"Party binding pattern '{partyBindingPattern}' not implemented.")
+                _ => throw new NotImplementedException($"Binding pattern '{partyBindingPattern}' not implemented.")
             };
         }
 
@@ -23,7 +23,7 @@ namespace FoxIDs.Client
                 PartyBindingPatterns.Brackets => $"({upPartyName})",
                 PartyBindingPatterns.Tildes => $"~{upPartyName}~",
                 PartyBindingPatterns.Dot => $".{upPartyName}.",
-                _ => throw new NotImplementedException($"Party binding pattern '{partyBindingPattern}' not implemented.")
+                _ => throw new NotImplementedException($"Binding pattern '{partyBindingPattern}' not implemented.")
             };
         }
     }

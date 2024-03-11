@@ -33,12 +33,24 @@ namespace FoxIDs.Client.Models.ViewModels
 
         public List<string> DefaultResourceScopeScopes { get; set; }
 
+        [Display(Name = "Absolute URIs")]
+        public new bool DisableAbsoluteUris { get; set; }
+
         public List<OAuthClientSecretViewModel> ExistingSecrets { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.OAuthDownParty.Client.SecretsMin, Constants.Models.OAuthDownParty.Client.SecretsMax, Constants.Models.SecretHash.SecretLength)]
         [Display(Name = "Secrets")]
         public List<string> Secrets { get; set; }
+
+        [Display(Name = "Client Credentials grant")]
+        public new bool DisableClientCredentialsGrant { get; set; }
+
+        [Display(Name = "Token exchange grant")]
+        public new bool DisableTokenExchangeGrant { get; set; }
+
+        [Display(Name = "Client as token exchange actor")]
+        public new bool DisableClientAsTokenExchangeActor { get; set; }
 
         public new IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

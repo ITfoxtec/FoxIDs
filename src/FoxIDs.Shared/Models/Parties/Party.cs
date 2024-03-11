@@ -19,6 +19,11 @@ namespace FoxIDs.Models
             public string PartyName { get; set; }
         }
 
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "display_name")]
+        public string DisplayName { get; set; }
+
         [MaxLength(Constants.Models.Party.NoteLength)]
         [JsonProperty(PropertyName = "note")]
         public string Note { get; set; }

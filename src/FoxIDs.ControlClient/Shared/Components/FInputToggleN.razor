@@ -1,11 +1,11 @@
 ﻿@inherits FInputBase<bool?>
 
 <div class="@(IncludeActiveFormGroup ? "form-group active-group" : string.Empty)">
-    <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-outline-secondary off")" @onclick="@(() => ToggleCurrentValue())" data-toggle="toggle" role="button" style="width: @width; height: 38px;">
+    <div class="toggle btn @(CurrentValue == true ? "btn-outline-primary" : "btn-c-light btn-outline-secondary off")" @onclick="@(() => ToggleCurrentValue())" data-toggle="toggle" role="button" style="width: @width; height: 38px;">
         <input @ref="inputElement" class="input-control" type="checkbox" @bind="@CurrentValue" data-toggle="toggle" data-onstyle="outline-primary" data-offstyle="outline-secondary">
         <div class="toggle-group">
             <label class="btn btn-outline-primary toggle-on">@onText</label>
-            <label class="btn btn-outline-secondary toggle-off">@offText</label>
+            <label class="btn btn-c-light btn-outline-secondary toggle-off">@offText</label>
             <span class="toggle-handle btn btn-light"></span>
         </div>
     </div>
@@ -18,8 +18,8 @@
 
 @code {
     private string width = "65px";
-    private string onText = "On";
-    private string offText = "Off";
+    private string onText = "Yes";
+    private string offText = "No";
 
     [Parameter]
     public bool IncludeActiveFormGroup { get; set; } = true;

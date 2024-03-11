@@ -24,8 +24,6 @@ namespace FoxIDs.Client.Pages.Components
         public IJSRuntime JSRuntime { get; set; }
 
         protected List<string> responseTypeItems = new List<string> (Constants.OAuth.DefaultResponseTypes);
-        private Modal importClientKeyModal;
-        private PageEditForm<OAuthUpImportClientKeyViewModel> importClientKeyForm;
 
         protected override async Task OnInitializedAsync()
         {
@@ -59,6 +57,11 @@ namespace FoxIDs.Client.Pages.Components
 
             return oauthUpParty.Map<OAuthUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (oauthUpParty.UpdateState == PartyUpdateStates.Manual)
                 {
                     afterMap.IsManual = true;
@@ -115,7 +118,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (oauthUpParty.CreateMode)
             {
-                model.DisableUserAuthenticationTrust = true;
+                if (oauthUpParty.TokenExchange)
+                {
+                    model.DisableUserAuthenticationTrust = true;
+                }
                 model.Client = new OAuthUpClientViewModel();
                 model.Client.Claims = new List<string> { "*" };
             }
@@ -160,16 +166,17 @@ namespace FoxIDs.Client.Pages.Components
                     var oauthUpPartyResult = await UpPartyService.CreateOAuthUpPartyAsync(oauthUpParty);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
                     generalOAuthUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect up-party created.");
+                    toastService.ShowSuccess("OAuth 2.0 application created.");
+                    generalOAuthUpParty.Name = oauthUpPartyResult.Name;
+                    generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
                 else
                 {
                     var oauthUpPartyResult = await UpPartyService.UpdateOAuthUpPartyAsync(oauthUpParty);
                     generalOAuthUpParty.Form.UpdateModel(ToViewModel(generalOAuthUpParty, oauthUpPartyResult));
-                    toastService.ShowSuccess("OpenID Connect up-party updated.");
+                    toastService.ShowSuccess("OAuth 2.0 application updated.");
+                    generalOAuthUpParty.DisplayName = oauthUpPartyResult.DisplayName;
                 }
-
-                generalOAuthUpParty.Name = generalOAuthUpParty.Form.Model.Name;
             }
             catch (FoxIDsApiException ex)
             {

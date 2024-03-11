@@ -32,7 +32,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link RP initiated logout request.");
+            logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Oidc);
@@ -42,13 +42,13 @@ namespace FoxIDs.Logic
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false);
             if (party.ToUpPartyName != keySequenceData.KeyName)
             {
-                throw new Exception($"Incorrect up-party name '{keySequenceData.KeyName}', expected up-party name '{party.ToUpPartyName}'.");
+                throw new Exception($"Incorrect authentication method name '{keySequenceData.KeyName}', expected authentication method name '{party.ToUpPartyName}'.");
             }
 
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyName = party.Name, UpPartySequenceString = keySequenceString });
 
             var toUpParty = await hrdLogic.GetUpPartyAndDeleteHrdSelectionAsync();
-            logger.ScopeTrace(() => $"Request, Up type '{toUpParty.Type}'.");
+            logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty.Type}'.");
             switch (toUpParty.Type)
             {
                 case PartyTypes.Login:
@@ -63,7 +63,7 @@ namespace FoxIDs.Logic
                     return await serviceProvider.GetService<TrackLinkRpInitiatedLogoutUpLogic>().LogoutRequestRedirectAsync(toUpParty, GetLogoutRequest(party, keySequenceData.SessionId, keySequenceData.RequireLogoutConsent));
 
                 default:
-                    throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                    throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
             }
         }
 
@@ -82,7 +82,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> LogoutResponseAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link RP initiated logout response.");
+            logger.ScopeTrace(() => "AppReg, Environment Link RP initiated logout response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 

@@ -6,6 +6,6 @@ namespace FoxIDs.Models.Api
     public class TrackResourceItem : ResourceItem, INameValue
     {
         [IgnoreDataMember]
-        public string Name { get => Convert.ToString(Id); }
+        public string Name { get => Convert.ToString(Id); set { } }
     }
 }

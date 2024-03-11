@@ -1,8 +1,8 @@
 ﻿@inherits FInputBase<string>
 
-<div class="active-group active">
+<div class="active-group active @Class">
     <div class="card bg-light">
-        <div class="card-body px-3 py-2">
+        <div class="card-body">
             @CurrentValue
         </div>
     </div>
@@ -10,5 +10,6 @@
 </div>
 
 @code {
-
+    [Parameter]
+    public string Class { get; set; }
 }

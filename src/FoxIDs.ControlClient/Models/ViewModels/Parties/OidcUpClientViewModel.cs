@@ -9,12 +9,12 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class OidcUpClientViewModel : IClientAdditionalParameters, IValidatableObject
     {
-        // Link to referring party.
+        // Link to referring authentication method.
         [JsonIgnore]
         public OidcUpPartyViewModel Party { get; set; }
 
         [MaxLength(Constants.Models.OAuthUpParty.Client.ClientIdLength)]
-        [Display(Name = "Optional custom SP client ID (default the party name)")]
+        [Display(Name = "Optional custom SP client ID")]
         public string SpClientId { get; set; }
 
         [ListLength(Constants.Models.OAuthUpParty.Client.ScopesMin, Constants.Models.OAuthUpParty.Client.ScopesMax, Constants.Models.OAuthUpParty.ScopeLength, Constants.Models.OAuthUpParty.ScopeRegExPattern)]
@@ -56,7 +56,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string EndSessionUrl { get; set; }
 
         [Display(Name = "Front channel logout")]
-        public bool EnableFrontChannelLogout { get; set; } = true;
+        public bool DisableFrontChannelLogout { get; set; }
 
         [Display(Name = "Front channel logout session required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;

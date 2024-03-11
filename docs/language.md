@@ -62,15 +62,15 @@ Please contribute if you see an error, the text can be improved or you are lacki
 
 It is possible to contribute either by creating a pull request in the FoxIDs [GitHub repository](https://github.com/ITfoxtec/FoxIDs) or by sending an updated [EmbeddedResource.json](https://github.com/ITfoxtec/FoxIDs/blob/master/src/FoxIDs.Shared/Models/Master/Resources/EmbeddedResource.json) file to [support@itfoxtec.com](mailto:support@itfoxtec.com?subject=FoxIDs-embedded-resource).
 
-## Translation in track
+## Translation in environment
 
-It is possible to add track specific translations for each text element in multiple languages in [FoxIDs Control Client](control.md#foxids-control-client).
+It is possible to add environment specific translations for each text element in multiple languages in [FoxIDs Control Client](control.md#foxids-control-client).
 
 > If you want to change a text and thereby not using the default text. It can be archived by adding a new text for each supported language. It is also possible to add new HTML tags in the text and set the related CSS.
 
-Add translation to a track:
+Add translation to a environment:
 
-1. Open the track
+1. Open the environment
 2. Select the Texts tab
 3. Select a text element
 4. Specify language and add the text

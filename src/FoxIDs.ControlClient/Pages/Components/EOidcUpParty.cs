@@ -63,6 +63,11 @@ namespace FoxIDs.Client.Pages.Components
 
             return oidcUpParty.Map<OidcUpPartyViewModel>(afterMap =>
             {
+                if (afterMap.DisplayName.IsNullOrWhiteSpace())
+                {
+                    afterMap.DisplayName = afterMap.Name;
+                }
+
                 if (oidcUpParty.UpdateState == PartyUpdateStates.Manual)
                 {
                     afterMap.IsManual = true;
@@ -77,7 +82,6 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.AutomaticStopped = false;
                 }
 
-                afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
                 if (afterMap.Client != null)
                 {
                     afterMap.Client.Party = afterMap;
@@ -86,8 +90,6 @@ namespace FoxIDs.Client.Pages.Components
                     {
                         afterMap.Client.ClientSecret = afterMap.Client.ClientSecretLoaded = afterMap.Client.ClientSecret.Length == 3 ? $"{afterMap.Client.ClientSecret}..." : afterMap.Client.ClientSecret;
                     }
-
-                    afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
 
                     if (clientKeyResponse?.PrimaryKey?.PublicKey != null)
                     {
@@ -170,8 +172,6 @@ namespace FoxIDs.Client.Pages.Components
                 var oidcUpParty = generalOidcUpParty.Form.Model.Map<OidcUpParty>(afterMap: afterMap =>
                 {
                     afterMap.UpdateState = PartyUpdateStates.Automatic;
-                    afterMap.DisableSingleLogout = !generalOidcUpParty.Form.Model.EnableSingleLogout;
-                    afterMap.Client.DisableFrontChannelLogout = !generalOidcUpParty.Form.Model.Client.EnableFrontChannelLogout;
 
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
@@ -188,7 +188,9 @@ namespace FoxIDs.Client.Pages.Components
                     var oidcUpPartyResult = await UpPartyService.CreateOidcUpPartyAsync(oidcUpParty);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, null));
                     generalOidcUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect up-party created.");
+                    toastService.ShowSuccess("OpenID Connect application created.");
+                    generalOidcUpParty.Name = oidcUpPartyResult.Name;
+                    generalOidcUpParty.DisplayName = oidcUpPartyResult.DisplayName;
                 }
                 else
                 {
@@ -214,10 +216,9 @@ namespace FoxIDs.Client.Pages.Components
                     }
                     var clientKeyResponse = await UpPartyService.GetOidcClientKeyUpPartyAsync(UpParty.Name);
                     generalOidcUpParty.Form.UpdateModel(ToViewModel(generalOidcUpParty, oidcUpPartyResult, clientKeyResponse));
-                    toastService.ShowSuccess("OpenID Connect up-party updated.");
-                }
-
-                generalOidcUpParty.Name = generalOidcUpParty.Form.Model.Name;
+                    toastService.ShowSuccess("OpenID Connect application updated.");
+                    generalOidcUpParty.DisplayName = oidcUpPartyResult.DisplayName;
+                }                
             }
             catch (FoxIDsApiException ex)
             {
@@ -298,7 +299,7 @@ namespace FoxIDs.Client.Pages.Components
 
                     importClientKeyForm.Model.ClientKeyFileStatus = GeneralTrackCertificateViewModel.DefaultCertificateFileStatus;
                     importClientKeyModal.Hide();
-                    toastService.ShowSuccess("Up-party client key imported.");
+                    toastService.ShowSuccess("Authentication method client key imported.");
                 }
             }
             catch (TokenUnavailableException)
@@ -322,7 +323,7 @@ namespace FoxIDs.Client.Pages.Components
             await UpPartyService.DeleteOidcClientKeyUpPartyAsync($"{oidcUpParty.Name}.{keyName}");
 
             oidcUpParty.Form.Model.Client.PublicClientKeyInfo = null;
-            toastService.ShowSuccess("Up-party client key removed.");
+            toastService.ShowSuccess("Authentication method client key removed.");
         }
 
         private async Task DownloadPublicCertificateFileAsync(KeyInfoViewModel publicClientKeyInfo)

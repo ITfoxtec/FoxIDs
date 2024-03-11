@@ -10,7 +10,7 @@ The Azure ARM deployment include:
 - Two App Services one for FoxIDs and one for the FoxIDs Control (Client and API). Both App Services is hosted in the same App Service plan and the App Services has both a production and test slot. 
 - FoxIDs is deployed to the two App Services test slots from the `master` branch with Kudu. [Updates](update) is initiated manually in the App Services test slots. Deployment updates is automatically promoted from the test slots to the production slots. It is possible to change the automatically promoted to manually initiated.
 - Key Vault. Certificates and secrets are saved and handled in Key Vault.
-- Cosmos DB. Contain all data including tenants, tracks and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
+- Cosmos DB. Contain all data including tenants, environments and users. Cosmos DB is a NoSQL database and data is saved in JSON documents.
 - Redis cache. Holds sequence (e.g., login and logout sequences) data, data cache to improve performance and handle counters to secure authentication against various attacks.
 - Application Insights and Log Analytics workspace. Logs are send to Application Insights and queries in Log Analytics workspace.
 - VLAN with subnets.
@@ -35,7 +35,7 @@ Create more admin users with a valid email addresses and grant the users the adm
 
 ![FoxIDs Control Client - Master tenant admin user](images/master-tenant-admin-user.png)
 
-> You should generally not change the parties configuration or add applications in the master tenant, unless you are sure about what you are doing.
+> You should generally not change the application registrations and authentication methods configuration or add applications in the master tenant, unless you are sure about what you are doing.
 
 ### Troubleshooting deployent errors
 
@@ -68,8 +68,8 @@ The seed tool is configured in the `appsettings.json` file.
 
 Create a seed tool OAuth 2.0 client in the [FoxIDs Control Client](control.md#foxids-control-client):
 
-1. Login to the `master` track and select the Parties tab
-2. Create a OAuth 2.0 down-party, click `OAuth 2.0 - Client Credentials Grant`.
+1. Login to the `master` environment and select the Applications tab
+2. Create a OAuth 2.0 application registration, click `OAuth 2.0 - Client Credentials Grant`.
 3. Set the client id to `foxids_seed`.
 4. Remember the client secret.
 5. In the resource and scopes section. Grant the sample seed client access to the FoxIDs Control API resource `foxids_control_api` with the scope `foxids:master`.
@@ -99,9 +99,9 @@ Run the seed tool executable SeedTool.exe or run the seed tool directly from Vis
 
 The risk password upload will take a while.
 
-## Add sample configuration to a track
+## Add sample configuration to a environment
 
-It is possible to run the sample applications after they are configured in a FoxIDs track. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-track).
+It is possible to run the sample applications after they are configured in a FoxIDs environment. The sample configuration can be added with the [sample seed tool](samples.md#configure-samples-in-foxids-environment).
 
 ## Custom primary domains
 
@@ -118,7 +118,7 @@ The FoxIDs site support one primary domain and multiple [custom domains](custom-
 
 Configure new primary custom domains:
 
-1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Parties` tab and `Down-parties` tab then click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
+1) Login to [FoxIDs Control Client](control.md#foxids-control-client) using the default/old primary domain. Select the `Applications` tab then click `OpenID Connect - foxids_control_client` and click `Show advanced settings`.
 
    - Add the FoxIDs Control sites new primary custom domain URL to the `Allow CORS origins` list without a trailing slash.
    - Add the FoxIDs Control Client sites new primary custom domain login and logout redirect URIs to the `Redirect URIs` list including the trailing `/master/authentication/login_callback` and `/master/authentication/logout_callback`.

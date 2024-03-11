@@ -26,13 +26,13 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Authorization response, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Authorization response, Authentication type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthUpLogic<OidcUpParty, OidcUpClient>>().AuthenticationResponseAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -46,13 +46,13 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"End session response, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"End session response, Authentication type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().EndSessionResponseAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -66,13 +66,13 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Front channel logout, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Front channel logout, Authentication type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcFrontChannelLogoutUpLogic<OidcUpParty, OidcUpClient>>().FrontChannelLogoutAsync(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -86,13 +86,13 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Single Logout done, Up type '{RouteBinding.UpParty.Type}'");
+                logger.ScopeTrace(() => $"Single Logout done, Authentication type '{RouteBinding.UpParty.Type}'");
                 switch (RouteBinding.UpParty.Type)
                 {
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutUpLogic<OidcUpParty, OidcUpClient>>().SingleLogoutDone(RouteBinding.UpParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.UpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.UpParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -108,10 +108,10 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up-party not configured.");
+                    throw new NotSupportedException("Authentication method not configured.");
                 }
 
-                logger.ScopeTrace(() => $"Authorize request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"Authorize request, Application type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -119,7 +119,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcAuthDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().AuthenticationRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -132,7 +132,7 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Token request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"Token request, Application type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
@@ -140,7 +140,7 @@ namespace FoxIDs.Controllers
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcTokenDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().TokenRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -154,14 +154,14 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"UserInfo request, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"UserInfo request, Application type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.OAuth2:
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcUserInfoDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().UserInfoRequestAsync(RouteBinding.DownParty.Id);
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
             }
             catch (Exception ex)
@@ -177,17 +177,17 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.ToUpParties?.Count() < 1)
                 {
-                    throw new NotSupportedException("Up-party not configured.");
+                    throw new NotSupportedException("Authentication method not configured.");
                 }
 
-                logger.ScopeTrace(() => $"End session, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"End session, Application type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcRpInitiatedLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().EndSessionRequestAsync(RouteBinding.DownParty.Id);
 
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
 
             }
@@ -202,14 +202,14 @@ namespace FoxIDs.Controllers
         {
             try
             {
-                logger.ScopeTrace(() => $"Front Channel Logout Done, Down type '{RouteBinding.DownParty.Type}'");
+                logger.ScopeTrace(() => $"Front Channel Logout Done, Application type '{RouteBinding.DownParty.Type}'");
                 switch (RouteBinding.DownParty.Type)
                 {
                     case PartyTypes.Oidc:
                         return await serviceProvider.GetService<OidcFrontChannelLogoutDownLogic<OidcDownParty, OidcDownClient, OidcDownScope, OidcDownClaim>>().LogoutDoneAsync();
 
                     default:
-                        throw new NotSupportedException($"Party type '{RouteBinding.DownParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{RouteBinding.DownParty.Type}' not supported.");
                 }
 
             }

@@ -11,11 +11,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class SamlUpPartyViewModel : IValidatableObject, ISamlClaimTransformViewModel, IUpPartySessionLifetime, IUpPartyHrd, ISamlMetadataAttributeConsumingServiceVievModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Up-party name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
+        
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
@@ -122,9 +127,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string SingleLogoutResponseUrl { get; set; }
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
-        [Display(Name = "URL party binding pattern")]
+        [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>
@@ -151,7 +156,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         [Display(Name = "Single logout")]
-        public bool EnableSingleLogout { get; set; } = true;
+        public bool DisableSingleLogout { get; set; } 
 
         [Display(Name = "Optional Authn context comparison")]
         public SamlAuthnContextComparisonTypesVievModel AuthnContextComparisonViewModel { get; set; }
@@ -209,10 +214,10 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "HRD logo URL")]
         public string HrdLogoUrl { get; set; }
 
-        [Display(Name = "Disable user authentication trust")]
+        [Display(Name = "User authentication trust")]
         public bool DisableUserAuthenticationTrust { get; set; }
 
-        [Display(Name = "Disable token exchange trust")]
+        [Display(Name = "Token exchange trust")]
         public bool DisableTokenExchangeTrust { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

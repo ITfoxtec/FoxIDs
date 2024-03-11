@@ -1,4 +1,5 @@
 ﻿using FoxIDs.Infrastructure.DataAnnotations;
+using ITfoxtec.Identity;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -6,10 +7,13 @@ namespace FoxIDs.Models.Api
 {
     public class OidcDownParty : IValidatableObject, IDownParty, INameValue, IClaimTransform<OAuthClaimTransform>
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern)]
         public string Name { get; set; }
+
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         public string Note { get; set; }
@@ -36,7 +40,7 @@ namespace FoxIDs.Models.Api
         public List<OAuthClaimTransform> ClaimTransforms { get; set; }
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
@@ -49,6 +53,10 @@ namespace FoxIDs.Models.Api
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             var results = new List<ValidationResult>();
+            if (Name.IsNullOrWhiteSpace() && DisplayName.IsNullOrWhiteSpace())
+            {
+                results.Add(new ValidationResult($"Require either a Name or Display Name.", new[] { nameof(Name), nameof(DisplayName) }));
+            }
             if (Client != null && AllowUpPartyNames?.Count <= 0)
             {
                 results.Add(new ValidationResult($"At least one in the field {nameof(AllowUpPartyNames)} is required if the Client is defined.", new[] { nameof(Client), nameof(AllowUpPartyNames) }));

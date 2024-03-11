@@ -1,6 +1,12 @@
 ﻿@inherits PageBase
 
-<p>Authentication is in progress...</p>
+<div class="load-spinner">
+    <img class="logo" src="images/foxids_logo.svg" />
+    <div>
+        <div class="spinner-border" role="status"></div>
+        Authentication in progress...
+    </div>
+</div>
 
 @code {
     [Inject]

@@ -25,10 +25,10 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Read SAML 2.0 up-party metadata.
+        /// Read SAML 2.0 authentication method metadata.
         /// </summary>
         /// <param name="samlReadMetadataRequest">SAML 2.0 metadata.</param>
-        /// <returns>SAML 2.0 up-party.</returns>
+        /// <returns>SAML 2.0 authentication method.</returns>
         [ProducesResponseType(typeof(Api.SamlUpParty), StatusCodes.Status200OK)]
         public async Task<ActionResult<Api.SamlUpParty>> PostSamlUpPartyReadMetadata([FromBody] Api.SamlReadMetadataRequest samlReadMetadataRequest)
         {

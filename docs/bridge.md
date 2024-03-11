@@ -2,23 +2,23 @@
 
 By default, FoxIDs is a bridge between [SAML 2.0](saml-2.0.md) and [OpenID Connect](oidc.md) / [OAuth 2.0](oauth-2.0.md) without any additional configuration. 
 
-If you configure a [SAML 2.0 up-party](up-party-saml-2.0.md) to an external Identity Provider (IdP) and connect your app as a [OpenID Connect down-party](down-party-oidc.md) where you select the SAML 2.0 up-party. 
+If you configure a [SAML 2.0 authentication method](auth-method-saml-2.0.md) to an external Identity Provider (IdP) and connect your app as a [OpenID Connect application registration](app-reg-oidc.md) where you select the SAML 2.0 authentication method. 
 A log in request from your app is routed as an external SAML 2.0 log in requests. The SAML 2.0 log in response is subsequently mapped to an OpenID Connect response for your app.
 
 ![Bridge SAML 2.0 to OpenID Connect](images/bridge-saml-oidc.svg)
 
-The opposite is likewise possible starting the log in request from a [SAML 2.0 down-party](down-party-saml-2.0.md) app and routing to an external OpenID Provider (OP) configured as a [OpenID Connect up-party](up-party-oidc.md).
+The opposite is likewise possible starting the log in request from a [SAML 2.0 application registration](app-reg-saml-2.0.md) app and routing to an external OpenID Provider (OP) configured as a [OpenID Connect authentication method](auth-method-oidc.md).
 Subsequently, the response is mapped to a SAML 2.0 response.
 
 ![Bridge OpenID Connect to SAML 2.0](images/bridge-oidc-saml.svg)
 
 FoxIDs support to bridge both log in, logout and single logout between SMAL 2.0 and OpenID Connect.
 
-## One track - one Identity Provider
-All bridge functionality can be combined in the same track. Enables an OpenID Connect app to support log in via both a SAML 2.0 or OpenID Connect up-party at the same time. 
-The OpenID Connect app can either select the up-party grammatically or let the user select on a [home realm discovery (HRD)](login.md#home-realm-discovery-hrd) page.
+## One environment - one Identity Provider
+All bridge functionality can be combined in the same environment. Enables an OpenID Connect app to support log in via both a SAML 2.0 or OpenID Connect authentication method at the same time. 
+The OpenID Connect app can either select the authentication method grammatically or let the user select on a [home realm discovery (HRD)](login.md#home-realm-discovery-hrd) page.
 
-It is recommended to have an application infrastructure with [OpenID Connect](down-party-oidc.md) enabled clients and [OAuth 2.0](down-party-oauth-2.0.md) enable APIs. Where all applications (clients and APIs) trust the same Identity Provider (IdP) - one IdP is equal to one track FoxIDs.
+It is recommended to have an application infrastructure with [OpenID Connect](app-reg-oidc.md) enabled clients and [OAuth 2.0](app-reg-oauth-2.0.md) enable APIs. Where all applications (clients and APIs) trust the same Identity Provider (IdP) - one IdP is equal to one environment FoxIDs.
 By utilized the bridge functionality in FoxIDs SAML 2.0 tokens is mapped to ID tokens and access tokens which can be used to authenticate OpenID Connect apps and to call existing APIs.
 
 ## Token exchange

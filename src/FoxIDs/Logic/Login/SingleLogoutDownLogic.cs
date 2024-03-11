@@ -118,7 +118,7 @@ namespace FoxIDs.Logic
 
         private async Task<IActionResult> ResponseUpPartyAsync(string upPartyName, PartyTypes upPartyType)
         {
-            logger.ScopeTrace(() => $"Single Logout response, Up type {upPartyType}.");
+            logger.ScopeTrace(() => $"Single Logout response, Authentication type {upPartyType}.");
             var partyId = await UpParty.IdFormatAsync(RouteBinding, upPartyName);
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
 

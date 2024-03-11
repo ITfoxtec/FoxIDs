@@ -51,7 +51,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, SAML Authn request.");
+            logger.ScopeTrace(() => "AppReg, SAML Authn request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.Saml2);
@@ -83,7 +83,7 @@ namespace FoxIDs.Logic
                 try
                 {
                     samlHttpRequest.Binding.Unbind(samlHttpRequest, saml2AuthnRequest);
-                    logger.ScopeTrace(() => "Down, SAML Authn request accepted.", triggerEvent: true);
+                    logger.ScopeTrace(() => "AppReg, SAML Authn request accepted.", triggerEvent: true);
                 }
                 catch (Exception ex)
                 {
@@ -106,7 +106,7 @@ namespace FoxIDs.Logic
                 if (toUpParties.Count() == 1)
                 {
                     var toUpParty = toUpParties.First();
-                    logger.ScopeTrace(() => $"Request, Up type '{toUpParty:Type}'.");
+                    logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty:Type}'.");
                     switch (toUpParty.Type)
                     {
                         case PartyTypes.Login:
@@ -121,7 +121,7 @@ namespace FoxIDs.Logic
                             return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequestAsync(party, saml2AuthnRequest));
 
                         default:
-                            throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                            throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
                     }
                 }
                 else
@@ -150,7 +150,7 @@ namespace FoxIDs.Logic
 
         private void ValidateAuthnRequest(SamlDownParty party, Saml2AuthnRequest saml2AuthnRequest)
         {
-            if (saml2AuthnRequest.AssertionConsumerServiceUrl != null && !party.AcsUrls.Any(u => u.Equals(saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString, StringComparison.InvariantCultureIgnoreCase)))
+            if (saml2AuthnRequest.AssertionConsumerServiceUrl != null && !party.AcsUrls.Any(u => party.DisableAbsoluteUrls ? saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString.StartsWith(u, StringComparison.InvariantCultureIgnoreCase) : u.Equals(saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString, StringComparison.InvariantCultureIgnoreCase)))
             {
                 throw new EndpointException($"Invalid assertion consumer service URL '{saml2AuthnRequest.AssertionConsumerServiceUrl.OriginalString}' (maybe the request URL do not match the expected relaying party).") { RouteBinding = RouteBinding };
             }
@@ -196,7 +196,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthnResponseAsync(string partyId, Saml2StatusCodes status = Saml2StatusCodes.Success, IEnumerable<Claim> jwtClaims = null)
         {
-            logger.ScopeTrace(() => $"Down, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
+            logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty )}, Status code '{status}'.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
 
             var party = await tenantRepository.GetAsync<SamlDownParty>(partyId);
@@ -209,7 +209,7 @@ namespace FoxIDs.Logic
 
         private Task<IActionResult> AuthnResponseAsync(SamlDownParty party, Saml2Configuration samlConfig, string inResponseTo, string relayState, string acsUrl, Saml2StatusCodes status, IEnumerable<Claim> claims = null) 
         {
-            logger.ScopeTrace(() => $"Down, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
+            logger.ScopeTrace(() => $"AppReg, SAML Authn response{(status != Saml2StatusCodes.Success ? " error" : string.Empty)}, Status code '{status}'.");
 
             var binding = party.AuthnBinding.ResponseBinding;
             logger.ScopeTrace(() => $"Binding '{binding}'");
@@ -236,9 +236,9 @@ namespace FoxIDs.Logic
             };
             if (status == Saml2StatusCodes.Success && party != null && claims != null)
             {
-                logger.ScopeTrace(() => $"Down, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, SAML Authn received SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                logger.ScopeTrace(() => $"Down, SAML Authn output SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, SAML Authn output SAML claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 saml2AuthnResponse.SessionIndex = samlClaimsDownLogic.GetSessionIndex(claims);
 
@@ -266,7 +266,7 @@ namespace FoxIDs.Logic
             }
             logger.ScopeTrace(() => $"SAML Authn response '{saml2AuthnResponse.XmlDocument.OuterXml}'.", traceType: TraceTypes.Message);
             logger.ScopeTrace(() => $"ACS URL '{acsUrl}'.");
-            logger.ScopeTrace(() => "Down, SAML Authn response.", triggerEvent: true);
+            logger.ScopeTrace(() => "AppReg, SAML Authn response.", triggerEvent: true);
 
             if (party.RestrictFormAction)
             {

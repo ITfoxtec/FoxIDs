@@ -20,7 +20,7 @@ namespace FoxIDs.Client.Models.ViewModels
         [Display(Name = "Select one tenant by full tenant name")]
         public string TenantName { get; set; } 
 
-        [Display(Name = "Select one track by full track name")]
+        [Display(Name = "Select one environment by full environment name")]
         public string TrackName { get; set; }       
     }
 }

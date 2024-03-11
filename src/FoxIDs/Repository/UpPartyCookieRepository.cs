@@ -46,7 +46,7 @@ namespace FoxIDs.Repository
             if (tryGet && RouteBindingDoNotExists(routeBinding)) return null;
             CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Get up-party cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}', delete '{delete}'.");
+            logger.ScopeTrace(() => $"Get authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}', delete '{delete}'.");
 
             var cookie = httpContextAccessor.HttpContext.Request.Cookies[CookieName()];
             if (!cookie.IsNullOrWhiteSpace())
@@ -57,7 +57,7 @@ namespace FoxIDs.Repository
 
                     if (delete)
                     {
-                        logger.ScopeTrace(() => $"Delete up-party cookie, '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+                        logger.ScopeTrace(() => $"Delete authentication method cookie, '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
                         DeleteByName(routeBinding, party, CookieName());
                     }
 
@@ -65,13 +65,13 @@ namespace FoxIDs.Repository
                 }
                 catch (CryptographicException ex)
                 {
-                    logger.Warning(ex, $"Unable to unprotect up-party cookie '{typeof(TMessage).Name}', deleting cookie.");
+                    logger.Warning(ex, $"Unable to unprotect authentication method cookie '{typeof(TMessage).Name}', deleting cookie.");
                     DeleteByName(routeBinding, party, CookieName());
                     return null;
                 }
                 catch (Exception ex)
                 {
-                    throw new Exception($"Unable to read up-party cookie '{typeof(TMessage).Name}'.", ex);
+                    throw new Exception($"Unable to read authentication method cookie '{typeof(TMessage).Name}'.", ex);
                 }
             }
             else
@@ -86,7 +86,7 @@ namespace FoxIDs.Repository
             CheckRouteBinding(routeBinding);
             if (message == null) new ArgumentNullException(nameof(message));
 
-            logger.ScopeTrace(() => $"Save up-party cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Save authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             var cookieOptions = new CookieOptions
             {
@@ -116,7 +116,7 @@ namespace FoxIDs.Repository
             if (tryDelete && RouteBindingDoNotExists(routeBinding)) return;
             CheckRouteBinding(routeBinding);
 
-            logger.ScopeTrace(() => $"Delete up-party cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
+            logger.ScopeTrace(() => $"Delete authentication method cookie '{typeof(TMessage).Name}', route '{routeBinding.Route}'.");
 
             DeleteByName(routeBinding, party, CookieName());
         }

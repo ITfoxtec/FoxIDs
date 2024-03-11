@@ -62,19 +62,19 @@ namespace FoxIDs.Models.Config
         public int ConfirmationCodeLifetime { get; set; }
 
         /// <summary>
-        /// Up-party update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.
+        /// Authentication method update with OIDC Discovery or SAML 2.0 Metadata wait period in seconds.
         /// </summary>
         [Required]
         public int UpPartyUpdateWaitPeriod { get; set; }
 
         /// <summary>
-        /// Up-party max failing update with OIDC Discovery or SAML 2.0 Metadata before automatic update is stopped.
+        /// Authentication method max failing update with OIDC Discovery or SAML 2.0 Metadata before automatic update is stopped.
         /// </summary>
         [Required]
         public int UpPartyMaxFailingUpdate { get; set; }
 
         /// <summary>
-        /// The max number of up-parties in the HRD cookie.
+        /// The max number of authentication methods in the HRD cookie.
         /// </summary>
         [Required]
         public int HrdUpPartiesMaxCount { get; set; } = 5;

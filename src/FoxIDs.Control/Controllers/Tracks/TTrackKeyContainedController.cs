@@ -31,7 +31,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track keys contained.
+        /// Get environment keys contained.
         /// </summary>
         /// <returns>Track keys.</returns>
         [ProducesResponseType(typeof(Api.TrackKeyItemsContained), StatusCodes.Status200OK)]
@@ -61,7 +61,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKeyItemsContained).Name}' contained by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Get '{typeof(Api.TrackKeyItemsContained).Name}' contained by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemsContained).Name, RouteBinding.TrackName);
                 }
                 throw;
@@ -69,7 +69,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Update track key contained.
+        /// Update environment key contained.
         /// </summary>
         /// <param name="trackKeyRequest">Track key.</param>
         /// <returns>Track keys.</returns>
@@ -147,7 +147,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKeyItemContainedRequest).Name}' contained by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Update '{typeof(Api.TrackKeyItemContainedRequest).Name}' contained by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContainedRequest).Name, RouteBinding.TrackName);
                 }
                 throw;
@@ -155,7 +155,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Delete secondary track key contained.
+        /// Delete secondary environment key contained.
         /// </summary>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -193,7 +193,7 @@ namespace FoxIDs.Controllers
             {
                 if (ex.StatusCode == HttpStatusCode.NotFound)
                 {
-                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackKeyItemContained).Name}' contained by track name '{RouteBinding.TrackName}'.");
+                    logger.Warning(ex, $"NotFound, Delete '{typeof(Api.TrackKeyItemContained).Name}' contained by environment name '{RouteBinding.TrackName}'.");
                     return NotFound(typeof(Api.TrackKeyItemContained).Name, RouteBinding.TrackName);
                 }
                 throw;

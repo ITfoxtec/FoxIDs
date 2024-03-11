@@ -4,19 +4,16 @@
     var trackLinkUpParty = UpParty as GeneralTrackLinkUpPartyViewModel;
 }
 
-<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(m => TrackLinkUpPartyViewModelAfterInit(trackLinkUpParty, m))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
+<PageEditForm @ref="trackLinkUpParty.Form" TModel="TrackLinkUpPartyViewModel" OnAfterInit="@(async (model) => await TrackLinkUpPartyViewModelAfterInitAsync(model))" OnValidSubmit="@(async (editContext) => await OnEditTrackLinkUpPartyValidSubmitAsync(trackLinkUpParty, editContext))">
     <div class="modal-header">
         <div>
-            Track link
+            Environment Link
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="UpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (trackLinkUpParty.CreateMode)
-        {
-            <FInputText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" Focus="true" />
-        }
-        else
+        <FInputText @bind-Value="trackLinkUpParty.Form.Model.DisplayName" For="@(() => trackLinkUpParty.Form.Model.DisplayName)" />
+        @if (trackLinkUpParty.ShowAdvanced)
         {
             <FFieldText @bind-Value="trackLinkUpParty.Form.Model.Name" For="@(() => trackLinkUpParty.Form.Model.Name)" />
         }
@@ -27,22 +24,22 @@
 
         @if (trackLinkUpParty.ShowAdvanced)
         {
-            <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.EnableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+            <FInputToggle @bind-Value="trackLinkUpParty.Form.Model.DisableSingleLogout" For="@(() => trackLinkUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
         }
 
         <div class="mb-3 alert alert-info" role="alert">
-            <div>Please add a corresponding down-party track link in the track you want to connect to.</div>
+            <div>Please add a corresponding authentication method environment link in the environment you want to connect to.</div>
         </div>
 
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 @if (trackLinkUpParty.ShowTrackLinkTab)
                 {
-                    <a class="nav-link active">Track link</a>
+                    <a class="nav-link active">Environment Link</a>
                 }
                 else
                 {
-                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.TrackLink))">Track link</button>
+                    <button type="button" class="btn btn-link nav-link" @onclick="@(() => ShowTrackLinkTab(trackLinkUpParty, TrackLinkTabTypes.TrackLink))">Environment Link</button>
                 }
             </li>
             <li class="nav-item">
@@ -80,8 +77,22 @@
         <div class="tab-content pt-3">
             @if (trackLinkUpParty.ShowTrackLinkTab)
             {
-                <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
-                <FInputText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
+                @if (trackLinkUpParty.Form.Model.ToDownTrackDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownTrackDisplayName" For="@(() => trackLinkUpParty.Form.Model.ToDownTrackDisplayName)" />
+                }
+                @if (trackLinkUpParty.Form.Model.ToDownPartyDisplayName.IsNullOrWhiteSpace())
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyName)" />
+                }
+                else
+                {
+                    <FFieldText @bind-Value="trackLinkUpParty.Form.Model.ToDownPartyDisplayName" For="@(() => trackLinkUpParty.Form.Model.ToDownPartyDisplayName)" />
+                }
                 <FInputTextList @bind-ValueList="trackLinkUpParty.Form.Model.SelectedUpParties" For="@(() => trackLinkUpParty.Form.Model.SelectedUpParties)" />
                 @if (trackLinkUpParty.ShowAdvanced)
                 {
@@ -110,7 +121,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete Track link Up-party "@UpParty.Name", are you sure?
+                    You are about to delete Environment Link authentication method "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

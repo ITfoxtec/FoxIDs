@@ -24,20 +24,20 @@ namespace FoxIDs.Models
             var results = new List<ValidationResult>();
             if (Type == TrackKeyTypes.KeyVaultRenewSelfSigned && ExternalName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(ExternalName)} is required for track key type '{Type}'.", new[] { nameof(ExternalName) }));
+                results.Add(new ValidationResult($"The field {nameof(ExternalName)} is required for environment key type '{Type}'.", new[] { nameof(ExternalName) }));
             }
             else if(Type != TrackKeyTypes.KeyVaultRenewSelfSigned && !ExternalName.IsNullOrWhiteSpace())
             {
-                results.Add(new ValidationResult($"The field {nameof(ExternalName)} is not supported for track key type '{Type}'.", new[] { nameof(ExternalName) }));
+                results.Add(new ValidationResult($"The field {nameof(ExternalName)} is not supported for environment key type '{Type}'.", new[] { nameof(ExternalName) }));
             }
 
             if(Type == TrackKeyTypes.Contained && Keys?.Count < 1) 
             {
-                results.Add(new ValidationResult($"The field {nameof(Keys)} required at least one element for track key type '{Type}'.", new[] { nameof(Keys) }));
+                results.Add(new ValidationResult($"The field {nameof(Keys)} required at least one element for environment key type '{Type}'.", new[] { nameof(Keys) }));
             }
             else if (Type != TrackKeyTypes.Contained && Keys?.Count > 0)
             {
-                results.Add(new ValidationResult($"The field {nameof(Keys)} is not supported for track key type '{Type}'.", new[] { nameof(Keys) }));
+                results.Add(new ValidationResult($"The field {nameof(Keys)} is not supported for environment key type '{Type}'.", new[] { nameof(Keys) }));
             }
 
             return results;

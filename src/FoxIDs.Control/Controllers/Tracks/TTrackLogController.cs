@@ -32,7 +32,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track logs.
+        /// Get environment logs.
         /// </summary>
         /// <returns>Logs.</returns>
         [ProducesResponseType(typeof(Api.LogResponse), StatusCodes.Status200OK)]

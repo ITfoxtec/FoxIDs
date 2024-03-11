@@ -1,76 +1,427 @@
-﻿@page "/{tenantName}/downparties"
+﻿@page "/{tenantName}/applications"
 @inherits PageBase
 
-<div class="d-flex">
-    <div class="mr-auto">
-    </div>
-    <div class="p-2">
-        <div class="btn-group" role="group">
-            <button id="btnGroupCreateDownParty" type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <span class="oi oi-plus" aria-hidden="true"></span> Create Down-party
+<div class="tab-content">
+    <div class="d-flex">
+        <div class="mr-auto info-text pt-0">
+            Register your applications and APIs with <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>, <DocsLink Page="app-reg-oauth-2.0">OAuth 2.0</DocsLink> and <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink>.
+            <br />
+            More about: <DocsLink Page="howto-connect">How to connect</DocsLink> | <DocsLink Page="bridge">OpenID Connect to SAML 2.0 bridge</DocsLink> | <DocsLink Page="token-exchange">Token exchange</DocsLink>
+        </div>
+        <div class="pb-2">
+            <button type="button" class="btn btn-primary" @onclick="ShowNewDownParty">
+                <span class="oi oi-plus" aria-hidden="true"></span> New registration
             </button>
-            <div class="dropdown-menu" aria-labelledby="btnGroupCreateDownParty">
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Oidc))">OpenID Connect</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.Resource))">OAuth 2.0 - Resource (API)</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.OAuth2, OAuthSubPartyTypes.ClientCredentialsGrant))">OAuth 2.0 - Client Credentials Grant</button>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.Saml2))">SAML 2.0</button>
-                <div class="dropdown-divider"></div>
-                <button class="dropdown-item btn btn-link" type="button" @onclick="@(() => ShowCreateDownParty(PartyTypes.TrackLink))">Track link</button>
-            </div>
         </div>
     </div>
-</div>
-
-<ul class="nav nav-tabs">
-    <li class="nav-item">
-        <a class="nav-link active">Down-parties</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="@upPartyHref">Up-parties</a>
-    </li>
-</ul>
-
-<div class="tab-content">
-    <PageEditForm @ref="downPartyFilterForm" TModel="FilterPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
+    <PageEditForm @ref="downPartyFilterForm" TModel="FilterDownPartyViewModel" OnValidSubmit="OnDownPartyFilterValidSubmitAsync">
         <FInputTextFilter @bind-Value="downPartyFilterForm.Model.FilterName" For="@(() => downPartyFilterForm.Model.FilterName)" />
     </PageEditForm>
 
     <ul class="list-group">
-        @foreach (var downParty in downParties)
+        @if (downParties != null)
         {
-            <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
-                @if (!downParty.Error.IsNullOrWhiteSpace())
+            @if (downParties.Count() > 0)
+            {
+                @foreach (var downParty in downParties)
                 {
-                    <div class="alert alert-danger" role="alert">
-                        @downParty.Error
-                    </div>
+                    <li class="list-group-item @(downParty.Edit ? "active" : string.Empty)">
+                        @if (!downParty.Error.IsNullOrWhiteSpace())
+                        {
+                            <div class="alert alert-danger" role="alert">
+                                @downParty.Error
+                            </div>
+                        }
+                        @if (downParty.Edit)
+                        {
+                            if (downParty.Type == PartyTypes.Oidc)
+                            {
+                                <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                            else if (downParty.Type == PartyTypes.OAuth2)
+                            {
+                                <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                            else if (downParty.Type == PartyTypes.Saml2)
+                            {
+                                <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                            else if (downParty.Type == PartyTypes.TrackLink)
+                            {
+                                <ETrackLinkDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
+                            }
+                        }
+                        else
+                        {
+                            <button class="btn btn-link" @onclick="@(() => ShowUpdateDownParty(downParty))">
+                                @DownPartyInfoText(downParty)
+                            </button>
+                        }
+                    </li>
                 }
-                @if (downParty.Edit)
-                {
-                    if (downParty.Type == PartyTypes.Oidc)
-                    {
-                        <EOidcDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                    else if (downParty.Type == PartyTypes.OAuth2)
-                    {
-                        <EOAuthDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                    else if (downParty.Type == PartyTypes.Saml2)
-                    {
-                        <ESamlDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                    else if (downParty.Type == PartyTypes.TrackLink)
-                    {
-                        <ETrackLinkDownParty OnStateHasChanged="OnStateHasChangedAsync" DownParties="downParties" DownParty="downParty" TenantName="@TenantName" />
-                    }
-                }
-                else
-                {
-                    <button class="btn btn-link" @onclick="@(() => ShowUpdateDownParty(downParty))">
-                        @DownPartyInfoText(downParty)
-                    </button>
-                }
-            </li>
+            }
+            else if (!downPartyFilterForm.Model.FilterName.IsNullOrWhiteSpace())
+            {
+                <div class="font-italic pl-1">No match</div>
+            }
         }
     </ul>
 </div>
+
+@if (newDownPartyModal != null)
+{
+    <Modal @ref="newDownPartyModal.Modal" Title="New Registration">
+        <div class="modal-body">
+            <div class="d-flex">
+                <div class="mr-auto"><h6>@newDownPartyModal.AppTitle</h6></div>
+                <div class="pt-0 pb-2">
+                    @if (newDownPartyModal.Type == null)
+                    {
+                        <FInputSwitch @bind-Value="newDownPartyModal.ShowAll" Text="Show advanced" />
+                    }
+                    else if (!newDownPartyModal.Created)
+                    {
+                        <FInputSwitchAdvancedOptions @bind-Value="newDownPartyModal.ShowAdvanced" />
+                    }
+                </div>
+            </div>
+            @if (newDownPartyModal.Type == null)
+            {
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
+                                <h5 class="py-2">Web Application <div class="small">(OpenID Connect)</div></h5>
+                                <div class="py-2 font-italic">E.g., ASP.NET Core, Blazor Server, Java, Nodes.js, PHP.</div>
+                                <div class="py-2">Web application running on a server, optionally with a backend API.</div>
+                            </a>
+                        </div>
+                        @if (newDownPartyModal.ShowAll)
+                        {
+                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Web Application", PartyTypes.Saml2))" @onclick:preventDefault>
+                                    <h5 class="py-2">Web Application <div class="small">(SAML 2.0)</div></h5>
+                                    <div class="py-2 font-italic">E.g., ASP.NET Core, Java, PHP.</div>
+                                    <div class="py-2">Web application running on a server.<br />SAML 2.0 is an old standard with its shortcomings, it is often better to use OpenID Connect.</div>
+                                </a>
+                            </div>
+                        }
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Single Page Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Public))" @onclick:preventDefault>
+                                <h5 class="py-2">Single Page Application <div class="small">(OpenID Connect)</div></h5>
+                                <div class="py-2">E.g., Blazor WebAssembly (WASM), React, Angular, Vue.</div>
+                                <div class="py-2">Application running in the browser, often with an backend API.</div>
+                            </a>
+                        </div>
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Native Application", PartyTypes.Oidc, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.PublicNative))" @onclick:preventDefault>
+                                <h5 class="py-2">Native Application <div class="small">(OpenID Connect)</div></h5>
+                                <div class="py-2">E.g., .NET MAUI, React Native, Ionic, IOS, Android.</div>
+                                <div class="py-2">Mobile, smart device or desktop applications, often with an backend API.</div>
+                            </a>
+                        </div>
+                        <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                            <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("Backend Application", PartyTypes.OAuth2, DownPartyOAuthTypes.Client, DownPartyOAuthClientTypes.Confidential))" @onclick:preventDefault>
+                                <h5 class="py-2">Backend Application <div class="small">(OAuth 2.0)</div></h5>
+                                <div class="py-2">E.g., .NET service, Java, Script.</div>
+                                <div class="py-2">Backend service or daemon applications, optionally with a backend API.</div>
+                            </a>
+                        </div>
+                        @if (newDownPartyModal.ShowAll)
+                        {
+                            <div class="col-6 py-3 @(newDownPartyModal.ShowAll ? "col-lg-4" : string.Empty)">
+                                <a href="" class="d-flex flex-column btn btn-wrap btn-max btn-outline-secondary" onclick="@(() => ChangeNewDownPartyState("API", PartyTypes.OAuth2, DownPartyOAuthTypes.Resource))" @onclick:preventDefault>
+                                    <h5 class="py-2">API <div class="small">(OAuth 2.0)</div></h5>
+                                    <div class="py-2">E.g., ASP.NET Core, Azure Functions, Java.</div>
+                                    <div class="py-2">APIs or micro services.<br />Used for more advanced solutions where multiple applications need to call the API.</div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else if (newDownPartyModal.Type == PartyTypes.Oidc)
+            {
+                <PageEditForm @ref="newDownPartyModal.OidcForm" TModel="NewDownPartyOidcViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOidcModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OidcForm, editContext))">
+                    @if (!newDownPartyModal.Created)
+                    {
+                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
+                        {
+                            <div class="info-text">
+                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your single page application running in the browser, often with an backend API (called a Public Client).
+                            </div>
+                        }
+                        else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                        {
+                            <div class="info-text">
+                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your native application often with an backend API (called a Public Client).
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="info-text">
+                                Add new <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink> registration for your web application running on a server, optionally with a backend API (called a Confidential Client).
+                            </div>
+                        }
+
+                        <div>
+                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.DisplayName" For="@(() => newDownPartyModal.OidcForm.Model.DisplayName)" Focus="true" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">Enter the Client ID / Resource name you want, otherwise auto generated.</div>
+                                <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                            }
+                            <div class="info-text">
+                                @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                                {
+                                    <div>Enter your applications URI as Redirect URI, e.g. 'myapp://', 'myapp://callback' or 'https://myapp.com/auth'.</div>
+                                    
+                                }
+                                else
+                                {
+                                    <div>Enter your applications base URL as Redirect URI, e.g. 'https://myapp.com/' or 'https://myapp.com/callback' or 'https://myapp.com/theappsite'.</div>
+                                }                                
+                            </div>
+                            <FInputText @bind-Value="newDownPartyModal.OidcForm.Model.RedirectUri" For="@(() => newDownPartyModal.OidcForm.Model.RedirectUri)" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">
+                                    @{
+                                        var uriText = newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative ? "URI" : "URL";
+                                    }
+                                    Enable Absolute URIs if you know the exact @uriText in your application that the user should be redirected back to when logged in, and enter the absolute @uriText as the Redirect URI.                                
+                                </div>
+                                <FInputToggle @bind-Value="newDownPartyModal.OidcForm.Model.DisableAbsoluteUris" For="@(() => newDownPartyModal.OidcForm.Model.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public)
+                        {
+                            <div class="info-text">
+                                Your single page application is registered!
+                            </div>
+                        }
+                        else if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                        {
+                            <div class="info-text">
+                                Your native application is registered!
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="info-text">
+                                Your web application is registered!
+                            </div>
+                        }
+
+                        <div class="info-text">
+                            Remember the following information, you need them to configure your application. 
+                        </div>
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Authority" For="@(() => newDownPartyModal.OidcForm.Model.Authority)" />
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Name" For="@(() => newDownPartyModal.OidcForm.Model.Name)" />
+                        @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Confidential)
+                        {
+                            <FFieldTextClipboard @bind-Value="newDownPartyModal.OidcForm.Model.Secret" For="@(() => newDownPartyModal.OidcForm.Model.Secret)" />
+                        }
+                        else @if (newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.Public || newDownPartyModal.OAuthClientType == DownPartyOAuthClientTypes.PublicNative)
+                        {
+                            <FFieldText @bind-Value="newDownPartyModal.OidcForm.Model.Pkce" For="@(() => newDownPartyModal.OidcForm.Model.Pkce)" />
+                        }
+                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OidcForm.Model.Scopes" For="@(() => newDownPartyModal.OidcForm.Model.Scopes)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newDownPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newDownPartyModal.CreateWorking ? "disabled" : "")" onclick="@(() => ChangeNewDownPartyState())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Register</button>
+                            <button type="button" class="btn btn-secondary @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newDownPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newDownPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newDownPartyModal.Type == PartyTypes.OAuth2 && newDownPartyModal.OAuthType == DownPartyOAuthTypes.Client)
+            {
+                <PageEditForm @ref="newDownPartyModal.OAuthClientForm" TModel="NewDownPartyOAuthClientViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthClientModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthClientForm, editContext))">
+                    @if (!newDownPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your backend application, optionally with a backend API (called a Confidential Client that request an access token using Client Credential Grant).
+                        </div>
+
+                        <div>
+                            <FInputText @bind-Value="newDownPartyModal.OAuthClientForm.Model.DisplayName" For="@(() => newDownPartyModal.OAuthClientForm.Model.DisplayName)" Focus="true" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">Enter the Client ID you want, otherwise auto generated.</div>
+                                <FInputText @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            Your backend application is registered!
+                        </div>
+
+                        <div class="info-text">
+                            Remember the following information, you need them to configure your application.
+                        </div>
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Authority" For="@(() => newDownPartyModal.OAuthClientForm.Model.Authority)" />
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Name" For="@(() => newDownPartyModal.OAuthClientForm.Model.Name)" />
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthClientForm.Model.Secret" For="@(() => newDownPartyModal.OAuthClientForm.Model.Secret)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newDownPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newDownPartyModal.CreateWorking ? "disabled" : "")" onclick="@(() => ChangeNewDownPartyState())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Register</button>
+                            <button type="button" class="btn btn-secondary @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newDownPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newDownPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newDownPartyModal.Type == PartyTypes.OAuth2 && newDownPartyModal.OAuthType == DownPartyOAuthTypes.Resource)
+            {
+                <PageEditForm @ref="newDownPartyModal.OAuthResourceForm" TModel="NewDownPartyOAuthResourceViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartyOAuthResourceModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.OAuthResourceForm, editContext))">
+                    @if (!newDownPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="app-reg-oauth-2.0" Fragment="client-credentials-grant">OAuth 2.0</DocsLink> registration for your API (called a Resource). Used for more advanced solutions where multiple applications need to call the API.
+                        </div>
+
+                        <div>
+                            <FInputText @bind-Value="newDownPartyModal.OAuthResourceForm.Model.DisplayName" For="@(() => newDownPartyModal.OAuthResourceForm.Model.DisplayName)" Focus="true" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">Enter the Resource name you want, otherwise auto generated.</div>
+                                <FInputText @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                            }
+                        </div>
+
+                        <div class="info-text">
+                            Add Scopes to restrict access from a calling client to the API.
+                        </div>
+                        <FInputTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.Scopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Scopes)" />
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            Your API is registered!
+                        </div>
+
+                        <div class="info-text">
+                            Remember the following information, you need them to configure your application.
+                        </div>
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Authority" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Authority)" />
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.OAuthResourceForm.Model.Name" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Name)" />
+                        <div class="info-text">
+                            You added the following scopes to the API.
+                        </div>
+                        <FFieldTextList @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.Scopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.Scopes)" />
+                        <div class="info-text">
+                            A client requests scopes as compound scope names that include the API's resource name.                           
+                        </div>
+                        <FFieldTextListClipboard @bind-ValueList="newDownPartyModal.OAuthResourceForm.Model.ClientScopes" For="@(() => newDownPartyModal.OAuthResourceForm.Model.ClientScopes)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newDownPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newDownPartyModal.CreateWorking ? "disabled" : "")" onclick="@(() => ChangeNewDownPartyState())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Register</button>
+                            <button type="button" class="btn btn-secondary @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newDownPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newDownPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else if (newDownPartyModal.Type == PartyTypes.Saml2)
+            {
+                <PageEditForm @ref="newDownPartyModal.SamlForm" TModel="NewDownPartySamlViewModel" OnValidSubmit="@(async (editContext) => await OnNewDownPartySamlModalValidSubmitAsync(newDownPartyModal, newDownPartyModal.SamlForm, editContext))">
+                    @if (!newDownPartyModal.Created)
+                    {
+                        <div class="info-text">
+                            Add new <DocsLink Page="app-reg-saml-2.0">SAML 2.0</DocsLink> registration for your web application running on a server. 
+                            <br />
+                            SAML 2.0 is an old standard with its shortcomings, it is often better to use <DocsLink Page="app-reg-oidc">OpenID Connect</DocsLink>.
+                        </div>
+
+                        <div>
+                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.DisplayName" For="@(() => newDownPartyModal.SamlForm.Model.DisplayName)" Focus="true" />
+                            <div class="info-text">Enter the applications issuer, otherwise auto generated.</div>
+                            <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">Enter the Technical name you want for the registration, otherwise auto generated.</div>
+                                <FInputText @bind-Value="newDownPartyModal.SamlForm.Model.Name" For="@(() => newDownPartyModal.SamlForm.Model.Name)" />
+                            }
+                            <div class="info-text">
+                                <div>Enter your applications base URL as Assertion consumer service (ACS) URL, e.g. 'https://myapp.com/' or 'https://myapp.com/acs' or 'https://myapp.com/theappsite'.</div>
+                            </div>
+                            <FInputTextList @bind-ValueList="newDownPartyModal.SamlForm.Model.AcsUrls" For="@(() => newDownPartyModal.SamlForm.Model.AcsUrls)" />
+                            @if (newDownPartyModal.ShowAdvanced)
+                            {
+                                <div class="info-text">
+                                    Enable Absolute URLs if you know the exact URL in your application that the user should be redirected back to when logged in, and enter the absolute URL as the Assertion consumer service (ACS) URL.
+                                </div>
+                                <FInputToggle @bind-Value="newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls" For="@(() => newDownPartyModal.SamlForm.Model.DisableAbsoluteUrls)" Negation="true" TextType="e.d" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="info-text">
+                            Your web application is registered!
+                        </div>
+
+                        <div class="info-text">
+                            Remember the following information, you need them to configure your application.
+                        </div>
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Metadata" For="@(() => newDownPartyModal.SamlForm.Model.Metadata)" />
+                        <FFieldTextClipboard @bind-Value="newDownPartyModal.SamlForm.Model.Issuer" For="@(() => newDownPartyModal.SamlForm.Model.Issuer)" />
+                    }
+                    <div class="d-flex modal-footer px-0 pb-0">
+                        @if (!newDownPartyModal.Created)
+                        {
+                            <div class="mr-auto">
+                                <button type="button" class="btn btn-link pl-0 @(newDownPartyModal.CreateWorking ? "disabled" : "")" onclick="@(() => ChangeNewDownPartyState())"><i class="bi bi-caret-left bi-right-space"></i>Back</button>
+                            </div>
+                            <button type="submit" class="btn btn-primary @(newDownPartyModal.CreateWorking ? "disabled" : "")">Register</button>
+                            <button type="button" class="btn btn-secondary @(newDownPartyModal.CreateWorking ? "disabled" : "")" @onclick="@(() => newDownPartyModal.Modal.Hide())">Cancel</button>
+                        }
+                        else
+                        {
+                            <div class="mr-auto"></div>
+                            <button type="button" class="btn btn-secondary" @onclick="@(() => newDownPartyModal.Modal.Hide())">Close</button>
+                        }
+                    </div>
+                </PageEditForm>
+            }
+            else
+            {
+                throw new Exception("New down-party type and selection not supported.");
+            }
+        </div>
+    </Modal>
+}

@@ -34,7 +34,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> FrontChannelLogoutAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, Track link front channel logout.");
+            logger.ScopeTrace(() => "AuthMethod, Environment Link front channel logout.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkUpParty>(partyId);
 
@@ -43,12 +43,12 @@ namespace FoxIDs.Logic
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkDownSequenceData>(keySequence, party.ToDownTrackName, remove: false);
             if (!keySequenceData.KeyNames.Where(k => k == party.ToDownPartyName).Any())
             {
-                throw new Exception($"Incorrect down-party key names, expected down-party name '{party.ToDownPartyName}'.");
+                throw new Exception($"Incorrect application registration key names, expected application registration name '{party.ToDownPartyName}'.");
             }
 
             await hrdLogic.DeleteHrdSelectionBySelectedUpPartyAsync(party.Name);
             var session = await sessionUpPartyLogic.DeleteSessionAsync(party);
-            logger.ScopeTrace(() => "Up, Successful track link front channel logout request.", triggerEvent: true);
+            logger.ScopeTrace(() => "AuthMethod, Successful environment link front channel logout request.", triggerEvent: true);
             if (session != null)
             {
                 var _ = await sessionUpPartyLogic.DeleteSessionAsync(party, session);

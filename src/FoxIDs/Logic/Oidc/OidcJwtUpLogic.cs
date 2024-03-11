@@ -1,5 +1,6 @@
 ﻿using FoxIDs.Infrastructure;
 using FoxIDs.Models;
+using ITfoxtec.Identity;
 using ITfoxtec.Identity.Models;
 using ITfoxtec.Identity.Tokens;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +23,7 @@ namespace FoxIDs.Logic
             (var validKeys, var invalidKeys) = party.Keys.GetValidKeys();
             try
             {
-                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(idToken, issuer, validKeys, clientId));
+                (var claimsPrincipal, _) = await Task.FromResult(JwtHandler.ValidateToken(idToken, issuer, validKeys, clientId, validateIssuer: !issuer.IsNullOrWhiteSpace()));
                 return claimsPrincipal;
             }
             catch (Exception ex)

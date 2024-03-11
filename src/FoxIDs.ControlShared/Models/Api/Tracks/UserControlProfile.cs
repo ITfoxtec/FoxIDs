@@ -7,7 +7,7 @@ namespace FoxIDs.Models.Api
     {
         [MaxLength(Constants.Models.Track.NameLength)]
         [RegularExpression(Constants.Models.Track.NameDbRegExPattern)]
-        [Display(Name = "Last track")]
+        [Display(Name = "Last environment")]
         public string LastTrackName { get; set; }        
     }
 }

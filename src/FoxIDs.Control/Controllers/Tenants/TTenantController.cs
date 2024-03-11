@@ -110,8 +110,8 @@ namespace FoxIDs.Controllers
                 await masterTenantLogic.CreateMasterFoxIDsControlApiResourceDocumentAsync(tenant.Name);
                 await masterTenantLogic.CreateMasterControlClientDocmentAsync(tenant.Name, tenant.ControlClientBaseUri, mLoginUpParty);
 
-                await CreateTrackDocumentAsync(tenant.Name, "test", plan.GetKeyType());
-                await CreateTrackDocumentAsync(tenant.Name, "-", plan.GetKeyType()); // production
+                await CreateTrackDocumentAsync(tenant.Name, "Test", "test", plan.GetKeyType());
+                await CreateTrackDocumentAsync(tenant.Name, "Production", "-", plan.GetKeyType());
 
                 return Created(mapper.Map<Api.Tenant>(mTenant));
             }
@@ -150,9 +150,9 @@ namespace FoxIDs.Controllers
             }
         }
 
-        private async Task CreateTrackDocumentAsync(string tenantName, string trackName, TrackKeyTypes keyType)
+        private async Task CreateTrackDocumentAsync(string tenantName, string trackDisplayName, string trackName, TrackKeyTypes keyType)
         {
-            var mTrack = mapper.Map<Track>(new Api.Track { Name = trackName?.ToLower() });
+            var mTrack = mapper.Map<Track>(new Api.Track { DisplayName = trackDisplayName, Name = trackName?.ToLower() });
             await masterTenantLogic.CreateTrackDocumentAsync(tenantName, mTrack, keyType);
             await masterTenantLogic.CreateLoginDocumentAsync(tenantName, mTrack.Name);
         }

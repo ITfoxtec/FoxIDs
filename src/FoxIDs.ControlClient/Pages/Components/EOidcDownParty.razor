@@ -4,7 +4,7 @@
     var oidcDownParty = DownParty as GeneralOidcDownPartyViewModel;
 }
 
-<PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnAfterInit="@(m => OidcDownPartyViewModelAfterInit(oidcDownParty, m))" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
+<PageEditForm @ref="oidcDownParty.Form" TModel="OidcDownPartyViewModel" OnValidSubmit="@(async (editContext) => await OnEditOidcDownPartyValidSubmitAsync(oidcDownParty, editContext))">
     <div class="modal-header">
         <div>
             OpenID Connect
@@ -12,48 +12,44 @@
         <FInputSwitchAdvancedOptions @bind-Value="DownParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
-        @if (oidcDownParty.CreateMode)
-        {
-            <FInputText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" Focus="true" />
-        }
-        else
-        {
-            <FFieldText @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
-        }
+        <FInputText @bind-Value="oidcDownParty.Form.Model.DisplayName" For="@(() => oidcDownParty.Form.Model.DisplayName)" />
+        <FFieldTextClipboard @bind-Value="oidcDownParty.Form.Model.Name" For="@(() => oidcDownParty.Form.Model.Name)" />
         @if (oidcDownParty.ShowAdvanced)
         {
             <FInputText @bind-Value="oidcDownParty.Form.Model.Note" For="@(() => oidcDownParty.Form.Model.Note)" />
         }
 
-        <div class="mb-3 alert alert-info" role="alert">
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                (var clientAuthority, var clientOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
-                <div>Client Authority and OIDC Discovery<br /><i>Example for a up-party with the name 'login' as the target.</i></div>                 
-                <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
-                <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
-            }
+        @if (!oidcDownParty.Form.Model.Name.IsNullOrWhiteSpace())
+        {
+            <div class="mb-3 alert alert-info" role="alert">
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.Client || oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    (var clientAuthority, var clientOidcDiscovery) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, true, oidcDownParty.Form.Model.PartyBindingPattern);
+                    <div>Authority: <FTextClipboard Text="@clientAuthority" /></div>
+                    <div>OIDC Discovery: <FTextLinkClipboard Text="@clientOidcDiscovery" /></div>
+                }
 
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                <hr />
-            }
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    <hr />
+                }
 
-            @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
-            {
-                (var resourceAuthority, var resourceOidcDiscovery) = GetAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
-                <div>Resource Authority and OIDC Discovery</div>
-                <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
-                <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>                
-            }
-        </div>
+                @if (oidcDownParty.DownPartyType == DownPartyOAuthTypes.ClientAndResource)
+                {
+                    (var resourceAuthority, var resourceOidcDiscovery) = MetadataLogic.GetDownAuthorityAndOIDCDiscovery(oidcDownParty.Form.Model.Name, false);
+                    <div>Resource Authority and OIDC Discovery</div>
+                    <div>Authority: <FTextClipboard Text="@resourceAuthority" /></div>
+                    <div>OIDC Discovery: <FTextLinkClipboard Text="@resourceOidcDiscovery" /></div>
+                }
+            </div>
+        }
 
         @if (DownParty.ShowAdvanced)
         {
             <FInputSelect @bind-Value="oidcDownParty.Form.Model.PartyBindingPattern" For="@(() => oidcDownParty.Form.Model.PartyBindingPattern)">
-                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../down-party(up-party)/... - default</option>
-                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../down-party~up-party~/...</option>
-                <option value="@PartyBindingPatterns.Dot">Dot pattern .../down-party.up-party./...</option>
+                <option value="@PartyBindingPatterns.Brackets">Brackets pattern .../application(auth-method)/... - default</option>
+                <option value="@PartyBindingPatterns.Tildes">Tildes pattern .../application~auth-method~/...</option>
+                <option value="@PartyBindingPatterns.Dot">Dot pattern .../application.auth-method./...</option>
             </FInputSelect>
 
             <FInputSelect TValue="DownPartyOAuthTypes" @bind-Value="oidcDownParty.DownPartyType" For="@(() => oidcDownParty.DownPartyType)" OnValidChange="@((type) => OnOidcDownPartyTypeChange(oidcDownParty, type))">
@@ -111,12 +107,13 @@
                     }
                     <FInputTextList @bind-ValueList="oidcDownParty.Form.Model.Client.RedirectUris" For="@(() => oidcDownParty.Form.Model.Client.RedirectUris)" />
                     <FInputText @bind-Value="oidcDownParty.Form.Model.Client.PostLogoutRedirectUri" For="@(() => oidcDownParty.Form.Model.Client.PostLogoutRedirectUri)" />
+                    <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableAbsoluteUris" For="@(() => oidcDownParty.Form.Model.Client.DisableAbsoluteUris)" Negation="true" TextType="e.d" />
                     @if (DownParty.ShowAdvanced)
                     {
                         <FInputText @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutUri" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutUri)" />
                         <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcDownParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" />
+                        <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     }
-                    <FInputCheckboxSelect Items="responseTypeItems" SelectedItems="oidcDownParty.Form.Model.Client.ResponseTypes" For="@(() => oidcDownParty.Form.Model.Client.ResponseTypes)" />
                     <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.RequirePkce" For="@(() => oidcDownParty.Form.Model.Client.RequirePkce)" TextType="y.n" />
                     @if (DownParty.ShowAdvanced)
                     {
@@ -126,8 +123,11 @@
                             <option value="@ClientAuthenticationMethods.PrivateKeyJwt">Private key JWT</option>
                         </FInputSelect>
                     }
-                    <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
-                    @if (DownParty.ShowAdvanced)
+                    @if (DownParty.ShowAdvanced || oidcDownParty.Form.Model.Client.ClientAuthenticationMethod != ClientAuthenticationMethods.PrivateKeyJwt)
+                    {
+                        <OAuthSecrets ClientSecret="oidcDownParty.Form.Model.Client" />
+                    }
+                    @if (DownParty.ShowAdvanced || oidcDownParty.Form.Model.Client.ClientAuthenticationMethod == ClientAuthenticationMethods.PrivateKeyJwt)
                     {
                         <div class="form-group active-group active">
                             <div class="drag-drop-zone input-control">
@@ -163,7 +163,7 @@
                         @if (oidcDownParty.Form.Model.Client.ScopesViewModel.Count() <= 0)
                         {
                             <div class="card">
-                                <div class="card-body px-3 py-2">
+                                <div class="card-body">
                                 </div>
                             </div>
                         }
@@ -197,7 +197,7 @@
                                                                 else
                                                                 {
                                                                     <div class="card">
-                                                                        <div class="card-body px-3 py-2">
+                                                                        <div class="card-body">
                                                                         </div>
                                                                     </div>
                                                                 }
@@ -221,7 +221,7 @@
                                                                 else
                                                                 {
                                                                     <div class="card">
-                                                                        <div class="card-body px-3 py-2">
+                                                                        <div class="card-body">
                                                                         </div>
                                                                     </div>
                                                                 }
@@ -284,7 +284,7 @@
                             @if (oidcDownParty.Form.Model.Client.Claims.Count() <= 0)
                             {
                                 <div class="card">
-                                    <div class="card-body px-3 py-2">
+                                    <div class="card-body">
                                     </div>
                                 </div>
                             }
@@ -336,9 +336,9 @@
                             <option value="@IdentityConstants.ResponseModes.Query">query</option>
                         </FInputSelect>
 
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant)" TextType="y.n" />
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant)" TextType="y.n" />
-                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" TextType="y.n" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableClientCredentialsGrant)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant" For="@(() => oidcDownParty.Form.Model.Client.DisableTokenExchangeGrant)" Negation="true" TextType="e.d" />
+                        <FInputToggle @bind-Value="oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor" For="@(() => oidcDownParty.Form.Model.Client.DisableClientAsTokenExchangeActor)" Negation="true" TextType="e.d" />
                     }
                 }
             }
@@ -359,12 +359,12 @@
             }
         </div>
     </div>
-    @if (!DownParty.CreateMode && DownParty.DeleteAcknowledge)
+    @if (DownParty.DeleteAcknowledge)
     {
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete OpenID Connect Down-party "@DownParty.Name", are you sure?
+                    You are about to delete OpenID Connect application registration "@(DownParty.DisplayName ?? DownParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">
@@ -375,11 +375,8 @@
         </div>
     }
     <div class="modal-footer">
-        @if (!DownParty.CreateMode)
-        {
-            <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
-        }
-        <button type="submit" class="btn btn-primary">@(@DownParty.CreateMode ? "Create" : "Update")</button>
-        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">@(@DownParty.CreateMode ? "Cancel" : "Close")</button>
+        <button type="button" class="btn btn-link" @onclick="@(() => DownParty.DeleteAcknowledge = true)">Delete</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button type="button" class="btn btn-secondary" @onclick="@(() => DownPartyCancelAsync(DownParty))">Close</button>
     </div>
 </PageEditForm>

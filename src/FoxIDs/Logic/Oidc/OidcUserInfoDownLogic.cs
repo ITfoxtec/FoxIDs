@@ -27,7 +27,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> UserInfoRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, OIDC UserInfo request.");
+            logger.ScopeTrace(() => "AppReg, OIDC UserInfo request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TParty>(partyId);
 

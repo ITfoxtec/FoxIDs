@@ -11,33 +11,50 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
+using System.Linq;
+using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages
 {
     public partial class UpParties
     {
-        private PageEditForm<FilterPartyViewModel> upPartyFilterForm;
-        private List<GeneralUpPartyViewModel> upParties = new List<GeneralUpPartyViewModel>();
-        private string downPartyHref;
-     
+        private NewUpPartyViewModel newUpPartyModal;
+        private PageEditForm<FilterUpPartyViewModel> upPartyFilterForm;
+        private List<GeneralUpPartyViewModel> upParties;
+
+        [Inject]
+        public IToastService toastService { get; set; }
+
         [Inject]
         public RouteBindingLogic RouteBindingLogic { get; set; }
 
         [Inject]
+        public TrackService TrackService { get; set; }
+
+        [Inject]
         public UpPartyService UpPartyService { get; set; }
+
+        [Inject]
+        public DownPartyService DownPartyService { get; set; }
 
         [Parameter]
         public string TenantName { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
-            downPartyHref = $"{await RouteBindingLogic.GetTenantNameAsync()}/downparties";
             await base.OnInitializedAsync();
+            newUpPartyModal = new NewUpPartyViewModel();
             TrackSelectedLogic.OnTrackSelectedAsync += OnTrackSelectedAsync;
             if (TrackSelectedLogic.IsTrackSelected)
             {
                 await DefaultLoadAsync();
             }
+        }
+
+        protected override void OnDispose()
+        {
+            TrackSelectedLogic.OnTrackSelectedAsync -= OnTrackSelectedAsync;
+            base.OnDispose();
         }
 
         private async Task OnTrackSelectedAsync(Track track)
@@ -83,33 +100,34 @@ namespace FoxIDs.Client.Pages
 
         private void SetGeneralUpParties(IEnumerable<UpParty> dataUpParties)
         {
-            upParties.Clear();
+            var ups = new List<GeneralUpPartyViewModel>();
             foreach (var dp in dataUpParties)
             {
                 if (dp.Type == PartyTypes.Login)
                 {
-                    upParties.Add(new GeneralLoginUpPartyViewModel(dp));
+                    ups.Add(new GeneralLoginUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.OAuth2)
                 {
-                    upParties.Add(new GeneralOAuthUpPartyViewModel(dp));
+                    ups.Add(new GeneralOAuthUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Oidc)
                 {
-                    upParties.Add(new GeneralOidcUpPartyViewModel(dp));
+                    ups.Add(new GeneralOidcUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.Saml2)
                 {
-                    upParties.Add(new GeneralSamlUpPartyViewModel(dp));
+                    ups.Add(new GeneralSamlUpPartyViewModel(dp));
                 }
                 else if (dp.Type == PartyTypes.TrackLink)
                 {
-                    upParties.Add(new GeneralTrackLinkUpPartyViewModel(dp));
+                    ups.Add(new GeneralTrackLinkUpPartyViewModel(dp));
                 }
             }
+            upParties = ups;
         }
 
-        private void ShowCreateUpParty(PartyTypes type)
+        private void ShowCreateUpParty(PartyTypes type, bool tokenExchange = false)
         {
             if (type == PartyTypes.Login)
             {
@@ -123,6 +141,7 @@ namespace FoxIDs.Client.Pages
                 var oauthUpParty = new GeneralOAuthUpPartyViewModel();
                 oauthUpParty.CreateMode = true;
                 oauthUpParty.Edit = true;
+                oauthUpParty.TokenExchange = tokenExchange;
                 upParties.Add(oauthUpParty);
             }
             else if (type == PartyTypes.Oidc)
@@ -130,6 +149,7 @@ namespace FoxIDs.Client.Pages
                 var oidcUpParty = new GeneralOidcUpPartyViewModel();
                 oidcUpParty.CreateMode = true;
                 oidcUpParty.Edit = true;
+                oidcUpParty.TokenExchange = tokenExchange;
                 upParties.Add(oidcUpParty);
             }
             else if (type == PartyTypes.Saml2)
@@ -137,6 +157,7 @@ namespace FoxIDs.Client.Pages
                 var samlUpParty = new GeneralSamlUpPartyViewModel();
                 samlUpParty.CreateMode = true;
                 samlUpParty.Edit = true;
+                samlUpParty.TokenExchange = tokenExchange;
                 upParties.Add(samlUpParty);
             }
             else if (type == PartyTypes.TrackLink)
@@ -159,35 +180,139 @@ namespace FoxIDs.Client.Pages
 
         private async Task OnStateHasChangedAsync(GeneralUpPartyViewModel upParty)
         {
-            await InvokeAsync(() =>
-            {
-                StateHasChanged();
-            });
+            await InvokeAsync(StateHasChanged);
         }
 
         private string UpPartyInfoText(GeneralUpPartyViewModel upParty)
         {
             if (upParty.Type == PartyTypes.Login)
             {
-                return $"Login - {upParty.Name}";
+                return $"{upParty.DisplayName ?? (upParty.Name == Constants.DefaultLogin.Name ? "Default" : upParty.Name)} (User login UI)";
             }
             else if (upParty.Type == PartyTypes.OAuth2)
             {
-                return $"OAuth 2.0 - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (OAuth 2.0)";
             }
             else if (upParty.Type == PartyTypes.Oidc)
             {
-                return $"OpenID Connect - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (OpenID Connect)";
             }
             else if (upParty.Type == PartyTypes.Saml2)
             {
-                return $"SAML 2.0 - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (SAML 2.0)";
             }
             else if (upParty.Type == PartyTypes.TrackLink)
             {
-                return $"Track link - {upParty.Name}";
+                return $"{upParty.DisplayName ?? upParty.Name} (Environment Link)";
             }
             throw new NotSupportedException();
+        }
+
+        private void ShowNewUpParty()
+        {
+            newUpPartyModal.Init();
+            newUpPartyModal.Modal.Show();
+        }
+
+        private async Task ChangeNewUpPartyStateAsync(string appTitle = null, PartyTypes? type = null, bool tokenExchange = false)
+        {
+            if(type == PartyTypes.TrackLink)
+            {
+                await LoadTracksAsync();
+                newUpPartyModal.AppTitle = appTitle;
+                newUpPartyModal.Type = type;
+            }
+            else if(type.HasValue)
+            {
+                ShowCreateUpParty(type.Value, tokenExchange);
+                newUpPartyModal.Modal.Hide();
+            }
+        }
+
+        private void ShowSelectTrack(NewUpPartyEnvironmentLinkViewModel newUpPartyEnvironmentLinkViewModel)
+        {
+            newUpPartyEnvironmentLinkViewModel.ToDownTrackName = null;
+            newUpPartyEnvironmentLinkViewModel.ToDownTrackDisplayName = null;
+        }
+
+        private async Task LoadTracksAsync(string filterName = null)
+        {
+            try
+            {
+                var selectTrackTasks = (await TrackService.FilterTrackAsync(filterName)).OrderTracks();
+                newUpPartyModal.SelectTrackTasks = selectTrackTasks.Where(t => t.Name != TrackSelectedLogic.Track.Name);
+            }
+            catch (FoxIDsApiException ex)
+            {
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    newUpPartyModal.SelectTrackFilterForm.SetFieldError(nameof(newUpPartyModal.SelectTrackFilterForm.Model.FilterName), ex.Message);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private Task OnSelectTrackFilterValidSubmitAsync(EditContext editContext)
+        {
+            return LoadTracksAsync(newUpPartyModal.SelectTrackFilterForm.Model.FilterName);
+        }
+
+        private void SelectTrack(Track track)
+        {
+            newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackName = track.Name;
+            newUpPartyModal.EnvironmentLinkForm.Model.ToDownTrackDisplayName = track.DisplayName.GetConcatProdTrackName();
+        }
+
+        private async Task OnNewUpPartyOAuthEnvironmentLinkModalValidSubmitAsync(NewUpPartyViewModel newDownPartyViewModel, PageEditForm<NewUpPartyEnvironmentLinkViewModel> newUpPartyOAuthEnvironmentLinkForm, EditContext editContext)
+        {
+            try
+            {
+                newDownPartyViewModel.CreateWorking = true;
+
+                var trackLinkUpParty = newUpPartyOAuthEnvironmentLinkForm.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
+                {
+                    afterMap.ToDownPartyName = "x";
+                    afterMap.SelectedUpParties = new List<string> { "*" };
+                    afterMap.Claims = new List<string> { "*" };
+                });
+                var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
+
+                var trackLinkDownPartyResult = await DownPartyService.CreateTrackLinkDownPartyAsync(new TrackLinkDownParty
+                {
+                    DisplayName = newUpPartyOAuthEnvironmentLinkForm.Model.DisplayName,
+                    ToUpTrackName = TrackSelectedLogic.Track.Name,
+                    ToUpPartyName = trackLinkUpPartyResult.Name,
+                    AllowUpPartyNames = new List<string> { Constants.DefaultLogin.Name },
+                    Claims = new List<OAuthDownClaim>
+                    {
+                        new OAuthDownClaim { Claim = "*" }
+                    }
+                }, trackName: newUpPartyOAuthEnvironmentLinkForm.Model.ToDownTrackName);
+
+                trackLinkUpPartyResult.ToDownPartyName = trackLinkDownPartyResult.Name;
+                _ = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpPartyResult);
+                toastService.ShowSuccess("Environment Link authentication method created.");
+
+                var generalUpPartyViewModel = new GeneralTrackLinkUpPartyViewModel(new UpParty { Type = PartyTypes.TrackLink, Name = trackLinkUpPartyResult.Name, DisplayName = trackLinkUpPartyResult.DisplayName });
+                upParties.Add(generalUpPartyViewModel);
+                if (upParties.Count() <= 1)
+                {
+                    ShowUpdateUpParty(generalUpPartyViewModel);
+                }
+                newDownPartyViewModel.Created = true;
+            }
+            catch (FoxIDsApiException ex)
+            {
+                newDownPartyViewModel.CreateWorking = false;
+                throw;
+            }
+            catch
+            {
+                newDownPartyViewModel.CreateWorking = false;
+            }
         }
     }
 }

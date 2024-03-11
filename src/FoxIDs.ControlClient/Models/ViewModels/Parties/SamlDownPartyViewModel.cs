@@ -12,11 +12,16 @@ namespace FoxIDs.Client.Models.ViewModels
 {
     public class SamlDownPartyViewModel : IValidatableObject, IAllowUpPartyNames, IDownPartyName, ISamlClaimTransformViewModel, ISamlMetadataOrganizationVievModel, ISamlMetadataContactPersonVievModel
     {
-        [Required]
         [MaxLength(Constants.Models.Party.NameLength)]
         [RegularExpression(Constants.Models.Party.NameRegExPattern, ErrorMessage = "The field {0} can contain letters, numbers, '-' and '_'.")]
-        [Display(Name = "Down-party name")]
+        [Display(Name = "Technical name")]
         public string Name { get; set; }
+
+        [Required]
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [Display(Name = "Name")]
+        public string DisplayName { get; set; }
 
         [MaxLength(Constants.Models.Party.NoteLength)]
         [Display(Name = "Your notes")]
@@ -24,7 +29,7 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [ValidateComplexType]
         [ListLength(Constants.Models.DownParty.AllowUpPartyNamesMin, Constants.Models.DownParty.AllowUpPartyNamesMax, Constants.Models.Party.NameLength, Constants.Models.Party.NameRegExPattern)]
-        [Display(Name = "Allow up-party names")]
+        [Display(Name = "Allow application names")]
         public List<string> AllowUpPartyNames { get; set; } = new List<string>();
 
         [MaxLength(Constants.Models.Party.IssuerLength)]
@@ -65,9 +70,9 @@ namespace FoxIDs.Client.Models.ViewModels
         public string SignatureAlgorithm { get; set; } = Saml2SecurityAlgorithms.RsaSha256Signature;
 
         /// <summary>
-        /// URL party binding pattern.
+        /// URL binding pattern.
         /// </summary>
-        [Display(Name = "URL party binding pattern")]
+        [Display(Name = "URL binding pattern")]
         public PartyBindingPatterns PartyBindingPattern { get; set; } = PartyBindingPatterns.Brackets;
 
         /// <summary>
@@ -94,13 +99,12 @@ namespace FoxIDs.Client.Models.ViewModels
 
         [Required]
         [Display(Name = "Authn request binding")]
-        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Post;
+        public SamlBindingTypes AuthnRequestBinding { get; set; } = SamlBindingTypes.Redirect;
 
         [Required]
         [Display(Name = "Authn response binding")]
         public SamlBindingTypes AuthnResponseBinding { get; set; } = SamlBindingTypes.Post;
 
-        [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.Down.AcsUrlsMin, Constants.Models.SamlParty.Down.AcsUrlsMax, Constants.Models.SamlParty.Down.AcsUrlsLength)]
         [Display(Name = "Assertion consumer service (ACS) URL")]
         public List<string> AcsUrls { get; set; }
@@ -124,6 +128,9 @@ namespace FoxIDs.Client.Models.ViewModels
         [MaxLength(Constants.Models.SamlParty.Down.LoggedOutUrlLength)]
         [Display(Name = "Optional logged out URL")]
         public string LoggedOutUrl { get; set; }
+
+        [Display(Name = "Absolute URLs")]
+        public bool DisableAbsoluteUrls { get; set; }
 
         [ValidateComplexType]
         [ListLength(Constants.Models.SamlParty.Down.KeysMin, Constants.Models.SamlParty.KeysMax)]

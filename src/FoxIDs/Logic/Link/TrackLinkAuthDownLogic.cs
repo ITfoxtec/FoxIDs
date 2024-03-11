@@ -38,7 +38,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthRequestAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, Track link auth request.");
+            logger.ScopeTrace(() => "AppReg, Environment Link auth request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
             await sequenceLogic.SetDownPartyAsync(partyId, PartyTypes.TrackLink);
@@ -48,7 +48,7 @@ namespace FoxIDs.Logic
             var keySequenceData = await sequenceLogic.ValidateKeySequenceDataAsync<TrackLinkUpSequenceData>(keySequence, party.ToUpTrackName, remove: false);
             if (party.ToUpPartyName != keySequenceData.KeyName)
             {
-                throw new Exception($"Incorrect up-party name '{keySequenceData.KeyName}', expected up-party name '{party.ToUpPartyName}'.");
+                throw new Exception($"Incorrect authentication method name '{keySequenceData.KeyName}', expected authentication method name '{party.ToUpPartyName}'.");
             }
 
             await sequenceLogic.SaveSequenceDataAsync(new TrackLinkDownSequenceData { KeyName = party.Name, UpPartySequenceString = keySequenceString });
@@ -57,7 +57,7 @@ namespace FoxIDs.Logic
             if (toUpParties.Count() == 1)
             {
                 var toUpParty = toUpParties.First();
-                logger.ScopeTrace(() => $"Request, Up type '{toUpParty:Type}'.");
+                logger.ScopeTrace(() => $"Request, Authentication type '{toUpParty:Type}'.");
                 switch (toUpParty.Type)
                 {
                     case PartyTypes.Login:
@@ -72,7 +72,7 @@ namespace FoxIDs.Logic
                         return await serviceProvider.GetService<TrackLinkAuthUpLogic>().AuthRequestAsync(toUpParty, GetLoginRequest(party, keySequenceData));
 
                     default:
-                        throw new NotSupportedException($"Party type '{toUpParty.Type}' not supported.");
+                        throw new NotSupportedException($"Connection type '{toUpParty.Type}' not supported.");
                 }
             }
             else
@@ -96,7 +96,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> AuthResponseAsync(string partyId, List<Claim> claims, string error = null, string errorDescription = null)
         {
-            logger.ScopeTrace(() => "Down, Track link auth response.");
+            logger.ScopeTrace(() => "AppReg, Environment Link auth response.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = await tenantRepository.GetAsync<TrackLinkDownParty>(partyId);
 
@@ -104,9 +104,9 @@ namespace FoxIDs.Logic
 
             if (error.IsNullOrEmpty())
             {
-                logger.ScopeTrace(() => $"Down, Track link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, Environment Link received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
                 claims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
-                logger.ScopeTrace(() => $"Down, Track link output / Up, Track link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
+                logger.ScopeTrace(() => $"AppReg, Environment Link output / AuthMethod, Environment Link received - JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
                 claims = await claimsDownLogic.FilterJwtClaimsAsync(claimsDownLogic.GetFilterClaimTypes(party.Claims), claims);
 

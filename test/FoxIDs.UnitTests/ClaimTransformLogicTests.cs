@@ -3,7 +3,6 @@ using FoxIDs.Models;
 using FoxIDs.UnitTests.Helpers;
 using FoxIDs.UnitTests.MockHelpers;
 using ITfoxtec.Identity;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -621,7 +620,7 @@ namespace FoxIDs.UnitTests
         [Theory]
         [InlineData(new[] { JwtClaimTypes.GivenName, JwtClaimTypes.FamilyName }, JwtClaimTypes.Name, "{0} {1}", 1, "Anders Andersen", 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName, JwtClaimTypes.FamilyName }, JwtClaimTypes.GivenName, "{0} {1}", 1, "Anders Andersen", 2)]
-        [InlineData(new[] { JwtClaimTypes.Subject, JwtClaimTypes.FamilyName }, "test-claim", "{0}-{1}", 1, "up-party-name|12345-Andersen", 1)]
+        [InlineData(new[] { JwtClaimTypes.Subject, JwtClaimTypes.FamilyName }, "test-claim", "{0}-{1}", 1, "auth-method-name|12345-Andersen", 1)]
         [InlineData(new[] { "do-not-exist", JwtClaimTypes.FamilyName }, "test-claim", "{0}-{1}", 1, "-Andersen", 1)]
         [InlineData(new[] { "do-not-exist1", "do-not-exist1" }, "test-claim", "{0}-{1}", 0, "", 0)]
         public async Task TransformConcatenate_AddClaim(string[] claimIn, string claimOut, string transformation, int withValueCount, string result, int count)
@@ -644,7 +643,7 @@ namespace FoxIDs.UnitTests
         [Theory]
         [InlineData(new[] { JwtClaimTypes.GivenName, JwtClaimTypes.FamilyName }, JwtClaimTypes.Name, "{0} {1}", 1, "Anders Andersen", 1)]
         [InlineData(new[] { JwtClaimTypes.GivenName, JwtClaimTypes.FamilyName }, JwtClaimTypes.GivenName, "{0} {1}", 1, "Anders Andersen", 1)]
-        [InlineData(new[] { JwtClaimTypes.Subject, JwtClaimTypes.FamilyName }, "test-claim", "{0}-{1}", 1, "up-party-name|12345-Andersen", 1)]
+        [InlineData(new[] { JwtClaimTypes.Subject, JwtClaimTypes.FamilyName }, "test-claim", "{0}-{1}", 1, "auth-method-name|12345-Andersen", 1)]
         [InlineData(new[] { "do-not-exist", JwtClaimTypes.FamilyName }, "test-claim", "{0}-{1}", 1, "-Andersen", 1)]
         [InlineData(new[] { "do-not-exist1", "do-not-exist1" }, "test-claim", "{0}-{1}", 0, "", 0)]
         public async Task TransformConcatenate_ReplaceClaim(string[] claimIn, string claimOut, string transformation, int withValueCount, string result, int count)
@@ -766,7 +765,7 @@ namespace FoxIDs.UnitTests
 
         private IEnumerable<Claim> GetTestClaims()
         {
-            yield return new Claim(JwtClaimTypes.Subject, "up-party-name|12345");
+            yield return new Claim(JwtClaimTypes.Subject, "auth-method-name|12345");
             yield return new Claim(JwtClaimTypes.GivenName, "Anders");
             yield return new Claim(JwtClaimTypes.FamilyName, "Andersen");
             yield return new Claim(JwtClaimTypes.Email, "andersen@abc.com");

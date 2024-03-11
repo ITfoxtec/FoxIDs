@@ -19,7 +19,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track usage logs.
+        /// Get environment usage logs.
         /// </summary>
         /// <returns>Logs.</returns>
         [ProducesResponseType(typeof(Api.UsageLogResponse), StatusCodes.Status200OK)]

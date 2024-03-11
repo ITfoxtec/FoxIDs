@@ -13,6 +13,11 @@ namespace FoxIDs.Models
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [MaxLength(Constants.Models.Party.DisplayNameLength)]
+        [RegularExpression(Constants.Models.Party.DisplayNameRegExPattern)]
+        [JsonProperty(PropertyName = "display_name")]
+        public string DisplayName { get; set; }
+
         [Required]
         [JsonProperty(PropertyName = "type")]
         public PartyTypes Type { get; set; }

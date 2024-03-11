@@ -14,7 +14,7 @@ using FoxIDs.Infrastructure.Security;
 namespace FoxIDs.Controllers
 {
     /// <summary>
-    /// Abstract OAuth 2.0 client secret for down-party API.
+    /// Abstract OAuth 2.0 client secret for application registration API.
     /// </summary>
     [TenantScopeAuthorize(Constants.ControlApi.Segment.Party)]
     public abstract class GenericOAuthClientSecretDownPartyController<TParty, TClient, TScope, TClaim> : ApiController where TParty : OAuthDownParty<TClient, TScope, TClaim> where TClient : OAuthDownClient<TScope, TClaim> where TScope : OAuthDownScope<TClaim> where TClaim : OAuthDownClaim
@@ -99,7 +99,7 @@ namespace FoxIDs.Controllers
         /// <summary>
         /// Delete a client secret.
         /// </summary>
-        /// <param name="name">Name is [down-party name].[secret id] </param>
+        /// <param name="name">Name is [application registration name].[secret id] </param>
         protected async Task<IActionResult> Delete(string name)
         {
             try

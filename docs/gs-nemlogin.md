@@ -2,8 +2,8 @@
 
 > By using FoxIDs it become straight forward and easy to connect to NemLog-in (Danish IdP).
 
-Configure a connection from [FoxIDs](https://www.foxids.com) to NemLog-in by following the [step-by-step guide](up-party-howto-saml-2.0-nemlogin.md) - FoxIDs handles the SAML 2.0 / OIOSAML3 traffic.  
-Then connect your application to FoxIDs with [OpenID Connect](down-party-oidc.md) or [lightweight SAML 2.0](down-party-saml-2.0.md) .
+Configure a connection from [FoxIDs](https://www.foxids.com) to NemLog-in by following the [step-by-step guide](auth-method-howto-saml-2.0-nemlogin.md) - FoxIDs handles the SAML 2.0 / OIOSAML3 traffic.  
+Then connect your application to FoxIDs with [OpenID Connect](app-reg-oidc.md) or [lightweight SAML 2.0](app-reg-saml-2.0.md) .
 
 ![Connect to NemLog-in](images/how-to-nemlogin.svg)
 

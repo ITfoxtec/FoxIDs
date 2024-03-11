@@ -39,7 +39,7 @@ namespace FoxIDs.Controllers
             {
                 if(RouteBinding.TrackName != Constants.Routes.MasterTrackName)
                 {
-                    throw new Exception("User control profile only supported in master track.");
+                    throw new Exception("User control profile only supported in master environment.");
                 }
 
                 var userHashId = await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync();
@@ -71,7 +71,7 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.TrackName != Constants.Routes.MasterTrackName)
                 {
-                    throw new Exception("User control profile only supported in master track.");
+                    throw new Exception("User control profile only supported in master environment.");
                 }
 
                 var mUserControlProfile = mapper.Map<UserControlProfile>(userControlProfile);
@@ -102,7 +102,7 @@ namespace FoxIDs.Controllers
             {
                 if (RouteBinding.TrackName != Constants.Routes.MasterTrackName)
                 {
-                    throw new Exception("User control profile only supported in master track.");
+                    throw new Exception("User control profile only supported in master environment.");
                 }
 
                 var userHashId = await User.Identity.Name.ToLower().Sha256HashBase64urlEncodedAsync();

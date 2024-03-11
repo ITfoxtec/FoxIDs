@@ -35,7 +35,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> SpMetadataAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Up, SP Metadata request.");
+            logger.ScopeTrace(() => "AuthMethod, SP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.UpPartyId, partyId);
             var party = RouteBinding.UpParty != null ? await tenantRepository.GetAsync<SamlUpParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;
@@ -105,7 +105,7 @@ namespace FoxIDs.Logic
 
         public async Task<IActionResult> IdPMetadataAsync(string partyId)
         {
-            logger.ScopeTrace(() => "Down, IdP Metadata request.");
+            logger.ScopeTrace(() => "AppReg, IdP Metadata request.");
             logger.SetScopeProperty(Constants.Logs.DownPartyId, partyId);
             var party = RouteBinding.DownParty != null ? await tenantRepository.GetAsync<SamlDownParty>(partyId) : null;
             var signMetadata = party != null ? party.SignMetadata : false;

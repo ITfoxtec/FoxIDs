@@ -5,11 +5,9 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using Microsoft.AspNetCore.Components;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
-using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models;
 using System;
-using FoxIDs.Models.Api;
 using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages.Components
@@ -27,6 +25,9 @@ namespace FoxIDs.Client.Pages.Components
 
         [Inject]
         public TrackSelectedLogic TrackSelectedLogic { get; set; }
+
+        [Inject]
+        public MetadataLogic MetadataLogic { get; set; }
 
         [Inject]
         public OpenidConnectPkce OpenidConnectPkce { get; set; }
@@ -187,19 +188,6 @@ namespace FoxIDs.Client.Pages.Components
                 default:
                     throw new NotSupportedException();
             }
-        }
-
-        public (string, string, string) GetRedirectAndLogoutUrls(string partyName, PartyBindingPatterns partyBindingPattern)
-        {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--up-party-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
-            var oauthUrl = $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.OAuthController}/";
-            return (oauthUrl + Constants.Endpoints.AuthorizationResponse, oauthUrl + Constants.Endpoints.EndSessionResponse, oauthUrl + Constants.Endpoints.FrontChannelLogout);
-        }
-
-        public string GetSamlMetadata(string partyName, PartyBindingPatterns partyBindingPattern)
-        {
-            var partyBinding = (partyName.IsNullOrEmpty() ? "--up-party-name--" : partyName.ToLower()).ToUpPartyBinding(partyBindingPattern);
-            return $"{RouteBindingLogic.GetFoxIDsTenantEndpoint()}/{(RouteBindingLogic.IsMasterTenant ? "master" : TrackSelectedLogic.Track.Name)}/{partyBinding}/{Constants.Routes.SamlController}/{Constants.Endpoints.SamlSPMetadata}";
         }
 
         public async Task UpPartyCancelAsync(GeneralUpPartyViewModel upParty)

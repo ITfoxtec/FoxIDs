@@ -3,14 +3,14 @@
 namespace FoxIDs.Models.Api
 {
     /// <summary>
-    /// Log settings in track.
+    /// Log settings in environment.
     /// </summary>
     public class LogSettings
     {
         [Display(Name = "Log info trace - to see details about the login and logout sequences")]
         public bool LogInfoTrace { get; set; }
 
-        [Display(Name = "Log claim trace - to see the claims up-parties and down-parties receive and pass on")]
+        [Display(Name = "Log claim trace - to see the claims authentication methods and application registrations receive and pass on")]
         public bool LogClaimTrace { get; set; }
 
         [Display(Name = "Log message trace - to see the raw messages received and sent")]

@@ -11,6 +11,7 @@ using FoxIDs.Logic;
 using ITfoxtec.Identity;
 using System;
 using FoxIDs.Infrastructure.Security;
+using ITfoxtec.Identity.Util;
 
 namespace FoxIDs.Controllers
 {
@@ -37,7 +38,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Get track.
+        /// Get environment.
         /// </summary>
         /// <param name="name">Track name.</param>
         /// <returns>Track.</returns>
@@ -65,7 +66,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Create track.
+        /// Create environment.
         /// </summary>
         /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
@@ -76,7 +77,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
-                track.Name = track.Name?.ToLower();
+                track.Name = await GetTrackNameAsync(track.Name);
 
                 if (!RouteBinding.PlanName.IsNullOrEmpty())
                 {
@@ -87,7 +88,7 @@ namespace FoxIDs.Controllers
                         // included + master track
                         if (count > plan.Tracks.Included) 
                         {
-                            throw new Exception($"Maximum number of tracks ({plan.Tracks.Included}) included in the '{plan.Name}' plan has been reached. Master track not counted.");
+                            throw new Exception($"Maximum number of tracks ({plan.Tracks.Included}) included in the '{plan.Name}' plan has been reached. Master environment not counted.");
                         }
                     }
                 }
@@ -120,7 +121,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Update track.
+        /// Update environment.
         /// </summary>
         /// <param name="track">Track.</param>
         /// <returns>Track.</returns>
@@ -131,7 +132,7 @@ namespace FoxIDs.Controllers
             try
             {
                 if (!await ModelState.TryValidateObjectAsync(track)) return BadRequest(ModelState);
-                track.Name = track.Name?.ToLower();
+                track.Name = await GetTrackNameAsync(track.Name);
 
                 var trackIdKey = new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = track.Name };
                 var mTrack = await tenantRepository.GetTrackByNameAsync(trackIdKey);
@@ -162,7 +163,7 @@ namespace FoxIDs.Controllers
         }
 
         /// <summary>
-        /// Delete track.
+        /// Delete environment.
         /// </summary>
         /// <param name="name">Track name.</param>
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -197,6 +198,28 @@ namespace FoxIDs.Controllers
                     return NotFound(typeof(Api.Track).Name, name);
                 }
                 throw;
+            }
+        }
+
+        private async Task<string> GetTrackNameAsync(string name = null, int count = 0)
+        {
+            if (name.IsNullOrWhiteSpace())
+            {
+                name = RandomGenerator.GenerateCode(Constants.ControlApi.DefaultNameLength).ToLower();
+                if (count < 3)
+                {
+                    var mTrack = await tenantRepository.GetTrackByNameAsync(new Track.IdKey { TenantName = RouteBinding.TenantName, TrackName = name }, required: false);
+                    if (mTrack != null)
+                    {
+                        count++;
+                        return await GetTrackNameAsync(count: count);
+                    }
+                }
+                return name;
+            }
+            else
+            {
+                return name.ToLower();
             }
         }
     }

@@ -43,14 +43,13 @@ code {
 }
 
 .brand-content-text {
-    font-size: 4.5rem;
     font-weight: 300;
     line-height: 1.2;
-    color: #fc7e01;
 }
-.brand-content-text-sub {
-    color: #bbbbbb;
-}
+    .brand-content-text img {
+        height: 70px;
+        margin-bottom: 10px;
+    }
 
 .footer-container {
     position: absolute;

@@ -9,7 +9,7 @@ namespace FoxIDs.Models.Api
     public class OAuthDownClient : IValidatableObject
     {
         [ValidateComplexType]
-        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
+        [ListLength(Constants.Models.OAuthDownParty.Client.ResourceScopesApiMin, Constants.Models.OAuthDownParty.Client.ResourceScopesMax)]
         [Display(Name = "Resource and scopes")]
         public List<OAuthDownResourceScope> ResourceScopes { get; set; }
 
@@ -30,6 +30,9 @@ namespace FoxIDs.Models.Api
         [ListLength(Constants.Models.OAuthDownParty.Client.RedirectUrisMin, Constants.Models.OAuthDownParty.Client.RedirectUrisMax, Constants.Models.OAuthDownParty.Client.RedirectUriLength)]
         [Display(Name = "Redirect URIs")]
         public List<string> RedirectUris { get; set; }
+
+        [Display(Name = "Disable absolute URIs")]
+        public bool DisableAbsoluteUris { get; set; }
 
         [Display(Name = "Client authentication method")]
         public ClientAuthenticationMethods ClientAuthenticationMethod { get; set; } = ClientAuthenticationMethods.ClientSecretPost;

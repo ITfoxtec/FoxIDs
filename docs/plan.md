@@ -4,7 +4,7 @@ FoxIDs is a cloud application designed as a container with multi-tenant support.
 
 Plan is for a shared cloud deployment like on [FoxIDs.com](https://foxids.com) to be able to calculate payments in an external system.
 
-Plans is defined and connected to tenants in the `master` tenant `master` track.
+Plans is defined and connected to tenants in the `master` tenant `master` environment.
 
 A plan is configured with:
 

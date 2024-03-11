@@ -7,21 +7,31 @@
 <PageEditForm @ref="loginUpParty.Form" TModel="LoginUpPartyViewModel" OnAfterInit="LoginUpPartyViewModelAfterInit" OnValidSubmit="@(async (editContext) => await OnEditLoginUpPartyValidSubmitAsync(loginUpParty, editContext))">
     <div class="modal-header">
         <div>
-            Login
+            User login UI
         </div>
         <FInputSwitchAdvancedOptions @bind-Value="loginUpParty.ShowAdvanced" />
     </div>
     <div class="modal-body">
+        <div class="info-text">
+            <DocsLink Page="users">Users</DocsLink> can authenticate with the environment's user store or choose another authentication method. The user interface is customizable.
+            <br />
+            The users' sessions are associated with this  <DocsLink Page="login">Login</DocsLink> authentication method.
+        </div>
         @if (loginUpParty.CreateMode)
         {
-            <div class="mb-3 alert alert-info" role="alert">
-                The user is authenticated with the track's user repository and the user session is connected to this up-party login configuration.
-            </div>
-            <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" Focus="true" />
+            <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (loginUpParty.ShowAdvanced) 
+            {
+                <FInputText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+            }
         }
         else
         {
-            <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+            <FInputText @bind-Value="loginUpParty.Form.Model.DisplayName" For="@(() => loginUpParty.Form.Model.DisplayName)" Focus="true" />
+            @if (loginUpParty.ShowAdvanced)
+            {
+                <FFieldText @bind-Value="loginUpParty.Form.Model.Name" For="@(() => loginUpParty.Form.Model.Name)" />
+            }
         }
         @if (loginUpParty.ShowAdvanced)
         {
@@ -88,7 +98,7 @@
             {
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCancelLogin" For="@(() => loginUpParty.Form.Model.EnableCancelLogin)" TextType="e.d" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableCreateUser" For="@(() => loginUpParty.Form.Model.EnableCreateUser)" TextType="e.d" />
-                <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableResetPassword" For="@(() => loginUpParty.Form.Model.EnableResetPassword)" TextType="e.d" />
+                <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableResetPassword" For="@(() => loginUpParty.Form.Model.DisableResetPassword)" Negation="true" TextType="e.d" />
                 <FInputText @bind-Value="loginUpParty.Form.Model.TwoFactorAppName" For="@(() => loginUpParty.Form.Model.TwoFactorAppName)" />
                 <FInputToggle @bind-Value="loginUpParty.Form.Model.RequireTwoFactor" For="@(() => loginUpParty.Form.Model.RequireTwoFactor)" TextType="y.n" />                
                 @if (loginUpParty.ShowAdvanced)
@@ -98,7 +108,7 @@
                         <option value="@LoginUpPartyLogoutConsents.Always">Always</option>
                         <option value="@LoginUpPartyLogoutConsents.Never">Never</option>
                     </FInputSelect>
-                    <FInputToggle @bind-Value="loginUpParty.Form.Model.EnableSingleLogout" For="@(() => loginUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+                    <FInputToggle @bind-Value="loginUpParty.Form.Model.DisableSingleLogout" For="@(() => loginUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.Title" For="@(() => loginUpParty.Form.Model.Title)" />
                     <FInputText @bind-Value="loginUpParty.Form.Model.IconUrl" For="@(() => loginUpParty.Form.Model.IconUrl)" />
                     <FInputTextArea @bind-Value="loginUpParty.Form.Model.Css" For="@(() => loginUpParty.Form.Model.Css)" />
@@ -130,7 +140,7 @@
         <div class="modal-footer">
             <div class="alert alert-danger" role="alert">
                 <div>
-                    You are about to delete login up-party "@UpParty.Name", are you sure?
+                    You are about to delete login application "@(UpParty.DisplayName ?? UpParty.Name)", are you sure?
                 </div>
 
                 <div class="mt-3">

@@ -69,7 +69,7 @@
 
         @if (oidcUpParty.Form.Model.EditIssuersInAutomatic == true)
         {
-            <div class="info-text">Use * to accept all issuers. The accepted issuer is added in the '@Constants.JwtClaimTypes.IssuerWildcard' claim.</div>
+            <div class="info-text">Use * to accept all issuers. The accepted issuer is added in the '@Constants.JwtClaimTypes.AuthMethodIssuer' claim.</div>
             <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Issuers" For="@(() => oidcUpParty.Form.Model.Issuers)" />
         }
         else

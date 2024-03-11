@@ -199,14 +199,14 @@ namespace FoxIDs.Logic
 
             claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
                 c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
-                c.Type != Constants.JwtClaimTypes.IssuerWildcard).ToList();
+                c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
             claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
             if (!tokenIssuer.IsNullOrEmpty())
             {
-                claims.Add(new Claim(Constants.JwtClaimTypes.IssuerWildcard, $"{party.Name}|{tokenIssuer}"));
+                claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));
             }
 
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);

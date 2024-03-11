@@ -71,7 +71,8 @@ The multitenant configuration differs slightly form the single tenant configurat
 
  1. Add the authority `https://login.microsoftonline.com/common/v2.0`
  2. Select edit issuer
- 3. Change the issuer to `https://login.microsoftonline.com/{Microsoft Entra ID tenant ID}/v2.0` (e.g., `https://login.microsoftonline.com/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/v2.0`), where you add the Microsoft Entra ID tenant ID. You can possible add multiple issuers and thereby trust multiple Azure tenants
+ 3. Change the issuer to `https://login.microsoftonline.com/{Microsoft Entra ID tenant ID}/v2.0` (e.g., `https://login.microsoftonline.com/82B2EBAE-5864-4C9F-8F78-40CB172BC7E1/v2.0`), where you add the Microsoft Entra ID tenant ID.  
+ You can possible add multiple issuers and thereby trust multiple Azure tenants. Or you can use the wildcard `*` without anything else to accept all issuers, the accepted issuer is added in the `auth_method_issuer` claim.
 
 ## Read claims from access token
 

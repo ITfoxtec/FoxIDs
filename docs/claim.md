@@ -15,8 +15,8 @@ In both an [OpenID Connect](auth-method-oidc.md) and [SAML 2.0](auth-method-saml
 An authentication method issues two claims which can be read in the application registration and used in [claim transforms](claim-transform.md). The claims always apply to the last authentication method.  
 The authentication method issued claims (default forward):
 
-- `up_party` contain the the authentication method name, the name is unique in a environment.
-- `up_party_type` contain the the authentication method type: `login`, `oidc` or `saml`.
+- `auth_method` contain the authentication method name, the name is unique in a environment.
+- `auth_method_type` contain the authentication method type: `login`, `oidc`, `oauth2`, `saml2` or `env_link`.
 
 A `sub` claim and an access token revived from an external Identity Provider is nested with a pipe symbol (|) after the up_party name.  
 Examples: 

@@ -260,9 +260,9 @@ namespace FoxIDs.Logic
                     c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && 
                     c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
                 claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
-                claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
+                claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
                 claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
-                claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+                claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
 
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = ValidateClaims(party, transformedClaims);
@@ -485,9 +485,9 @@ namespace FoxIDs.Logic
 
             var claims = receivedClaims.Where(c => c.Type != Constants.SamlClaimTypes.AuthMethod && c.Type != Constants.SamlClaimTypes.AuthMethodType && c.Type != Constants.SamlClaimTypes.UpParty && c.Type != Constants.SamlClaimTypes.UpPartyType).ToList();
             claims.AddClaim(Constants.SamlClaimTypes.AuthMethod, party.Name);
-            claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.SamlClaimTypes.AuthMethodType, party.Type.GetPartyTypeValue());
             claims.AddClaim(Constants.SamlClaimTypes.UpParty, party.Name);
-            claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+            claims.AddClaim(Constants.SamlClaimTypes.UpPartyType, party.Type.GetPartyTypeValue());
 
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             var validClaims = ValidateClaims(party, transformedClaims);

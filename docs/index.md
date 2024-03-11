@@ -1,4 +1,4 @@
-**FoxIDs is a free and open-source Identity Services (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
+**FoxIDs is a Identity Services (IDS) with support for [OAuth 2.0](oauth-2.0.md), [OpenID Connect 1.0](oidc.md) and [SAML 2.0](saml-2.0.md).**
 
 > Developed in Denmark and hosted in Netherlands, ownership and data is kept in Europe.
 
@@ -22,15 +22,14 @@ You can select to use a shared cloud or a private cloud setup.
 
 - FoxIDs SaaS is available at [FoxIDs.com](https://foxids.com) as an Identity Services (IDS) also called Identity as a Service (IDaaS).  
 FoxIDs.com is hosted in Europe and mainly in Microsoft Azure Holland, Netherlands.
-- You are free to [deploy](deployment.md) FoxIDs as your own private cloud on Microsoft Azure.
+- You can [deploy](deployment.md) FoxIDs as your own private cloud on Microsoft Azure.
 
 > For more information please see the [get started](get-started.md) guide.
 
-## Free and Open-Source
+## Source code available 
 
-FoxIDs is free and open-source, see the [GitHub repository](https://github.com/ITfoxtec/FoxIDs).  
-The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all (individuals, companies etc.) the right to use FoxIDs for free. The license only restricts reselling FoxIDs as a IDaaS to third parties, without a supplementary agreement.
-You are free to use FoxIDs as a IDaaS for you own products.
+The FoxIDs source code is available at the [GitHub repository](https://github.com/ITfoxtec/FoxIDs). 
+The [license](https://github.com/ITfoxtec/FoxIDs/blob/master/LICENSE) grant all the right to install and use FoxIDs for non-production. The license grant small companies including, personal projects and non-profit educational institutions the right to install and use FoxIDs in production.
 
 ## Selection by URL
 The [structure](foxids-inside.md#structure) of FoxIDs separates the different tenants, environments and [connections](connections.md) which is selected with URL elements. 

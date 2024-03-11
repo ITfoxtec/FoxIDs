@@ -42,6 +42,11 @@ namespace FoxIDs.Logic
                 return true;
             }
 
+            if (oldUpParty.DisplayName != newUpParty.DisplayName)
+            {
+                return true;
+            }
+
             var oldHrdIssuers = oldUpParty.ReadIssuers != null ? string.Join(',', oldUpParty.ReadIssuers) : string.Empty;
             var newHrdIssuers = newUpParty.ReadIssuers != null ? string.Join(',', newUpParty.ReadIssuers) : string.Empty;
             if (oldHrdIssuers != newHrdIssuers) 
@@ -89,6 +94,7 @@ namespace FoxIDs.Logic
             var message = new UpPartyHrdQueueMessage
             {
                 Name = upParty.Name,
+                DisplayName = upParty.DisplayName,
                 Issuers = upParty.ReadIssuers,
                 SpIssuer = upParty.SpIssuer,
                 HrdDisplayName = upParty.HrdDisplayName,
@@ -180,6 +186,7 @@ namespace FoxIDs.Logic
             {
                 if (!messageObj.Remove)
                 {
+                    upParty.DisplayName = messageObj.DisplayName;
                     upParty.Issuers = messageObj.Issuers;
                     upParty.SpIssuer = messageObj.SpIssuer;
                     upParty.HrdDomains = messageObj.HrdDomains;

@@ -95,7 +95,22 @@ h4 {
         top: 0.5rem;
     }
 
-/*Navbar*/ 
+.load-spinner {
+    position: absolute;
+    top: 30vh;
+    left: 0px;
+    width: 100%;
+    text-align: center
+}
+
+    .load-spinner div {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center
+    }
+
+/*Navbar*/
 .navbar.navbar-main {
     border-bottom: 2px solid #fc7e01;
     background-color: #ffffff !important;
@@ -115,8 +130,8 @@ h4 {
     }
 }
 
-/*Medium + 4*/
-@media (min-width: 774px) {
+/*Medium ++ */
+@media (min-width: 860px) { /*774 860*/
     .navbar.navbar-main {
         padding-bottom: 8px;
     }
@@ -131,9 +146,9 @@ h4 {
     padding-bottom: 2px;
 }
 
-    .navbar .navbar-brand img {
-        height: 54px;
-    }
+img.logo {
+    height: 54px;
+}
 
 .navbar .card {
     border-bottom-left-radius: unset;
@@ -191,8 +206,8 @@ h4 {
     }
 }
 
-/*Medium + 6*/
-@media (min-width: 774px) {
+/*Medium ++ */
+@media (min-width: 860px) { /*774 860*/
     .navbar .dropdown-nav-item {
         width: auto;
         min-width: 460px;
@@ -239,9 +254,12 @@ h4 {
     font-size: 12px;
 }
 
+.navbar-outline {
+    border-bottom: 1px solid #dee2e6;
+}
+
 .navbar.navbar-second {
     padding: 0rem 1rem;
-    border-bottom: 1px solid #dee2e6;
     flex-wrap: nowrap;
     align-items: normal;
 }
@@ -283,7 +301,7 @@ h4 {
     max-width: 150px;
 }
 
-@media (min-width: 816px) {
+@media (min-width: 670px) {
     .navbar-expand-master {
         -ms-flex-flow: row nowrap;
         flex-flow: row nowrap;
@@ -317,7 +335,7 @@ h4 {
     max-width: 180px;
 }
 
-@media (min-width: 746px) {
+@media (min-width: 598px) {
     .navbar-expand-env {
         -ms-flex-flow: row nowrap;
         flex-flow: row nowrap;
@@ -406,7 +424,6 @@ h4 {
     }
 
     .btn.btn-icon-xs {
-        color: #788489 !important;
         padding: 0 0 0 .1rem;
         border: 0;
         font-size: .875rem;
@@ -547,13 +564,18 @@ h4 {
     padding: 0.5rem 0.5rem 0.7rem 0.5rem;
 }
 
-.docs-link .bi {
-    font-size: 65%;
-    font-weight: 400;
-    position: relative;
-    bottom: 2px;
-    padding-left: 5px;
+.docs-link {
+    color: #df8935 !important;
 }
+
+    .docs-link .bi {
+        color:#df8935 !important;
+        font-size: 65%;
+        font-weight: 400;
+        position: relative;
+        bottom: 2px;
+        padding-left: 5px;
+    }
 
 .nav-item .bi {
     font-size: 75%;

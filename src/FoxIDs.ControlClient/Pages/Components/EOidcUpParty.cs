@@ -82,7 +82,6 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.AutomaticStopped = false;
                 }
 
-                afterMap.EnableSingleLogout = !oidcUpParty.DisableSingleLogout;
                 if (afterMap.Client != null)
                 {
                     afterMap.Client.Party = afterMap;
@@ -91,8 +90,6 @@ namespace FoxIDs.Client.Pages.Components
                     {
                         afterMap.Client.ClientSecret = afterMap.Client.ClientSecretLoaded = afterMap.Client.ClientSecret.Length == 3 ? $"{afterMap.Client.ClientSecret}..." : afterMap.Client.ClientSecret;
                     }
-
-                    afterMap.Client.EnableFrontChannelLogout = !oidcUpParty.Client.DisableFrontChannelLogout;
 
                     if (clientKeyResponse?.PrimaryKey?.PublicKey != null)
                     {
@@ -175,8 +172,6 @@ namespace FoxIDs.Client.Pages.Components
                 var oidcUpParty = generalOidcUpParty.Form.Model.Map<OidcUpParty>(afterMap: afterMap =>
                 {
                     afterMap.UpdateState = PartyUpdateStates.Automatic;
-                    afterMap.DisableSingleLogout = !generalOidcUpParty.Form.Model.EnableSingleLogout;
-                    afterMap.Client.DisableFrontChannelLogout = !generalOidcUpParty.Form.Model.Client.EnableFrontChannelLogout;
 
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {

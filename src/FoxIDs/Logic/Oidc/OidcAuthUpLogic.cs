@@ -6,13 +6,16 @@ using FoxIDs.Models.Sequences;
 using FoxIDs.Repository;
 using ITfoxtec.Identity;
 using ITfoxtec.Identity.Messages;
+using ITfoxtec.Identity.Saml2.Schemas;
 using ITfoxtec.Identity.Tokens;
 using ITfoxtec.Identity.Util;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -219,7 +222,7 @@ namespace FoxIDs.Logic
                 bool isImplicitFlow = !party.Client.ResponseType.Contains(IdentityConstants.ResponseTypes.Code);
                 ValidateAuthenticationResponse(party, authenticationResponse, sessionResponse, isImplicitFlow, onlyAcceptGetResponseWithError);
 
-                (var claims, var idToken) = isImplicitFlow switch
+                (var claims, var idToken, List<string> tokenIssuers) = isImplicitFlow switch
                 {
                     true => await ValidateTokensAsync(party, sequenceData, authenticationResponse.IdToken, authenticationResponse.AccessToken, true),
                     false => await HandleAuthorizationCodeResponseAsync(party, sequenceData, authenticationResponse.Code)
@@ -229,9 +232,21 @@ namespace FoxIDs.Logic
 
                 var externalSessionId = claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.SessionId);
                 externalSessionId.ValidateMaxLength(IdentityConstants.MessageLength.SessionIdMax, nameof(externalSessionId), "Session state or claim");
-                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId && c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
+                claims = claims.Where(c => c.Type != JwtClaimTypes.SessionId &&
+                    c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
+                    c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType && 
+                    c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
+                claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+                claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
                 claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
                 claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+                if (tokenIssuers?.Count() > 0)
+                {
+                    foreach (var tokenIssuer in tokenIssuers)
+                    {
+                        claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));
+                    }                  
+                }
 
                 var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
                 var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);
@@ -319,7 +334,7 @@ namespace FoxIDs.Logic
             }
         }
 
-        private async Task<(List<Claim>, string)> HandleAuthorizationCodeResponseAsync(TParty party, OidcUpSequenceData sequenceData, string code)
+        private async Task<(List<Claim> claims, string idToken, List<string> tokenIssuers)> HandleAuthorizationCodeResponseAsync(TParty party, OidcUpSequenceData sequenceData, string code)
         {
             var tokenResponse = await TokenRequestAsync(party.Client, code, sequenceData);
             return await ValidateTokensAsync(party, sequenceData, tokenResponse.IdToken, tokenResponse.AccessToken, false);
@@ -454,9 +469,14 @@ namespace FoxIDs.Logic
             return requestDictionary;
         }
 
-        protected async Task<(List<Claim>, string)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        protected async Task<(List<Claim> claims, string idToken, List<string> tokenIssuers)> ValidateTokensAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
-            var claims = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
+            var tokenIssuers = new List<string>();
+            (var claims, var idTokenIssuer) = await ValidateIdTokenAsync(party, sequenceData, idToken, accessToken, authorizationEndpoint);
+            if (!idTokenIssuer.IsNullOrEmpty())
+            {
+                tokenIssuers.Add(idTokenIssuer);
+            }
             if (!accessToken.IsNullOrWhiteSpace())
             {
                 if (party.Client.UseUserInfoClaims)
@@ -466,7 +486,11 @@ namespace FoxIDs.Logic
                 else if (!party.Client.UseIdTokenClaims)
                 {
                     var sessionIdClaim = claims.Where(c => c.Type == JwtClaimTypes.SessionId).FirstOrDefault();
-                    claims = await ValidateAccessTokenAsync(party, accessToken);
+                    (claims, var accessTokenIssuer) = await ValidateAccessTokenAsync(party, accessToken);
+                    if (!accessTokenIssuer.IsNullOrEmpty())
+                    {
+                        tokenIssuers.Add(accessTokenIssuer);
+                    }
                     if (sessionIdClaim != null && !claims.Where(c => c.Type == JwtClaimTypes.SessionId).Any())
                     {
                         claims.Add(sessionIdClaim);
@@ -499,21 +523,17 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            return (claims, idToken);
+            return (claims, idToken, tokenIssuers);
         }
 
-        private async Task<List<Claim>> ValidateIdTokenAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
+        private async Task<(List<Claim> claims, string tokenIssuer)> ValidateIdTokenAsync(TParty party, OidcUpSequenceData sequenceData, string idToken, string accessToken, bool authorizationEndpoint)
         {
             try
             {
                 var jwtToken = JwtHandler.ReadToken(idToken);
-                var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
-                if (string.IsNullOrEmpty(issuer))
-                {
-                    throw new OAuthRequestException($"{party.Name}|Id token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                }
+                (string issuer, string tokenIssuer) = ValidateIdTokenIssuer(party, jwtToken);
 
-                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);
+                var claimsPrincipal = await oidcJwtUpLogic.ValidateIdTokenAsync(idToken, issuer, party, sequenceData.ClientId);              
                 var nonce = claimsPrincipal.Claims.FindFirstOrDefaultValue(c => c.Type == JwtClaimTypes.Nonce);
                 if (!sequenceData.Nonce.Equals(nonce, StringComparison.Ordinal))
                 {
@@ -530,7 +550,7 @@ namespace FoxIDs.Logic
                     }
                 }
 
-                return claimsPrincipal.Claims.ToList();
+                return (claimsPrincipal.Claims.ToList(), !tokenIssuer.IsNullOrEmpty() ? $"id_token|{tokenIssuer}" : null);
             }
             catch (OAuthRequestException)
             {
@@ -540,6 +560,24 @@ namespace FoxIDs.Logic
             {
                 throw new OAuthRequestException($"{party.Name}|Id token not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
+        }
+
+        private (string issuer, string tokenIssuer) ValidateIdTokenIssuer(TParty party, JwtSecurityToken jwtToken)
+        {
+            var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
+            if (string.IsNullOrEmpty(issuer))
+            {
+                if (party.EditIssuersInAutomatic == true && party.Issuers.Where(i => i == "*").Any())
+                {
+                    return (null, jwtToken.Issuer);
+                }
+                else
+                {
+                    throw new OAuthRequestException($"{party.Name}|Id token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                }
+            }
+
+            return (issuer, null);
         }
 
         private async Task<IActionResult> AuthenticationResponseDownAsync(OidcUpSequenceData sequenceData, List<Claim> claims = null, string error = null, string errorDescription = null)

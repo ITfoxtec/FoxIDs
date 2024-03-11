@@ -136,7 +136,7 @@ namespace FoxIDs.Controllers
         {
             return new UpPartyLink 
             {
-                Name = upParty.Name, Type = upParty.Type, Issuers = upParty.Issuers, 
+                Name = upParty.Name, DisplayName = upParty.DisplayName, Type = upParty.Type, Issuers = upParty.Issuers, 
                 HrdDomains = upParty.HrdDomains, HrdShowButtonWithDomain = upParty.HrdShowButtonWithDomain, HrdDisplayName = upParty.HrdDisplayName, HrdLogoUrl = upParty.HrdLogoUrl,
                 DisableUserAuthenticationTrust = upParty.DisableUserAuthenticationTrust, DisableTokenExchangeTrust = upParty.DisableTokenExchangeTrust
             };
@@ -245,7 +245,7 @@ namespace FoxIDs.Controllers
             {
                 if (up.HrdLogoUrl.IsNullOrWhiteSpace())
                 {
-                    return up.Name;
+                    return up.DisplayName.IsNullOrWhiteSpace() ? up.Name : up.DisplayName;
                 }
                 else
                 {

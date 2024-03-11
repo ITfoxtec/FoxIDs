@@ -10,7 +10,7 @@ You become the first admin user and you can add more [admin users](control.md#cr
 ---
 
 #### FoxIDs Private Cloud
-FoxIDs is [open-source](index.md#free-and-open-source) and you are free to deploy FoxIDs as your own private cloud in your Microsoft Azure tenant.
+You can deploy FoxIDs as your own private cloud in your Microsoft Azure tenant.
 
 a. [Deploy](deployment.md) FoxIDs in your Microsoft Azure tenant.
 b. After successfully deployment, [login](deployment.md#first-login-and-admin-users) to the `master` tenant.  

@@ -56,6 +56,7 @@ namespace FoxIDs.Logic
         {
             var mLoginUpParty = new LoginUpParty
             {
+                DisplayName = "Default",
                 Name = Constants.DefaultLogin.Name,
                 EnableCreateUser = true,
                 EnableCancelLogin = false,

@@ -32,6 +32,9 @@ namespace FoxIDs.Models.Api
 
         public bool? EditIssuersInAutomatic { get; set; }
 
+        /// <summary>
+        /// Use * to accept all issuers, only possible if the issuer is edited.
+        /// </summary>
         [ListLength(Constants.Models.UpParty.IssuersBaseMin, Constants.Models.UpParty.IssuersMax, Constants.Models.Party.IssuerLength)]
         public List<string> Issuers { get; set; }
 

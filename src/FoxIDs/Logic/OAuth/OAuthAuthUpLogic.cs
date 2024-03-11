@@ -7,6 +7,7 @@ using ITfoxtec.Identity.Tokens;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -37,9 +38,9 @@ namespace FoxIDs.Logic
             this.httpClientFactory = httpClientFactory;
         }
 
-        protected async Task<List<Claim>> ValidateTokenAsync(TParty party, string accessToken, string audience = null)
+        protected async Task<(List<Claim>, string tokenIssuer)> ValidateTokenAsync(TParty party, string accessToken, string audience = null)
         {
-            List<Claim> claims = await ValidateAccessTokenAsync(party, accessToken, audience);
+            (var claims, string accessTokenIssuer) = await ValidateAccessTokenAsync(party, accessToken, audience);
             if (party.Client.UseUserInfoClaims)
             {
                 claims = await UserInforRequestAsync(party.Client, accessToken);
@@ -70,22 +71,18 @@ namespace FoxIDs.Logic
                 claims.Add(new Claim(JwtClaimTypes.Subject, $"{party.Name}|{subject}"));
             }
 
-            return claims;
+            return (claims, accessTokenIssuer);
         }
 
-        protected virtual async Task<List<Claim>> ValidateAccessTokenAsync(TParty party, string accessToken, string audience = null)
+        protected virtual async Task<(List<Claim> claims, string tokenIssuer)> ValidateAccessTokenAsync(TParty party, string accessToken, string audience = null)
         {
             try
             {
                 var jwtToken = JwtHandler.ReadToken(accessToken);
-                var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
-                if (string.IsNullOrEmpty(issuer))
-                {
-                    throw new OAuthRequestException($"{party.Name}|Access token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
-                }
+                (string issuer, string tokenIssuer) = ValidateAccessTokenIssuer(party, jwtToken);
 
                 var claimsPrincipal = await oauthJwtUpLogic.ValidateAccessTokenAsync(accessToken, issuer, party, audience);
-                return claimsPrincipal.Claims.ToList();
+                return (claimsPrincipal.Claims.ToList(), !tokenIssuer.IsNullOrEmpty() ? $"access_token|{tokenIssuer}" : null);
             }
             catch (OAuthRequestException)
             {
@@ -95,6 +92,24 @@ namespace FoxIDs.Logic
             {
                 throw new OAuthRequestException($"{party.Name}|Access token not valid.", ex) { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
             }
+        }
+
+        private (string issuer, string tokenIssuer) ValidateAccessTokenIssuer(TParty party, JwtSecurityToken jwtToken)
+        {
+            var issuer = party.Issuers.Where(i => i == jwtToken.Issuer).FirstOrDefault();
+            if (string.IsNullOrEmpty(issuer))
+            {
+                if (party.EditIssuersInAutomatic == true && party.Issuers.Where(i => i == "*").Any())
+                {
+                    return (null, jwtToken.Issuer);
+                }
+                else
+                {
+                    throw new OAuthRequestException($"{party.Name}|Access token issuer '{jwtToken.Issuer}' is unknown.") { RouteBinding = RouteBinding, Error = IdentityConstants.ResponseErrors.InvalidToken };
+                }
+            }
+
+            return (issuer, null);
         }
 
         protected virtual async Task<List<Claim>> UserInforRequestAsync(TClient client, string accessToken)
@@ -177,14 +192,22 @@ namespace FoxIDs.Logic
 
             var party = await tenantRepository.GetAsync<TParty>(partyId);
 
-            var claims = await ValidateTokenAsync(party, subjectToken, ResolveAudience(party));
+            (var claims, string tokenIssuer) = await ValidateTokenAsync(party, subjectToken, ResolveAudience(party));
 
             logger.ScopeTrace(() => "AuthMethod, OAuth token exchange subject token valid.", triggerEvent: true);
             logger.ScopeTrace(() => $"AuthMethod, OAuth received JWT claims '{claims.ToFormattedString()}'", traceType: TraceTypes.Claim);
 
-            claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType).ToList();
+            claims = claims.Where(c => c.Type != Constants.JwtClaimTypes.AuthMethod && c.Type != Constants.JwtClaimTypes.AuthMethodType && 
+                c.Type != Constants.JwtClaimTypes.UpParty && c.Type != Constants.JwtClaimTypes.UpPartyType &&
+                c.Type != Constants.JwtClaimTypes.AuthMethodIssuer).ToList();
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethod, party.Name);
+            claims.AddClaim(Constants.JwtClaimTypes.AuthMethodType, party.Type.ToString().ToLower());
             claims.AddClaim(Constants.JwtClaimTypes.UpParty, party.Name);
             claims.AddClaim(Constants.JwtClaimTypes.UpPartyType, party.Type.ToString().ToLower());
+            if (!tokenIssuer.IsNullOrEmpty())
+            {
+                claims.Add(new Claim(Constants.JwtClaimTypes.AuthMethodIssuer, $"{party.Name}|{tokenIssuer}"));
+            }
 
             var transformedClaims = await claimTransformLogic.Transform(party.ClaimTransforms?.ConvertAll(t => (ClaimTransform)t), claims);
             var validClaims = claimValidationLogic.ValidateUpPartyClaims(party.Client.Claims, transformedClaims);

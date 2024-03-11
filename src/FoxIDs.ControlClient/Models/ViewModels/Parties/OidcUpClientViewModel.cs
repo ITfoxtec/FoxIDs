@@ -56,7 +56,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public string EndSessionUrl { get; set; }
 
         [Display(Name = "Front channel logout")]
-        public bool EnableFrontChannelLogout { get; set; } = true;
+        public bool DisableFrontChannelLogout { get; set; }
 
         [Display(Name = "Front channel logout session required")]
         public bool FrontChannelLogoutSessionRequired { get; set; } = true;

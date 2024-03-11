@@ -46,6 +46,7 @@
 
         @if (oauthUpParty.Form.Model.EditIssuersInAutomatic == true)
         {
+            <div class="info-text">Use * to accept all issuers. The accepted issuer is added in the '@Constants.JwtClaimTypes.AuthMethodIssuer' claim.</div>
             <FInputTextList @bind-ValueList="oauthUpParty.Form.Model.Issuers" For="@(() => oauthUpParty.Form.Model.Issuers)" />
         }
         else

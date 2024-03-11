@@ -69,6 +69,7 @@
 
         @if (oidcUpParty.Form.Model.EditIssuersInAutomatic == true)
         {
+            <div class="info-text">Use * to accept all issuers. The accepted issuer is added in the '@Constants.JwtClaimTypes.AuthMethodIssuer' claim.</div>
             <FInputTextList @bind-ValueList="oidcUpParty.Form.Model.Issuers" For="@(() => oidcUpParty.Form.Model.Issuers)" />
         }
         else
@@ -115,7 +116,7 @@
             <FInputNumber @bind-Value="oidcUpParty.Form.Model.OidcDiscoveryUpdateRate" For="@(() => oidcUpParty.Form.Model.OidcDiscoveryUpdateRate)" />
             @if (!oidcUpParty.Form.Model.DisableUserAuthenticationTrust)
             {
-                <FInputToggle @bind-Value="oidcUpParty.Form.Model.EnableSingleLogout" For="@(() => oidcUpParty.Form.Model.EnableSingleLogout)" TextType="e.d" />
+                <FInputToggle @bind-Value="oidcUpParty.Form.Model.DisableSingleLogout" For="@(() => oidcUpParty.Form.Model.DisableSingleLogout)" Negation="true" TextType="e.d" />
             }
         }
 
@@ -313,7 +314,7 @@
                             <option value="@IdentityConstants.ResponseModes.Query">query</option>
                         </FInputSelect>
 
-                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.EnableFrontChannelLogout" For="@(() => oidcUpParty.Form.Model.Client.EnableFrontChannelLogout)" TextType="e.d" />
+                        <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.DisableFrontChannelLogout" For="@(() => oidcUpParty.Form.Model.Client.DisableFrontChannelLogout)" Negation="true" TextType="e.d" />
                         <FInputToggle @bind-Value="oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired" For="@(() => oidcUpParty.Form.Model.Client.FrontChannelLogoutSessionRequired)" TextType="y.n" />
                     }
                 }

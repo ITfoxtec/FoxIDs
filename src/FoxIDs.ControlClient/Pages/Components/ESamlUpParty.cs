@@ -80,8 +80,6 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.AutomaticStopped = false;
                 }
 
-                afterMap.EnableSingleLogout = !samlUpParty.DisableSingleLogout;
-
                 if (samlUpParty.AuthnContextComparison.HasValue)
                 {
                     afterMap.AuthnContextComparisonViewModel = (SamlAuthnContextComparisonTypesVievModel)Enum.Parse(typeof(SamlAuthnContextComparisonTypesVievModel), samlUpParty.AuthnContextComparison.Value.ToString());
@@ -116,6 +114,10 @@ namespace FoxIDs.Client.Pages.Components
         {
             if (samlUpParty.CreateMode)
             {
+                if (samlUpParty.TokenExchange)
+                {
+                    model.DisableUserAuthenticationTrust = true;
+                }
                 model.Claims = new List<string> { "*" };
             }
         }
@@ -267,8 +269,6 @@ namespace FoxIDs.Client.Pages.Components
 
                 var samlUpParty = generalSamlUpParty.Form.Model.Map<SamlUpParty>(afterMap =>
                 {
-                    afterMap.DisableSingleLogout = !generalSamlUpParty.Form.Model.EnableSingleLogout;
-
                     if (generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel != SamlAuthnContextComparisonTypesVievModel.Null)
                     {
                         afterMap.AuthnContextComparison = (SamlAuthnContextComparisonTypes)Enum.Parse(typeof(SamlAuthnContextComparisonTypes), generalSamlUpParty.Form.Model.AuthnContextComparisonViewModel.ToString());

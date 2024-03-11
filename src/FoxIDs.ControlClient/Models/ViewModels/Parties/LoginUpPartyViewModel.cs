@@ -47,7 +47,7 @@ namespace FoxIDs.Client.Models.ViewModels
         public bool PersistentSessionLifetimeUnlimited { get; set; } = false;
 
         [Display(Name = "Single logout")]
-        public bool EnableSingleLogout { get; set; } = true;
+        public bool DisableSingleLogout { get; set; }
 
         /// <summary>
         /// Default false.
@@ -68,7 +68,7 @@ namespace FoxIDs.Client.Models.ViewModels
         /// </summary>
         [Required]
         [Display(Name = "Reset password")]
-        public bool EnableResetPassword { get; set; } = true;
+        public bool DisableResetPassword { get; set; }
 
         /// <summary>
         /// Claim transforms.

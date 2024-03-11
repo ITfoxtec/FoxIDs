@@ -11,11 +11,19 @@ using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
 using FoxIDs.Client.Infrastructure.Security;
 using ITfoxtec.Identity;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components;
 
 namespace FoxIDs.Client.Pages.Components
 {
     public partial class ETrackLinkUpParty : UpPartyBase
     {
+        [Inject]
+        public TrackService TrackService { get; set; }
+
+        [Inject]
+        public DownPartyService DownPartyService { get; set; }
+
+
         protected override async Task OnInitializedAsync()
         {
             await base.OnInitializedAsync();
@@ -52,7 +60,6 @@ namespace FoxIDs.Client.Pages.Components
                     afterMap.DisplayName = afterMap.Name;
                 }
 
-                afterMap.EnableSingleLogout = !trackLinkUpParty.DisableSingleLogout;
                 if (afterMap.ClaimTransforms?.Count > 0)
                 {
                     afterMap.ClaimTransforms = afterMap.ClaimTransforms.MapClaimTransforms();
@@ -60,13 +67,17 @@ namespace FoxIDs.Client.Pages.Components
             });
         }
 
-        private void TrackLinkUpPartyViewModelAfterInit(GeneralTrackLinkUpPartyViewModel trackLinkUpParty, TrackLinkUpPartyViewModel model)
+        private async Task TrackLinkUpPartyViewModelAfterInitAsync(TrackLinkUpPartyViewModel model)
         {
-            if (trackLinkUpParty.CreateMode)
+            try
             {
-                model.SelectedUpParties = new List<string> { "*" };
-                model.Claims = new List<string> { "*" };
+                var track = await TrackService.GetTrackAsync(model.ToDownTrackName);
+                model.ToDownTrackDisplayName = track.DisplayName;
+
+                var downParty = await DownPartyService.GetTrackLinkDownPartyAsync(model.ToDownPartyName, trackName: model.ToDownTrackName);
+                model.ToDownPartyDisplayName = downParty.DisplayName;
             }
+            catch { }
         }
 
         private async Task OnEditTrackLinkUpPartyValidSubmitAsync(GeneralTrackLinkUpPartyViewModel generalTrackLinkUpParty, EditContext editContext)
@@ -86,7 +97,6 @@ namespace FoxIDs.Client.Pages.Components
 
                 var trackLinkUpParty = generalTrackLinkUpParty.Form.Model.Map<TrackLinkUpParty>(afterMap: afterMap =>
                 {
-                    afterMap.DisableSingleLogout = !generalTrackLinkUpParty.Form.Model.EnableSingleLogout;
                     if (afterMap.ClaimTransforms?.Count() > 0)
                     {
                         int order = 1;
@@ -97,20 +107,11 @@ namespace FoxIDs.Client.Pages.Components
                     }
                 });
 
-                if (generalTrackLinkUpParty.CreateMode)
-                {
-                    var trackLinkUpPartyResult = await UpPartyService.CreateTrackLinkUpPartyAsync(trackLinkUpParty);
-                    generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
-                    generalTrackLinkUpParty.CreateMode = false;
-                    toastService.ShowSuccess("OpenID Connect authentication method created.");
-                    generalTrackLinkUpParty.Name = trackLinkUpPartyResult.Name;
-                    generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
-                }
-                else
+                if (!generalTrackLinkUpParty.CreateMode)
                 {
                     var trackLinkUpPartyResult = await UpPartyService.UpdateTrackLinkUpPartyAsync(trackLinkUpParty);
                     generalTrackLinkUpParty.Form.UpdateModel(ToViewModel(trackLinkUpPartyResult));
-                    toastService.ShowSuccess("OpenID Connect authentication method updated.");
+                    toastService.ShowSuccess("Environment Link authentication method updated.");
                     generalTrackLinkUpParty.DisplayName = trackLinkUpPartyResult.DisplayName;
                 }
             }
@@ -132,6 +133,12 @@ namespace FoxIDs.Client.Pages.Components
             try
             {
                 await UpPartyService.DeleteTrackLinkUpPartyAsync(generalTrackLinkUpParty.Name);
+                try
+                {
+                    await DownPartyService.DeleteTrackLinkDownPartyAsync(generalTrackLinkUpParty.Form.Model.ToDownPartyName, trackName: generalTrackLinkUpParty.Form.Model.ToDownTrackName);
+                }
+                catch
+                { }
                 UpParties.Remove(generalTrackLinkUpParty);
                 await OnStateHasChanged.InvokeAsync(UpParty);
             }

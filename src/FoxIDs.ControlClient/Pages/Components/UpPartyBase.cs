@@ -5,11 +5,9 @@ using FoxIDs.Client.Models.ViewModels;
 using FoxIDs.Client.Services;
 using Microsoft.AspNetCore.Components;
 using ITfoxtec.Identity.BlazorWebAssembly.OpenidConnect;
-using ITfoxtec.Identity;
 using FoxIDs.Client.Models.Config;
 using FoxIDs.Client.Models;
 using System;
-using FoxIDs.Models.Api;
 using Blazored.Toast.Services;
 
 namespace FoxIDs.Client.Pages.Components
